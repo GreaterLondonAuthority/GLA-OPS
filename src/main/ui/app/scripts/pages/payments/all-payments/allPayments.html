@@ -1,0 +1,169 @@
+<div class="payments all-payments">
+  <page-header class="no-padding">All Payments</page-header>
+
+  <well class="row mbottom10 search-container">
+
+    <div class="col-xs-12 no-padding mbottom10">
+      <div class="col-xs-12 col-md-5 search-column">
+        <div class="text-align-left">Search</div>
+        <search-field options="$ctrl.searchOptions"
+                      selected-option="$ctrl.selectedSearchOption"
+                      search-text="$ctrl.searchTextModel"
+                      on-select="$ctrl.select($ctrl.selectedSearchOption)"
+                      on-search="$ctrl.search()"
+                      on-clear="$ctrl.clearSearch()"></search-field>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
+        <div class="status-box">
+          <div class="text-align-left">Source</div>
+          <checkbox-filter id="source-filter" filter-dropdown-items="$ctrl.sourceDropdownItems" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
+        <div class="status-box">
+          <div class="text-align-left"><Status>In/Out</Status></div>
+          <checkbox-filter id="payment-direction-filter" filter-dropdown-items="$ctrl.paymentDirectionDropdownItems" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
+      <div class="status-box">
+        <div class="text-align-left">Programme</div>
+        <checkbox-filter id="programme-filter" filter-dropdown-items="$ctrl.programmeDropDownItems" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
+      <div class="status-box">
+        <div class="text-align-left"><Status>Status</Status></div>
+        <checkbox-filter id="status-filter" filter-dropdown-items="$ctrl.statusDropdownItems" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+      </div>
+    </div>
+    <!--<div class="col-xs-12 col-sm-6 col-md-4 no-padding mtop30" ng-if="$ctrl.invalidForShowDateFiltering">-->
+      <!--Date range does not apply to this status-->
+    <!--</div>-->
+    <div class="col-xs-12 col-sm-6 col-md-4 no-padding" ng-if="$ctrl.showDateFiltering">
+      <div class="col-xs-12">
+        <div class="text-align-left">Payment authorisation date range</div>
+      </div>
+      <row class="">
+        <div class="col-xs-6 date-picker">
+          <span class="input-group">
+            <input type="text"
+                   class="form-control date-input"
+                   uib-datepicker-popup="{{$ctrl.dateFormat}}"
+                   ng-model="$ctrl.fromDate"
+                   name="fromDate"
+                   is-open="$ctrl.fromDatePopup.opened"
+                   datepicker-options="$ctrl.fromDateOptions"
+                   ng-required="false"
+                   close-text="Close"
+                   ng-click="$ctrl.openFromDate()"
+                   ng-change="$ctrl.changeFromFilterDates($ctrl.fromDate)" placeholder="From date"
+                   show-button-bar="false"
+                   aria-label="From Date"
+            />
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" ng-click="$ctrl.openFromDate()"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+          </span>
+        </div>
+        <div class="col-xs-6 date-picker">
+          <span class="input-group">
+            <input type="text"
+                   class="form-control date-input"
+                   uib-datepicker-popup="{{$ctrl.dateFormat}}"
+                   ng-model="$ctrl.toDate"
+                   name="toDate"
+                   is-open="$ctrl.toDatePopup.opened"
+                   datepicker-options="$ctrl.toDateOptions"
+                   ng-required="true"
+                   close-text="Close"
+                   ng-click="$ctrl.openToDate()"
+                   ng-change="$ctrl.changeToFilterDates($ctrl.toDate)" placeholder="To date"
+                   show-button-bar="false"
+                   aria-label="To Date"
+            />
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="$ctrl.openToDate()"><i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+          </span>
+        </div>
+      </row>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-2 no-padding reset-column">
+      <div class="clear-filter-and-search-box pull-left">
+        <button
+          ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState"
+          class="action-buttons action-buttons-reset"
+          ng-click="$ctrl.clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset</button>
+      </div>
+    </div>
+  </well>
+
+  <div class="col-xs-12 mtop15 no-padding">
+    <pagination class="bottom-pagination"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                total-items="$ctrl.totalItems"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.updateFilters()"></pagination>
+    <div ng-if="!$ctrl.payments.length" class="no-payments-message">
+      <span ng-if="!($ctrl.searchText || !$ctrl.isDefaultFilterState)">There are currently no payments</span>
+      <span ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState">0 results match your search. Check your filter selection and try again.</span>
+    </div>
+    <div class="table-responsive" ng-if="$ctrl.payments.length">
+      <table id="all-payments-table" class="table table-bordered table-striped-groups">
+        <thead class="thead-inverse uppercase">
+          <tr>
+            <th>Project ID</th>
+            <th>Project Title</th>
+            <th>Programme</th>
+            <th>ORG.</th>
+            <th>Source</th>
+            <th>Value £</th>
+            <th>Type</th>
+            <th>Sub Type</th>
+            <th>Actioned By</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat-start="item in $ctrl.payments"
+            ng-class="{'odd-row': $index % 2 === 1}"
+            class="clickable-row"
+            ui-sref="payment-summary({paymentId:item.id})">
+            <td>P{{item.projectId}}</td>
+            <td class="project-name">{{item.projectName}}</td>
+            <td>{{item.programmeName}}</td>
+            <td>{{item.vendorName}}</td>
+            <td>{{item.source}}</td>
+            <td>{{item.totalIncludingInterest | number: 2}}</td>
+            <td>{{item.category}}</td>
+            <td>{{item.subCategory}}</td>
+            <td>{{item.authorisedOn ? item.authorisor : item.lastModifierName}}</td>
+            <td>{{item.ledgerStatus}}</td>
+            <td>{{item.displayDate | date: 'dd/MM/yyyy'}}</td>
+            <!--<td>{{item.authorisedOn ? (item.authorisedOn | date: 'dd/MM/yyyy') : (item.modifiedOn | date: 'dd/MM/yyyy')}}</td>-->
+          </tr>
+          <tr ng-repeat-end
+              ng-if="false && item.ledgerStatus==='Declined'"
+              ng-class="{'odd-row': $index % 2 === 1}">
+            <td colspan=11 class="extra-row">
+              <div><span class="bold">Reason for payment decline:</span> {{item.declineReason.displayValue}}</div>
+              <div><span class="bold">Comments:</span> {{item.declineComments}}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <pagination class="bottom-pagination"
+              current-page="$ctrl.currentPage"
+              items-per-page="$ctrl.itemsPerPage"
+              total-items="$ctrl.totalItems"
+              number-of-elements="$ctrl.itemsPerPage"
+              on-change="$ctrl.updateFilters()"></pagination>
+
+</div>

@@ -1,0 +1,39 @@
+<div class="org-programmes">
+  <div class="row no-padding-row">
+    <div class="col-xs-8 col-xs-offset-2 no-padding">
+      <h3>Programmes</h3>
+      <div>Displaying programmes where the organisation has projects</div>
+      <div class="number-of-programmes">{{$ctrl.org.programmes.length}} programmes</div>
+    </div>
+  </div>
+  <div class="row no-padding-row" ng-if="$ctrl.org.programmes.length">
+    <div class="col-xs-8 col-xs-offset-2 no-padding programmes-list">
+      <div class="row no-padding-row bold">
+        <div class="col-xs-8">
+          Programme
+        </div>
+        <div class="col-xs-4">
+          Total approved budget £
+        </div>
+      </div>
+      <div class="row no-padding-row" ng-repeat="programme in $ctrl.org.programmes | orderBy: 'name' | limitTo: $ctrl.showHowMany">
+        <div class="org-programme">
+          <div class="row no-padding-row">
+            <div class="col-xs-8 programme-title programme-name">
+              <a href="" ng-click="$ctrl.goToOrganisationProgramme($ctrl.org.id, programme)">
+                {{programme.name}}
+              </a>
+            </div>
+            <div class="col-xs-4 total-approved-budget">
+              <span ng-if="programme.total || programme.total === 0">{{programme.total | currency:'£':0}}</span>
+              <span ng-if="!programme.total && programme.total !== 0">Not provided</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-if="$ctrl.org.programmes.length > 3" class="text-align-center mtop10">
+        <button type="button" class="btn btn-primary btn-md" ng-click="$ctrl.showMoreLessProgrammes()">VIEW {{$ctrl.showAll ? 'LESS' : 'ALL'}} PROGRAMMES</button>
+      </div>
+    </div>
+  </div>
+</div>

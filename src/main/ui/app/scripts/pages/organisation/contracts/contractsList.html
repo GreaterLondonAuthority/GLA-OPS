@@ -1,0 +1,59 @@
+<div class="org-contracts">
+  <div class="row no-padding-row">
+    <div class="col-xs-8 col-xs-offset-2 no-padding">
+      <h3>Contracts</h3>
+      <div>Payments cannot be authorised for projects unless the relevant contract has been signed.</div>
+      <div class="number-of-contracts">{{$ctrl.org.contracts.length}} contracts</div>
+    </div>
+  </div>
+  <div class="row no-padding-row" ng-if="$ctrl.org.contracts.length">
+    <div class="col-xs-8 col-xs-offset-2 no-padding contracts-list">
+      <div class="row no-padding-row bold">
+        <div class="col-xs-6">
+          Contract
+        </div>
+        <div class="col-xs-6">
+          Contract status
+        </div>
+      </div>
+      <!-- Blank, Signed, NotRequired -->
+      <div class="row no-padding-row" ng-repeat="contract in $ctrl.org.contracts | orderBy: 'name' | limitTo: $ctrl.showHowMany">
+        <div class="org-contract">
+          <div class="row no-padding-row">
+            <div class="contract-title col-xs-6 contract-name">{{contract.name}}{{contract.orgGroupType ? (' - ' + contract.orgGroupType) : '' }}</div>
+            <div class="col-xs-3" ng-if="$ctrl.canEditContracts">
+              <div class="checkbox signed"
+                ng-class="{checked: contract.status === $ctrl.contractStatusConst.SIGNED}"
+                ng-click="$ctrl.statusCheckboxClicked(contract,$ctrl.contractStatusConst.SIGNED)">
+                <input type="checkbox"
+                  aria-label="contract signed"
+                  name="signed"
+                  ng-click="$event.stopPropagation();$ctrl.statusCheckboxClicked(contract,$ctrl.contractStatusConst.SIGNED)">
+                <div class="checkbox-label">Signed</div>
+              </div>
+
+            </div>
+            <div class="col-xs-3" ng-if="$ctrl.canEditContracts">
+              <div class="checkbox not-required"
+                ng-class="{checked: contract.status === $ctrl.contractStatusConst.NOT_REQUIRED}"
+                ng-click="$ctrl.statusCheckboxClicked(contract,$ctrl.contractStatusConst.NOT_REQUIRED)">
+                <input type="checkbox"
+                  aria-label="contract required"
+                  name="required"
+                  ng-click="$event.stopPropagation();$ctrl.statusCheckboxClicked(contract,$ctrl.contractStatusConst.NOT_REQUIRED)">
+
+                <div class="checkbox-label">Not required</div>
+              </div>
+            </div>
+            <div class="col-xs-6" ng-if="!$ctrl.canEditContracts">
+              <div class="checkbox-label no-checkbox">{{$ctrl.contractStatusMap[contract.status]}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-if="$ctrl.org.contracts.length > 3" class="text-align-center mtop10">
+        <button type="button" class="btn btn-primary btn-md" ng-click="$ctrl.showMoreLessContract()">VIEW {{$ctrl.showAll ? 'LESS' : 'ALL'}} CONTRACTS</button>
+      </div>
+    </div>
+  </div>
+</div>

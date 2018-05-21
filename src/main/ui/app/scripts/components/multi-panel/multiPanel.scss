@@ -1,0 +1,50 @@
+multi-panel {
+  display: block;
+  margin: auto;
+
+  .multi-panel {
+    .column {
+      padding: 20px;
+      background-color: white;
+    }
+
+    .section {
+      &:not(:last-child) {
+        border-bottom: 2px solid $alto-light;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+
+      .section-header {
+        font-family: $font-family-default;
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      .field-label, .field-value {
+        text-align: left;
+        font-size: 14px;
+        line-height: 1.25;
+        margin-bottom: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .field-label {
+        text-align: left;
+        font-family: $font-family-default;
+        font-weight: bold;
+        color: $primary-text;
+        padding-right: 5px;
+      }
+    }
+
+    @include when-sm {
+      display: flex;
+      justify-content: space-between;
+      .column {
+        width: 49.9%;
+      }
+    }
+  }
+}

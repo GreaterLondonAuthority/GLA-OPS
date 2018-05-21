@@ -1,0 +1,991 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <!--
+    The motivation of this is to have a single file where placing the
+    definitions of the elements. Instead of having a historic file where we add
+    any change as a new changeset, like normal liquidbase approach, we have a
+    liquiBase changelog that allows updates on changesets.
+    So any change in any view or any new view we create, would normally drive to
+    a change in the changeset.
+
+    Initially this is intended to be for views, but this approach can be
+    extended to any read-only element.
+
+    The logic behind the main changeset(id: CREATE_VIEWS, author: team) is that
+    in every deployment this changeseet is executed. Every time it drops all
+    the views and create them again. This is a clean way where we avoid issues
+    where we expect the view to be recreated but we dont really need to change
+    the changeset, among other scenarios.
+    So, if you are adding a new view, please don't forget to add the
+    corresponding 'DROP VIEW IF EXISTS ..."
+
+
+    (1) Notice that if any statement inside the changeset fails, although
+    doesn't break because of failOnError='false', it won't carry on executing
+    the changeset
+
+    (2) Why don't use <dropview ..>? The problem with this approach is that
+    fails if the view doesn't exist yet. Plus the explained in (1), it won't
+    execute the changeset and would produce unexpected results. So by using
+    <sql> we fix this issue.
+    -->
+
+
+
+    <!---
+     V_ANNUAL_SPEND_BY_TYPE requires an specific implementation for H2,
+     so it needs two changeset, one for H2 and another one for Postgres.
+
+     Please notice that both are only executed on change.
+     -->
+    <changeSet id="V_ANNUAL_SPEND_BY_TYPE_H2_CREATION" author="team" dbms="h2"
+               runOnChange="true" failOnError="false">
+        <createView viewName="V_ANNUAL_SPEND_BY_TYPE" replaceIfExists="true">
+            select ROWNUM() as id, * from (
+            select CASE WHEN month &lt;  4 THEN  year -1
+            ELSE year END as financial_year,  project_id, block_id, SUM(amount) as SPEND,
+            ledger_status, spend_type, year, month from project_ledger_entry
+            GROUP BY project_id, block_id,ledger_status, spend_type , financial_year, year, month
+            order by  project_id, financial_year, ledger_status, spend_type asc)
+        </createView>
+    </changeSet>
+
+
+    <changeSet id="V_ANNUAL_SPEND_BY_TYPE_POSTGRES_CREATION" author="team"
+               dbms="postgresql" failOnError="false" runOnChange="true">
+        <!-- comment update to force rerun after change to 1.1xml -->
+        <createView viewName="V_ANNUAL_SPEND_BY_TYPE" replaceIfExists="true">
+            select ROW_NUMBER() OVER() AS id, CASE WHEN month &lt;  4 THEN  year -1
+            ELSE year END as financial_year,  project_id, block_id, SUM(amount) as SPEND,
+            ledger_status, spend_type, year , month from project_ledger_entry
+            GROUP BY  project_id, block_id,ledger_status, spend_type , financial_year, year, month
+            order by project_id, financial_year, ledger_status, spend_type asc;
+        </createView>
+    </changeSet>
+
+
+    <!--
+    This is the main changeset which will be executed in every deployment.
+    It drops and recreate all the views.
+    -->
+    <changeSet id="CREATE_VIEWS" author="team" failOnError="${failsOnError}"
+               runAlways="true" runOnChange="true">
+
+        <!--
+        VIEWS CREATION
+         -->
+
+        <!--
+        It should never happen that the APPROVED block is taken,
+        as it will be always the LAST_APPROVED. If there is no LAST_APPROVED,
+        then no block has been approved yet.
+        However, just in case the scenario where there is an APPROVED block
+        but no a LAST_APPROVED is covered.
+        -->
+        <createView viewName="v_project_block_active" replaceIfExists="true">
+            SELECT  id,block_display_name,project_block_type,block_type,display_order,
+            project_id, last_modified, modified_by, block_status,
+            approver_name, approval_timestamp,version_number
+            from project_block where reporting_version = true
+        </createView>
+
+        <!--
+         POTENTIAL ISSUES
+        -->
+        <createView viewName="v_total_grant" replaceIfExists="true">
+            SELECT
+            prg.name Programme,
+            org.name Organisation,
+            pdb.title Project,
+            SUM(tu.total_units) Units, SUM(tu.grant_requested) Grant_Requested
+            FROM tenure_and_units tu
+            LEFT OUTER JOIN template_tenure_type tt ON tu.tenure_type_id = tt.id
+            LEFT OUTER JOIN project prj ON tu.project_id = prj.id
+            LEFT OUTER JOIN programme prg ON prj.programme_id = prg.id
+            LEFT OUTER JOIN organisation org ON prj.org_id = org.id
+            LEFT OUTER JOIN template tmplt ON prj.template_id = tmplt.id
+            INNER JOIN v_project_block_active pb ON pb.id = tu.block_id
+            INNER JOIN v_project_block_active active_details_block ON active_details_block.project_id = prj.id AND active_details_block.project_block_type = 'Details'
+            INNER JOIN project_details_block pdb ON active_details_block.id = pdb.id
+            WHERE tu.total_units > 0
+            GROUP BY prg.name, org.name, pdb.title
+        </createView>
+
+        <createView viewName="v_project_permissions" replaceIfExists="true">
+            SELECT p.id project_id, p.org_id organisation_id, pdb.title project_title, p.organisation_group_id, r.username, r.name role_name
+            FROM project p
+            LEFT JOIN user_roles r ON ((r.organisation_id = 10000) OR (p.org_id = r.organisation_id))
+            INNER JOIN v_project_block_active active_details_block ON active_details_block.project_id = p.id AND active_details_block.project_block_type = 'Details'
+            INNER JOIN project_details_block pdb ON active_details_block.id = pdb.id
+            WHERE r.approved
+        </createView>
+
+        <!--
+        unapproved_changes is built from status and subStatus. Before was
+        a column from project.
+        -->
+        <createView viewName="v_project_summaries" replaceIfExists="true">
+            SELECT prg.name prg_name, org.name org_name, tpl.name template_name, og.name og_name, og.type og_type, og.lead_organisation_id, pdb.title,  p.*,
+            p.status = 'Active' AND p.substatus = 'UnapprovedChanges' as unnapproved_changes
+            FROM project p
+            LEFT JOIN programme prg ON p.programme_id = prg.id
+            LEFT JOIN template tpl ON p.template_id = tpl.id
+            LEFT JOIN organisation org ON p.org_id = org.id
+            LEFT JOIN organisation_group og ON p.organisation_group_id = og.id
+            INNER JOIN v_project_block_active active_details_block ON active_details_block.project_id = p.id AND active_details_block.project_block_type = 'Details'
+            INNER JOIN project_details_block pdb ON active_details_block.id = pdb.id
+
+        </createView>
+
+        <!--
+        Potential issue once change control is implemented
+        -->
+        <createView viewName="v_design_standards" replaceIfExists="true">
+            SELECT p.id project_id,
+            ds.meeting_design_guide AS ds_lhds_met,
+            ds.reason_not_meeting_design_guide AS ds_lhds_comments
+            FROM project p
+            INNER JOIN v_project_block_active active_details_block ON active_details_block.project_id = p.id AND active_details_block.project_block_type = 'DesignStandards'
+            INNER JOIN design_standards ds ON active_details_block.id = ds.id
+        </createView>
+
+        <createView viewName="v_tenure_items" replaceIfExists="true">
+            SELECT p.id,
+            pb.block_type block_type,
+            CASE
+            WHEN pb.block_type = 'CALCULATE' THEN tu.total_units
+            WHEN pb.block_type = 'NEGOTIATED' THEN tu.total_units
+            WHEN pb.block_type = 'DEVELOPER-LED' AND tu.s106_units IS NULL
+            THEN tu.additional_units
+            WHEN pb.block_type = 'DEVELOPER-LED' AND tu.additional_units IS NULL
+            THEN tu.s106_units
+            WHEN pb.block_type = 'DEVELOPER-LED' AND tu.s106_units IS NOT NULL AND tu.additional_units IS NOT NULL
+            THEN tu.s106_units + tu.additional_units
+            ELSE null END eg_total_units,
+
+            -- total units to calculate total grant
+            CASE
+            WHEN pb.block_type = 'CALCULATE' AND tu.s106_units IS NULL THEN tu.total_units
+            WHEN pb.block_type = 'CALCULATE' THEN tu.total_units - tu.s106_units
+            WHEN pb.block_type = 'NEGOTIATED' THEN tu.total_units
+            WHEN pb.block_type = 'DEVELOPER-LED' AND (tu.s106_units IS NULL OR affordable_criteria_met != TRUE)
+            THEN tu.additional_units
+            WHEN pb.block_type = 'DEVELOPER-LED' AND tu.additional_units IS NOT NULL
+            THEN tu.s106_units + tu.additional_units
+            WHEN pb.block_type = 'DEVELOPER-LED' AND tu.additional_units IS NULL
+            THEN tu.s106_units
+            ELSE null END eg_total_grant_units,
+
+            CASE WHEN pb.block_type = 'CALCULATE' THEN tu.s106_units ELSE NULL END eg_nil_grant_units,
+            CASE WHEN pb.block_type = 'NEGOTIATED' THEN tu.eligible_grant ELSE NULL END eg_calculate_eligible_grant,
+            CASE WHEN pb.block_type = 'DEVELOPER-LED' THEN tu.additional_units ELSE NULL END eg_add_aff_units,
+            CASE WHEN pb.block_type = 'DEVELOPER-LED' THEN tu.s106_units ELSE NULL END eg_s106_units,
+            CASE WHEN pb.block_type = 'CALCULATE' OR pb.block_type = 'DEVELOPER-LED' OR pb.block_type = 'NEGOTIATED' THEN tu.total_cost ELSE NULL END eg_dev_cost,
+            CASE WHEN pb.block_type = 'NEGOTIATED' THEN tu.supported_units ELSE NULL END eg_supp_units,
+            CASE WHEN pb.block_type = 'CALCULATE' OR pb.block_type = 'DEVELOPER-LED' THEN tu.grant_per_unit
+            WHEN pb.block_type = 'NEGOTIATED' AND tu.eligible_units IS NOT NULL AND tu.eligible_units != 0 THEN CAST( ROUND( CAST (tu.eligible_grant AS FLOAT) / tu.eligible_units) AS INTEGER)
+            ELSE NULL END eg_gpu,
+            ttt.external_id,
+            tt.name,
+            bt.affordable_criteria_met
+            from project p
+            LEFT JOIN tenure_AND_units tu ON tu.project_id = p.id
+            LEFT JOIN template_tenure_type  ttt ON tu.tenure_type_id = ttt.id
+            INNER JOIN tenure_type tt ON ttt.external_id = tt.id
+            INNER JOIN tenure_block bt ON tu.block_id = bt.id
+            INNER JOIN v_project_block_active pb ON pb.id = tu.block_id
+        </createView>
+
+        <createView viewName="v_eligible_grant_1000" replaceIfExists="true">
+            SELECT
+            lar.id project_id,
+            lar.block_type block_type,
+            -- 4000
+            lar.eg_total_units eg_total_units_lar,
+            lar.eg_nil_grant_units eg_nil_grant_units_lar,
+            lar.eg_Add_aff_units eg_Add_aff_units_lar,
+            lar.eg_s106_units eg_s106_units_lar,
+            lar.eg_supp_units eg_supp_units_lar,
+            lar.eg_dev_cost eg_dev_cost_lar,
+            lar.eg_gpu eg_gpu_lar,
+            lar.eg_total_grant_units eg_eligible_units_lar,
+            CASE WHEN lar.block_type = 'NEGOTIATED' THEN lar.eg_calculate_eligible_grant ELSE lar.eg_total_grant_units * lar.eg_gpu END eg_total_eligible_grant_lar,
+            -- 4001
+            llr.eg_total_units eg_total_units_llr,
+            llr.eg_nil_grant_units eg_nil_grant_units_llr,
+            llr.eg_Add_aff_units eg_Add_aff_units_llr,
+            llr.eg_s106_units eg_s106_units_llr,
+            llr.eg_supp_units eg_supp_units_llr,
+            llr.eg_dev_cost eg_dev_cost_llr,
+            llr.eg_gpu eg_gpu_llr,
+            llr.eg_total_grant_units eg_eligible_units_llr,
+            CASE WHEN lar.block_type = 'NEGOTIATED' THEN llr.eg_calculate_eligible_grant ELSE llr.eg_total_grant_units * llr.eg_gpu END eg_total_eligible_grant_llr,
+            -- 4002
+            so.eg_total_units eg_total_units_so,
+            so.eg_nil_grant_units eg_nil_grant_units_so,
+            so.eg_Add_aff_units eg_Add_aff_units_so,
+            so.eg_s106_units eg_s106_units_so,
+            so.eg_supp_units eg_supp_units_so,
+            so.eg_dev_cost eg_dev_cost_so,
+            so.eg_gpu eg_gpu_so,
+            so.eg_total_grant_units eg_eligible_units_so,
+            CASE WHEN lar.block_type = 'NEGOTIATED' THEN so.eg_calculate_eligible_grant ELSE so.eg_total_grant_units * so.eg_gpu END eg_total_eligible_grant_so,
+            -- 4003
+            oa.eg_total_units eg_total_units_oa,
+            oa.eg_nil_grant_units eg_nil_grant_units_oa,
+            oa.eg_Add_aff_units eg_Add_aff_units_oa,
+            oa.eg_s106_units eg_s106_units_oa,
+            oa.eg_supp_units eg_supp_units_oa,
+            oa.eg_dev_cost eg_dev_cost_oa,
+            oa.eg_gpu eg_gpu_oa,
+            oa.eg_total_grant_units eg_eligible_units_oa,
+            CASE WHEN lar.block_type = 'NEGOTIATED' THEN oa.eg_calculate_eligible_grant ELSE oa.eg_total_grant_units * oa.eg_gpu END eg_total_eligible_grant_oa,
+
+            llr.affordable_criteria_met eg_40pct_hab_rooms
+            FROM v_tenure_items lar
+            LEFT JOIN v_tenure_items llr ON lar.id = llr.id
+            LEFT JOIN v_tenure_items so ON lar.id = so.id
+            LEFT JOIN v_tenure_items oa ON lar.id = oa.id
+            where lar.external_id = 4000 AND
+            llr.external_id = 4001 AND
+            so.external_id = 4002 AND
+            oa.external_id = 4003
+        </createView>
+
+        <createView viewName="v_grant_source" replaceIfExists="true">
+            SELECT p.id project_id,
+            gs.zero_grant_requested as gs_zero_grant_requested,
+            gs.associated_project as gs_associated_project,
+            gs.rcgf_value gs_rcgf_requested,
+            gs.dpf_value gs_dpf_requested,
+            gs.grant_value gs_grant_requested,
+            gs.strategic_funding as gs_strategic_funding
+            FROM grant_source_block gs
+            INNER JOIN v_project_block_active pb ON gs.id = pb.id AND pb.block_type = 'GRANT_SOURCE'
+            LEFT JOIN project p ON p.id = pb.project_id
+        </createView>
+
+        <createView viewName="v_project_details" replaceIfExists="true">
+            SELECT p.id project_id,
+            pdb.title project_title,
+
+            CASE
+            WHEN p.organisation_group_id IS NULL THEN 'Individual'
+            ELSE bid_org_group.type END org_type,
+
+            CASE
+            WHEN p.organisation_group_id IS NULL THEN bid_org.name
+            ELSE bid_org_group.name END bidding_arrangement,
+
+            CASE
+            WHEN p.organisation_group_id IS NULL THEN bid_org.name
+            ELSE lead_org.name END lead_org_name,
+
+            CASE
+            WHEN p.organisation_group_id IS NULL THEN bid_org.id
+            ELSE bid_org_group.lead_organisation_id END org_id,
+
+            pr.name programme_name,
+            t.name project_type,
+            pdb.address,
+            pdb.borough,
+            pdb.postcode,
+            pdb.description,
+            pdb.coord_x x_coord,
+            pdb.coord_y y_coord,
+            dev_org.name developing_org,
+            pdb.main_contact_name main_contact,
+            pdb.planning_permission_reference planning_ref,
+            ph.comments submit_comment,
+            ph.created_on date_submitted,
+            pdb.developing_organisation_id
+
+
+            FROM project p
+            LEFT JOIN template t ON p.template_id = t.id
+            LEFT JOIN programme pr ON p.programme_id = pr.id
+            LEFT JOIN organisation_group bid_org_group ON p.organisation_group_id = bid_org_group.id
+            LEFT JOIN organisation bid_org ON p.org_id = bid_org.id
+            LEFT JOIN organisation lead_org ON bid_org_group.lead_organisation_id = lead_org.id
+            INNER JOIN v_project_block_active active_details_block ON active_details_block.project_id = p.id AND active_details_block.project_block_type = 'Details'
+            INNER JOIN project_details_block pdb ON active_details_block.id = pdb.id
+            LEFT JOIN organisation dev_org ON pdb.developing_organisation_id = dev_org.id
+            LEFT JOIN project_history ph ON ph.id = (
+            SELECT max(id)
+            FROM project_history
+            WHERE project_id = p.id AND transition = 'Submitted'
+            )
+        </createView>
+
+        <createView viewName="v_add_questions_1000" replaceIfExists="true">
+            SELECT pb.project_id,
+            MAX(CASE WHEN a.question_id = 524 THEN numeric_answer ELSE NULL END) aq_selfcont_sh,
+            MAX(CASE WHEN a.question_id = 511 THEN numeric_answer ELSE NULL END) aq_sharedfac_sh,
+            MAX(CASE WHEN a.question_id = 512 THEN numeric_answer ELSE NULL END) aq_wheelchair_units,
+            MAX(CASE WHEN a.question_id = 513 THEN answer ELSE NULL END) aq_client_group,
+            MAX(CASE WHEN a.question_id = 514 THEN numeric_answer ELSE NULL END) aq_moveon_units,
+            MAX(CASE WHEN a.question_id = 525 THEN numeric_answer ELSE NULL END) aq_other_pub_subsidy,
+            MAX(CASE WHEN a.question_id = 526 THEN numeric_answer ELSE NULL END) aq_income_rents,
+            MAX(CASE WHEN a.question_id = 527 THEN numeric_answer ELSE NULL END) aq_income_first_sales,
+            MAX(CASE WHEN a.question_id = 528 THEN numeric_answer ELSE NULL END) aq_provider_contrib
+            FROM answer a
+            LEFT JOIN v_project_block_active pb ON a.questions_block = pb.id
+            GROUP BY pb.project_id
+        </createView>
+
+        <createView viewName="v_milestones_1000" replaceIfExists="true">
+            SELECT
+            pb.project_id,
+            MAX(pr.name) ms_processing_route,
+            MIN(CASE WHEN m.external_id = 3005 THEN milestone_date ELSE NULL END) ms_land_acquired,
+            MIN(CASE WHEN m.external_id = 3005 THEN monetary_split ELSE NULL END) ms_land_acquired_pct,
+            MIN(CASE WHEN m.external_id = 3005 THEN milestone_status ELSE NULL END) ms_land_acquired_status,
+            MIN(CASE WHEN m.external_id = 3001 THEN milestone_date ELSE NULL END) ms_contractor,
+            MIN(CASE WHEN m.external_id = 3001 THEN monetary_split ELSE NULL END) ms_contractor_pct	,
+            MIN(CASE WHEN m.external_id = 3001 THEN milestone_status ELSE NULL END) ms_contractor_status,
+            MIN(CASE WHEN m.external_id = 3006 THEN milestone_date ELSE NULL END) ms_plan_perm,
+            MIN(CASE WHEN m.external_id = 3006 THEN monetary_split ELSE NULL END) ms_plan_perm_pct	,
+            MIN(CASE WHEN m.external_id = 3006 THEN milestone_status ELSE NULL END) ms_plan_perm_status,
+            MIN(CASE WHEN m.external_id = 3003 THEN milestone_date ELSE NULL END) ms_start_site,
+            MIN(CASE WHEN m.external_id = 3003 THEN monetary_split ELSE NULL END) ms_start_site_pct,
+            MIN(CASE WHEN m.external_id = 3003 THEN milestone_status ELSE NULL END) ms_start_site_status,
+            MIN(CASE WHEN m.external_id = 3004 THEN milestone_date ELSE NULL END) ms_completion,
+            MIN(CASE WHEN m.external_id = 3004 THEN monetary_split ELSE NULL END) ms_completion_pct,
+            MIN(CASE WHEN m.external_id = 3004 THEN milestone_status ELSE NULL END) ms_completion_status
+            FROM milestone m
+            LEFT JOIN project_block pb ON pb.id = m.milestones_block
+            LEFT JOIN milestones_block mb ON pb.id = mb.id
+            LEFT JOIN processing_route pr ON mb.processing_route_id = pr.id
+            INNER JOIN v_project_block_active pba ON pba.id = pb.id
+            GROUP BY pb.project_id
+        </createView>
+
+        <createView viewName="v_indicative_units_1000" replaceIfExists="true">
+            SELECT p.id project_id,
+            iv.units,
+            iv.year,
+            tu.grant_per_unit ,
+            tt.external_id
+            FROM project p
+            LEFT JOIN tenure_AND_units tu ON tu.project_id = p.id
+            LEFT JOIN template_tenure_type  tt ON tu.tenure_type_id = tt.id
+            INNER JOIN indicative_tenure_value iv ON tu.id = iv.tenure_units_id
+            INNER JOIN v_project_block_active pb ON pb.id = tu.block_id
+        </createView>
+
+
+        <createView viewName="v_questions_1000" replaceIfExists="true">
+            SELECT pb.project_id,
+            MAX(CASE WHEN a.question_id = 530 THEN numeric_answer ELSE NULL END) q_larger_aff_homes	,
+            MAX(CASE WHEN a.question_id = 501 THEN answer ELSE NULL END) q_other_aff_type,
+            MAX(CASE WHEN a.question_id = 502 THEN answer ELSE NULL END) q_planning_status,
+            MAX(CASE WHEN a.question_id = 503 THEN answer ELSE NULL END) q_land_status,
+            MAX(CASE WHEN a.question_id = 529 THEN answer ELSE NULL END) q_tender_status,
+            MAX(CASE WHEN a.question_id = 504 THEN answer ELSE NULL END) q_previously_funded,
+            MAX(CASE WHEN a.question_id = 505 THEN numeric_answer ELSE NULL END) q_rcgf_land_amount,
+            MAX(CASE WHEN a.question_id = 506 THEN answer ELSE NULL END) q_estate_regen,
+            MAX(CASE WHEN a.question_id = 507 THEN answer ELSE NULL END) q_offsite_provision,
+            MAX(CASE WHEN a.question_id = 509 THEN numeric_answer ELSE NULL END) q_ar_pct_mr,
+            MAX(CASE WHEN a.question_id = 519 THEN numeric_answer ELSE NULL END) q_ind_conv_aff,
+            MAX(CASE WHEN a.question_id = 520 THEN numeric_answer ELSE NULL END) q_ind_market_units,
+            MAX(CASE WHEN a.question_id = 521 THEN numeric_answer ELSE NULL END) q_ind_afford_units,
+            MAX(CASE WHEN a.question_id = 522 THEN numeric_answer ELSE NULL END) q_london_stock_owned
+            FROM answer a
+            LEFT JOIN v_project_block_active pb ON a.questions_block = pb.id
+            GROUP BY pb.project_id
+        </createView>
+
+
+        <createView viewName="v_indicative_1000" replaceIfExists="true">
+            SELECT y17llr.project_id,
+            y17llr.units ind_llr_1718_starts,
+            y18llr.units ind_llr_1819_starts,
+            y19llr.units ind_llr_1920_starts,
+            y17lso.units ind_lso_1718_starts,
+            y18lso.units ind_lso_1819_starts,
+            y19lso.units ind_lso_1920_starts,
+            y17llr.grant_per_unit ind_llr_gpu,
+            y17lso.grant_per_unit ind_lso_gpu
+            FROM v_indicative_units_1000 y17llr
+            LEFT JOIN v_indicative_units_1000 y19llr ON y17llr.project_id = y19llr.project_id
+            LEFT JOIN v_indicative_units_1000 y17lso ON y17llr.project_id = y17lso.project_id
+            LEFT JOIN v_indicative_units_1000 y18lso ON y17llr.project_id = y18lso.project_id
+            LEFT JOIN v_indicative_units_1000 y18llr ON y17llr.project_id = y18llr.project_id
+            LEFT JOIN v_indicative_units_1000 y19lso ON y17llr.project_id = y19lso.project_id
+            WHERE y17llr.year = 2017 AND y17llr.external_id = 4001
+            AND y18llr.year = 2018 AND y18llr.external_id = 4001
+            AND y19llr.year = 2019 AND y19llr.external_id = 4001
+            AND y17lso.year = 2017 AND y17lso.external_id = 4002
+            AND y18lso.year = 2018 AND y18lso.external_id = 4002
+            AND y19lso.year = 2019 AND y19lso.external_id = 4002
+        </createView>
+
+        <createView viewName="v_eligible_grant_1000_null_clean" replaceIfExists="true">
+            SELECT
+            project_id,
+            eg_40pct_hab_rooms,
+            CASE WHEN
+            eg_s106_units_lar IS NULL AND
+            eg_s106_units_llr IS NULL AND
+            eg_s106_units_so IS NULL AND
+            eg_s106_units_oa IS NULL THEN TRUE
+            ELSE false END s106_null,
+            CASE
+            WHEN eg_s106_units_lar IS NULL THEN 0
+            ELSE eg_s106_units_lar END s106_lar,
+            CASE
+            WHEN eg_s106_units_llr IS NULL THEN 0
+
+            ELSE eg_s106_units_llr END s106_llr,
+            CASE
+            WHEN eg_s106_units_so IS NULL THEN 0
+            ELSE eg_s106_units_so END s106_so,
+            CASE
+            WHEN eg_s106_units_oa IS NULL THEN 0
+            ELSE eg_s106_units_oa END s106_oa,
+
+            CASE WHEN
+            eg_add_aff_units_lar IS NULL AND
+            eg_add_aff_units_llr IS NULL AND
+            eg_add_aff_units_so IS NULL AND
+            eg_add_aff_units_oa IS NULL THEN TRUE
+            ELSE false END add_aff_null,
+            CASE
+            WHEN eg_add_aff_units_lar IS NULL THEN 0
+            ELSE eg_add_aff_units_lar END add_aff_lar,
+            CASE
+            WHEN eg_add_aff_units_llr IS NULL THEN 0
+            ELSE eg_add_aff_units_llr END add_aff_llr,
+            CASE
+            WHEN eg_add_aff_units_so IS NULL THEN 0
+            ELSE eg_add_aff_units_so END add_aff_so,
+            CASE
+            WHEN eg_add_aff_units_oa IS NULL THEN 0
+            ELSE eg_add_aff_units_oa END add_aff_oa,
+
+            CASE WHEN
+            eg_supp_units_lar IS NULL AND
+            eg_supp_units_llr IS NULL AND
+            eg_supp_units_so IS NULL AND
+            eg_supp_units_oa IS NULL THEN TRUE
+            ELSE false END eg_supp_units_null,
+            CASE
+            WHEN eg_supp_units_lar IS NULL THEN 0
+            ELSE eg_supp_units_lar END eg_supp_units_lar,
+            CASE
+            WHEN eg_supp_units_llr IS NULL THEN 0
+            ELSE eg_supp_units_llr END eg_supp_units_llr,
+            CASE
+            WHEN eg_supp_units_so IS NULL THEN 0
+            ELSE eg_supp_units_so END eg_supp_units_so,
+            CASE
+            WHEN eg_supp_units_oa IS NULL THEN 0
+            ELSE eg_supp_units_oa END eg_supp_units_oa,
+
+            eg_total_units_lar lar_units,
+            eg_total_units_llr llr_units,
+            eg_total_units_so lso_units,
+            eg_total_units_oa other_units
+            FROM v_eligible_grant_1000
+        </createView>
+
+        <createView viewName="v_borough_report" replaceIfExists="true">
+            SELECT
+            proj.programme_id,
+            p.programme_name,
+            proj.template_id,
+            proj.status,
+            proj.org_id,
+            proj.managing_organisation_id,
+            p.project_type,
+            p.project_id,
+            p.project_title,
+            p.date_submitted,
+            p.description,
+            p.org_type,
+            p.lead_org_name,
+            p.developing_org,
+            p.borough,
+            p.postcode,
+            p.x_coord,
+            p.y_coord,
+            p.planning_ref,
+            ms.ms_start_site,
+            ms.ms_completion,
+            ms.ms_processing_route,
+            eg.eg_40pct_hab_rooms affordable_criteria_met_dev_led,
+            CASE
+            WHEN eg.s106_null THEN NULL
+            ELSE eg.s106_lar+eg.s106_llr+eg.s106_so+eg.s106_oa
+            END s106_dev_led,
+            CASE
+            WHEN eg.add_aff_null THEN NULL
+            ELSE eg.add_aff_lar+eg.add_aff_llr+eg.add_aff_so+eg.add_aff_oa
+            END add_aff_units_dev_led,
+            CASE
+            WHEN eg.eg_supp_units_null THEN NULL
+            ELSE eg.eg_supp_units_lar+eg.eg_supp_units_llr+eg.eg_supp_units_so+eg.eg_supp_units_oa
+            END   eg_supp_units,
+            eg.lar_units,
+            eg.llr_units,
+            eg.lso_units,
+            eg.other_units,
+
+            q.q_other_aff_type,
+            q.q_planning_status,
+            q.q_land_status,
+            q.q_larger_aff_homes,
+            aq.aq_wheelchair_units,
+            aq.aq_client_group
+            FROM v_project_details p
+            INNER JOIN project proj ON proj.id=p.project_id
+            LEFT JOIN v_eligible_grant_1000_null_clean eg ON p.project_id=eg.project_id
+            LEFT JOIN v_milestones_1000 ms on ms.project_id=p.project_id
+            LEFT JOIN v_questions_1000 q ON q.project_id=p.project_id
+            LEFT JOIN v_add_questions_1000 aq ON aq.project_id=p.project_id
+        </createView>
+
+        <createView viewName="v_payment_request" replaceIfExists="true">
+            SELECT
+            ple.id,
+            ple.project_id,
+            ple.category,
+            ple.sap_vendor_id,
+            o.sap_vendor_id sap_vendor_id_org,
+            ple.sub_category,
+            ple.amount,
+            ple.ledger_status as status,
+            ple.wbs_code,
+            ple.ledger_type transaction_type,
+            ple.created_on,
+            ple.created_by,
+            ple.modified_on,
+            ple.modified_by,
+            ple.authorised_on,
+            ple.authorised_by,
+            ple.sent_on,
+            ple.acknowledged_on,
+            ple.cleared_on,
+            ple.invoice_filename,
+            ple.organisation_id,
+            ple.vendor_name organisation_name,
+            ple.project_name,
+            ple.programme_name,
+            ple.external_id,
+            ple.block_id
+
+            FROM project_ledger_entry ple
+            INNER JOIN v_project_summaries p ON ple.project_id = p.id
+            INNER JOIN organisation o ON p.org_id = o.id
+            INNER JOIN v_project_block_active pb ON pb.project_id = p.id
+            INNER JOIN project_details_block pd ON pd.id=pb.id
+            WHERE ledger_type = 'PAYMENT' OR
+            ledger_type = 'CREDIT' OR
+            ledger_type = 'DPF' OR
+            ledger_type = 'RCGF'
+        </createView>
+
+        <createView viewName="v_budget_report" replaceIfExists="true">
+            <![CDATA[
+            SELECT
+                pid project_id,
+                SUM(no_milesone_date) no_milesone_date,
+                SUM(pre_2017) pre_2017_18,
+                SUM(y_2017) y_2017_18,
+                SUM(y_2018) y_2018_19,
+                SUM(y_2019) y_2019_20,
+                SUM(y_2020) y_2020_21,
+                SUM(y_2021) y_2021_22,
+                SUM(y_2022) y_2022_23,
+                SUM(y_2023) y_2023_24,
+                SUM(y_2024) y_2024_25,
+                SUM(y_2025) y_2025_26,
+                SUM(y_2026) y_2026_27,
+                SUM(y_2027) y_2027_28,
+                SUM(post_2027) post_2027_28
+            FROM (
+                SELECT
+                    pid,
+                    CASE WHEN  financial_year IS NULL THEN amount  ELSE 0 END no_milesone_date ,
+                    CASE WHEN  financial_year < 2017 THEN amount  ELSE 0 END pre_2017,
+                    CASE WHEN  financial_year > 2027 THEN amount  ELSE 0 END post_2027,
+                    CASE WHEN  financial_year = 2017 THEN amount  ELSE 0 END y_2017,
+                    CASE WHEN  financial_year = 2018 THEN amount  ELSE 0 END y_2018,
+                    CASE WHEN  financial_year = 2019 THEN amount  ELSE 0 END y_2019,
+                    CASE WHEN  financial_year = 2020 THEN amount  ELSE 0 END y_2020,
+                    CASE WHEN  financial_year = 2021 THEN amount  ELSE 0 END y_2021,
+                    CASE WHEN  financial_year = 2022 THEN amount  ELSE 0 END y_2022,
+                    CASE WHEN  financial_year = 2023 THEN amount  ELSE 0 END y_2023,
+                    CASE WHEN  financial_year = 2024 THEN amount  ELSE 0 END y_2024,
+                    CASE WHEN  financial_year = 2025 THEN amount  ELSE 0 END y_2025,
+                    CASE WHEN  financial_year = 2026 THEN amount  ELSE 0 END y_2026,
+                    CASE WHEN  financial_year = 2027 THEN amount  ELSE 0 END y_2027
+                FROM
+                (
+                    SELECT
+                        milestone.project_id pid,
+                        financial_year,
+                        SUM((monetary_split* grant_value)/100) amount,
+                        'milestone' as type
+
+                    FROM
+                    (
+                        SELECT
+                            pba.project_id,
+                            CASE WHEN EXTRACT(month FROM m.milestone_date) < 4 THEN EXTRACT(year FROM m.milestone_date) -1 ELSE EXTRACT(year FROM m.milestone_date)  END financial_year,
+                            m.monetary_split
+                        FROM  MILESTONE m
+                        INNER JOIN V_PROJECT_BLOCK_ACTIVE pba ON m.milestones_block = pba.id
+                    ) milestone
+                    LEFT JOIN
+                    (
+                        SELECT
+                            pba.project_id,
+                            gsb.grant_value
+                        FROM GRANT_SOURCE_BLOCK gsb
+                        INNER JOIN V_PROJECT_BLOCK_ACTIVE pba ON pba.id = gsb.id
+                    )  grant_source ON milestone.project_id=grant_source.project_id
+                    GROUP BY pid, financial_year
+
+                    UNION
+                    SELECT
+                        project_id pid,
+                        year financial_year,
+                        SUM(grant_per_unit * units) amount,
+                        'indicative' as type
+                    FROM v_indicative_units_1000
+                    GROUP BY pid, financial_year
+                ) T1 ) T2
+                GROUP BY pid]]>
+        </createView>
+
+        <createView viewName="v_organisation_programmes" replaceIfExists="true">
+            SELECT a.*, b.total FROM
+            (
+            SELECT project.org_id organisation_id, programme.id programme_id, programme.*, count(distinct project.id), project.org_id
+            FROM project LEFT JOIN programme ON project.programme_id = programme.id
+            GROUP BY project.org_id, programme.id
+            ) a
+            LEFT JOIN
+            (
+            SELECT organisation_id, programme_id, sum(amount) AS total
+            FROM organisation_budget_entry
+            GROUP BY organisation_id, programme_id
+            ) b
+            ON a.organisation_id = b.organisation_id AND a.programme_id = b.programme_id
+        </createView>
+
+        <createView viewName="v_requested_grant_values_by_org_and_prog" replaceIfExists="true">
+            SELECT
+            p.programme_id,
+            p.org_id,
+            p.strategic_project,
+            count(p.id) as project_count,
+            SUM(unapp_gsb.dpf_value) as dpf_requested,
+            SUM(unapp_gsb.grant_value)as grant_requested,
+            SUM(unapp_gsb.rcgf_value) as rcgf_requested,
+            SUM(app_gsb.dpf_value) as dpf_approved,
+            SUM(app_gsb.grant_value) as grant_approved,
+            SUM(app_gsb.rcgf_value) as rcgf_approved
+            FROM project p
+            LEFT OUTER JOIN project_block indic ON p.id = indic.project_id AND indic.block_type = 'Indicative'
+            LEFT OUTER JOIN project_block unapp ON p.id = unapp.project_id AND unapp.block_type = 'GRANT_SOURCE' AND unapp.block_status = 'UNAPPROVED'
+            AND concat(p.status, ':', p.substatus) IN ('Assess:Recommended','Assess:', 'Active:ApprovalRequested', 'Active:PaymentAuthorisationPending')
+            LEFT OUTER JOIN project_block app ON p.id = app.project_id AND app.block_type = 'GRANT_SOURCE' AND app.block_status = 'LAST_APPROVED'
+            LEFT OUTER JOIN grant_source_block unapp_gsb ON coalesce(unapp.id, app.id) = unapp_gsb.id and unapp_gsb.associated_project != true
+            LEFT OUTER JOIN grant_source_block app_gsb ON app.id = app_gsb.id and app_gsb.associated_project != true
+            WHERE concat(p.status, ':', p.substatus) IN ('Assess:Recommended','Assess:', 'Active:', 'Active:ApprovalRequested', 'Active:PaymentAuthorisationPending',
+            'Active:UnapprovedChanges', 'Closed:Completed')
+            and indic.id IS NULL
+            GROUP BY p.programme_id, p.org_id, p.strategic_project
+
+        </createView>
+        <createView viewName="v_total_authorised_payments" replaceIfExists="true">
+            SELECT
+            p.programme_id,
+            p.org_id,
+            p.strategic_project,
+            sum(rcgf.amount) as rcgf_paid,
+            sum(grnt.amount) as grant_paid,
+            sum(dpf.Amount) as dpf_paid
+            FROM project_ledger_entry ple
+            LEFT JOIN project p ON ple.project_id = p.id
+            LEFT JOIN project_ledger_entry rcgf ON rcgf.id = ple.id AND rcgf.ledger_type = 'RCGF'
+            LEFT JOIN project_ledger_entry grnt ON grnt.id= ple.id AND grnt.ledger_type = 'PAYMENT'
+            LEFT JOIN project_ledger_entry dpf ON dpf.id= ple.id AND dpf.ledger_type = 'DPF'
+            WHERE (ple.ledger_type = 'RCGF' OR ple.ledger_type = 'PAYMENT' OR ple.ledger_type = 'DPF') AND ple.authorised_on IS NOT NULL
+            GROUP BY p.programme_id, p.org_id, p.strategic_project
+        </createView>
+        <createView viewName="org_prog_project_type" replaceIfExists="true">
+            select distinct org_id, programme_id, strategic_project from project
+        </createView>
+
+        <createView viewName="v_payments_and_requested_grant_values" replaceIfExists="true">
+            SELECT DISTINCT
+            p.programme_id,
+            p.org_id,
+            p.strategic_project,
+            coalesce(grnt.project_count, 0)                                                         AS project_count,
+            dpf_requested,
+            grant_requested,
+            rcgf_requested,
+            dpf_approved,
+            grant_approved,
+            rcgf_approved,
+            coalesce(dpf_requested, 0) + coalesce(grant_requested, 0) + coalesce(rcgf_requested, 0) AS project_requested_total,
+            coalesce(dpf_approved, 0) + coalesce(grant_approved, 0) + coalesce(rcgf_approved, 0) AS project_approved_total,
+            coalesce(dpf_requested, 0) + coalesce(grant_requested, 0) + coalesce(rcgf_requested, 0) AS total_requested ,
+            coalesce(dpf_approved, 0) + coalesce(grant_approved, 0) + coalesce(rcgf_approved, 0) AS total_approved,
+            -rcgf_paid AS rcgf_paid,
+            -dpf_paid AS dpf_paid,
+            -grant_paid AS grant_paid,
+            -coalesce(rcgf_paid, 0) - coalesce(dpf_paid, 0) - coalesce(grant_paid, 0)                AS payment_total
+            FROM org_prog_project_type p
+            LEFT JOIN v_requested_grant_values_by_org_and_prog grnt
+            ON grnt.programme_id = p.programme_id AND grnt.org_id = p.org_id AND
+            grnt.strategic_project = p.strategic_project
+            LEFT JOIN v_total_authorised_payments payments
+            ON p.programme_id = payments.programme_id AND payments.org_id = p.org_id
+            AND
+            payments.strategic_project = p.strategic_project
+        </createView>
+
+        <createView viewName="v_organisation_programme">
+            SELECT o.name as org_name, p.name as programme_name, op.* FROM organisation_programme op
+            INNER JOIN organisation o ON o.id = op.org_id
+            INNER JOIN programme p ON p.id = op.programme_id
+        </createView>
+
+        <createView viewName="v_organisation_summaries" replaceIfExists="true">
+            SELECT o.id, o.name, o.entity_type, o.managing_organisation_id, mo.name managing_organisation_name, o.email, o.sap_vendor_id, o.status, o.user_reg_status
+            FROM organisation o
+            LEFT OUTER JOIN organisation mo ON o.managing_organisation_id = mo.id
+        </createView>
+
+        <createView viewName="v_dashboard_metrics">
+            SELECT username, 'projects.total' AS key, COUNT(DISTINCT project_id) AS value
+            FROM v_project_permissions
+            GROUP BY username
+
+            UNION ALL
+
+            SELECT vpp.username, 'projects.active' AS key, COUNT(DISTINCT vpp.project_id) AS value
+            FROM v_project_permissions vpp
+            LEFT JOIN project p ON vpp.project_id = p.id
+            WHERE p.status = 'Active'
+            GROUP BY vpp.username
+
+            UNION ALL
+
+            SELECT username, 'organisations.pending' AS key, COUNT(DISTINCT organisation_id) AS value
+            FROM user_roles
+            WHERE NOT approved
+            GROUP BY username
+
+            UNION ALL
+
+            SELECT username, 'organisations.active' AS key, COUNT(DISTINCT organisation_id) AS value
+            FROM user_roles
+            WHERE approved
+            GROUP BY username
+
+            UNION ALL
+
+            SELECT username, 'notifications.unread' AS key, COUNT(DISTINCT id) AS value
+            FROM user_notification
+            WHERE time_read IS NULL
+            GROUP BY username
+
+            ORDER BY username, key
+        </createView>
+
+        <createView viewName="v_payment_summaries" replaceIfExists="true">
+            SELECT ple.*,
+            pdb.title as project_title,
+            o.sap_vendor_id AS org_sap_vendor_id,
+            a.firstname AS authorisor_firstname, a.lastname AS authorisor_lastname,
+            prg.name as prg_name,
+            case when ple.AUTHORISED_ON is null then ple.MODIFIED_ON else ple.AUTHORISED_ON end as display_date
+            FROM project_ledger_entry ple
+            INNER JOIN organisation o ON ple.organisation_id = o.id
+            INNER JOIN project p ON p.id = ple.project_id
+            INNER JOIN v_project_block_active active_details_block ON active_details_block.project_id = p.id AND active_details_block.project_block_type = 'Details'
+            INNER JOIN project_details_block pdb ON active_details_block.id = pdb.id
+            INNER JOIN programme prg on prg.id = p.programme_id
+            LEFT OUTER JOIN users a ON ple.authorised_by = a.username
+        </createView>
+
+        <createView viewName="v_user_summaries" replaceIfExists="true">
+            select ROW_NUMBER() OVER() AS id, u.firstname, u.lastname, u.username, o.name as org_name, o.id as organisation_id,
+            o.managing_organisation_id, o.entity_type, r.name as role, r.approved,
+            t.approved_threshold , t.pending_threshold,
+            case when r.name = 'ROLE_OPS_ADMIN' or r.name='ROLE_GLA_SPM' or r.name='ROLE_GLA_ORG_ADMIN'
+            then true else false end as can_have_threshold
+            from users u
+            inner join user_roles r on u.username = r.username
+            inner join organisation o on r.organisation_id = o.id
+            left join user_org_finance_threshold t on r.username = t.username and r.organisation_id = t.organisation_id
+        </createView>
+
+    </changeSet>
+
+    <changeSet id="V_CURRENT_YEAR_MONTH_H2" author="team" dbms="h2"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_current_year_month" >
+            SELECT FORMATDATETIME(CURRENT_DATE, 'yyyyMM') AS current_year_month
+        </createView>
+    </changeSet>
+    <changeSet id="V_CURRENT_YEAR_MONTH_PG" author="team" dbms="postgresql"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_current_year_month" >
+            SELECT (date_part('year', CURRENT_DATE) * 100) + date_part('month', CURRENT_DATE) AS current_year_month
+
+        </createView>
+    </changeSet>
+    <changeSet id="V_OUTPUTS_SUMMARY_PG_CREATION" author="team" dbms="h2"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_outputs_summary" >
+            select ROWNUM() as id, *   from (
+            SELECT
+            ote.project_id,
+            ote.block_id,
+            CASE WHEN ote.output_type = 'DIRECT'
+            THEN 'DIRECT'
+            ELSE 'INDIRECT' END                                         AS CALC_OUTPUT_TYPE,
+            CASE WHEN ote.month &lt; 4
+            THEN ote.year - 1
+            ELSE ote.year END                                           AS financial_year,
+            occ.category,
+            occ.subcategory,
+            occ.value_type,
+            sum(ote.forecast)                                           AS forecast,
+            sum(ote.actual)                                             AS actual,
+            coalesce(sum(ff.forecast), 0) + coalesce(sum(pa.actual), 0) AS total
+            FROM output_table_entry ote
+            LEFT JOIN output_cat_config occ ON ote.configuration_id = occ.id
+            LEFT JOIN output_table_entry ff
+            ON ote.id = ff.id AND ff.forecast IS NOT NULL AND ff.year_month &gt;= (SELECT current_year_month
+            FROM v_current_year_month)
+            LEFT JOIN output_table_entry pa
+            ON ote.id = pa.id AND pa.actual IS NOT NULL AND pa.year_month &lt; (SELECT current_year_month
+            FROM v_current_year_month)
+            GROUP BY ote.project_id, ote.block_id, CALC_OUTPUT_TYPE, financial_year, occ.category, occ.subcategory, occ.value_type)
+        </createView>
+    </changeSet>
+    <changeSet id="V_OUTPUTS_SUMMARY_PG_CREATION" author="team" dbms="postgresql"
+                   runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_outputs_summary" >
+            select ROW_NUMBER() OVER() AS id,
+            ote.project_id,
+            ote.block_id,
+            CASE WHEN ote.output_type = 'DIRECT'
+            THEN 'DIRECT'
+            ELSE 'INDIRECT' END                                         AS CALC_OUTPUT_TYPE,
+            CASE WHEN ote.month &lt; 4
+            THEN ote.year - 1
+            ELSE ote.year END                                           AS financial_year,
+            occ.category,
+            occ.subcategory,
+            occ.value_type,
+            sum(ote.forecast)                                           AS forecast,
+            sum(ote.actual)                                             AS actual,
+            coalesce(sum(ff.forecast), 0) + coalesce(sum(pa.actual), 0) AS total
+            FROM output_table_entry ote
+            LEFT JOIN output_cat_config occ ON ote.configuration_id = occ.id
+            LEFT JOIN output_table_entry ff
+            ON ote.id = ff.id AND ff.forecast IS NOT NULL AND ff.year_month &gt;= (SELECT current_year_month
+            FROM v_current_year_month)
+            LEFT JOIN output_table_entry pa
+            ON ote.id = pa.id AND pa.actual IS NOT NULL AND pa.year_month &lt; (SELECT current_year_month
+            FROM v_current_year_month)
+            GROUP BY ote.project_id, ote.block_id, CALC_OUTPUT_TYPE, financial_year, occ.category, occ.subcategory, occ.value_type
+        </createView>
+    </changeSet>
+
+
+    <changeSet id="PROJECT_LEDGER_ENTRY_VIEWS" author="team"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_relevant_project_ledger_entries">
+            SELECT *
+            FROM project_ledger_entry
+            WHERE ((ledger_status = 'ACTUAL' AND
+            year_month &lt; (SELECT current_year_month FROM v_current_year_month))
+            OR (ledger_status = 'FORECAST' AND
+            year_month &gt;= (SELECT current_year_month FROM v_current_year_month)));
+        </createView>
+    </changeSet>
+    <changeSet id="V_RECEIPT_TOTALS_H2" author="team" dbms="h2"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_receipt_totals" >
+            select ROWNUM() as id, *   from (
+            select
+            project_id,
+            block_id,
+            ledger_status,
+            CASE WHEN month &lt;  4 THEN  year -1
+            ELSE year END as financial_year,
+            sum(amount) as total
+            FROM v_relevant_project_ledger_entries
+            WHERE ledger_type = 'RECEIPT'
+            GROUP BY project_id, block_id, financial_year, ledger_status)
+        </createView>
+    </changeSet>
+    <changeSet id="V_RECEIPT_TOTALS_PG" author="team" dbms="postgresql"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_receipt_totals" >
+            SELECT
+            ROW_NUMBER() OVER() AS id,
+            project_id,
+            block_id,
+            ledger_status,
+            CASE WHEN month &lt;  4 THEN  year -1
+            ELSE year END as financial_year,
+            sum(amount) as total
+            FROM v_relevant_project_ledger_entries
+            WHERE ledger_type = 'RECEIPT'
+            GROUP BY project_id, block_id,financial_year, ledger_status
+        </createView>
+    </changeSet>
+    <changeSet id="START_ON_SITE" author="team"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_start_on_site_status">
+            SELECT
+            p.id AS project_id,
+            m.claim_status
+            FROM project p
+            LEFT JOIN project_block pb
+            ON p.id = pb.project_id AND pb.block_type = 'MILESTONES' AND pb.block_status = 'LAST_APPROVED'
+            LEFT JOIN milestones_block mb ON mb.id = pb.id
+            LEFT JOIN milestone m ON mb.id = m.milestones_block
+            WHERE m.external_id = 3003;
+        </createView>
+        <createView viewName="v_associated_projects">
+            SELECT
+            p.programme_id,
+            p.org_id,
+            count(p.id)                AS project_count,
+            SUM(gsb.strategic_funding) AS strategic_requested,
+            SUM(CASE WHEN claim_status = 'Approved'
+            THEN gsb.strategic_funding
+            ELSE 0 END)            AS started_on_site
+            FROM project p
+            LEFT OUTER JOIN v_start_on_site_status sos ON p.id = sos.project_id
+            LEFT OUTER JOIN project_block unapp
+            ON p.id = unapp.project_id AND unapp.block_type = 'GRANT_SOURCE' AND unapp.block_status = 'UNAPPROVED'
+            AND concat(p.status, ':', p.substatus) IN ('Assess:Recommended', 'Assess:', 'Active:ApprovalRequested')
+            LEFT OUTER JOIN project_block app
+            ON p.id = app.project_id AND app.block_type = 'GRANT_SOURCE' AND app.block_status = 'LAST_APPROVED'
+            LEFT OUTER JOIN grant_source_block gsb ON coalesce(unapp.id, app.id) = gsb.id
+            WHERE concat(p.status, ':', p.substatus) IN
+            ('Assess:Recommended', 'Assess:', 'Active:', 'Active:ApprovalRequested', 'Active:PaymentAuthorisationPending',
+            'Active:UnapprovedChanges', 'Closed:Completed')
+            AND gsb.associated_project = TRUE
+            GROUP BY p.programme_id, p.org_id, p.strategic_project
+        </createView>
+    </changeSet>
+</databaseChangeLog>

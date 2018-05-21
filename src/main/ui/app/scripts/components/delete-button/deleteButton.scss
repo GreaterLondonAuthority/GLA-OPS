@@ -1,0 +1,45 @@
+delete-button {
+  $deleteButtonSize: 28px;
+  $deleteButtonSmallSize: 20px;
+
+  display: inline-block;
+  .delete-button {
+    border-radius: 50%;
+    line-height: 1em;
+    font-family: monospace;
+    font-weight: bold;
+    padding: 0px;
+    width: $deleteButtonSize;
+    height: $deleteButtonSize;
+    font-size: 12px;
+    position: absolute;
+    background-clip: padding-box;
+    color: $secondary-grey;
+    right: -$deleteButtonSize/2;
+    top: 50%;
+    bottom: 50%;
+    margin: auto;
+    background-color: $white;
+    border: 1px solid $table-border;
+    &:hover, &:focus, &:active{
+      color: $red;
+      outline: none;
+      box-shadow: none;
+      &:active{
+        background-color: darken($white, 5%);
+        outline: none;
+      }
+    }
+  }
+
+  &.small .delete-button{
+    width: $deleteButtonSmallSize;
+    height: $deleteButtonSmallSize;
+    font-size: 8px;
+  }
+}
+
+.delete-btn-container{
+  position: relative;
+}
+

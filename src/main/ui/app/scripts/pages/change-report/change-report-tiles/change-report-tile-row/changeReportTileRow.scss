@@ -1,0 +1,11 @@
+change-report-tile-row {
+  display: block;
+  .changed-value{
+    position: relative;
+  }
+  .glyphicon-exclamation-sign{
+    position: absolute;
+    padding-top: 10px;
+    right: 20px;
+  }
+}

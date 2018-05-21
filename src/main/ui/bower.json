@@ -1,0 +1,50 @@
+{
+  "name": "gla",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular": "1.5.8",
+    "bootstrap-sass-official": "^3.2.0",
+    "angular-animate": "1.5.8",
+    "angular-cookies": "1.5.8",
+    "angular-messages": "1.5.8",
+    "angular-resource": "1.5.8",
+    "angular-route": "1.5.8",
+    "angular-sanitize": "1.5.8",
+    "angular-touch": "1.5.8",
+    "angular-aria": "1.5.8",
+    "angular-i18n": "1.5.8",
+    "angular-ui-router": "^0.3.1",
+    "lodash": "^4.15.0",
+    "angular-bootstrap": "^2.1.1",
+    "angular-validation-match": "^1.9.0",
+    "ngstorage": "^0.3.11",
+    "moment": "momentjs#^2.15.1",
+    "angular-moment": "1.0.0",
+    "angular-toastr": "^2.1.1",
+    "angular-permission": "^4.1.1",
+    "angular-vertilize": "^1.0.1",
+    "ng-device-detector": "^3.0.1"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.5.8"
+  },
+  "appPath": "app",
+  "moduleName": "glaApp",
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "less/bootstrap.less",
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    },
+    "angular-i18n": {
+      "main":  [
+        "angular-locale_en-gb.js"
+      ]
+    }
+  },
+  "resolutions": {
+    "angular": "1.5.8"
+  }
+}

@@ -1,0 +1,33 @@
+<change-report-static-text text="'Units by tenure type that are expected to start on site in the years specified'" data="$ctrl.reportData" class="next-to-tables"></change-report-static-text>
+
+<change-report-table
+  rows="$ctrl.reportData.tenuresToCompare"
+  fields="$ctrl.tenuresFields"
+  changes="$ctrl.data.changes">
+</change-report-table>
+
+<change-report-table
+  heading="'TOTALS'"
+  rows="$ctrl.reportData.totalsToCompare"
+  fields="$ctrl.totalsFields"
+  changes="$ctrl.data.changes">
+</change-report-table>
+
+<div ng-repeat="item in $ctrl.summariesGroups">
+  <change-report-static-text text="item.name" data="$ctrl.reportData" class="next-to-tables"></change-report-static-text>
+  <change-report-tiles
+    heading-field="'title'"
+    rows="item.rows"
+    fields="$ctrl.summariesFields"
+    changes="$ctrl.data.changes">
+  </change-report-tiles>
+</div>
+
+
+<change-report-tile-total
+  heading="'TOTAL GRANT ELIGIBLE'"
+  data="$ctrl.data"
+  format="'currency'"
+  field="'totalGrantEligibility'"
+  changes="$ctrl.data.changes">
+</change-report-tile-total>

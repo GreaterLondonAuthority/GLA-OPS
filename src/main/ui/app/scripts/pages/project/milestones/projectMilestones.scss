@@ -1,0 +1,202 @@
+//$milestone-row-hover: lighten($cookie-warning, 20%);
+.no-right-border {
+  border-right: 0 !important;
+}
+.project-milestones {
+  width: 90%;
+  margin: auto;
+  .processingRoute {
+    h3 {
+      margin-top: 0;
+      font-weight: bold;
+    }
+  }
+
+  .addNewMilestoneBtn {
+    position: relative;
+    padding: 0.3rem 2.5rem 0.3rem 1.5rem !important;
+    b {
+      position: absolute;
+      top: 0.05rem;
+      font-size: 1.25rem;
+      margin-left: 0.5rem;
+    }
+  }
+
+  .manual-indicator {
+    width: 3px;
+    background-color: $dark-navy;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    &.conditional-indicator{
+      width: 6px;
+    }
+  }
+
+  tbody tr:first-child td .manual-indicator {
+    top: 1px;
+  }
+
+  tr th, tr td{
+    &:first-child{
+      padding-left: 10px;
+    }
+  }
+
+  table.table-with-inputs {
+    tr.with-manual-indicator.recently-added {
+      background-color: lighten($green-pearl, 5%);
+      td, input, .dateInput, date-input, textarea {
+        background-color: lighten($green-pearl, 5%);
+      }
+    }
+
+    tr.with-manual-indicator.with-conditional-indicator.recently-added {
+      background-color: lighten(#BEDDE7, 5%);
+      td, input, .dateInput, date-input, textarea {
+        background-color: lighten(#BEDDE7, 5%);
+      }
+    }
+
+    .with-manual-indicator:hover,
+    .with-manual-indicator.focused,
+    .with-manual-indicator.recently-added {
+      td:last-child{
+        position: relative;
+        background-clip: padding-box;
+        .delete-button{
+          display: inline-block;
+        }
+      }
+    }
+
+    td.with-manual-indicator {
+      position: relative;
+      background-clip:padding-box;
+    }
+
+    td textarea{
+      min-width: 200px;
+      padding-bottom: 0px;
+      line-height: 1.5;
+    }
+
+    &.multiline{
+      td{
+        //vertical-align: middle;
+       date-input, textarea, input.monetary-value{
+          height: 64px;
+        }
+        textarea{
+          resize: vertical;
+        }
+        input.monetary-value{
+          padding-bottom: 40px;
+        }
+      }
+    }
+  }
+  .delete-button {
+    display: none;
+  }
+
+  .glyphicon-exclamation-sign{
+    color: $red;
+    &.info{
+      color: darken($peppermint, 20%);
+    }
+  }
+
+  .sub-heading td, .sub-row td{
+      font-family: $font-family-default !important;
+  }
+  .sub-row td{
+    background-color: $white;
+  }
+
+  .expand-toggle{
+    margin-right: 3px;
+    top: 2px;
+  }
+
+}
+
+.milestone-modal .dateInput {
+  height: 30px;
+  input{
+    line-height: 1em;
+  }
+}
+
+.reclaim-milestone-modal {
+  .modal-body {
+    padding-top: 0px;
+  }
+}
+
+.claim-milestone-modal, .reclaim-milestone-modal {
+  .affordable-title {
+
+  }
+  .affordable-amount {
+
+  }
+  .col-xs-6 {
+    padding: 0;
+  }
+  .modal-body {
+    font-size: 14px;
+    color: #9e9e9e;
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+  .bold {
+    color: black;
+    font-size: 15px;
+    font-family: "Gotham-medium", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+  }
+  .monetary-title {
+    font-size: 21px;
+    text-transform: uppercase;
+  }
+  .monetary-amount {
+    font-size: 22px;
+  }
+}
+
+.evidence-modal{
+  h1{
+    line-height: 1.3;
+  }
+  .fileUpload{
+    &,
+    form{
+      display: inline-block;
+    }
+  }
+  .evidence-document-name{
+    word-break: break-all;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    -ms-word-wrap: break-word;
+    width: 200px;
+    max-width: 200px;
+  }
+}
+
+.info-modal{
+  .source:not(:first-child){
+    margin-top: 25px;
+  }
+  .original-value{
+    margin-bottom: 5px;
+  }
+
+  .reclaim-reason{
+    white-space: pre-line;
+    font-style: italic;
+  }
+}

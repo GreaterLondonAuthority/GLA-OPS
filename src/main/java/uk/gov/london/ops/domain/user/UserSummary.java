@@ -1,0 +1,161 @@
+/**
+ * Copyright (c) Greater London Authority, 2016.
+ *
+ * This source code is licensed under the Open Government Licence 3.0.
+ *
+ * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+ */
+package uk.gov.london.ops.domain.user;
+
+import uk.gov.london.ops.domain.organisation.OrganisationType;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity(name = "v_user_summaries")
+public class UserSummary {
+
+    @Id
+    private Integer id;
+
+    @Column(name="firstname")
+    private String firstName;
+
+    @Column(name="lastname")
+    private String lastName;
+
+    @Column(name="username")
+    private String username;
+
+    @Column(name="approved_threshold")
+    private Long approvedThreshold;
+
+    @Column(name="pending_threshold")
+    private Long pendingThreshold;
+
+    @Column(name="organisation_id")
+    private Integer organisationId;
+
+    @Column(name="managing_organisation_id")
+    private Integer managingOrganisationId;
+
+    @Column(name="org_name")
+    private String orgName;
+
+    @Column(name="entity_type")
+    private Integer entityTypeId;
+
+    @Column(name="role")
+    private String role;
+
+    @Column(name="approved")
+    private Boolean approved;
+
+    @Column(name="can_have_threshold")
+    private boolean canHaveThreshold;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Integer getOrganisationId() {
+        return organisationId;
+    }
+
+    public void setOrganisationId(Integer organisationId) {
+        this.organisationId = organisationId;
+    }
+
+    public Integer getManagingOrganisationId() {
+        return managingOrganisationId;
+    }
+
+    public void setManagingOrganisationId(Integer managingOrganisationId) {
+        this.managingOrganisationId = managingOrganisationId;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    public Integer getEntityTypeId() {
+        return entityTypeId;
+    }
+    public void setEntityTypeId(Integer entityTypeId) {
+        this.entityTypeId = entityTypeId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Boolean getApproved() {
+        return approved;
+    }
+
+    public void setApproved(Boolean approved) {
+        this.approved = approved;
+    }
+
+    public String getRoleDescription() {
+        return Role.getDescription(role);
+    }
+
+    public String getEntityType() {
+        OrganisationType type = OrganisationType.fromId(entityTypeId);
+        return type != null ? type.summary() : null;
+    }
+
+    public Long getApprovedThreshold() {
+        return approvedThreshold;
+    }
+
+    public void setApprovedThreshold(Long approvedThreshold) {
+        this.approvedThreshold = approvedThreshold;
+    }
+
+    public Long getPendingThreshold() {
+        return pendingThreshold;
+    }
+
+    public void setPendingThreshold(Long pendingThreshold) {
+        this.pendingThreshold = pendingThreshold;
+    }
+
+    public boolean getCanHaveThreshold() {
+        return this.canHaveThreshold;
+    }
+}

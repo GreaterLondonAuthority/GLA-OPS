@@ -1,0 +1,26 @@
+<div class="totalBox box" ng-class="{'noDescription': !$ctrl.description}">
+  <p class="totalBox__title" vertilize>{{$ctrl.title}}</p>
+  <p ng-if="$ctrl.description" class="totalBox_description">{{$ctrl.description}}</p>
+  <div class="totalBox__valueContainer">
+    <div class="row">
+      <div class="col-xs-6 no-padding">
+        <div class="totalBox__label">{{$ctrl.leftLabel}}</div>
+        <div class="totalBox__value text-nowrap">
+          <strong>{{$ctrl.leftValue || 0 | currency:'£':0}}</strong>
+        </div>
+      </div>
+      <div class="col-xs-6 no-padding">
+        <div class="totalBox__label">{{$ctrl.rightLabel}}</div>
+        <div class="totalBox__value text-nowrap">
+          <strong>{{$ctrl.rightValue || 0 | currency:'£':0}}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="row text-center" ng-if="$ctrl.showTotalValue">
+      <div class="totalBox__totalValue text-nowrap">
+        <hr/>
+        <strong>{{$ctrl.totalValue || 0 | currency:'£':0}}</strong>
+      </div>
+    </div>
+  </div>
+</div>

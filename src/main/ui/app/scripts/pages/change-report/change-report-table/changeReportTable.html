@@ -1,0 +1,24 @@
+<change-report-static-text ng-if="$ctrl.label" text="$ctrl.label" data="$ctrl.sideControler" class="next-to-tables"></change-report-static-text>
+<div class="report-tables">
+  <div ng-repeat="row in $ctrl.rows" class="aligned-tables">
+    <change-report-table-separator has-right-values="$ctrl.hasRightValues || $ctrl.showTableSeparators"></change-report-table-separator>
+    <change-report-table-row heading="$ctrl.heading"
+                             row="row"
+                             fields="$ctrl.fields"
+                             changes="$ctrl.changes"
+                             ng-class="{'with-no-element-msg': $ctrl.showNoElementMessage}">
+    </change-report-table-row>
+    <div ng-repeat="r in row.subrows" style="position: relative">
+        <change-report-table-row
+                                 row="r"
+                                 class="child-row"
+                                 ng-class="{'with-no-element-msg': $ctrl.showNoElementMessage}"
+                                 fields="row.subrowFields"
+                                 changes="$ctrl.changes">
+        </change-report-table-row>
+        <div ng-if="$ctrl.showNoElementMessage && !r.right" class="no-element changed-value" style="margin-top: 10px">Element is not present in this block version <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></div>
+    </div>
+    <div ng-if="$ctrl.showNoElementMessage && !row.right" class="no-element changed-value">Element is not present in this block version <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></div>
+  </div>
+  <change-report-table-separator has-right-values="$ctrl.hasRightValues || $ctrl.showTableSeparators"></change-report-table-separator>
+</div>

@@ -1,0 +1,104 @@
+<div class="annualOutputsForecast">
+  <div class="row no-gutter wizzard">
+      <div class="col-xs-12 no-gutter">
+        <div class="form-group col-md-2 col-xs-12 mtop15">
+            <month-selector
+              ng-if="$ctrl.periodType === 'Monthly'"
+              read-only="$ctrl.readOnly"
+              year="$ctrl.year"
+              on-month-selected="$ctrl.onMonthSelected(selectedMonth)"
+              selected-month="$ctrl.addOutputsMonth">
+            </month-selector>
+
+            <quarter-selector
+              ng-if="$ctrl.periodType === 'Quarterly'"
+              read-only="$ctrl.readOnly"
+              year="$ctrl.year"
+              on-quarter-selected="$ctrl.onMonthSelected(selectedMonth)"
+              selected-month="$ctrl.addOutputsMonth">
+            </quarter-selector>
+        </div>
+        <div class="form-group col-md-2 col-xs-12 mtop15">
+            <label for="outputsCategory">{{$ctrl.categoryName}}</label><br/>
+            <ui-select id="outputsCategory"
+                       placeholder="Select"
+                       ng-model="$ctrl.outputsCategory"
+                       search-enabled="false"
+                       ng-disabled="$ctrl.readOnly"
+                       on-select="$ctrl.categorySelected($item, $model)">
+                <ui-select-match title="{{$select.selected[0].category}}" placeholder="Select">
+                    {{$select.selected[0].category}}
+                </ui-select-match>
+                <ui-select-choices repeat="item in $ctrl.categories">
+                    <span>{{item[0].category}}</span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group col-md-2 col-xs-12 mtop15">
+            <label for="outputsSubCategory">{{$ctrl.subcategoryName}}</label><br/>
+            <!-- if there is no subcatgories selected or that sub category only has 1 option -> disable -->
+            <ui-select id="outputsSubCategory"
+                       placeholder="Select"
+                       ng-model="$ctrl.outputsSubCategory"
+                       search-enabled="false"
+                       on-select="$ctrl.subCategorySelected($item, $model)"
+                       ng-disabled="$ctrl.readOnly || $ctrl.subCategories.length < 2">
+                <ui-select-match placeholder="Select">
+                    {{$select.selected.subcategory}}
+                </ui-select-match>
+                <ui-select-choices repeat="item in $ctrl.subCategories">
+                    <span>{{item.subcategory}}</span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group col-md-2 col-xs-12 mtop15">
+            <label for="directOrIndirect">{{$ctrl.outputTypeName}}</label><br/>
+            <ui-select id="directOrIndirect"
+                      placeholder="Select"
+                      ng-model="$ctrl.directOrIndirect"
+                      search-enabled="false"
+                      ng-disabled="$ctrl.readOnly">
+                <ui-select-match placeholder="Select">
+                    {{$select.selected.description}}
+                </ui-select-match>
+                <ui-select-choices repeat="item in $ctrl.directOrIndirectChoices">
+                    <span>{{item.description}}</span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="form-group col-md-2 col-xs-12 mtop15">
+            <label for="outputsType">Forecast or Actual</label><br/>
+            <ui-select id="outputsType"
+                       placeholder="Select"
+                       ng-model="$ctrl.forcastOrActual"
+                       search-enabled="false"
+                       ng-disabled="$ctrl.readOnly">
+                <ui-select-match placeholder="Select">
+                    {{$select.selected.label}}
+                </ui-select-match>
+                <ui-select-choices repeat="item in $ctrl.forecastOrActualChoices">
+                    <span>{{item.label}}</span>
+                </ui-select-choices>
+            </ui-select>
+        </div>
+
+        <div class="form-group outputsValue col-md-2 col-xs-12 mtop15">
+            <label for="outputsValue">{{$ctrl.selectedUnits.label || '&nbsp'}}</label><br/>
+            <input class="form-control"
+                   id="outputsValue"
+                   type="text"
+                   placeholder="{{$ctrl.selectedUnits.placeholder}}"
+                   ng-model="$ctrl.outputsValue"
+                   number-mask="$ctrl.selectedUnits.precision || 0"
+                   maxlength="13"
+                   ng-disabled="$ctrl.readOnly || !$ctrl.selectedUnits">
+        </div>
+      </div>
+      <div class="col-xs-12 text-right">
+        <button class="btn btn-primary mtop15"
+                ng-click="$ctrl.addForecastOutput()"
+                ng-disabled="!$ctrl.canAddOutput()">ADD OUTPUT
+        </button>
+    </div>
+  </div>
+</div>

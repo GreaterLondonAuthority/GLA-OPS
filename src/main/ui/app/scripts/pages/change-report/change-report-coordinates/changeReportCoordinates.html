@@ -1,0 +1,17 @@
+
+<div class="row no-gutter report-field-row report-field-row-coordinates">
+  <div ng-class="'col-sm-'+$ctrl.displayMode.colspan" class="col-xs-12 report-field-left" ng-if="$ctrl.data.left">
+    <div class="left-column-label">{{$ctrl.label}}</div>
+
+    <div class="left-column-value">{{$ctrl.getValue($ctrl.data.left,'coordX')}} / {{$ctrl.getValue($ctrl.data.left,'coordY')}}</div>
+  </div>
+
+  <div class="col-sm-6 col-xs-12" ng-if="!$ctrl.data.left"></div>
+  <div class="col-sm-6 col-xs-12 report-field-right" ng-if="$ctrl.data.right" ng-class="{'has-changes': $ctrl.hasChanges}">
+    <div class="right-column-label">{{$ctrl.label}}<span class="glyphicon glyphicon-exclamation-sign" ng-if="$ctrl.hasChanges" aria-hidden="true"></span></div>
+
+    <div class="right-column-value">
+      <span ng-class="{'changed-value': $ctrl.hasFieldChanges('coordX')}">{{$ctrl.getValue($ctrl.data.right,'coordX')}}</span> / <span ng-class="{'changed-value': $ctrl.hasFieldChanges('coordY')}">{{$ctrl.getValue($ctrl.data.right,'coordY')}}</span>
+    </div>
+  </div>
+</div>

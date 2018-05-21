@@ -1,0 +1,164 @@
+.table-header {
+  font-family: $font-family-bolder;
+  font-size: 24px;
+}
+
+.st-sort-ascent:after {
+  content: '\25B2';
+}
+
+.st-sort-descent:after {
+  content: '\25BC';
+}
+
+
+
+table.table {
+  font-size: 0.75rem;
+  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+
+  > thead > tr > th {
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  margin-bottom: 0 !important;
+  border-bottom: 1px solid #dddddd;
+  border-collapse: collapse !important;
+  border-radius: 1px;
+  background-color: white !important;
+
+  .sub-heading{
+    &,
+    &:hover {
+      background-color: $table-sub-header;
+    }
+  }
+}
+
+.table-selectable-row {
+  tr {
+    cursor: pointer;
+  }
+}
+
+.thead-inverse th {
+  color: #fff;
+  background-color: #4a4d4e;
+  vertical-align: middle;
+}
+
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > th,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > th,
+.table-bordered > tfoot > tr > td {
+  border: 0;
+  border-top: 1px solid #ddd;
+}
+
+.thead-inverse th {
+    color: #aebecb;
+    background-color: #3e4e5c;
+}
+
+$active-cell-border-color: $dark-navy;
+$invalid-cell-color: $error;
+$read-only-cell: $ice-blue;
+
+
+table.table-with-inputs {
+
+  td:first-child, tfoot td {
+    font-family: $font-family-bolder;
+  }
+
+  td.cell-with-input {
+    background-color: white;
+    border: 1px solid $table-border-color;
+    padding: 0;
+    vertical-align: middle;
+  }
+
+  td.active-cell {
+    date-input, > input, > textarea {
+      border: 1px solid $active-cell-border-color;
+      padding: 7px;
+    }
+
+    .input-wrapper{
+      border: 1px solid $active-cell-border-color;
+    }
+  }
+
+  td.active-cell.invalid-cell {
+    date-input, > input, > textarea {
+      background-color: #ffffff;
+      border: 1px solid $invalid-cell-color;
+      .dateInput {
+        background-color: #ffffff;
+      }
+    }
+  }
+
+
+
+  tbody tr:first-child td {
+    border-top: 0;
+  }
+
+  tr, tfoot tr, tr:hover  {
+    background-color: $read-only-cell;
+  }
+
+  td >input, td date-input, td > textarea {
+    display: block;
+    padding: 8px;
+    width: 100%;
+    height: 35px;
+    border: none;
+
+    &:focus {
+      outline: none;
+      border: 1px solid $active-cell-border-color;
+      padding: 7px;
+    }
+  }
+
+  date-input {
+    .form-control {
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .dateInput {
+      border: none;
+    }
+  }
+
+  tfoot tr:first-child{
+    border-top: 1px solid #ddd;
+  }
+
+  td.read-only{
+    border: 1px solid #ddd;
+    padding: 8px;
+    background-color: $read-only-cell;
+  }
+
+  td.default-value{
+    color: $form-field-inactive;
+    input:focus, textarea:focus{
+      color: $primary-text;
+    }
+  }
+}
+
+.table-responsive {
+  @include when-md {
+    overflow-x: visible;
+  }
+}
+
+

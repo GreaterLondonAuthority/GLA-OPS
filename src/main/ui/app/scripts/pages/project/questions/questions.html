@@ -1,0 +1,105 @@
+<div class="project-questions">
+  <div class="row text-center">
+    <project-header on-back="$ctrl.back()" editable-block="$ctrl">{{$ctrl.blockData.blockDisplayName}}</project-header>
+  </div>
+  <spinner ng-if="$ctrl.loading"></spinner>
+  <form class="form-gla" name="qForm" name="questions" ng-if="!$ctrl.loading">
+    <div class="mbottom30"></div>
+
+      <div class="row no-gutter mtop10 animationIf"
+           ng-if="$ctrl.questions.length && $ctrl.isVisible(question)"
+
+           ng-class="{'conditional-question': question.subQuestion, 'section-question': question.section}"
+
+           ng-repeat="question in $ctrl.questions track by question.id">
+        <div ng-if="question.isFirstInSection" class="section-header">
+           <hr ng-if="!$first">
+          {{question.section.text}}
+        </div>
+        <div class="col-xs-12 col-sm-8 center-col" ng-switch="question.answerType">
+
+          <div class="form-group" ng-switch-when="YesNo">
+            <label for="{{question.id}}"><markdown text="question.text"></markdown> <span ng-if="question.isOptional">(optional)</span></label>
+            <yes-no-input ng-model="question.answer"
+                            id="{{question.id}}"
+                            name="{{question.id}}"
+                            is-disabled="$ctrl.readOnly">
+            </yes-no-input>
+          </div>
+
+          <div class="form-group" ng-switch-when="Number">
+            <label for="{{question.id}}"><markdown text="question.text"></markdown> <span ng-if="question.isOptional">(optional)</span></label>
+            <input class="form-control"
+                    type="text"
+                    ng-model="question.numericAnswer"
+                    ng-attr-id="{{question.id}}"
+                    name="{{question.id}}"
+                    ng-disabled="$ctrl.readOnly"
+                    maxlength="18"
+                    number-mask="0" negative-number />
+          </div>
+
+          <div class="Text-question form-group" ng-switch-when="Text">
+            <label for="{{question.id}}"><markdown text="question.text"></markdown> <span ng-if="question.isOptional">(optional)</span></label>
+            <input class="form-control"
+                    type="text"
+                    ng-model="question.answer"
+                    id="{{question.id}}"
+                    name="{{question.id}}"
+                    maxlength="80"
+                    ng-disabled="$ctrl.readOnly" />
+          </div>
+
+          <div class="form-group" ng-switch-when="Date">
+            <label for="{{question.id}}"><markdown text="question.text"></markdown> <span ng-if="question.isOptional">(optional)</span></label>
+            <div>
+              <date-input ng-model="question.answer"
+                          id="{{question.id}}"
+                          name="{{question.id}}"
+                          ng-disabled="$ctrl.readOnly">
+              </date-input>
+            </div>
+          </div>
+
+          <div class="FreeText-question form-group" ng-switch-when="FreeText">
+            <label for="{{question.id}}"><markdown text="question.text"></markdown> <span ng-if="question.isOptional">(optional)</span></label>
+            <textarea class="form-control" ng-model="question.answer" id="{{question.id}}" name="{{question.id}}" rows="4" cols="50" ng-trim="false"
+              ng-attr-maxlength="{{question.maxLength}}" ng-disabled="$ctrl.readOnly">
+            </textarea>
+            <remaining-characters text="question.answer" max="question.maxLength" ng-if="!$ctrl.readOnly"></remaining-characters>
+          </div>
+
+          <div class="form-group" ng-switch-when="Dropdown">
+            <label for="{{question.id}}"><markdown text="question.text"></markdown> <span ng-if="question.isOptional">(optional)</span></label>
+            <ui-select id="{{question.id}}"
+                       ng-class="{disabled: $ctrl.readOnly}"
+                       name="{{question.id}}"
+                       search-enabled="false"
+                       ng-disabled="$ctrl.readOnly"
+                       ng-model="question.answer"
+                       on-select="">
+              <ui-select-match allow-clear="true" placeholder="Select">{{$select.selected}}</ui-select-match>
+              <ui-select-choices repeat="item in question.answerOptions">
+                <span>{{item}}</span>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+
+          <div class="form-group" ng-switch-when="FileUpload">
+            <label for="{{question.id}}"><markdown text="question.text"></markdown> <span ng-if="question.isOptional">(optional)</span></label>
+              <question-file-upload class="question-file-upload" question="question" read-only="$ctrl.readOnly" project="$ctrl.project"></question-file-upload>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 text-center mtop30 mbottom30">
+          <button class="btn btn-primary"
+                ng-if="!$ctrl.readOnly"
+                  ng-click="$ctrl.onSaveData()">SAVE</span>
+          </button>
+        </div>
+      </div>
+    </form>
+</div>

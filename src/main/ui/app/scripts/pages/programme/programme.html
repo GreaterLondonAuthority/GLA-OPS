@@ -1,0 +1,206 @@
+<div class="new__programme">
+  <div class="user-home_header">
+
+    <form class="form-gla" role="form" name="newProgForm">
+
+      <page-header class="mbottom40" ng-if="$ctrl.newProgrammeMode">Create a new programme</page-header>
+      <page-header class="mbottom40" ng-if="$ctrl.editMode">Edit programme</page-header>
+      <page-header class="mbottom40"
+                   on-back="$ctrl.onBack()"
+                   editable-block="$ctrl"
+                   ng-if="!$ctrl.newProgrammeMode && !$ctrl.editMode">{{$ctrl.programme.name}}</page-header>
+
+      <div class="form-group" ng-if="$ctrl.newProgrammeMode || $ctrl.editMode">
+        <div class="row no-gutter">
+          <div class="col-sm-6 col-sm-offset-3 col-xs-12">
+            <label for="programme-name">Enter a programme name</label>
+            <input id="programme-name" name="name" type="text" class="form-control" required autofocus
+                   placeholder="Programme name" ng-model="$ctrl.programme.name" maxlength="50"/>
+            <div id="name-error" class="error-wrapper" role="alert" ng-show="newProgForm.$submitted || newProgForm.name.$touched">
+              <span class="error" ng-show="newProgForm.name.$error.required">Enter a name</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.newProgrammeMode || $ctrl.editMode">
+        <div class="row no-gutter">
+          <div class="col-sm-6 col-sm-offset-3 col-xs-12">
+
+            <label for="managing-organisation">Managing organisation</label>
+
+            <ui-select ng-if="$ctrl.newProgrammeMode && $ctrl.managingOrganisations.length > 1"
+                       id="managing-organisation"
+                       placeholder="Select"
+                       ng-model="$ctrl.managingOrganisationModel"
+                       search-enabled="false"
+                       on-select="$ctrl.onManagingOrganisation($item)"
+                       required>
+
+              <ui-select-match ng-attr-title="{{$select.selected.name}}" placeholder="Select">{{$select.selected.name}}</ui-select-match>
+              <ui-select-choices repeat="managingOrganisation in $ctrl.managingOrganisations">
+                <span>{{ managingOrganisation.name }}</span>
+              </ui-select-choices>
+            </ui-select>
+            <div ng-if="$ctrl.editMode || $ctrl.managingOrganisations.length === 1">
+              {{$ctrl.programme.managingOrganisationName || '-'}}
+            </div>
+        </div>
+      </div>
+    </div>
+
+      <div class="form-group" ng-if="$ctrl.newProgrammeMode || $ctrl.editMode">
+        <div class="row no-gutter">
+          <div class="col-sm-6 col-sm-offset-3 col-xs-12">
+            <label for="wbs-code">WBS code</label>
+            <input id="wbs-code"
+              name="wbsCode"
+              type="text"
+              class="form-control"
+              placeholder=""
+              ng-model="$ctrl.programme.wbsCode"
+              maxlength="60"/>
+         </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3" ng-if="!$ctrl.newProgrammeMode && !$ctrl.editMode">
+
+        <div class="row">
+          <div class="gla-label">
+            Managing organisation
+          </div>
+          <div>
+            {{$ctrl.programme.managingOrganisationName || '-'}}
+          </div>
+        </div>
+
+        <div class="row mtop15">
+          <div class="gla-label">
+            WBS code
+          </div>
+          <div>
+            {{$ctrl.programme.wbsCode || 'Not provided'}}
+          </div>
+        </div>
+
+        <div class="row mtop15">
+          <div class="gla-label">Associated templates</div>
+          <ul>
+            <li ng-repeat="template in $ctrl.programme.templates | orderBy : 'name'">{{template.name}}</li>
+          </ul>
+        </div>
+
+        <div class="row mtop15">
+          <span class="gla-label">
+            Total submitted projects:
+          </span>
+          <span>
+            {{$ctrl.programme.nbSubmittedProjects}}
+          </span>
+        </div>
+
+        <div class="row mtop15">
+          <span class="gla-label">
+            Enabled for new projects?
+          </span>
+          <span>
+            {{$ctrl.programme.enabled ? 'Yes' : 'No'}}
+          </span>
+        </div>
+
+        <div class="row mtop15">
+          <div class="gla-label"><a ui-sref="projects({programmeName: $ctrl.programme.name})">View all projects for this programme</a></div>
+        </div>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.newProgrammeMode || $ctrl.editMode">
+        <div class="row no-gutter">
+          <div class="col-sm-6 col-sm-offset-3 col-xs-12 mtop15 no-gutter">
+            <label for="programme-template">Select project template for the programme</label><br/>
+            <div class="mtop15 mbottom15">You can select multiple templates</div>
+            <div class="col-sm-12 col-xs-12" ng-repeat="template in $ctrl.programme.templates">
+              <div class="selected__template__item">
+                <div class="selected__template__text">{{ template.name }}</div>
+                <button class="btn delete-button"
+                        aria-label="Delete"
+                        ng-click="$ctrl.onTemplateRemoved(template)"
+                        ng-if="!$ctrl.projectsCount[template.id]">
+                  <i class="glyphicon glyphicon-remove"></i>
+                </button>
+                </div>
+            </div>
+          </div>
+
+          <div class="col-sm-8 col-sm-offset-3 col-xs-12 no-gutter">
+            <div class="col-sm-9 col-xs-8">
+              <ui-select id="programme-template" ng-model="$ctrl.selectedTemplate" name="template" search-enabled="false">
+                <ui-select-match placeholder="Select a template">
+                  {{$select.selected.name}}
+                  </ui-select-match>
+                <ui-select-choices repeat="template in $ctrl.templatesList">
+                  <span>{{ template.name }}</span>
+                </ui-select-choices>
+              </ui-select>
+            </div>
+            <div class="col-xs-2">
+              <button class="btn btn-secondary select__template__buttonAdd"
+                      ng-click="$ctrl.onTemplateAdded($ctrl.selectedTemplate)"
+                      ng-disabled="!$ctrl.selectedTemplate">ADD
+              </button>
+            </div>
+          </div>
+          <div class="col-sm-8 col-sm-offset-3 col-xs-12">
+            <div id="template-error" class="error-wrapper" role="alert" ng-show="newProgForm.$submitted && !$ctrl.templates.length">
+              <span class="error" ng-show="!$ctrl.programme.templates.length">Select a template</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.newProgrammeMode || $ctrl.editMode">
+        <div class="row no-gutter mtop30">
+          <div class="col-xs-12 col-sm-6 col-sm-offset-3 no-gutter">
+            <div class="restricted__field">
+              <label for="programme-enabled">Enable for new projects</label>
+              <input id="programme-enabled"
+                     class="form-control"
+                     type="checkbox"
+                     name="enabled"
+                     ng-model="$ctrl.programme.enabled"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.newProgrammeMode || $ctrl.editMode">
+        <div class="row no-gutter mtop30">
+          <div class="col-xs-12 col-sm-6 col-sm-offset-3 no-gutter">
+            <div class="restricted__field">
+              <label for="programme-restricted">Restricted for GLA internal use only</label>
+              <input id="programme-restricted"
+                     class="form-control"
+                     type="checkbox"
+                     name="restricted"
+                     ng-disabled="$ctrl.totalProjectCount"
+                     ng-model="$ctrl.programme.restricted"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.newProgrammeMode || $ctrl.editMode">
+        <div class="col-xs-12 text-center mtop30">
+          <button ng-disabled="newProgForm.$error.required ||
+            !$ctrl.programme.templates.length ||
+            $ctrl.isSaving"
+                  class="btn btn-primary" ng-enabled="$ctrl.submitenabled" ng-click="$ctrl.submit()">SAVE</button>
+        </div>
+        <div class="col-xs-12 text-center mtop15">
+          <a href ui-sref="programmes" class="form-cancel">Cancel</a>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+</div>

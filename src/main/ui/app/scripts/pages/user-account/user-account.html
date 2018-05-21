@@ -1,0 +1,100 @@
+<div class="user-account">
+  <page-header class="mbottom10"
+               editable-block="$ctrl"
+               on-back="$ctrl.back()">Your account profile</page-header>
+  <div class="col-xs-12">
+    <div class="row no-gutter">
+      <section-header subheader="">Registration details</section-header>
+      <div class="form-group row no-gutter">
+        <div class="col-sm-3"><label for="user-name">Name:</label></div>
+        <div id="user-name"
+             class="read-only-text col-sm-6">
+            {{$ctrl.userProfile.firstName}} {{$ctrl.userProfile.lastName}}
+        </div>
+      </div>
+      <div class="form-group row no-gutter">
+        <div class="col-sm-3"><label for="user-email">Email:</label></div>
+        <div id="user-email"
+             class="read-only-text col-sm-6">
+            {{$ctrl.userProfile.username}}
+        </div>
+      </div>
+      <hr class="mtop40 mbottom0">
+      <div class="row mTop30 rent-units">
+        <section-header subheader="">Your organisations</section-header>
+      </div>
+    </div>
+  </div>
+
+  <div class="row organisations" ng-class="{'edit-mode': !$ctrl.readOnly}">
+    <div class="col-xs-12 org-table table-responsive no-padding">
+      <table class="table table-bordered table-striped organisations-table user-organisations-table">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>ORGANISATION</th>
+          <th ng-if="$ctrl.showThresholds">SPEND AUTHORITY £</th>
+          <th>ROLE</th>
+          <th>REGISTRATION STATUS</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr ng-repeat="org in $ctrl.userProfile.organisations track by org.orgId" class="text-nowrap">
+          <td>{{org.orgName}}</td>
+          <td ng-class="{'spend-authority-edit': !$ctrl.readOnly}" ng-if="$ctrl.showThresholds">
+            <span ng-if="org.threshold">
+              <span ng-if="$ctrl.readOnly || !org.threshold.canBeEdited" class="threshold" ng-class="{pending: org.threshold.isPending}">
+                <span>{{(org.threshold.viewValue | number) || 'Not set'}}</span>
+                <span class="bolder" ng-if="org.threshold.isPending">pending...</span>
+              </span>
+
+
+              <span ng-if="!$ctrl.readOnly">
+                  <input ng-if="org.threshold.canBeEdited" number-mask="0" maxlength="11" ng-model="org.threshold.viewValue" change-on-blur="$ctrl.updatePendingThreshold(org.threshold)" class="form-control spend-authority-input">
+                  <button ng-if="org.threshold.canBeCanceled" class="btn btn-md btn-default btn-primary"  ng-click="$ctrl.cancel(org.threshold)">CANCEL</button>
+                  <button ng-if="org.threshold.canBeApproved" class="btn btn-md btn-default btn-primary"  ng-click="$ctrl.approve(org.threshold)">APPROVE</button>
+                  <button ng-if="org.threshold.canBeApproved" class="btn btn-md btn-default btn-primary"  ng-click="$ctrl.decline(org.threshold)">DECLINE</button>
+              </span>
+            </span>
+            <span ng-if="!org.threshold">
+              N/A
+            </span>
+
+          </td>
+          <td>
+            <span ng-if="$ctrl.readOnly || !org.isAssignableRole">{{org.role || org.defaultRole}}</span>
+            <ui-select ng-if="!$ctrl.readOnly && org.isAssignableRole"
+                       ng-model="org.roleName"
+                       search-enabled="false"
+                       style="width: 220px;"
+                       on-select="$ctrl.updateUserRole(org, $select.selected.name)">
+              <ui-select-match placeholder="{{$ctrl.defaultRole.description}}">
+                {{$select.selected.description}}
+              </ui-select-match>
+              <ui-select-choices repeat="role.name as role in org.assignableRoles track by role.name"> <span title="{{ role.description }}">{{ role.description }}</span></ui-select-choices>
+            </ui-select>
+          </td>
+          <td class="delete-btn-container">
+            <div ng-if="!org.approved">
+              <span ng-if="$ctrl.readOnly || !org.isEditable">Pending</span>
+              <button ng-if="!$ctrl.readOnly && org.isEditable" class="btn btn-primary btn-md"ng-click="$ctrl.approveUser(org)">APPROVE</button>
+            </div>
+            <div ng-if="org.approved" class="org-user-approved">
+              Approved <span class="glyphicon glyphicon-ok"></span>
+            </div>
+            <delete-button
+              ng-if="!$ctrl.readOnly && org.isEditable"
+              ng-click="$ctrl.deleteUser(org)">
+            </delete-button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="text-center mtop30">
+    <button class="btn btn-primary" ng-click="$ctrl.save()" ng-if="!$ctrl.readOnly">SAVE</button>
+  </div>
+
+</div>

@@ -1,0 +1,308 @@
+<div class="payment-summary">
+  <page-header>Payment Summary</page-header>
+  <div class="col-xs-12">
+    <div class="row no-gutter">
+      <div ng-if="$ctrl.payment.ledgerStatus==='Pending'"
+           class="col-sm-offset-3 col-sm-9 mtop30">
+        Select the <a ui-sref="pending-payments({paymentGroupId: $ctrl.paymentGroup.id})">Pending Payments page</a> to view, authorise or decline this payment.
+      </div>
+      <div class="col-sm-offset-3 col-sm-9"><section-header class="mtop40">Payee</section-header></div>
+
+      <div class="form-group lead-organisation row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="lead-organisation">Organisation name</label></div>
+        <div id="lead-organisation"
+             class="read-only-text col-sm-6">
+          <a href=""  ui-sref="organisation({orgId: $ctrl.payment.organisationId})">{{$ctrl.payment.vendorName}}</a>
+        </div>
+      </div>
+
+      <div class="col-sm-offset-3 col-sm-9"><section-header>Project Details</section-header></div>
+      <div class="form-group project-id row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="project-id">Project ID:</label></div>
+        <div id="project-id"
+             class="read-only-text col-sm-6">
+          <a ui-sref="project.overview({projectId: $ctrl.payment.projectId})">P{{$ctrl.payment.projectId}}</a>
+        </div>
+      </div>
+      <div class="form-group project-name row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="project-name">Project Name:</label></div>
+        <div id="project-name"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.projectName}}
+        </div>
+      </div>
+      <div class="form-group programme row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="programme">Programme:</label></div>
+        <div id="programme"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.programmeName}}
+        </div>
+      </div>
+      <div class="form-group category row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="category">Payment category:</label></div>
+        <div id="category"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.category}}
+        </div>
+      </div>
+      <div class="form-group sub-category row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="sub-category">Payment sub-category:</label></div>
+        <div id="sub-category"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.subCategory}}
+        </div>
+      </div>
+
+      <div class="col-sm-offset-3 col-sm-9"><section-header>Milestone approval</section-header></div>
+      <div class="form-group approval-requested-by row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="approval-requested-by">Approval requested by:</label></div>
+        <div id="approval-requested-by"
+             class="read-only-text col-sm-6">
+          {{$ctrl.paymentGroup.approvalRequestedBy}}
+        </div>
+      </div>
+      <div class="form-group approver row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="approver">Approver:</label></div>
+        <div id="approver"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.creator}}
+        </div>
+      </div>
+      <div class="form-group created-on row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="created-on">Date approved:</label></div>
+        <div id="created-on"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.createdOn | date: "dd/MM/yyyy"}}
+        </div>
+      </div>
+
+      <span ng-if="$ctrl.payment.reclaim" id="original-payment">
+        <div class="row no-gutter">
+          <div class="col-sm-offset-3 col-sm-6"><section-header>Original payment details</section-header></div>
+
+        </div>
+
+        <div class="form-group original-payment-total row no-gutter">
+          <div class="col-sm-offset-3 col-sm-3"><label for="original-payment-total">Payment Total:</label></div>
+          <div id="original-payment-total"
+               class="read-only-text col-sm-6">
+            {{$ctrl.originalPayment.totalIncludingInterest || 0 | currency:'£':0}}
+          </div>
+        </div>
+
+        <div class="form-group original-payment-id row no-gutter">
+          <div class="col-sm-offset-3 col-sm-3"><label for="original-payment-id">Payment ID:</label></div>
+          <div id="original-payment-id"
+               class="read-only-text col-sm-6">
+            <a ui-sref="payment-summary({paymentId:$ctrl.payment.reclaimOfPaymentId})">{{$ctrl.originalPayment.id}}</a>
+
+          </div>
+        </div>
+
+        <div class="form-group original-category row no-gutter">
+          <div class="col-sm-offset-3 col-sm-3"><label for="original-category">Payment category:</label></div>
+          <div id="original-category"
+               class="read-only-text col-sm-6">
+            {{$ctrl.originalPayment.category}}
+          </div>
+        </div>
+
+        <div class="form-group original-sub-category row no-gutter">
+          <div class="col-sm-offset-3 col-sm-3"><label for="original-sub-category">Payment sub-category:</label></div>
+          <div id="original-sub-category"
+               class="read-only-text col-sm-6">
+            {{$ctrl.originalPayment.subCategory}}
+          </div>
+        </div>
+
+        <div class="form-group original-payment-source row no-gutter">
+          <div class="col-sm-offset-3 col-sm-3"><label for="original-payment-source">Payment Source:</label></div>
+          <div id="original-payment-source"
+               class="read-only-text col-sm-6">
+            {{$ctrl.originalPayment.source}}
+          </div>
+        </div>
+      </span>
+
+      <div class="row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><section-header>{{$ctrl.payment.reclaim ? 'Reclaim Payment': 'Payment'}}</section-header></div>
+        <div class="col-sm-6">
+          <button class="mtop20 mbottom20 btn btn-primary btn-md"
+                  ng-if="$ctrl.showReclaimBtn"
+                  ng-click="$ctrl.reclaim()">RECLAIM<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
+        </div>
+      </div>
+
+      <div class="form-group reclaim-reason-block row no-gutter" ng-if="$ctrl.payment.reclaim && $ctrl.milestone.reclaimReason">
+        <div class="col-sm-offset-3 col-sm-3"><label for="reclaim-reason">Reason for payment reclaim:</label></div>
+        <div id="reclaim-reason" class="read-only-text col-sm-6">
+          {{$ctrl.milestone.reclaimReason}}
+        </div>
+      </div>
+
+      <div class="form-group payment-status row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="payment-status">Payment Status:</label></div>
+        <div id="payment-status"
+             class="read-only-text col-sm-6">
+          {{$ctrl.statusText}}
+        </div>
+      </div>
+
+
+      <div class="form-group payment-status row no-gutter"
+           ng-if="$ctrl.payment.ledgerStatus==='Declined'">
+        <div class="col-sm-offset-3 col-sm-3"><label for="decline-reason">Reason for payment decline:</label></div>
+        <div id="decline-reason"
+             class="read-only-text col-sm-6">
+          {{$ctrl.declineReason}}
+        </div>
+      </div>
+      <div class="form-group payment-status row no-gutter"
+           ng-if="$ctrl.payment.ledgerStatus==='Declined'">
+        <div class="col-sm-offset-3 col-sm-3"><label for="decline-comments">Comments:</label></div>
+        <div id="decline-comments"
+             class="read-only-text col-sm-6">
+          {{$ctrl.declineComments}}
+        </div>
+      </div>
+
+
+      <div class="form-group payment-id row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="payment-id">Payment ID:</label></div>
+        <div id="payment-id"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.id}}
+        </div>
+      </div>
+
+      <div class="form-group ops-invoice-number row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="payment-id">OPS Invoice Number:</label></div>
+        <div id="ops-invoice-number"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.opsInvoiceNumber}}
+        </div>
+      </div>
+
+      <div class="form-group sap-vendor-id row no-gutter" ng-if="$ctrl.canViewSapVendorId">
+        <div class="col-sm-offset-3 col-sm-3"><label for="sap-vendor-id">SAP vendor ID:</label></div>
+        <div id="sap-vendor-id"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.sapVendorId}}
+          <span ng-if="!$ctrl.payment.sapVendorId" class="error">
+               <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+               <span>SAP vendor ID has not been provided. A vendor ID must be added to the <a class="org-details" ui-sref="organisation({orgId: $ctrl.payment.organisationId})">Organisation details</a> to allow payment authorisation.</span>
+             </span>
+        </div>
+      </div>
+
+      <div class="form-group wbs-code row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="payment-id">WBS Code:</label></div>
+        <div id="wbs-code"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.wbsCode}}
+        </div>
+      </div>
+
+      <div class="form-group payment-source row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="payment-source">Payment Source:</label></div>
+        <div id="payment-source"
+             class="read-only-text col-sm-6">
+          {{$ctrl.source}}
+        </div>
+      </div>
+
+      <div class="form-group payment-total row no-gutter" ng-if="$ctrl.payment.reclaim">
+        <div class="col-sm-offset-3 col-sm-3"><label for="payment-total">Reclaim Value:</label></div>
+        <div id="reclaim-value"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.value || 0 | currency:'£':0}}
+        </div>
+      </div>
+
+      <div class="form-group payment-total row no-gutter" ng-if="$ctrl.payment.reclaim">
+        <div class="col-sm-offset-3 col-sm-3"><label for="payment-total">Interest added:</label></div>
+        <div id="interest-added"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.interest || 0 | currency:'£':0}}
+        </div>
+      </div>
+      <div class="form-group payment-total row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="payment-total">Payment Total:</label></div>
+        <div id="payment-total"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.totalIncludingInterest || 0 | currency:'£':0}}
+        </div>
+      </div>
+
+      <div ng-if="$ctrl.isAuthorised" class="form-group authorised-by row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="authorised-by">Authorised by:</label></div>
+        <div id="authorised-by"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.authorisor}}
+        </div>
+      </div>
+      <div ng-if="$ctrl.isAuthorised" class="form-group authorised-on row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="authorised-on">Authorised on:</label></div>
+        <div id="authorised-on"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.authorisedOn | date: "dd/MM/yyyy"}}
+        </div>
+      </div>
+      <div ng-if="$ctrl.isAuthorised" class="form-group authorised-on-time row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="authorised-on-time">Time:</label></div>
+        <div id="authorised-on-time"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.authorisedOn | date: "HH:mm"}}
+        </div>
+      </div>
+      <div ng-if="$ctrl.isDeclined" class="form-group declined-by row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="declined-by">Declined by:</label></div>
+        <div id="declined-by"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.lastModifier}}
+        </div>
+      </div>
+      <div ng-if="$ctrl.isDeclined" class="form-group declined-on row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="declined-on">Declined on:</label></div>
+        <div id="declined-on"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.modifiedOn | date: "dd/MM/yyyy"}}
+        </div>
+      </div>
+      <div ng-if="$ctrl.isDeclined" class="form-group declined-on-time row no-gutter">
+        <div class="col-sm-offset-3 col-sm-3"><label for="declined-on-time">Time:</label></div>
+        <div id="declined-on-time"
+             class="read-only-text col-sm-6">
+          {{$ctrl.payment.modifiedOn | date: "HH:mm"}}
+        </div>
+      </div>
+
+      <div class="row no-gutter history-accordion" ng-if="$ctrl.reclaims.length">
+        <div class="col-sm-offset-3 col-sm-6">
+          <uib-accordion>
+            <div uib-accordion-group class="panel-default text-center" is-open="status.isCustomHeaderOpen">
+
+              <uib-accordion-heading>
+                Reclaim History&nbsp;
+                <i id="accordion" class="glyphicon"
+                   ng-class="{'glyphicon-triangle-top': status.isCustomHeaderOpen, 'glyphicon-triangle-bottom': !status.isCustomHeaderOpen}">
+                </i>
+              </uib-accordion-heading>
+
+              <div class="row content reclaim-history" id="content">
+                <div class="col-xs-12 no-padding">
+                  <div ng-repeat="p in $ctrl.reclaims">
+                    <div class="text-left lighter" >
+                      {{ p._description }}
+                    </div>
+                    <hr ng-if="!$last"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </uib-accordion>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

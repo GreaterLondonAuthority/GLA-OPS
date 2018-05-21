@@ -1,0 +1,124 @@
+<div>
+  <div class="project-overview text-center">
+    <project-header on-back="$ctrl.onBack()" project="$ctrl.project"
+                    link-menu-items="$ctrl.linkMenuItems"
+      action-menu-items="$ctrl.actionMenuItems"
+      on-action-clicked="$ctrl.onActionClicked(item)"></project-header>
+
+    <header-status>
+      <hs-left class="project-status">
+        <span>Status: </span>
+        <span>{{ $ctrl.project.status }}</span>
+        <span class="text-nowrap">{{$ctrl.subStatusText}}</span>
+      </hs-left>
+
+      <hs-center class="gla-alert project-status-message">
+        <div class="row" ng-if="$ctrl.submitted && !$ctrl.programmeClosed">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>Submitted projects have to be <a href="" ng-click="$ctrl.goToSaveDiv()">withdrawn</a> before you can amend or abandon them</span>
+        </div>
+
+        <div class="row" ng-if="$ctrl.assess">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>This project is under assessment and cannot be edited</span>
+        </div>
+
+        <div class="row" ng-if="$ctrl.returned">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>This project is under assessment and has been returned back for edits</span>
+        </div>
+
+        <div class="row" ng-if="$ctrl.draft && $ctrl.programmeClosed">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>The programme is now closed for bidding and projects cannot be submitted</span>
+        </div>
+
+        <div class="row green" ng-if="$ctrl.draft && $ctrl.project.complete && $ctrl.transitionButtons.length">
+          <!--<span class="glyphicon glyphicon-ok"></span>-->
+          <span>This project is now ready to <a href="" class="jump-link" ng-click="$ctrl.jumpTo('buttons')">submit</a></span>
+        </div>
+
+        <div class="row" ng-if="$ctrl.programmeClosed && $ctrl.submitted">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>The programme is now closed for bidding and projects are awaiting assessment, projects cannot be edited at this stage</span>
+        </div>
+
+        <div class="row" ng-if="$ctrl.closed && ($ctrl.project.subStatus === 'Abandoned' || $ctrl.project.subStatus === 'Completed')">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>This project is closed and cannot be updated.</span>
+        </div>
+
+        <div class="row" ng-repeat="message in $ctrl.project.messages">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>{{message.description}}</span>
+        </div>
+
+        <div class="row green" ng-if="$ctrl.project.infoMessage">
+          <span>{{$ctrl.project.infoMessage}}</span>
+        </div>
+      </hs-center>
+
+      <hs-right class="project-id">
+        Project <span>ID: <strong>P{{ $ctrl.project.id }}</strong></span>
+      </hs-right>
+    </header-status>
+
+    <div class="col-xs-12 please-complete-text" ng-if="!$ctrl.submitted && !$ctrl.closed && !$ctrl.programmeClosed && !$ctrl.assess && !$ctrl.active">
+      <span>Please complete each section and then submit.</span>
+    </div>
+
+
+    <div class="project-overview__blocks row" >
+      <div ng-attr-id="{{block.id}}"
+           class="col-md-4 col-sm-6 col-xs-12 project-block-wrapper"
+           ng-click="$ctrl.goToSection(block)"
+           ng-repeat="block in $ctrl.projectBlocks">
+        <project-overview-block block-number="$index + 1" block="block" project-status="$ctrl.project.status" is-land-project="$ctrl.isLandProject">
+          <!-- <span style="text-transform: uppercase;" class="block-name">{{block.blockDisplayName}}</span> -->
+        </project-overview-block>
+      </div>
+    </div>
+
+    <project-history class="mtop30"
+      items="$ctrl.historyItems"
+      ng-if="$ctrl.historyItems.length">
+    </project-history>
+
+    <div class="row project-comment" ng-class="{'disabled': !$ctrl.commentBoxEditability}" id="comments">
+      <form name="mForm" style="margin: 30px 0px;"  ng-if="$ctrl.commentBoxVisibility" >
+        <div class="form-group col-xs-12" style="padding: 0px;margin-bottom: 0">
+          <!--TODO are these state checks still needed or buttonCfg.commentsRequired is enough?-->
+          <label for="project-comments">Comments <span ng-if="!$ctrl.assess && !$ctrl.returned && $ctrl.canReject || $ctrl.active && !buttonCfg.commentsRequired">(Optional)</span></label>
+          <textarea id="project-comments" class="form-control"
+                    name="comments"
+                    placeholder="{{$ctrl.getCommentsPlaceholder()}}"
+                    ng-model="$ctrl.comments"
+                    maxlength="1000" rows="5"
+                    ng-keypress="$ctrl.onCommentKeyPress()"
+                    ng-disabled="!$ctrl.commentBoxEditability">
+          </textarea>
+          <div class="error-wrapper comments-error">
+            <span class="error mbottom10" ng-if="$ctrl.missingComment && $ctrl.assess && $ctrl.canRecommend">You must add a comment to return the project to the provider or to recommend the project for rejection</span>
+            <span class="error mbottom10" ng-if="$ctrl.missingComment && $ctrl.assess && $ctrl.canReject">You must add a comment to return the project to the provider or to reject the project</span>
+            <span class="error mbottom10" ng-if="$ctrl.missingComment && $ctrl.returned && $ctrl.canReject">You must add a comment to reject the project</span>
+            <span class="error mbottom10" ng-if="$ctrl.missingComment && $ctrl.active">You must add a comment to return the project</span>
+            </div>
+        </div>
+      </form>
+      <div class="text-left mbottom30" ng-if="$ctrl.assess && $ctrl.canCreateConditionalMilestone && $ctrl.getMilestonesBlock()">
+        To add a conditional milestone, go to the <a href ng-click="$ctrl.onOpenMilestones()">milestone</a> block before referring the project
+      </div>
+    </div>
+
+    <div class="row" id="buttons">
+      <div class="col-xs-12 no-gutter mtop5">
+        <div  ng-repeat="buttonCfg in $ctrl.transitionButtons track by $index" class="col-xs-12 col-sm-{{12/$ctrl.transitionButtons.length}} col-md-{{12/$ctrl.transitionButtons.length}} mbottom10">
+          <button class="btn btn-primary min-padding"
+                  ng-disabled="$ctrl[buttonCfg.disableState] || ($ctrl[buttonCfg.disableStateFunction] && $ctrl[buttonCfg.disableStateFunction]())"
+                  ng-click="$ctrl.transitionButtonsCallback(buttonCfg)">{{buttonCfg.text}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

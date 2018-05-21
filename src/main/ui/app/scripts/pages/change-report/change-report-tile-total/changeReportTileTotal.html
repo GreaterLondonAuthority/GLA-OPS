@@ -1,0 +1,26 @@
+<change-report-table-separator has-right-values="$ctrl.hasRightValues"></change-report-table-separator>
+<div class="report-tables">
+  <div class="table-row">
+    <div class="left-col col" ng-class="{'no-block': !$ctrl.data.left}">
+      <div class="row-heading">{{$ctrl.heading}}</div>
+    </div>
+
+    <div class="right-col col" ng-class="{'no-block': !$ctrl.data.right}">
+      <div class="row-heading">{{$ctrl.heading}}</div>
+    </div>
+  </div>
+
+  <div class="table-row">
+    <div class="left-col col" ng-class="{'no-block': !$ctrl.data.left}">
+      <div class="field-value">{{$ctrl.getValue($ctrl.data.left, $ctrl.field)}}</div>
+    </div>
+
+    <div class="right-col col" ng-class="{'no-block': !$ctrl.data.right}">
+      <div class="field-value" ng-class="{'changed-value': $ctrl.hasFieldChanges($ctrl.field)}">
+        <span>{{$ctrl.getValue($ctrl.data.right, $ctrl.field)}}</span>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" ng-if="$ctrl.hasFieldChanges($ctrl.field)"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<change-report-table-separator has-right-values="$ctrl.hasRightValues"></change-report-table-separator>

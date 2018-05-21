@@ -1,0 +1,47 @@
+<div ng-if="$ctrl.user.loggedOn" class="programmes">
+
+  <page-header class="mbottom10" header="'Programmes'">
+    <ph-right ng-if="$ctrl.user.isAdmin">
+      <button ui-sref="programmes-new" class="btn btn-primary btn-md" id="newprogrammebtn">
+        CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </ph-right>
+  </page-header>
+
+
+
+  <div class="row mtop15 no-gutter">
+    <div class="col-xs-12" ng-show="programmes.length == 0">
+      There are currently no programmes available
+    </div>
+
+    <div class="col-xs-12 table-responsive" ng-show="programmes.length > 0">
+      <table class="table table-hover table-bordered table-striped table-selectable-row programmes-table">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Enabled</th>
+          <th>Templates</th>
+          <th>Restricted</th>
+          <th>Created by</th>
+          <th>Created date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="row in programmes" ng-click="getDetails(row.id)">
+          <td>{{row.id}}</td>
+          <td>{{row.name}}</td>
+          <td>{{row.enabled ? 'Y' : 'N'}}</td>
+          <td>
+            <div ng-repeat="template in row.templates | orderBy : 'name'" class="row">{{template.name}}</div>
+          </td>
+          <td>{{row.restricted ? 'GLA' : 'All'}}</td>
+          <td>{{row.creatorName}}</td>
+          <td>{{row.createdOn | date: 'MMM d, yyyy'}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

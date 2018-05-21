@@ -1,0 +1,39 @@
+<div class="design-standards">
+  <div class="text-center">
+    <project-header on-back="$ctrl.back()" editable-block="$ctrl">Confirm design standards</project-header>
+  </div>
+
+  <spinner ng-if="$ctrl.loading && !$ctrl.data"></spinner>
+  <div ng-if="!$ctrl.loading || $ctrl.data">
+    <div class="row grant-block-title">
+      Confirm that this project is intended to meet the <a href="https://www.london.gov.uk/what-we-do/regeneration/regeneration-publications/london-housing-design-guide" target="_blank">design standards</a> for this programme
+    </div>
+
+    <div id="radios" class="design-compliant">
+      <label for="trueRadio">
+        <input id="trueRadio" name="designCompliant" type="radio" ng-disabled="$ctrl.readOnly" ng-model="$ctrl.data.meetingLondonHousingDesignGuide" ng-value="true">
+        Yes
+      </label>
+      <label for="falseRadio">
+        <input id="falseRadio" name="designCompliant" type="radio" ng-disabled="$ctrl.readOnly" ng-model="$ctrl.data.meetingLondonHousingDesignGuide" ng-value="false">
+        No
+      </label>
+
+      <div ng-if="$ctrl.data.meetingLondonHousingDesignGuide === false" class="reason-label">Provide a brief explanation for why the London Housing Design Guide standards are not being met.</div>
+    </div>
+
+    <div ng-if="$ctrl.data.meetingLondonHousingDesignGuide === false">
+
+      <textarea id="reason" aria-label="Reason" rows="5" name="reason"
+                ng-disabled="$ctrl.readOnly" class="form-control" ng-model="$ctrl.data.reasonForNotMeetingDesignGuide"
+                maxlength="1000"></textarea>
+      <remaining-characters text="$ctrl.data.reasonForNotMeetingDesignGuide" max="1000"></remaining-characters>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 mtop30 mbottom30 text-center">
+        <button class="btn btn-primary" ng-click="$ctrl.submit()" ng-if="!$ctrl.readOnly">SAVE</button>
+      </div>
+    </div>
+  </div>
+</div>

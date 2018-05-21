@@ -1,0 +1,10 @@
+STATUS_FROM,STATUS_TO,ROLES,PROGRAMME_STATE,COMMENTS_REQUIRED,PROJECT_COMPLETION,APPROVAL_WILL_CREATE_PAYMENTS
+Draft,Closed (Abandoned),OPS_ADMIN | GLA_ORG_ADMIN | GLA_SPM | GLA_PM,ALL,true,ANY,ANY
+Draft,Active,"OPS_ADMIN | GLA_ORG_ADMIN | GLA_SPM | GLA_PM",ALL,false,COMPLETE,ANY
+Active,Closed (Abandoned),"OPS_ADMIN | GLA_ORG_ADMIN | GLA_SPM | GLA_PM",ALL,false,ANY,ANY
+Active,Closed (Completed),"OPS_ADMIN | GLA_ORG_ADMIN | GLA_SPM | GLA_PM",ALL,false,ANY,ANY
+Closed,Draft,"OPS_ADMIN",ALL,false,ANY,ANY
+"Closed (Abandoned)",Draft,"OPS_ADMIN",ALL,false,ANY,ANY
+Closed,Active,"OPS_ADMIN",ALL,false,ANY,ANY
+"Closed (Abandoned)",Active,"OPS_ADMIN",ALL,false,ANY,ANY
+"Closed (Completed)",Active,"OPS_ADMIN",ALL,false,ANY,ANY

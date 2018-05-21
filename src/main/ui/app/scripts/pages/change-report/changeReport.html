@@ -1,0 +1,116 @@
+<div class="change-report text-center">
+  <project-header on-back="$ctrl.onBack()">{{ $ctrl.latestProject.title }}</project-header>
+
+  <header-status class="mbottom20">
+    <hs-left class="project-status">
+      <span>Status: </span>
+      <span>{{ $ctrl.latestProject.status }}</span>
+      <span class="text-nowrap">{{$ctrl.subStatusText}}</span>
+    </hs-left>
+
+    <hs-center class="report-name">Change Management Report</hs-center>
+
+    <hs-right class="project-id">
+      Project <span>ID: <strong>P{{ $ctrl.latestProject.id }}</strong></span>
+    </hs-right>
+  </header-status>
+
+
+  <div class="col-xs-12 no-padding text-xs-center text-sm-left" ng-if="$ctrl.showDatePicker">
+    <div class="date-picker">
+      <a href="" ng-click="showDatePopup = !showDatePopup">
+        <span class="glyphicon glyphicon-calendar"></span>Select a month to compare
+      </a>
+      <input type="hidden"
+             ng-change="$ctrl.onComparisonDateChange($ctrl.comparisonDate)"
+             class="form-control"
+             uib-datepicker-popup="yyyy-MM"
+             ng-model="$ctrl.comparisonDate"
+             is-open="showDatePopup"
+             datepicker-options="$ctrl.dateOptions"
+             show-button-bar="false"
+             close-text="Close"/>
+    </div>
+  </div>
+
+  <div class="row project-general-info mtop25">
+    <div class="col-xs-12 col-sm-4 no-padding text-xs-center text-sm-left last-approved-date"><div ng-hide="!$ctrl.lastApproved || $ctrl.lastApprovedProject.autoApproval">Last Approved {{$ctrl.lastApproved | date: "dd/MM/yyyy"}}</div></div>
+    <div class="col-xs-12 col-sm-4 programme-name">{{$ctrl.latestProject.programme.name}}</div>
+    <div class="col-xs-12 col-sm-4 no-padding text-xs-center text-sm-right template-name">{{$ctrl.template.name}}</div>
+  </div>
+
+
+  <div class="row mtop25 unapproved-blocks-count">
+    <div class="col-xs-12 no-padding text-left">
+      {{$ctrl.numberOfUnapprovedBlocks}} unapproved block{{$ctrl.numberOfUnapprovedBlocks == 1? '': 's'}}
+      <a href="" ng-click="$ctrl.toggleAllSections()" class="no-print">
+        <span ng-if="$ctrl.showCollapseAll">Collapse all blocks</span>
+        <span ng-if="!$ctrl.showCollapseAll">Expand all blocks</span>
+      </a>
+    </div>
+  </div>
+  <hr class="mtop5">
+
+  <div class="text-left report-block mtop20" ng-class="item.blockDisplayCls+'-section'" ng-repeat="item in $ctrl.blocksToCompare track by item.id" ng-attr-id="{{item.id}}" ang-if="item.type === 'ProjectBudgetsBlock'">
+    <div>
+      <span class="report-block-title"  ng-click="$ctrl.toggleBlock(item)">
+        <span class="block-toggle no-print">
+          <span class="glyphicon glyphicon-triangle-bottom" ng-class="{'glyphicon-triangle-bottom': !item.expanded, 'glyphicon-triangle-top': item.expanded}" aria-hidden="true"></span>
+        </span>
+        <span class="block-name">{{item.blockDisplayName}}</span>
+      </span>
+      <a href="" ng-click="$ctrl.jumpTo($ctrl.blocksToCompare[$index +1].id)" class="jump-link pull-right no-print" ng-if="$ctrl.blocksToCompare[$index +1]">
+        <span>Jump to {{$ctrl.blocksToCompare[$index +1].blockDisplayName}}</span>
+      </a>
+    </div>
+
+    <div class="unapproved-changes-text" ng-if="item.config.supported && (item.left || !item.right.lastModified)">
+      <span class="change-count-display"><span class="unapproved-changes-count">{{item.changes.count}}</span> unapproved changes</span>
+      <span class="unapproved-changes-count" ng-if="item.changes.count">Unapproved changes</span>
+      <span class="unapproved-changes-count" ng-if="!item.changes.count">No unapproved changes</span>
+    </div>
+    <div class="unapproved-changes-text" ng-if="item.config.supported && (!item.left && item.right && item.right.lastModified)">
+      New block with edits
+    </div>
+    <div ng-if="!item.config.supported && item.type !== 'ProjectHistory'" class="unapproved-changes-text">Coming soon</div>
+
+
+    <div class="report-block-content" ng-if="item.type !== 'ProjectHistory'" ng-show="item.expanded" ng-class="[item.blockDisplayCls, {'no-unapproved-block': item.left.id == item.right.id}]">
+
+
+      <change-report-field ng-if="item.config.supported" data="item.versionObj" fields="'versionString'" class="block-version" ng-class="{'next-to-tables': $ctrl.hasTables(item)}"></change-report-field>
+
+      <project-details-change-report data="item" ng-if="item.type === 'ProjectDetailsBlock'"></project-details-change-report>
+
+
+      <budgets-change-report data="item" ng-if="item.type === 'ProjectBudgetsBlock'"></budgets-change-report>
+
+
+      <calculate-grant-change-report data="item" ng-if="item.type === 'CalculateGrantBlock'"></calculate-grant-change-report>
+      <negotiated-grant-change-report data="item" ng-if="item.type === 'NegotiatedGrantBlock'"></negotiated-grant-change-report>
+      <developer-led-grant-change-report data="item" ng-if="item.type === 'DeveloperLedGrantBlock'"></developer-led-grant-change-report>
+      <indicative-grant-change-report data="item" ng-if="item.type === 'IndicativeGrantBlock'"></indicative-grant-change-report>
+      <grant-source-change-report data="item" ng-if="item.type === 'GrantSourceBlock'"></grant-source-change-report>
+      <design-standards-change-report data="item" ng-if="item.type === 'DesignStandardsBlock'"></design-standards-change-report>
+
+
+       <risk-and-issues-change-report data="item" ng-if="item.type === 'ProjectRisksBlock'"></risk-and-issues-change-report>
+
+
+      <additional-questions-change-report data="item" ng-if="item.type === 'ProjectQuestionsBlock'"></additional-questions-change-report>
+
+
+      <outputs-change-report data="item" ng-if="item.type === 'OutputsBlock'"></outputs-change-report>
+      <receipts-change-report data="item" ng-if="item.type === 'ReceiptsBlock'"></receipts-change-report>
+      <unit-details-change-report data="item" ng-if="item.type === 'UnitDetailsBlock'"></unit-details-change-report>
+
+      <milestones-change-report data="item" ng-if="item.type === 'ProjectMilestonesBlock'"></milestones-change-report>
+
+      <hr ng-if="!$last">
+    </div>
+    <div class="report-block-content" ng-show="item.expanded" ng-if="item.type === 'ProjectHistory'"  ng-class="[item.blockDisplayCls]">
+      <div class="text-left lighter metainformation" id="metadata-{{$index}}">{{item.latestComment.createdOn | date: "dd/MM/yyyy 'at' HH:mm"}} {{item.latestComment.description || $ctrl.transitionMap[item.latestComment.transition] || item.latestComment.transition}} by {{ item.latestComment.createdByFirstName}} {{ item.latestComment.createdByLastName}}</div>
+      <div class="text-left comment">{{item.latestComment.comments}}</div>
+    </div>
+  </div>
+</div>

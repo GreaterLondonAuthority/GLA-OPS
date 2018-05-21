@@ -1,0 +1,87 @@
+.project-questions {
+  width: 90%;
+  margin: auto;
+
+  label{
+    line-height: 1.43;
+  }
+
+  .section-header {
+    font-size: 1.5rem;
+    font-weight: 100;
+    font-family: $font-family-light;
+    margin-bottom: 20px;
+  }
+  .section-question{
+    &.ng-enter{
+      opacity: 0;
+      transition: opacity ease-in 0.5s;
+      &.ng-enter-active{
+        opacity: 1;
+      }
+    }
+
+    &.ng-leave {
+      opacity: 1;
+      transition: opacity ease-out 0.5s;
+      &.ng-leave-active {
+        opacity: 0;
+      }
+    }
+  }
+  .conditional-question{
+    label{
+      margin-top: -4px;
+      color: darken($secondary-text, 7%);
+      font-family: $font-family-bolder;
+      font-weight: 100;
+      font-size: 13px;
+    }
+
+    .form-group {
+      border-left: 1px solid $alto-light;
+      padding-left: 15px;
+    }
+
+    &.ng-enter{
+      opacity: 0;
+      transition: opacity ease-in 0.5s;
+      &.ng-enter-active{
+        opacity: 1;
+      }
+    }
+
+    &.ng-leave {
+      opacity: 1;
+      transition: opacity ease-out 0.5s;
+      &.ng-leave-active {
+        opacity: 0;
+      }
+    }
+  }
+
+  @include when-sm{
+    .form-group input[number-mask]{
+      max-width: 150px;
+    }
+  }
+
+
+
+
+}
+.uploaded-file-link {
+  word-break: break-all;
+}
+
+
+yes-no-input{
+  display: block;
+  .yesNoInput{
+    height: 14px;
+    input {
+    margin-bottom: 0;
+    margin-left: 0;
+  }
+  }
+}

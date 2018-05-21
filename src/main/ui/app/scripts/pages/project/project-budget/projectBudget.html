@@ -1,0 +1,408 @@
+<div class="total__spend">
+
+  <project-header on-back="$ctrl.back()" editable-block="$ctrl" subtitle="">{{$ctrl.data.blockDisplayName || 'Project Budgets'}}</project-header>
+
+  <div class="col-xs-10 col-xs-offset-1 form-top-error mtop15" ng-if="$ctrl.errors">
+    <p class="error">Sorry, an error has occurred.</p>
+  </div>
+
+  <form role="form" name="tsForm">
+    <div class="col-xs-12 text-center outerBox no-padding">
+      <section-header subheader="">Approved lifetime budget</section-header>
+      <div class="row financial-year" ng-if="$ctrl.readOnly">
+        {{$ctrl.data.fromDate}} <span ng-if="$ctrl.data.toDate">to {{$ctrl.data.toDate}}</span>
+        <div class="out-of-range" ng-if="$ctrl.showOutOfRangeWarning">
+          Project contains information outside of the set year range which is not displaying in the project summary, to change the set years press <a href ng-click="$ctrl.editable && $ctrl.edit()"><strong>EDIT</strong></a>
+        </div>
+      </div>
+
+
+      <well class="row from-to-date-edit" ng-if="!$ctrl.readOnly">
+        <div class="col-md-6 col-sm-6">
+          <div class="box">
+            <div class="innerPadding">
+              <div class="form-group from-date">
+                <label for="project-budgets-from-date">From</label><br/>
+                <financial-year id="project-budgets-from-date"
+                  ng-if="$ctrl.realCurrentYear && $ctrl.fromDateSelected"
+                  back="20"
+                  forward="5"
+                  current-financial-year-const="$ctrl.realCurrentYear"
+                  on-select="$ctrl.onFromDateChange()"
+                  selected-year="$ctrl.fromDateSelected"
+                  populated-years="$ctrl.populatedYears"></financial-year>
+                <div class="out-of-range mtop10" ng-if="$ctrl.showOutOfRangeWarningFrom">
+                  Year {{$ctrl.minDatePopulatedFormatted}} contains information not visible in the project summary, amend the 'From' date to include this in the summary
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-6">
+          <div class="box">
+            <div class="innerPadding">
+              <div class="form-group to-date">
+                <label for="project-budgets-to-date">To</label><br/>
+                <financial-year id="project-budgets-to-date"
+                  ng-if="$ctrl.realCurrentYear"
+                  back="$ctrl.toDateFromLimit"
+                  forward="20"
+                  current-financial-year-const="$ctrl.realCurrentYear"
+                  on-select="$ctrl.onToDateChange()"
+                  selected-year="$ctrl.toDateSelected"
+                  populated-years="$ctrl.populatedYears"></financial-year>
+                <div class="out-of-range mtop10" ng-if="$ctrl.showOutOfRangeWarningTo">
+                  Year {{$ctrl.maxDatePopulatedFormatted}} contains information not visible in the project summary, amend the 'To' date to include this in the summary
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </well>
+
+      <div class="flex-container">
+        <well class="text-center capital-box">
+
+          <label class="totalBox__label property-name" for="project-budgets-capital">Capital</label><br/>
+          <div ng-if="!$ctrl.readOnly">
+            <input id="project-budgets-capital"
+                   class="form-control"
+                   type="text"
+                   maxlength="13"
+                   number-mask="0"
+                   name="capital"
+                   placeholder="£ Enter capital"
+                   ng-model="$ctrl.data.capital"
+                   ng-disabled="$ctrl.readOnly"
+                   ng-blur="$ctrl.autoSave()"
+                   aria-label="Capital">
+          </div>
+
+          <div class="totalBox__value property-value" id="capital" ng-if="$ctrl.readOnly">
+            <span ng-if="$ctrl.data.capital">{{$ctrl.data.capital | currency:'£':0}}</span>
+            <span ng-if="!$ctrl.data.capital">Not provided</span>
+          </div>
+
+          <div class="wbs-codes-title property-name">WBS code(s)</div>
+          <div class="property-value" ng-if="!$ctrl.capitalWbsCodes.length && $ctrl.readOnly">Not provided</div>
+          <wbs-codes class="wbs-capital"
+                     max="10"
+                     read-only="$ctrl.readOnly"
+                     type="'CAPITAL'"
+                     codes="$ctrl.data.wbsCodes"
+                     on-wbs-code-modification="$ctrl.autoSave()"></wbs-codes>
+        </well>
+
+        <well class="revenue-box">
+          <label class="totalBox__label property-name" for="project-budgets-revenue">Revenue</label><br/>
+          <div ng-if="!$ctrl.readOnly">
+            <input id="project-budgets-revenue"
+                   class="form-control"
+                   type="text"
+                   maxlength="13"
+                   number-mask="0"
+                   name="revenue"
+                   placeholder="£ Enter revenue"
+                   ng-model="$ctrl.data.revenue"
+                   ng-disabled="$ctrl.readOnly"
+                   ng-blur="$ctrl.autoSave()"
+                   aria-label="Revenue">
+          </div>
+          <div class="totalBox__value property-value" id="revenue" ng-if="$ctrl.readOnly">
+                <span ng-if="$ctrl.data.revenue">{{$ctrl.data.revenue | currency:'£':0}}</span>
+                <span ng-if="!$ctrl.data.revenue">Not provided</span>
+          </div>
+          <div class="wbs-codes-title property-name">WBS code(s)</div>
+          <div class="property-value" ng-if="!$ctrl.revenueWbsCodes.length && $ctrl.readOnly">Not provided</div>
+          <wbs-codes class="wbs-revenue"
+                     max="10"
+                     read-only="$ctrl.readOnly"
+                     type="'REVENUE'"
+                     codes="$ctrl.data.wbsCodes"
+                     on-wbs-code-modification="$ctrl.autoSave()"></wbs-codes>
+        </well>
+      </div>
+      <div class="row approval-needed-message">
+        <!-- <span class="approval-required-error glyphicon glyphicon-exclamation-sign"></span>  -->
+        <strong class="text-left pull-left">Approval is needed to update the total amount</strong>
+        <span class="text-right pull-right approval-needed-message-date" ng-if="$ctrl.data.lastModified">Last updated {{$ctrl.data.lastModified | date: "dd/MM/yyyy"}}</span>
+      </div>
+      <well class="row mtop15" ng-if="!$ctrl.readOnly">
+        <h4>Add approval documents</h4>
+        <h5>Maximum file size: 5MB</h5>
+
+        <div class="row mbottom15">
+          <div class="col-xs-6 no-padding">
+            <div class="form-group">
+              <ui-select id="document-type"
+                         name="document-type"
+                         class="document-type"
+                         ng-model="$ctrl.selectedDocumentType"
+                         ng-disabled="$ctrl.readOnly"
+                         search-enabled="false"
+                         aria-label="Select document type"
+                         required>
+                <ui-select-match placeholder="Select document type">{{$ctrl.selectedDocumentType}}</ui-select-match>
+                <ui-select-choices repeat="documentType in $ctrl.documentTypes">
+                  <span>{{ documentType }}</span>
+                </ui-select-choices>
+              </ui-select>
+            </div>
+          </div>
+
+          <div class="col-xs-6 no-padding">
+            <file-upload class="add-document"
+                         label="ADD DOCUMENT +"
+                         upload-params="$ctrl.uploadParams"
+                         on-progress="$ctrl.onFileUploadProgress(event)"
+                         on-complete="$ctrl.onFileUploadComplete(event)"
+                         on-error="$ctrl.onFileUploadError(event)"
+                         is-disabled="!$ctrl.selectedDocumentType || $ctrl.readOnly">
+            </file-upload>
+          </div>
+        </div>
+      </well>
+
+
+
+      <div class="row" ng-if="$ctrl.data.attachments.length > 0">
+        <section-header>Approval documents</section-header>
+
+          <div class="table-responsive text-left">
+            <table id="approval-documents" class="table table-hover table-bordered table-striped files">
+              <thead class="thead-inverse uppercase">
+              <tr>
+                <th>DOCUMENT NAME</th>
+                <th>DOCUMENT TYPE</th>
+                <th>UPLOAD DATE</th>
+                <th>UPLOADED BY</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="attachment in $ctrl.data.attachments | orderBy:'createdOn':true">
+
+                <td>
+                  <a ng-href="/api/v1/file/{{attachment.fileId}}" target="_blank"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{attachment.fileName}}</a>
+                </td>
+                <td>{{attachment.documentType}}</td>
+                <td>{{attachment.createdOn | date: 'MMM d, yyyy'}}</td>
+                <td>{{attachment.creatorName}}</td>
+                <td>
+                  <div ng-if="!$ctrl.readOnly">
+                    <a permission set-permission="{only: 'proj.doc.delete'}"
+                       href ng-click="$ctrl.removeAttachment(attachment)">DELETE
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 no-padding">
+
+          <section-header class="summary-profiled-years-header" subheader="(The information displayed summarises all profiled years)" ng-click="$ctrl.summaryExpanded = !$ctrl.summaryExpanded">
+            <i class="glyphicon glyphicon-triangle-bottom" ng-if="!$ctrl.summaryExpanded"></i>
+            <i class="glyphicon glyphicon-triangle-top" ng-if="$ctrl.summaryExpanded"></i>
+            Summary of all profiled years
+          </section-header>
+          <finance-summary
+            summary-data="$ctrl.summaryData"
+            ng-if="$ctrl.summaryExpanded">
+          </finance-summary>
+        </div>
+      </div>
+
+    <section-header>Lifetime spend summary</section-header>
+
+    <div class="row lifetime-spend-summary-block" vertilize-container>
+      <div class="col-sm-6">
+        <total-box
+          title="'AVAILABLE TO FORECAST'"
+          description="'Lifetime budget minus total remaining forecast and actual spend'"
+          left-label="'Capital'"
+          left-value="$ctrl.totals.availableToForecastCapital"
+          right-label="'Revenue'"
+          right-value="$ctrl.totals.availableToForecastRevenue">
+        </total-box>
+      </div>
+      <div class="col-sm-6">
+        <total-box
+          title="'LEFT TO SPEND'"
+          description="'Lifetime budget minus the actual spend'"
+          left-label="'Capital'"
+          left-value="$ctrl.totals.leftToSpendOnProjectCapital"
+          right-label="'Revenue'"
+          right-value="$ctrl.totals.leftToSpendOnProjectRevenue">
+        </total-box>
+      </div>
+    </div>
+    <div class="mtop15 row" vertilize-container>
+      <div class="col-sm-6">
+        <total-box
+          title="'APPROVED PROJECT FORECAST'"
+          description="'The amount forecast to be spent on the project that does not exceed the approved lifetime budget'"
+          left-label="'Capital'"
+          left-value="$ctrl.totals.approvedProjectForecastCapital"
+          right-label="'Revenue'"
+          right-value="$ctrl.totals.approvedProjectForecastRevenue">
+        </total-box>
+      </div>
+      <div class="col-sm-6">
+        <total-box
+          title="'UNAPPROVED PROJECT FORECAST'"
+          description="'Amount by which actual spend + future forecast exceeds lifetime budget'"
+          left-label="'Capital'"
+          left-value="$ctrl.totals.unapprovedProjectForecastCapital"
+          right-label="'Revenue'"
+          right-value="$ctrl.totals.unapprovedProjectForecastRevenue">
+        </total-box>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+
+
+
+
+
+
+
+<div class="annual-spend">
+
+  <form role="form" name="asForm">
+    <div class="col-xs-12 mtop20 text-center">
+      <hr>
+      <section-header class="mtop15" subheader="">Annual budget</section-header>
+      <div class="form-group mtop10 col-md-2 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
+        <label for="annualSpend-currentYear">Financial Year</label>
+
+        <financial-year id="annualSpend-currentYear"
+          ng-if="$ctrl.realCurrentYearAnnualSpend"
+          current-financial-year-const="$ctrl.realCurrentYearAnnualSpend"
+          on-select="$ctrl.yearSelected(selectedYear)"
+          selected-year="$ctrl.currentYearAnnualSpend.financialYear"
+          populated-years="$ctrl.populatedYears"></financial-year>
+      </div>
+    </div>
+
+    <div class="row no-gutter responsiveBoxes">
+      <!--<spinner ng-if="$ctrl.showBudgetLoading"></spinner>-->
+      <div class="col-sm-6 col-xs-12 no-padding">
+        <div class="budgetBox box">
+          <label class="budgetBox__label" for="capitalInput">Capital</label><br/>
+          <div ng-if="!$ctrl.readOnly">
+            <input class="form-control"
+                   id="capitalInput"
+                   type="text"
+                   placeholder="Enter capital £"
+                   ng-model="$ctrl.yearData.annualBudgetCapital"
+                   ng-change="$ctrl.onAnnualBudgetChange()"
+                   ng-blur="$ctrl.onAnnualBudgetBlur($event)"
+                   maxlength="13"
+                   number-mask="0"
+                   aria-label="Capital">
+          </div>
+          <div ng-if="$ctrl.readOnly">
+            <span class="budgetBox__value" id="annual-budget-capital">
+              <strong ng-if="$ctrl.yearData.annualBudgetCapital">{{$ctrl.yearData.annualBudgetCapital | currency:'£':0}}</strong>
+              <strong ng-if="!$ctrl.yearData.annualBudgetCapital">£</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xs-12 no-padding">
+        <div class="budgetBox box">
+          <label class="budgetBox__label" for="revenueInput">Revenue</label><br/>
+          <div ng-if="!$ctrl.readOnly">
+            <input class="form-control"
+                   id="revenueInput"
+                   type="text"
+                   placeholder="Enter revenue £"
+                   ng-model="$ctrl.yearData.annualBudgetRevenue"
+                   ng-change="$ctrl.onAnnualBudgetChange()"
+                   ng-blur="$ctrl.onAnnualBudgetBlur($event)"
+                   maxlength="13"
+                   number-mask="0"
+                   aria-label="Revenue">
+          </div>
+          <div ng-if="$ctrl.readOnly">
+            <span class="budgetBox__value" id="annual-budget-revenue">
+              <strong ng-if="$ctrl.yearData.annualBudgetRevenue">{{$ctrl.yearData.annualBudgetRevenue | currency:'£':0}}</strong>
+              <strong ng-if="!$ctrl.yearData.annualBudgetRevenue">£</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row"
+           id="lastUpdated">
+        <div class="col-xs-12 text-right">
+          <span ng-if="$ctrl.budgetLastModified">Last updated {{$ctrl.budgetLastModified}}</span>
+        </div>
+
+        <div class="col-xs-12 error text-center mtop20 mbottom10"
+           ng-if="$ctrl.showBudgetInvalid">
+          <span>You must enter a value of £0 or more in both Revenue and Capital to set your Annual Budget.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mbottom30">
+      <section-header>Forecast your spend {{$ctrl.currentYearAnnualSpend.financialYear.label}}</section-header>
+      <project-budget-forecast
+        session-storage="$ctrl.blockSessionStorage"
+        year="$ctrl.currentYearAnnualSpend"
+        year-data="$ctrl.yearData"
+        spend-categories="$ctrl.forecastSpendCategories"
+        spend-types="$ctrl.forecastLedgerTypes"
+        spend-recurrence="$ctrl.forecastSpendRecurrence"
+        on-add-spend="$ctrl.onAddSpendForecast(event)"
+        on-remove-spend="$ctrl.onRemoveSpendForecast(event)"
+        on-show-metadata="$ctrl.showMetadataModal(event)"
+        read-only-parent="$ctrl.readOnly"
+        read-only="
+          $ctrl.readOnly ||
+          $ctrl.yearData.annualBudgetCapital == null ||
+          $ctrl.yearData.annualBudgetRevenue == null
+          ">
+      </project-budget-forecast>
+    </div>
+
+    <div class="row mtop30 no-gutter responsiveBoxes" vertilize-container>
+      <div class="col-md-6 col-sm-6 no-padding">
+        <total-box
+          title="'LEFT TO SPEND AGAINST ANNUAL BUDGET'"
+          description="'Annual budget minus actual spend (excluding the current month)'"
+          left-label="'Capital'"
+          left-value="$ctrl.yearData.totals.leftToSpendCapitalInclCurrentMonth"
+          right-label="'Revenue'"
+          right-value="$ctrl.yearData.totals.leftToSpendRevenueInclCurrentMonth">
+        </total-box>
+      </div>
+      <div class="col-md-6 col-sm-6 no-padding">
+        <total-box
+          title="'AVAILABLE TO FORECAST AGAINST ANNUAL BUDGET'"
+          description="'Annual budget minus total remaining forecast and actual spend'"
+          left-label="'Capital'"
+          left-value="$ctrl.yearData.totals.availableToForecastCapital"
+          right-label="'Revenue'"
+          right-value="$ctrl.yearData.totals.availableToForecastRevenue">
+        </total-box>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 mtop40 mbottom30 text-center">
+        <button class="btn btn-primary" ng-if="!$ctrl.readOnly" ng-click="$ctrl.submit()">SAVE</button>
+      </div>
+    </div>
+  </form>
+</div>

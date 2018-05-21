@@ -1,0 +1,147 @@
+<div class="projects-page">
+    <page-header header="'Projects'">
+      <ph-right permission permission-only="'proj.create'" ng-if="$ctrl.user.approved">
+        <button class="btn btn-primary btn-md" ng-click="$ctrl.createNewProject()">
+          CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </ph-right>
+    </page-header>
+
+    <well class="row programmes-list-actions mbottom10 search-container">
+      <div class="col-md-5 search-column">
+        <div class="text-align-left">Search</div>
+        <search-field options="$ctrl.searchOptions"
+                      selected-option="$ctrl.selectedSearchOption"
+                      search-text="$ctrl.searchTextModel"
+                      on-select="$ctrl.select($ctrl.selectedSearchOption)"
+                      on-search="$ctrl.search()"
+                      on-clear="$ctrl.clearSearch()"></search-field>
+      </div>
+
+      <div class="col-xs-12 col-sm-6 col-md-4 project-status search-column">
+        <div class="status-box pull-left">
+          <div class="text-align-left">Project status</div>
+          <checkbox-filter filter-dropdown-items="$ctrl.filterDropdownItems" on-change="$ctrl.updateFilters($event)"></checkbox-filter>
+        </div>
+        <div class="clear-filter-and-search-box pull-left">
+          <button
+            ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState"
+            class="action-buttons action-buttons-reset"
+            ng-click="$ctrl.clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset</button>
+        </div>
+      </div>
+
+
+      <div class="col-xs-12 col-sm-6 col-md-3 actions-panel search-column">
+        <div ng-if="$ctrl.showActions()">
+          <div class="actions-panel-title">Actions</div>
+          <div>
+            <button
+              ng-if="$ctrl.canAssess"
+              class="action-buttons"
+              ng-click="$ctrl.setToAssess()"><span class="icon-Assess icon"></span> Set to Assess</button>
+            <button
+              ng-if="$ctrl.canRevert"
+              class="action-buttons"
+              ng-click="$ctrl.revertToSubmit()"><span class="icon-Revert icon"></span> Revert to Submit</button>
+            <button
+              ng-if="$ctrl.canDelete"
+              class="action-buttons"
+              ng-click="$ctrl.delete()"><span class="icon-Delete icon"></span></span> Delete</button>
+          </div>
+        </div>
+      </div>
+    </well>
+
+    <div>
+      <spinner ng-if="$ctrl.loading && $ctrl.filteredList.length == 0"></spinner>
+    </div>
+    <div class="row" ng-if="$ctrl.searchText">
+      <div class="col-xs-12" id="total-results">
+        <span class="pull-left mbottom5">
+          Total results {{$ctrl.filteredList.length}}
+        </span>
+      </div>
+    </div>
+    <div class="row" ng-if="!$ctrl.loading && ($ctrl.filteredList.length == 0)" id="no-results">
+      <hr/>
+      <span ng-if="$ctrl.searchText">
+        0 results match your search {{$ctrl.selectedSearchOption.description}} {{$ctrl.searchText}}. Check your search query and filters and try again.
+        For Project ID and Organisation Code searches, ensure you have entered the full number as a partial number will not return any search results
+      </span>
+        <span ng-if="!$ctrl.searchText && $ctrl.filterCounts.false !== 7">
+          0 projects match your filter selections. Check your filter criteria and try again.
+        </span>
+        <span ng-if="!$ctrl.searchText && $ctrl.filterCounts.true === 7">
+        There are currently no projects available for you to view.
+      </span>
+    </div>
+
+    <div class="row" ng-if="$ctrl.filteredList.length > 0">
+      <div class="col-xs-12 project-table table-responsive no-padding">
+        <table id="projects-table" class="table table-hover table-bordered table-striped table-selectable-row">
+          <thead class="thead-inverse uppercase">
+            <tr>
+              <th ng-if="::$ctrl.canAssess || $ctrl.canRevert || $ctrl.canDelete">
+                <div class="checkbox" ng-class="{checked: $ctrl.allSelected}">
+                  <input type="checkbox"
+                    aria-label="Select all projects"
+                    name="selectInput"
+                    ng-model="$ctrl.allSelected"
+                    ng-change="$ctrl.onAllCheckboxChange($event)"
+                    ng-disabled="$ctrl.readOnly"
+                    ng-hide="$ctrl.hideAllCheckbox">
+                  </div>
+              </th>
+              <th>Project ID</th>
+              <th>Project Title</th>
+              <th>Org Name</th>
+              <th>Org Code</th>
+              <th>Org Type</th>
+              <th>Programme</th>
+              <th>Project Type</th>
+              <th>Status</th>
+              <th>Modified</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="project in $ctrl.projectsPage track by project.id" ng-click="$ctrl.goToProjectOverview(project.id)" class="project-row">
+              <td ng-if="::$ctrl.canAssess || $ctrl.canRevert || $ctrl.canDelete">
+                <div class="checkbox" ng-class="{checked: project.isSelected}">
+                  <input type="checkbox"
+                    aria-label="Select project"
+                    name="selectInput"
+                    ng-model="project.isSelected"
+                    ng-click="$event.stopPropagation(); $ctrl.onProjectCheckboxClick(project)"
+                    ng-disabled="$ctrl.readOnly"
+                    ng-hide="$ctrl.hideProjectCheckbox">
+                </div>
+
+              </td>
+              <td class="project-id">P{{ project.id }}</td>
+              <td><div class="title-cell">{{ project.title }}</div></td>
+              <td>{{ project.orgName }}</td>
+              <td>{{ project.orgId }}</td>
+              <td>{{ project.orgType}}</td>
+              <td>{{ project.programmeName }}</td>
+              <td>{{ project.templateName }}</td>
+              <td class="project-status-column">{{project.fullStatus}}</td>
+              <td>{{ project.lastModified | date: 'MMM d, yyyy HH:mm'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- TODO pagination component -->
+      <br>
+      <div class="col-xs-12 no-padding bottom-pagination mtop10">
+        <div class="pull-right">
+          <ul uib-pagination max-size="3" items-per-page="$ctrl.itemsPerPage" total-items="$ctrl.filteredList.length" ng-model="$ctrl.currentPage"
+              class="pagination-sm pull-right" boundary-link-numbers="true" force-ellipses="true" ng-change="$ctrl.showPage($ctrl.currentPage)">
+          </ul>
+        </div>
+        <div class="pull-right pagination-summary">
+          Showing <span class="start-end-index">{{$ctrl.indexStart + 1}} - {{$ctrl.indexEnd }}</span> of {{$ctrl.filteredList.length}}
+        </div>
+      </div>
+    </div>
+</div>

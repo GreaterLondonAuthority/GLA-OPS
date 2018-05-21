@@ -1,0 +1,100 @@
+<div class="create-delegated-modal">
+
+  <div class="modal-header text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Adjust budgets</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="crateDelegatedForm"
+      role="form"
+      name="crateDelegatedForm"
+      class="form-group">
+
+      <div class="form-group" ng-if="$ctrl.grantTypes.length !== 1">
+        <label for="grantType">Select grant type</label>
+        <ui-select id="grantType"
+                   name="grantType"
+                   search-enabled="false"
+                   on-select="$ctrl.onGrantTypeSelect($select.selected)"
+                   required
+                   ng-model="$ctrl.grantType">
+          <ui-select-match placeholder="Select">{{$select.selected.label}}</ui-select-match>
+          <ui-select-choices repeat="grantType in $ctrl.grantTypes">
+            <span>{{grantType.label}}</span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+      <div class="form-group">
+        <label for="amount">Enter amount £, to reduce the initial budget enter a negative figure</label>
+        <input id="amount"
+               type="text"
+               maxlength="13"
+               number-mask="0"
+               name="amount"
+               ng-disabled="$ctrl.readOnly"
+               class="form-control"
+               placeholder="Enter amount £"
+               ng-model="$ctrl.dataBlock.amount"
+               required
+               maxlength="50"
+               negative-number
+        />
+        <div class="error-wrapper" ng-show="crateDelegatedForm.amount.$touched">
+          <span class="error" ng-show="$ctrl.dataBlock.amount !== '' && !$ctrl.isAmountValid()">The budget cannot be reduced by more than the current allocation</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+
+        <label class="mtop10" for="approvedOn">Date approval was agreed (cannot be in the future)</label>
+        <date-input ng-model="$ctrl.dataBlock.approvedOn"
+                    id="approvedOn"
+                    style="display: block"
+                    required
+                    name="approvedOn"
+                    default-date="true"
+                    max-date="$ctrl.maxDate">
+        </date-input>
+      </div>
+      <!--<div class="error-wrapper">-->
+      <!--<span class="error" ng-show="$ctrl.dataBlock.approvedOn && !$ctrl.isApprovedOnValid()">This date cannot be in the future</span>-->
+      <!--</div>-->
+      <div class="form-group">
+        <label class="mtop10" for="approvedBy">Name of approver</label>
+        <input id="approvedBy"
+               type="text"
+               name="approvedBy"
+               ng-disabled="$ctrl.readOnly"
+               class="form-control"
+               placeholder=""
+               ng-model="$ctrl.dataBlock.approvedBy"
+               required
+               maxlength="50"/>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row" ng-if="true">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="claim-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$close($ctrl.dataBlock)"
+          ng-disabled="crateDelegatedForm.$invalid || !$ctrl.dataBlock.amount || !$ctrl.isAmountValid()">ADJUST
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15 no-border">
+        <a href class="form-cancel" ng-mousedown="$dismiss()">Close</a>
+      </div>
+    </div>
+  </div>
+</div>

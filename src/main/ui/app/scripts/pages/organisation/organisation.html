@@ -1,0 +1,151 @@
+<div class="organisation">
+
+  <div class="row text-center org-title">
+    <div class="col-xs-10 col-xs-offset-1">
+      <page-header
+        editable-block="$ctrl"
+        on-back="$ctrl.back()">{{$ctrl.org.name}}</page-header>
+
+      <header-status>
+        <hs-left>Status: {{$ctrl.org.status}}</hs-left>
+      </header-status>
+    </div>
+  </div>
+
+  <multi-panel class="org-details">
+    <well class="column">
+      <div class="section">
+        <div class="section-header">Organisation details</div>
+        <mp-field label="'Organisation name'">{{$ctrl.org.name}}</mp-field>
+        <mp-field label="'GLA OPS ID'">{{$ctrl.org.id}}</mp-field>
+        <mp-field ng-if="$ctrl.imsNumberLabel" label="$ctrl.imsNumberLabel">{{$ctrl.org.imsNumber}}</mp-field>
+        <mp-field label="'Head of organisation'">{{$ctrl.org.ceoName}}</mp-field>
+        <mp-field label="'Email for head of organisation'">
+          <a ng-href="mailto:{{$ctrl.org.email}}" class="text-nowrap" ng-attr-title="{{$ctrl.org.email}}">{{$ctrl.org.email}}</a>
+        </mp-field>
+        <mp-field label="'Website'">
+          <a ng-href="{{$ctrl.org.website}}" target="_blank" class="text-nowrap" ng-attr-title="{{$ctrl.org.website}}">{{$ctrl.org.website}}</a>
+        </mp-field>
+        <mp-field label="'Address'">
+            <div>{{$ctrl.org.address.address1}}</div>
+            <div>{{$ctrl.org.address.address2}}</div>
+            <div>{{$ctrl.org.address.address5}}</div>
+            <div>{{$ctrl.org.address.postcode}}</div>
+        </mp-field>
+      </div>
+      <div class="section">
+        <div class="section-header">Primary contact</div>
+        <mp-field label="'Primary contact name'">{{$ctrl.org.primaryContactFirstName}} {{$ctrl.org.primaryContactLastName}}</mp-field>
+        <mp-field label="'Primary contact email'">
+          <a ng-href="mailto:{{$ctrl.org.primaryContactEmail}}" class="text-nowrap" ng-attr-title="{{$ctrl.org.primaryContactEmail}}">{{$ctrl.org.primaryContactEmail}}</a>
+        </mp-field>
+        <mp-field label="'Contact number'">{{$ctrl.org.primaryContactNumber}}</mp-field>
+      </div>
+    </well>
+
+    <well class="column">
+      <div class="section">
+        <div class="section-header">GLA governance</div>
+        <mp-field label="'Organisation type'" id="organisation-type">{{$ctrl.organisationTypes[$ctrl.org.entityType]}}</mp-field>
+        <mp-field label="'Managing organisation'" id="managing-organisation">{{$ctrl.org.managingOrganisationName}}</mp-field>
+        <mp-field label="'Parent organisation ID for reporting purposes (optional)'" id="parent-organisation">{{$ctrl.org.parentOrganisationName}}</mp-field>
+        <mp-field label="'SAP ID'" ng-if="$ctrl.canViewSapId">{{$ctrl.org.sapVendorId}}</mp-field>
+      </div>
+      <div class="section" ng-if="!$ctrl.org.techSupportOrganisation">
+        <div class="section-header">Regulatory information</div>
+        <mp-field label="'Registered with the housing regulator'">{{$ctrl.org.regulated ? 'Yes' : 'No'}}</mp-field>
+        <mp-field label="'Viability score'">{{$ctrl.org.viability}}</mp-field>
+        <mp-field label="'Governance score'">{{$ctrl.org.governance}}</mp-field>
+      </div>
+    </well>
+  </multi-panel>
+
+  <div class="text-center" ng-if="$ctrl.org.status === 'Pending'" permission permission-only="'org.manage.approve'">
+    <div class="col-xs-10 col-xs-offset-1">
+      <button class="btn btn-primary mtop15 approve-organisation" ng-click="$ctrl.approveOrg()">APPROVE</button>
+      <hr class="mtop30">
+    </div>
+  </div>
+
+
+  <programmes-list org="$ctrl.org" refresh-details="$ctrl.refreshDetails()">
+  </programmes-list>
+
+  <contracts-list org="$ctrl.org" refresh-details="$ctrl.refreshDetails()">
+  </contracts-list>
+
+  <div class="org-users" ng-if="$ctrl.showUsers">
+    <div class="row no-gutter">
+      <div class="col-xs-offset-2 col-xs-10">
+        <h3>Registrations</h3>
+      </div>
+      <div class="col-xs-offset-2 col-xs-10 mbottom40">
+        Access registration details via the <a href ui-sref="users">All users</a> page
+      </div>
+    </div>
+  </div>
+
+  <!--TODO remove properly when we know registration is working fine. False in ng-if for now.-->
+  <div class="org-users" ng-if="false && $ctrl.showUsers">
+    <div class="row no-gutter">
+      <div class="col-xs-2"></div>
+
+      <div class="col-xs-4">
+        <h3>Registrations</h3>
+      </div>
+
+      <div class="col-xs-4">
+        <div class="pull-right clearfix" >
+          <checkbox-filter class="mtop15" filter-dropdown-items="$ctrl.userRegStatusDropdown" on-change="$ctrl.setUserRegFilter()"></checkbox-filter>
+        </div>
+      </div>
+
+      <div class="col-xs-2"></div>
+    </div>
+
+    <div class="row no-padding-row" ng-repeat="user in $ctrl.org.users | filter: $ctrl.userRegFilter | orderBy: ['firstName', 'lastName']">
+    <div class="col-xs-1 col-md-2"></div>
+      <div class="col-xs-12 col-sm-10 col-md-8 org-user">
+      <div class="row">
+          <div class="col-xs-4 registrations__name">
+            <div class="row gla-label">
+              {{user.firstName}} {{user.lastName}}
+            </div>
+            <div class="row">
+              <div class="username" ng-attr-title="{{user.username}}">{{user.username}}</div>
+            </div>
+          </div>
+
+          <div class="col-xs-4">
+            <ui-select class="registrations__role"
+                       ng-class="{disabled: !user.currentOrgRole.approved}"
+                       name="role"
+                       ng-disabled="(!user.currentOrgRole.approved || !$ctrl.assignableRole(user.currentOrgRole.name))"
+                       ng-model="user.currentOrgRole"
+                       search-enabled="false"
+                       on-select="$ctrl.userRoleUpdated(user, $select.selected.name)">
+              <ui-select-match placeholder="{{$ctrl.defaultRole.description}}">
+                {{$ctrl.getRoleDescription($select.selected.name, user)}}
+              </ui-select-match>
+              <ui-select-choices repeat="role in $ctrl.userRoles"> <span title="{{ role.description }}">{{ role.description }}</span></ui-select-choices>
+            </ui-select>
+          </div>
+
+          <div class="col-xs-4">
+            <div class="org-user-remove pull-right" style="margin-left: 10px;">
+              <button type="button" class="btn btn-primary btn-md" ng-disabled="!$ctrl.assignableRole(user.currentOrgRole.name)" ng-click="$ctrl.remove(user)">REMOVE</button>
+            </div>
+
+            <div ng-if="!user.currentOrgRole.approved" class="org-user-pending">
+              <button type="button" class="btn btn-primary btn-md pull-right"ng-click="$ctrl.approveUser(user)">
+                APPROVE</button>
+            </div>
+            <div ng-if="user.currentOrgRole.approved" class="org-user-approved pull-right">
+              Approved <span class="glyphicon glyphicon-ok"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="row">
+  <div class="col-xs-12 grant-footer mtop15" style="background: none; border: none; margin-bottom: -10px">
+    <div class="grant-footer-title">
+      {{$ctrl.title || 'TOTAL GRANT ELIGIBLE'}}
+    </div>
+    <div class="grant-footer-value total-grant">
+      {{$ctrl.isUnit? '':'&pound;'}}{{ $ctrl.total | number }}
+    </div>
+  </div>
+  <div class="col-xs-6 col-xs-offset-3"><hr></div>
+</div>

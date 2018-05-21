@@ -1,0 +1,51 @@
+#toast-container {
+  .glyphicon {
+    display: none;
+  }
+  z-index: 1004;
+  .inline-block{
+    display: inline-block;
+  }
+  .glyphicon {
+    padding-right: 10px;
+  }
+  .inline-flex {
+    display: inline-flex;
+  }
+  
+  .toast.toast-success {
+    background-image: none !important;
+    .glyphicon.glyphicon-ok {
+      color: $green;
+      font-size: 30px;
+      display: inline;
+    }
+    border: 2px solid $green;
+  }
+
+  .toast.toast-warning {
+    background-image: none !important;
+    .glyphicon.glyphicon-exclamation-sign {
+      display: inline;
+      font-size: 30px;
+      color: $amber;
+      display: inline;
+    }
+    border: 2px solid $amber;
+  }
+
+  .toast {
+    opacity: 1;
+    background-color: $gla-white;
+    font-family: $font-family-light;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+    color: $primary-text;
+    text-align: center;
+    padding: 20px;
+    width: auto !important;
+    border-radius: 1px;
+    margin-top: -2px;
+    border: 2px solid $silver-dark;
+    font-size: 18px;
+  }
+}

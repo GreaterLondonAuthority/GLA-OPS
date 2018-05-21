@@ -1,0 +1,135 @@
+.btn-common {
+  outline: none;
+  box-shadow: 1px 1px 5px 0 rgba(0, 0, 0, 0.2);
+  font-family: $font-family-bolder;
+  padding: 6px 40px;
+  &[disabled] {
+    box-shadow: none;
+    opacity: 1;
+  }
+  .glyphicon {
+    margin-left: 10px;
+  }
+
+  &.min-padding {
+    padding: 6px 16px;
+  }
+}
+
+.btn.btn-default {
+  &:focus,
+  &:active:focus {
+    outline: none;
+  }
+}
+
+.btn.btn-md {
+  &,
+  &.btn-md:active {
+    padding: 6px 12px;
+  }
+}
+
+.btn-primary {
+  @extend .btn-common;
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: $btn-primary-hover;
+    @extend .btn-common;
+  }
+  &:active:focus {
+    background-color: darken($btn-primary-hover, 3%);
+    @extend .btn-common;
+  }
+  &[disabled] {
+    &:focus, &:active, & {
+      background-color: $btn-disabled-bg !important;
+      color: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+.btn-secondary {
+  @include button-variant($btn-secondary-color, $btn-secondary-bg, $btn-secondary-border);
+}
+
+.btn-secondary {
+  @extend .btn-common;
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: $btn-secondary-hover;
+    border-color: $btn-secondary-border-active;
+    @extend .btn-common;
+  }
+  &:active:focus {
+    background-color: darken($btn-secondary-hover, 3%);
+    border-color: darken($btn-secondary-border-active, 3%);
+    @extend .btn-common;
+  }
+  &[disabled] {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+      background-color: $btn-secondary-bg;
+      color: rgba(119, 119, 119, 0.3);
+    }
+  }
+}
+
+.btn-text {
+  @extend .btn-common;
+  color: $moonstone !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  &:hover {
+    text-decoration: underline;
+  }
+  &[disabled] {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+      color: rgba(119, 119, 119, 0.3) !important;
+      text-decoration: none;
+    }
+  }
+}
+
+.back-button, .btn-project-menu {
+  background-color: white;
+  color: #5ca9c4;
+  font-size: 0.75rem;
+  font-weight: bold;
+  //width: 4.68rem;
+  padding: 0.45rem 0.2rem 0.35rem 0;
+
+  i {
+    padding-top: 0.2rem;
+    font-size: 0.7rem;
+  }
+}
+
+.btn-edit {
+  @extend .btn-primary;
+}
+.checkbox {
+  width: 22px;
+  height: 22px;
+  background: url(../images/Unchecked.png) no-repeat;
+  &.checked {
+    background: url(../images/Checked.png) no-repeat;
+  }
+  &.focused {
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  }
+  input[type="checkbox"]{
+    margin-left: 0px;
+    height: 22px;
+    width: 22px;
+    opacity: 0;
+  }
+}

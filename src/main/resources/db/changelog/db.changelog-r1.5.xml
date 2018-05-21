@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="304" author="ybouhass">
+        <createSequence sequenceName="contract_seq" startValue="100" incrementBy="1" />
+
+        <createTable tableName="contract">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="contract_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="organisation_contract_seq" startValue="1000" incrementBy="1" />
+
+        <createTable tableName="organisation_contract">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="organisation_contract_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="contract_id" type="INT4">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="organisation_id" type="INT4">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="contract_id"
+                                 baseTableName="organisation_contract"
+                                 constraintName="fk_organisation_contract_contract_id"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="contract"/>
+
+        <addForeignKeyConstraint baseColumnNames="organisation_id"
+                                 baseTableName="organisation_contract"
+                                 constraintName="fk_organisation_contract_organisation_id"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="organisation"/>
+
+        <addColumn tableName="template">
+            <column name="contract_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="contract_id"
+                                 baseTableName="template"
+                                 constraintName="fk_template_contract_id"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="contract"/>
+    </changeSet>
+
+    <changeSet id="305" author="ybouhass">
+        <addColumn tableName="organisation_contract">
+            <column name="org_group_type" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="created_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="306" author="dieppa">
+        <createTable tableName="risks_block">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="milestones_block_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="rating" type="INT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="rating_explanation" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+
+    <changeSet id="307" author="dieppa">
+        <dropTable tableName="risks_block" />
+        <createSequence sequenceName="risks_block_seq" startValue="10000" incrementBy="1"/>
+        <createTable tableName="risks_block">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="risks_block_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="rating" type="INT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="rating_explanation" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="308" author="ybouhass">
+        <modifyDataType tableName="risks_block" columnName="rating_explanation" newDataType="varchar(1000)" />
+    </changeSet>
+
+    <changeSet id="309" author="melville">
+        <createTable tableName="OUTPUT_TYPE">
+            <column name="id" type="INT4" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="output_type" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <createTable tableName="OUTPUT_CONFIG_GROUP" remarks="holds all information relating to output config group">
+            <column name="id" type="INT4" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="period_type" type="VARCHAR(20)"  />
+            <column name="output_type_name" type="VARCHAR(50)"  />
+        </createTable>
+        <createTable tableName="OUTPUT_GROUP_OUTPUT_CONFIG" remarks="join table between outputs group and output config categories">
+            <column name="output_group_id" type="INT4" remarks="output group id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="output_config_id" type="INT4" remarks="output category id">
+                <constraints nullable="false" />
+            </column>
+            <column name="display_order" type="INT4" remarks="category display order for this template">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createTable tableName="OUTPUT_GROUP_OUTPUT_TYPE" remarks="join table between outputs group and output types">
+            <column name="output_group_id" type="INT4" remarks="output group id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="output_type_id" type="INT4" remarks="output type id">
+                <constraints nullable="false" />
+            </column>
+            <column name="display_order" type="INT4" remarks="output types display order for this template">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <dropColumn tableName="OUTPUT_CAT_CONFIG" columnName="display_order"/>
+        <addColumn tableName="template_block">
+            <column name="OUTPUT_CONFIG_GROUP_ID" type="INT4">
+            </column>
+        </addColumn>
+        <sql>
+            update template_block set OUTPUT_CONFIG_GROUP_ID = 1000 where block = 'Outputs'
+        </sql>
+    </changeSet>
+    <changeSet id="310" author="melville">
+        <addColumn tableName="outputs">
+            <column name="org_config_group_id" type="INT4" defaultValue="1000">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="311" author="melville">
+        <dropTable tableName="OUTPUT_TYPE"/>
+        <createTable tableName="OUTPUT_TYPE">
+            <column name="key" type="varchar(40)" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addColumn tableName="OUTPUT_GROUP_OUTPUT_TYPE">
+            <column name="output_type_key" type="VARCHAR(40)"></column>
+        </addColumn>
+        <dropNotNullConstraint tableName="OUTPUT_GROUP_OUTPUT_TYPE" columnName="output_type_id" columnDataType="INT4"/>
+        <sql>
+            update OUTPUT_GROUP_OUTPUT_TYPE set output_type_key = 'DIRECT' where output_type_id = 1 ;
+            update OUTPUT_GROUP_OUTPUT_TYPE set output_type_key = 'IND_COUNTED_IN_ANOTHER' where output_type_id = 2 ;
+            update OUTPUT_GROUP_OUTPUT_TYPE set output_type_key = 'IND_MINORITY_STAKE' where output_type_id =  3;
+            update OUTPUT_GROUP_OUTPUT_TYPE set output_type_key = 'IND_UNBLOCKS' where output_type_id = 4 ;
+            update OUTPUT_GROUP_OUTPUT_TYPE set output_type_key = 'IND_UNLOCKING' where output_type_id = 5 ;
+            update OUTPUT_GROUP_OUTPUT_TYPE set output_type_key = 'IND_OTHER' where output_type_id = 6 ;
+        </sql>
+        <dropColumn tableName="OUTPUT_GROUP_OUTPUT_TYPE" columnName="output_type_id"/>
+    </changeSet>
+
+    <changeSet id="312" author="ybouhass">
+        <renameColumn tableName="outputs" oldColumnName="org_config_group_id" newColumnName="config_group_id" />
+    </changeSet>
+
+    <changeSet id="313" author="cmelville">
+        <addColumn tableName="OUTPUT_CONFIG_GROUP">
+            <column name="category_name" type="VARCHAR(40)"></column>
+        </addColumn>
+        <addColumn tableName="OUTPUT_CONFIG_GROUP">
+            <column name="subcategory_name" type="VARCHAR(40)"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="314" author="cmelville">
+        <addColumn tableName="units_table_entry">
+            <column name="original_id" type="INT4" remarks="Used to track changes to same table row entry between block versions"></column>
+        </addColumn>
+        <sql>
+            update units_table_entry set original_id = id;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

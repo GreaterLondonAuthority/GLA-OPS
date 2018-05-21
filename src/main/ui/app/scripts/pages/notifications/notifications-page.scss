@@ -1,0 +1,50 @@
+.notifications-page {
+
+  .notification-group-title {
+    font-size: 18px;
+  }
+  .notification-group{
+    background-color: white;
+    border: 1px solid #e2e2e2;
+
+    .notification-repeater {
+      padding: 10px;
+      hr {
+        margin: 0;
+      }
+
+      border-left: 3px solid black;
+      padding-left: 7px;
+
+      border-bottom: 1px solid #e2e2e2;
+
+      &.notification-read {
+        background-color: #f9f9f9;
+        border-left: 0;
+        padding-left: 10px;
+        .notification-text {
+          font-family: "Gotham-book", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+        }
+      }
+      .notification-text{
+        font-family: "Gotham-medium", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+      }
+    }
+
+    .notification-repeater:last-child{
+      border-bottom: 0;
+    }
+
+    .notification {
+      cursor: pointer;
+
+      .notification-text {
+        padding: 5px;
+      }
+      .notification-time {
+        padding: 5px;
+        color: #777777;
+      }
+    }
+  }
+}

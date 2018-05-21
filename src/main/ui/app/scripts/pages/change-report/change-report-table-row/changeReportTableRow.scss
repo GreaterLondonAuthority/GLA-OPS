@@ -1,0 +1,11 @@
+change-report-table-row {
+  display: block;
+
+  .changed-value a{
+    color: $red;
+  }
+
+  .glyphicon-file{
+    margin-right: 3px;
+  }
+}

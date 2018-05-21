@@ -1,0 +1,49 @@
+.pending-payments {
+  table {
+    tr.clickable-row td{
+        cursor: pointer;
+    }
+    > tbody + tbody{
+      //border-top: none;
+    }
+
+
+
+    td {
+      cursor: default;
+    }
+    tbody:nth-child(even) tr {
+      //background-color: $primary-white;
+      background-color: #EDEDED;
+    }
+
+    &.table-bordered > tbody > tr > td {
+      border: 1px solid $base-border-color;
+      border-top: 1px solid $base-border-color;
+    }
+  }
+
+  .payment-row {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    min-height: 50px;
+    line-height: 2rem;
+    .total {
+      margin-right: 20px;
+    }
+
+    .glyphicon-remove {
+      top: 2px;
+      color: $red;
+    }
+
+    .error .glyphicon-exclamation-sign {
+      font-size: 16px;
+      top: 3px;
+    }
+
+    .btn-authorise, .btn-interest{
+      margin-right: 10px;
+    }
+  }
+}

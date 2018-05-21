@@ -1,0 +1,20 @@
+<div id="server-error">
+  <div class="modal-header text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1 class="bright-red">{{header}}</h1>
+    <h3 class="subheader">{{subHeader}}</h3>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <p>{{body}}</p>
+        <p ng-if="errorId">ID: {{errorId}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$dismiss()">OK</button>
+  </div>
+</div>

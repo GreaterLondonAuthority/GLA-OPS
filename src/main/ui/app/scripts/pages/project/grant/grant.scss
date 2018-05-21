@@ -1,0 +1,102 @@
+.grant-block-wrap {
+  margin: 10px 0;
+  background-color: #ffffff;
+
+  .grant-block {
+    padding: 5px 5px;
+    text-align: center;
+    background-color: #ffffff;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+
+
+    .grant-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      color: $secondary-text;
+      padding: 10px 0 15px 0;
+      //min-height: 85px;
+    }
+    .grant-property {
+      font-size: 12px;
+      line-height: 1.4;
+      margin-bottom: 1em;
+      &:last-child {
+        padding-bottom: 5px;
+      }
+      .grant-name{
+        font-family: $font-family-light;
+        color: $secondary-text;
+      }
+
+      .grant-value {
+        font-family: $font-family-bolder;
+      }
+    }
+  }
+}
+.project-grant {
+  width: 90%;
+  margin: auto;
+
+  .grant-column {
+    padding: 0px;
+    //background-color: #ffffff;
+
+    .grant-block-wrap {
+      //border-right: 1px solid #ddd;
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+  }
+
+  .grant{
+    //box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+    position:relative;
+    margin-left: -8px;
+    margin-right: -8px;
+  }
+  .grant-footer {
+    font-size: 16px;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    background-color: $ice-blue;
+    padding: 15px;
+    line-height: 1.75;
+
+    .grant-footer-title {
+      //margin-bottom: 10px;
+      //font-family: $font-family-light;
+      color: $secondary-text;
+    }
+
+    .grant-footer-value {
+      font-family: $font-family-bolder;
+    }
+  }
+
+  .design-compliant{
+    margin-bottom: 5px;
+    label {
+      margin-right: 20px;
+    }
+  }
+
+  .sub-comment{
+    font-size: 12px;
+    margin-top: 5px;
+    font-family: $font-family-light;
+  }
+}
+
+.start-on-site-message {
+  padding-top: 10px;
+  color: $peppermint;
+  font-size: 12px;
+}
+
+section .grant-block-title{
+  margin-top: 30px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-family: $font-family-light;
+}

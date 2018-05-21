@@ -1,0 +1,84 @@
+  change-report-tiles {
+    display: block;
+    .table-row {
+      .row-heading, .row-description {
+        font-family: $font-family-default !important;
+        color: $secondary-text;
+        border-left: $tiles-border;
+        border-right: $tiles-border;
+      }
+
+      .row-heading{
+        text-transform: uppercase;
+        border-top: $tiles-border;
+        padding: 20px 10px 10px 10px !important;
+        font-size: 14px;
+      }
+
+      .field-label {
+        border-left: $tiles-border;
+        padding-left: 40px !important;
+      }
+      .field-value {
+        border-right: $tiles-border;
+        color: $primary-text;
+        font-family: $font-family-bolder;
+        padding-right: 40px !important;
+      }
+
+      &:last-child {
+        .right-col {
+          .field-label, .field-value {
+            border-bottom: $tiles-border;
+            padding-bottom: 20px;
+          }
+        }
+      }
+
+      @include when-sm {
+        &:last-child {
+          .left-col, .right-col {
+            .field-label, .field-value, .row-heading, .row-description {
+              border-bottom: $tiles-border;
+              padding-bottom: 20px;
+            }
+          }
+        }
+      }
+
+      font-size: 12px;
+      .field-label {
+        background-color: $white;
+        text-align: left;
+        color: $secondary-text;
+      }
+
+      .row-heading, .row-description {
+        background-color: $white;
+        text-align: center;
+        color: $secondary-text;
+        font-family: $font-family-bolder;
+      }
+
+      //Mobile case
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      .left-col, .right-col, .col {
+        display: flex;
+        &.no-block {
+          display: none;
+        }
+      }
+
+      .field-label, .field-value {
+        width: 50%;
+      }
+
+      .field-value {
+        background: $white;
+        text-align: right;
+      }
+    }
+  }
+

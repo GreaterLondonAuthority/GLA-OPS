@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="396" author="ybouhass">
+        <addColumn tableName="milestone_template">
+            <column name="na_selectable" type="boolean" defaultValue="false" remarks="determines whether the N/A option is selectable for this milestone" />
+        </addColumn>
+
+        <addColumn tableName="milestone">
+            <column name="na_selectable" type="boolean" defaultValue="false" remarks="determines whether the N/A option is selectable for this milestone" />
+            <column name="not_applicable" type="boolean" defaultValue="false" remarks="flag for when milestone is not applicable" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="397" author="ybouhass">
+        <addColumn tableName="project_ledger_entry">
+            <column name="modified_on_copy" type="varchar(255)" remarks="back up data for modified_on column as we need to change its data type to timestamp" />
+        </addColumn>
+
+        <sql>update project_ledger_entry set modified_on_copy = modified_on</sql>
+
+        <modifyDataType tableName="project_ledger_entry" columnName="modified_on" newDataType="timestamp" />
+    </changeSet>
+    <changeSet id="398" author="cmelville">
+        <addColumn tableName="table_relationships">
+            <column name="comments" type="varchar(255)" remarks="comments for describing this join, if appropriate." />
+        </addColumn>
+    </changeSet>
+    <changeSet id="400" author="cmelville">
+        <addColumn tableName="milestone">
+            <column name="reclaim_reason" type="varchar(255)" remarks="reason to reclaim" />
+        </addColumn>
+        <addColumn tableName="milestone">
+            <column name="reclaimed_grant" type="INT4" remarks="field for storing monetary reclaims amount"></column>
+        </addColumn>
+        <addColumn tableName="milestone">
+            <column name="reclaimed_dpf" type="INT4" remarks="field for storing dpf amount"></column>
+        </addColumn>
+        <addColumn tableName="milestone">
+            <column name="reclaimed_rcgf" type="INT4" remarks="field for storing rcgf amount"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="399" author="ybouhass">
+        <addColumn tableName="template_question">
+            <column name="section_id" type="INT4" remarks="optional external id of a questions block section" />
+        </addColumn>
+
+        <createSequence sequenceName="questions_block_section_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="questions_block_section">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="questions_block_section_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="external_id" type="INT4" remarks="user defined id" />
+            <column name="display_order" type="INT4" remarks="sections display order" />
+            <column name="text" type="varchar(1000)" remarks="section header text" />
+            <column name="template_block_id" type="INT4" remarks="template questions block id" />
+            <column name="project_block_id" type="INT4" remarks="project questions block id" />
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="401" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="info_message" type="varchar(255)" remarks="info message to appear in the project overview" />
+        </addColumn>
+
+        <addColumn tableName="project">
+            <column name="info_message" type="varchar(255)" remarks="info message to appear in the project overview" />
+        </addColumn>
+
+        <addColumn tableName="template_block">
+            <column name="info_message" type="varchar(255)" remarks="info message to appear in the project block" />
+        </addColumn>
+
+        <addColumn tableName="project_block">
+            <column name="info_message" type="varchar(255)" remarks="info message to appear in the project block" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="402" author="cmelville">
+        <addColumn tableName="milestone">
+            <column name="reclaimed" type="BOOLEAN" remarks="true if milestone has been previously reclaimed." />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="403" author="rbettison">
+        <addColumn tableName="project">
+            <column name="first_approved" type="TIMESTAMP" remarks="date project was first made active"></column>
+        </addColumn>
+
+        <sql>update project p set first_approved = (select approval_timestamp from project_block where project_block_type = 'Details' and version_number=1 and project_id = p.id)</sql>
+    </changeSet>
+
+</databaseChangeLog>

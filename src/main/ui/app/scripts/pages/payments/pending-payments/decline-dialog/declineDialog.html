@@ -1,0 +1,45 @@
+<div class="decline-payement-dialog">
+  <form name="$ctrl.form">
+    <div class="modal-header text-center">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h2>DECLINE {{$ctrl.isReclaim? 'RECLAIM PAYMENTS' : 'PAYMENTS'}}</h2>
+    </div>
+    <div class="modal-body">
+
+      <div class="text-center confirm-message text-center">Declining {{$ctrl.isReclaim? 'reclaim payments' : 'payments'}} will return the project to the GLA project manager for evaluation. This information is visible to external providers.</div>
+      <div class="row mtop15">
+        <label for="declineReason">Tell us why the {{$ctrl.isReclaim? 'reclaim payment' : 'payment'}} is being declined</label><br/>
+        <ui-select id="declineReason"
+                   name="declineReason"
+                   ng-model="$ctrl.declineReason"
+                   on-select=""
+                   search-enabled="false"
+                   required>
+          <ui-select-match placeholder="Select a reason">{{$select.selected.displayValue}}</ui-select-match>
+          <ui-select-choices repeat="reason in $ctrl.paymentDeclineReason">{{reason.displayValue}}</ui-select-choices>
+        </ui-select>
+      </div>
+      <div class="row mtop15">
+        <textarea id="reason"
+                aria-label="Reason" rows="5" name="reason"
+                class="form-control" ng-model="$ctrl.declineComments"
+                maxlength="500"></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <div class="row">
+        <button
+          class="btn btn-default btn-primary btn-center approve-btn"
+          type="button"
+          ng-click="$ctrl.declinePayment()"
+          ng-disabled="!$ctrl.isFormValid()">DECLINE {{$ctrl.isReclaim? 'RECLAIM PAYMENTS' : 'PAYMENTS'}}</button>
+      </div>
+      <div class="row mtop15">
+        <a href  class="form-cancel" ng-click="$dismiss()">Close</a>
+    </div>
+    </div>
+  </form>
+</div>

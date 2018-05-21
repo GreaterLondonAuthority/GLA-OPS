@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>GLA OPS</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+  <!-- build:css(.) styles/vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/angular-toastr/dist/angular-toastr.css" />
+  <!-- endbower -->
+  <!-- endbuild -->
+  <!-- build:css(.tmp) styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild -->
+</head>
+
+<body ng-app="GLA" ng-controller="app.appCtrl">
+
+<div class="gla-wrapper">
+  <gla-header></gla-header>
+  <top-menu></top-menu>
+
+  <section class="gla-main-section">
+    <div ui-view></div>
+  </section>
+
+  <gla-footer></gla-footer>
+</div>
+<loading-mask ng-if="$root.showGlobalLoadingMask" text="" class="is-full-screen"></loading-mask>
+
+<!-- build:js(.) scripts/vendor.js -->
+<!-- bower:js -->
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="bower_components/angular-messages/angular-messages.js"></script>
+<script src="bower_components/angular-resource/angular-resource.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="bower_components/angular-touch/angular-touch.js"></script>
+<script src="bower_components/angular-aria/angular-aria.js"></script>
+<script src="bower_components/angular-i18n/angular-locale_en-gb.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="bower_components/lodash/lodash.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/angular-validation-match/dist/angular-validation-match.min.js"></script>
+<script src="bower_components/ngstorage/ngStorage.js"></script>
+<script src="bower_components/moment/moment.js"></script>
+<script src="bower_components/angular-moment/angular-moment.js"></script>
+<script src="bower_components/angular-toastr/dist/angular-toastr.tpls.js"></script>
+<script src="bower_components/angular-permission/dist/angular-permission.js"></script>
+<script src="bower_components/angular-permission/dist/angular-permission-ui.js"></script>
+<script src="bower_components/angular-permission/dist/angular-permission-ng.js"></script>
+<script src="bower_components/angular-vertilize/angular-vertilize.js"></script>
+<script src="bower_components/re-tree/re-tree.js"></script>
+<script src="bower_components/ng-device-detector/ng-device-detector.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!--This block is replaced with custom configuration in grunt file. -->
+<!-- build:js scripts/scripts.js -->
+<!-- We have a created a patchd up version of ui-select that we need to load manualy do to an issue with contact in grunt -->
+<script src="scripts/directives/angular-ui-select/select.js"></script>
+<script src="scripts/glaModule.js"></script>
+<script src="scripts/app.js"></script>
+<script src="scripts/templateCache.js"></script>
+<!-- endbuild -->
+
+</body>
+</html>

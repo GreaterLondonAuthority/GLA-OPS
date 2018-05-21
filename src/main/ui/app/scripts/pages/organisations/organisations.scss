@@ -1,0 +1,88 @@
+.organisations {
+
+  page-header{
+    padding: 0;
+  }
+
+  .top-pagination {
+    padding-top: 14px;
+  }
+
+  .bottom-pagination {
+    padding-top: 16px;
+  }
+
+  .org-table {
+    /*overflow-y: scroll;*/
+    font-size: 12px;
+    border: none;
+    table > thead > tr > th {
+      /*text-align: center;*/
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    table {
+      box-shadow: 0 0 10px 0 rgba(0,0,0,0.1);
+    }
+
+    td {
+      height: 40px;
+      vertical-align: middle !important;
+    }
+
+    .registration-status-pending {
+      font-weight: bold;
+    }
+
+    .registration-status-approved {
+      color: #31ae52;
+    }
+  }
+
+  .btn.btn-secondary{
+    padding: 6px 12px;
+  }
+
+  .action-buttons-reset{
+    padding-left: 0;
+    padding-bottom: 0;
+  }
+
+  .register-buttons .btn-primary{
+    margin-bottom: 5px;
+  }
+
+
+  .search-filter {
+    margin-bottom: 15px;
+  }
+
+
+  @include when-md {
+    padding-left: 15px;
+    padding-right: 15px;
+
+    .btn.btn-secondary{
+      padding: 6px 40px;
+    }
+
+    .search-filter {
+      margin-bottom: 0;
+    }
+
+    .reset-column{
+      margin-top: 15px;
+    }
+  }
+
+  @include when-lg {
+    padding-left: 15px;
+    padding-right: 15px;
+
+    .reset-column {
+      padding: 0;
+      margin-top: 25px;
+    }
+  }
+}

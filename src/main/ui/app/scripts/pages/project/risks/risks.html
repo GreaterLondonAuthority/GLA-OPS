@@ -1,0 +1,94 @@
+<div class="project-risks-block">
+  <div class="row no-gutter text-center">
+    <project-header on-back="$ctrl.back()" editable-block="$ctrl">Risks and Issues</project-header>
+  </div>
+  <form class="form-gla form-group" name="risksForm" name="risks" ng-if="!$ctrl.loading">
+    <section-header>
+      Project Risk Rating
+    </section-header>
+    <div class="row no-gutter mtop30 mbottom15">
+      <div class="col-xs-12">
+        <label for="rating-dropdown">Overall Project Risk Rating</label>
+      </div>
+      <div class="col-xs-6">
+        <div class="risk-{{$ctrl.overallRating.color.toLowerCase()}}" ng-if="$ctrl.readOnly && $ctrl.overallRating">
+          <span class="risk-color">{{$ctrl.overallRating.color.toUpperCase()}}</span> - {{$ctrl.overallRating.description}}
+        </div>
+
+        <div ng-if="$ctrl.readOnly && !$ctrl.overallRating">
+          Not provided
+        </div>
+
+        <ui-select id="rating-dropdown"
+                   name="rating-dropdown"
+                   class="rating-dropdown"
+                   ng-model="$ctrl.overallRating"
+                   search-enabled="false"
+                   ng-if="!$ctrl.readOnly"
+                   ng-disabled="$ctrl.readOnly"
+                   on-select="$ctrl.autoSave()">
+          <ui-select-match allow-clear="true" placeholder="Select risk rating">{{$ctrl.overallRating.color}} - {{$ctrl.overallRating.description}}</ui-select-match>
+          <ui-select-choices repeat="rating in $ctrl.overallRatings track by rating.id">
+            <span>{{rating.color}} - {{rating.description}}</span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+    </div>
+    <div class="row no-gutter mbottom10">
+      <div class="col-xs-12">
+        <label for="explanation">Explanation of Risk Rating</label>
+      </div>
+      <div class="col-xs-12">
+        <div ng-if="$ctrl.readOnly && $ctrl.blockData.ratingExplanation">
+          {{$ctrl.blockData.ratingExplanation}}
+        </div>
+
+        <div ng-if="$ctrl.readOnly && !$ctrl.blockData.ratingExplanation">
+          Not provided
+        </div>
+
+        <textarea id="explanation" class="form-control"
+                  name="explanation"
+                  aria-label="explanation"
+                  placeholder=""
+                  ng-model="$ctrl.blockData.ratingExplanation"
+                  maxlength="1000" rows="5"
+                  ng-keypress=""
+                  ng-if="!$ctrl.readOnly"
+                  ng-disabled="$ctrl.readOnly"
+                  change-on-blur="$ctrl.autoSave()">
+        </textarea>
+      </div>
+    </div>
+    <div ng-if="$ctrl.showRisksAndIssues">
+      <hr class="mtop30">
+      <manage-project-risk read-only="$ctrl.readOnly"
+          risks="$ctrl.risks"
+          create-new-risk="$ctrl.createNewRisk()"
+          add-mitigation="$ctrl.addMitigation(risk)"
+          delete-mitigation="$ctrl.deleteMitigation(risk, mitigation)"
+          edit-risk="!$ctrl.readOnly && $ctrl.editRisk(risk)"
+          delete-risk="$ctrl.deleteRisk(risk)"
+          close-risk="$ctrl.closeRiskOrIssue(risk)"
+          block-session-storage="$ctrl.blockSessionStorage"></manage-project-risk>
+
+      <hr class="mtop30">
+      <manage-project-issues read-only="$ctrl.readOnly"
+          issues="$ctrl.issues"
+          create-new-issue="$ctrl.createNewIssue()"
+          edit-issue="$ctrl.editIssue(issue)"
+          add-action="$ctrl.addAction(issue)"
+          delete-issue="$ctrl.deleteIssue(issue)"
+          delete-action="$ctrl.deleteAction(issue, action)"
+          close-issue="$ctrl.closeRiskOrIssue(issue)"
+          block-session-storage="$ctrl.blockSessionStorage"></manage-project-issues>
+    </div>
+  </form>
+  <spinner ng-if="$ctrl.loading"></spinner>
+  <div class="row no-gutter separator"></div>
+  <div class="row">
+    <div class="col-xs-12 mtop30 mbottom30 text-center">
+      <button class="btn btn-primary" ng-click="$ctrl.submit()" ng-if="!$ctrl.readOnly">SAVE</button>
+    </div>
+  </div>
+</div>

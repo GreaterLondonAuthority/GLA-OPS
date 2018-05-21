@@ -1,0 +1,41 @@
+<div ng-class="{'with-buttons': $ctrl.hasButtons}">
+  <div class="title-row">
+    <div class="back-btn-col">
+      <button ng-if="$ctrl.onBack"
+              ng-click="$ctrl.onBack()"
+              title="Back"
+              mouse-event-for-autosave
+              mouse-down-state="$ctrl.mouseDownState"
+              class="back-button btn btn-md btn-default pull-left no-print">
+        <i class="glyphicon glyphicon-menu-left"></i>
+        <span>BACK</span>
+      </button>
+    </div>
+    <div class="title-col">
+      <h2 class="page-title">
+        <ng-transclude></ng-transclude>
+        {{$ctrl.header}}
+      </h2>
+    </div>
+    <!-- TODO consider using parent scope instead -->
+    <div class="edit-col" ng-if="$ctrl.editableBlock || $ctrl.header">
+      <div ng-transclude="phRight"></div>
+      <!--Enable only if block can be edited (has permissions) and block is in readOnly mode -->
+      <button
+        ng-if="$ctrl.editableBlock.editable && $ctrl.editableBlock.readOnly"
+        ng-click="$ctrl.editableBlock.edit()"
+        class="btn btn-edit btn-md pull-right"
+        title="Edit">
+        <span>EDIT</span><i class="glyphicon glyphicon-edit"></i>
+      </button>
+
+      <div class="pull-right locked-by"
+           ng-if="$ctrl.editableBlock.lockDetails && !$ctrl.editableBlock.editable && $ctrl.currentUser != $ctrl.editableBlock.lockDetails.username">
+        Currently being edited by {{$ctrl.editableBlock.lockDetails.firstName}}
+        {{$ctrl.editableBlock.lockDetails.lastName}}
+      </div>
+    </div>
+  </div>
+  <hr class="form-header__hr">
+</div>
+

@@ -1,0 +1,402 @@
+<div class="editOrganisation">
+  <div class="row text-center">
+    <div class="col-xs-10 col-xs-offset-1">
+      <page-header on-back="$ctrl.back()">{{$ctrl.title}}</page-header>
+      <header-status ng-if="!$ctrl.isNew">
+        <hs-left>Status: {{$ctrl.org.status}}</hs-left>
+      </header-status>
+    </div>
+  </div>
+
+  <div class="col-xs-10 col-xs-offset-1 form-top-error mtop20"
+       ng-if="$ctrl.errors">
+    <p class="error">Sorry, we were unable to complete your changes. Please check your details and try again</p>
+  </div>
+
+  <form class="register gla-governance" role="form" name="orgForm">
+    <div class="col-xs-10 col-xs-offset-1 text-center mtop20" ng-if="$ctrl.isProfile">
+      Creating a new profile allows you to apply for projects within that GLA department.
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 mtop20 mbottom15">
+      <div class="form-section-header">GLA Governance</div>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="orgType">{{$ctrl.labels.orgType}}</label>
+          <ui-select id="orgType"
+                     name="orgType"
+                     ng-disabled="!$ctrl.canEditOrgType"
+                     ng-model="$ctrl.org.entityType"
+                     required
+                     on-select="$ctrl.onEntityTypeChange()"
+                     search-enabled="false">
+            <ui-select-match placeholder="Select organisation type">
+              {{$select.selected.value}}
+            </ui-select-match>
+            <ui-select-choices repeat="orgType.id*1 as (id, orgType) in $ctrl.organisationTypes">
+              <span>{{orgType.value}}</span>
+            </ui-select-choices>
+          </ui-select>
+          <div class="error-wrapper" role="alert" ng-show="(orgForm.$submitted || orgForm.orgType.$touched) && orgForm.orgType.$error.required">
+            <span class="error">Select organisation type</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="managingOrg">Managing organisation</label>
+          <div class="secondary-text sub-label" ng-if="$ctrl.isProfile">The GLA department you are registering with</div>
+          <ui-select id="managingOrg"
+                     name="managingOrg"
+                     ng-disabled="!$ctrl.canEditManagingOrg"
+                     placeholder="Select managing organisation"
+                     ng-model="$ctrl.org.managingOrganisationId"
+                     required
+                     search-enabled="false">
+            <ui-select-match placeholder="Select managing organisation">
+              {{$select.selected.name}}
+            </ui-select-match>
+            <ui-select-choices repeat="item.id as item in $ctrl.managingOrganisations track by item.id">
+              <span>{{item.name}}</span>
+            </ui-select-choices>
+          </ui-select>
+          <div class="error-wrapper" role="alert" ng-show="(orgForm.$submitted || orgForm.managingOrg.$touched) && orgForm.managingOrg.$error.required">
+            <span class="error">Select managing organisation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12">
+        <div class="form-group has-feedback">
+          <label for="parentOrgCode">Parent organisation ID for reporting purposes (optional)</label>
+          <div class="row">
+            <div class="col-sm-6 org-code-input">
+              <input id="parentOrgCode"
+                     type="text"
+                     name="parentOrgCode"
+                     aria-label="Parent Organisation Id"
+                     class="form-control"
+                     ng-minlength="3"
+                     ng-model="$ctrl.org.parentOrganisationId"
+                     placeholder="Parent organisation id"
+                     ng-change="$ctrl.checkOrgCode()"
+                     org-lookup="$ctrl.org.parentOrganisationName"
+                     autocomplete="off"/>
+              <span ng-if="$ctrl.org.parentOrganisationName" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+            </div>
+
+            <div class="col-sm-6 no-padding">
+            <div ng-if="$ctrl.org.parentOrganisationName" class="organisation-name mtop10">
+              {{$ctrl.org.parentOrganisationName}}
+            </div>
+          </div>
+          </div>
+          <div class="error-wrapper row" role="alert">
+            <span class="error" ng-if="$ctrl.org.parentOrganisationId.length > 2 && !$ctrl.org.parentOrganisationName">Organisation number not recognised</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-6">
+        <div class="form-group">
+          <label for="org-sapVendorId">SAP ID (optional)</label>
+          <input id="org-sapVendorId" class="form-control"
+                 ng-disabled="!$ctrl.canEditSapId"
+                 type="text"
+                 name="sapVendorId"
+                 maxlength="20"
+                 ng-model="$ctrl.org.sapVendorId"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15">
+      <hr/>
+      <div class="form-section-header">Organisation Details</div>
+    </div>
+    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3" id="organisation-details">
+      <div class="col-xs-12" ng-if="$ctrl.isProfile">
+        <div class="form-group">
+          <label for="org-source">Select a primary organisation to copy data from (optional)</label>
+          <div class="secondary-text sub-label">Details will be copied over to this new profile. You can then edit the information.</div>
+          <ui-select id="org-source"
+                     name="orgSource"
+                     ng-disabled="false"
+                     placeholder="None"
+                     ng-model="$ctrl.orgToCopyFrom"
+                     on-select="$ctrl.copyFrom($ctrl.orgToCopyFrom)"
+                     search-enabled="false">
+            <ui-select-match placeholder="None">
+              {{$select.selected.name}}
+            </ui-select-match>
+            <ui-select-choices repeat="item.id as item in $ctrl.orgsToCopyFrom track by item.id">
+              <span>{{item.name}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+      </div>
+
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="org-name">{{$ctrl.labels.orgName}}</label>
+          <input id="org-name" class="form-control"
+                 type="text"
+                 name="name"
+                 ng-model="$ctrl.org.name"
+                 required
+                 ng-change="$ctrl.validateName($ctrl.org.name)"
+                 ng-model-options="{ debounce: 300 }"
+                 ng-disabled="!$ctrl.isProfile && !$ctrl.user.isAdmin"/>
+          <div class="error-wrapper" role="alert" ng-show="(orgForm.$submitted || orgForm.name.$touched) && orgForm.name.$error.required">
+            <span class="error">Enter the organisation name</span>
+          </div>
+
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.org.name && !$ctrl.isUniqueOrgName">
+            <span class="error">This organisation is already registered, enter an alternative organisation name</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="org-website">Website (optional)</label>
+          <input id="org-website" class="form-control"
+                 type="text"
+                 name="website"
+                 ng-model="$ctrl.org.website"/>
+        </div>
+      </div>
+
+      <div class="row no-gutter">
+        <div class="col-xs-12">
+          <div class="col-xs-6 form-group">
+            <label for="org-contact-number">Contact number (optional)</label>
+            <input id="org-contact-number" class="form-control"
+                   type="number"
+                   name="contactNumber"
+                   ng-model="$ctrl.org.contactNumber"/>
+          </div>
+          <div class="col-xs-6 form-group" ng-if="$ctrl.imsNumberLabel">
+            <label for="org-ims-number">{{$ctrl.imsNumberLabel}} (optional)</label>
+            <input id="org-ims-number" class="form-control"
+                   type="text"
+                   name="imsNumber"
+                   maxlength="20"
+                   ng-model="$ctrl.org.imsNumber"
+                   ng-disabled="!$ctrl.user.isAdmin"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15">
+      <hr/>
+      <div class="form-section-header">Organisation Address</div>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="org-address1">Address line 1 (optional)</label>
+          <input id="org-address1" class="form-control"
+                 type="text"
+                 name="address1"
+                 ng-model="$ctrl.org.address.address1"/>
+        </div>
+      </div>
+
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="org-address2">Address line 2 (optional)</label>
+          <input id="org-address2" class="form-control"
+                 type="text"
+                 name="address2"
+                 ng-model="$ctrl.org.address.address2"/>
+        </div>
+      </div>
+
+      <div class="row no-gutter">
+        <div class="col-xs-12">
+          <div class="col-xs-6 form-group">
+            <label for="org-address5">City (optional)</label>
+            <input id="org-address5" class="form-control"
+                   type="text"
+                   name="address5"
+                   ng-model="$ctrl.org.address.address5"/>
+          </div>
+
+          <div class="col-xs-6 form-group">
+            <label for="org-postcode">Postcode (optional)</label>
+            <input id="org-postcode" class="form-control"
+                   type="text"
+                   name="postcode"
+                   maxlength="10"
+                   ng-pattern="/^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$/"
+                   ng-model="$ctrl.org.address.postcode"/>
+            <div class="error-wrapper" role="alert" ng-show="(orgForm.$submitted || orgForm.postcode.$touched) && orgForm.postcode.$error.pattern">
+              <span class="error">Postcode must be in a standard format</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15">
+      <hr/>
+      <div class="form-section-header">Head of Organisation</div>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
+      <div class="row no-gutter">
+        <div class="col-xs-12">
+          <div class="col-xs-6 form-group">
+            <label for="org-ceo-first-name">First name</label>
+            <input id="org-ceo-first-name" class="form-control"
+                   type="text"
+                   name="ceoFirstName"
+                   ng-model="$ctrl.org.ceoFirstName" required/>
+            <div class="error-wrapper" role="alert" ng-show="(orgForm.$submitted || orgForm.ceoFirstName.$touched) && orgForm.ceoFirstName.$error.required">
+              <span class="error">Enter the first name</span>
+            </div>
+          </div>
+          <div class="col-xs-6 form-group">
+            <label for="org-ceo-last-name">Surname</label>
+            <input id="org-ceo-last-name" class="form-control"
+                   type="text"
+                   name="ceoLastName"
+                   ng-model="$ctrl.org.ceoLastName" required/>
+            <div class="error-wrapper" role="alert" ng-show="(orgForm.$submitted || orgForm.ceoLastName.$touched) && orgForm.ceoLastName.$error.required">
+              <span class="error">Enter the surname</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="org-email">Email address (optional)</label>
+          <input id="org-email" class="form-control"
+                 type="email"
+                 name="email"
+                 ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                 ng-model="$ctrl.org.email"/>
+          <div class="error-wrapper" role="alert" ng-show="(orgForm.$submitted || orgForm.email.$touched) && orgForm.email.$invalid">
+            <span class="error">Enter a valid email</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15">
+      <hr/>
+      <div class="form-section-header">Primary contact</div>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
+      <div class="row no-gutter">
+        <div class="section-description" ng-if="$ctrl.isProfile">Enter the primary contact responsible for this GLA organisation</div>
+        <div class="col-xs-12">
+          <div class="col-xs-6 form-group">
+            <label for="org-primary-contact-first-name">First name (optional)</label>
+            <input id="org-primary-contact-first-name" class="form-control"
+                   type="text"
+                   name="primaryContactFirstName"
+                   ng-model="$ctrl.org.primaryContactFirstName"/>
+          </div>
+          <div class="col-xs-6 form-group">
+            <label for="org-primary-contact-last-name">Surname (optional)</label>
+            <input id="org-primary-contact-last-name" class="form-control"
+                   type="text"
+                   name="primaryContactLastName"
+                   ng-model="$ctrl.org.primaryContactLastName"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="org-primary-contact-email">Email address (optional)</label>
+          <input id="org-primary-contact-email" class="form-control"
+                 type="email"
+                 name="primaryContactEmail"
+                 ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                 ng-model="$ctrl.org.primaryContactEmail"/>
+          <div class="error-wrapper" role="alert"
+               ng-show="(orgForm.$submitted || orgForm.primaryContactEmail.$touched) && orgForm.primaryContactEmail.$invalid">
+            <span class="error">Enter a valid email</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-6 form-group">
+        <label for="org-primary-contact-number">Contact number (optional)</label>
+        <input id="org-primary-contact-number" class="form-control"
+               type="number"
+               name="primaryContactNumber"
+               ng-model="$ctrl.org.primaryContactNumber"/>
+      </div>
+    </div>
+    <div ng-if="!($ctrl.isTechSupportOrganisation() || $ctrl.techSupportSelected())">
+      <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15">
+        <hr/>
+        <div class="form-section-header">Regulatory information</div>
+      </div>
+
+      <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
+        <div class="col-xs-12 form-group">
+          <label for="org-regulated">Is the organisation registered with the social housing regulator?</label>
+          <yes-no-input id="org-regulated"
+                        name="org-regulated"
+                        ng-model="$ctrl.org.regulated"
+                        required>
+          </yes-no-input>
+        </div>
+
+        <div class="row no-gutter" ng-show="$ctrl.org.regulated === 'yes'">
+          <div class="col-xs-12">
+            <div class="col-xs-6 form-group">
+              <label for="org-viability">Viability score (optional)</label>
+              <input id="org-viability"
+                     class="form-control"
+                     type="text"
+                     name="viability"
+                     maxlength="2"
+                     ng-model="$ctrl.org.viability"/>
+            </div>
+            <div class="col-xs-6 form-group">
+              <label for="org-governance">Governance score (optional)</label>
+              <input id="org-governance"
+                     class="form-control"
+                     type="text"
+                     name="governance"
+                     maxlength="2"
+                     ng-model="$ctrl.org.governance"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-12 text-center mtop30 mbottom30">
+      <button class="btn btn-primary"
+              ng-disabled="
+              !$ctrl.isUniqueOrgName ||
+              orgForm.name.$invalid ||
+              orgForm.orgType.$invalid ||
+              orgForm.managingOrg.$invalid ||
+              orgForm.ceoFirstName.$invalid ||
+              orgForm.ceoLastName.$invalid ||
+              !($ctrl.org.regulated || $ctrl.org.entityType === 5)"
+              ng-click="$ctrl.submit()">
+        {{$ctrl.btnText || 'SAVE'}}
+      </button>
+      <br/>
+      <br/>
+    </div>
+  </form>
+</div>

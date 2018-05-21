@@ -1,0 +1,95 @@
+
+.project-overview {
+  width: 90%;
+  margin: auto;
+  padding-bottom: 40px;
+
+
+  .project-id-and-status {
+    display: block;
+    margin: auto;
+    margin-bottom: 20px;
+    margin-top: 10px;
+
+    .project-status {
+      padding-left: 0;
+      text-align: left;
+    }
+    .project-id {
+      padding-right: 0;
+      text-align: right;
+    }
+    span {
+      font-weight: bold;
+    }
+  }
+
+  .please-complete-text {
+    color: grey;
+    font-size: 0.875rem;
+    padding-left: 0;
+    text-align: left;
+  }
+
+  .content {
+    height: 200px;
+    overflow: auto;
+  }
+
+  .lighter {
+    color: #999999;
+  }
+
+  .project-overview__blocks {
+    padding: 0;
+    margin: -10px;
+    margin-top: 30px;
+  }
+
+  .project-block-wrapper {
+    padding: 10px;
+  }
+
+
+
+  .project-comment {
+    padding: 0;
+    &.disabled {
+      color: #9E9E9E;
+    }
+  }
+
+  .comments-error{
+    min-height: 15px;
+  }
+
+  .jump-link{
+    cursor: pointer;
+    font-family: $font-family-bolder;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .gla-alert .green{
+    &,a {
+      color: $green;
+    }
+  }
+}
+
+.abandon-modal{
+  //min-height: 250px;
+  .glyphicon {
+    font-size: 40px;
+    color: #c63c32;
+    margin-bottom: 25px;
+  }
+
+  h1{
+    margin: 0;
+  }
+}
+
+
+

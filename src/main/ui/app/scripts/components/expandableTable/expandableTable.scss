@@ -1,0 +1,98 @@
+.expandableTable {
+    overflow-x: visible;
+
+    // @media only screen and(max-width: 991px) {
+    @media only screen and(max-width: 1010px) {
+        overflow-x: auto;
+    }
+
+    table {
+        color: $primary-black;
+        box-shadow: 0 0 0.6rem 0 rgba(0, 0, 0, 0.05);
+        .mainHeader {
+            background-color: $navy !important;
+            color: $heather;
+            cursor: default;
+        }
+        .mainHeader th {
+            padding: .8rem; // .5rem .8rem .5rem;
+        }
+        .mainHeader th:first-child {
+            padding-left: 1rem;
+        }
+        .expandableRow {
+            width: 100%;
+            .primaryRow {
+                width: 100%;
+                background-color: white;
+                cursor: default;
+                &.expandable {
+                    cursor: pointer !important;
+                }
+                &.primaryRowFocus {
+                    border: 1px solid black;
+                }
+                th {
+                    font-family: $font-family-bolder;
+                    padding: .8rem;
+                    i {
+                        margin: 0 0 0 .3rem;
+                        font-size: 0.50rem;
+                        color: $primary-black;
+                    }
+                }
+                th:first-child {
+                    font-size: 0.80rem;
+                    a {
+                        color: black !important;
+                        outline: none !important;
+                    }
+                }
+                &:hover {
+                    background-color: darken(white, 5%);
+                }
+            }
+            .secondaryRow {
+                width: 100%;
+                background-color: darken($ice-blue, 3%);
+                cursor: default;
+                td {
+                    padding: .6rem .6rem .6rem .8rem;
+                    font-size: .70rem;
+                    border: 1px solid $alto;
+                    border-left: none;
+                    border-right: none;
+                    border-bottom: none;
+                }
+                td:first-child {
+                    padding-left: 1rem;
+                }
+                &:hover {
+                    background-color: darken($ice-blue, 7%);
+                }
+                input {
+                    padding: 6px 12px;
+                    // width: 8rem;
+                    margin: auto;
+                }
+            }
+        }
+        td[colspan] {
+            padding: 0;
+            cursor: default;
+        }
+        .footer-row {
+            background-color: white;
+        }
+        .divider {
+            height: 5px;
+            background-color: #cccccc;
+            &:hover {
+                background-color: #cccccc;
+            }
+            td {
+                padding: 0;
+            }
+        }
+    }
+}

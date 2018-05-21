@@ -1,0 +1,57 @@
+<div class="consortiums">
+  <div class="text-center">
+    <page-header class="mbottom10" header="'Consortiums & Partnerships'">
+      <ph-right permission permission-only="'cons.create'">
+        <button ui-sref="consortiums-new" class="btn btn-primary btn-md">
+          CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </ph-right>
+    </page-header>
+
+    <!--for e2e-->
+    <input type="hidden" id="created-consortium" ng-value="$ctrl.createdConsortiumId">
+
+    <div class="row">
+      <spinner ng-if="$ctrl.isLoading"></spinner>
+
+      <div class="col-xs-12" ng-show="!$ctrl.isLoading && $ctrl.groups.length === 0">
+        There are no Consortiums & Partnerships.
+      </div>
+
+      <div class="table-responsive text-left" ng-show="!$ctrl.isLoading && $ctrl.groups.length > 0">
+
+        <table class="table table-hover table-bordered table-striped table-selectable-row">
+          <thead class="thead-inverse uppercase">
+            <tr>
+              <th ng-click="$ctrl.sortBy('name')">
+                NAME
+                <span class="sortorder" ng-show="$ctrl.sortedBy === 'name'" ng-class="{reverse: $ctrl.sortReversed}"></span>
+              </th>
+              <th ng-click="$ctrl.sortBy('type')">
+                TYPE
+                <span class="sortorder" ng-show="$ctrl.sortedBy === 'type'" ng-class="{reverse: $ctrl.sortReversed}"></span>
+              </th>
+              <th ng-click="$ctrl.sortBy('programme')">
+                PROGRAMME
+                <span class="sortorder" ng-show="$ctrl.sortedBy === 'programme'" ng-class="{reverse: $ctrl.sortReversed}"></span>
+              </th>
+              <th ng-click="$ctrl.sortBy('lead')">
+                LEAD ORGANISATION
+                <span class="sortorder" ng-show="$ctrl.sortedBy === 'lead'" ng-class="{reverse: $ctrl.sortReversed}"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="item in $ctrl.groups" ui-sref="consortiums-edit({orgGroupId: item.id})">
+              <td>{{item.name}}</td>
+              <td>{{item.type}}</td>
+              <td>{{item.programme.name}}</td>
+              <td>{{item.leadOrganisation.name}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>

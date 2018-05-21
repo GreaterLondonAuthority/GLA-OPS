@@ -1,0 +1,56 @@
+<div class="modal-header text-center">
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <h1>Transfer project</h1>
+</div>
+<div class="modal-body text-left transfer-modal">
+  <div class="row" ng-if="$ctrl.isTransferAllowed">
+    <div class="col-md-10 center-col">
+      <form
+        id="transferForm"
+        role="form"
+        name="transferForm">
+
+        <label for="orgcode" class="label">Enter organisation number to transfer project</label>
+        <div class="form-group has-feedback mbottom0">
+
+          <input id="orgcode" type="text" name="orgcode" aria-label="Organisation Code" class="form-control" ng-minlength="3" ng-disabled="$ctrl.transferred"
+                 ng-model="$ctrl.orgCode" placeholder="Enter organisation number" autofocus autocomplete="off" org-lookup="$ctrl.orgName"/>
+          <span ng-if="$ctrl.orgName" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+          <div class="error-wrapper" role="alert" style="min-height: 12px">
+            <span class="error" ng-if="$ctrl.orgCode.length > 2 && !$ctrl.orgName">Organisation number not recognised</span>
+          </div>
+          <div ng-if="$ctrl.orgName" class="organisation-name">
+            {{$ctrl.orgName}}
+          </div>
+        </div>
+        <div ng-if="$ctrl.transferred" class="mtop30 text-center">
+          <span class="glyphicon glyphicon-ok green" aria-hidden="true"></span>
+          Project transferred
+        </div>
+      </form>
+    </div>
+  </div>
+  <div ng-if="!$ctrl.isTransferAllowed" class="text-center">You cannot transfer a project with pending changes</div>
+</div>
+<div class="modal-footer">
+  <div class="row">
+    <div class="col-xs-12 text-center mbottom15">
+      <button
+        id="abandon-btn"
+        class="btn btn-default btn-primary btn-center"
+        type="button"
+        ng-if="!$ctrl.transferred && $ctrl.isTransferAllowed"
+        ng-click="$ctrl.onTransfer()"
+        ng-disabled="!$ctrl.orgName">TRANSFER PROJECT</button>
+
+
+      <button
+        id="cancel-btn"
+        class="btn btn-default btn-primary btn-center"
+        type="button"
+        ng-click="$ctrl.transferred? $close() : $dismiss()">{{($ctrl.transferred || !$ctrl.isTransferAllowed)? 'CLOSE' : 'CANCEL'}}</button>
+    </div>
+  </div>
+</div>

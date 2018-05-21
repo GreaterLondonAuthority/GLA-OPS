@@ -1,0 +1,38 @@
+<div>
+  <div class="text-center user-home_header" ng-if="$ctrl.user.loggedOn">
+    <page-header>Welcome to the Greater London Authority Open Project System (GLA-OPS)</page-header>
+
+    <div class="row no-gutter mtop40">
+      <div class="col-sm-8 center-col">
+          <p class="user-home-text">GLA-OPS is a new, user-friendly online system used by the GLA's Housing and Land and Regeneration external partners to apply for grant funding and to manage land projects internally.</p>
+        <div>
+          <p class="features-header">This new system currently enables you to:</p>
+          <div class="features">
+            <ul>
+              <li>Input and manage affordable housing grant allocations</li>
+              <li>Monitor land developments</li>
+              <li>Manage project assessment and approvals</li>
+              <li>Access simple reporting features depending on your role and permissions</li>
+              <li>Claim milestones and payments</li>
+            </ul>
+          </div>
+        </div>
+
+        <!--<div class="user-home_unapproved" ng-if="!$ctrl.user.approved">
+          <div class="user-home_unapproved-row">
+            Your registration has not yet been approved. You will receive an email confirming your registration in due course.
+          </div>
+          <div>
+            Please contact GLA if you have any concerns or you have been informed that your registration has been approved.
+          </div>
+        </div>-->
+
+        <div class="user-home_unapproved text-left" ng-if="!$ctrl.user.approved">
+          <div>You are logged in to GLA-OPS but you currently are not associated with any organisations.</div>
+          <div>Go to <a href ui-sref="organisations">Manage Organisations</a> to request access to an organisation.</div>
+          <div>If you have already made a request you will receive an email confirming your application in due course.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

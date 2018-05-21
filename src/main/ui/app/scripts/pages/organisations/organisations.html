@@ -1,0 +1,153 @@
+<div class="organisations">
+
+  <page-header class="mbottom10">Organisations</page-header>
+
+  <div class="text-right register-buttons">
+    <button permission set-permission="{only: 'org.request.access'}"
+            ng-click="$ctrl.requestOrganisationAccess()" class="btn btn-primary btn-md">
+      REQUEST ACCESS<span class="glyphicon glyphicon-plus"></span>
+    </button>
+
+    <button permission set-permission="{only: 'org.manage.register'}"
+            ui-sref="organisations-new" class="btn btn-primary btn-md mleft10">
+      REGISTER NEW<span class="glyphicon glyphicon-plus"></span>
+    </button>
+
+    <button permission set-permission="{only: 'org.manage.create.profile'}"
+            ui-sref="organisations-new-profile" class="btn btn-primary btn-md mleft10">
+      CREATE NEW PROFILE<span class="glyphicon glyphicon-plus"></span>
+    </button>
+  </div>
+
+  <well class="row mbottom20 search-container" ng-if="$ctrl.showFilters">
+    <div class="col-sm-6 col-md-5 text-search search-filter">
+      <div>Search</div>
+      <search-field options="$ctrl.searchOptions"
+                    selected-option="$ctrl.selectedSearchOption"
+                    search-text="$ctrl.searchText"
+                    on-select="$ctrl.select($ctrl.selectedSearchOption)"
+                    on-search="$ctrl.search()"
+                    on-clear="$ctrl.clearSearchText()"
+                    reset="$ctrl.resetSearch"></search-field>
+    </div>
+
+    <div class="col-sm-6 col-md-2 search-filter">
+      <div class="text-nowrap">Organisation Type</div>
+      <checkbox-filter
+        id="org-type"
+        filter-dropdown-items="$ctrl.orgTypeDropdown"
+        on-change="$ctrl.search()"></checkbox-filter>
+    </div>
+
+    <div class="col-sm-6 col-md-2 search-filter">
+      <div>Org. status</div>
+      <checkbox-filter
+        id="org-status"
+        filter-dropdown-items="$ctrl.orgStatusDropdown"
+        on-change="$ctrl.search()"></checkbox-filter>
+    </div>
+
+
+    <div class="col-sm-6 col-md-2 reg-stat search-filter">
+      <div>User reg. status</div>
+      <checkbox-filter
+        id="user-reg-status"
+        filter-dropdown-items="$ctrl.userRegStatusDropdown"
+        on-change="$ctrl.search()"></checkbox-filter>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-1" ng-class="{'reset-column' : $ctrl.showReset}">
+      <button
+        ng-if="$ctrl.showReset"
+        class="action-buttons action-buttons-reset text-nowrap"
+        ng-click="$ctrl.clearAll()"><span class="glyphicon glyphicon-remove"></span>Reset all
+      </button>
+    </div>
+  </well>
+
+  <div ng-if="$ctrl.orgCollection.length || !$ctrl.showFilters">
+    <pagination class="mbottom10"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                total-items="$ctrl.totalItems"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.getOrganisations()"></pagination>
+
+
+    <div class="row">
+      <div class="col-xs-12 org-search-result-message no-padding" ng-if="$ctrl.user.approved && $ctrl.orgCollection.length == 0">
+        There are no {{$ctrl.status}} registrations.
+      </div>
+
+      <div class="col-xs-12 org-table table-responsive no-padding">
+
+        <table class="table table-hover table-bordered table-striped organisations-table table-selectable-row">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th ng-click="$ctrl.sortBy('id')">
+              ID NO.
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'id'" ng-class="{reverse: $ctrl.sortReverse}"></span>
+            </th>
+
+            <th ng-click="$ctrl.sortBy('name')">
+              ORG. NAME
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'name'" ng-class="{reverse: $ctrl.sortReverse}"></span>
+            </th>
+            <th>
+              ORG. TYPE
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'entityType'" ng-class="{reverse: $ctrl.sortReverse}"></span>
+            </th>
+            <th>
+              MANAGED BY
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'managingOrganisationName'"
+                    ng-class="{reverse: $ctrl.sortReverse}"></span>
+            </th>
+            <th>
+              PRIMARY CONTACT
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'email'" ng-class="{reverse: $ctrl.sortReverse}"></span>
+            </th>
+            <th>
+              SAP ID
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'sapVendorId'" ng-class="{reverse: $ctrl.sortReverse}"></span>
+            </th>
+            <th>
+              ORG. STATUS
+            </th>
+            <th>
+              User reg. status
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'userRegStatus'" ng-class="{reverse: $ctrl.$ctrl.sortReverse}"></span>
+            </th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr ng-repeat="row in $ctrl.orgCollection" ng-click="$ctrl.getDetails(row.id)">
+            <td>{{row.id}}</td>
+            <td>{{row.name}}</td>
+            <td>{{$ctrl.organisationTypes[row.entityType]}}</td>
+            <td>{{row.managingOrganisationName}}</td>
+            <td>{{row.email}}</td>
+            <td>{{row.sapVendorId}}</td>
+            <td>{{row.status}}</td>
+            <td class="registration-status-{{row.userRegStatus.toLowerCase()}}">{{row.userRegStatus}}</td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="text-center mtop30" ng-if="!$ctrl.user.approved">You currently do not have access to any organisations.
+        </div>
+      </div>
+    </div>
+
+    <pagination class="bottom-pagination"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                total-items="$ctrl.totalItems"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.getOrganisations()"></pagination>
+  </div>
+
+  <div class="text-center" ng-if="!$ctrl.loading && $ctrl.showFilters && !$ctrl.orgCollection.length" id="no-results">
+    <hr/>
+    0 organisations match your filter criteria. Check your filter selections and search criteria and try again.
+  </div>
+</div>

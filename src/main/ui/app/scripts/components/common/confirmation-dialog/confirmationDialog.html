@@ -1,0 +1,14 @@
+<div class="confirmation-dialog">
+  <div class="modal-body text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" ng-class="{'info': $ctrl.config.info}"></span>
+    <h1 class="title" ng-if="$ctrl.config.title">{{$ctrl.config.title}}</h1>
+    <div class="text-center confirm-message" compile="$ctrl.config.message"></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center dismiss-btn" ng-if="$ctrl.config.showDismiss" type="button" ng-click="$dismiss()">{{::$ctrl.config.dismissText}}</button>
+    <button class="btn btn-default btn-primary btn-center approve-btn" ng-if="$ctrl.config.showApprove" type="button" ng-click="$close()">{{::$ctrl.config.approveText}}</button>
+  </div>
+</div>

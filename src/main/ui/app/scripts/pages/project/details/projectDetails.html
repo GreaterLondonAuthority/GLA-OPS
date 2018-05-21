@@ -1,0 +1,424 @@
+<div class="project-details text-center">
+  <project-header on-back="$ctrl.back(newProjForm)"
+               editable-block="$ctrl">Enter project details</project-header>
+
+  <spinner ng-if="loading && !$ctrl.project"></spinner>
+
+  <form class="form-gla" role="form" name="newProjForm" style="margin-top: 30px" ng-if="$ctrl.project">
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="project-title">{{$ctrl.fields.title.label}}</label>
+          <input id="project-title"
+                 type="text"
+                 name="title"
+                 ng-disabled="$ctrl.readOnly"
+                 class="form-control"
+                 placeholder="{{$ctrl.fields.title.placeholder}}"
+                 ng-model="$ctrl.projectBlock.title"
+                 maxlength="50" required />
+          <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.title.$touched">
+            <span class="error" ng-show="newProjForm.title.$error.required">Enter a title</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group bidding-arrangement">
+          <label for="bidding-arrangement">{{$ctrl.fields.organisationGroupId.label}}</label>
+          <!--<div id="orgType" class="read-only-text">{{$ctrl.orgType}}</div>-->
+          <ui-select id="bidding-arrangement"
+                     ng-if="$ctrl.organisationGroups.length > 1"
+                     name="organisationGroup"
+                     search-enabled="false"
+                     ng-disabled="$ctrl.readOnly || $ctrl.active"
+                     ng-change="$ctrl.changeBiddingArrangement()"
+                     ng-model="$ctrl.projectBlock.organisationGroupId">
+            <ui-select-match  placeholder="{{$ctrl.fields.organisationGroupId.placeholder}}">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="org.id as org in $ctrl.organisationGroups track by org.id">
+              <span>{{org.name}}</span>
+            </ui-select-choices>
+          </ui-select>
+
+          <div id="bidding-arrangement"
+               ng-if="$ctrl.organisationGroups.length === 1"
+               class="read-only-text">{{$ctrl.organisationGroups[0].name}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="org-name">Organisation name</label>
+          <div id="org-name" class="read-only-text">{{$ctrl.orgName}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="$ctrl.leadOrg">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="leadOrg">Lead organisation</label>
+          <div id="leadOrg" class="read-only-text">{{$ctrl.leadOrg.name}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="programme">Programme selected</label>
+          <div id="programme" class="read-only-text">{{$ctrl.project.programme.name}} </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="project-type">Project type selected</label>
+          <div id="project-type" class="read-only-text">{{$ctrl.template.name}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="$ctrl.organisations.length">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="developingOrg">{{$ctrl.fields.developingOrganisationId.label}}</label>
+          <ui-select id="developingOrg"
+                     name="developingOrg"
+                     search-enabled="false"
+                     ng-disabled="$ctrl.readOnly"
+                     ng-model="$ctrl.projectBlock.developingOrganisationId">
+            <ui-select-match  placeholder="{{$ctrl.fields.developingOrganisationId.placeholder}}">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="org.id as org in $ctrl.organisations track by org.id">
+              <span>{{org.name}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Field is not controlled by template -->
+    <div class="row" ng-if="$ctrl.organisations.length">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="developmentLiabilityOrganisationId">{{$ctrl.fields.developmentLiabilityOrganisationId.label}}</label>
+          <ui-select id="developmentLiabilityOrganisationId"
+                     ng-class="{disabled: $ctrl.readOnly}"
+                     name="developingOrg"
+                     search-enabled="false"
+                     ng-disabled="$ctrl.readOnly"
+                     ng-model="$ctrl.projectBlock.developmentLiabilityOrganisationId">
+            <ui-select-match  placeholder="{{$ctrl.fields.developmentLiabilityOrganisationId.placeholder}}">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="org.id as org in $ctrl.organisations track by org.id">
+              <span>{{org.name}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row" ng-if="$ctrl.organisations.length">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="postCompletionLiabilityOrganisationId">{{$ctrl.fields.postCompletionLiabilityOrganisationId.label}}</label>
+          <ui-select id="postCompletionLiabilityOrganisationId"
+                     ng-class="{disabled: $ctrl.readOnly}"
+                     name="postCompletionLiabilityOrgId"
+                     search-enabled="false"
+                     ng-disabled="$ctrl.readOnly"
+                     ng-model="$ctrl.projectBlock.postCompletionLiabilityOrganisationId">
+            <ui-select-match  placeholder="{{$ctrl.fields.postCompletionLiabilityOrganisationId.placeholder}}">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="org.id as org in $ctrl.organisations track by org.id">
+              <span>{{org.name}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.description.hidden">
+          <label for="project-desc">{{$ctrl.fields.description.label}}</label>
+          <textarea id="project-desc"
+                    rows="5"
+                    placeholder="{{$ctrl.fields.description.placeholder}}"
+                    name="description"
+                    ng-disabled="$ctrl.readOnly"
+                    class="form-control"
+                    ng-model="$ctrl.projectBlock.description"
+                    maxlength="1000">
+          </textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.address.hidden">
+          <label for="project-addressLine">{{$ctrl.fields.fullAddress.label}}</label>
+          <textarea id="project-addressLine" type="text"
+                 rows="5"
+                 class="form-control"
+                 ng-disabled="$ctrl.readOnly"
+                 name="address"
+                 placeholder="{{$ctrl.fields.address.placeholder}}"
+                 ng-model="$ctrl.projectBlock.address" maxlength="255">
+          </textarea>
+
+          <ui-select class="group-field borough__dropdown" id="project-borough"
+                     ng-class="{disabled: $ctrl.readOnly}"
+                     name="borough"
+                     aria-label="Borough"
+                     search-enabled="false"
+                     ng-disabled="$ctrl.readOnly"
+                     ng-change="$ctrl.onBoroughChange ($select.selected)"
+                     ng-model="$ctrl.projectBlock.borough">
+            <ui-select-match  placeholder="{{$ctrl.fields.borough.placeholder}}">{{$select.selected.boroughName}}</ui-select-match>
+            <ui-select-choices repeat="b.boroughName as b in $ctrl.boroughs track by b.id">
+              <span>{{b.boroughName}}</span>
+            </ui-select-choices>
+          </ui-select>
+
+          <input id="project-postcode"
+                 title="Postcode"
+                 style="width: 180px"
+                 name="postcode"
+                 type="text"
+                 ng-disabled="$ctrl.readOnly"
+                 class="form-control group-field"
+                 placeholder="{{$ctrl.fields.postcode.placeholder}}"
+                 ng-model="$ctrl.projectBlock.postcode"
+                 maxlength="10"
+                 ng-pattern="/^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$/" />
+          <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.postcode.$touched">
+            <span class="error" ng-show="newProjForm.postcode.$error.pattern">Postcode must be entered in a standard format</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.coords.hidden">
+          <label for="project-xCoord">{{$ctrl.fields.coords.label}}</label>
+            <div class="form-group row no-gutter">
+            <div class="col-md-5">
+              <input id="project-xCoord"
+                     title="X Coordinate" type="text"
+                     class="form-control"
+                     ng-disabled="$ctrl.readOnly"
+                     ng-pattern="/^\d{6}$/"
+                     placeholder="{{$ctrl.fields.coordX.placeholder}}"
+                     name="xCoord"
+                     ng-model="$ctrl.projectBlock.coordX"
+                     maxlength="8" />
+
+              <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.xCoord.$touched">
+                <span class="error" id="invalidX" ng-show="newProjForm.xCoord.$error.pattern">Enter 6 digit X coordinate</span>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-2">
+              <input id="project-yCoord"
+                     title="Y Coordinate"
+                     type="text"
+                     class="form-control"
+                     ng-disabled="$ctrl.readOnly"
+                     ng-pattern="/^\d{6}$/"
+                     placeholder="{{$ctrl.fields.coordY.placeholder}}"
+                     name="yCoord"
+                     ng-model="$ctrl.projectBlock.coordY"
+                     maxlength="7" />
+
+              <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.yCoord.$touched">
+                <span class="error" id="invalidY" ng-show="newProjForm.yCoord.$error.pattern">Enter 6 digit Y coordinate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="!$ctrl.fields.address.hidden">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="ward">{{$ctrl.fields.wardId.label}}</label>
+          <ui-select id="ward"
+                     ng-class="{disabled: $ctrl.readOnly}"
+                     name="ward"
+                     search-enabled="false"
+                     ng-disabled="$ctrl.readOnly || !$ctrl.projectBlock.borough"
+                     ng-model="$ctrl.projectBlock.wardId">
+            <ui-select-match allow-clear="true" placeholder="{{$ctrl.fields.wardId.placeholder}}">{{$select.selected.wardName}}</ui-select-match>
+            <ui-select-choices repeat="w.id as w in $ctrl.wards track by w.id">
+              <span>{{w.wardName}}</span>
+            </ui-select-choices>
+          </ui-select>
+          <div class="error-wrapper" role="alert" ng-show="!$ctrl.readOnly && !$ctrl.projectBlock.borough">
+            <span class="error ward-error">A borough must be selected before a ward can be selected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.mainContact.hidden">
+          <label for="project-main-contact">{{$ctrl.fields.mainContact.label}}</label>
+          <input id="project-main-contact"
+                 type="text"
+                 ng-disabled="$ctrl.readOnly"
+                 class="form-control"
+                 name="mainContact"
+                 placeholder="{{$ctrl.fields.mainContact.placeholder}}"
+                 ng-model="$ctrl.projectBlock.mainContact"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.mainContactEmail.hidden">
+          <label for="project-main-contact-email">{{$ctrl.fields.mainContactEmail.label}}</label>
+          <input id="project-main-contact-email"
+                 type="email"
+                 ng-disabled="$ctrl.readOnly"
+                 name="email"
+                 class="form-control"
+                 ng-model="$ctrl.projectBlock.mainContactEmail"
+                 ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                 placeholder="{{$ctrl.fields.mainContactEmail.placeholder}}"
+                 maxlength="100"
+                 autofocus />
+          <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.email.$touched">
+            <span class="error" id="invalidEmail" ng-show="newProjForm.email.$error.pattern || newProjForm.email.$error.email">Enter a valid email address</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.siteOwner.hidden">
+          <label for="project-site-owner">{{$ctrl.fields.siteOwner.label}}</label>
+          <input id="project-site-owner"
+                 name="siteOwner"
+                 type="text"
+                 class="form-control"
+                 ng-disabled="$ctrl.readOnly"
+                 placeholder="{{$ctrl.fields.siteOwner.placeholder}}"
+                 ng-model="$ctrl.projectBlock.siteOwner"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.interest.hidden">
+          <label for="project-interest">{{$ctrl.fields.interest.label}}</label>
+          <input id="project-interest"
+                 name="interest"
+                 type="text"
+                 class="form-control"
+                 ng-disabled="$ctrl.readOnly"
+                 placeholder="{{$ctrl.fields.interest.placeholder}}"
+                 ng-model="$ctrl.projectBlock.interest"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.projectManager.hidden">
+          <label for="project-project-manager">{{$ctrl.fields.projectManager.label}}</label>
+          <input id="project-project-manager"
+                 name="projectManager"
+                 type="text"
+                 class="form-control"
+                 ng-model="$ctrl.projectBlock.projectManager"
+                 placeholder="{{$ctrl.fields.projectManager.placeholder}}"
+                 ng-disabled="$ctrl.readOnly"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.siteStatus.hidden">
+          <label for="project-site-status">{{$ctrl.fields.siteStatus.label}}</label>
+          <ui-select class="status__dropdown" id="project-site-status"
+                     ng-class="{disabled: $ctrl.readOnly}"
+                     name="siteStatus"
+                     aria-label="{{$ctrl.fields.siteStatus.label}}"
+                     search-enabled="false"
+                     ng-disabled="$ctrl.readOnly"
+                     ng-model="$ctrl.projectBlock.siteStatus">
+            <ui-select-match  placeholder="{{$ctrl.fields.siteStatus.placeholder}}">{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="siteStatis in $ctrl.siteStatuses">
+              <span>{{siteStatis}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.legacyProjectCode.hidden">
+          <label for="project-pcd-code">{{$ctrl.fields.legacyProjectCode.label}}</label>
+          <input id="project-pcd-code"
+                 name="legacyProjectCode"
+                 numbers-only
+                 class="form-control"
+                 ng-disabled="$ctrl.readOnly"
+                 placeholder="{{$ctrl.fields.legacyProjectCode.placeholder}}"
+                 ng-model="$ctrl.projectBlock.legacyProjectCode"
+                 change-on-blur="$ctrl.checkLegacyProjectCode()" />
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.existingProjectWithLegacyCode">
+            <span class="error" id="invalidPcsCode" ng-show="$ctrl.existingProjectWithLegacyCode">
+              This Legacy project code is already associated with OPS project P{{$ctrl.existingProjectWithLegacyCode}}. This code won't be saved, use an alternative code.
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.planningPermissionReference.hidden">
+          <label for="planning-permission-reference">{{$ctrl.fields.planningPermissionReference.label}}</label>
+          <input id="planning-permission-reference"
+                 name="planningPermissionReference"
+                 type="text"
+                 class="form-control"
+                 ng-disabled="$ctrl.readOnly"
+                 placeholder="{{$ctrl.fields.planningPermissionReference.placeholder}}"
+                 ng-model="$ctrl.projectBlock.planningPermissionReference"
+                 maxlength="20" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 mtop30 mbottom30">
+        <button class="btn btn-primary"
+                id="submitButton"
+                ng-if="!$ctrl.readOnly"
+                ng-click="$ctrl.submit(newProjForm, true)">SAVE
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

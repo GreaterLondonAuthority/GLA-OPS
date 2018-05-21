@@ -1,0 +1,100 @@
+<div class="row no-gutter mbottom10">
+  <div class="col-xs-12">
+    <div class="no-padding" ng-class="{'col-sm-9 col-md-10': $ctrl.risks.length, 'col-xs-12': !$ctrl.risks.length}">
+      <section-header subheader="A risk is an event which has not yet happened but could have a negative impact on the project if it did occur.">Manage Project Risks</section-header>
+    </div>
+    <div class="col-sm-3 col-md-2 text-right no-padding section-control" ng-if="$ctrl.risks.length">
+      <label for="hideRisks"><input type="checkbox" ng-model="$ctrl.hideClosed" id="hideRisks" ng-change="$ctrl.toggleFilter()"/> Hide closed risks</label>
+    </div>
+    <div class="col-xs-12 text-right mbottom10 no-padding" ng-if="!$ctrl.readOnly">
+      <button type="button" class="btn btn-secondary" ng-click="$ctrl.createNewRisk()">CREATE NEW RISK +</button>
+    </div>
+    <table id="risks-summary-table" class="table table-bordered table-responsive">
+        <thead class="thead-inverse uppercase">
+            <tr class="mainHeader">
+              <th style="width: 50px"></th>
+              <th style="width: 200px;">TITLE</th>
+              <th>DESCRIPTION OF CAUSE AND IMPACT</th>
+              <th>CATEGORY</th>
+              <th style="width: 110px;">INITIAL RISK RATING</th>
+              <th style="width: 110px;">RESIDUAL RISK RATING</th>
+              <th style="width: 100px;">STATUS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-if="$ctrl.risks.length == 0">
+              <td></td>
+              <td colspan="6" class="not-provided">Not provided</td>
+            </tr>
+            <tr ng-repeat-start="risk in $ctrl.risks | filter: $ctrl.filter"  ng-click="$ctrl.canEdit(risk) && $ctrl.editRisk({risk:risk})" ng-class="{'primary-row': $ctrl.canEdit(risk)}">
+              <td class="expandable" ng-click="$ctrl.blockSessionStorage.manageProjectRisksTablesState[risk.id] = !$ctrl.blockSessionStorage.manageProjectRisksTablesState[risk.id]; $event.stopPropagation();">
+                <span>
+                  <i class="glyphicon glyphicon-triangle-bottom" ng-if="!$ctrl.blockSessionStorage.manageProjectRisksTablesState[risk.id]"></i>
+                  <i class="glyphicon glyphicon-triangle-top" ng-if="$ctrl.blockSessionStorage.manageProjectRisksTablesState[risk.id]"></i>
+                </span>
+              </td>
+              <td class="break-word">
+                {{risk.title}}
+              </td>
+              <td class="break-word pre-line">{{risk.description}}</td>
+              <td>{{risk.riskCategory.displayValue}}</td>
+              <td ng-class="'severity-{{risk.initialRiskLevel.level}}'">
+                  <div>{{risk.computedInitialRating}}</div><div>{{risk.initialRiskLevel.level}}</div>
+              </td>
+              <td>
+                <div ng-if="risk.residualRiskLevel.level" ng-class="'severity-{{risk.residualRiskLevel.level}}'">
+                  <div>{{risk.computedResidualRating}}</div><div>{{risk.residualRiskLevel.level}}</div>
+                </div>
+                <div class="severity-n-a" ng-if="!risk.residualRiskLevel.level">
+                  N/A
+                </div>
+              </td>
+              <td class="delete-btn-container delete-risk-button-container">
+                <a href="" ng-click="$ctrl.closeRisk({risk:risk}); $event.stopPropagation();" ng-if="$ctrl.canEdit(risk)">{{risk.status}}</a>
+                <span ng-if="!$ctrl.canEdit(risk)">{{risk.status}}</span>
+                <delete-button ng-click="$ctrl.deleteRisk({risk:risk}); $event.stopPropagation();" ng-if="$ctrl.canEdit(risk)">
+                </delete-button>
+              </td>
+            </tr>
+            <tr class="secondaryRow" ng-if="$ctrl.blockSessionStorage.manageProjectRisksTablesState[risk.id]" ng-repeat-end>
+              <td class="secondaryCell" colspan="7">
+                <table id="risks-mitigation-table" class="table table-bordered table-responsive secondary-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 250px;"></th>
+                      <th>MITIGATION</th>
+                      <th></th>
+                      <th style="width: 220px;">OWNER</th>
+                      <th style="width: 100px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-if="risk.actions.length == 0">
+                      <td></td>
+                      <td colspan="5" class="not-provided">Not provided</td>
+                    </tr>
+                    <tr ng-repeat="mitigation in risk.actions | orderBy: 'lastModified'">
+                      <td></td>
+                      <td colspan="2">{{mitigation.action}}</td>
+                      <td colspan="1" class="delete-btn-container">
+                        {{mitigation.owner}}
+                        <delete-button ng-if="$ctrl.canEdit(risk)"
+                                       ng-attr-id="delete-owner-{{$index+1}}"
+                                       class="small"
+                                       ng-click="$ctrl.deleteMitigation({risk:risk, mitigation: mitigation}); $event.stopPropagation();">
+                        </delete-button>
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div ng-if="$ctrl.canEdit(risk)" class="text-right add-mitigation">
+                  <a class="pageLink add-mitigation" id="addMitigation" ng-click="$ctrl.addMitigation({risk:risk})">Add Mitigation & Owner</a>
+                </div>
+              </td>
+            </tr>
+
+        </tbody>
+    </table>
+  </div>
+</div>

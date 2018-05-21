@@ -1,0 +1,109 @@
+<div class="row login">
+  <div class="col-xs-12">
+      <h2>Welcome to GLA-OPS</h2>
+  </div>
+</div>
+
+<div class="row login">
+  <div class="col-xs-12"><hr></div>
+</div>
+
+<div class="row login">
+  <div class="col-xs-12 col-ms-10 col-sm-6 center-col">
+    <div class="gla-welcome-message" ng-bind-html="data.message"></div>
+  </div>
+</div>
+
+<div class="row login">
+  <div class="col-xs-12">
+    <h2>Login</h2>
+  </div>
+</div>
+
+<div class="col-xs-12 mtop15 text-center" ng-if="$ctrl.showReasonSuccess || $ctrl.showReasonError">
+  <span ng-if="$ctrl.showReasonSuccess">
+    <span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;{{$ctrl.showReasonSuccess}}
+  </span>
+  <span class="error" ng-if="$ctrl.showReasonError">{{$ctrl.showReasonError}}</span>
+</div>
+
+<div class="row login">
+  <div class="col-xs-12 form-top-error">
+    <p class="error" ng-if="$ctrl.error">Sorry, your email and password combination is not recognised</p>
+  </div>
+  <div class="col-xs-1"></div>
+</div>
+<form class="form-gla" role="form" name="logonForm" ng-click="$ctrl.resetAutoFill()">
+    <div class="row login">
+      <div class="col-xs-12 col-ms-8 col-sm-6 col-md-4 center-col">
+        <div class="form-group">
+          <label for="login-email">Email address</label>
+          <input id = "login-email" type="email" name="email" class="form-control" ng-model="$ctrl.uname" ng-keyup="$ctrl.clearErrors()"
+                 placeholder="Organisation email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" required autofocus/>
+          <div class="login-email-error" role="alert">
+            <span ng-show="logonForm.$submitted || logonForm.email.$touched">
+              <span class="error" ng-show="logonForm.email.$error.required">Enter your email</span>
+              <span class="error" ng-show="logonForm.email.$error.pattern || logonForm.email.$error.email">Check your email</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row login">
+      <div class="col-xs-12 col-ms-8 col-sm-6 col-md-4 center-col">
+        <div class="form-group">
+          <label for="login-pass">Password</label>
+          <input id="login-pass"
+                 type="password"
+                 name="pass"
+                 class="form-control"
+                 ng-model="$ctrl.pass"
+                 placeholder="GLA OPS password"
+                 ng-keyup="$ctrl.clearErrors()"
+                 chrome-autofill="$ctrl.onAutoFill()"
+                 required>
+          <div class="login-email-error" role="alert">
+            <span ng-show="logonForm.$submitted || logonForm.pass.$touched">
+              <span class="error" ng-show="logonForm.pass.$error.required">
+                Enter your password
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row login">
+      <div class="col-xs-12">
+        <div class="text-center mtop30">
+          <button
+            class="btn btn-primary"
+            type="submit"
+            ng-disabled="
+              logonForm.email.$error.required ||
+              logonForm.email.$error.email ||
+              (logonForm.pass.$error.required && !$ctrl.isAutoFilled)"
+            ng-click="$ctrl.submit()">LOGIN
+          </button>
+        </div>
+      </div>
+    </div>
+
+  <div class="row login">
+    <div class="col-xs-12">
+      <div class="mtop15 text-center">
+        <a ui-sref="request-password-reset" class="pageLink" id="resetPasswordLink">Forgotten your password?</a>
+      </div>
+    </div>
+  </div>
+
+    <div class="row login">
+      <div class="col-xs-12">
+        <div class="mtop15 mbottom30 text-center">
+          <a ui-sref="registration" class="pageLink" id="registrationLink">Don't have an account? Register here</a>
+        </div>
+      </div>
+    </div>
+
+</form>

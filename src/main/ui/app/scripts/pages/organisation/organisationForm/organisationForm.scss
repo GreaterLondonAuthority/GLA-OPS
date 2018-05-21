@@ -1,0 +1,33 @@
+.editOrganisation {
+  h3 {
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  .org-code-input {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .sub-label{
+    margin-top: -3px;
+    margin-bottom: 8px;
+    color: $secondary-text;
+    line-height: 1.25;
+  }
+
+  .section-description{
+    padding: 0 15px;
+    margin-bottom: 25px;
+  }
+
+  @include when-sm {
+    .org-code-input {
+      padding-right: 15px;
+    }
+
+    .glyphicon-ok.form-control-feedback{
+      right: 15px;
+    }
+  }
+}

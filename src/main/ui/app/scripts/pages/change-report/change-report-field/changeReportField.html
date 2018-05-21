@@ -1,0 +1,20 @@
+<div class="row no-gutter report-field-row">
+  <div ng-class="'col-sm-'+$ctrl.displayMode.colspan" class="col-xs-12">
+    <div ng-if="$ctrl.data.left" class="report-field-left">
+      <div class="left-column-label"><markdown text="$ctrl.label"></markdown></div>
+      <div class="left-column-sublabel" ng-if="$ctrl.sublabel">{{$ctrl.sublabel}}</div>
+
+      <div class="left-column-value" ng-repeat="field in $ctrl.mappedFields">{{$ctrl.getValue($ctrl.data.left,field)}}</div>
+    </div>
+    <div class="col-sm-6 col-xs-12" ng-if="!$ctrl.data.left">&nbsp</div>
+  </div>
+
+  <div class="col-sm-6 col-xs-12 report-field-row-right" ng-class="{'has-changes': $ctrl.hasChanges}">
+    <div ng-if="$ctrl.data.right" class="report-field-right">
+      <div class="right-column-label"><markdown text="$ctrl.label"></markdown><span class="glyphicon glyphicon-exclamation-sign" ng-if="$ctrl.hasChanges" aria-hidden="true"></span></div>
+      <div class="right-column-sublabel" ng-if="$ctrl.sublabel">{{$ctrl.sublabel}}</div>
+      <div class="right-column-value" ng-repeat="field in $ctrl.mappedFields" ng-class="{'changed-value': $ctrl.hasFieldChanges(field)}">{{$ctrl.getValue($ctrl.data.right,field)}}</div>
+    </div>
+    <div ng-if="!$ctrl.data.right">&nbsp</div>
+  </div>
+</div>

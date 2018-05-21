@@ -1,0 +1,21 @@
+<div class="includes-tables">
+
+  <change-report-field-lookup
+    class="next-to-tables"
+    ng-if="$ctrl.processingRouteId && $ctrl.processingRoutes.length > 1"
+    label="'Processing route'"
+    data="$ctrl.data"
+    fields="'name'"
+    key="'processingRouteId'"
+    collection-key="'id'"
+    collection= "$ctrl.processingRoutes">
+  </change-report-field-lookup>
+
+
+  <change-report-table
+    show-no-element-message="!!$ctrl.data.right"
+    rows="$ctrl.milestonesToCompare"
+    fields="$ctrl.fields"
+    changes="$ctrl.data.changes">
+  </change-report-table>
+</div>

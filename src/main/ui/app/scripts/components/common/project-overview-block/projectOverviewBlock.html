@@ -1,0 +1,40 @@
+<button class="project-block" ng-class="{'active-block':$ctrl.projectIsActive,'block-unapproved':$ctrl.isBlockUnapproved, 'land-project-block': $ctrl.isLandProject, 'incomplete-block': !$ctrl.complete}">
+  <!--project.status != Draft && block.blockAppearsOnStatus === project.status && block.lastModified == null-->
+  <div
+  ng-if="$ctrl.block.newBlock">
+    <div class="new-block">
+      NEW
+    </div>
+    <div class="arrow-down"></div>
+  </div>
+  <div class="project-block-step-number">{{::$ctrl.blockNumber}}</div>
+  <!-- <div class="project-block-name" ng-transclude></div> -->
+  <div class="project-block-name">{{::$ctrl.block.blockDisplayName}}</div>
+
+  <div ng-if="!$ctrl.projectIsActive && !$ctrl.projectIsClosed">
+    <div class="project-block-status project-block-status-complete" ng-if="$ctrl.complete">
+      SECTION COMPLETE <span class="glyphicon glyphicon-ok"></span>
+    </div>
+    <div class="project-block-status project-block-status-incomplete" ng-if="!$ctrl.complete">
+      INCOMPLETE <span class="glyphicon glyphicon-exclamation-sign"></span>
+    </div>
+  </div>
+
+  <div ng-if="($ctrl.projectIsActive && !$ctrl.isLandProject) || (!$ctrl.projectIsActive && $ctrl.projectIsClosed)">
+    <div ng-if="!$ctrl.isBlockUnapproved" class="project-block-status project-block-status-approved">
+      <div>APPROVED <span class="glyphicon glyphicon-ok"></span></div>
+      <div class="active-project-block-status-incomplete" ng-if="!$ctrl.complete">INCOMPLETE</div>
+    </div>
+    <div ng-if="$ctrl.isBlockUnapproved" class="project-block-status project-block-status-unapproved">
+      <div>UNAPPROVED <span class="glyphicon glyphicon-exclamation-sign"></span></div>
+      <div class="active-project-block-status-incomplete" ng-if="!$ctrl.complete">INCOMPLETE</div>
+    </div>
+  </div>
+
+  <div ng-if="$ctrl.projectIsActive && $ctrl.isLandProject">
+    <div class="project-block-status project-block-status-approved">
+      <div ng-if="$ctrl.complete"><span class="glyphicon glyphicon-ok"></span></div>
+      <div class="active-project-block-status-incomplete" ng-if="!$ctrl.complete">INCOMPLETE</div>
+    </div>
+  </div>
+</button>

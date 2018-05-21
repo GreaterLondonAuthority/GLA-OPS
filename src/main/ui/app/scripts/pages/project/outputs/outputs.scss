@@ -1,0 +1,48 @@
+.outputs {
+    width: 90%;
+    margin: auto;
+
+    .expandableTable table {
+        min-width: 55rem; //maintain width so that contents dont brake alignment
+    }
+    .no-gutter-outputs{
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+
+  a.link {
+    font-size: 14px;
+    font-family: $font-family-bolder;
+    display: inline-block;
+    margin-left: 20px;
+  }
+
+  .section-toggle{
+    user-select: none;
+    .glyphicon {
+      top: 3px;
+      //color: $links;
+    }
+    cursor: pointer;
+  }
+  //TODO make reusable
+  .primary-row{
+    cursor: pointer;
+    background-color: $primary-white;
+    td {
+      border-top: 2px solid darken($table-border, 10%);
+    }
+  }
+
+  .sub-heading{
+    background-color: $table-sub-header;
+    //&:hover {
+    //  background-color: darken($table-sub-header, 3%);
+    //}
+  }
+
+  tr.secondary-row td {
+    border: 0;
+  }
+
+}

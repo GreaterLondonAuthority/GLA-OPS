@@ -1,0 +1,42 @@
+<div>
+  <div class="modal-header text-center" style="padding-bottom: 0">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.title}}</h1>
+  </div>
+  <div class="modal-body">
+    <div class="table-responsivea">
+      <table class="table table-bordered table-striped" id="metadata">
+        <thead class="thead-inverse uppercase">
+
+        <tr>
+          <th>Vendor Name</th>
+          <th>Date</th>
+          <th>Actual</th>
+          <th>Cost Element</th>
+          <th>Transaction ID</th>
+          <th>Source</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in $ctrl.data | filter: $ctrl.transactionFilter | orderBy:['date', 'payerName']">
+            <td>{{item.payerName}}</td>
+            <td><span ng-if="item.date">{{item.date | date: 'dd/MM/yyyy'}}</span></td>
+            <td>{{$ctrl.isCRFormated ? ($ctrl.formatNumberWithCR(item.amount, 2)) : (item.amount | number: 2)}}</td>
+            <td>{{item.sapCategoryCode}}</td>
+            <td>{{item.invoiceNumber}}</td>
+            <td>{{$ctrl.source[item.ledgerSource] || item.ledgerSource}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer mbottom15">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <button class="btn btn-default btn-primary" type="button" ng-click="$dismiss()">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>

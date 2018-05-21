@@ -1,0 +1,83 @@
+.projects-page {
+
+  .input-group {
+    max-width: 450px;
+  }
+
+  .text-align-left {
+    text-align: left;
+  }
+
+
+
+  .project-table {
+    border: none;
+    table > thead > tr > th {
+      cursor: pointer;
+    }
+    .title-cell {
+      min-width:200px;
+      word-wrap: break-word;
+    }
+    td {
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .registration-status-pending {
+      font-weight: bold;
+    }
+
+    .registration-status-approved {
+      color: #31ae52;
+    }
+  }
+
+
+
+  .actions-panel {
+    text-align: left;
+    .actions-panel-title{
+      padding-left: 5px;
+      padding-bottom: 5px;
+    }
+
+    .icon{
+      font-weight: bold;
+      font-size: 13px;
+    }
+  }
+  .dropdown-menu{
+    width: 250px;
+    background-color: #f7f7f7;
+    color: #000;
+    li {
+      .checkbox {
+        float: left;
+        margin: 5px 10px;
+      }
+      .li-item-label{
+        margin-left: 40px;
+        padding-top: 5px;
+      }
+      line-height: 25px;
+      clear: both;
+    }
+  }
+
+  .project-status-column {
+      padding-right: 0;
+  }
+  .float-right {
+    float: right;
+  }
+  .status-box {
+    width: 140px;
+    display: block;
+  }
+
+  @include when-md {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}

@@ -1,0 +1,15 @@
+header-status{
+  display: block;
+
+  .status-left, .status-right{
+    font-weight: bold;
+  }
+
+  .status-center {
+    padding: 0 5px;
+  }
+
+  .status-left, .status-center, .status-right{
+    margin-top: 10px;
+  }
+}

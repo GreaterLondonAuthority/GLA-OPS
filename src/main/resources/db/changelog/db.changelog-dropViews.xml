@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <!--
+    Change set to drop view will be run before tables are created/updated.
+    -->
+    <changeSet id="DROP_VIEWS" author="team" failOnError="false"
+               runAlways="true" runOnChange="true">
+        <!--
+        DROP VIEWS
+        -->
+        <sql>
+            DROP VIEW IF EXISTS v_dashboard_metrics;
+            DROP VIEW IF EXISTS v_budget_reporting;
+            DROP VIEW IF EXISTS v_budget_report;
+            DROP VIEW IF EXISTS v_payment_request;
+            DROP VIEW IF EXISTS v_borough_report;
+            DROP VIEW IF EXISTS v_indicative_units_1000_grouped;
+            DROP VIEW IF EXISTS v_eligible_grant_1000_null_clean;
+            DROP VIEW IF EXISTS v_eligible_grant_1000;
+            DROP VIEW IF EXISTS v_tenure_items;
+            DROP VIEW IF EXISTS v_indicative_1000;
+            DROP VIEW IF EXISTS v_indicative_units_1000;
+            DROP VIEW IF EXISTS v_indicative_units_1000;
+            DROP VIEW IF EXISTS v_milestones_1000;
+            DROP VIEW IF EXISTS v_questions_1000;
+            DROP VIEW IF EXISTS v_add_questions_1000;
+            DROP VIEW IF EXISTS v_project_details;
+            DROP VIEW IF EXISTS v_grant_source;
+            DROP VIEW IF EXISTS v_design_standards;
+            DROP VIEW IF EXISTS v_project_summaries;
+            DROP VIEW IF EXISTS v_payment_summaries;
+            DROP VIEW IF EXISTS v_project_permissions;
+            DROP VIEW IF EXISTS v_total_grant;
+            DROP VIEW IF EXISTS v_project_block_active;
+            DROP VIEW IF EXISTS v_organisation_programmes;
+            DROP VIEW IF EXISTS v_payments_and_requested_grant_values;
+            DROP VIEW IF EXISTS v_requested_grant_values_by_org_and_prog;
+            DROP VIEW IF EXISTS v_requested_indicative_values_by_org_and_prog;
+            DROP VIEW IF EXISTS v_total_authorised_payments;
+            DROP VIEW IF EXISTS v_organisation_programme;
+            DROP VIEW IF EXISTS v_outputs_summary;
+            DROP VIEW IF EXISTS v_receipt_totals;
+            DROP VIEW IF EXISTS v_relevant_project_ledger_entries;
+            DROP VIEW IF EXISTS v_current_year_month;
+            DROP VIEW IF EXISTS v_associated_projects;
+            DROP VIEW IF EXISTS v_start_on_site_status;
+        </sql>
+
+    </changeSet>
+
+
+</databaseChangeLog>

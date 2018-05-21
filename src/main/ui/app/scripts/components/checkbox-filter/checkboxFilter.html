@@ -1,0 +1,24 @@
+<div id="filter-dropdown" class="btn-group" uib-dropdown is-open="status.isopen">
+  <a type="button" class="btn filter-dropdown-button" uib-dropdown-toggle>
+    {{$ctrl.title}} <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu filter-dropdown" uib-dropdown-menu role="menu" aria-labelledby="filter-dropdown">
+    <li role="menuitem">
+      <div class="select-all-filter-toggle">
+        <a ng-href="" ng-click="$ctrl.toggleAllFilters($event, false)" ng-if="$ctrl.hasFilterSelections">Deselect All</a>
+        <a ng-href="" ng-click="$ctrl.toggleAllFilters($event, true)" ng-if="!$ctrl.hasFilterSelections">Select All</a>
+      </div>
+    </li>
+    <li role="menuitem" ng-repeat="item in $ctrl.filterDropdownItems">
+      <div class="checkbox" ng-class="{checked: item.model, unchecked: !item.model, focused: item.focused}">
+        <input type="checkbox"
+               aria-label="{{item.ariaLabel}}"
+               name="{{item.name}}"
+               ng-model="item.model"
+               ng-click="$event.stopPropagation();"
+               ng-change="$ctrl.onCheckboxesChange()">
+      </div>
+      <div class="li-item-label">{{item.label}}</div>
+    </li>
+  </ul>
+</div>

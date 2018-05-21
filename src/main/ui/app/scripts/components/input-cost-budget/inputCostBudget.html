@@ -1,0 +1,31 @@
+<div class="inputCostBudget">
+  <div class="row">
+    <div class="col-xs-6 inputCostBudget__select">
+      <!-- <div ng-click="$ctrl.onSelectedChange()"> -->
+        <input type="checkbox"
+          ng-attr-id="{{$ctrl.linkId}}"
+          name="selectInput"
+          ng-model="$ctrl.isSelected"
+          ng-change="$ctrl.onCheckboxChange()"
+          ng-disabled="$ctrl.readOnly" ng-if="!$ctrl.hideCheckbox"
+          aria-label="{{$ctrl.label}}-checkbox"><span ng-hide="$ctrl.hideCheckbox">&nbsp;</span>
+          <label for="{{$ctrl.linkId}}" ng-click="$ctrl.onSelectedChange()">
+            {{$ctrl.label}}
+          </label>
+      <!-- </div> -->
+    </div>
+
+    <div class="col-xs-6 inputCostBudget__input"
+      ng-class="{'disabled': !$ctrl.isSelected || $ctrl.readOnly}" ng-if="!$ctrl.hideValue">
+      &pound;&nbsp;
+      <input type="text"
+        ng-attr-id="$ctrl.linkId"
+        maxlength="13"
+        name="costInput"
+        ng-model="$ctrl.value"
+        ng-disabled="!$ctrl.isSelected || $ctrl.readOnly"
+        number-mask="0"
+        aria-label="{{$ctrl.label}}-input">
+    </div>
+  </div>
+</div>

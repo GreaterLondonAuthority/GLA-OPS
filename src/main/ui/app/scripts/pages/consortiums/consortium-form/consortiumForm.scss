@@ -1,0 +1,48 @@
+.consortium-form {
+  .selected__org__item {
+    border: 1px solid #cecece;
+    background-color: white;
+    margin-bottom: 1rem;
+  }
+
+  .selected__org__text {
+    padding: 0.5rem 1rem;
+  }
+
+  .selected__org__buttonClose {
+    position: absolute;
+    padding: 0.4rem 0.7rem 0.25rem !important;
+    top: 0;
+    right: 0;
+    box-shadow: none !important;
+  }
+
+  .organisation-block {
+    padding: 15px;
+    border: 1px solid $silver;
+    div:first-child {
+      margin-bottom: 5px
+    }
+  }
+
+  .form-check-inline{
+    font-family: $font-family-default;
+    &.consortium-radio {
+      margin-right: 30/16 + 0rem;
+    }
+  }
+
+  .select-as-input .caret{
+    display: none;
+  }
+
+  .form-group.with-comment{
+    margin-bottom: 8px;
+  }
+}
+
+.consortium-name{
+  margin-top: 30/16 + 0rem;
+  font-family: $font-family-bolder;
+  font-size: 1rem;
+}

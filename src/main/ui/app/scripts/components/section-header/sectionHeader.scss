@@ -1,0 +1,19 @@
+//TODO match design across all blocks
+section-header {
+  display: block;
+  text-align: left;
+  margin-top: 30/16 + 0rem;
+  margin-bottom: 8/16 + 0rem;
+
+  .section__header {
+    font-size: 20/16 + 0rem;
+    font-family: $font-family-light;
+
+  }
+
+  .section__subheader{
+    font-family: $font-family-default;
+    color: $secondary-text;
+    font-size: 14/16 + 0rem;
+  }
+}

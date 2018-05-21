@@ -1,0 +1,48 @@
+<change-report-field class="gs-strategic-project-funding"
+                      ng-if="$ctrl.config.showAssociated"
+                      label="'This project is using strategic partnership funding'"
+                      data="$ctrl.data"
+                      fields="'associatedProject'"
+                      formats="'yesno'"></change-report-field>
+
+<change-report-field class="gs-strategic-project-funding-amount"
+                      ng-if="$ctrl.config.showAssociated"
+                      label="'Specify the strategic project funding attributed to this project'"
+                      data="$ctrl.data"
+                      fields="'strategicFunding'"
+                      formats="'currency'"></change-report-field>
+
+<change-report-field class="gs-zero-grant-requested"
+                     ng-if="$ctrl.config.showNilGrant"
+                     label="'£0 grant requested (nil grant)'"
+                     data="$ctrl.data"
+                     fields="'zeroGrantRequested'"
+                     formats="'yesno'"></change-report-field>
+
+
+<change-report-field class="gs-rcgf"
+                     ng-if="$ctrl.config.showRcgfGrant"
+                     label="'Recycled Capital Grant Fund (RCGF)'"
+                     data="$ctrl.data"
+                     fields="'recycledCapitalGrantFundValue'"
+                     formats="'currency'"></change-report-field>
+
+<change-report-field class="gs-dpf"
+                     ng-if="$ctrl.config.showDpfGrant"
+                     label="'Disposal Proceeds Fund (DPF)'"
+                     data="$ctrl.data"
+                     fields="'disposalProceedsFundValue'"
+                     formats="'currency'"></change-report-field>
+
+<change-report-field class="gs-affordable-housing-grant"
+                     label="'Grant'"
+                     ng-if="$ctrl.config.showGrant"
+                     data="$ctrl.data"
+                     fields="'grantValue'"
+                     formats="'currency'"></change-report-field>
+
+<change-report-field class="gs-total-amount-request"
+                     label="$ctrl.blockMetaData.grantTotalText || 'THE AMOUNT REQUESTED FOR THIS PROJECT IS'"
+                     data="$ctrl.data"
+                     fields="'totalGrantRequested'"
+                     formats="'currency'"></change-report-field>

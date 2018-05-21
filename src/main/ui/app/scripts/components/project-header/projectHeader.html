@@ -1,0 +1,71 @@
+<page-header
+  on-back="$ctrl.onBack()"
+  editable-block="$ctrl.editableBlock"
+  header="$ctrl.project.title">
+   <ng-transclude ng-if="!$ctrl.project"></ng-transclude>
+   <ph-right ng-if="$ctrl.project && ($ctrl.linkMenuItems.length || $ctrl.actionMenuItems.length)">
+       <div class="btn-group project-menu-dropdown" uib-dropdown is-open="status.isopen">
+         <button id="project-menu" type="button" class="btn-project-menu btn btn-md btn-default" uib-dropdown-toggle ng-disabled="disabled" title="Project Menu">
+           PROJECT MENU <i class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></i>
+         </button>
+         <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu" aria-labelledby="project-menu">
+           <li role="menuitem" ng-repeat="item in $ctrl.linkMenuItems">
+             <a ng-if="!item.hr" title="{{item.displayText}}" ui-sref2="change-report({projectId: $ctrl.project.id})" ui-sref="{{item.uiSref}}">
+               <!--<span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span>-->
+               {{item.displayText}}
+             </a>
+             <hr ng-if="item.hr"/>
+           </li>
+
+           <!--<li><hr></li>-->
+
+           <li role="menuitem">
+             <a ng-if="!$ctrl.project.currentUserWatching" title="Watch" ng-click="$ctrl.onActionClicked({item: {action:'watch'}})">
+               <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+               Watch
+             </a>
+             <a ng-if="$ctrl.project.currentUserWatching" title="Stop watching" ng-click="$ctrl.onActionClicked({item: {action:'unwatch'}})">
+               <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+               Stop watching
+             </a>
+           </li>
+
+           <li ng-if="$ctrl.reportMenuItems.length && $ctrl.actionMenuItems.length"><hr></li>
+           <li role="menuitem" ng-repeat="item in $ctrl.actionMenuItems">
+             <a title="{{item.displayText}}" ng-click="$ctrl.onActionClicked({item:item})">
+               <span class="glyphicon" ng-class="item.icon" aria-hidden="true"></span>
+               {{item.displayText}}
+             </a>
+           </li>
+         </ul>
+       </div>
+     </ph-right>
+</page-header>
+
+<!-- Project header status -->
+<div class="row subtitle-row" ng-if="$ctrl.editableBlock.project.id">
+  <div class="col-xs-12  col-sm-4 no-padding text-xs-center text-sm-left  block-version"
+       ng-class="{'col-sm-4': $ctrl.editableBlock.infoMessage, 'col-sm-8': !$ctrl.editableBlock.infoMessage }"
+       ng-if="$ctrl.editableBlock.version">
+    {{$ctrl.editableBlock.version}}
+    <span class="text-nowrap">
+      <a href="" ng-if="$ctrl.editableBlock.blockHistory.length > 1" ng-click="$ctrl.editableBlock.viewHistory()" class="view-history">View History</a>
+      <!-- Show IF can be deleted and is not locked by other user -->
+      <span ng-if="$ctrl.editableBlock.blockHistory.length > 1 && $ctrl.editableBlock.deletable && !($ctrl.editableBlock.lockDetails && !$ctrl.editableBlock.editable && $ctrl.currentUser != $ctrl.editableBlock.lockDetails.username)">| <a href="" ng-click="$ctrl.editableBlock.deleteBlock()" class="delete-block">Delete</a></span>
+    </span>
+  </div>
+
+  <div class="col-xs-12 no-padding project-message green"
+       ng-class="{'col-sm-4' : $ctrl.editableBlock.version, 'col-sm-6 col-sm-offset-3' : !$ctrl.editableBlock.version}"
+       ng-if="$ctrl.editableBlock.infoMessage">
+    <div>{{$ctrl.editableBlock.infoMessage}}</div>
+  </div>
+
+  <div class="col-xs-12 no-padding text-sm-right  project-id"
+       ng-class="{'text-xs-center': $ctrl.editableBlock.infoMessage || $ctrl.editableBlock.version,
+         'col-sm-4': $ctrl.editableBlock.version,
+         'col-sm-3': !$ctrl.editableBlock.version,
+         'col-sm-offset-9' : !$ctrl.editableBlock.infoMessage && !$ctrl.editableBlock.version}">
+    Project <span>ID: <strong>P{{$ctrl.editableBlock.project.id}}</strong></span>
+  </div>
+</div>

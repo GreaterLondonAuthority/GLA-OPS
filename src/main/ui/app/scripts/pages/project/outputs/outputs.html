@@ -1,0 +1,149 @@
+<div class="outputs">
+  <div class="text-center">
+    <project-header
+      on-back="$ctrl.onBack()"
+      editable-block="$ctrl">Outputs
+    </project-header>
+  </div>
+
+  <section-header ng-click="$ctrl.toggleSection()" class="section-toggle" id="outputs-summary-title">
+    <span class="glyphicon" ng-class="{'glyphicon-triangle-bottom': !$ctrl.sectionExpanded, 'glyphicon-triangle-top': $ctrl.sectionExpanded}"></span>
+    <span>{{$ctrl.outputsSummaryTitle}}</span>
+    <a class="link" href="" ng-click="$ctrl.toggleOutputs();$event.stopPropagation()" ng-if="$ctrl.sectionExpanded && $ctrl.outputSummaries.length">
+      <span ng-if="!$ctrl.outputsExpanded">Expand all outputs</span>
+      <span ng-if="$ctrl.outputsExpanded">Collapse all outputs</span>
+    </a>
+  </section-header>
+
+  <div aclass="table-responsive">
+    <table class="table" ng-if="$ctrl.sectionExpanded" id="outputs-summary">
+      <thead class="thead-inverse uppercase">
+        <tr>
+          <th>OUTPUT TYPE</th>
+          <th>VALUE</th>
+          <th>CATEGORY</th>
+          <th>FORECAST</th>
+          <th>ACTUAL</th>
+          <th>TOTALS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat-start="r in $ctrl.outputSummaries | orderBy:['outputType', 'category']" ng-click="$ctrl.toggleRow(r)" class="primary-row">
+          <td>
+            <span class="glyphicon" ng-class="{'glyphicon-triangle-bottom': r.collapsed, 'glyphicon-triangle-top': !r.collapsed}"></span>
+            <span class="text-capitalize">{{r.outputType | lowercase}}</span>
+          </td>
+          <td>{{$ctrl.unitConfig[r.valueType].label}}</td>
+          <td>{{r.category}}</td>
+          <td>{{$ctrl.formatNumber(r.forecast, r.valueType)}}</td>
+          <td>{{$ctrl.formatNumber(r.actual, r.valueType)}}</td>
+          <td>{{$ctrl.formatNumber(r.total, r.valueType)}}</td>
+        </tr>
+
+
+        <tr ng-if="!r.collapsed" class="sub-heading">
+          <td></td>
+          <td>YEAR</td>
+          <td>SUB CATEGORY</td>
+          <td></td>
+          <td></td>
+          <!--GLA-13493-->
+          <td></td>
+        </tr>
+
+
+        <tr ng-repeat-end ng-repeat="s in r.subcategories | orderBy:['financialYear', 'subcategory']" ng-if="!r.collapsed" class="secondary-row">
+          <td></td>
+          <td>{{s.financialYear}}/{{s.financialYear + 1 | limitTo:2:2}}</td>
+          <td>{{s.subcategory}}</td>
+          <td>{{$ctrl.formatNumber(s.forecast, s.valueType)}}</td>
+          <td>{{$ctrl.formatNumber(s.actual, s.valueType)}}</td>
+          <!--GLA-13493-->
+          <td>{{$ctrl.formatNumber(s.total, s.valueType)}}</td>
+        </tr>
+
+        <tr ng-if="!$ctrl.outputSummaries.length">
+          <td colspan="5">Not provided</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <hr class="mtop40">
+
+  <form role="form" name="asForm">
+    <div class="col-xs-12 mtop30 text-center">
+      <div class="form-group col-md-2 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
+          <label for="annualSpend-currentYear">Financial Year</label>
+
+          <financial-year id="annualSpend-currentYear"
+            ng-if="$ctrl.realCurrentYear"
+            from="1998"
+            current-financial-year-const="$ctrl.realCurrentYear"
+            on-select="$ctrl.onYearSelected(selectedYear)"
+            selected-year="$ctrl.currentYear.financialYear"
+            populated-years="$ctrl.projectBlock.populatedYears"></financial-year>
+      </div>
+    </div>
+    <section-header subheader="Add outputs to a financial year">
+      Outputs by financial year
+    </section-header>
+    <div class="col-xs-12 text-center no-gutter-outputs">
+      <outputs-wizard
+        ng-if="$ctrl.configLoaded && !$ctrl.readOnly"
+        year="$ctrl.currentYear"
+        read-only="$ctrl.readOnly"
+        on-add-output="$ctrl.onAddOutput(event)"
+        period-type="$ctrl.periodType"
+        output-type-name="$ctrl.outputTypeName"
+        category-name="$ctrl.categoryName"
+        subcategory-name="$ctrl.subcategoryName">
+      </outputs-wizard>
+    </div>
+    <div class="row no-gutter mtop30" ng-if="$ctrl.tableData.length">
+      <div class="col-xs-12 expandableTable table-responsive">
+        <table class="table table-hover table-bordered table-with-inputs mtop15" id="outputs-table">
+            <thead>
+                <tr class="mainHeader">
+                    <th ng-style="{'width': $ctrl.tableColumnOffsets[0]}">{{$ctrl.categoryName.toUpperCase()}}</th>
+                    <th ng-style="{'width': $ctrl.tableColumnOffsets[1]}">{{$ctrl.outputTypeName.toUpperCase()}}</th>
+                    <th ng-style="{'width': $ctrl.tableColumnOffsets[2]}">VALUE</th>
+                    <th ng-style="{'width': $ctrl.tableColumnOffsets[3]}">{{$ctrl.periodType === 'Quarterly' ? 'QUARTER' : 'MONTH'}}</th>
+                    <th ng-style="{'width': $ctrl.tableColumnOffsets[4]}">FORECAST</th>
+                    <th ng-style="{'width': $ctrl.tableColumnOffsets[5]}">ACTUAL</th>
+                    <th ng-style="{'width': $ctrl.tableColumnOffsets[6]}">DIFFERENCE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in $ctrl.tableData">
+                    <td colspan="7">
+                        <forecast-category-row
+                          session-storage="$ctrl.blockSessionStorage"
+                          table-id="outputsTable"
+                          row-id="item[0].config.category"
+                          data="item"
+                          current-financial-year="$ctrl.realCurrentYear"
+                          column-offsets="$ctrl.tableColumnOffsets"
+                          on-row-changed="$ctrl.onRowChanged(event)"
+                          on-delete="$ctrl.onRowDeleted(event)"
+                          read-only="$ctrl.readOnly"
+                          period-type="$ctrl.periodType">
+                        </forecast-category-row>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+  </div>
+
+  <div class="col-xs-12 text-center mtop30 mbottom15">
+    <button class="btn btn-primary"
+            ng-click="$ctrl.unlockAndExit()"
+            mouse-event-for-autosave
+            ng-if="!$ctrl.readOnly">SAVE
+    </button>
+  </div>
+
+  </form>
+</div>

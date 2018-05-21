@@ -1,0 +1,41 @@
+project-header {
+  display: block;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+
+  hr{
+    margin: 5px 0;
+  }
+
+  .project-message{
+    font-size: 12/16 + 0rem;
+    margin-top: 10px;
+  }
+
+  .project-id, .block-version{
+    margin-top: 10px;
+  }
+
+  .dropdown-menu{
+    border-radius: 0;
+    background-clip: border-box;
+    padding-left: 5px;
+    padding-right: 5px;
+    hr{
+      border-top: 1px solid #aebecb;
+    }
+    > li > a {
+      padding-left: 5px;
+      font-size: 12px;
+      font-family: $font-family-bolder;
+      .glyphicon {
+        margin-right: 5px;
+        top: 2px;
+        &.glyphicon-transfer{
+          top: 3px;
+        }
+      }
+    }
+  }
+}

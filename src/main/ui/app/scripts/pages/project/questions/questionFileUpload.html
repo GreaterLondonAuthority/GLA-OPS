@@ -1,0 +1,88 @@
+<div class="file-upload" ng-class="'file-upload-'+$ctrl.question.id">
+  <well class="row" ng-if="!$ctrl.readOnly">
+    <h4>Attachments</h4>
+    <h5>Maximum file size: 5MB</h5>
+
+    <div class="row mbottom15">
+
+      <div class="col-xs-12 no-padding">
+        <file-upload
+                    class="add-document"
+                     label="ADD DOCUMENT +"
+                     upload-params="$ctrl.uploadParams"
+                     on-progress="$ctrl.onFileUploadProgress(event)"
+                     on-complete="$ctrl.onFileUploadComplete(event)"
+                     on-error="$ctrl.onFileUploadError(event)"
+                     is-disabled="$ctrl.readOnly || ($ctrl.question.attachments.length + $ctrl.question.fileAttachments.length) >= $ctrl.question.quantity"
+                     context="$ctrl.question"
+                     component-input-id="'file-upload-'+$ctrl.question.id">
+        </file-upload>
+      </div>
+    </div>
+
+    <!-- <div class="row uploaded-files mbottom15">
+      <div class="col-xs-12 no-padding" ng-repeat="file in $ctrl.question.attachments">
+        <hr/>
+        <div class="uploaded-file">
+          <div class="col-xs-10 text-left no-padding file-name">
+            {{file.fileName}}
+          </div>
+          <div class="col-xs-2 pull-right no-padding">
+            <a href ng-click="$ctrl.removeFileToUpload(file)"
+               ng-disabled="$ctrl.readOnly">DELETE
+            </a>
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </well>
+
+  <div class="row">
+
+      <div class="table-responsive attached-files text-left">
+        <table ng-attr-id="{{'file-uploaded-table-'+$ctrl.question.id}}" class="table table-hover table-bordered table-striped">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th>DOCUMENT NAME</th>
+            <th>UPLOAD DATE</th>
+            <th>UPLOADED BY</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="staged-file" ng-repeat="attachment in $ctrl.question.attachments | orderBy:'createdOn':true">
+            <td>
+              <a class="uploaded-file-link" href="/api/v1/file/{{attachment.fileId}}"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{attachment.fileName}}</a>
+            </td>
+            <td>{{attachment.createdOn | date: 'MMM d, yyyy'}}</td>
+            <td>{{attachment.creatorName}}</td>
+            <td>
+              <div ng-if="!$ctrl.readOnly">
+                <a
+                   href ng-click="$ctrl.removeFileToUpload(attachment)">DELETE
+                </a>
+              </div>
+            </td>
+          </tr>
+          <tr class="attached-file" ng-repeat="attachment in $ctrl.question.fileAttachments | orderBy:'createdOn':true">
+            <td>
+              <a class="uploaded-file-link" href="/api/v1/file/{{attachment.id}}"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{attachment.fileName}}</a>
+            </td>
+            <td>{{attachment.createdOn | date: 'MMM d, yyyy'}}</td>
+            <td>{{attachment.creatorName}}</td>
+            <td>
+              <div ng-if="!$ctrl.readOnly">
+                <a
+                   href ng-click="$ctrl.removeAttachment(attachment)">DELETE
+                </a>
+              </div>
+            </td>
+          </tr>
+          <tr class="no-attached-files"ng-if="($ctrl.question.attachments.length + $ctrl.question.fileAttachments.length) == 0">
+            <td colspan="4">No files added.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,327 @@
+<div class="organisationProgramme">
+
+  <div class="col-xs-10 col-xs-offset-1">
+    <page-header on-back="$ctrl.back()" editable-block="$ctrl" hide-edit="!$ctrl.editable">
+      {{$ctrl.organisation.name}}
+    </page-header>
+
+    <div class="row programme-name">
+      <h3>{{$ctrl.programme.name}}</h3>
+    </div>
+
+    <div class="row strategic-partnership-block" ng-if="$ctrl.data.strategicPartnership || !$ctrl.readOnly">
+      <section-header>Strategic Partnership Status</section-header>
+      <div class="checkbox-field">
+        <label for="strategicPartnership">
+          <input id="strategicPartnership"
+                 ng-if="!$ctrl.readOnly"
+                 type="checkbox"
+                 name="strategicPartnership"
+                 ng-model="$ctrl.data.strategicPartnership"
+                 ng-disabled="$ctrl.data.strategicPartnership && $ctrl.totals.initialStrategicTotal"
+                 ng-click="$ctrl.onStrategicPartnershipChange()"/>
+          Organisation is a strategic partner
+        </label>
+        <div ng-if="!$ctrl.readOnly && $ctrl.data.strategicPartnership && $ctrl.totals.initialStrategicTotal">To remove strategic partner status, strategic grant, RCGF and DPF allocation must show 0</div>
+      </div>
+      <hr class="mtop30">
+    </div>
+
+
+
+    <div class="row">
+      <section-header>Initial Allocated Budgets</section-header>
+    </div>
+
+    <div class="row no-gutter mtop10 initial-allocated-budgets">
+      <div class="col-xs-9 grant-types" ng-class="{'has-totals': $ctrl.showTotals}">
+        <div class="row no-gutter">
+          <div ng-class="$ctrl.grantTypesCol" ng-repeat="grant in $ctrl.initialBudgets track by grant.uniqueId" ng-attr-id="{{grant.uniqueId}}">
+            <div class="budget-label">{{grant.label}}</div>
+            <div ng-if="$ctrl.readOnly">{{grant.amount == null? 'Not provided' : (grant.amount | number)}}</div>
+            <div ng-if="!$ctrl.readOnly">
+              <input class="form-control budget-input"
+                     type="text"
+                     maxlength="13"
+                     number-mask="0"
+                     aria-label="{{grant.label}}"
+                     ng-model="grant.amount"
+                     change-on-blur="$ctrl.updateBudgetEntry(grant)">
+            </div>
+          </div>
+
+          <div ng-class="$ctrl.grantTypesCol" ng-if="$ctrl.showTotals">
+            <div class="budget-label">Total</div>
+            <div id="initial-non-strategic-total">{{$ctrl.totals.initialNonStrategicTotal | number}}</div>
+          </div>
+        </div>
+
+        <div class="row no-gutter mtop30 initial-strategic-budgets" ng-if="$ctrl.data.strategicPartnership">
+          <div ng-class="$ctrl.grantTypesCol" ng-repeat="grant in $ctrl.initialStrategicBudgets" ng-attr-id="{{grant.uniqueId}}">
+            <div class="budget-label">{{grant.label}}</div>
+            <div ng-if="$ctrl.readOnly">{{grant.amount == null? 'Not provided' : (grant.amount | number)}}</div>
+            <div ng-if="!$ctrl.readOnly">
+              <input class="form-control budget-input"
+                     type="text"
+                     maxlength="13"
+                     number-mask="0"
+                     aria-label="{{grant.label}}"
+                     ng-model="grant.amount"
+                     change-on-blur="$ctrl.updateBudgetEntry(grant)">
+            </div>
+          </div>
+
+          <div ng-class="$ctrl.grantTypesCol" ng-if="$ctrl.showTotals">
+            <div class="budget-label">Total</div>
+            <div id="initial-strategic-total">{{$ctrl.totals.initialStrategicTotal | number}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-3 no-gutter grant-totals-summary" ng-if="$ctrl.showTotals">
+        <div class="budget-label">Total initial value £</div>
+        <div id="initial-total">{{$ctrl.totals.initialTotal | number}}</div>
+      </div>
+    </div>
+
+
+
+    <hr class="mtop30">
+
+    <div class="row no-gutter">
+      <div class="col-xs-6">
+        <section-header>Additional Approvals</section-header>
+      </div>
+      <div class="col-xs-6 text-right" ng-if="!$ctrl.readOnly">
+        <button type="button" class="btn btn-secondary mtop30 mbottom10" ng-click="$ctrl.createDelegatedApprovalClicked()">ADJUST BUDGETS <b>+</b></button>
+      </div>
+      <table id="delegated-approval-table" class="table table-bordered table-responsive">
+        <thead class="thead-inverse uppercase">
+        <tr class="">
+          <th>GRANT TYPE</th>
+          <th>AMOUNT £</th>
+          <th>APPROVAL AGREED DATE</th>
+          <th>APPROVED BY</th>
+          <th>ADDED BY</th>
+          <th>DATE</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-if="$ctrl.delegatedApprovalEntries.length === 0">
+          <td colspan="7">
+            No additional approvals.
+          </td>
+        </tr>
+        <tr ng-repeat="entry in $ctrl.delegatedApprovalEntries | orderBy:['approvedOn', 'createdOn']:true">
+          <td>{{$ctrl.label(entry.grantType, entry.strategic, entry.type)}}</td>
+          <td>{{entry.amount | currency:'':0}}</td>
+          <td>{{entry.approvedOn | date: 'dd/MM/yyyy'}}</td>
+          <td>{{entry.approvedBy}}</td>
+          <td>{{entry.creatorName}}</td>
+          <td>{{entry.createdOn | date: 'dd/MM/yyyy'}}</td>
+          <td class="delete-btn-container">
+            <delete-button ng-click="$ctrl.deleteEntry(entry)" ng-if="!$ctrl.readOnly" class="delete-{{$index+1}}">
+            </delete-button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+
+    <hr class="mtop30">
+
+    <div class="row">
+      <section-header subheader="Initial allocated budgets plus budget adjustments made during the project lifecycle">Totals</section-header>
+      <div class="row no-gutter mtop10 totals">
+        <div class="col-xs-9 grant-types" ng-class="{'has-totals': $ctrl.showTotals}">
+          <div class="row no-gutter">
+            <div ng-class="$ctrl.grantTypesCol" ng-repeat="grant in $ctrl.initialBudgets">
+              <div class="budget-label">{{grant.label}}</div>
+              <div ng-attr-id="{{grant.uniqueId + '-total'}}">{{grant.total | number}}</div>
+            </div>
+
+            <div ng-class="$ctrl.grantTypesCol" ng-if="$ctrl.showTotals">
+              <div class="budget-label">Total</div>
+              <div id="non-strategic-total">{{$ctrl.totals.nonStrategicTotal | number}}</div>
+            </div>
+          </div>
+
+          <div class="row no-gutter mtop30 strategic-totals" ng-if="$ctrl.data.strategicPartnership || $ctrl.totals.strategicTotal">
+            <div ng-class="$ctrl.grantTypesCol" ng-repeat="grant in $ctrl.initialStrategicBudgets">
+              <div class="budget-label">{{grant.label}}</div>
+              <div ng-attr-id="{{grant.uniqueId + '-total'}}">{{grant.total | number}}</div>
+            </div>
+
+            <div ng-class="$ctrl.grantTypesCol" ng-if="$ctrl.showTotals">
+              <div class="budget-label">Total</div>
+              <div id="strategic-total">{{$ctrl.totals.strategicTotal | number}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-3 no-gutter grant-totals-summary" ng-if="$ctrl.showTotals">
+          <div class="budget-label">Total initial <br>+ adjusted value £</div>
+          <div id="total">{{$ctrl.totals.total | number}}</div>
+        </div>
+      </div>
+    </div>
+
+
+    <hr class="mtop30">
+
+    <div class="grant-source-totals">
+      <div class="row mtop10">
+        <section-header subheader="">
+          Grant Source Totals
+        </section-header>
+      </div>
+      <div class="row">
+          <input type="checkbox"
+            id="show-approved-only-checkbox"
+            ng-attr-id="show-approved-only-checkbox"
+            name="selectInput"
+            ng-model="$ctrl.showApprovedOnlyCheckbox"
+            aria-label="show-approved-only-checkbox">
+            <label for="show-approved-only-checkbox">
+              Show approved requests only
+            </label>
+      </div>
+      <table id="grant-source-total-table" class="table table-bordered table-responsive">
+        <thead class="thead-inverse uppercase">
+        <tr class="mainHeader">
+          <th>ALL {{$ctrl.grantSourceData.projectCount}} PROJECT(S)</th>
+          <th>REQUESTED</th>
+          <th>PAID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-if="$ctrl.isGrantTypeAvailable('Grant')">
+          <td class="header-cell">GRANT VALUE £</td>
+          <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.grantApproved : $ctrl.grantSourceData.grantRequested) | number}}</td>
+          <td>{{$ctrl.grantSourceData.grantPaid | number}}</td>
+        </tr>
+        <tr ng-if="$ctrl.isGrantTypeAvailable('RCGF')">
+          <td class="header-cell">RCGF VALUE £</td>
+          <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.rcgfApproved : $ctrl.grantSourceData.rcgfRequested) | number}}</td>
+          <td>{{$ctrl.grantSourceData.rcgfPaid | number}}</td>
+        </tr>
+        <tr ng-if="$ctrl.isGrantTypeAvailable('DPF')">
+          <td class="header-cell">DPF VALUE £</td>
+          <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.dpfApproved : $ctrl.grantSourceData.dpfRequested) | number}}</td>
+          <td>{{$ctrl.grantSourceData.dpfPaid | number}}</td>
+        </tr>
+        <tr ng-if="$ctrl.showTotals">
+          <td class="header-cell">TOTALS</td>
+          <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.projectApprovedTotal : $ctrl.grantSourceData.projectRequestedTotal) | number}}</td>
+          <td>{{$ctrl.grantSourceData.totalPaid | number}}</td>
+        </tr>
+        <tr class="divider" ng-if="$ctrl.showIndicative"><td colspan="3"></td></tr>
+        <tr ng-if="$ctrl.showIndicative">
+          <td class="header-cell">INDICATIVE PROJECT ALLOCATION £</td>
+          <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.indicativeGrantApproved : $ctrl.grantSourceData.indicativeGrantRequested)| number}}</td>
+          <td>N/A</td>
+        </tr>
+        <tr class="divider" ng-if="$ctrl.showIndicative"><td colspan="3"></td></tr>
+        <tr ng-if="$ctrl.showIndicative">
+          <td class="header-cell">TOTAL OF ALL PROJECTS + INDICATIVE</td>
+          <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.totalApproved : $ctrl.grantSourceData.totalRequested) | number}}</td>
+          <td>{{$ctrl.grantSourceData.totalPaid | number}}</td>
+        </tr>
+
+        </tbody>
+      </table>
+      </div>
+    <div ng-if="$ctrl.strategicRecord" class="strategic-partnership-totals">
+      <hr class="mtop30">
+      <div class="row mtop10">
+        <section-header subheader="">
+          Strategic Partnership totals
+        </section-header>
+      </div>
+      <div class="row">
+          <input type="checkbox"
+            id="show-approved-only-checkbox-startegic"
+            ng-attr-id="show-approved-only-checkbox-startegic"
+            name="selectInput"
+            ng-model="$ctrl.showApprovedOnlyCheckboxStrategic"
+            aria-label="show-approved-only-checkbox-startegic">
+            <label for="show-approved-only-checkbox-startegic">
+              Show approved requests only
+            </label>
+      </div>
+      <table id="strategic-partnership-total-table" class="table table-bordered table-responsive">
+        <thead class="thead-inverse uppercase">
+        <tr class="mainHeader">
+          <th>STRATEGIC PROJECT</th>
+          <th>REQUESTED</th>
+          <th>PAID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-if="$ctrl.isGrantTypeAvailable('Grant')">
+          <td class="header-cell">GRANT VALUE £</td>
+          <td>{{($ctrl.showApprovedOnlyCheckboxStrategic ? $ctrl.strategicRecord.grantApproved : $ctrl.strategicRecord.grantRequested) | number}}</td>
+          <td>{{$ctrl.strategicRecord.grantPaid | number}}</td>
+        </tr>
+        <tr ng-if="$ctrl.isGrantTypeAvailable('RCGF')">
+          <td class="header-cell">RCGF VALUE £</td>
+          <td>{{($ctrl.showApprovedOnlyCheckboxStrategic ? $ctrl.strategicRecord.rcgfApproved : $ctrl.strategicRecord.rcgfRequested) | number}}</td>
+          <td>{{$ctrl.strategicRecord.rcgfPaid | number}}</td>
+        </tr>
+        <tr ng-if="$ctrl.isGrantTypeAvailable('DPF')">
+          <td class="header-cell">DPF VALUE £</td>
+          <td>{{($ctrl.showApprovedOnlyCheckboxStrategic ? $ctrl.strategicRecord.dpfApproved : $ctrl.strategicRecord.dpfRequested) | number}}</td>
+          <td>{{$ctrl.strategicRecord.dpfPaid | number}}</td>
+        </tr>
+        <tr ng-if="$ctrl.showTotals">
+          <td class="header-cell">TOTALS</td>
+          <td>{{($ctrl.showApprovedOnlyCheckboxStrategic ? $ctrl.strategicRecord.projectApprovedTotal : $ctrl.strategicRecord.projectRequestedTotal) | number}}</td>
+          <td>{{$ctrl.strategicRecord.totalPaid | number}}</td>
+        </tr>
+
+        </tbody>
+      </table>
+      <table id="associated-projects-total-table" class="table table-bordered table-responsive mtop15">
+        <thead class="thead-inverse uppercase">
+        <tr class="mainHeader">
+          <th>ALL {{$ctrl.associatedProjectsRecord.projectCount}} ASSOCIATED PROJECT(S)</th>
+          <th>REQUESTED</th>
+          <th>PROJECTS THAT HAVE STARTED ON SITE</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="header-cell">TOTAL VALUE £</td>
+          <td>{{$ctrl.associatedProjectsRecord.projectCount ? ($ctrl.associatedProjectsRecord.strategicRequested | number) : 'N/A'}}</td>
+          <td>{{$ctrl.associatedProjectsRecord.projectCount ? ($ctrl.associatedProjectsRecord.startedOnSite | number) : 'N/A'}}</td>
+        </tr>
+      </tbody>
+    </table>
+      <table id="variance-total-table" class="table table-bordered table-responsive mtop15">
+        <thead class="thead-inverse uppercase">
+        <tr class="mainHeader">
+          <th>VARIANCE</th>
+          <th>REQUESTED VARIANCE</th>
+          <th>VARIANCE BETWEEN PAID AND SOS CLAIMED</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="header-cell">TOTAL VALUE £</td>
+          <td>{{$ctrl.associatedProjectsRecord.projectCount ? ($ctrl.associatedProjectsRecord.requestedVariance | number) : 'N/A'}}</td>
+          <td>{{$ctrl.associatedProjectsRecord.projectCount ? ($ctrl.associatedProjectsRecord.varianceBetweenPaidAndSoSClaimed | number) : 'N/A'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    <hr class="mtop30">
+
+    <div class="row mtop30">
+      <div class="col-xs-12 text-center">
+        <button ng-if="!$ctrl.readOnly" class="btn btn-primary" ng-click="$ctrl.save()">SAVE</button>
+      </div>
+    </div>
+  </div>
+
+</div>

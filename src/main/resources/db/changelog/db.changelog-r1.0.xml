@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="164" author="dieppa" failOnError="false" >
+        <dropView viewName="v_borough_report"/>
+        <createView viewName="v_borough_report" replaceIfExists="true">
+            SELECT
+            proj.programme_id,
+            p.programme_name,
+            proj.template_id,
+            proj.status,
+            p.project_type,
+            p.project_id,
+            p.project_title,
+            p.date_submitted,
+            p.description,
+            p.org_type,
+            p.lead_org_name,
+            p.developing_org,
+            p.borough,
+            p.postcode,
+            p.x_coord,
+            p.y_coord,
+            p.planning_ref,
+            ms.ms_start_site,
+            ms.ms_completion,
+            CASE WHEN s106.affordable_criteria_met = TRUE THEN s106.s106 + s106.add_aff_units
+            WHEN s106.affordable_criteria_met != TRUE THEN s106.s106
+            ELSE null END s106_dev_led,
+            s106.add_aff_units add_aff_units_dev_led,
+            CASE
+            WHEN s106.affordable_criteria_met IS NOT NULL THEN affordable_criteria_met
+            ELSE null END affordable_criteria_met_dev_led,
+            iug.lar_units,
+            iug.llr_units,
+            iug.lso_units,
+            iug.other_units,
+            q.q_other_aff_type,
+            q.q_planning_status,
+            q.q_land_status,
+            q.q_larger_aff_homes,
+            aq.aq_wheelchair_units,
+            aq.aq_client_group
+            FROM v_project_details p
+            INNER JOIN project proj ON proj.id=p.project_id
+            LEFT JOIN v_milestones_1000 ms on ms.project_id=p.project_id
+            LEFT JOIN v_indicative_units_1000_grouped iug ON iug.project_id=p.project_id
+            LEFT JOIN v_questions_1000 q ON q.project_id=p.project_id
+            LEFT JOIN v_add_questions_1000 aq ON aq.project_id=p.project_id
+            LEFT JOIN v_s106_developer_led_grouped s106 ON s106.project_id=p.project_id
+        </createView>
+    </changeSet>
+
+    <changeSet id="165" author="cmelville" >
+        <addColumn tableName="project">
+            <column name="recommendation" type="varchar(40)"  remarks="project recommendation status, for GLA PM to recommend action to SPM">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="166" author="cmelville">
+        <createView viewName="v_project_summaries" replaceIfExists="true">
+            SELECT prg.name prg_name, org.name org_name, tpl.name template_name, og.name og_name, og.type og_type, og.lead_organisation_id, p.*
+            FROM project p
+            LEFT JOIN programme prg ON p.programme_id = prg.id
+            LEFT JOIN template tpl ON p.template_id = tpl.id
+            LEFT JOIN organisation org ON p.org_id = org.id
+            LEFT JOIN organisation_group og ON p.organisation_group_id = og.id
+        </createView>
+    </changeSet>
+
+    <changeSet id="167" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="auto_approval" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="168" author="dieppa" failOnError="false" >
+        <dropView viewName="v_borough_report"/>
+        <createView viewName="v_tenure_items_grouped" replaceIfExists="true">
+            SELECT id project_id,SUM(eg_supp_units) eg_supp_units
+            FROM v_tenure_items
+            GROUP BY id
+        </createView>
+        <createView viewName="v_borough_report" replaceIfExists="true">
+            SELECT
+            proj.programme_id,
+            p.programme_name,
+            proj.template_id,
+            proj.status,
+            p.project_type,
+            p.project_id,
+            p.project_title,
+            p.date_submitted,
+            p.description,
+            p.org_type,
+            p.lead_org_name,
+            p.developing_org,
+            p.borough,
+            p.postcode,
+            p.x_coord,
+            p.y_coord,
+            p.planning_ref,
+            ms.ms_start_site,
+            ms.ms_completion,
+            ms.ms_processing_route,
+            CASE WHEN s106.affordable_criteria_met = TRUE THEN s106.s106 + s106.add_aff_units
+            WHEN s106.affordable_criteria_met != TRUE THEN s106.s106
+            ELSE null END s106_dev_led,
+            s106.add_aff_units add_aff_units_dev_led,
+            CASE
+            WHEN s106.affordable_criteria_met IS NOT NULL THEN s106.affordable_criteria_met
+            ELSE null END affordable_criteria_met_dev_led,
+            iug.lar_units,
+            iug.llr_units,
+            iug.lso_units,
+            iug.other_units,
+            q.q_other_aff_type,
+            q.q_planning_status,
+            q.q_land_status,
+            q.q_larger_aff_homes,
+            tig.eg_supp_units,
+            aq.aq_wheelchair_units,
+            aq.aq_client_group
+            FROM v_project_details p
+            INNER JOIN project proj ON proj.id=p.project_id
+            LEFT JOIN v_milestones_1000 ms on ms.project_id=p.project_id
+            LEFT JOIN v_indicative_units_1000_grouped iug ON iug.project_id=p.project_id
+            LEFT JOIN v_questions_1000 q ON q.project_id=p.project_id
+            LEFT JOIN v_add_questions_1000 aq ON aq.project_id=p.project_id
+            LEFT JOIN v_s106_developer_led_grouped s106 ON s106.project_id=p.project_id
+            LEFT JOIN v_tenure_items_grouped tig ON tig.project_id=p.project_id
+        </createView>
+    </changeSet>
+    <changeSet id="169" author="cmelville" >
+        <createSequence sequenceName="import_process_log_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="import_process_log" remarks="Table records imports that have been run to prevent multiple imports">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="import_process_log">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="type" type="varchar(50)" remarks="the type of import, PCS project or financial data for example">
+                <constraints nullable="false" />
+            </column>
+            <column name="execution_date" type="TIMESTAMP" remarks="Date and time the import was run">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="170" author="ybouhass">
+        <addColumn tableName="milestone">
+            <column name="conditional" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="modified_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="171" author="cmelville" >
+        <createSequence sequenceName="import_error_log_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="import_error" remarks="Table records import errors that have occurred by import">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="import_error_log_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="type" type="varchar(50)" remarks="the type of import, PCS project or financial data for example">
+                <constraints nullable="false" />
+            </column>
+            <column name="execution_date" type="TIMESTAMP" remarks="Date and time the import was run">
+                <constraints nullable="false" />
+            </column>
+            <column name="importedBy" type="varchar(255)" remarks="user running the import">
+                <constraints nullable="false" />
+            </column>
+            <column name="row_number" type="INT4" remarks="row in csv file which this error relates to">
+                <constraints nullable="false" />
+            </column>
+            <column name="error_summary" type="varchar(500)" remarks="summary of failure reason">
+                <constraints nullable="false" />
+            </column>
+            <column name="rawData" type="varchar(2500)" remarks="raw row data">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="172" author="cmelville" >
+        <renameTable oldTableName="import_error" newTableName="import_errors"/>
+        <renameColumn tableName="import_errors" oldColumnName="type" newColumnName="import_type"/>
+        <renameColumn tableName="import_errors" oldColumnName="execution_date" newColumnName="import_time"/>
+        <renameColumn tableName="import_errors" oldColumnName="importedBy" newColumnName="imported_by"/>
+        <renameColumn tableName="import_errors" oldColumnName="rawData" newColumnName="raw_data"/>
+    </changeSet>
+    <changeSet id="173" author="cmelville">
+        <addColumn tableName="project_block">
+            <column name="block_status" type="varchar(60)" defaultValue="UNAPPROVED">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="approver_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="approval_timestamp" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="174" author="cmelville">
+        <addColumn tableName="project_block">
+            <column name="version_number" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="175" author="ybouhass">
+        <addColumn tableName="import_process_log">
+            <column name="status" type="varchar(50)" remarks="status of the import STARTED or COMPLETE">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="import_count" type="INT4" remarks="number of rows imported successfully">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="error_count" type="INT4" remarks="number of rows failed to import">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="176" author="dieppa" failOnError="false" >
+        <dropView viewName="v_borough_report"/>
+        <dropView viewName="v_indicative_units_1000_grouped"/>
+        <dropView viewName="v_s106_developer_led_grouped"/>
+        <dropView viewName="v_tenure_items_grouped"/>
+        <createView viewName="v_borough_report" replaceIfExists="true">
+            SELECT
+            proj.programme_id,
+            p.programme_name,
+            proj.template_id,
+            proj.status,
+            p.project_type,
+            p.project_id,
+            p.project_title,
+            p.date_submitted,
+            p.description,
+            p.org_type,
+            p.lead_org_name,
+            p.developing_org,
+            p.borough,
+            p.postcode,
+            p.x_coord,
+            p.y_coord,
+            p.planning_ref,
+            ms.ms_start_site,
+            ms.ms_completion,
+            ms.ms_processing_route,
+            eg.eg_s106_units_lar+eg.eg_s106_units_llr+eg.eg_s106_units_so+eg.eg_s106_units_oa
+            s106_dev_led,
+            eg.eg_add_aff_units_lar+eg.eg_add_aff_units_llr+eg.eg_add_aff_units_so+eg.eg_add_aff_units_oa
+            add_aff_units_dev_led,
+            eg.eg_40pct_hab_rooms affordable_criteria_met_dev_led,
+            eg.eg_total_units_lar lar_units,
+            eg.eg_total_units_llr llr_units,
+            eg.eg_total_units_so lso_units,
+            eg.eg_total_units_oa other_units,
+            eg.eg_supp_units_lar+eg.eg_supp_units_llr+eg.eg_supp_units_so+eg.eg_supp_units_oa
+            eg_supp_units,
+            q.q_other_aff_type,
+            q.q_planning_status,
+            q.q_land_status,
+            q.q_larger_aff_homes,
+            aq.aq_wheelchair_units,
+            aq.aq_client_group
+            FROM v_project_details p
+            INNER JOIN project proj ON proj.id=p.project_id
+            LEFT JOIN v_eligible_grant_1000 eg ON p.project_id=eg.project_id
+            LEFT JOIN v_milestones_1000 ms on ms.project_id=p.project_id
+            LEFT JOIN v_questions_1000 q ON q.project_id=p.project_id
+            LEFT JOIN v_add_questions_1000 aq ON aq.project_id=p.project_id
+        </createView>
+    </changeSet>
+
+    <changeSet id="177" author="ybouhass">
+        <addColumn tableName="project_ledger_entry">
+            <column name="ledger_source" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <sql>update project_ledger_entry set ledger_source = 'SAP' where ledger_status = 'ACTUAL'</sql>
+        <sql>update project_ledger_entry set ledger_source = 'WebUI' where ledger_status = 'FORECAST'</sql>
+    </changeSet>
+    <changeSet id="178" author="dieppa" failOnError="false" >
+        <dropView viewName="v_borough_report"/>
+        <createView viewName="v_eligible_grant_1000_null_clean" replaceIfExists="true">
+            SELECT
+            project_id,
+            eg_40pct_hab_rooms,
+            CASE WHEN
+            eg_s106_units_lar IS NULL AND
+            eg_s106_units_llr IS NULL AND
+            eg_s106_units_so IS NULL AND
+            eg_s106_units_oa IS NULL THEN TRUE
+            ELSE false END s106_null,
+            CASE
+            WHEN eg_s106_units_lar IS NULL THEN 0
+            ELSE eg_s106_units_lar END s106_lar,
+            CASE
+            WHEN eg_s106_units_llr IS NULL THEN 0
+
+            ELSE eg_s106_units_llr END s106_llr,
+            CASE
+            WHEN eg_s106_units_so IS NULL THEN 0
+            ELSE eg_s106_units_so END s106_so,
+            CASE
+            WHEN eg_s106_units_oa IS NULL THEN 0
+            ELSE eg_s106_units_oa END s106_oa,
+
+            CASE WHEN
+            eg_add_aff_units_lar IS NULL AND
+            eg_add_aff_units_llr IS NULL AND
+            eg_add_aff_units_so IS NULL AND
+            eg_add_aff_units_oa IS NULL THEN TRUE
+            ELSE false END add_aff_null,
+            CASE
+            WHEN eg_add_aff_units_lar IS NULL THEN 0
+            ELSE eg_add_aff_units_lar END add_aff_lar,
+            CASE
+            WHEN eg_add_aff_units_llr IS NULL THEN 0
+            ELSE eg_add_aff_units_llr END add_aff_llr,
+            CASE
+            WHEN eg_add_aff_units_so IS NULL THEN 0
+            ELSE eg_add_aff_units_so END add_aff_so,
+            CASE
+            WHEN eg_add_aff_units_oa IS NULL THEN 0
+            ELSE eg_add_aff_units_oa END add_aff_oa,
+
+            CASE WHEN
+            eg_supp_units_lar IS NULL AND
+            eg_supp_units_llr IS NULL AND
+            eg_supp_units_so IS NULL AND
+            eg_supp_units_oa IS NULL THEN TRUE
+            ELSE false END eg_supp_units_null,
+            CASE
+            WHEN eg_supp_units_lar IS NULL THEN 0
+            ELSE eg_supp_units_lar END eg_supp_units_lar,
+            CASE
+            WHEN eg_supp_units_llr IS NULL THEN 0
+            ELSE eg_supp_units_llr END eg_supp_units_llr,
+            CASE
+            WHEN eg_supp_units_so IS NULL THEN 0
+            ELSE eg_supp_units_so END eg_supp_units_so,
+            CASE
+            WHEN eg_supp_units_oa IS NULL THEN 0
+            ELSE eg_supp_units_oa END eg_supp_units_oa,
+
+            eg_total_units_lar lar_units,
+            eg_total_units_llr llr_units,
+            eg_total_units_so lso_units,
+            eg_total_units_oa other_units
+            FROM v_eligible_grant_1000
+        </createView>
+        <createView viewName="v_borough_report" replaceIfExists="true">
+            SELECT
+            proj.programme_id,
+            p.programme_name,
+            proj.template_id,
+            proj.status,
+            p.project_type,
+            p.project_id,
+            p.project_title,
+            p.date_submitted,
+            p.description,
+            p.org_type,
+            p.lead_org_name,
+            p.developing_org,
+            p.borough,
+            p.postcode,
+            p.x_coord,
+            p.y_coord,
+            p.planning_ref,
+            ms.ms_start_site,
+            ms.ms_completion,
+            ms.ms_processing_route,
+            eg.eg_40pct_hab_rooms affordable_criteria_met_dev_led,
+            CASE
+            WHEN eg.s106_null THEN NULL
+            ELSE eg.s106_lar+eg.s106_llr+eg.s106_so+eg.s106_oa
+            END s106_dev_led,
+            CASE
+            WHEN eg.add_aff_null THEN NULL
+            ELSE eg.add_aff_lar+eg.add_aff_llr+eg.add_aff_so+eg.add_aff_oa
+            END add_aff_units_dev_led,
+            CASE
+            WHEN eg.eg_supp_units_null THEN NULL
+            ELSE eg.eg_supp_units_lar+eg.eg_supp_units_llr+eg.eg_supp_units_so+eg.eg_supp_units_oa
+            END   eg_supp_units,
+            eg.lar_units,
+            eg.llr_units,
+            eg.lso_units,
+            eg.other_units,
+
+            q.q_other_aff_type,
+            q.q_planning_status,
+            q.q_land_status,
+            q.q_larger_aff_homes,
+            aq.aq_wheelchair_units,
+            aq.aq_client_group
+            FROM v_project_details p
+            INNER JOIN project proj ON proj.id=p.project_id
+            LEFT JOIN v_eligible_grant_1000_null_clean eg ON p.project_id=eg.project_id
+            LEFT JOIN v_milestones_1000 ms on ms.project_id=p.project_id
+            LEFT JOIN v_questions_1000 q ON q.project_id=p.project_id
+            LEFT JOIN v_add_questions_1000 aq ON aq.project_id=p.project_id
+        </createView>
+    </changeSet>
+    <changeSet id="179" author="dieppa" failOnError="false" >
+        <dropView viewName="v_borough_report"/>
+        <dropView viewName="v_eligible_grant_1000_null_clean"/>
+        <dropView viewName="v_eligible_grant_1000"/>
+        <dropView viewName="v_tenure_items"/>
+        <createView viewName="v_tenure_items" replaceIfExists="true">
+            SELECT p.id,
+            CASE
+                WHEN bt.grant_type = 'CALCULATE' THEN tu.total_units
+                WHEN bt.grant_type = 'NEGOTIATED' THEN tu.total_units
+                WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.s106_units IS NULL AND tu.additional_units IS NOT NULL
+                    THEN tu.additional_units
+                WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.additional_units IS NULL AND tu.s106_units IS NOT NULL
+                    THEN tu.s106_units
+                WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.s106_units IS NOT NULL AND tu.additional_units IS NOT NULL
+                    THEN tu.s106_units + tu.additional_units
+                ELSE null END eg_total_units,
+            CASE WHEN bt.grant_type = 'CALCULATE' THEN tu.s106_units ELSE NULL END eg_nil_grant_units,
+            CASE WHEN bt.grant_type = 'DEVELOPER-LED' THEN tu.additional_units ELSE NULL END eg_add_aff_units,
+            CASE WHEN bt.grant_type = 'DEVELOPER-LED' THEN tu.s106_units ELSE NULL END eg_s106_units,
+            CASE WHEN bt.grant_type = 'CALCULATE' OR bt.grant_type = 'DEVELOPER-LED' OR bt.grant_type = 'NEGOTIATED' THEN tu.total_cost ELSE NULL END eg_dev_cost,
+            CASE WHEN bt.grant_type = 'NEGOTIATED' THEN tu.supported_units ELSE NULL END eg_supp_units,
+            CASE WHEN bt.grant_type = 'CALCULATE' OR bt.grant_type = 'DEVELOPER-LED' THEN tu.grant_per_unit
+            WHEN bt.grant_type = 'NEGOTIATED' THEN CAST( ROUND( CAST (tu.eligible_grant AS FLOAT) / tu.eligible_units) AS INTEGER)
+            ELSE NULL END eg_gpu,
+            tt.external_id,
+            bt.affordable_criteria_met
+            from project p
+            LEFT JOIN tenure_AND_units tu ON tu.project_id = p.id
+            LEFT JOIN tenure_type  tt ON tu.tenure_type_id = tt.id
+            INNER JOIN budget_AND_tenure bt ON tu.budget_id = bt.id
+        </createView>
+        <createView viewName="v_eligible_grant_1000" replaceIfExists="true">
+            SELECT
+            -- 4000
+            lar.id project_id,
+            lar.eg_total_units eg_total_units_lar,
+            lar.eg_nil_grant_units eg_nil_grant_units_lar,
+            lar.eg_Add_aff_units eg_Add_aff_units_lar,
+            lar.eg_s106_units eg_s106_units_lar,
+            lar.eg_supp_units eg_supp_units_lar,
+            lar.eg_dev_cost eg_dev_cost_lar,
+            lar.eg_gpu eg_gpu_lar,
+            -- 4001
+            llr.eg_total_units eg_total_units_llr,
+            llr.eg_nil_grant_units eg_nil_grant_units_llr,
+            llr.eg_Add_aff_units eg_Add_aff_units_llr,
+            llr.eg_s106_units eg_s106_units_llr,
+            llr.eg_supp_units eg_supp_units_llr,
+            llr.eg_dev_cost eg_dev_cost_llr,
+            llr.eg_gpu eg_gpu_llr,
+            -- 4002
+            so.eg_total_units eg_total_units_so,
+            so.eg_nil_grant_units eg_nil_grant_units_so,
+            so.eg_Add_aff_units eg_Add_aff_units_so,
+            so.eg_s106_units eg_s106_units_so,
+            so.eg_supp_units eg_supp_units_so,
+            so.eg_dev_cost eg_dev_cost_so,
+            so.eg_gpu eg_gpu_so,
+            -- 4003
+            oa.eg_total_units eg_total_units_oa,
+            oa.eg_nil_grant_units eg_nil_grant_units_oa,
+            oa.eg_Add_aff_units eg_Add_aff_units_oa,
+            oa.eg_s106_units eg_s106_units_oa,
+            oa.eg_supp_units eg_supp_units_oa,
+            oa.eg_dev_cost eg_dev_cost_oa,
+            oa.eg_gpu eg_gpu_oa,
+            llr.affordable_criteria_met eg_40pct_hab_rooms
+            FROM v_tenure_items lar
+            LEFT JOIN v_tenure_items llr ON lar.id = llr.id
+            LEFT JOIN v_tenure_items so ON lar.id = so.id
+            LEFT JOIN v_tenure_items oa ON lar.id = oa.id
+            where lar.external_id = 4000 AND
+            llr.external_id = 4001 AND
+            so.external_id = 4002 AND
+            oa.external_id = 4003
+        </createView>
+        <createView viewName="v_eligible_grant_1000_null_clean" replaceIfExists="true">
+            SELECT
+            project_id,
+            eg_40pct_hab_rooms,
+            CASE WHEN
+            eg_s106_units_lar IS NULL AND
+            eg_s106_units_llr IS NULL AND
+            eg_s106_units_so IS NULL AND
+            eg_s106_units_oa IS NULL THEN TRUE
+            ELSE false END s106_null,
+            CASE
+            WHEN eg_s106_units_lar IS NULL THEN 0
+            ELSE eg_s106_units_lar END s106_lar,
+            CASE
+            WHEN eg_s106_units_llr IS NULL THEN 0
+
+            ELSE eg_s106_units_llr END s106_llr,
+            CASE
+            WHEN eg_s106_units_so IS NULL THEN 0
+            ELSE eg_s106_units_so END s106_so,
+            CASE
+            WHEN eg_s106_units_oa IS NULL THEN 0
+            ELSE eg_s106_units_oa END s106_oa,
+
+            CASE WHEN
+            eg_add_aff_units_lar IS NULL AND
+            eg_add_aff_units_llr IS NULL AND
+            eg_add_aff_units_so IS NULL AND
+            eg_add_aff_units_oa IS NULL THEN TRUE
+            ELSE false END add_aff_null,
+            CASE
+            WHEN eg_add_aff_units_lar IS NULL THEN 0
+            ELSE eg_add_aff_units_lar END add_aff_lar,
+            CASE
+            WHEN eg_add_aff_units_llr IS NULL THEN 0
+            ELSE eg_add_aff_units_llr END add_aff_llr,
+            CASE
+            WHEN eg_add_aff_units_so IS NULL THEN 0
+            ELSE eg_add_aff_units_so END add_aff_so,
+            CASE
+            WHEN eg_add_aff_units_oa IS NULL THEN 0
+            ELSE eg_add_aff_units_oa END add_aff_oa,
+
+            CASE WHEN
+            eg_supp_units_lar IS NULL AND
+            eg_supp_units_llr IS NULL AND
+            eg_supp_units_so IS NULL AND
+            eg_supp_units_oa IS NULL THEN TRUE
+            ELSE false END eg_supp_units_null,
+            CASE
+            WHEN eg_supp_units_lar IS NULL THEN 0
+            ELSE eg_supp_units_lar END eg_supp_units_lar,
+            CASE
+            WHEN eg_supp_units_llr IS NULL THEN 0
+            ELSE eg_supp_units_llr END eg_supp_units_llr,
+            CASE
+            WHEN eg_supp_units_so IS NULL THEN 0
+            ELSE eg_supp_units_so END eg_supp_units_so,
+            CASE
+            WHEN eg_supp_units_oa IS NULL THEN 0
+            ELSE eg_supp_units_oa END eg_supp_units_oa,
+
+            eg_total_units_lar lar_units,
+            eg_total_units_llr llr_units,
+            eg_total_units_so lso_units,
+            eg_total_units_oa other_units
+            FROM v_eligible_grant_1000
+        </createView>
+        <createView viewName="v_borough_report" replaceIfExists="true">
+            SELECT
+            proj.programme_id,
+            p.programme_name,
+            proj.template_id,
+            proj.status,
+            p.project_type,
+            p.project_id,
+            p.project_title,
+            p.date_submitted,
+            p.description,
+            p.org_type,
+            p.lead_org_name,
+            p.developing_org,
+            p.borough,
+            p.postcode,
+            p.x_coord,
+            p.y_coord,
+            p.planning_ref,
+            ms.ms_start_site,
+            ms.ms_completion,
+            ms.ms_processing_route,
+            eg.eg_40pct_hab_rooms affordable_criteria_met_dev_led,
+            CASE
+            WHEN eg.s106_null THEN NULL
+            ELSE eg.s106_lar+eg.s106_llr+eg.s106_so+eg.s106_oa
+            END s106_dev_led,
+            CASE
+            WHEN eg.add_aff_null THEN NULL
+            ELSE eg.add_aff_lar+eg.add_aff_llr+eg.add_aff_so+eg.add_aff_oa
+            END add_aff_units_dev_led,
+            CASE
+            WHEN eg.eg_supp_units_null THEN NULL
+            ELSE eg.eg_supp_units_lar+eg.eg_supp_units_llr+eg.eg_supp_units_so+eg.eg_supp_units_oa
+            END   eg_supp_units,
+            eg.lar_units,
+            eg.llr_units,
+            eg.lso_units,
+            eg.other_units,
+
+            q.q_other_aff_type,
+            q.q_planning_status,
+            q.q_land_status,
+            q.q_larger_aff_homes,
+            aq.aq_wheelchair_units,
+            aq.aq_client_group
+            FROM v_project_details p
+            INNER JOIN project proj ON proj.id=p.project_id
+            LEFT JOIN v_eligible_grant_1000_null_clean eg ON p.project_id=eg.project_id
+            LEFT JOIN v_milestones_1000 ms on ms.project_id=p.project_id
+            LEFT JOIN v_questions_1000 q ON q.project_id=p.project_id
+            LEFT JOIN v_add_questions_1000 aq ON aq.project_id=p.project_id
+        </createView>
+    </changeSet>
+
+    <changeSet id="179_fix_GLA-6361" author="ybouhass">
+        <modifyDataType tableName="project_ledger_entry" columnName="transaction_number" newDataType="varchar(40)" />
+    </changeSet>
+
+    <changeSet id="181_fix" author="dieppa" failOnError="false" >
+        <dropView viewName="v_borough_report"/>
+        <dropView viewName="v_eligible_grant_1000_null_clean"/>
+        <dropView viewName="v_eligible_grant_1000"/>
+        <dropView viewName="v_tenure_items"/>
+        <createView viewName="v_tenure_items" replaceIfExists="true">
+            SELECT p.id,
+            bt.grant_type grant_type,
+            CASE
+            WHEN bt.grant_type = 'CALCULATE' THEN tu.total_units
+            WHEN bt.grant_type = 'NEGOTIATED' THEN tu.total_units
+            WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.s106_units IS NULL
+            THEN tu.additional_units
+            WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.additional_units IS NULL
+            THEN tu.s106_units
+            WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.s106_units IS NOT NULL AND tu.additional_units IS NOT NULL
+            THEN tu.s106_units + tu.additional_units
+            ELSE null END eg_total_units,
+
+            -- total units to calculate total grant
+            CASE
+            WHEN bt.grant_type = 'CALCULATE' AND tu.s106_units IS NULL THEN tu.total_units
+            WHEN bt.grant_type = 'CALCULATE' THEN tu.total_units - tu.s106_units
+            WHEN bt.grant_type = 'NEGOTIATED' THEN tu.total_units
+            WHEN bt.grant_type = 'DEVELOPER-LED' AND (tu.s106_units IS NULL OR affordable_criteria_met != TRUE)
+            THEN tu.additional_units
+            WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.additional_units IS NOT NULL
+            THEN tu.s106_units + tu.additional_units
+            WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.additional_units IS NULL
+            THEN tu.s106_units
+            ELSE null END eg_total_grant_units,
+
+            CASE WHEN bt.grant_type = 'CALCULATE' THEN tu.s106_units ELSE NULL END eg_nil_grant_units,
+            CASE WHEN bt.grant_type = 'DEVELOPER-LED' THEN tu.additional_units ELSE NULL END eg_add_aff_units,
+            CASE WHEN bt.grant_type = 'DEVELOPER-LED' THEN tu.s106_units ELSE NULL END eg_s106_units,
+            CASE WHEN bt.grant_type = 'CALCULATE' OR bt.grant_type = 'DEVELOPER-LED' OR bt.grant_type = 'NEGOTIATED' THEN tu.total_cost ELSE NULL END eg_dev_cost,
+            CASE WHEN bt.grant_type = 'NEGOTIATED' THEN tu.supported_units ELSE NULL END eg_supp_units,
+            CASE WHEN bt.grant_type = 'CALCULATE' OR bt.grant_type = 'DEVELOPER-LED' THEN tu.grant_per_unit
+            WHEN bt.grant_type = 'NEGOTIATED' AND tu.eligible_units IS NOT NULL AND tu.eligible_units != 0 THEN CAST( ROUND( CAST (tu.eligible_grant AS FLOAT) / tu.eligible_units) AS INTEGER)
+            ELSE NULL END eg_gpu,
+            tt.external_id,
+            bt.affordable_criteria_met
+            from project p
+            LEFT JOIN tenure_AND_units tu ON tu.project_id = p.id
+            LEFT JOIN tenure_type  tt ON tu.tenure_type_id = tt.id
+            INNER JOIN budget_AND_tenure bt ON tu.budget_id = bt.id
+        </createView>
+        <createView viewName="v_eligible_grant_1000" replaceIfExists="true">
+            SELECT
+            lar.id project_id,
+            -- 4000
+            lar.eg_total_units eg_total_units_lar,
+            lar.eg_nil_grant_units eg_nil_grant_units_lar,
+            lar.eg_Add_aff_units eg_Add_aff_units_lar,
+            lar.eg_s106_units eg_s106_units_lar,
+            lar.eg_supp_units eg_supp_units_lar,
+            lar.eg_dev_cost eg_dev_cost_lar,
+            lar.eg_gpu eg_gpu_lar,
+            lar.eg_total_grant_units * lar.eg_gpu eg_total_eligible_grant_lar,
+            -- 4001
+            llr.eg_total_units eg_total_units_llr,
+            llr.eg_nil_grant_units eg_nil_grant_units_llr,
+            llr.eg_Add_aff_units eg_Add_aff_units_llr,
+            llr.eg_s106_units eg_s106_units_llr,
+            llr.eg_supp_units eg_supp_units_llr,
+            llr.eg_dev_cost eg_dev_cost_llr,
+            llr.eg_gpu eg_gpu_llr,
+            llr.eg_total_grant_units * llr.eg_gpu eg_total_eligible_grant_llr,
+            -- 4002
+            so.eg_total_units eg_total_units_so,
+            so.eg_nil_grant_units eg_nil_grant_units_so,
+            so.eg_Add_aff_units eg_Add_aff_units_so,
+            so.eg_s106_units eg_s106_units_so,
+            so.eg_supp_units eg_supp_units_so,
+            so.eg_dev_cost eg_dev_cost_so,
+            so.eg_gpu eg_gpu_so,
+            so.eg_total_grant_units * so.eg_gpu eg_total_eligible_grant_so,
+            -- 4003
+            oa.eg_total_units eg_total_units_oa,
+            oa.eg_nil_grant_units eg_nil_grant_units_oa,
+            oa.eg_Add_aff_units eg_Add_aff_units_oa,
+            oa.eg_s106_units eg_s106_units_oa,
+            oa.eg_supp_units eg_supp_units_oa,
+            oa.eg_dev_cost eg_dev_cost_oa,
+            oa.eg_gpu eg_gpu_oa,
+            oa.eg_total_grant_units * oa.eg_gpu eg_total_eligible_grant_oa,
+
+            llr.affordable_criteria_met eg_40pct_hab_rooms
+            FROM v_tenure_items lar
+            LEFT JOIN v_tenure_items llr ON lar.id = llr.id
+            LEFT JOIN v_tenure_items so ON lar.id = so.id
+            LEFT JOIN v_tenure_items oa ON lar.id = oa.id
+            where lar.external_id = 4000 AND
+            llr.external_id = 4001 AND
+            so.external_id = 4002 AND
+            oa.external_id = 4003
+
+        </createView>
+        <createView viewName="v_eligible_grant_1000_null_clean" replaceIfExists="true">
+            SELECT
+            project_id,
+            eg_40pct_hab_rooms,
+            CASE WHEN
+            eg_s106_units_lar IS NULL AND
+            eg_s106_units_llr IS NULL AND
+            eg_s106_units_so IS NULL AND
+            eg_s106_units_oa IS NULL THEN TRUE
+            ELSE false END s106_null,
+            CASE
+            WHEN eg_s106_units_lar IS NULL THEN 0
+            ELSE eg_s106_units_lar END s106_lar,
+            CASE
+            WHEN eg_s106_units_llr IS NULL THEN 0
+
+            ELSE eg_s106_units_llr END s106_llr,
+            CASE
+            WHEN eg_s106_units_so IS NULL THEN 0
+            ELSE eg_s106_units_so END s106_so,
+            CASE
+            WHEN eg_s106_units_oa IS NULL THEN 0
+            ELSE eg_s106_units_oa END s106_oa,
+
+            CASE WHEN
+            eg_add_aff_units_lar IS NULL AND
+            eg_add_aff_units_llr IS NULL AND
+            eg_add_aff_units_so IS NULL AND
+            eg_add_aff_units_oa IS NULL THEN TRUE
+            ELSE false END add_aff_null,
+            CASE
+            WHEN eg_add_aff_units_lar IS NULL THEN 0
+            ELSE eg_add_aff_units_lar END add_aff_lar,
+            CASE
+            WHEN eg_add_aff_units_llr IS NULL THEN 0
+            ELSE eg_add_aff_units_llr END add_aff_llr,
+            CASE
+            WHEN eg_add_aff_units_so IS NULL THEN 0
+            ELSE eg_add_aff_units_so END add_aff_so,
+            CASE
+            WHEN eg_add_aff_units_oa IS NULL THEN 0
+            ELSE eg_add_aff_units_oa END add_aff_oa,
+
+            CASE WHEN
+            eg_supp_units_lar IS NULL AND
+            eg_supp_units_llr IS NULL AND
+            eg_supp_units_so IS NULL AND
+            eg_supp_units_oa IS NULL THEN TRUE
+            ELSE false END eg_supp_units_null,
+            CASE
+            WHEN eg_supp_units_lar IS NULL THEN 0
+            ELSE eg_supp_units_lar END eg_supp_units_lar,
+            CASE
+            WHEN eg_supp_units_llr IS NULL THEN 0
+            ELSE eg_supp_units_llr END eg_supp_units_llr,
+            CASE
+            WHEN eg_supp_units_so IS NULL THEN 0
+            ELSE eg_supp_units_so END eg_supp_units_so,
+            CASE
+            WHEN eg_supp_units_oa IS NULL THEN 0
+            ELSE eg_supp_units_oa END eg_supp_units_oa,
+
+            eg_total_units_lar lar_units,
+            eg_total_units_llr llr_units,
+            eg_total_units_so lso_units,
+            eg_total_units_oa other_units
+            FROM v_eligible_grant_1000
+
+        </createView>
+        <createView viewName="v_borough_report" replaceIfExists="true">
+            SELECT
+            proj.programme_id,
+            p.programme_name,
+            proj.template_id,
+            proj.status,
+            p.project_type,
+            p.project_id,
+            p.project_title,
+            p.date_submitted,
+            p.description,
+            p.org_type,
+            p.lead_org_name,
+            p.developing_org,
+            p.borough,
+            p.postcode,
+            p.x_coord,
+            p.y_coord,
+            p.planning_ref,
+            ms.ms_start_site,
+            ms.ms_completion,
+            ms.ms_processing_route,
+            eg.eg_40pct_hab_rooms affordable_criteria_met_dev_led,
+            CASE
+            WHEN eg.s106_null THEN NULL
+            ELSE eg.s106_lar+eg.s106_llr+eg.s106_so+eg.s106_oa
+            END s106_dev_led,
+            CASE
+            WHEN eg.add_aff_null THEN NULL
+            ELSE eg.add_aff_lar+eg.add_aff_llr+eg.add_aff_so+eg.add_aff_oa
+            END add_aff_units_dev_led,
+            CASE
+            WHEN eg.eg_supp_units_null THEN NULL
+            ELSE eg.eg_supp_units_lar+eg.eg_supp_units_llr+eg.eg_supp_units_so+eg.eg_supp_units_oa
+            END   eg_supp_units,
+            eg.lar_units,
+            eg.llr_units,
+            eg.lso_units,
+            eg.other_units,
+
+            q.q_other_aff_type,
+            q.q_planning_status,
+            q.q_land_status,
+            q.q_larger_aff_homes,
+            aq.aq_wheelchair_units,
+            aq.aq_client_group
+            FROM v_project_details p
+            INNER JOIN project proj ON proj.id=p.project_id
+            LEFT JOIN v_eligible_grant_1000_null_clean eg ON p.project_id=eg.project_id
+            LEFT JOIN v_milestones_1000 ms on ms.project_id=p.project_id
+            LEFT JOIN v_questions_1000 q ON q.project_id=p.project_id
+            LEFT JOIN v_add_questions_1000 aq ON aq.project_id=p.project_id
+
+        </createView>
+    </changeSet>
+
+</databaseChangeLog>

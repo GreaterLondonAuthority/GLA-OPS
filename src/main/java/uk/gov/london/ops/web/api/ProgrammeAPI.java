@@ -9,26 +9,26 @@ package uk.gov.london.ops.web.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.london.ops.FeatureStatus;
+import uk.gov.london.common.CSVFile;
+import uk.gov.london.common.GlaUtils;
+import uk.gov.london.ops.framework.feature.Feature;
+import uk.gov.london.ops.framework.feature.FeatureStatus;
 import uk.gov.london.ops.domain.EntityCount;
 import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.domain.project.ProjectDetailsBlock;
 import uk.gov.london.ops.domain.template.Programme;
 import uk.gov.london.ops.domain.template.ProgrammeSummary;
-import uk.gov.london.ops.domain.user.Role;
-import uk.gov.london.ops.exception.ForbiddenAccessException;
-import uk.gov.london.ops.exception.ValidationException;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants;
 import uk.gov.london.ops.service.ProgrammeService;
 import uk.gov.london.ops.service.SdeService;
 import uk.gov.london.ops.service.project.ProjectService;
-import uk.gov.london.ops.spe.SimpleProjectExportConstants;
-import uk.gov.london.ops.util.CSVFile;
-import uk.gov.london.ops.util.ExporterUtils;
-import uk.gov.london.ops.util.GlaOpsUtils;
+import uk.gov.london.ops.framework.ExporterUtils;
+import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.OutputStreamWriter;
@@ -36,6 +36,9 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static uk.gov.london.common.user.BaseRole.*;
 
 /**
  * REST API for programme data.
@@ -62,19 +65,18 @@ public class ProgrammeAPI {
         this.featureStatus = featureStatus;
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.ORG_ADMIN, Role.PROJECT_EDITOR, Role.TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/programmes", method = RequestMethod.GET)
-    @ApiOperation(value="get all programme data", notes="retrieves a list of all programmes")
-    public List<ProgrammeSummary> getAll(@RequestParam(name = "enabled", required = false) boolean enabled) {
-        if (featureStatus.isEnabled(FeatureStatus.Feature.ManagingOrgFilter)) {
-            return service.getSummaries(enabled);
-        }
-        else {
-            return service.findAllEnabled(enabled);
-        }
+    @ApiOperation(value="get a list of filtered programme data", notes="retrieves a list of all programmes, unless a filtered list is required specified by existence of searchText param")
+    public Page<ProgrammeSummary> getAll(@RequestParam(name = "enabled", required = false) boolean enabled,
+                                         @RequestParam(name = "statuses", required = false) List<Programme.Status> statuses,
+                                         @RequestParam(name = "searchText", required = false) String programmeText,
+                                         @RequestParam(name = "managingOrganisations", required = false) List<Integer> managingOrganisations,
+                                         Pageable pageable) {
+        return service.getSummaries(enabled, statuses,programmeText, managingOrganisations, pageable);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @GetMapping(value = "/programmes/{id}/borough")
     public Collection<String> getProgrammeBoroughs(@PathVariable Integer id) {
         final Collection<Project> projects = projectService.getProjectbyProgrammeId(id);
@@ -88,28 +90,27 @@ public class ProgrammeAPI {
                 : Collections.emptyList();
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @GetMapping(value = "/programmes/{id}/status")
     public Collection<String> getProgrammeStatuses(@PathVariable Integer id) {
         final Collection<Project> projects = projectService.getProjectbyProgrammeId(id);
         return projects != null
                 ? projects.stream()
-                .filter(GlaOpsUtils::notNull)
-                .map(Project::getStatus)
-                .map(Project.Status::name)
+                .filter(GlaUtils::notNull)
+                .map(Project::getStatusName)
                 .sorted()//Sorts it with natural order: Alphabetic
                 .collect(Collectors.toSet())
                 : Collections.emptyList();
     }
 
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, TECH_ADMIN})
     @RequestMapping(value = "/programmes/{id}", method = RequestMethod.GET)
-    public Programme get(@PathVariable Integer id) {
-        return service.getById(id);
+    public Programme get(@PathVariable Integer id, @RequestParam(required = false) boolean enrich) {
+        return service.getById(id, enrich);
     }
 
-    @Secured({Role.OPS_ADMIN})
+    @Secured({OPS_ADMIN})
     @RequestMapping(value = "/programmes/{id}/projectCountPerTemplate", method = RequestMethod.GET)
     public Set<EntityCount> getProjectCountPerTemplate(@PathVariable Integer id) {
         return service.getProjectCountPerTemplateForProgramme(id);
@@ -124,7 +125,7 @@ public class ProgrammeAPI {
      * @param id programme Id
      * @throws Exception
      */
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, TECH_ADMIN})
     @GetMapping("/programmes/{id}/csvexport")
     @ApiOperation(
             value="file download",
@@ -132,7 +133,7 @@ public class ProgrammeAPI {
     public void downloadCsvExport(HttpServletResponse response ,
                                   @PathVariable Integer id) throws Exception {
 
-        if (featureStatus.isEnabled(FeatureStatus.Feature.OutputCSV)) {
+        if (featureStatus.isEnabled(Feature.OutputCSV)) {
 
             //Retrieving data and generating headers from it
             final List<Map<String, Object>> projectsAsMap = sdeService
@@ -146,7 +147,7 @@ public class ProgrammeAPI {
             ExporterUtils.csvResponse(response, fileN);
 
             try (OutputStreamWriter out =
-                         new OutputStreamWriter(response.getOutputStream())) {
+                         new OutputStreamWriter(response.getOutputStream(), UTF_8)) {
                 CSVFile csvFile = new CSVFile(finalHeaders, out);
                 for (Map<String, Object> projectAsMap: projectsAsMap) {
                     csvFile.writeValues(projectAsMap);
@@ -199,22 +200,14 @@ public class ProgrammeAPI {
     }
 
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/programmes", method = RequestMethod.POST)
-    @ApiOperation(
-            value="create a new programme",
-            notes="creates a new programme and assigns it an ID")
-    public Programme create(final @Valid @RequestBody Programme programme,
-                            final HttpServletRequest request) {
-        if (programme.getId() != null) {
-            throw new ValidationException(
-                    "id",
-                    "New programmes must not have an ID");
-        }
+    @ApiOperation(value="create a new programme", notes="creates a new programme and assigns it an ID")
+    public Programme create(@Valid @RequestBody Programme programme) {
         return service.create(programme);
     }
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/programmes/{id}", method = RequestMethod.PUT)
     @ApiOperation(
             value="update an existing programme",
@@ -224,21 +217,7 @@ public class ProgrammeAPI {
         return service.update(id, programme);
     }
 
-    @Secured(Role.OPS_ADMIN)
-    @RequestMapping(value = "/programmes/{id}/managingOrg/{orgId}", method = RequestMethod.PUT)
-    @ApiOperation(
-            value="update an existing programme's managing org",
-            notes="updates an existing programme managing org ID")
-    public Programme updateManagingOrg(final @PathVariable Integer id, final @PathVariable Integer orgId) {
-        if (featureStatus.isEnabled(FeatureStatus.Feature.ManagingOrgFilter)) {
-            // can't update managing org for programme if the filter is currently enabled
-            throw new ForbiddenAccessException();
-        }
-        return service.updateManagingOrg(id, orgId);
-
-    }
-
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(
             value = "/programmes/{id}/enabled",
             method = RequestMethod.PUT)
@@ -250,14 +229,14 @@ public class ProgrammeAPI {
         service.updateEnabled(id, Boolean.parseBoolean(enabled));
     }
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/programmes/{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable Integer id) {
         service.deleteProgramme(id);
         return "Deleted programme " + id;
     }
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/programmes/{id}/supportedReports",method = RequestMethod.PUT)
     @ApiOperation(value="updates a programme's supported reports list", notes="updates a programme's supported reports list")
     public void updateSupportedReports(@PathVariable Integer id, @RequestBody List<String> supportedReports) {

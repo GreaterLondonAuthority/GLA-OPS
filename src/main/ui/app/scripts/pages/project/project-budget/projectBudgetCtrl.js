@@ -12,8 +12,8 @@ import ForecastDataUtil from '../../../util/ForecastDataUtil';
 import DateUtil from '../../../util/DateUtil';
 
 class ProjectBudgetCtrl extends ProjectBlockCtrl {
-  constructor(project, $injector, $scope, $log, FileUploadErrorModal, FileDeleteConfirmationModal, ToastrUtil, BudgetService, ActualsMetadataModal) {
-    super(project, $injector);
+  constructor(project, $injector, $scope, $log, FileUploadErrorModal, FileDeleteConfirmationModal, ToastrUtil, BudgetService, FinanceService, ActualsMetadataModal) {
+    super($injector);
     this.$scope = $scope;
     this.$log = $log;
     this.ToastrUtil = ToastrUtil;
@@ -21,12 +21,17 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
     this.FileDeleteConfirmationModal = FileDeleteConfirmationModal;
     this.BudgetService = BudgetService;
     this.ActualsMetadataModal = ActualsMetadataModal;
+    this.FinanceService = FinanceService;
 
+  }
+
+  $onInit(){
+    super.$onInit();
     this.data = this.projectBlock || {};
     this.originalData = angular.copy(this.data);
 
     this.uploadParams = {
-      orgId: project.organisation.id
+      orgId: this.project.organisation.id
     };
     this.selectedDocumentType = null;
     this.documentTypes = ['DAR', 'ADD', 'DD', 'MD', 'Other'];
@@ -270,11 +275,6 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
       data.toDateFinancialYear = this.toDateSelected.financialYear;
     }
 
-    // if (data.complete && this.hasApprovalAmountChanged() && this.isMissingAttachment()) {
-    //   //TODO might be needed in the future
-    //   // data = this.resetApprovalAmountToOriginal();
-    // }
-
     let p = this.$q.all(this.requestsQueue).then(results => {
       return this.BudgetService.saveProjectBudgets(this.project.id, data, !autoSave)
         .then(resp => {
@@ -283,8 +283,6 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
           if(autoSave){
             this.data.attachments = resp.data.attachments;
             this.refreshData(resp.data);
-          }else{
-            this.returnToOverview(this.blockId);
           }
         })
         .catch(err => {
@@ -293,7 +291,7 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
         });
       });
 
-      return this.addToRequestsQueue(p);
+    return this.addToRequestsQueue(p);
   }
 
   resetApprovalAmountToOriginal(){
@@ -309,23 +307,6 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
     return hasRevenueChanged || hasCapitalChanged;
   }
 
-  // isMissingAttachment(){
-  //   let isBlockComplete = this.originalData.complete;
-  //
-  //   if(this.filesToUpload.length){
-  //     return false;
-  //   }
-  //
-  //   if(!isBlockComplete && this.data.attachments.length){
-  //     return false;
-  //   }
-  //
-  //   if(isBlockComplete && !this.hasApprovalAmountChanged() && this.data.attachments.length){
-  //     return false;
-  //   }
-  //
-  //   return true;
-  // }
 
   shouldShowOutOfRangeWarning() {
     this.showOutOfRangeWarning = false;
@@ -366,20 +347,6 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // ANNUAL SPEND ctrl
   /**
    * Load data for a financial year
@@ -406,7 +373,7 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
   setupForecastData() {
     this.forecastLedgerTypes = ForecastDataUtil.getLedgerTypes();
     this.forecastSpendRecurrence = ForecastDataUtil.getSpendRecurrence();
-    return this.ProjectService.getSpendCategories()
+    return this.FinanceService.getSpendCategories()
       .then(categories => {
         this.forecastSpendCategories = categories;
       });
@@ -443,7 +410,7 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
    */
   validateAnnualBudget() {
     const data = this.yearData;
-    this.showBudgetInvalid = !this.readOnly && (data.annualBudgetCapital === null || data.annualBudgetRevenue === null);
+    this.showBudgetInvalid = !this.readOnly && (data.annualBudgetCapital == null || data.annualBudgetRevenue == null);
   }
 
   /**
@@ -547,7 +514,7 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
   }
 }
 
-ProjectBudgetCtrl.$inject = ['project', '$injector', '$scope', '$log', 'FileUploadErrorModal', 'FileDeleteConfirmationModal', 'ToastrUtil', 'BudgetService', 'ActualsMetadataModal'];
+ProjectBudgetCtrl.$inject = ['project', '$injector', '$scope', '$log', 'FileUploadErrorModal', 'FileDeleteConfirmationModal', 'ToastrUtil', 'BudgetService', 'FinanceService', 'ActualsMetadataModal'];
 
 angular.module('GLA')
   .controller('ProjectBudgetCtrl', ProjectBudgetCtrl);

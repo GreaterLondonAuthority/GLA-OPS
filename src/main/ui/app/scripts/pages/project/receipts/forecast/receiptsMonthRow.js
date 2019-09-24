@@ -14,6 +14,10 @@ class ReceiptsMonthRowCtrl extends ExpandableRow {
     super();
     this.$scope = $scope;
     this.numberFilter = numberFilter;
+  }
+
+  $onInit(){
+    super.init();
     this.data.breakdown = _.orderBy(this.data.breakdown, ['category']);
     this.originalData = _.cloneDeep(this.data);
     this.monthName = this.data.monthName;

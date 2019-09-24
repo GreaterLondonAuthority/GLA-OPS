@@ -25,6 +25,10 @@ checkbox-filter {
     padding-left: 0px;
 
     li {
+      &.group-item{
+        padding-left: 30px;
+      }
+
       .checkbox {
         float: left;
         margin: 5px 10px;
@@ -40,6 +44,10 @@ checkbox-filter {
 
   .filter-dropdown-button{
     min-width: 150px;
+  }
+
+  .glyphicon.link{
+    padding: 5px 5px 5px 3px;
   }
 }
 

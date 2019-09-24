@@ -8,7 +8,6 @@
 
 class NotificationCtrl {
   constructor($state, NotificationsService, UserService, ModalDisplayService, DeleteNotificationModal, SessionService) {
-    this.notification = this.content.notification;
     this.NotificationsService = NotificationsService;
     this.UserService = UserService;
     this.$state = $state;
@@ -18,7 +17,7 @@ class NotificationCtrl {
   }
 
   $onInit() {
-
+    this.notification = this.content.notification;
   }
 
   _deleteNotification() {
@@ -42,23 +41,37 @@ class NotificationCtrl {
   notificationClicked() {
     this.NotificationsService.markNotificationAsRead(this.content.id).then(()=>{
       this.content.timeRead = true;
-      if(this.notification.targetEntityId && this.notification.targetEntityType){
+      if(this.notification.targetEntityType){
         this.UserService.checkCurrentUserAccess(
           this.notification.targetEntityType,
           this.notification.targetEntityId,
           {403: this.notification.targetEntityType === 'project'}).then(() => {
 
           if(this.notification.targetEntityType === 'project') {
-            this.$state.go('project.overview', {
+            this.$state.go('project-overview', {
               'projectId': this.notification.targetEntityId,
             });
           } else if(this.notification.targetEntityType === 'organisation') {
-            this.$state.go('organisation', {
+            this.$state.go('organisation.view', {
               'orgId': this.notification.targetEntityId
             });
+          } else if(this.notification.targetEntityType === 'payment') {
+            this.$state.go('all-payments');
           } else if(this.notification.targetEntityType === 'paymentGroup') {
             this.$state.go('pending-payments', {
               'paymentGroupId': this.notification.targetEntityId
+            });
+          } else if (this.notification.targetEntityType === 'user') {
+            let userId = this.notification.targetEntityId;
+            if (userId) {
+              this.$state.go('user-account', {'userId': userId});
+            } else {
+              this.$state.go('users');
+            }
+
+          } else if (this.notification.targetEntityType === 'annualSubmission') {
+            this.$state.go('annual-submission', {
+              'annualSubmissionId': this.notification.targetEntityId
             });
           } else {
             console.error('No action found for action type ', this.notification.targetEntityType);

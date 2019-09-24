@@ -1,5 +1,6 @@
 <div id="top-menu-container">
   <gla-cookie-warning></gla-cookie-warning>
+  <banner-message ng-if="$ctrl.shouldShowBanner()" class="system-outage-banner" message="$ctrl.systemOutageMessage" can-close="$ctrl.canDismissBanner"></banner-message>
   <nav class="navbar navbar-default" ng-if="user.loggedOn">
     <div class="container-fluid">
 
@@ -15,54 +16,27 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li ui-sref-active="active"><a href ui-sref="user">HOME</a></li>
+          <li ng-class="{'dropdown': topMenuItem.items.length, 'active': isMenuItemActive(topMenuItem)}"
+              ng-repeat="topMenuItem in menu"
+              permission
+              permission-only="topMenuItem.permissions">
 
-          <li ng-class="{ active: $state.includes('consortiums') || $state.includes('organisations') }" class="dropdown">
-            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">ORGANISATIONS<span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li ui-sref-active="active" permission permission-only="'user.list.view.*'"><a href ui-sref="users">All users</a></li>
-              <li ui-sref-active="active"><a href ui-sref="organisations">Manage organisations</a></li>
-              <li ui-sref-active="active" permission set-permission="{only: 'cons'}"><a href ui-sref="consortiums">Consortiums & Partnerships</a></li>
+            <a aria-haspopup="true" data-toggle="dropdown" ng-class="{'dropdown-toggle': topMenuItem.items.length}" ng-click="goToState(topMenuItem.state)" role="button">{{topMenuItem.title}}<span class="caret" ng-if="topMenuItem.items.length"></span></a>
+
+            <ul class="dropdown-menu" ng-if="topMenuItem.items.length">
+              <li ng-repeat="item in topMenuItem.items"
+                  permission
+                  permission-only="item.permissions"
+                  ui-sref-active="active">
+                <a href ui-sref="{{item.state}}">{{item.title}}</a>
+              </li>
             </ul>
           </li>
-          <!--TODO move selection logic to code-->
-          <li permission set-permission="{only: ['prog', 'proj']}"
-              ng-class="{ active: $state.includes('programmes') || $state.includes('projects') }"
-              class="dropdown">
-            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">PROGRAMMES &amp; PROJECTS<span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li permission set-permission="{only: 'prog'}" ui-sref-active="active"><a href ui-sref="programmes">Programmes</a></li>
-              <li permission set-permission="{only: 'proj'}" ui-sref-active="active"><a href ui-sref="projects">Projects</a></li>
-            </ul>
-          </li>
-
-          <li permission set-permission="{only: 'payments'}" ng-class="{ active: $state.includes('payments') || $state.includes('pending-payments')  }" class="dropdown">
-            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">PAYMENTS<span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li ui-sref-active="active"><a href ui-sref="all-payments">All Payments</a></li>
-              <li ui-sref-active="active"><a href ui-sref="pending-payments">Pending Payments</a></li>
-              <!--<li ui-sref-active="active"><a href ui-sref="authorised-payments">Authorised Payments</a></li>-->
-              <!--<li ui-sref-active="active"><a href ui-sref="declined-payments">Declined Payments</a></li>-->
-            </ul>
-          </li>
-
-          <li permission set-permission="{only: 'reports.tab'}" ui-sref-active="active" ><a href ui-sref="reports">REPORTS</a></li>
-          <li ng-if="notificationsEnabled" ui-sref-active="active" ><a href ui-sref="notifications">NOTIFICATIONS</a></li>
-          <li permission permission-only="'system.dashboard'" ng-class="{ active: $state.includes('system') }" class="dropdown">
-            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true">ADMIN<span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li ui-sref-active="active"><a href ui-sref="system">System</a></li>
-            </ul>
-          </li>
-
         </ul>
         <ul class="nav navbar-nav navbar-right scroll-to-top-link">
           <li><a href ng-click="scrollToTop()"><span class="glyphicon glyphicon-chevron-up"></span></a></li>
         </ul>
-
-
       </div>
-
     </div>
   </nav>
 </div>

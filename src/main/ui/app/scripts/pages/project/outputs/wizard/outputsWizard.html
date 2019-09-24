@@ -1,12 +1,13 @@
-<div class="annualOutputsForecast">
-  <div class="row no-gutter wizzard">
-      <div class="col-xs-12 no-gutter">
-        <div class="form-group col-md-2 col-xs-12 mtop15">
+<div class="annualOutputsForecast" ng-style="{'baseline-wizard': $ctrl.baseline}">
+  <div class="wizzard">
+    <div class="row no-gutter inputs-row">
+        <div ng-if="!$ctrl.baseline" class="form-group col-md-2 col-xs-12 mtop15">
             <month-selector
               ng-if="$ctrl.periodType === 'Monthly'"
               read-only="$ctrl.readOnly"
               year="$ctrl.year"
               on-month-selected="$ctrl.onMonthSelected(selectedMonth)"
+              disabled-months="$ctrl.disabledMonths"
               selected-month="$ctrl.addOutputsMonth">
             </month-selector>
 
@@ -18,14 +19,15 @@
               selected-month="$ctrl.addOutputsMonth">
             </quarter-selector>
         </div>
-        <div class="form-group col-md-2 col-xs-12 mtop15">
+
+        <div class="form-group col-xs-12 mtop15" ng-class="{'col-md-2': $ctrl.displayOutputType, 'col-md-3': !$ctrl.displayOutputType}">
             <label for="outputsCategory">{{$ctrl.categoryName}}</label><br/>
             <ui-select id="outputsCategory"
                        placeholder="Select"
                        ng-model="$ctrl.outputsCategory"
                        search-enabled="false"
                        ng-disabled="$ctrl.readOnly"
-                       on-select="$ctrl.categorySelected($item, $model)">
+                       on-select="$ctrl.categorySelected($item)">
                 <ui-select-match title="{{$select.selected[0].category}}" placeholder="Select">
                     {{$select.selected[0].category}}
                 </ui-select-match>
@@ -34,9 +36,11 @@
                 </ui-select-choices>
             </ui-select>
         </div>
-        <div class="form-group col-md-2 col-xs-12 mtop15">
+
+        <div class="form-group col-xs-12 mtop15" ng-class="{'col-md-2': $ctrl.displayOutputType, 'col-md-3': !$ctrl.displayOutputType}"
+            ng-if="$ctrl.subCategories.length > 1" id="outputsSubCategory">
             <label for="outputsSubCategory">{{$ctrl.subcategoryName}}</label><br/>
-            <!-- if there is no subcatgories selected or that sub category only has 1 option -> disable -->
+            <!-- if there is no subcategories selected or that sub category only has 1 option -> disable -->
             <ui-select id="outputsSubCategory"
                        placeholder="Select"
                        ng-model="$ctrl.outputsSubCategory"
@@ -51,7 +55,7 @@
                 </ui-select-choices>
             </ui-select>
         </div>
-        <div class="form-group col-md-2 col-xs-12 mtop15">
+        <div ng-if="!$ctrl.baseline && $ctrl.displayOutputType" class="form-group col-md-2 col-xs-12 mtop15">
             <label for="directOrIndirect">{{$ctrl.outputTypeName}}</label><br/>
             <ui-select id="directOrIndirect"
                       placeholder="Select"
@@ -66,7 +70,7 @@
                 </ui-select-choices>
             </ui-select>
         </div>
-        <div class="form-group col-md-2 col-xs-12 mtop15">
+        <div ng-if="!$ctrl.baseline" class="form-group col-md-2 col-xs-12 mtop15">
             <label for="outputsType">Forecast or Actual</label><br/>
             <ui-select id="outputsType"
                        placeholder="Select"
@@ -93,12 +97,33 @@
                    maxlength="13"
                    ng-disabled="$ctrl.readOnly || !$ctrl.selectedUnits">
         </div>
+
+        <div class="form-group  form-horizontal outputsUnitCost col-md-2 col-xs-12 mtop15" ng-if="$ctrl.displayUnitCost">
+          <label for="outputsUnitCost">{{'Unit Cost £' || '&nbsp'}}</label><br/>
+          <input class="form-control"
+                 id="outputsUnitCost"
+                 type="text"
+                 placeholder="Not provided"
+                 ng-model="$ctrl.outputsUnitCost"
+                 ng-disabled="true">
+        </div>
+
+      <div class="row no-gutter">
+        <div class="col-xs-12 text-right button-container">
+
+          <button ng-if="$ctrl.baseline"
+                  class="btn btn-primary mtop15"
+                  ng-click="$ctrl.addBaselinedOutput()"
+                  ng-disabled="!$ctrl.canAddBaseline()">ADD BASELINE
+          </button>
+
+          <button ng-if="!$ctrl.baseline"
+                  class="btn btn-primary mtop15"
+                  ng-click="$ctrl.addForecastOutput()"
+                  ng-disabled="!$ctrl.canAddOutput()">ADD OUTPUT
+          </button>
+        </div>
       </div>
-      <div class="col-xs-12 text-right">
-        <button class="btn btn-primary mtop15"
-                ng-click="$ctrl.addForecastOutput()"
-                ng-disabled="!$ctrl.canAddOutput()">ADD OUTPUT
-        </button>
     </div>
   </div>
 </div>

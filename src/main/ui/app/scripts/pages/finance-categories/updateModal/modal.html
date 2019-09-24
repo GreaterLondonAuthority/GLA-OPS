@@ -1,0 +1,93 @@
+<div class="finance-categories-modal">
+
+  <div class="modal-header text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Update spend & receipt category</h1>
+  </div>
+
+  <div class="modal-body">
+    <form
+      id="financeCategoryForm"
+      role="form"
+      name="financeCategoryForm">
+      <div class="form-group">
+        <label for="title">Define spend category</label>
+        <input id="title"
+               type="text"
+               name="text"
+               ng-disabled="$ctrl.readOnly"
+               class="form-control"
+               placeholder=""
+               ng-model="$ctrl.category.text"
+               required
+               maxlength="50"/>
+
+        <label for="ceCodesString" class="mtop10">
+          Enter CE code(s) to match against.<br/>For more than one, separate codes using a comma
+        </label>
+        <textarea
+               id="ceCodesString"
+               rows="5"
+               type="text"
+               name="ceCodesString"
+               ng-disabled="$ctrl.readOnly"
+               class="form-control"
+               placeholder=""
+               ng-model="$ctrl.ceCodesString"
+               required
+        ></textarea>
+
+        <div class="error-wrapper" role="alert"  ng-if="$ctrl.errorMessage">
+          <span class="error" ng-if="$ctrl.errorMessage">{{$ctrl.errorMessage}}</span>
+        </div>
+        <label for="spend-status" class="mtop10">
+          Spend - Select forecast & report status for spend
+        </label>
+        <ui-select id="spend-status"
+                   name="spend status"
+                   class="search-dropdown"
+                   ng-model="$ctrl.category.spendStatus"
+                   search-enabled="false"
+                   required>
+          <ui-select-match>{{$select.selected.label}}</ui-select-match>
+          <ui-select-choices repeat="status.value as status in $ctrl.statuses">
+            <span>{{status.label}}</span>
+          </ui-select-choices>
+        </ui-select>
+
+
+        <label for="receipt-status" class="mtop10">
+          Receipt - Select forecast & report status for receipts
+        </label>
+        <ui-select id="receipt-status"
+                   name="receipt status"
+                   class="search-dropdown"
+                   ng-model="$ctrl.category.receiptStatus"
+                   search-enabled="false"
+                   required>
+          <ui-select-match>{{$select.selected.label}}</ui-select-match>
+          <ui-select-choices repeat="status.value as status in $ctrl.statuses">
+            <span>{{status.label}}</span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="row">
+        <div class="col-xs-6">
+          <button
+            class="btn confirm-button btn-default btn-primary"
+            type="button"
+            ng-disabled="!financeCategoryForm.$valid"
+            ng-click="$ctrl.onUpdate()">{{$ctrl.category.id? 'UPDATE':'CREATE'}}</button>
+        </div>
+        <div class="col-xs-6">
+          <button class="btn btn-default btn-secondary" type="button" ng-click="$dismiss()">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -8,9 +8,9 @@
 package uk.gov.london.ops.domain.project;
 
 import uk.gov.london.ops.domain.OpsEntity;
+import uk.gov.london.ops.domain.Requirement;
 import uk.gov.london.ops.domain.attachment.StandardAttachment;
-import uk.gov.london.ops.domain.template.Requirement;
-import uk.gov.london.ops.util.jpajoins.NonJoin;
+import uk.gov.london.ops.framework.jpa.NonJoin;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -19,6 +19,7 @@ import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
 import static uk.gov.london.ops.domain.project.ClaimStatus.Approved;
 import static uk.gov.london.ops.domain.project.ClaimStatus.Claimed;
 import static uk.gov.london.ops.domain.project.MilestoneStatus.ACTUAL;
@@ -128,6 +129,9 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
     @Column(name="not_applicable")
     private boolean notApplicable;
 
+    @Column(name = "milestone_marked_corporate")
+    private boolean milestoneMarkedCorporate;
+
     @Transient
     private boolean claimedExceeded;
 
@@ -179,6 +183,14 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
 
     public BigDecimal getMonetaryValue() {
         return monetaryValue;
+    }
+
+    public BigDecimal getUnapprovedMonetaryValue() {
+        if (monetaryValue == null) {
+            return BigDecimal.ZERO;
+        }
+        Long reclaimed = nullSafeAdd(reclaimedDpf, reclaimedGrant, reclaimedRcgf);
+        return monetaryValue.subtract(new BigDecimal(reclaimed));
     }
 
     public void setMonetaryValue(BigDecimal monetaryValue) {
@@ -367,6 +379,14 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
         this.naSelectable = naSelectable;
     }
 
+    public boolean isMilestoneMarkedCorporate() {
+        return milestoneMarkedCorporate;
+    }
+
+    public void setMilestoneMarkedCorporate(boolean milestoneMarkedCorporate) {
+        this.milestoneMarkedCorporate = milestoneMarkedCorporate;
+    }
+
     public boolean isNotApplicable() {
         return notApplicable;
     }
@@ -425,6 +445,14 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
         }
     }
 
+    public Long calculateTotalValueClaimed() {
+        return nullSafeAdd(claimedGrant, claimedRcgf, claimedDpf);
+    }
+
+    public Long calculateTotalValueReclaimed() {
+        return nullSafeAdd(reclaimedGrant, reclaimedRcgf, reclaimedDpf);
+    }
+
     public Long getPendingTotalAmountIncludingReclaimsByType(GrantType grantType) {
         Long result = 0L;
         switch (grantType) {
@@ -479,4 +507,14 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
     public void setReclaimed(Boolean reclaimed) {
         this.reclaimed = reclaimed;
     }
+
+    /**
+     * @return if this is a monetary milestone with a non zero split or value.
+     */
+    boolean hasMonetaryValue() {
+        return Boolean.TRUE.equals(monetary) && (
+                (monetarySplit != null && monetarySplit != 0) ||
+                        (monetaryValue != null && BigDecimal.ZERO.compareTo(monetaryValue) != 0));
+    }
+
 }

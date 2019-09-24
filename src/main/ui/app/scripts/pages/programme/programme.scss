@@ -1,61 +1,79 @@
-.new__programme {
-    .selected__template__item {
-        border: 1px solid #cecece;
-        background-color: white;
-        margin-bottom: 1rem;
-        // box-shadow: 1px 1px 5px 0 rgba(0, 0, 0, 0.2);
+programme-page {
 
-        .btn.delete-button {
-            display: inline-block;
-            position: absolute;
-            outline: none;
-            box-shadow: none;
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 2rem;
-            border: 1px solid #ddd;
-            padding: 0.3rem 0;
-            top: 0.25rem;
-            right: -0.70rem;
-            color: #777;
-            background-color: #fff;
-            font-size: 0.75rem;
-            &:hover {
-                color: #c63c32;
-            }
-            &:active{
-                background-color: darken($white, 5%);
-            }
-        }
+
+  .collapse-project-types{
+    .section-header {
+      color: $primary-text;
+      font-family: $font-family-bolder;
+      font-size: 24px;
+      cursor: default;
+    }
+  }
+
+  a.collapse-all{
+    text-decoration: none;
+    font-family: $font-family-bold !important;
+  }
+
+  .edit-mode {
+    multi-panel .multi-panel .section .field-value {
+      overflow: visible;
     }
 
-    .select__template__buttonAdd {
-        padding: 0.25rem 1.91rem !important;
-        margin-left: 1rem;
+    input[type="checkbox"]{
+      height: 17px;
+      margin: 0;
     }
 
-    .selected__template__text {
-        padding: 0.5rem 1rem;
-    }   
-
-    .selected__template__buttonClose {
-        position: absolute;
-        padding: 0.4rem 0.7rem 0.25rem !important;
-        top: 0;
-        right: 0;
-        box-shadow: none !important;
+    input[type="radio"]{
+      margin-top: 1px;
     }
 
-    .restricted__field {
-        label {
-            float: left;
-            margin-right: 1.5rem;
-        }
-        input[type = 'checkbox'] {
-            margin: 0;
-            width: 1rem;
-            height: 1rem;
-            float: left;
-        }
+    .radio-group{
+      //margin-bottom: 10px;
     }
+
+    .default-value{
+      display: none;
+    }
+
+    .add-btn{
+      margin-top: -6px;
+    }
+  }
+}
+
+.assessment-template-modal {
+  .roles-toggle {
+    font-family: $font-family-bolder;
+    margin: 10px 0;
+  }
+
+  .gla-roles {
+    &.edit-mode {
+      border: 1px solid $form-field-inactive;
+      padding: 5px 12px;
+
+      input {
+        font-size: 16px;
+      }
+
+      label {
+        display: block;
+      }
+    }
+
+    .roles-toggle{
+      a:first-child {
+        display: inline-block;
+        margin-right: 15px;
+      }
+    }
+
+    .role {
+      margin-bottom: 8px;
+    }
+
+
+  }
 }

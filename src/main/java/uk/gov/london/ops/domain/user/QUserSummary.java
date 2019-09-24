@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.querydsl.core.types.PathMetadataFactory.forVariable;
-import static uk.gov.london.ops.util.GlaOpsUtils.parseInt;
+import static uk.gov.london.common.GlaUtils.parseInt;
 
 // This HAS to be called QUserSummary otherwise the JPA repository will not instantiate
 public class QUserSummary extends EntityPathBase<UserSummary> {

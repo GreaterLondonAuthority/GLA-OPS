@@ -25,9 +25,19 @@
             {{$ctrl.orgName}}
           </div>
         </div>
-        <div ng-if="$ctrl.transferred" class="mtop30 text-center">
-          <span class="glyphicon glyphicon-ok green" aria-hidden="true"></span>
-          Project transferred
+        <!--<div ng-if="$ctrl.transferred && !$ctrl.transferCount" class="mtop30 text-center">-->
+          <!--<span class="glyphicon glyphicon-ok green" aria-hidden="true"></span>-->
+          <!--Project transferred-->
+        <!--</div>-->
+        <div ng-if2="$ctrl.transferred && $ctrl.transferCount" class="mtop30 text-center">
+          <div ng-if="$ctrl.nbTransferredMsg">
+            <span class="glyphicon glyphicon-ok green" aria-hidden="true"></span>
+            {{$ctrl.nbTransferredMsg}}
+          </div>
+          <div ng-if="$ctrl.nbErrorMsg">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            {{$ctrl.nbErrorMsg}}
+          </div>
         </div>
       </form>
     </div>
@@ -50,7 +60,15 @@
         id="cancel-btn"
         class="btn btn-default btn-primary btn-center"
         type="button"
-        ng-click="$ctrl.transferred? $close() : $dismiss()">{{($ctrl.transferred || !$ctrl.isTransferAllowed)? 'CLOSE' : 'CANCEL'}}</button>
+        ng-if="!($ctrl.transferred || !$ctrl.isTransferAllowed)"
+        ng-click="$dismiss()">CANCEL</button>
+        <!--ng-click="$ctrl.transferred? $close() : $dismiss()">{{($ctrl.transferred || !$ctrl.isTransferAllowed)? 'CLOSE' : 'CANCEL'}}</button>-->
+      <button
+        id="close-btn"
+        class="btn btn-default btn-primary btn-center"
+        type="button"
+        ng-if="$ctrl.transferred || !$ctrl.isTransferAllowed"
+        ng-click="$close()">CLOSE</button>
     </div>
   </div>
 </div>

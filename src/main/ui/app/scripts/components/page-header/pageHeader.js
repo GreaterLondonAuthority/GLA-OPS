@@ -9,10 +9,14 @@
 
 class PageHeaderCtrl {
   constructor(UserService, $transclude){
-    this.hasCustomRightSide = $transclude.isSlotFilled('phRight');
-    // console.log('hasCustomRightSide', this.hasCustomRightSide)
-    this.currentUser = UserService.currentUser().username;
-    this.hasButtons = this.onBack || this.editableBlock || this.hasCustomRightSide
+    this.UserService = UserService;
+    this.$transclude = $transclude;
+  }
+
+  $onInit(){
+    this.hasCustomRightSide = this.$transclude.isSlotFilled('phRight');
+    this.currentUser = this.UserService.currentUser().username;
+    this.hasButtons = this.onBack || this.editableBlock || this.hasCustomRightSide;
   }
 }
 
@@ -30,7 +34,9 @@ angular.module('GLA')
       editableBlock: '<?',
       mouseDownState: '=',
       // hideEdit: '<?',
-      header: '<?'
+      header: '<?',
+      backBtnName: '<?',
+      stopEditing: '<?',
     },
     controller: PageHeaderCtrl
 

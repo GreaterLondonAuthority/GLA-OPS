@@ -7,9 +7,9 @@
  */
 package uk.gov.london.ops.domain.project;
 
-import uk.gov.london.ops.util.GlaOpsUtils;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.common.GlaUtils;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.web.model.project.AnnualReceiptsSummary;
 
 import javax.persistence.*;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @DiscriminatorValue("RECEIPTS")
 @JoinData(sourceTable = "receipts_block", sourceColumn = "id", targetTable = "project_block", targetColumn = "id", joinType = Join.JoinType.OneToOne,
         comment = "the receipts block is a subclass of the project block and shares a common key")
-public class ReceiptsBlock extends NamedProjectBlock {
+public class ReceiptsBlock extends BaseFinanceBlock {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = WbsCode.class)
     @JoinColumn(name = "block_id")
@@ -33,9 +33,6 @@ public class ReceiptsBlock extends NamedProjectBlock {
 
     @Transient
     private List<AnnualReceiptsSummary> annualReceiptsSummaries = new ArrayList<>();
-
-    @Transient
-    private Set<Integer> populatedYears = new HashSet<>();
 
     public ReceiptsBlock() {}
 
@@ -59,14 +56,6 @@ public class ReceiptsBlock extends NamedProjectBlock {
         this.annualReceiptsSummary = annualReceiptsSummary;
     }
 
-    public Set<Integer> getPopulatedYears() {
-        return populatedYears;
-    }
-
-    public void setPopulatedYears(Set<Integer> populatedYears) {
-        this.populatedYears = populatedYears;
-    }
-
     @Override
     public ProjectBlockType getBlockType() {
         return ProjectBlockType.Receipts;
@@ -75,11 +64,6 @@ public class ReceiptsBlock extends NamedProjectBlock {
     @Override
     public boolean isComplete() {
         return isVisited();
-    }
-
-    @Override
-    protected void generateValidationFailures() {
-
     }
 
     public void merge(ReceiptsBlock updatedBlock) {
@@ -97,11 +81,6 @@ public class ReceiptsBlock extends NamedProjectBlock {
                 clone.getWbsCodes().add(new WbsCode(wbsCode.getCode(), wbsCode.getType()));
             }
         }
-    }
-
-    @Override
-    public boolean allowMultipleVersions() {
-        return true;
     }
 
     @Override
@@ -141,11 +120,11 @@ public class ReceiptsBlock extends NamedProjectBlock {
             AnnualReceiptsSummary otherSummary = otherReceipts.get(key);
 
             if (otherSummary != null) {
-                if (GlaOpsUtils.compareBigDecimals(thisSummary.getTotalForPastMonths().getActual(),
+                if (GlaUtils.compareBigDecimals(thisSummary.getTotalForPastMonths().getActual(),
                         otherSummary.getTotalForPastMonths().getActual()) != 0) {
                     differences.add(new ProjectDifference(thisSummary, "actual"));
                 }
-                if (GlaOpsUtils.compareBigDecimals(thisSummary.getTotalForCurrentAndFutureMonths().getForecast(),
+                if (GlaUtils.compareBigDecimals(thisSummary.getTotalForCurrentAndFutureMonths().getForecast(),
                         otherSummary.getTotalForCurrentAndFutureMonths().getForecast()) != 0) {
                     differences.add(new ProjectDifference(thisSummary, "forecast"));
                 }

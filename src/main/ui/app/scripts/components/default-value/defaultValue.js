@@ -21,15 +21,15 @@ function DefaultValue() {
         },
 
         (newText, oldText) => {
-          if (newText !== oldText) {
-            if (!isDefaultValueSet && newText.length === 0) {
-              element.prepend(defaultValueEl);
-              isDefaultValueSet = true;
-            } else if (newText.length > 0 && isDefaultValueSet && newText != defaultText) {
+          if(!isDefaultValueSet && newText.length === 0){
+            element.prepend(defaultValueEl);
+            isDefaultValueSet = true;
+          } else if (newText !== oldText && newText.length > 0 && isDefaultValueSet && newText != defaultText) {
               element.find('.default-value').remove();
               isDefaultValueSet = false;
-            }
           }
+
+          // console.log(`from '${oldText}' to '${newText}', isDefaultValueSet '${isDefaultValueSet}'`);
         });
     },
 

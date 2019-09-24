@@ -1,0 +1,21 @@
+<div class="grant-claimed">
+
+  <section-header subheader="">Claimed units</section-header>
+
+  <div class="section__subheader" ng-if="$ctrl.startMilestone">
+    A total of {{$ctrl.totalStartOnSite | number}} units were claimed as started
+    on site and authorised on {{$ctrl.startMilestone | date: 'dd/MM/yyyy'}}.
+  </div>
+
+  <div class="section__subheader" ng-if="$ctrl.completionMilestone">
+    A total of {{$ctrl.totalCompletion | number}} units were claimed as completed
+    and authorised on {{$ctrl.completionMilestone | date: 'dd/MM/yyyy'}}.
+  </div>
+
+  <tenure-tiles tenures="$ctrl.tenures"></tenure-tiles>
+
+  <total-grant total="$ctrl.totalCompletion || $ctrl.totalStartOnSite"
+    title="TOTAL UNITS CLAIMED"
+    is-unit="true">
+  </total-grant>
+</div>

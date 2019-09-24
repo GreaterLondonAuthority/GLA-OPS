@@ -6,11 +6,18 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
 
-UserService.$inject = ['$http', 'config', '$rootScope', '$sessionStorage', '$state', 'SessionService', '$cookies', '$localStorage'];
 
-function UserService($http, config, $rootScope, $sessionStorage, $state, SessionService, $cookies, $localStorage) {
+const SESSION_DEFAULTS = {
+  idleDuration: 60*25,
+  timeoutDuration: 60*5,
+  keepAliveInterval: 60*5
+};
+
+UserService.$inject = ['$http', 'config', '$rootScope', '$sessionStorage', '$state', 'SessionService', '$cookies', '$localStorage', 'Idle', 'Keepalive'];
+
+
+function UserService($http, config, $rootScope, $sessionStorage, $state, SessionService, $cookies, $localStorage, Idle, Keepalive) {
 
   let user = {
     data: {
@@ -18,7 +25,8 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
     }
   };
 
-  return {
+
+  let userService = {
 
     searchOptions() {
       let res = [
@@ -136,6 +144,13 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
           model: undefined,
           label: 'Project Editor',
           key: 'ROLE_PROJECT_EDITOR',
+        }, {
+          checkedClass: 'projectReader',
+          ariaLabel: 'Project Reader',
+          name: 'projectReader',
+          model: undefined,
+          label: 'Project Reader',
+          key: 'ROLE_PROJECT_READER',
         }
       ]);
       return res;
@@ -226,6 +241,20 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
     },
 
     /**
+     * Update the user's primary organisation
+     * @param {String} userEmail - user email
+     * @param {Object} organisationId - new organisation to make primary
+     * @returns {Object} promise
+     */
+    updatePrimaryOrganisation (userEmail, organisationId, roleName) {
+      return $http({
+        url: config.basePath + '/users/' + userEmail.toLowerCase() + '/makePrimaryOrganisation/' + organisationId + '/roleName/' + roleName,
+        method: 'PUT',
+        serialize: false
+      });
+    },
+
+    /**
      * Retrieve list of roles the user can assign
      * @param  {String} userEmail - user email
      * @return {Object} promise
@@ -276,12 +305,12 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
      * Log out current user
      * @returns {Promise}
      */
-    logout () {
+    logout (logoutMsg) {
       var promise = $http({
         url: config.basePath + '/sessions/_current',
         method: 'DELETE'
       });
-      userLogoutHandler();
+      userLogoutHandler(logoutMsg);
       return promise;
     },
 
@@ -309,6 +338,10 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
       let user = this.currentUser();
       let organisations = user.organisations || [];
       if (permission) {
+        if(user.permissions.indexOf(`${permission}.*`) !== -1){
+          //ops admin
+          return organisations;
+        }
         let permissionRegexStr = `^${permission}.\\d+$`;
         permissionRegexStr = permissionRegexStr.replace(/\./g, '\\.');
         let regexp = new RegExp(permissionRegexStr);
@@ -345,7 +378,6 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
       return res;
     },
 
-    //TODO move to currentUser object
     hasPermission:function(permission, orgId){
       let permissions = this.currentUser().permissions || [];
       return permissions.some(p => {
@@ -353,10 +385,9 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
       });
     },
 
-    //TODO move to currentUser object
     hasPermissionStartingWith:function(permission){
       return (this.currentUser().permissions || []).some(p => {
-        return p.indexOf(permission) > -1;
+        return p.indexOf(permission) == 0;
       });
     },
 
@@ -399,6 +430,7 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
 
 
       $rootScope.$broadcast('user.login');
+
       return user;
     },
 
@@ -420,7 +452,8 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
     getUsers(data){
       let cfg = {
         params: {
-          size:2000,
+          page: data.page,
+          size:50,
           sort:['firstName,asc','lastName,asc','orgName,asc'],
           username: data && data.username,
           organisation: data && data.organisation,
@@ -451,14 +484,36 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
       return $http.put(`${config.basePath}/userThresholds/${username}/organisation/${orgId}/decline/`);
     },
 
+    getSessionConfig(){
+      let userSessionConfig = _.pick(this.currentUser(), _.keys(SESSION_DEFAULTS));
+      return _.merge(angular.copy(SESSION_DEFAULTS), userSessionConfig);
+    },
+
+    setupUserSession() {
+      let user = this.currentUser();
+      if (user && user.loggedOn) {
+        let sessionConfig = this.getSessionConfig();
+        Idle.setIdle(sessionConfig.idleDuration);
+        Idle.setTimeout(sessionConfig.timeoutDuration);
+        Idle.watch();
+        Keepalive.setInterval(sessionConfig.keepAliveInterval);
+        Keepalive.start();
+      }
+    }
+
   };
+
+  $rootScope.$on('user.login', function() {
+    userService.setupUserSession();
+  });
+
 
   /**
    * Removes current user object
-   * @param response
+   * @param logoutMsg
    * @returns {*}
    */
-  function userLogoutHandler(response) {
+  function userLogoutHandler(logoutMsg) {
     //Moved from USER.js
     user.data = {
       loggedOn: false
@@ -466,14 +521,19 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
     SessionService.clear();
     delete $localStorage.user;
     $cookies.remove('user');
+
     $rootScope.$broadcast('user.logout');
     if($state.current.name !== 'home') {
-      $state.go('home');
+      $state.go('home', {reasonError: logoutMsg});
     }else{
       $rootScope.showGlobalLoadingMask = false;
     }
-    return response;
+
+    return logoutMsg;
   }
+
+  return userService;
+
 }
 
 angular.module('GLA')

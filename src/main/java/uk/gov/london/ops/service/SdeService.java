@@ -10,14 +10,12 @@ package uk.gov.london.ops.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.service.project.ProjectService;
-import uk.gov.london.ops.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.util.GlaOpsUtils;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +48,7 @@ public class SdeService {
         try{
             return  projectService.getProjectsForProgramme(id, null)
                     .stream()
-                    .filter(GlaOpsUtils::notNull)
+                    .filter(GlaUtils::notNull)
                     .map(this::sdeWithConfig)
                     .collect(Collectors.toList());
         } catch(Exception ex) {

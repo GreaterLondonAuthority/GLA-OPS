@@ -39,6 +39,24 @@ profiled-unit-wizard {
       .numberOfUnitsGroup{
         max-width: 140px;
       }
+
+      &.multi-line-labels{
+        label{
+          min-height: 28px;
+        }
+        .first-tranche-sales{
+          min-width: 0px;
+          max-width: 165px;
+        }
+
+        .weekly-service-charge{
+          max-width: 175px;
+        }
+
+        .legacy-sales{
+          max-width: 160px;
+        }
+      }
     }
     >div{
       //border: 1px solid black;

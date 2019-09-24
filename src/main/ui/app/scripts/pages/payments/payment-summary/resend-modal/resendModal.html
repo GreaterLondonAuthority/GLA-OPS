@@ -1,0 +1,40 @@
+<div class="confirmation-dialog">
+  <div class="modal-body text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss('cancel')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <div class="text-center confirm-message">
+      Are you sure you want to re-send this payment file to TfL?
+      <br/>
+      This will not create another payment.
+    </div>
+
+    <div class="row mtop20">
+      <div class="col-md-10 center-col">
+        <form
+          id="resendForm"
+          role="form"
+          name="resendForm">
+          <div class="form-group">
+            <label for="wbsCode" class="label">Override WBS code (optional)</label>
+            <input id="wbsCode"
+                   name="wbsCode"
+                   ng-model="$ctrl.wbsCode"
+                   required
+                   class="form-control"/>
+
+<!--            <div class="error-wrapper">-->
+<!--              <span class="error" ng-if="resendForm.wbsCode.$error.required">Enter a WBS code</span>-->
+<!--            </div>-->
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center approve-btn min-padding" type="button" ng-click="$close($ctrl.wbsCode)">RESEND</button>
+    <button class="btn btn-default btn-secondary btn-center dismiss-btn min-padding" type="button" ng-click="$dismiss('cancel')">CANCEL</button>
+  </div>
+</div>

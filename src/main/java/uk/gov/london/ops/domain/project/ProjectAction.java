@@ -8,8 +8,8 @@
 package uk.gov.london.ops.domain.project;
 
 import org.springframework.util.StringUtils;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -41,6 +41,9 @@ public class ProjectAction implements ComparableItem {
     @JoinData(targetTable = "project_action", targetColumn = "id", joinType = Join.JoinType.OneToOne,
             comment = "A reference to a previous version of this item if this is a cloned via a new block version.")
     private Integer originalId;
+
+    @Column(name = "action_marked_corporate")
+    private boolean markedForCorporateReporting;
 
     public ProjectAction() {}
 
@@ -95,6 +98,14 @@ public class ProjectAction implements ComparableItem {
         return originalId;
     }
 
+    public boolean isMarkedForCorporateReporting() {
+        return markedForCorporateReporting;
+    }
+
+    public void setMarkedForCorporateReporting(boolean markedForCorporateReporting) {
+        this.markedForCorporateReporting = markedForCorporateReporting;
+    }
+
     public void setOriginalId(Integer originalId) {
         this.originalId = originalId;
     }
@@ -105,6 +116,8 @@ public class ProjectAction implements ComparableItem {
         copy.setOwner(getOwner());
         copy.setLastModified(getLastModified());
         copy.setOriginalId(getOriginalId());
+        copy.setMarkedForCorporateReporting(isMarkedForCorporateReporting());
+
         return copy;
     }
 

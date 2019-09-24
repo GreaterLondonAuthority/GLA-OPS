@@ -15,8 +15,6 @@ import javax.persistence.Entity;
 import java.util.Arrays;
 import java.util.List;
 
-import static uk.gov.london.ops.util.GlaOpsUtils.listToCsString;
-
 @Entity
 @DiscriminatorValue("GRANT_SOURCE")
 public class GrantSourceTemplateBlock extends TemplateBlock {
@@ -25,9 +23,6 @@ public class GrantSourceTemplateBlock extends TemplateBlock {
 
     @Column(name = "nil_grant_hidden")
     private boolean nilGrantHidden;
-
-    @Column(name = "grant_types")
-    private String grantTypesString;
 
     @Column(name = "grant_description")
     private String description;
@@ -51,25 +46,16 @@ public class GrantSourceTemplateBlock extends TemplateBlock {
         this.nilGrantHidden = nilGrantHidden;
     }
 
-    public String getGrantTypesString() {
-        return grantTypesString;
-    }
 
-    public void setGrantTypesString(String grantTypesString) {
-        this.grantTypesString = grantTypesString;
-    }
 
     public List<String> getGrantTypes() {
-        if (grantTypesString == null || grantTypesString.isEmpty()) {
-            return all_grant_types;
+        List<String> grantTypes = super.getGrantTypes();
+        if (grantTypes.isEmpty()) {
+            grantTypes = all_grant_types;
         }
-        else {
-            return Arrays.asList(grantTypesString.split(","));
-        }
-    }
+        return grantTypes;
 
-    public void setGrantTypes(List<String> grantTypes) {
-        this.grantTypesString = listToCsString(grantTypes);
+
     }
 
     public String getDescription() {
@@ -88,4 +74,13 @@ public class GrantSourceTemplateBlock extends TemplateBlock {
         this.grantTotalText = grantTotalText;
     }
 
+
+    @Override
+    public void updateCloneFromBlock(TemplateBlock clone) {
+        GrantSourceTemplateBlock gsb = (GrantSourceTemplateBlock) clone;
+        gsb.setNilGrantHidden(this.isNilGrantHidden());
+        gsb.setDescription(this.getDescription());
+        gsb.setGrantTotalText(this.getGrantTotalText());
+
+    }
 }

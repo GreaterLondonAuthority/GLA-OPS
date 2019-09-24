@@ -15,6 +15,19 @@
     </change-report-table>
   </div>
 
-  <change-report-static-text ng-if="!$ctrl.comparableOutputGroups.length" text="'No information provided'" data="$ctrl.data" class="next-to-tables text-secondary"></change-report-static-text>
+  <change-report-static-text ng-if="!$ctrl.comparableOutputGroups.length && !$ctrl.advancePaymentsToCompare.length"
+                             text="'No information provided'"
+                             data="$ctrl.data"
+                             class="next-to-tables text-secondary"></change-report-static-text>
+
+
+  <change-report-table
+    ng-if="$ctrl.outputsCostsBlock.advancePayment"
+    label="'Advance Payment'"
+    rows="$ctrl.advancePaymentsToCompare"
+    fields="$ctrl.advancePaymentFields"
+    changes="$ctrl.data.changes"
+    show-table-separators="$ctrl.data.right">
+  </change-report-table>
 
 </div>

@@ -7,7 +7,6 @@
  */
 package uk.gov.london.ops.web.model;
 
-import uk.gov.london.ops.domain.organisation.Organisation;
 import uk.gov.london.ops.domain.organisation.OrganisationStatus;
 
 /**
@@ -26,6 +25,8 @@ public class OrganisationModel {
     private boolean isTechOrg;
 
     private boolean isManagingOrganisation;
+
+    private Boolean registrationAllowed;
 
     public Integer getId() {
         return id;
@@ -72,17 +73,6 @@ public class OrganisationModel {
     }
     public boolean getIsManagingOrganisation() {return isManagingOrganisation;}
 
-    public static OrganisationModel from(Organisation organisation) {
-        OrganisationModel model = new OrganisationModel();
-        model.setId(organisation.getId());
-        model.setName(organisation.getName());
-        model.setManagingOrganisationId(organisation.getManagingOrganisationId());
-        model.setStatus(organisation.getStatus());
-        model.setIsTechOrg(organisation.isTechSupportOrganisation());
-        model.setIsManagingOrganisation(organisation.isManagingOrganisation());
-        return model;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -100,5 +90,13 @@ public class OrganisationModel {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
+    }
+
+    public Boolean getRegistrationAllowed() {
+        return registrationAllowed;
+    }
+
+    public void setRegistrationAllowed(Boolean registrationAllowed) {
+        this.registrationAllowed = registrationAllowed;
     }
 }

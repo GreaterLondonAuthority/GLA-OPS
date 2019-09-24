@@ -1,0 +1,192 @@
+.assessment {
+
+  &.edit-mode {
+
+    .active-text {
+      color: black;
+      margin-top: 10px;
+    }
+
+    .disabled-text {
+      color: grey;
+    }
+
+    .criteria-score {
+      padding-left: 30px;
+    }
+
+    .criteria-comments {
+      padding-left: 30px;
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+
+    .criteria {
+      margin-bottom: 0px;
+
+      label {
+        white-space: normal;
+        line-height: normal;
+        margin-top: -4px;
+        //color: darken($secondary-text, 7%);
+        font-family: $font-family-bolder;
+        font-weight: 100;
+        font-size: 13px;
+      }
+
+      //.form-group {
+      border-left: 1px solid $alto-light;
+      padding: 15px;
+      //}
+
+      &.ng-enter {
+        opacity: 0;
+        transition: opacity ease-in 0.5s;
+
+        &.ng-enter-active {
+          opacity: 1;
+        }
+      }
+
+      &.ng-leave {
+        opacity: 1;
+        transition: opacity ease-out 0.5s;
+
+        &.ng-leave-active {
+          opacity: 0;
+        }
+      }
+    }
+
+    .complete-assessment-checkbox {
+      margin-left: 5px;
+      margin-right: 10px;
+    }
+
+    .right-side-hint-text {
+      color: #b0b0b0;
+    }
+
+    .sub-heading {
+      font-size: 18px;
+      padding-top: 5px;
+      padding-bottom: 15px;
+      margin-bottom: 0;
+      display: block;
+      color: #8d8d8d;
+      font-family: $font-family-default;
+    }
+
+    .section-border {
+      border: 1px solid #b0b0b0;
+      background: white;
+    }
+
+    input[type=checkbox] {
+      -ms-transform: scale(2);
+      -moz-transform: scale(2);
+      -webkit-transform: scale(2);
+      -o-transform: scale(2);
+      padding: 10px;
+    }
+
+    .checkboxtext {
+      font-size: 110%;
+      display: inline;
+    }
+
+    .assessment-section-header {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      background: #3e4e5c;
+      font-size: 15px;
+    }
+
+    .section-comments {
+      padding: 0 15px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .section-title {
+      color: #aebecb;
+      padding-right: 15px;
+      padding-left: 15px;
+      font-weight: bold;
+    }
+
+
+    .block {
+      text-align: center;
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    .circle {
+      background: lightgrey;
+      border-radius: 200px;
+      color: white;
+      width: 25px;
+      height: 25px;
+      font-weight: bold;
+      display: table;
+    }
+
+    .circle p {
+      vertical-align: middle;
+      display: table-cell;
+      font-size: 12px;
+      color: black;
+    }
+  }
+
+  &.readonly-mode {
+    .score-column {
+      text-align: right;
+      padding-right: 0;
+    }
+
+    .label {
+      //margin-bottom: 15px;
+      white-space: normal;
+      line-height: normal;
+    }
+
+    hr.section-bar{
+      margin-bottom: 30px;
+    }
+
+    .comments{
+      margin-top: 12px;
+    }
+
+    .comments{
+      margin-top: 12px;
+    }
+
+    .section-block {
+      margin-top: 20px;
+    }
+
+    .criteria {
+      margin-top: 20px;
+      //&.with-comment {
+      //  margin-top: 30px;
+      //}
+    }
+
+    .section-weight {
+      font-size: 1rem;
+    }
+
+    .criteria-weight {
+      font-size: 12px;
+    }
+
+    padding-bottom: 50px;
+  }
+}
+
+

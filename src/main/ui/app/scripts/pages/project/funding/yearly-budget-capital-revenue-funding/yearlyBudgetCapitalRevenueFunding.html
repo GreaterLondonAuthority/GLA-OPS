@@ -1,0 +1,91 @@
+<div class="table-responsive yearly-budget-capital-revenue-table">
+  <table class="table table-bordered table-striped" id="capital-revenue-summary-table">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th class="highlight-cell text-center">PROFILE BY YEAR</th>
+      <th ng-if="$ctrl.capital">CAPITAL Q1</th>
+      <th ng-if="$ctrl.revenue">REVENUE Q1</th>
+
+      <th ng-if="$ctrl.capital">CAPITAL Q2</th>
+      <th ng-if="$ctrl.revenue">REVENUE Q2</th>
+
+      <th ng-if="$ctrl.capital">CAPITAL Q3</th>
+      <th ng-if="$ctrl.revenue">REVENUE Q3</th>
+
+      <th ng-if="$ctrl.capital">CAPITAL Q4</th>
+      <th ng-if="$ctrl.revenue">REVENUE Q4</th>
+      <th>TOTAL</th>
+    </tr>
+    </thead>
+    <tbody class="expandableRow">
+    <tr ng-if="$ctrl.yearlyData.years.length === 0"><td colspan="5"><b>No budget added to any year, select a year to add expected annual budget</b></td></tr>
+    <tr ng-repeat-start="year in $ctrl.yearlyData.years" class="year-row primaryRow expandable" ng-click="$ctrl.blockSessionStorage.capitalRevenueExpandState[year.year] = !$ctrl.blockSessionStorage.capitalRevenueExpandState[year.year]">
+      <td class="expandable no-print year-column-cell cursor-pointer">
+         <span>
+            <i class="glyphicon glyphicon-triangle-bottom" ng-if="!$ctrl.blockSessionStorage.capitalRevenueExpandState[year.year]"></i>
+            <i class="glyphicon glyphicon-triangle-top" ng-if="$ctrl.blockSessionStorage.capitalRevenueExpandState[year.year]"></i>
+          </span>
+        {{year.yearLabel}} TOTAL PROFILED
+      </td>
+      <td ng-if="$ctrl.capital">{{year.capitalTotals[1] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{year.revenueTotals[1] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{year.capitalTotals[2] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{year.revenueTotals[2] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{year.capitalTotals[3] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{year.revenueTotals[3] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{year.capitalTotals[4] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{year.revenueTotals[4] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{year.capitalTotal | number}}</td>
+      <td ng-if="$ctrl.revenue">{{year.revenueTotal | number}}</td>
+    </tr>
+    <tr ng-repeat-start="milestone in year.milestones" ng-if="$ctrl.blockSessionStorage.capitalRevenueExpandState[year.year] && $ctrl.showRow(milestone)">
+      <td class="highlight-cell">{{milestone.name}}</td>
+      <td ng-if="$ctrl.capital">{{milestone.capitalTotals[1] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{milestone.revenueTotals[1] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{milestone.capitalTotals[2] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{milestone.revenueTotals[2] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{milestone.capitalTotals[3] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{milestone.revenueTotals[3] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{milestone.capitalTotals[4] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{milestone.revenueTotals[4] | number}}</td>
+
+      <td></td>
+
+    </tr>
+    <tr ng-repeat-start="activity in milestone.activities" ng-if="$ctrl.blockSessionStorage.capitalRevenueExpandState[year.year] && $ctrl.showRow(activity)" >
+      <td>{{activity.name}}</td>
+      <td ng-if="$ctrl.capital">{{activity.capitalTotals[1] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{activity.revenueTotals[1] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{activity.capitalTotals[2] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{activity.revenueTotals[2] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{activity.capitalTotals[3] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{activity.revenueTotals[3] | number}}</td>
+
+      <td ng-if="$ctrl.capital">{{activity.capitalTotals[4] | number}}</td>
+      <td ng-if="$ctrl.revenue">{{activity.revenueTotals[4] | number}}</td>
+
+      <td></td>
+    </tr>
+
+
+    <tr ng-repeat-end ng-hide="true"></tr>
+    <tr ng-repeat-end ng-hide="true"></tr>
+    <tr ng-repeat-end ng-hide="true"></tr>
+    <tr class="year-row">
+      <td colspan="5">TOTAL</td>
+      <td ng-if="$ctrl.capital">{{$ctrl.yearlyData.capitalTotal | number}}</td>
+      <td ng-if="$ctrl.revenue">{{$ctrl.yearlyData.revenueTotal | number}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+

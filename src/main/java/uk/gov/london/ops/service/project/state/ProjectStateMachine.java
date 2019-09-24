@@ -7,10 +7,13 @@
  */
 package uk.gov.london.ops.service.project.state;
 
-import uk.gov.london.ops.aop.LogMetrics;
+import uk.gov.london.common.CSVFile;
+import uk.gov.london.ops.domain.project.NamedProjectBlock;
 import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.domain.project.ProjectHistory;
-import uk.gov.london.ops.util.CSVFile;
+import uk.gov.london.ops.domain.project.state.ProjectStatus;
+import uk.gov.london.ops.domain.project.state.ProjectSubStatus;
+import uk.gov.london.ops.framework.annotations.LogMetrics;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -18,7 +21,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static uk.gov.london.ops.domain.project.NamedProjectBlock.BlockStatus.UNAPPROVED;
 import static uk.gov.london.ops.domain.project.ProjectHistory.Transition.*;
+import static uk.gov.london.ops.domain.project.state.ProjectStatus.Active;
 
 /**
  * State machine for GLA OPS projects.
@@ -26,6 +31,7 @@ import static uk.gov.london.ops.domain.project.ProjectHistory.Transition.*;
 public abstract class ProjectStateMachine {
     static final String ROLE_DELIMITER = " \\| ";
     static final String ALL_MATCH = "ALL";
+    static final String NOT_IN_ASSESS = "NOT_IN_ASSESS";
     static final String ANY_MATCH = "ANY";
     private static final Boolean UNKNOWN = null;
     /**
@@ -33,12 +39,17 @@ public abstract class ProjectStateMachine {
      */
     final CSVFile.CSVMapper<StateTransition> csvMapper = csvRow -> new StateTransition(
             ProjectState.parse(csvRow.getString("STATUS_FROM")),
-            ProjectState.parse(csvRow.getString("STATUS_TO"),
-                    csvRow.getString("COMMENTS_REQUIRED")),
+            ProjectState.parse(csvRow.getString("STATUS_TO"), csvRow.getString("COMMENTS_REQUIRED"), csvRow.getString("ACTION_NAME")),
             csvRow.getString("ROLES").split(ROLE_DELIMITER),
             csvRow.getString("PROGRAMME_STATE"),
             csvRow.getString("PROJECT_COMPLETION"),
-            csvRow.getString("APPROVAL_WILL_CREATE_PAYMENTS")
+            csvRow.getString("TRANSITION_TYPE"),
+            csvRow.getString("APPROVAL_WILL_CREATE_PAYMENTS"),
+            csvRow.getString("PROJECT_HISTORY_TRANSITION"),
+            csvRow.getString("PROJECT_HISTORY_DESCRIPTION"),
+            csvRow.getString("ACTION_NAME"),
+            csvRow.getString("NOTIFICATION_KEY"),
+            Boolean.parseBoolean(csvRow.getString("CLEAR_NEW_LABEL"))
     );
     List<StateTransition> allowedTransitions;
 
@@ -52,8 +63,10 @@ public abstract class ProjectStateMachine {
      */
     @LogMetrics
     public Set<ProjectState> getAllowedTransitionsFor(ProjectState currentState, Set<String> userRoles, boolean programmeEnabled,
+                                                      boolean programmeInAssessment,List<ProjectHistory> projectHistory,
                                                       boolean projectComplete, boolean approvalWillCreatePendingPayment) {
-        return getAllowedTransitionsFor(currentState, userRoles, programmeEnabled, UNKNOWN, projectComplete, approvalWillCreatePendingPayment);
+        return getAllowedTransitionsFor(currentState, userRoles, programmeEnabled, programmeInAssessment, projectHistory, UNKNOWN, projectComplete, approvalWillCreatePendingPayment)
+                .stream().map(StateTransition::getTo).collect(Collectors.toSet());
     }
 
     /**
@@ -61,30 +74,51 @@ public abstract class ProjectStateMachine {
      *
      * This version of this method is for situations when it is known whether comments have been provided.
      */
-    public Set<ProjectState> getAllowedTransitionsFor( ProjectState currentState, Set<String> userRoles, boolean programmeEnabled,
-                                               Boolean commentsProvided, boolean projectComplete, boolean approvalWillCreatePendingPayment) {
+    public Set<StateTransition> getAllowedTransitionsFor(ProjectState currentState, Set<String> userRoles, boolean programmeEnabled,
+                                                         boolean programmeInAssessment, List<ProjectHistory> projectHistory,
+                                                         Boolean commentsProvided, boolean projectComplete, boolean approvalWillCreatePendingPayment) {
         return allowedTransitions.stream()
                 .filter(transition -> transition.isFrom(currentState))
                 .filter(transition -> transition.matchesRoles(userRoles))
-                .filter(transition -> transition.matchesProgrammeStatus(programmeEnabled))
+                .filter(transition -> transition.matchesProgrammeStatus(programmeEnabled, programmeInAssessment,projectHistory))
                 .filter(transition -> transition.matchesProjectCompletion(projectComplete))
                 .filter(transition -> transition.matchesPaymentGenerationStatus(approvalWillCreatePendingPayment))
                 .filter(transition -> transition.matchesCommentRequirement(commentsProvided))
-                .map(StateTransition::getTo)
                 .collect(Collectors.toSet());
     }
 
-    public ProjectHistory.Transition transitionFor(ProjectState current, ProjectState target) {
-        if (target.getStatus().equals(Project.Status.Draft)) {
+    public StateTransition getTransition(ProjectState currentState, ProjectState targetState, Set<String> userRoles, boolean programmeEnabled,
+                                         boolean programmeInAssessment, List<ProjectHistory> projectHistory, Boolean commentsProvided,
+                                         boolean projectComplete, boolean approvalWillCreatePendingPayment) {
+        return allowedTransitions.stream()
+                .filter(transition -> transition.isFrom(currentState))
+                .filter(transition -> transition.isTo(targetState))
+                .filter(transition -> transition.matchesRoles(userRoles))
+                .filter(transition -> transition.matchesProgrammeStatus(programmeEnabled, programmeInAssessment,projectHistory))
+                .filter(transition -> transition.matchesProjectCompletion(projectComplete))
+                .filter(transition -> transition.matchesPaymentGenerationStatus(approvalWillCreatePendingPayment))
+                .filter(transition -> transition.matchesCommentRequirement(commentsProvided))
+                .findFirst().orElse(null);
+    }
+
+    public StateTransition getTransition(ProjectState currentState, StateTransitionType transitionType) {
+        return allowedTransitions.stream()
+                .filter(transition -> transition.isFrom(currentState))
+                .filter(transition -> transitionType.equals(transition.getTransitionType()))
+                .findFirst().orElse(null);
+    }
+
+    public ProjectHistory.Transition getProjectHistoryTransition(ProjectState current, ProjectState target) {
+        if (ProjectStatus.Draft.equals(target.getStatusType()) && ProjectStatus.Submitted.equals(current.getStatusType())) {
             return Withdrawn;
         }
-        if (target.getStatus().equals(Project.Status.Returned)) {
+        if (ProjectStatus.Returned.equals(target.getStatusType())) {
             return Returned;
         }
-        if (target.getStatus().equals(Project.Status.Closed)) {
-            if (Project.SubStatus.Abandoned.equals(target.getSubStatus())) {
+        if (ProjectStatus.Closed.equals(target.getStatusType())) {
+            if (ProjectSubStatus.Abandoned.equals(target.getSubStatusType())) {
                 return Abandoned;
-            } else if (Project.SubStatus.Completed.equals(target.getSubStatus())) {
+            } else if (ProjectSubStatus.Completed.equals(target.getSubStatusType())) {
                 return Completed;
             }
             else {
@@ -92,47 +126,70 @@ public abstract class ProjectStateMachine {
             }
         }
 
-        if (target.getStatus().equals(Project.Status.Submitted) && current.getStatus().equals(Project.Status.Assess)) {
+        if (ProjectStatus.Submitted.equals(target.getStatusType()) && ProjectStatus.Assess.equals(current.getStatusType())) {
             return null;
         }
-        if (target.getStatus().equals(Project.Status.Submitted)) {
+        if (ProjectStatus.Submitted.equals(target.getStatusType())) {
             return Submitted;
         }
 
-        if (target.getStatus().equals(Project.Status.Assess) && current.getStatus().equals(Project.Status.Submitted)) {
+        if (ProjectStatus.Assess.equals(target.getStatusType()) && ProjectStatus.Submitted.equals(current.getStatusType())) {
             return Assess;
         }
-        if (target.getStatus().equals(Project.Status.Assess) && current.getStatus().equals(Project.Status.Returned)) {
+        if (ProjectStatus.Assess.equals(target.getStatusType()) && ProjectStatus.Returned.equals(current.getStatusType())) {
             return Resubmitted;
         }
-        if (target.getStatus().equals(Project.Status.Assess)) {
+        if (ProjectStatus.Assess.equals(target.getStatusType())) {
             // Should never see this
             throw new RuntimeException("Illegal state transition: " + current.getStatus() + " to Assess");
         }
 
-        if (target.getStatus().equals(Project.Status.Active) && current.getStatus().equals(Project.Status.Active)) {
-            if (Project.SubStatus.ApprovalRequested.equals(target.getSubStatus()) && Project.SubStatus.UnapprovedChanges.equals(current.getSubStatus())) {
+        if (ProjectStatus.Active.equals(target.getStatusType()) && ProjectStatus.Active.equals(current.getStatusType())) {
+            if (ProjectSubStatus.ApprovalRequested.equals(target.getSubStatusType()) && ProjectSubStatus.UnapprovedChanges.equals(current.getSubStatusType())) {
                 return ApprovalRequested;
             }
-            if (Project.SubStatus.UnapprovedChanges.equals(target.getSubStatus()) && Project.SubStatus.ApprovalRequested.equals(current.getSubStatus())) {
+            if (ProjectSubStatus.UnapprovedChanges.equals(target.getSubStatusType()) && ProjectSubStatus.ApprovalRequested.equals(current.getSubStatusType())) {
                 return Returned;
             }
-            if (Project.SubStatus.PaymentAuthorisationPending.equals(target.getSubStatus()) && Project.SubStatus.ApprovalRequested.equals(current.getSubStatus())) {
+            if (ProjectSubStatus.PaymentAuthorisationPending.equals(target.getSubStatusType()) && ProjectSubStatus.ApprovalRequested.equals(current.getSubStatusType())) {
                 return PaymentAuthorisationRequested;
             }
-            if (target.getSubStatus() == null && Project.SubStatus.AbandonPending.equals(current.getSubStatus())) {
+            if (target.getSubStatus() == null && ProjectSubStatus.AbandonPending.equals(current.getSubStatusType())) {
                 return AbandonRejected;
             }
         }
 
-        if (target.getStatus().equals(Project.Status.Active) && target.getSubStatus() == null) {
+        if (ProjectStatus.Active.equals(target.getStatusType()) && target.getSubStatus() == null) {
             return Approved;
         }
 
-        if (target.getSubStatus().equals(Project.SubStatus.AbandonPending)) {
+        if (ProjectSubStatus.AbandonPending.equals(target.getSubStatusType())) {
             return AbandonRequested;
         }
 
         return null;
     }
+
+    public String getProjectHistoryDescription(Project project, ProjectHistory.Transition historyTransition) {
+        String historyDescription = null;
+        if (ProjectHistory.Transition.ApprovalRequested.equals(historyTransition)) {
+            historyDescription = "Approval requested for unapproved blocks " + unapprovedBlockDisplayNames(project);
+        }
+        if (ProjectHistory.Transition.Returned.equals(historyTransition) && project.getStatusType().equals(Active)) {
+            historyDescription = "Returned to organisation";
+        }
+        if (ProjectHistory.Transition.Approved.equals(historyTransition) && !project.getStateModel().isApprovalRequired()) {
+            historyDescription = "Project saved to active";
+        }
+        return historyDescription;
+    }
+
+    private String unapprovedBlockDisplayNames(Project project) {
+        return project.getLatestProjectBlocks()
+                .stream()
+                .filter(b -> UNAPPROVED.equals(b.getBlockStatus()))
+                .map(NamedProjectBlock::getBlockDisplayName)
+                .collect(Collectors.joining(","));
+    }
+
 }

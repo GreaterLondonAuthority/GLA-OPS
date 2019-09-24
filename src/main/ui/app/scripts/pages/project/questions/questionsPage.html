@@ -1,0 +1,16 @@
+<div class="project-questions medium-page">
+  <div class="row text-center">
+    <project-header editable-block="$ctrl" on-back="$ctrl.back()">{{$ctrl.projectBlock.blockDisplayName}}</project-header>
+  </div>
+
+  <spinner ng-if="$ctrl.loading"></spinner>
+
+  <questions class="mtop30"
+             ng-if="!$ctrl.loading"
+             project="$ctrl.project"
+             questions="$ctrl.questions"
+             read-only="$ctrl.readOnly"></questions>
+
+  <project-block-footer editable-block="$ctrl"></project-block-footer>
+
+</div>

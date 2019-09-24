@@ -12,11 +12,15 @@ import ProjectBlockCtrl from '../ProjectBlockCtrl';
 
 class DesignStandardsCtrl extends ProjectBlockCtrl {
 
-  constructor($state, project, ProjectService, $rootScope, $injector) {
-    super(project, $injector);
+  constructor($state, project, ProjectService, ProjectBlockService, $rootScope, $injector) {
+    super($injector);
     this.$state = $state;
     this.ProjectService = ProjectService;
     this.$rootScope = $rootScope;
+  }
+
+  $onInit() {
+    super.$onInit();
     this.data = this.projectBlock;
   }
 
@@ -41,13 +45,12 @@ class DesignStandardsCtrl extends ProjectBlockCtrl {
       this.data.reasonForNotMeetingDesignGuide = null;
     }
 
-    this.ProjectService.updateDesignStandards(this.project.id, this.data).then(rsp => {
-      this.returnToOverview(this.blockId);
-    });
+    return this.ProjectBlockService.updateBlock(this.project.id, this.data.id, this.data, true);
+
   };
 }
 
-DesignStandardsCtrl.$inject = ['$state', 'project', 'ProjectService', '$rootScope', '$injector'];
+DesignStandardsCtrl.$inject = ['$state', 'project', 'ProjectService', 'ProjectBlockService', '$rootScope', '$injector'];
 
 
 angular.module('GLA')

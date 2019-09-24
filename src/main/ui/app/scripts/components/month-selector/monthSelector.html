@@ -8,7 +8,7 @@
     <ui-select-match placeholder="Select">
         {{$select.selected.label}}
     </ui-select-match>
-    <ui-select-choices repeat="item in $ctrl.monthList">
+    <ui-select-choices repeat="item in $ctrl.monthList" ui-disable-choice="$ctrl.isDisabled(item)">
         <span>{{item.label}}</span>
     </ui-select-choices>
 </ui-select>

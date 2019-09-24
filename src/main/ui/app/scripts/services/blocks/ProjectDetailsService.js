@@ -193,6 +193,38 @@ function ProjectDetailsService() {
       }
 
       return fieldConfig;
+    },
+
+    getDetailsConfigurableFields() {
+      return [
+        'addressRequirement',
+        'boroughRequirement',
+        'postcodeRequirement',
+        'coordsRequirement',
+        'maincontactRequirement',
+        'imageRequirement',
+        'contactRequirement',
+        'siteOwnerRequirement',
+        'interestRequirement',
+        'projectManagerRequirement',
+        'siteStatusRequirement',
+        'legacyProjectCodeRequirement',
+        'descriptionRequirement',
+        'planningPermissionReferenceRequirement'
+      ];
+    },
+
+    getRequirementOptions() {
+      return [{
+        label: 'Hidden',
+        id: 'hidden'
+      }, {
+        label: 'Mandatory',
+        id: 'mandatory'
+      }, {
+        label: 'Optional',
+        id: 'optional'
+      }]
     }
   };
 }

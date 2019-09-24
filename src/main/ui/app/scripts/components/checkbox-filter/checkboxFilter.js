@@ -12,27 +12,43 @@ class CheckboxFilterCtrl {
 
 
   $onInit() {
-    this.countSelections();
+    this.init();
   }
 
   $onChanges(changes){
+    this.init();
+  }
+
+  init(){
+    this.dropdownItems = this.grouped? this.groupToFlat(this.filterDropdownItems) : this.filterDropdownItems;
     this.countSelections();
   }
 
 
   countSelections(){
-    this.selections = _.filter(this.filterDropdownItems, {model:true});
+    this.selections = _.filter(this.dropdownItems, {model:true});
     this.hasFilterSelections = this.selections.length > 0;
     this.title = this.getFilterMenuButtonText();
   }
 
-
-
+  groupToFlat(groupedCheckboxes){
+    let flatCheckboxes = [];
+    groupedCheckboxes.forEach(checkbox => {
+      flatCheckboxes.push(checkbox);
+      if(checkbox.items && checkbox.items.length){
+        checkbox.items.forEach(c => c.groupId = checkbox.id);
+        checkbox.model = checkbox.items.some(c => c.model);
+        checkbox.collapsed = checkbox.items.some(c => c.collapsed);
+        flatCheckboxes = flatCheckboxes.concat(checkbox.items);
+      }
+    });
+    return flatCheckboxes;
+  }
 
   getFilterMenuButtonText() {
     if (!this.hasFilterSelections) {
       return 'None selected';
-    } else if (this.selections.length === this.filterDropdownItems.length) {
+    } else if (this.selections.length === this.dropdownItems.length) {
       return 'All selected';
     } else {
       return 'Filter applied';
@@ -40,16 +56,32 @@ class CheckboxFilterCtrl {
   }
 
   toggleAllFilters($event, selectAll) {
-    this.filterDropdownItems.forEach(item => item.model = !!selectAll);
+    this.dropdownItems.forEach(item => item.model = !!selectAll);
     this.countSelections();
     this.onCheckboxesChange();
     $event.stopPropagation();
   };
 
-  onCheckboxesChange(){
-    console.log('change');
+  onCheckboxesChange(checkbox){
+    if(checkbox && checkbox.items){
+      checkbox.items.forEach(c => c.model = checkbox.model);
+    }
+
+    if(checkbox && checkbox.groupId){
+      let group = _.find(this.dropdownItems, {id: checkbox.groupId});
+      let hasAnyChecked = group.items.some(c=> c.model);
+      group.model = hasAnyChecked;
+    }
     this.countSelections();
     this.onChange();
+  }
+
+  toggle(group){
+    group.collapsed = !group.collapsed;
+    (group.items || []).forEach(item => item.collapsed = group.collapsed);
+    if(this.onCollapseExpandToggle) {
+      this.onCollapseExpandToggle();
+    }
   }
 }
 
@@ -58,7 +90,10 @@ gla.component('checkboxFilter', {
   controller: CheckboxFilterCtrl,
   bindings: {
     filterDropdownItems: '<',
-    onChange: '&'
+    grouped: '<?',
+    onChange: '&',
+    isDisabled: '<?',
+    onCollapseExpandToggle: '&?'
   },
 });
 

@@ -8,19 +8,17 @@
 
 
 class WbsCodesCtrl {
-  constructor(ConfirmationDialog, UserService) {
+  constructor(ConfirmationDialog, UserService, ProjectService) {
     this.ConfirmationDialog = ConfirmationDialog;
     this.canDelete = UserService.hasPermission('proj.wbs.delete');
     this.validators = [];
+    this.ProjectService = ProjectService;
+    this.projectIdsUsingWbsCode = [];
   }
 
   $onInit() {
     this.max = this.max || 10;
-    if (this.type) {
-      this.validators.push(this.isValidWbsCodeEnding.bind(this));
-    } else {
-      this.validators.push(this.isUnique.bind(this));
-    }
+    this.validators.push(this.isUnique.bind(this));
   }
 
   delete(wbs) {
@@ -38,14 +36,19 @@ class WbsCodesCtrl {
   }
 
   add(wbsCode) {
-    this.codes.push({
-      code: wbsCode,
-      type: this.type
+    this.ProjectService.findAllProjectIdsByWBSCode(wbsCode).then(resp => {
+      this.projectIdsUsingWbsCode = resp.data;
+      if (this.projectIdsUsingWbsCode.length === 0) {
+        this.codes.push({
+          code: wbsCode,
+          type: this.type
+        });
+        this.code = null;
+        if(this.onWbsCodeModification){
+          this.onWbsCodeModification();
+        }
+      }
     });
-    this.code = null;
-    if(this.onWbsCodeModification){
-      this.onWbsCodeModification();
-    }
   }
 
   isValid(wbsCode) {
@@ -58,24 +61,16 @@ class WbsCodesCtrl {
     return true;
   }
 
-  isValidWbsCodeEnding(wbsCode) {
-    if (!wbsCode || wbsCode.length < 2) {
-      return false;
-    }
-    let endingExists = this.codes.some(wbs => {
-      let existingSubstr = wbs.code.substr(wbs.code.length - 2);
-      let addedSubstr = wbsCode.substr(wbsCode.length - 2);
-      return existingSubstr === addedSubstr;
-    });
-    return !endingExists;
-  }
-
   isUnique(wbsCode) {
     let codeExists = this.codes.some(wbs => (wbs.code === wbsCode));
     return !codeExists;
   }
+
+  clearErrorMessage() {
+    this.projectIdsUsingWbsCode = [];
+  }
 }
 
-WbsCodesCtrl.$inject = ['ConfirmationDialog', 'UserService'];
+WbsCodesCtrl.$inject = ['ConfirmationDialog', 'UserService', 'ProjectService'];
 
 export default WbsCodesCtrl;

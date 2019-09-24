@@ -17,14 +17,16 @@ public class ProgrammeRequestedAndPaidRecord {
     private RequestedAndPaidRecord strategicRecord;
     private RequestedAndPaidRecord nonStrategicRecord;
     private AssociatedProjectsRecord associatedProjectsRecord;
+    private StrategicPartnershipUnitSummary strategicPartnershipUnitSummary;
 
     public ProgrammeRequestedAndPaidRecord() {
     }
 
-    public ProgrammeRequestedAndPaidRecord(RequestedAndPaidRecord strategicRecord, RequestedAndPaidRecord nonStrategicRecord, AssociatedProjectsRecord associatedProjectsRecord) {
+    public ProgrammeRequestedAndPaidRecord(RequestedAndPaidRecord strategicRecord, RequestedAndPaidRecord nonStrategicRecord, AssociatedProjectsRecord associatedProjectsRecord, StrategicPartnershipUnitSummary strategicPartnershipUnitSummary) {
         this.strategicRecord = strategicRecord;
         this.nonStrategicRecord = nonStrategicRecord;
         this.associatedProjectsRecord = associatedProjectsRecord;
+        this.strategicPartnershipUnitSummary = strategicPartnershipUnitSummary;
     }
 
     public RequestedAndPaidRecord getStrategicRecord() {
@@ -49,5 +51,13 @@ public class ProgrammeRequestedAndPaidRecord {
 
     public void setAssociatedProjectsRecord(AssociatedProjectsRecord associatedProjectsRecord) {
         this.associatedProjectsRecord = associatedProjectsRecord;
+    }
+
+    public StrategicPartnershipUnitSummary getStrategicPartnershipUnitSummary() {
+        return strategicPartnershipUnitSummary;
+    }
+
+    public void setStrategicPartnershipUnitSummary(StrategicPartnershipUnitSummary strategicPartnershipUnitSummary) {
+        this.strategicPartnershipUnitSummary = strategicPartnershipUnitSummary;
     }
 }

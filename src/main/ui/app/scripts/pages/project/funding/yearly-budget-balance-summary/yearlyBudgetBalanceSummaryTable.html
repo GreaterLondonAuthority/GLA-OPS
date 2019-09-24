@@ -1,0 +1,33 @@
+<div class="table-responsive yearly-budget-balance-summary-table">
+  <table class="table table-bordered" id="balance-summary-table">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th class="year-column-cell">YEAR</th>
+      <th>SPEND TYPE</th>
+      <th>TOTAL BUDGET £</th>
+      <th>ACTUAL SPEND TO DATE £</th>
+      <th>REMAINING FORECAST £</th>
+      <th>BALANCE £</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-if="$ctrl.data.length === 0">
+      <td colspan="6"><b>No budget added to any year, select a year to add expected annual budget</b></td>
+    </tr>
+
+    <tr ng-repeat="yearData in $ctrl.data track by yearData.id" >
+      <td class="years-cell bold-cell"
+          ng-attr-rowspan="{{($ctrl.data[$index+1].year == $ctrl.data[$index].year && $ctrl.data[$index+1].spendType != $ctrl.data[$index].spendType) ? 2 : 1}}"
+          ng-if="$ctrl.data[$index-1].year != $ctrl.data[$index].year"
+          style="vertical-align : middle; text-align:center;">
+        {{$ctrl.formatYear(yearData.year)}}</td>
+      <td class="bolder" >{{$ctrl.spendTypeText(yearData.spendType)}}</td>
+      <td>{{$ctrl.formatNumber(yearData.budget)}}</td>
+      <td>{{$ctrl.formatNumber(yearData.actualSpend)}}</td>
+      <td>{{$ctrl.formatNumber(yearData.forecastSpend)}}</td>
+      <td>{{$ctrl.formatNumber(yearData.balance)}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+

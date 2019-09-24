@@ -10,13 +10,13 @@ package uk.gov.london.ops.domain.project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import uk.gov.london.ops.domain.Requirement;
 import uk.gov.london.ops.domain.template.DetailsTemplate;
-import uk.gov.london.ops.domain.template.Requirement;
-import uk.gov.london.ops.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.spe.SimpleProjectExportConstants;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
-import uk.gov.london.ops.util.jpajoins.NonJoin;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
+import uk.gov.london.ops.framework.jpa.NonJoin;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static uk.gov.london.ops.spe.SimpleProjectExportConstants.FieldNames.post_code;
-import static uk.gov.london.ops.spe.SimpleProjectExportConstants.FieldNames.project_name;
+import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.post_code;
+import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.project_name;
 
 /**
  * The Project Details block in a Project.
@@ -173,6 +173,7 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
                 checkRequirement(this.getCoordY(), config.getCoordsRequirement()) &&
                 checkRequirement(this.getMainContact(), config.getMaincontactRequirement()) &&
                 checkRequirement(this.getMainContactEmail(), config.getMaincontactemailRequirement()) &&
+                checkRequirement(this.getWardId(), config.getWardIdRequirement()) &&
                 checkRequirement(this.getSiteOwner(), config.getSiteOwnerRequirement()) &&
                 checkRequirement(this.getInterest(), config.getInterestRequirement()) &&
                 checkRequirement(this.getProjectManager(), config.getProjectManagerRequirement()) &&
@@ -413,10 +414,6 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
 
     public void setOrgSelected(boolean orgSelected) {
         this.orgSelected = orgSelected;
-    }
-
-    public boolean allowMultipleVersions() {
-        return true;
     }
 
     @Override

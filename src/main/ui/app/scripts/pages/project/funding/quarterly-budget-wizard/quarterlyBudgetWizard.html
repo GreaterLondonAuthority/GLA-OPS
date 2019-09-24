@@ -1,0 +1,114 @@
+<div class="quarterlyExpenditureWizard mtop20">
+  <div class="row no-gutter wizzard">
+    <div class="col-xs-12 ">
+      <div class="form-group col-md-2 col-xs-12 mtop15">
+        <month-selector
+          ng-if="$ctrl.periodType === 'Monthly'"
+          read-only="$ctrl.readOnly"
+          year="$ctrl.year"
+          on-month-selected="$ctrl.onMonthSelected(selectedMonth)"
+          selected-month="$ctrl.data.selectedMonth">
+        </month-selector>
+
+        <quarter-selector
+          ng-if="$ctrl.periodType === 'Quarterly'"
+          read-only="$ctrl.readOnly"
+          year="$ctrl.year"
+          on-quarter-selected="$ctrl.onMonthSelected(selectedMonth)"
+          selected-month="$ctrl.data.selectedQuarter">
+        </quarter-selector>
+      </div>
+
+      <div ng-if="$ctrl.spendTypeOptions.length > 1" class="form-group col-md-2 col-xs-12 mtop15">
+        <label for="spendType">Type</label><br/>
+        <ui-select id="spendType"
+                   placeholder="Select"
+                   ng-model="$ctrl.data.spendType"
+                   search-enabled="false"
+                   ng-disabled="$ctrl.readOnly"
+                   on-select="$ctrl.categorySelected($item, $model)">
+          <ui-select-match title="{{$select.selected.label}}" placeholder="Select">
+            {{$select.selected.label}}
+          </ui-select-match>
+          <ui-select-choices repeat="item in $ctrl.spendTypeOptions">
+            <span>{{item.label}}</span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+      <!--  If the flag showMilestones is on, display dropdown with milestones -->
+      <div class="form-group col-md-2 col-xs-12 mtop15" ng-if="($ctrl.milestones.length > 0) && $ctrl.showMilestones">
+        <label for="milestoneEntry">Milestone title</label><br/>
+        <ui-select id="milestoneEntry"
+                   placeholder="Select"
+                   ng-model="$ctrl.data.milestoneSelected"
+                   search-enabled="false"
+                   on-select="$ctrl.onMilestoneSelected($item, $model)">
+          <ui-select-match placeholder="Select">
+            {{$select.selected.summary}}
+          </ui-select-match>
+          <ui-select-choices repeat="milestone in $ctrl.milestones">
+            <span>{{milestone.summary}}</span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+    <!--  If the flag for showCategories is on, display dropdown with categories  -->
+      <div class="form-group col-md-2 col-xs-12 mtop15" ng-if="($ctrl.categories.length > 0) && $ctrl.showCategories">
+        <label for="spendCategoryEntry">Spend Category</label><br/>
+        <ui-select id="spendCategoryEntry"
+                   placeholder="Select"
+                   ng-model="$ctrl.data.spendCategorySelected"
+                   search-enabled="false"
+                   on-select="$ctrl.onSpendCategorySelected($item, $model)">
+          <ui-select-match placeholder="Select">
+            {{$select.selected.category}}
+          </ui-select-match>
+          <ui-select-choices repeat="spendCategory in $ctrl.categories">
+            <span>{{spendCategory.category}}</span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+
+      <div class="form-group col-md-2 col-xs-12 mtop15" ng-if="$ctrl.showCapitalGla || $ctrl.showRevenueGla">
+        <label for="valueInput">{{$ctrl.wizardClaimLabel}}</label><br/>
+        <input class="form-control"
+               id="valueInput"
+               type="text"
+               placeholder=""
+               ng-model="$ctrl.data.value"
+               number-mask="$ctrl.monetaryValueScale"
+               maxlength="13">
+      </div>
+      <div class="form-group col-md-3 col-xs-12 mtop15" ng-if="$ctrl.showCapitalOther || $ctrl.showRevenueOther">
+        <label for="matchFundingInput">{{$ctrl.wizardOtherLabel}}</label><br/>
+        <input class="form-control match-funding-input"
+               id="matchFundingInput"
+               type="text"
+               placeholder=""
+               ng-model="$ctrl.data.matchFundValue"
+               number-mask="$ctrl.monetaryValueScale"
+               maxlength="13">
+      </div>
+
+      <div class="form-group outputsValue col-md-2 col-xs-12 mtop15" ng-if="$ctrl.allowActivityUpdate">
+        <label for="activityDescription">Activity description</label><br/>
+        <input class="form-control"
+               id="activityDescription"
+               type="text"
+               placeholder="{{$ctrl.selectedUnits.placeholder}}"
+               maxlength="30"
+               ng-model="$ctrl.data.activityDescription">
+      </div>
+    </div>
+    <div class="col-xs-12 text-right">
+      <button class="btn btn-primary mtop15"
+              ng-click="$ctrl.addQuarterlyEntry()"
+              ng-disabled="!$ctrl.canAddOutput()">ADD
+      </button>
+    </div>
+  </div>
+</div>
+
+

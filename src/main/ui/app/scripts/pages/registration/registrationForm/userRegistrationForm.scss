@@ -1,0 +1,41 @@
+user-registration-form {
+  .form-gla > .row{
+    margin: 0 -15px;
+  }
+}
+
+@include when-sm {
+  user-registration-form {
+    password-strength {
+      margin-top: 22px;
+    }
+
+    .password-comment{
+      margin-top: -15px;
+    }
+
+    .form-gla > .row{
+      margin: 0 15px;
+    }
+
+    .organisation-name{
+      padding: 7px 0;
+    }
+  }
+}
+
+
+.org-code-label{
+  margin-bottom: 0;
+}
+
+.organisation-name {
+  font-family: $font-family-bolder;
+  white-space: nowrap;
+}
+
+/* copy so we can turn it on/off independently  */
+.ng-invalid-copy {
+  border: 1px solid $error;
+  box-shadow: none;
+}

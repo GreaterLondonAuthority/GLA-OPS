@@ -10,7 +10,7 @@ function EvidenceModal($uibModal, $rootScope, FileUploadErrorModal, MilestonesSe
   return {
     show: function (project, blockId, milestone, maxEvidenceAttachments, readOnly) {
       const evidenceModal = this;
-      return $uibModal.open({
+      var modal = $uibModal.open({
         bindToController: true,
         controllerAs: '$ctrl',
         animation: false,
@@ -64,6 +64,14 @@ function EvidenceModal($uibModal, $rootScope, FileUploadErrorModal, MilestonesSe
           };
         }]
       });
+
+      modal.closed.then(() => {
+        _.forEach(milestone.attachments, attachment => {
+          attachment.showConfirmDelete = false;
+        });
+      });
+
+      return modal;
     }
   };
 }

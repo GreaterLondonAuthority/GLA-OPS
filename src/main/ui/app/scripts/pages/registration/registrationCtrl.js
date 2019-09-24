@@ -6,67 +6,37 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
 
-RegistrationCtrl.$inject = ['$scope', '$log', 'OrganisationService', 'UserService'];
+class RegistrationCtrl {
+  constructor($log, UserService, $state, $rootScope) {
+    this.$log = $log;
+    this.UserService = UserService;
+    this.$state = $state;
+    this.$rootScope = $rootScope;
+    this.isFormValid = false;
+  }
 
-function RegistrationCtrl($scope, $log, OrganisationService, UserService) {
-  var ctrl = this;
+  submit() {
+    this.$rootScope.showGlobalLoadingMask = true;
+    this.UserService.registerUser(this.regData).then(() => {
+      this.$state.go('confirm-user-created');
+    }).catch(error => {
+      this.errors = {};
+      error.data.errors.forEach(e => this.errors[e.name] = e.description);
+      this.$log.log(this.errors);
+    }).finally(() => {
+      this.$rootScope.showGlobalLoadingMask = false;
+    });
+  }
 
-  ctrl.done = false;
-
-  $scope.regdata = {};
-
-  ctrl.checkOrgCode = function () {
-    let orgCode = $scope.regdata.orgCode;
-    if ($scope.regdata.orgCode) {
-      OrganisationService.lookupOrgNameByCode($scope.regdata.orgCode)
-        .then(function (response) {
-          if (orgCode === $scope.regdata.orgCode) {
-            if (response == undefined || response.status != 200) {
-              $log.log('org with id or ims not found: ' + $scope.regdata.orgCode);
-              ctrl.orgCodeValidationError = true;
-              ctrl.orgName = '';
-            } else {
-              ctrl.orgCodeValidationError = false;
-              ctrl.orgName = response.data;
-              $log.log('org with id or ims number', $scope.regdata.orgCode + ' found.');
-            }
-          }
-        })
-        .catch(function (error) {
-          if (orgCode === $scope.regdata.orgCode) {
-            $log.log('org with id or ims not found:', error);
-            ctrl.orgCodeValidationError = true;
-          }
-        });
-    } else {
-      ctrl.orgCodeValidationError = false;
-      ctrl.orgName = null;
-    }
-  };
-
-  ctrl.passwordChanged = function() {
-    ctrl.errors = null;
-  };
-
-  ctrl.submit = function() {
-    UserService.registerUser($scope.regdata).then(
-        function() {
-          ctrl.done = true;
-        },
-        function(error) {
-          ctrl.errors = {};
-          error.data.errors.map(function(i) {
-            ctrl.errors[i.name] = i.description
-          });
-          //register.regForm.$setValidity('emailexists', false, register.regForm);
-          $log.log(ctrl.errors);
-        }
-      );
-
+  onFormValidityChange(event) {
+    this.isFormValid = event.isFormValid;
+    this.regData = event.data;
   }
 }
+
+RegistrationCtrl.$inject = ['$log', 'UserService', '$state', '$rootScope'];
+
 
 angular.module('GLA')
   .controller('RegistrationCtrl', RegistrationCtrl);

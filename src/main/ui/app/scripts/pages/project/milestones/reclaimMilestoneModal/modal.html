@@ -5,7 +5,7 @@
       <span aria-hidden="true">&times;</span>
     </button>
     <h1>APPROVED MILESTONE</h1>
-    <div>{{$ctrl.milestone.summary}}</div>
+    <div class="mbottom10">{{$ctrl.milestone.summary}}</div>
   </div>
 
   <div class="modal-body text-left">
@@ -14,12 +14,35 @@
       role="form"
       name="claimMilestoneForm">
 
-
-      <div class="row" ng-if="$ctrl.showReclaimRcgf">
-        <div class="bold mbottom5">Request to repay/reclaim RCGF</div>
-        <div>You must request to repay a total of £{{$ctrl.projectBlock.availableToReclaimByType.RCGF | number:0}} RCGF on this project and up to £{{$ctrl.rcgfUpTo | number:0}} may be claimed against this milestone</div>
+      <div class="row mbottom20" ng-if="$ctrl.showReclaimGrant">
+        <div>You must request to repay a total of £{{$ctrl.projectBlock.availableToReclaimByType.Grant| number:0}} grant on this project.</div>
+        <div class="mtop5">Up to £{{$ctrl.grantUpTo| number:0}} grant may be repaid against this milestone.</div>
+        <label for="grant-input">Enter value of grant to repay</label>
         <div class="mbottom5 row">
+          <div class="col-xs-6">
+            <input type="text"
+                   id="grant-input"
+                   class="form-control grant-input"
+                   aria-label="grant-input"
+                   maxlength="13"
+                   name="reclaimedGrant"
+                   ng-model="$ctrl.reclaimedGrant"
+                   number-mask="0"
+                   max="$ctrl.maxGrant">
+          </div>
+        </div>
+        <div role="alert" ng-show="claimMilestoneForm.reclaimedGrant.$error.max">
+          <span class="error" ng-if="claimMilestoneForm.reclaimedGrant.$error.max">Reclaim amount cannot exceed remaining grant</span>
+        </div>
+      </div>
 
+
+
+      <div class="row mbottom20" ng-if="$ctrl.showReclaimRcgf">
+        <div>You must request to repay a total of £{{$ctrl.projectBlock.availableToReclaimByType.RCGF | number:0}} RCGF on this project.</div>
+        <div class="mtop5">Up to £{{$ctrl.rcgfUpTo | number:0}} RCGF may be repaid against this milestone.</div>
+        <label for="rcgf-input">Enter value of RCGF</label>
+        <div class="mbottom5 row">
           <div class="col-xs-6">
             <input type="text"
                    id="rcgf-input"
@@ -38,9 +61,10 @@
       </div>
 
 
-      <div class="row" ng-if="$ctrl.showReclaimDpf">
-        <div class="bold mbottom5">Request to repay/reclaim DPF</div>
-        <div>You must request to repay a total of £{{$ctrl.projectBlock.availableToReclaimByType.DPF| number:0}} DPF on this project and up to £{{$ctrl.dpfUpTo| number:0}} may be claimed against this milestone</div>
+      <div class="row mbottom10" ng-if="$ctrl.showReclaimDpf">
+        <div>You must request to repay a total of £{{$ctrl.projectBlock.availableToReclaimByType.DPF| number:0}} DPF on this project.</div>
+        <div class="mtop5">Up to £{{$ctrl.dpfUpTo| number:0}} DPF may be repaid against this milestone.</div>
+        <label for="dpf-input">Enter value of DPF</label>
         <div class="mbottom5 row">
 
           <div class="col-xs-6">
@@ -59,13 +83,14 @@
           <span class="error" ng-if="claimMilestoneForm.reclaimedDpf.$error.max">Reclaim amount cannot exceed remaining DPF</span>
         </div>
       </div>
+
       <label for="reason">Explain why you are requesting a repayment/reclaim</label>
       <textarea id="reason"
                 rows="5"
                 ng-attr-placeholder="{{$ctrl.modal.placeholder}}"
                 name="action"
                 ng-disabled="$ctrl.readOnly"
-                class="form-control"
+                class="form-control mtop5"
                 ng-model="$ctrl.reclaimReason"
                 maxlength="200">
       </textarea>
@@ -80,7 +105,7 @@
           class="btn btn-default btn-primary btn-center claim-btn"
           type="button"
           ng-click="$ctrl.claim()"
-          ng-disabled="!claimMilestoneForm.$valid">UPDATE</button>
+          ng-disabled="!claimMilestoneForm.$valid">CREATE</button>
       </div>
     </div>
 

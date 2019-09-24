@@ -64,7 +64,7 @@ public class ImportLogService {
     }
 
     public void recordErrors(Iterable<ImportErrorLog> errors) {
-        importErrorLogRepository.save(errors);
+        importErrorLogRepository.saveAll(errors);
     }
 
 }

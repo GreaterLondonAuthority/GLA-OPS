@@ -6,14 +6,22 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
 
 ModalDisplayService.$inject = ['$injector'];
 
 function ModalDisplayService($injector) {
+  const msgDefaults = {
+    header: 'Oops!',
+    subHeader: 'Something has gone wrong',
+    body: 'It’s not your fault. Try again by clicking OK but if the issue persists you may need to speak to the GLA technical team.',
+    get bodyWithErrorId() {
+      return `${this.body} They may ask for the code below.`
+    }
+  };
+
   return {
     standardError(message) {
-      if(!this.$uibModal){
+      if (!this.$uibModal) {
         this.$uibModal = $injector.get('$uibModal');
       }
       return this.$uibModal.open({
@@ -26,10 +34,9 @@ function ModalDisplayService($injector) {
           }
         },
         controller: ['$scope', 'message', ($scope, message) => {
-          $scope.header = message.header ? message.header : 'Oops!';
-          $scope.subHeader = message.subHeader ? message.subHeader : 'Something has gone wrong';
-          var defaultMessage = 'It’s not your fault. Try again by clicking OK but if the issue persists you may need to speak to the GLA technical team.';
-          if (message.errorId) defaultMessage = defaultMessage+' They may ask for the code below.';
+          $scope.header = message.header ? message.header : msgDefaults.header;
+          $scope.subHeader = message.subHeader ? message.subHeader : msgDefaults.subHeader;
+          let defaultMessage = message.errorId ? msgDefaults.bodyWithErrorId : msgDefaults.body;
           $scope.body = message.body ? message.body : defaultMessage;
           $scope.errorId = message.errorId ? message.errorId : '';
         }]

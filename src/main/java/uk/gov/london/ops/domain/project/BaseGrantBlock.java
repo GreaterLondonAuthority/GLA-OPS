@@ -15,15 +15,17 @@ import uk.gov.london.ops.EventType;
 import uk.gov.london.ops.OpsEvent;
 import uk.gov.london.ops.domain.template.TemplateBlock;
 import uk.gov.london.ops.domain.template.TemplateTenureType;
-import uk.gov.london.ops.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.spe.SimpleProjectExportConstants;
-import uk.gov.london.ops.spe.SimpleProjectExportUtils;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportUtils;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
 
 @MappedSuperclass
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
@@ -50,7 +52,7 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "block_id")
-    private Set<TenureTypeAndUnits> tenureTypeAndUnitsEntries;
+    private Set<ProjectTenureDetails> tenureTypeAndUnitsEntries;
 
     @Column(name = "sos_milestone_authorised")
     protected OffsetDateTime startOnSiteMilestoneAuthorised;
@@ -61,7 +63,7 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
     public abstract Long getTotalGrantEligibility();
 
-    public Set<TenureTypeAndUnits> getTenureTypeAndUnitsEntries() {
+    public Set<ProjectTenureDetails> getTenureTypeAndUnitsEntries() {
         return tenureTypeAndUnitsEntries;
     }
 
@@ -69,15 +71,15 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
     @JsonIgnore
     @Transient
-    public List<TenureTypeAndUnits> getTenureTypeAndUnitsEntriesSorted() {
-        List<TenureTypeAndUnits> list = new ArrayList<>(getTenureTypeAndUnitsEntries());
+    public List<ProjectTenureDetails> getTenureTypeAndUnitsEntriesSorted() {
+        List<ProjectTenureDetails> list = new ArrayList<>(getTenureTypeAndUnitsEntries());
 
         list.sort(Comparator.comparing(o -> o.getTenureType().getDisplayOrder()));
         return list;
     }
 
-    public void setTenureTypeAndUnitsEntries(Set<TenureTypeAndUnits> tenureTypeAndUnitsEntries) {
-        this.tenureTypeAndUnitsEntries = tenureTypeAndUnitsEntries;
+    public void setTenureTypeAndUnitsEntries(Set<ProjectTenureDetails> projectTenureDetailsEntries) {
+        this.tenureTypeAndUnitsEntries = projectTenureDetailsEntries;
     }
 
 
@@ -86,13 +88,19 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
         final Map<String, Object> map = new HashMap<>();
         final SimpleProjectExportConstants.ReportPrefix prefix =
                 SimpleProjectExportConstants.ReportPrefix.eg_;
-        for (TenureTypeAndUnits tenureTypeAndUnits : getTenureTypeAndUnitsEntriesSorted()) {
-            String keySuffix = simpleProjectExportConfig.getReplacementProperty(TENURE_TYPE_PROPERTY_PREFIX + tenureTypeAndUnits.getTenureType().getExternalId());
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + TOTAL_UNITS + keySuffix), this.calculateTotalUnits(tenureTypeAndUnits));
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + NIL_GRANT_UNITS + keySuffix), this.calculateNilGrantUnits(tenureTypeAndUnits));
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + S106_UNITS + keySuffix), this.calculateS106Units(tenureTypeAndUnits));
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + DEV_COST + keySuffix), this.calculateDevCosts(tenureTypeAndUnits));
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + GRANT_PER_UNIT + keySuffix), this.calculateGrantPerUnitCost(tenureTypeAndUnits));
+        for (ProjectTenureDetails projectTenureDetails : getTenureTypeAndUnitsEntriesSorted()) {
+            String keySuffix = simpleProjectExportConfig.getReplacementProperty(TENURE_TYPE_PROPERTY_PREFIX + projectTenureDetails
+                .getTenureType().getExternalId());
+            map.put(SimpleProjectExportUtils.formatForExport(prefix + TOTAL_UNITS + keySuffix), this.calculateTotalUnits(
+                projectTenureDetails));
+            map.put(SimpleProjectExportUtils.formatForExport(prefix + NIL_GRANT_UNITS + keySuffix), this.calculateNilGrantUnits(
+                projectTenureDetails));
+            map.put(SimpleProjectExportUtils.formatForExport(prefix + S106_UNITS + keySuffix), this.calculateS106Units(
+                projectTenureDetails));
+            map.put(SimpleProjectExportUtils.formatForExport(prefix + DEV_COST + keySuffix), this.calculateDevCosts(
+                projectTenureDetails));
+            map.put(SimpleProjectExportUtils.formatForExport(prefix + GRANT_PER_UNIT + keySuffix), this.calculateGrantPerUnitCost(
+                projectTenureDetails));
         }
         map.put(prefix + TOTAL_GRANT_ELIGIBILITY, this.getTotalGrantEligibility());
 
@@ -101,50 +109,61 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
     @Transient
     @JsonIgnore
-    public Integer calculateTotalUnits(TenureTypeAndUnits tenureType) {
+    public Integer calculateTotalUnits(ProjectTenureDetails tenureType) {
         return null;
     }
 
     @Transient
     @JsonIgnore
-    public Integer calculateNilGrantUnits(TenureTypeAndUnits tenureType) {
+    public Integer calculateNilGrantUnits(ProjectTenureDetails tenureType) {
         return null;
     }
 
     @Transient
     @JsonIgnore
-    public Integer calculateS106Units(TenureTypeAndUnits tenureType) {
+    public Integer calculateS106Units(ProjectTenureDetails tenureType) {
         return null;
     }
 
     @Transient
     @JsonIgnore
-    public Long calculateDevCosts(TenureTypeAndUnits tenureType) {
+    public Long calculateDevCosts(ProjectTenureDetails tenureType) {
         return null;
     }
 
     @Transient
     @JsonIgnore
-    public Integer calculateGrantPerUnitCost(TenureTypeAndUnits tenureType) {
+    public Integer calculateGrantPerUnitCost(ProjectTenureDetails tenureType) {
         return null;
     }
 
     @Transient
     @Override
     public boolean isComplete() {
-
-        return isVisited() && getValidationFailures().size()==0;
+        return isVisited() && getValidationFailures().size() == 0;
 
     }
 
     @Override
     protected void generateValidationFailures() {
         if (StringUtils.isNotEmpty(project.getTemplate().getStartOnSiteRestrictionText())) {
-            for (TenureTypeAndUnits entry: getTenureTypeAndUnitsEntries()) {
-                if (entry.getTotalUnitsAtStartOnSite() != null && entry.getTotalUnitsAtStartOnSite() < this.calculateTotalUnits(entry)) {
-                    String message = "You can't increase the total units above "+entry.getTotalUnitsAtStartOnSite()+" as the start on site milestone has been claimed. Submit a new project to increase units.";
-                    addErrorMessage(String.valueOf(entry.getId()), "totalUnits", message);
+            Integer totalUnitsAtStartOnSite = null;
+            Integer totalUnits = null;
+
+            for (ProjectTenureDetails entry: getTenureTypeAndUnitsEntries()) {
+                if (entry.getTotalUnitsAtStartOnSite() != null) {
+                    totalUnitsAtStartOnSite = nullSafeAdd(totalUnitsAtStartOnSite, entry.getTotalUnitsAtStartOnSite());
                 }
+
+                Integer calculatedTotalEntries = calculateTotalUnits(entry);
+                if (calculatedTotalEntries != null) {
+                    totalUnits = nullSafeAdd(totalUnits, calculatedTotalEntries);
+                }
+            }
+
+            if (totalUnitsAtStartOnSite != null && totalUnits != null && totalUnitsAtStartOnSite < totalUnits) {
+                String message = "You can't increase the total units above "+totalUnitsAtStartOnSite+" as the start on site milestone has been claimed. Submit a new project to increase units.";
+                addErrorMessage("Block1", "totalUnits", message);
             }
         }
     }
@@ -170,9 +189,9 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
         this.getTenureTypeAndUnitsEntries().clear();
         if (hasTenureInfo(newValue)) {
             this.getTenureTypeAndUnitsEntries().addAll(newValue.getTenureTypeAndUnitsEntries());
-            for (TenureTypeAndUnits tenureTypeAndUnitsEntry : this.getTenureTypeAndUnitsEntries()) {
-                tenureTypeAndUnitsEntry.setProject(project);
-                calculateTotals(tenureTypeAndUnitsEntry);
+            for (ProjectTenureDetails projectTenureDetailsEntry : this.getTenureTypeAndUnitsEntries()) {
+                projectTenureDetailsEntry.setProject(project);
+                calculateTotals(projectTenureDetailsEntry);
             }
         }
     }
@@ -180,7 +199,7 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
     /**
      * Calculate total eligible units, grant per unit and total grant eligable
      */
-    public abstract void calculateTotals(TenureTypeAndUnits tenureInfo);
+    public abstract void calculateTotals(ProjectTenureDetails tenureInfo);
 
     private boolean hasTenureInfo(BaseGrantBlock newValue) {
         return newValue.getTenureTypeAndUnitsEntries() != null && !newValue.getTenureTypeAndUnitsEntries().isEmpty();
@@ -192,9 +211,9 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
         if (!(this instanceof IndicativeGrantBlock)) {
             if (this.getStartOnSiteMilestoneAuthorised() != null) {
-                for (TenureTypeAndUnits tenureTypeAndUnitsEntry : tenureTypeAndUnitsEntries) {
-                    if (tenureTypeAndUnitsEntry.getTotalUnitsAtStartOnSite() != null) {
-                        response += tenureTypeAndUnitsEntry.getTotalUnitsAtStartOnSite();
+                for (ProjectTenureDetails projectTenureDetailsEntry : tenureTypeAndUnitsEntries) {
+                    if (projectTenureDetailsEntry.getTotalUnitsAtStartOnSite() != null) {
+                        response += projectTenureDetailsEntry.getTotalUnitsAtStartOnSite();
                     }
                 }
             }
@@ -208,9 +227,9 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
         if (!(this instanceof IndicativeGrantBlock)) {
             if (this.getCompletionMilestoneAuthorised() != null) {
-                for (TenureTypeAndUnits tenureTypeAndUnitsEntry : tenureTypeAndUnitsEntries) {
-                    if (tenureTypeAndUnitsEntry.getTotalUnitsAtCompletion() != null) {
-                        response += tenureTypeAndUnitsEntry.getTotalUnitsAtCompletion();
+                for (ProjectTenureDetails projectTenureDetailsEntry : tenureTypeAndUnitsEntries) {
+                    if (projectTenureDetailsEntry.getTotalUnitsAtCompletion() != null) {
+                        response += projectTenureDetailsEntry.getTotalUnitsAtCompletion();
                     }
                 }
             }
@@ -221,38 +240,25 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
     @Transient
     public abstract List<TenureSummaryDetails> getTenureSummaryDetails();
 
-    @Transient
-    public abstract void initialiseFromTenureTypes(Set<TemplateTenureType> tenureTypes);
-
-    protected abstract boolean isRowValid(TenureTypeAndUnits tenureTypeAndUnit);
-
-    @Override
-    protected void initFromTemplateSpecific(TemplateBlock templateBlock) {
-        initialiseFromTenureTypes(getProject().getTemplate().getTenureTypes());
-    }
+    protected abstract boolean isRowValid(ProjectTenureDetails tenureTypeAndUnit);
 
     @Override
     protected void copyBlockContentInto(NamedProjectBlock target) {
         final BaseGrantBlock targetCalculateGrantBlock = (BaseGrantBlock)target;
-        final Set<TenureTypeAndUnits> items = getTenureTypeAndUnitsEntries()
+        final Set<ProjectTenureDetails> items = getTenureTypeAndUnitsEntries()
                 .stream()
-                .map(TenureTypeAndUnits::copy)
+                .map(ProjectTenureDetails::copy)
                 .collect(Collectors.toSet());
         targetCalculateGrantBlock.setTenureTypeAndUnitsEntries(items);
         targetCalculateGrantBlock.setStartOnSiteMilestoneAuthorised(this.startOnSiteMilestoneAuthorised);
         targetCalculateGrantBlock.setCompletionMilestoneAuthorised(this.completionMilestoneAuthorised);
     }
 
-    @Override
-    public boolean allowMultipleVersions() {
-        return true;
-    }
-
     public void startOnSiteMilestoneApproved() {
         if (!(this instanceof IndicativeGrantBlock)) {
-            for (TenureTypeAndUnits tenureTypeAndUnitsEntry : tenureTypeAndUnitsEntries) {
-                Integer unitsAtStartOnSite = this.calculateTotalUnits(tenureTypeAndUnitsEntry);
-                tenureTypeAndUnitsEntry.setTotalUnitsAtStartOnSite(unitsAtStartOnSite);
+            for (ProjectTenureDetails projectTenureDetailsEntry : tenureTypeAndUnitsEntries) {
+                Integer unitsAtStartOnSite = this.calculateTotalUnits(projectTenureDetailsEntry);
+                projectTenureDetailsEntry.setTotalUnitsAtStartOnSite(unitsAtStartOnSite);
             }
         }
         this.setStartOnSiteMilestoneAuthorised(OffsetDateTime.now());
@@ -260,9 +266,9 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
     public void completionMilestoneApproved() {
         if (!(this instanceof IndicativeGrantBlock)) {
-            for (TenureTypeAndUnits tenureTypeAndUnitsEntry : tenureTypeAndUnitsEntries) {
-                Integer unitsAtStartOnSite = this.calculateTotalUnits(tenureTypeAndUnitsEntry);
-                tenureTypeAndUnitsEntry.setTotalUnitsAtCompletion(unitsAtStartOnSite);
+            for (ProjectTenureDetails projectTenureDetailsEntry : tenureTypeAndUnitsEntries) {
+                Integer unitsAtStartOnSite = this.calculateTotalUnits(projectTenureDetailsEntry);
+                projectTenureDetailsEntry.setTotalUnitsAtCompletion(unitsAtStartOnSite);
             }
         }
         // todo take this from the event
@@ -284,13 +290,27 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
         }
     }
 
-    public TenureTypeAndUnits getTenureTypeAndUnitsEntry(String tenureType) {
-        for (TenureTypeAndUnits entry: getTenureTypeAndUnitsEntries()) {
+    public ProjectTenureDetails getTenureTypeAndUnitsEntry(String tenureType) {
+        for (ProjectTenureDetails entry: getTenureTypeAndUnitsEntries()) {
             if (entry.getTenureType().getName().equals(tenureType)) {
                 return entry;
             }
         }
         return null;
+    }
+
+    @Override
+    protected void initFromTemplateSpecific(TemplateBlock templateBlock) {
+        Set<TemplateTenureType> tenureTypes = getProject().getTemplate().getTenureTypes();
+        HashSet<ProjectTenureDetails> projectTenureDetailsEntries = new HashSet<>();
+        this.setTenureTypeAndUnitsEntries(projectTenureDetailsEntries);
+        if (tenureTypes != null) {
+            for (TemplateTenureType tenureType : tenureTypes) {
+                ProjectTenureDetails tenureEntry = new ProjectTenureDetails(project);
+                projectTenureDetailsEntries.add(tenureEntry);
+                tenureEntry.setTenureType(tenureType);
+            }
+        }
     }
 
 }

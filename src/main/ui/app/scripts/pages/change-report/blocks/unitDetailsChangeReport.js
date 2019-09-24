@@ -7,29 +7,28 @@
  */
 
 class UnitDetailsChangeReport {
-  constructor($rootScope, $scope, ReferenceDataService, UnitsService) {
-
-  this.UnitsService = UnitsService;
+  constructor(UnitsService) {
+    this.UnitsService = UnitsService;
   }
 
   $onInit() {
-    this.UnitsService.getUnitsMetadata(this.data.context.project.left ? this.data.context.project.left.id  : this.data.context.project.right.id).then((unitsMetadata) => {
-      this.tenureIdToName = unitsMetadata.data.tenureDetails.reduce((idToName, item)=>{
-        idToName[item.id] = item.name;
+    this.UnitsService.getUnitsMetadata(this.data.context.project.left ? this.data.context.project.left.id : this.data.context.project.right.id).then((unitsMetadata) => {
+      this.tenureIdToName = unitsMetadata.data.tenureDetails.reduce((idToName, item) => {
+        idToName[item.externalId] = item;
         return idToName;
       }, {});
-      if(this.data.left){
+      if (this.data.left) {
         _.forEach(this.data.left.tableEntries, (entry) => {
-          entry.tenureName = this.tenureIdToName[entry.tenureId];
+          this.UnitsService.enrichTableEntry(entry, this.tenureIdToName);
         });
       }
-      if(this.data.right){
+      if (this.data.right) {
         _.forEach(this.data.right.tableEntries, (entry) => {
-          entry.tenureName = this.tenureIdToName[entry.tenureId];
+          this.UnitsService.enrichTableEntry(entry, this.tenureIdToName);
         });
       }
       this.reportData = this.UnitsService.prepareReportData(this.data.left, this.data.right);
-      if(this.data.left && this.data.right){
+      if (this.data.left && this.data.right) {
         this.data.changes.addDeletions(this.reportData.salesUnits);
         this.data.changes.addDeletions(this.reportData.rentalsUnits);
       }
@@ -50,39 +49,39 @@ class UnitDetailsChangeReport {
         label: 'TENURE',
         field: 'tenureName',
         format: ''
-      },{
+      }, {
         label: 'MARKET TYPE',
         field: 'marketType.name',
         format: ''
-      },{
+      }, {
         label: 'BED(S)',
         field: 'nbBeds.displayValue',
         format: ''
-      },{
+      }, {
         label: 'UNIT TYPE',
         field: 'unitType.displayValue',
         format: ''
-      },{
+      }, {
         label: 'UNITS',
         field: 'nbUnits',
         format: 'number'
-      },{
+      }, {
         label: 'NET WEEKLY RENT £',
         field: 'netWeeklyRent',
         format: 'currency'
-      },{
+      }, {
         label: 'WEEKLY SC £',
         field: 'weeklyServiceCharge',
         format: 'currency'
-      },{
+      }, {
         label: 'RENT TOTAL £',
         field: 'rentTotal',
         format: 'currency'
-      },{
+      }, {
         label: 'WEEKLY MARKET RENT £',
         field: 'weeklyMarketRent',
         format: 'currency'
-      },{
+      }, {
         label: 'RENT AS A % OF MARKET RENT',
         field: 'rentPercentageOfMarket',
         format: 'number'
@@ -94,48 +93,50 @@ class UnitDetailsChangeReport {
         label: 'TENURE',
         field: 'tenureName',
         format: ''
-      },{
+      }, {
         label: 'MARKET TYPE',
         field: 'marketType.name',
         format: ''
-      },{
+      }, {
         label: 'BED(S)',
         field: 'nbBeds.displayValue',
         format: ''
-      },{
+      }, {
         label: 'UNIT TYPE',
         field: 'unitType.displayValue',
         format: ''
-      },{
+      }, {
         label: 'UNITS',
         field: 'nbUnits',
         format: 'number'
-      },{
+      }, {
         label: 'MARKET VALUE £',
         field: 'marketValue',
         format: 'number'
-      },{
+      }, {
         label: 'FIRST TRANCHE SALES %',
         field: 'firstTrancheSales',
         format: 'number',
         hidden: hiddenSalesColumns.firstTrancheSales
-      },{
+      }, {
         label: '% DISCOUNT OFF MARKET VALUE',
         field: 'discountOffMarketValue',
         format: 'number',
         hidden: hiddenSalesColumns.discountOffMarketValue
-      },{
+      }, {
         label: 'NET WEEKLY RENT £',
         field: 'netWeeklyRent',
         format: 'currency',
         hidden: hiddenSalesColumns.netWeeklyRent
-      },{
+      }, {
         label: 'WEEKLY SC £',
         field: 'weeklyServiceCharge',
         format: 'number'
       }];
 
-      this.salesUnitsFields = _.filter(this.salesUnitsFields, f => {return !f.hidden });
+      this.salesUnitsFields = _.filter(this.salesUnitsFields, f => {
+        return !f.hidden
+      });
 
 
       this.buildTypeFields = [{
@@ -200,7 +201,7 @@ class UnitDetailsChangeReport {
   }
 }
 
-UnitDetailsChangeReport.$inject = ['$rootScope', '$scope', 'ReferenceDataService', 'UnitsService'];
+UnitDetailsChangeReport.$inject = ['UnitsService'];
 
 angular.module('GLA')
   .component('unitDetailsChangeReport', {
@@ -208,4 +209,5 @@ angular.module('GLA')
       data: '<'
     },
     templateUrl: 'scripts/pages/change-report/blocks/unitDetailsChangeReport.html',
-    controller: UnitDetailsChangeReport  });
+    controller: UnitDetailsChangeReport
+  });

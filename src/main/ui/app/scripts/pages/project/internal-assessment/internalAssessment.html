@@ -1,0 +1,43 @@
+<div class="medium-page internal-assessment">
+  <project-header on-back="$ctrl.back()" editable-block="$ctrl" on-create="$ctrl.showAssessmentTypeModal()" create-btn-name="$ctrl.createBtnName">
+    Project Assessment Overview
+  </project-header>
+
+  <div class="text-center">This block is only visible to GLA staff</div>
+
+  <section-header>Assessment summary</section-header>
+
+  <div class="row no-gutter">
+    <div class="col-xs-12" ng-show="$ctrl.block.assessments.length == 0">
+      No assessments have been created
+    </div>
+
+    <div class="col-xs-12 table-responsive" ng-show="$ctrl.block.assessments.length > 0">
+      <table class="table table-hover table-bordered table-striped table-selectable-row assessments-table">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>USER NAME</th>
+          <th>PRIMARY ORG</th>
+          <th>ASSESSMENT TYPE</th>
+          <th>DATE STARTED</th>
+          <th>DATE MODIFIED</th>
+          <th>PROJECT STATUS</th>
+          <th>ASSESSMENT STATUS</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr ng-repeat="assessment in $ctrl.block.assessments" ui-sref="assessment({id: assessment.id})">
+          <td>{{assessment.creatorName}}</td>
+          <td>{{assessment.usersPrimaryOrganisationName}}</td>
+          <td>{{assessment.assessmentTemplateName}}</td>
+          <td>{{assessment.createdOn | date: 'dd/MM/yyyy'}}</td>
+          <td>{{assessment.modifiedOn | date: 'dd/MM/yyyy'}}</td>
+          <td>{{$ctrl.getProjectStatus(assessment)}}</td>
+          <td>{{$ctrl.getStatus(assessment.status)}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -7,8 +7,12 @@
  */
 package uk.gov.london.ops.domain.template;
 
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
+import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.service.project.state.ProjectState;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,7 +26,7 @@ public class TemplateQuestion implements Serializable {
     private Integer id;
 
     @Column(name = "display_order")
-    private Integer displayOrder;
+    private Double displayOrder;
 
     @ManyToOne(cascade = {})
     @JoinColumn(name = "question_id")
@@ -43,9 +47,15 @@ public class TemplateQuestion implements Serializable {
     @Column(name = "section_id")
     private Integer sectionId;
 
+    @Column(name = "appears_on_status")
+    private String appearsOnStatus;
+
+    @Column(name = "appears_on_sub_status")
+    private String appearsOnSubStatus;
+
     public TemplateQuestion() {}
 
-    public TemplateQuestion(final Integer displayOrder,
+    public TemplateQuestion(final Double displayOrder,
                             final Question question,
                             final Requirement requirement) {
         this.displayOrder = displayOrder;
@@ -61,11 +71,11 @@ public class TemplateQuestion implements Serializable {
         this.id = id;
     }
 
-    public Integer getDisplayOrder() {
+    public Double getDisplayOrder() {
         return displayOrder;
     }
 
-    public void setDisplayOrder(Integer displayOrder) {
+    public void setDisplayOrder(Double displayOrder) {
         this.displayOrder = displayOrder;
     }
 
@@ -109,6 +119,27 @@ public class TemplateQuestion implements Serializable {
         this.sectionId = sectionId;
     }
 
+    public String getAppearsOnStatus() {
+        return appearsOnStatus;
+    }
+
+    public void setAppearsOnStatus(String appearsOnStatus) {
+        this.appearsOnStatus = appearsOnStatus;
+    }
+
+    public String getAppearsOnSubStatus() {
+        return appearsOnSubStatus;
+    }
+
+    public void setAppearsOnSubStatus(String appearsOnSubStatus) {
+        this.appearsOnSubStatus = appearsOnSubStatus;
+    }
+
+    @JsonIgnore
+    public ProjectState getAppearsOnState() {
+        return new ProjectState(appearsOnStatus, appearsOnSubStatus);
+    }
+
     public TemplateQuestion copy() {
         final TemplateQuestion copy =  new TemplateQuestion();
         copy.setId(this.getId());
@@ -117,12 +148,27 @@ public class TemplateQuestion implements Serializable {
         copy.setParentAnswerToMatch(this.getParentAnswerToMatch());
         copy.setParentId(this.getParentId());
         copy.setSectionId(this.getSectionId());
+        copy.setAppearsOnStatus(this.getAppearsOnStatus());
+        copy.setAppearsOnSubStatus(this.getAppearsOnSubStatus());
         if(this.getQuestion() != null) {
             copy.setQuestion(this.question.copy());
         } else {
             copy.setQuestion(null);
         }
         return copy;
+    }
+
+    public boolean appearsOnStateTransition() {
+        return StringUtils.isNotEmpty(appearsOnStatus);
+    }
+
+    @JsonIgnore
+    public boolean hasParent() {
+        return parentId != null;
+    }
+
+    public boolean appearsOnState(ProjectState state) {
+        return appearsOnStateTransition() && state.equals(getAppearsOnState());
     }
 
 }

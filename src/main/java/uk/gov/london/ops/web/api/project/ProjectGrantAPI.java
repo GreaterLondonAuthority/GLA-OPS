@@ -16,24 +16,30 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.london.ops.domain.project.*;
-import uk.gov.london.ops.domain.user.Role;
-import uk.gov.london.ops.exception.ApiError;
-import uk.gov.london.ops.exception.ValidationException;
 import uk.gov.london.ops.service.project.ProjectGrantService;
+import uk.gov.london.common.error.ApiError;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.service.project.ProjectService;
 
 import javax.validation.Valid;
+
+import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.ops.framework.web.APIUtils.verifyBinding;
 
 @RestController
 @RequestMapping("/api/v1")
 @Api(
         description = "managing Project grant blocks"
 )
-public class ProjectGrantAPI extends BaseProjectAPI {
+public class ProjectGrantAPI {
+
+    @Autowired
+    private ProjectService service;
 
     @Autowired
     ProjectGrantService projectGrantService;
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/developerLedGrant", method = RequestMethod.PUT)
     @ApiOperation(value = "set a project's developer-leg grant", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -48,7 +54,7 @@ public class ProjectGrantAPI extends BaseProjectAPI {
         return fromDB.getDeveloperLedGrantBlock();
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/indicativeGrant", method = RequestMethod.PUT)
     @ApiOperation(value = "set a project's tenure details for S106", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -62,7 +68,7 @@ public class ProjectGrantAPI extends BaseProjectAPI {
         return fromDB.getIndicativeGrantBlock();
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/calculateGrant", method = RequestMethod.PUT)
     @ApiOperation(value = "set a project's tenure details", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -76,7 +82,7 @@ public class ProjectGrantAPI extends BaseProjectAPI {
         return fromDB.getCalculateGrantBlock();
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/negotiatedGrant", method = RequestMethod.PUT)
     @ApiOperation(value = "set a project's tenure details", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -97,8 +103,8 @@ public class ProjectGrantAPI extends BaseProjectAPI {
             }
         }
         if (tenure.getTenureTypeAndUnitsEntries() != null) {
-            for (TenureTypeAndUnits tenureTypeAndUnits : tenure.getTenureTypeAndUnitsEntries()) {
-                if (tenureTypeAndUnits.getTenureType() == null || tenureTypeAndUnits.getTenureType().getId() == null) {
+            for (ProjectTenureDetails projectTenureDetails : tenure.getTenureTypeAndUnitsEntries()) {
+                if (projectTenureDetails.getTenureType() == null || projectTenureDetails.getTenureType().getId() == null) {
                     throw new ValidationException("A valid Tenure Type must be supplied for tenure entries");
                 }
             }

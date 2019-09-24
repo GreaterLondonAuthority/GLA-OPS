@@ -34,7 +34,7 @@
                   ng-disabled="$ctrl.readOnly"
                   ng-model="$ctrl.dataBlock.riskCategory"
                   required>
-         <ui-select-match  placeholder="Select a catgory">{{$select.selected.displayValue}}</ui-select-match>
+         <ui-select-match  placeholder="Select a category">{{$select.selected.displayValue}}</ui-select-match>
          <ui-select-choices repeat="category in $ctrl.riskCategories">
            <span>{{category.displayValue}}</span>
          </ui-select-choices>

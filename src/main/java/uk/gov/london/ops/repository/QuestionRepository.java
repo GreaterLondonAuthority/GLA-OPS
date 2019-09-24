@@ -7,12 +7,27 @@
  */
 package uk.gov.london.ops.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import uk.gov.london.ops.domain.template.Question;
 
 import java.util.List;
+import java.util.Set;
 
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
+    @Query(value = "select tq.question_id from template t " +
+            "inner join template_block tb on t.id = tb.TEMPLATE_ID " +
+            "inner join TEMPLATE_BLOCK_QUESTION tqb on tqb.template_block_id = tb.id " +
+            "inner join TEMPLATE_QUESTION tq on tq.id = tqb.question_id " +
+            "where t.id = ?1 or upper(t.name) like upper(concat('%', ?2, '%'))", nativeQuery = true)
+    Set<Integer> findQuestionsByTemplateIdOrText(Integer id, String templateText);
+
     List<Question> findByExternalKey(String externalKey);
+
+    Page<Question> findAllByIdOrTextContainingIgnoreCase(Integer id, String text, Pageable pageable);
+
+    Page<Question> findByIdIn(Set<Integer> questionIds, Pageable pageable);
 }

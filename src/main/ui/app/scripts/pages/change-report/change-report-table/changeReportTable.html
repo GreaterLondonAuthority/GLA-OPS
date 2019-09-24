@@ -1,6 +1,6 @@
 <change-report-static-text ng-if="$ctrl.label" text="$ctrl.label" data="$ctrl.sideControler" class="next-to-tables"></change-report-static-text>
 <div class="report-tables">
-  <div ng-repeat="row in $ctrl.rows" class="aligned-tables">
+  <div ng-repeat="row in $ctrl.rows" class="aligned-tables comparable-table-row">
     <change-report-table-separator has-right-values="$ctrl.hasRightValues || $ctrl.showTableSeparators"></change-report-table-separator>
     <change-report-table-row heading="$ctrl.heading"
                              row="row"

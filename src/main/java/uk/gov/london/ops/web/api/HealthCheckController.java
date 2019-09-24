@@ -20,10 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-//import uk.gov.london.ops.di.DataInitialiser;
-import uk.gov.london.ops.domain.user.Role;
+import uk.gov.london.ops.di.DataInitialiser;
 import uk.gov.london.ops.domain.user.User;
 import uk.gov.london.ops.service.UserService;
+
+import static uk.gov.london.common.user.BaseRole.*;
 
 @Controller
 @Api(hidden = true)
@@ -37,8 +38,8 @@ public class HealthCheckController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-//    @Autowired
-//    DataInitialiser dataInitialiser;
+    @Autowired
+    DataInitialiser dataInitialiser;
 
     boolean mocked = false;
 
@@ -57,15 +58,15 @@ public class HealthCheckController {
             throw new RuntimeException("health check mocked to fail!");
         }
         jdbcTemplate.execute("select 1");
-//        if (dataInitialiser.isFinished()) {
+        if (dataInitialiser.isFinished()) {
             return ResponseEntity.ok("OK");
-//        }
-//        else {
-//            return ResponseEntity.status(503).body("KO");
-//        }
+        }
+        else {
+            return ResponseEntity.status(503).body("KO");
+        }
     }
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/healthcheck/mocked", method = RequestMethod.PUT)
     @ApiOperation(value = "", hidden = true)
     public @ResponseBody boolean mockHealthCheck(@RequestBody String mocked) {

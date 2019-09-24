@@ -7,6 +7,8 @@
  */
 package uk.gov.london.ops.web.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.validation.constraints.NotNull;
 
 public class UserRegistration {
@@ -75,5 +77,17 @@ public class UserRegistration {
 
     public void setOrgCode(String orgCode) {
         this.orgCode = orgCode;
+    }
+
+    @Override
+    public String toString() {
+        return "UserRegistration{" +
+                "email='" + email + '\'' +
+                ", password='" + (StringUtils.isEmpty(password ) ? "empty" : "not empty") + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", orgCode='" + orgCode + '\'' +
+                '}';
     }
 }

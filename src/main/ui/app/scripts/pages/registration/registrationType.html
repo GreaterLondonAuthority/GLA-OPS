@@ -1,0 +1,35 @@
+<div class="row registration" ng-if="!$ctrl.done">
+  <page-header>New to GLA-OPS?</page-header>
+
+  <div class="col-xs-12 col-ms-10 col-sm-8 col-md-7 center-col registration-type">
+
+    <section-header class="mbottom30">Enter OPS Org Code to request access to an organisation</section-header>
+
+    <div class="row no-gutter">
+      <div class="col-xs-12 col-md-7">
+        <p class="mbottom30">Obtain the code from your organisation admin. They will also approve your request once submitted.</p>
+      </div>
+      <div class="col-xs-12 col-md-5 text-right">
+        <button class="btn btn-primary mbottom30" ui-sref="registration" id="registrationLink">REQUEST ACCESS</button>
+      </div>
+    </div>
+
+    <div class="mbottom30 mtop10 text-center">
+      <a  ui-sref="home" class="pageLink" id="logonLink" tabindex="2">Already have an account? Log in here</a>
+    </div>
+
+    <div class="row no-gutter">
+      <div class="col-xs-5"><hr></div>
+      <div class="col-xs-2 text-center">OR</div>
+      <div class="col-xs-5"><hr></div>
+    </div>
+
+    <section-header class="mbottom30">Register a new organisation and admin account</section-header>
+
+    <div class="row mbottom40 no-gutter">
+      <div class="col-xs-12 text-right">
+        <button class="btn btn-primary"  ui-sref="organisation.new-with-user">REGISTER AN ORGANISATION</button>
+      </div>
+    </div>
+  </div>
+</div>

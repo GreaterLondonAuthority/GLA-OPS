@@ -1,0 +1,49 @@
+<div class="includes-tables">
+  <div class="output-summaries-title">
+    <span>{{$ctrl.outputsSummaryTitle}}</span>
+    <a class="link no-print" href="" ng-click="$ctrl.toggleOutputs();$event.stopPropagation()" ng-if="$ctrl.outputSummaries.length">
+      <span ng-if="!$ctrl.outputsExpanded">Expand all outputs</span>
+      <span ng-if="$ctrl.outputsExpanded">Collapse all outputs</span>
+    </a>
+  </div>
+  <output-summaries-table ng-if="$ctrl.outputSummaries.length"
+                          on-toggle-row="$ctrl.toggleRow($event)"
+                          template="$ctrl.template"
+                          output-summaries="$ctrl.outputSummaries"
+                          display-output-type="$ctrl.displayOutputType"
+                          display-value="$ctrl.displayValue">
+  </output-summaries-table>
+  <div ng-if="!$ctrl.outputSummaries.length">Not provided</div>
+
+  <div ng-if="$ctrl.project.advancePaymentAmount" class="mtop15">
+    <div class="output-summaries-title">
+      Advance Payment
+    </div>
+    <div class="row no-gutter" >
+      <div class="col-xs-12 table-responsive">
+        <table class="table table-hover table-bordered" id="claims">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th>AGREED PAYMENT £</th>
+            <th>CLAIM DATE</th>
+            <th>CLAIM STATUS</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr >
+            <td>
+              {{$ctrl.project.advancePaymentAmount | number }}
+            </td>
+            <td>
+              {{$ctrl.block.advancePaymentClaim.claimedOn | date: "dd/MM/yyyy"}}
+            </td>
+            <td>
+              {{$ctrl.block.advancePaymentClaim.claimStatus}}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

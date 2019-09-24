@@ -54,17 +54,27 @@ class AllPaymentsCtrl {
     this.sourceDropdownItems = this.applyFilterState(PaymentService.sourceOptions());
     this.statusDropdownItems = this.applyFilterState(PaymentService.statusOptions());
     this.paymentDirectionDropdownItems = this.applyFilterState(PaymentService.paymentDirectionOptions());
-    this.programmeDropDownItems = this.applyFilterState(this.enhanceProgrammes(_.sortBy(programmes,'name')));
+
+    let programmeDropdown = _.filter(programmes, (p)=>{return p.status != 'Abandoned';});
+
+    this.programmeDropDownItems = this.applyFilterState(this.enhanceProgrammes(_.sortBy(programmeDropdown,'name')));
     this.applyDateFilters();
 
     let paymentsSearchState = this.getSearchParams();
 
+    this.byProjectOption = _.find(this.searchOptions,{name: 'project'});
+    this.byProgrammeOption = _.find(this.searchOptions,{name: 'programme'});
+    this.byOrganisationOption = _.find(this.searchOptions,{name: 'organisation'});
+
     if (paymentsSearchState.organisation) {
-      this.selectedSearchOption = this.searchOptions[1];
+      this.selectedSearchOption = this.byOrganisationOption;
       this.searchTextModel = paymentsSearchState.organisation;
+    }else if (paymentsSearchState.programme) {
+      this.selectedSearchOption = this.byProgrammeOption;
+      this.searchTextModel = paymentsSearchState.programme;
     }
     else {
-      this.selectedSearchOption = this.searchOptions[0];
+      this.selectedSearchOption = this.byProjectOption;
       this.searchTextModel = paymentsSearchState.project;
     }
     this.searchText = this.searchTextModel;
@@ -179,12 +189,19 @@ class AllPaymentsCtrl {
 
     let projectIdOrName;
     let orgName;
+    let programmeName
 
-    if(this.selectedSearchOption.name === 'project'){
+    let isProgrammeOption = false;
+    if(this.selectedSearchOption.name === this.byProjectOption.name){
       projectIdOrName = this.searchTextModel;
-    } else {
+    } else if(this.selectedSearchOption.name === this.byOrganisationOption.name){
       orgName = this.searchTextModel;
+   } else if(this.selectedSearchOption.name === this.byProgrammeOption.name){
+      programmeName = this.searchTextModel;
+      isProgrammeOption = true;
     }
+
+
 
     var page = resetPage ? 0 : this.currentPage - 1;
     var size = this.itemsPerPage;
@@ -197,9 +214,10 @@ class AllPaymentsCtrl {
     this.$q.all(this.requestsQueue).then(() => {
       let p = this.PaymentService.getPayments(projectIdOrName,
         orgName,
+        programmeName,
         statuses,
         sources,
-        programmes,
+        isProgrammeOption ? null : programmes,
         this.toDate,
         this.fromDate,
         paymentDirection,
@@ -214,7 +232,6 @@ class AllPaymentsCtrl {
           this.currentPage = 1;
         }
         this.totalItems = response.totalElements;
-        // TODO move this into pagination component
       });
       this.requestsQueue.push(p);
       p.finally(() => _.remove(this.requestsQueue, p));

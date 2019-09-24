@@ -1,0 +1,86 @@
+<div class="label-modal">
+  <div class="modal-header text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Apply label</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="applyLabelForm"
+      role="form"
+      name="applyLabelForm">
+
+      <div class="form-group label-type-select">
+        <label for="labelType">Label type</label>
+        <ui-select id="labelType"
+                   ng-class="{disabled: $ctrl.readOnly}"
+                   name="label-type"
+                   aria-label="Label type"
+                   search-enabled="false"
+                   ng-model="$ctrl.label.type"
+                   ng-change="$ctrl.onLabelTypeChange()"
+                   required>
+          <ui-select-match  placeholder="Select a label type">{{$select.selected.labelName}}</ui-select-match>
+          <ui-select-choices repeat="label.type as label in $ctrl.labelTypes track by label.type">
+            <span>{{label.labelName}}</span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+      <div class="form-group ad-hoc-label" ng-if="$ctrl.label.type ==='Custom'">
+        <label for="label-text" class="mtop10">{{$ctrl.explanatoryText}}</label>
+        <input id="label-text"
+               type="text"
+               class="form-control"
+               ng-change="$ctrl.validate()"
+               maxlength="20"
+               ng-model="$ctrl.label.text">
+        <div class="error-wrapper" ng-if="$ctrl.isExistingLabel">
+          <span class="error">Label already exists</span>
+        </div>
+      </div>
+
+
+      <div class="form-group pre-set-label" ng-if="$ctrl.label.type ==='Predefined'">
+        <label for="pre-set-label">Select pre-set label</label>
+        <ui-select id="pre-set-label"
+                   ng-class="{disabled: $ctrl.readOnly}"
+                   name="preSetLabel"
+                   aria-label="Pre-set label"
+                   search-enabled="false"
+                   ng-model="$ctrl.label.preSetLabel"
+                   required>
+          <ui-select-match  placeholder="Select pre-set label">{{$select.selected.labelName}}</ui-select-match>
+          <ui-select-choices repeat="preSetLabel in $ctrl.activePreSetLabels | orderBy: 'labelName'" >
+            <div class="clearfix">
+              <span class="pull-left">{{preSetLabel.labelName}}</span>
+              <span class="pull-right">{{preSetLabel.managingOrganisationName}}</span>
+            </div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$ctrl.apply()"
+          ng-disabled="(!$ctrl.label.type || (!$ctrl.label.text && !$ctrl.label.preSetLabel)) || $ctrl.isExistingLabel">APPLY</button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,98 +7,26 @@
  */
 
 class AdditionalQuestionsChangeReport {
-  constructor($rootScope, $scope, ReferenceDataService, OrganisationGroupService, ProjectService) {
+  constructor(QuestionsService) {
+    this.QuestionsService = QuestionsService;
+  }
+
+  $onInit(){
     this.showingLeft = !!this.data.left;
     this.showingRight = !!this.data.right;
-    this.ProjectService = ProjectService;
-    let leftSize = 0;
-    let leftQuestionsSorted;
-    // let leftAnswersSorted;
-    // if(this.data.left != null && this.data.left.questionEntities!= null) {
-    //   leftSize = this.data.left.questionEntities.length;
-    //   leftQuestionsSorted = this.data.left.questionEntities.sort(this.sortQuestions);
-      // leftAnswersSorted = this.sortAnswers(this.data.left.answers, this.getQuestionDisplayOrderMap(leftQuestionsSorted));
-    // } else {
-    //   leftSize=0;
-      // leftQuestionsSorted = null;
-    // }
 
-
-    // let rightSize;
-    // let rightQuestionsSorted;
-    // let rightAnswersSorted;
-    // if(this.data.right != null && this.data.right.questionEntities!= null) {
-    //   rightSize = this.data.right.questionEntities.length;
-    //   rightQuestionsSorted = this.data.right.questionEntities.sort(this.sortQuestions);
-      // rightAnswersSorted = this.sortAnswers(
-      //   this.data.right.answers,
-      //   this.getQuestionDisplayOrderMap(rightQuestionsSorted));
-    // } else {
-    //   rightSize=0;
-      // rightQuestionsSorted = null
-    // }
-
-
-    // var commonSize;
-    // var bigger;
-    // if(rightSize < leftSize) {
-    //   commonSize = rightSize;
-    //   bigger = {isRight : false, questions: leftQuestionsSorted, answers : leftAnswersSorted};
-    // } else if(rightSize > leftSize){
-    //   commonSize = leftSize;
-    //   bigger = {isRight : true, questions: rightQuestionsSorted, answers : rightAnswersSorted};
-    // } else {
-    //   commonSize = leftSize
-    // }
-    // var arrayData = [];
-    // for(var i=0 ; i< commonSize ; i++) {
-    //   // if(this.ProjectService.hasParentCondition(rightQuestionsSorted[i])){
-    //   //   debugger;
-    //   // }
-    //
-    //   const item = this.generateItem(
-    //     rightQuestionsSorted[i],
-    //     this.showingLeft ? leftAnswersSorted[i] : null,
-    //     this.showingRight ? rightAnswersSorted[i] : null)
-    //   arrayData.push(item);
-    // }
-    // if(bigger) {
-    //   for(var bIndex=commonSize ; bIndex < bigger.questions.length ; bIndex++) {
-    //     var leftAnswer;
-    //     var rightAnswer;
-    //     if(bigger.isRight) {
-    //       leftAnswer = null;
-    //       rightAnswer = bigger.answers[bIndex];
-    //     } else {
-    //       leftAnswer = bigger.answers[bIndex];
-    //       rightAnswer = null;
-    //     }
-    //     let question = bigger.questions[bIndex];
-    //
-    //     if(this.ProjectService.hasParentCondition(question)){
-    //       let parentQuestion = _.find(bigger.questions, {question:{id:question.parentId}});
-    //       debugger;
-    //
-    //     }
-    //
-    //     const extraItem = this.generateItem(
-    //       bigger.questions[bIndex],
-    //       this.showingLeft ? leftAnswer : null,
-    //       this.showingRight ? rightAnswer : null);
-    //     arrayData.push(extraItem);
-    //   }
-    // }
     let arrayData = [];
     let unionQuestions = _.unionBy(
-      this.data.left ? this.data.left.questionEntities : [],
-      this.data.right ? this.data.right.questionEntities : [], (item) => {
-        return item.question.id;
-      }).sort(this.sortQuestions);
+      this.data.left ? this.data.left.questions : [],
+      this.data.right ? this.data.right.questions : [],
+      (item) => item.id
+    ).sort(this.sortQuestions);
+
 
     _.forEach(unionQuestions, (item)=>{
       let leftAnswer = null;
       let rightAnswer = null;
-      let hasParentCondition = this.ProjectService.hasParentCondition(item);
+      let hasParentCondition = this.QuestionsService.hasParentCondition(item);
       let parentAnswer = null;
 
       let conditionsMet = {
@@ -106,7 +34,7 @@ class AdditionalQuestionsChangeReport {
         right: false,
       };
 
-      if(this.showingLeft){
+      if(this.showingLeft && this.questionExist(this.data.left.questions, item)){
         conditionsMet.left = true;
         if(hasParentCondition) {
           parentAnswer = _.find(this.data.left.answers, {questionId: item.parentId});
@@ -116,12 +44,12 @@ class AdditionalQuestionsChangeReport {
             conditionsMet.left = false;
           }
         }
-        leftAnswer = _.find(this.data.left.answers, {questionId: item.question.id});
+        leftAnswer = _.find(this.data.left.answers, {questionId: item.id});
       }
 
       parentAnswer =  null;
 
-      if(this.showingRight){
+      if(this.showingRight && this.questionExist(this.data.right.questions, item)){
         conditionsMet.right = true;
         if(hasParentCondition) {
           parentAnswer = _.find(this.data.right.answers, {questionId: item.parentId});
@@ -131,8 +59,9 @@ class AdditionalQuestionsChangeReport {
             conditionsMet.right = false;
           }
         }
-        rightAnswer = conditionsMet.right && _.find(this.data.right.answers, {questionId: item.question.id});
+        rightAnswer = conditionsMet.right && _.find(this.data.right.answers, {questionId: item.id});
       }
+
       if(conditionsMet.left || conditionsMet.right){
         arrayData.push(this.generateItem(
           item,
@@ -142,22 +71,22 @@ class AdditionalQuestionsChangeReport {
         ));
       }
 
-
     });
 
     this.questions = arrayData;
 
-    var self = this;
+    let self = this;
     this.questionFilter = (value, index, array) => {
       if(value && value.isHidden){
         return false;
-      } else if(self.ProjectService.hasParentCondition(value)){
-        return self.ProjectService.isParentConditionMet(value, array);
+      } else if(self.QuestionsService.hasParentCondition(value)){
+        return self.QuestionsService.isParentConditionMet(value, array);
       }else{
         return true;
       }
     }
   }
+
   sortAnswers(answers, qMap) {
     return answers.sort(function(a,b) {
       const aDisplayOrder = qMap[a.questionId]
@@ -168,7 +97,7 @@ class AdditionalQuestionsChangeReport {
 
   getQuestionDisplayOrderMap(arr) {
     return arr.reduce(function(map, obj) {
-      map[obj.question.id] = obj.displayOrder;
+      map[obj.id] = obj.displayOrder;
       return map;
     }, {});
   }
@@ -179,7 +108,7 @@ class AdditionalQuestionsChangeReport {
     let leftAnswer;
     let rightAnswer;
     let isFileUploadQuestion = false;
-    if(sourceQuestion.question.answerType === 'FileUpload'){
+    if(sourceQuestion.answerType === 'FileUpload'){
       isFileUploadQuestion = true;
     }
 
@@ -223,12 +152,12 @@ class AdditionalQuestionsChangeReport {
 
     return {
       className: 'question'+sourceQuestion.displayOrder,
-      isFreeText: sourceQuestion.question.answerType === 'FreeText',
+      isFreeText: sourceQuestion.answerType === 'FreeText',
       displayOrder: sourceQuestion.displayOrder,
-      label : sourceQuestion.question.text,
+      label : sourceQuestion.text,
       left : left,
       right: right, //rightAnswerData ? {answer : rightAnswer} : (this.showingRight ? {} : undefined),
-      questionId: sourceQuestion.question.id,
+      questionId: sourceQuestion.id,
       isFileUploadQuestion: isFileUploadQuestion,
       changes: this.data.changes,
       isHidden: sourceQuestion.requirement === 'hidden'
@@ -237,11 +166,15 @@ class AdditionalQuestionsChangeReport {
   sortQuestions(entity1, entity2) {
     return entity1.displayOrder - entity2.displayOrder;
   }
+
+  questionExist(questions, question){
+    return !!_.find(questions, {id: (question || {}).id});
+  }
 }
 
 
 
-AdditionalQuestionsChangeReport.$inject = ['$rootScope', '$scope', 'ReferenceDataService', 'OrganisationGroupService', 'ProjectService'];
+AdditionalQuestionsChangeReport.$inject = ['QuestionsService'];
 
 angular.module('GLA')
   .component('additionalQuestionsChangeReport', {

@@ -8,14 +8,14 @@
 package uk.gov.london.ops.service.project.block;
 
 import uk.gov.london.ops.domain.project.NamedProjectBlock;
-import uk.gov.london.ops.domain.project.Project;
+import uk.gov.london.ops.domain.project.state.ProjectStatus;
 
 import java.util.List;
 
 public class BlockActionRule {
 
     private NamedProjectBlock.Action action;
-    private Project.Status status;
+    private ProjectStatus status;
     private String subStatus;
     private String blockType;
     private String blockStatus;
@@ -24,7 +24,7 @@ public class BlockActionRule {
     private String programmeState;
     private String permissions;
 
-    public BlockActionRule(NamedProjectBlock.Action action, Project.Status status, String subStatus, String blockType, String blockStatus, String blockCompletion, List<String> userRoles, String programmeState, String permissions) {
+    public BlockActionRule(NamedProjectBlock.Action action, ProjectStatus status, String subStatus, String blockType, String blockStatus, String blockCompletion, List<String> userRoles, String programmeState, String permissions) {
         this.action = action;
         this.status = status;
         this.subStatus = subStatus;
@@ -44,11 +44,11 @@ public class BlockActionRule {
         this.action = action;
     }
 
-    public Project.Status getStatus() {
+    public ProjectStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Project.Status status) {
+    public void setStatus(ProjectStatus status) {
         this.status = status;
     }
 

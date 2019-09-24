@@ -7,18 +7,16 @@
  */
 package uk.gov.london.ops.domain.project;
 
+import static com.querydsl.core.types.PathMetadataFactory.forVariable;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.querydsl.core.types.PathMetadataFactory.forVariable;
-import static uk.gov.london.ops.util.GlaOpsUtils.parseInt;
+import org.apache.commons.collections.CollectionUtils;
 
 // This HAS to be called QProjectSummary otherwise the JPA repository will not instantiate
 public class QProjectSummary extends EntityPathBase<ProjectSummary> {
@@ -32,13 +30,19 @@ public class QProjectSummary extends EntityPathBase<ProjectSummary> {
 
     public final NumberPath<Integer> orgId = createNumber("orgId", Integer.class);
 
+    public final NumberPath<Integer> managingOrganisationId = createNumber("managingOrganisationId", Integer.class);
+
+    public final StringPath orgName = createString("orgName");
+
     public final NumberPath<Integer> programmeId = createNumber("programmeId", Integer.class);
+
+    public final NumberPath<Integer> templateId = createNumber("templateId", Integer.class);
 
     public final StringPath programmeName = createString("programmeName");
 
-    public final EnumPath<Project.Status> status = createEnum("status", Project.Status.class);
+    public final StringPath state = createString("state");
 
-    public final EnumPath<Project.SubStatus> subStatus = createEnum("subStatus", Project.SubStatus.class);
+    public final StringPath subscriptions = createString("subscriptions");
 
     private BooleanBuilder predicateBuilder = new BooleanBuilder();
 
@@ -47,49 +51,85 @@ public class QProjectSummary extends EntityPathBase<ProjectSummary> {
     }
 
     public void withOrganisations(List<Integer> organisations) {
-        predicateBuilder.and(this.orgId.in(organisations));
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(this.managingOrganisationId.in(organisations));
+        predicates.add(this.orgId.in(organisations));
+        predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));
     }
 
-    public void andSearch(String project, Integer organisationId, Integer programmeId, String programmeName) {
-        List<Predicate> predicates = new ArrayList<>();
-        if (project != null) {
-            predicates.add(this.title.containsIgnoreCase(project));
-            Integer projectId = getProjectId(project);
+  public void andSearch(Integer projectId,
+                        String projectName,
+                        Integer organisationId,
+                        String organisationName,
+                        Integer programmeId,
+                        String programmeName,
+                        List<Integer> programmes,
+                        List<Integer> templates,
+                        List<String> states,
+                        String watchingProjectUsername) {
+
+        if (projectId != null || projectName != null) {
+            List<Predicate> projectPredicates = new ArrayList<>();
+
             if (projectId != null) {
-                predicates.add(this.id.eq(projectId));
+                projectPredicates.add(this.id.eq(projectId));
             }
-        }
-        else if (organisationId != null) {
-            predicates.add(this.orgId.eq(organisationId));
-        }
-        else if (programmeId != null) {
-            predicates.add(this.programmeId.eq(programmeId));
-        }
-        else if (programmeName != null) {
-            predicates.add(this.programmeName.containsIgnoreCase(programmeName));
-        }
-        predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));
-    }
 
-    private Integer getProjectId(String project) {
-        if (project.startsWith("P") || project.startsWith("p")) {
-            project = project.substring(1);
-        }
-        return parseInt(project);
-    }
+            if (projectName != null) {
+                projectPredicates.add(this.title.containsIgnoreCase(projectName));
+            }
 
-    public void andStatuses(List<Project.Status> statuses, List<Project.SubStatus> subStatuses) {
-        List<Predicate> predicates = new ArrayList<>();
-
-        if (statuses != null) {
-            predicates.add(this.status.in(statuses));
+            predicateBuilder.andAnyOf(projectPredicates.toArray(new Predicate[projectPredicates.size()]));
         }
 
-        if (subStatuses != null) {
-            predicates.add(this.subStatus.in(subStatuses));
+        if (watchingProjectUsername != null) {
+          List<Predicate> watchingPredicates = new ArrayList<>();
+          watchingPredicates.add(this.subscriptions.containsIgnoreCase("|" + watchingProjectUsername));
+          predicateBuilder.andAnyOf(watchingPredicates.toArray(new Predicate[watchingPredicates.size()]));
         }
 
-        predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));
+
+        if (organisationId != null || organisationName != null) {
+            List<Predicate> organisationPredicates = new ArrayList<>();
+
+            if (organisationId != null) {
+                organisationPredicates.add(this.orgId.eq(organisationId));
+            }
+
+            if (organisationName != null) {
+                organisationPredicates.add(this.orgName.containsIgnoreCase(organisationName));
+            }
+
+            predicateBuilder.andAnyOf(organisationPredicates.toArray(new Predicate[organisationPredicates.size()]));
+        }
+
+        if (programmeId != null || programmeName != null) {
+            List<Predicate> programmePredicate = new ArrayList<>();
+
+            if (programmeId != null) {
+                programmePredicate.add(this.programmeId.eq(programmeId));
+            }
+
+            if (programmeName != null) {
+                programmePredicate.add(this.programmeName.containsIgnoreCase(programmeName));
+            }
+
+            predicateBuilder.andAnyOf(programmePredicate.toArray(new Predicate[programmePredicate.size()]));
+        }
+
+
+
+        if (CollectionUtils.isNotEmpty(programmes)) {
+            predicateBuilder.and(this.programmeId.in(programmes));
+        }
+
+        if (CollectionUtils.isNotEmpty(templates)) {
+            predicateBuilder.and(this.templateId.in(templates));
+        }
+
+        if (CollectionUtils.isNotEmpty(states)) {
+            predicateBuilder.and(this.state.in(states));
+        }
     }
 
     public Predicate getPredicate() {

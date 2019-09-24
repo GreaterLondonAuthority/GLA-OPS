@@ -17,6 +17,7 @@ class MilestonesChangeReport {
 
     //Processing route can not be changed
     let milestonesExtraData = _.find(template.blocksEnabled, {block: 'Milestones'});
+    this.showDescription = milestonesExtraData.descriptionEnabled;
     this.processingRoutes = milestonesExtraData.processingRoutes;
     this.processingRouteId = (this.data.left && this.data.left.processingRouteId) || (this.data.right && this.data.right.processingRouteId);
 
@@ -109,7 +110,7 @@ class MilestonesChangeReport {
         format: 'date',
         defaultValue: defaultNAValue,
       }, {
-        hidden: !this.isMonetaryValueType,
+        hidden: !this.showDescription ,
         field: 'description',
         label: 'DESCRIPTION',
         cls: 'multiline-text'
@@ -133,6 +134,7 @@ class MilestonesChangeReport {
           }
         }
       }, {
+        hidden: !template.shouldMilestonesBlockShowStatus,
         field: 'milestoneStatus',
         label: 'STATUS',
         defaultValue: defaultNAValue

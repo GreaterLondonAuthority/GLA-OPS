@@ -9,6 +9,9 @@
 class ProfiledUnitTableCtrl {
   constructor(UnitsService){
     this.UnitsService = UnitsService;
+  }
+
+  $onInit(){
     this.wizardType= this.wizardType || 'Rent';
   }
 }
@@ -22,7 +25,6 @@ angular.module('GLA')
       readOnly: '<',
       wizardType: '@',
       showMarketTypes: '<',
-      hasFirstTrancheSales: '<?',
       hasLegacyRent: '<?',
       hasLegacySales: '<?',
       hasDiscountedRate: '<?',

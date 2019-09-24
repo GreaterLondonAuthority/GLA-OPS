@@ -1,0 +1,79 @@
+<div class="summary-report change-report">
+
+  <report-header project="$ctrl.project"
+                 template="$ctrl.template"
+                 on-back="$ctrl.onBack()">Project summary report</report-header>
+
+
+  <div class="col-xs-12 mtop10 mbottom10 no-padding no-print" ng-if="$ctrl.project.stateModel.approvalRequired">
+    <div class="form-group show-approved">
+      <div class="checkbox" ng-class="{checked: $ctrl.showApprovedOnly}">
+        <input type="checkbox"
+               id="show-all-code"
+               aria-label="'Show approved versions only'"
+               ng-change="$ctrl.onShowApprovedOnlyChange()"
+               ng-model="$ctrl.showApprovedOnly">
+      </div>
+      <label for="show-all-code">Show approved versions only</label>
+    </div>
+  </div>
+
+  <div class="mtop25">
+    <a href="" ng-click="$ctrl.toggleAllSections($ctrl.blocksToCompare)" class="collapse-all-toggle no-print">
+      <span ng-if="$ctrl.showCollapseAll">Collapse all blocks</span>
+      <span ng-if="!$ctrl.showCollapseAll">Expand all blocks</span>
+    </a>
+  </div>
+  <hr class="mtop5">
+
+  <report-section ng-repeat="item in $ctrl.blocksToCompare track by item.id" item="item" on-collapse-change="$ctrl.toggleBlock($event, $ctrl.blocksToCompare)">
+
+    <div class="report-block-content" ng-if="item.type !== 'ProjectHistory'" ng-show="item.expanded" ng-class="[item.blockDisplayCls, {'no-unapproved-block': item.left.id == item.right.id}]">
+      <change-report-field ng-if="item.versionObj" data="item.versionObj" fields="'versionString'" class="block-version" ng-class="{'next-to-tables': $ctrl.hasTables(item)}"></change-report-field>
+      <project-details-change-report data="item" ng-if="item.type === 'ProjectDetailsBlock'"></project-details-change-report>
+      <budgets-summary-report block="item.left" financial-year="$ctrl.currentFinancialYear" ng-if="item.type === 'ProjectBudgetsBlock'"></budgets-summary-report>
+      <calculate-grant-summary-report block="item.left" ng-if="item.type === 'CalculateGrantBlock'"></calculate-grant-summary-report>
+      <negotiated-grant-summary-report block="item.left" ng-if="item.type === 'NegotiatedGrantBlock'"></negotiated-grant-summary-report>
+      <developer-led-grant-summary-report block="item.left" ng-if="item.type === 'DeveloperLedGrantBlock'"></developer-led-grant-summary-report>
+      <indicative-grant-summary-report block="item.left" ng-if="item.type === 'IndicativeGrantBlock'"></indicative-grant-summary-report>
+      <grant-source-summary-report data="item" ng-if="item.type === 'GrantSourceBlock'"></grant-source-summary-report>
+      <design-standards-change-report data="item" ng-if="item.type === 'DesignStandardsBlock'"></design-standards-change-report>
+      <risks-and-issues-summary-report data="item.left" ng-if="item.type === 'ProjectRisksBlock'"></risks-and-issues-summary-report>
+      <additional-questions-change-report data="item" ng-if="item.type === 'ProjectQuestionsBlock'"></additional-questions-change-report>
+
+      <outputs-summary-report ng-if="item.type === 'OutputsBlock'"
+                              block="item.left"
+                              project="$ctrl.project"
+                              template="$ctrl.template"></outputs-summary-report>
+
+      <receipts-change-report data="item" ng-if="item.type === 'ReceiptsBlock'"></receipts-change-report>
+      <unit-details-change-report data="item" ng-if="item.type === 'UnitDetailsBlock'"></unit-details-change-report>
+
+      <funding-summary-report ng-if="item.type === 'FundingBlock'" block="item.left"></funding-summary-report>
+
+      <milestones-summary-report ng-if="item.type === 'ProjectMilestonesBlock'"
+                                 block="item.left"
+                                 project="$ctrl.project"
+                                 template="$ctrl.template"></milestones-summary-report>
+
+      <learning-grant-summary-report block="item.left"
+                                     ng-if="item.type === 'LearningGrantBlock'"
+                                     template="$ctrl.template"></learning-grant-summary-report>
+
+      <outputs-cost-summary-report block="item.left"
+                                   ng-if="item.type === 'OutputsCostsBlock'"
+                                   project="$ctrl.project"
+                                   template="$ctrl.template"></outputs-cost-summary-report>
+
+      <internal-blocks-change-report ng-if="item.type === 'InternalBlocks'"
+                                     project="$ctrl.latestProject"
+                                     comments="$ctrl.internalRiskComments"></internal-blocks-change-report>
+      <hr ng-if="!$last">
+    </div>
+
+    <div class="report-block-content" ng-show="item.expanded" ng-if="item.type === 'ProjectHistory'"  ng-class="[item.blockDisplayCls]">
+      <div class="text-left lighter metainformation" id="metadata-{{$index}}">{{item.latestComment.createdOn | date: "dd/MM/yyyy 'at' HH:mm"}} {{item.latestComment.description || $ctrl.transitionMap[item.latestComment.transition] || item.latestComment.transition}} by {{ item.latestComment.createdByFirstName}} {{ item.latestComment.createdByLastName}}</div>
+      <div class="text-left comment">{{item.latestComment.comments}}</div>
+    </div>
+  </report-section>
+</div>

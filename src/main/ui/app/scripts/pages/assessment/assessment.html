@@ -1,0 +1,57 @@
+<div class="assessment readonly-mode page">
+
+  <page-header back-btn-name="'ASSESSMENT OVERVIEW'" header="$ctrl.assessmentTemplate.name" on-back="$ctrl.onBack()"
+               editable-block="$ctrl" stop-editing="true">
+  </page-header>
+
+  <header-status>
+    <hs-left class="row text-nowrap"
+             ng-if="$ctrl.assessment.createdOn && $ctrl.assessment.creatorName && !($ctrl.assessment.modifiedOn && $ctrl.assessment.modifierName)">
+      Created on {{($ctrl.assessment.createdOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.assessment.creatorName}} for {{$ctrl.assessment.usersPrimaryOrganisationName}}
+    </hs-left>
+    <hs-left class="row text-nowrap" ng-if="$ctrl.assessment.modifiedOn && $ctrl.assessment.modifierName">
+      <div>Last updated on {{($ctrl.assessment.modifiedOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.assessment.modifierName}} for {{$ctrl.assessment.usersPrimaryOrganisationName}}
+      </div>
+      <div>Status: {{$ctrl.AssessmentService.getAssessmentStatus($ctrl.assessment)}}</div>
+    </hs-left>
+    <hs-right>ID: <b id="assessment-id">{{$ctrl.assessment.id}}</b></hs-right>
+  </header-status>
+
+
+  <div name="sections">
+    <div class="row no-gutter section-block"
+         ng-repeat="section in $ctrl.assessment.sections | orderBy:'id' track by section.id">
+
+      <div class="col-sm-9 center-col">
+        <section-header>{{section.title}}<span class="section-weight" ng-if="$ctrl.assessmentTemplate.includeWeight"> (weight: {{section.weight}}%)</span></section-header>
+        <hr class="section-bar">
+
+        <div class="section">
+
+          <div class="section-comments" ng-if="section.commentsRequirement !== 'hidden'">
+            <div class="label">General comments</div>
+            <div class="word-wrap comments">{{section.comments|| 'Not provided'}}</div>
+          </div>
+
+          <div class="criteria row" ng-class="{'with-comment': criteria.comments && criteria.commentsRequirement !== 'hidden'}" ng-repeat="criteria in section.criteriaList | orderBy:'id' track by criteria.id">
+            <div class="label col-sm-10">{{$index+1}}. {{criteria.title}}<span class="criteria-weight" ng-if="criteria.answerType === 'Score'"> (weight: {{criteria.weight}}%)</span></div>
+            <div class="label col-sm-2 score-column">
+              <div ng-if="criteria.answerType === 'Score'">
+                <span ng-if="criteria.score != null">Score: {{criteria.score}} of {{$ctrl.maxScore.score}}</span>
+                <span ng-if="criteria.score == null">Not provided</span>
+              </div>
+
+              <div ng-if="criteria.answerType === 'PassFail'">
+                {{$ctrl.getFailedCriteriaText(criteria.failed) || 'Not provided'}}
+              </div>
+            </div>
+
+            <div class="word-wrap comments col-sm-12 no-padding" ng-if="criteria.commentsRequirement !== 'hidden' && criteria.comments">
+              {{criteria.comments}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

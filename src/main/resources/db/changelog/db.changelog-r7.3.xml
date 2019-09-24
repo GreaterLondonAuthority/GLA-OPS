@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+
+  <changeSet id="636" author="cmelville">
+    <addColumn tableName="question">
+      <column name="max_upload_size" type="INT4"  remarks="maximum file upload size"></column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="637" author="jdimsa">
+    <addColumn tableName="deliverable">
+      <column name="deliverable_type_description" type="varchar(255)">
+        <constraints nullable="true" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="638" author="cmelville">
+    <addColumn tableName="template_block">
+      <column name="capital_gla_funding" type="boolean"/>
+      <column name="revenue_gla_funding" type="boolean"/>
+      <column name="capital_other_funding" type="boolean"/>
+      <column name="revenue_other_funding" type="boolean"/>
+    </addColumn>
+    <addColumn tableName="funding_block">
+      <column name="capital_gla_funding" type="boolean"/>
+      <column name="revenue_gla_funding" type="boolean"/>
+      <column name="capital_other_funding" type="boolean"/>
+      <column name="revenue_other_funding" type="boolean"/>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="639" author="cmelville">
+    <addColumn tableName="file">
+      <column name="file_size" type="INT4" defaultValueNumeric="0"/>
+    </addColumn>
+  </changeSet>
+
+
+</databaseChangeLog>

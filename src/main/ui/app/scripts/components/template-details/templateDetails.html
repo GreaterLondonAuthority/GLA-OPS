@@ -1,0 +1,55 @@
+<div class="template-details">
+  <form class="form-gla" name="modalForm" role="form">
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 center-col">
+
+        <div class="form-group">
+          <label for="template-name">Template name</label>
+          <input class="form-control"
+                 id="template-name"
+                 name="template-name"
+                 ng-model="$ctrl.template.name"
+                 ng-disabled="$ctrl.readOnly"
+                 placeholder="Template name"
+                 type="text"/>
+        </div>
+
+        <div class="form-group">
+          <label for="state-model">State model</label>
+
+          <ui-select id="state-model"
+                     name="template-state-model"
+                     ng-disabled="$ctrl.readOnly"
+                     ng-model="$ctrl.template.stateModel.name"
+                     search-enabled="false">
+            <ui-select-match placeholder="State model">
+              {{$select.selected.label}}
+            </ui-select-match>
+            <ui-select-choices repeat="stateModel.id as stateModel in $ctrl.stateModels track by stateModel.id">
+              <span>{{stateModel.label}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+
+        <div class="form-group">
+          <label for="max-projects-for-template">Maximum projects for template</label>
+          <input class="form-control"
+                 id="max-projects-for-template"
+                 name="max-projects-for-template"
+                 ng-model="$ctrl.template.numberOfProjectAllowedPerOrg"
+                 ng-disabled="$ctrl.readOnly"
+                 placeholder="Maximum projects for template"
+                 type="number"/>
+
+        <!--  <div class="error-wrapper"
+               ng-if="$ctrl.template.numberOfProjectAllowedPerOrg != null && $ctrl.template.numberOfProjectAllowedPerOrg < 1">
+            <span class="error">
+              Maximum number of projects needs to be 1 or more or empty (Indicating no limit)
+            </span>
+          </div>-->
+        </div>
+
+      </div>
+    </div>
+  </form>
+</div>

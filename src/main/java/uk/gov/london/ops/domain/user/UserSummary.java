@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.domain.user;
 
-import uk.gov.london.ops.domain.organisation.OrganisationType;
+import uk.gov.london.common.organisation.OrganisationType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -155,7 +155,7 @@ public class UserSummary {
         this.pendingThreshold = pendingThreshold;
     }
 
-    public boolean getCanHaveThreshold() {
-        return this.canHaveThreshold;
-    }
+    public boolean getCanHaveThreshold() { return this.canHaveThreshold; }
+
+    public boolean isPending() { return pendingThreshold != null; }
 }

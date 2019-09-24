@@ -8,8 +8,14 @@
 package uk.gov.london.ops.domain.template;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.collections.CollectionUtils;
+import uk.gov.london.ops.domain.project.InternalBlockType;
 import uk.gov.london.ops.domain.project.ProjectBlockType;
-import uk.gov.london.ops.exception.ValidationException;
+import uk.gov.london.ops.service.project.state.StateModel;
+import uk.gov.london.ops.framework.exception.NotFoundException;
+import uk.gov.london.ops.framework.exception.ValidationException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,9 +27,12 @@ import java.util.*;
  * A project's template.
  */
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Template implements Serializable {
 
-    public enum MilestoneType { NonMonetary, MonetarySplit, MonetaryValue }
+    public enum MilestoneType {NonMonetary, MonetarySplit, MonetaryValue}
+
+    public enum TemplateStatus {Draft, Active}
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "template_seq_gen")
@@ -37,18 +46,25 @@ public class Template implements Serializable {
     @Column(name = "author")
     private String author;
 
+    @Column(name = "template_status")
+    @Enumerated(EnumType.STRING)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private TemplateStatus status = TemplateStatus.Draft;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = TemplateBlock.class)
     @JoinColumn(name = "template_id")
     private List<TemplateBlock> blocksEnabled = new ArrayList<>();
 
-    @Column(name = "change_controlled")
-    private Boolean changeControlled = false;
-
-    @Column(name = "auto_approval")
-    private Boolean autoApproval = false;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = InternalTemplateBlock.class)
+    @JoinColumn(name = "template_id")
+    private List<InternalTemplateBlock> internalBlocks = new ArrayList<>();
 
     @Column(name = "clone_of_template")
     private Integer cloneOfTemplateId;
+
+    @Column(name = "json")
+    @JsonIgnore
+    private String json;
 
     @Column(name = "clone_modified")
     private Boolean cloneModified = false;
@@ -63,6 +79,10 @@ public class Template implements Serializable {
     @Enumerated(EnumType.STRING)
     private MilestoneType milestoneType = MilestoneType.NonMonetary;
 
+    @Column(name = "state_model")
+    @Enumerated(EnumType.STRING)
+    private StateModel stateModel;
+
     @Column(name = "milestone_description_hint_text")
     private String milestoneDescriptionHintText;
 
@@ -76,15 +96,18 @@ public class Template implements Serializable {
     @Column(name = "warning_message")
     private String warningMessage;
 
+    @Column(name = "max_projects_for_template")
+    private Integer numberOfProjectAllowedPerOrg;
+
     @Embedded
     private DetailsTemplate detailsConfig;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = TemplateTenureType.class)
-    @JoinColumn(name="template_id")
+    @JoinColumn(name = "template_id")
     private Set<TemplateTenureType> tenureTypes;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name="indicative_tenure_config_id")
+    @JoinColumn(name = "indicative_tenure_config_id")
     private IndicativeTenureConfiguration indicativeTenureConfiguration;
 
     @ManyToOne(cascade = {})
@@ -100,9 +123,8 @@ public class Template implements Serializable {
     @Column(name = "start_on_site_restriction_text")
     private String startOnSiteRestrictionText;
 
-//    @JsonIgnore
-//    @Column(name = "json")
-//    private String json;
+    @Transient
+    List<Programme> programmes;
 
     public Template() {
         // Empty
@@ -115,6 +137,10 @@ public class Template implements Serializable {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -133,28 +159,20 @@ public class Template implements Serializable {
         this.author = author;
     }
 
-    public Boolean getChangeControlled() {
-        return changeControlled;
-    }
-
-    public void setChangeControlled(Boolean changeControlled) {
-        this.changeControlled = changeControlled;
-    }
-
-    public Boolean isAutoApproval() {
-        return autoApproval;
-    }
-
-    public void setAutoApproval(boolean autoApproval) {
-        this.autoApproval = autoApproval;
-    }
-
     public List<TemplateBlock> getBlocksEnabled() {
         return blocksEnabled;
     }
 
     public void setBlocksEnabled(List<TemplateBlock> blocksEnabled) {
         this.blocksEnabled = blocksEnabled;
+    }
+
+    public List<InternalTemplateBlock> getInternalBlocks() {
+        return internalBlocks;
+    }
+
+    public void setInternalBlocks(List<InternalTemplateBlock> internalBlocks) {
+        this.internalBlocks = internalBlocks;
     }
 
     public DetailsTemplate getDetailsConfig() {
@@ -191,19 +209,8 @@ public class Template implements Serializable {
     }
 
     public void addNextBlock(ProjectBlockType blockType) {
-        if (blockType.equals(ProjectBlockType.Questions)) {
-            addNextBlock(new QuestionsTemplateBlock(0, blockType));
-        } else if (blockType.equals(ProjectBlockType.GrantSource)) {
-            addNextBlock(new GrantSourceTemplateBlock(0));
-        } else if (blockType.equals(ProjectBlockType.Milestones)) {
-            addNextBlock(new MilestonesTemplateBlock(0));
-        } else if (blockType.equals(ProjectBlockType.Outputs)) {
-            addNextBlock(new OutputsTemplateBlock(0));
-        } else if (blockType.equals(ProjectBlockType.Receipts)) {
-            addNextBlock(new ReceiptsTemplateBlock(0));
-        } else {
-            addNextBlock(new TemplateBlock(0, blockType));
-        }
+        TemplateBlock block = blockType.newTemplateBlockInstance();
+        addNextBlock(block);
     }
 
     public void addNextBlock(TemplateBlock block) {
@@ -222,7 +229,7 @@ public class Template implements Serializable {
 
     public TemplateBlock getSingleBlockByType(ProjectBlockType blockType) {
         Set<TemplateBlock> blocksByType = this.getBlocksByType(blockType);
-        if (blocksByType == null) {
+        if (blocksByType == null || blocksByType.isEmpty()) {
             return null;
         } else if (blocksByType.size() == 1) {
             return blocksByType.iterator().next();
@@ -312,6 +319,27 @@ public class Template implements Serializable {
         this.indicativeTenureConfiguration = indicativeTenureConfiguration;
     }
 
+    public StateModel getStateModel() {
+        return stateModel;
+    }
+
+    public void setStateModel(StateModel stateModel) {
+        this.stateModel = stateModel;
+    }
+
+    @JsonIgnore
+    public Set<TenureYear> getTenureYears() {
+        TemplateBlock templateBlock = getSingleBlockByType(ProjectBlockType.IndicativeGrant);
+        if (templateBlock != null && templateBlock instanceof IndicativeGrantTemplateBlock) {
+            IndicativeGrantTemplateBlock indicativeGrantTemplateBlock = (IndicativeGrantTemplateBlock) templateBlock;
+            if (CollectionUtils.isNotEmpty(indicativeGrantTemplateBlock.getTenureYears())) {
+                return indicativeGrantTemplateBlock.getTenureYears();
+            }
+        }
+
+        return buildIndicativeTenureYears();
+    }
+
     public Contract getContract() {
         return contract;
     }
@@ -344,13 +372,29 @@ public class Template implements Serializable {
         this.startOnSiteRestrictionText = startOnSiteRestrictionText;
     }
 
-//    public String getJson() {
-//        return json;
-//    }
-//
-//    public void setJson(String json) {
-//        this.json = json;
-//    }
+    public TemplateStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TemplateStatus status) {
+        this.status = status;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
+    }
+
+    public Integer getNumberOfProjectAllowedPerOrg() {
+        return numberOfProjectAllowedPerOrg;
+    }
+
+    public void setNumberOfProjectAllowedPerOrg(Integer numberOfProjectAllowedPerOrg) {
+        this.numberOfProjectAllowedPerOrg = numberOfProjectAllowedPerOrg;
+    }
 
     public Boolean isStrategicTemplate() {
         return strategicTemplate;
@@ -384,28 +428,38 @@ public class Template implements Serializable {
     }
 
     public Template cloneTemplate(String newName) {
-        Template clone = new Template();
+        return cloneIntoTemplate(new Template(), newName);
+    }
+
+    public Template cloneIntoTemplate(Template clone, String newName) {
         clone.setName(newName);
-        clone.setAutoApproval(this.isAutoApproval());
+        clone.setStateModel(this.getStateModel());
         clone.setMilestoneType(this.getMilestoneType());
-        clone.setChangeControlled(this.getChangeControlled());
         clone.setCloneOfTemplateId(this.getId());
         clone.setMonetarySplitTitle(this.getMonetarySplitTitle());
         clone.setWarningMessage(this.getWarningMessage());
-        clone.setTenureTypes(new HashSet<>());
+        clone.setNumberOfProjectAllowedPerOrg(this.getNumberOfProjectAllowedPerOrg());
+
+        if (clone.getTenureTypes() == null) {
+            clone.setTenureTypes(new HashSet<>());
+        } else {
+            clone.getTenureTypes().clear();
+        }
         clone.setStrategicTemplate(this.isStrategicTemplate());
         clone.setAssociatedProjectsEnabled(this.isAssociatedProjectsEnabled());
 
-        for (TemplateTenureType templateTenureType : this.getTenureTypes()) {
-            TemplateTenureType clonedTenure = new TemplateTenureType(templateTenureType.getTenureType());
-            clonedTenure.setExternalId(templateTenureType.getExternalId());
-            clonedTenure.setDisplayOrder(templateTenureType.getDisplayOrder());
-            clonedTenure.setName(templateTenureType.getName());
-            clonedTenure.setTariffRate(templateTenureType.getTariffRate());
-            clone.getTenureTypes().add(clonedTenure);
+        if (this.getTenureTypes() != null) {
+            for (TemplateTenureType templateTenureType : this.getTenureTypes()) {
+                TemplateTenureType clonedTenure = new TemplateTenureType(templateTenureType.getTenureType());
+                clonedTenure.setExternalId(templateTenureType.getExternalId());
+                clonedTenure.setDisplayOrder(templateTenureType.getDisplayOrder());
+                clonedTenure.setName(templateTenureType.getName());
+                clonedTenure.setTariffRate(templateTenureType.getTariffRate());
+                clone.getTenureTypes().add(clonedTenure);
+            }
         }
 
-        DetailsTemplate clonedDetails = new DetailsTemplate();
+        DetailsTemplate clonedDetails = clone.getDetailsConfig() == null ? new DetailsTemplate() : clone.getDetailsConfig();
         DetailsTemplate sourceConfig = this.getDetailsConfig();
         clonedDetails.setAddressRequirement(sourceConfig.getAddressRequirement());
         clonedDetails.setBoroughRequirement(sourceConfig.getBoroughRequirement());
@@ -415,27 +469,87 @@ public class Template implements Serializable {
         clonedDetails.setInterestRequirement(sourceConfig.getInterestRequirement());
         clonedDetails.setLegacyProjectCodeRequirement(sourceConfig.getLegacyProjectCodeRequirement());
         clonedDetails.setMaincontactemailRequirement(sourceConfig.getMaincontactemailRequirement());
+        clonedDetails.setWardIdRequirement(sourceConfig.getWardIdRequirement());
         clonedDetails.setMaincontactRequirement(sourceConfig.getMaincontactRequirement());
         clonedDetails.setPostcodeRequirement(sourceConfig.getPostcodeRequirement());
         clonedDetails.setProjectManagerRequirement(sourceConfig.getProjectManagerRequirement());
         clonedDetails.setSiteOwnerRequirement(sourceConfig.getSiteOwnerRequirement());
         clonedDetails.setSiteStatusRequirement(sourceConfig.getSiteStatusRequirement());
+        clonedDetails.setPlanningPermissionReferenceRequirement(sourceConfig.getPlanningPermissionReferenceRequirement());
 
         clone.setDetailsConfig(clonedDetails);
         for (TemplateBlock templateBlock : this.getBlocksEnabled()) {
             TemplateBlock clonedBlock = templateBlock.cloneTemplateBlock();
             clone.getBlocksEnabled().add(clonedBlock);
         }
+
+        for (InternalTemplateBlock internalBlock : this.getInternalBlocks()) {
+            InternalTemplateBlock clonedInternalBlock = internalBlock.clone();
+            clone.getInternalBlocks().add(clonedInternalBlock);
+        }
+
         return clone;
     }
 
     public Set<String> getGrantTypes() {
         Set<String> grantTypes = new HashSet<>();
-        if (isBlockPresent(ProjectBlockType.GrantSource) && getSingleBlockByType(ProjectBlockType.GrantSource) instanceof GrantSourceTemplateBlock) {
-            GrantSourceTemplateBlock grantSourceBlock = (GrantSourceTemplateBlock) getSingleBlockByType(ProjectBlockType.GrantSource);
-            grantTypes.addAll(grantSourceBlock.getGrantTypes());
+
+        for (TemplateBlock templateBlock : this.getBlocksEnabled()) {
+            grantTypes.addAll(templateBlock.getGrantTypes());
         }
+
         return grantTypes;
     }
-    
+
+    public InternalTemplateBlock getInternalBlockByType(InternalBlockType type) {
+        return internalBlocks.stream().filter(b -> b.getType().equals(type)).findFirst().orElse(null);
+    }
+
+    @JsonIgnore
+    public InternalRiskTemplateBlock getInternalRiskBlock() {
+        InternalRiskTemplateBlock block = (InternalRiskTemplateBlock) getInternalBlockByType(InternalBlockType.Risk);
+        if (block == null) {
+            throw new NotFoundException("could not find risk template block");
+        }
+        return block;
+    }
+
+    public boolean getShouldMilestonesBlockShowStatus() {
+        Set<TemplateBlock> blocksByType = this.getBlocksByType(ProjectBlockType.Milestones);
+        if (blocksByType != null && blocksByType.size() > 0) {
+            MilestonesTemplateBlock next = (MilestonesTemplateBlock) blocksByType.iterator().next();
+            if (next.getShowMilestoneStatus() != null) {
+                return next.getShowMilestoneStatus();
+            } else {
+                return this.getStateModel().equals(StateModel.AutoApproval);
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public Set<TenureYear> buildIndicativeTenureYears() {
+        Set<TenureYear> tenureYears = new HashSet<>();
+        if (this.tenureTypes != null) {
+            for (TemplateTenureType tenureType : this.tenureTypes) {
+                Integer endYear = this.indicativeTenureConfiguration.getIndicativeTenureStartYear() + this.indicativeTenureConfiguration.getIndicativeTenureNumberOfYears() - 1;
+                for (Integer year = this.indicativeTenureConfiguration.getIndicativeTenureStartYear(); year <= endYear; year++) {
+                    tenureYears.add(new TenureYear(year, tenureType.getExternalId(), tenureType.getTariffRate()));
+                }
+            }
+        }
+        return tenureYears;
+    }
+
+    public List<Programme> getProgrammes() {
+        return programmes;
+    }
+
+    public void setProgrammes(List<Programme> programmes) {
+        this.programmes = programmes;
+    }
+
+    public TemplateBlock getSingleBlockByDisplayOrder(Integer displayOrderId) {
+        return blocksEnabled.stream().filter(b -> b.getDisplayOrder().equals(displayOrderId)).findFirst().orElse(null);
+    }
 }

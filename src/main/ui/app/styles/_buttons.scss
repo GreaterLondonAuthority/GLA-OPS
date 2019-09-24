@@ -48,10 +48,19 @@
       color: rgba(255, 255, 255, 0.3);
     }
   }
+  &.btn-negative{
+    background-color: $red;
+  }
 }
 
 .btn-secondary {
   @include button-variant($btn-secondary-color, $btn-secondary-bg, $btn-secondary-border);
+
+  &.btn-negative{
+    &,&:active:focus{
+      color: $red;
+    }
+  }
 }
 
 .btn-secondary {

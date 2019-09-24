@@ -1,7 +1,12 @@
-.editOrganisation {
+.organisation-form {
   h3 {
     margin-top: 30px;
     text-align: center;
+  }
+
+  header-status{
+    padding-left: 15px ;
+    padding-left: 15px ;
   }
 
   .org-code-input {
@@ -28,6 +33,32 @@
 
     .glyphicon-ok.form-control-feedback{
       right: 15px;
+    }
+  }
+
+  .user-form{
+    .user-registration-form > .row {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  }
+
+  section-header .section-header{
+    font-size: 24px;
+    font-family: $font-family-bolder;
+  }
+
+  .registration-allowed{
+    input{
+      width: 1rem;
+      height: 1rem;
+
+      margin-left: 10px;
+      margin-top: 11px;
+    }
+    label {
+      padding-top: 11px;
+
     }
   }
 }

@@ -1,0 +1,30 @@
+<page-header on-back="$ctrl.back()" header="'Create new SQL update'">
+</page-header>
+
+
+<div class="create-new">
+  <form class="form-gla" role="form" name="newSqlForm">
+    <label for="sql-update">SQL Query</label>
+    <textarea class="form-control" id="sql-update" name="sqlUpdate" required ng-model="$ctrl.sqlUpdateRequest">
+    </textarea>
+    <div class="error-wrapper" role="alert" ng-if="newSqlForm.sqlUpdate.$touched">
+      <span class="error" ng-show="newSqlForm.sqlUpdate.$error.required">Enter SQL query</span>
+    </div>
+
+    <label for="sql-summary">Summary</label>
+    <input id="sql-summary" name="summary" type="text" class="form-control" ng-model="$ctrl.sqlSummaryRequest"
+           placeholder="Brief description of the SQL to be executed" maxlength="140" required />
+    <div class="error-wrapper" role="alert" ng-if="newSqlForm.summary.$touched">
+      <span class="error" ng-show="newSqlForm.summary.$error.required">Enter a brief summary</span>
+    </div>
+
+    <label for="sql-trackingId">Tracking Id</label>
+    <input class="form-control" id="sql-trackingId" ng-model="$ctrl.sqlTrackingIdRequest"/>
+
+    <div class="row">
+      <div class="col-xs-12 mtop30 mbottom30 text-center">
+        <input type="submit" class="btn btn-primary" ng-click="$ctrl.createDatabaseUpdate()" value="SAVE" ng-disabled="newSqlForm.$invalid" />
+      </div>
+    </div>
+  </form>
+</div>

@@ -12,10 +12,13 @@ function index(obj, i) {
   return obj[i];
 }
 class ChangeReportFieldLookup {
-  constructor($rootScope, $scope, ReportService) {
+  constructor(ReportService) {
     this.ReportService = ReportService;
+  }
+
+  $onInit(){
     this.emptyField = '-';
-    this.displayMode = ReportService.getReportDisplayMode();
+    this.displayMode = this.ReportService.getReportDisplayMode();
     // take from left and right the value to look for in th collection: for example orgId
     let leftLookupValue = this.ReportService.extractValue(this.key, this.data.left);
     let rightLookupValue = this.ReportService.extractValue(this.key, this.data.right);
@@ -32,6 +35,7 @@ class ChangeReportFieldLookup {
     this.formats = angular.isArray(this.formats) ? this.formats : [this.formats];
     this.mappedFields = this.ReportService.mapFields(this.fields, this.formats);
   }
+
   getValue(data, field) {
     if(!data){
       return;
@@ -50,7 +54,7 @@ class ChangeReportFieldLookup {
   }
 }
 
-ChangeReportFieldLookup.$inject = ['$rootScope', '$scope', 'ReportService'];
+ChangeReportFieldLookup.$inject = ['ReportService'];
 angular.module('GLA')
   .component('changeReportFieldLookup', {
     bindings: {

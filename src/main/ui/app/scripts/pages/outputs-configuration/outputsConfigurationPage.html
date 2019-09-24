@@ -1,0 +1,31 @@
+<div class="outputs-configuration-page page">
+  <page-header header="'Outputs Configuration'"></page-header>
+  <div class="table-responsive mtop20">
+    <table class="outputs-configuration-table table table-hover table-bordered" id="outputs-configuration-table">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>ID</th>
+        <th>Category</th>
+        <th>Subcategory</th>
+        <th>Type</th>
+        <th>Tenure</th>
+        <th>Hidden?</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr ng-if="!$ctrl.outputConfigurations.length"><td colspan="6">Not provided</td></tr>
+
+      <tr class="cursor-pointer" ng-repeat="outputConfiguration in $ctrl.outputConfigurations | orderBy: ['category', 'subcategory', 'id'] track by outputConfiguration.id">
+        <td>{{outputConfiguration.id}}</td>
+        <td>{{outputConfiguration.category}}</td>
+        <td>{{outputConfiguration.subcategory}}</td>
+        <td>{{outputConfiguration.valueType}}</td>
+        <td>{{outputConfiguration.tenureTypeId}}</td>
+        <td>{{outputConfiguration.hidden == true ? 'Yes' : 'No'}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+

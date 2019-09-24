@@ -12,10 +12,13 @@ class IndicativeGrantChangeReport {
   }
 
   $onInit() {
-    this.reportData = this.GrantService.prepareReportData(this.data.left, this.data.right);
+    let leftBlock = this.GrantService.enhanceIndicativeBlock(this.data.left);
+    let rightBlock = this.GrantService.enhanceIndicativeBlock(this.data.right);
+    this.reportData = this.GrantService.prepareReportData(leftBlock, rightBlock);
     this.tenuresFields = this.createTenureFields();
     this.totalsFields = this.createTotalsFields();
     this.summariesFields = this.createSummariesFields();
+    this.sectionTitle = this.GrantService.indicativeGrantSectionTitle(this.data.context.template);
 
 
     this.addTitleToSummaries(this.reportData.summariesToCompare);
@@ -56,7 +59,13 @@ class IndicativeGrantChangeReport {
         changeAttribute(row){
           let valueObj = valueObject(row, yearObj);
           return valueObj? `${row.comparisonId}:${valueObj.comparisonId}:units`: null;
-        }
+        },
+
+        hide(comparableRow){
+          let tenureTypeYears = (comparableRow.left || comparableRow.right).indicativeTenureValuesSorted || [];
+          let disabledYear = _.find(tenureTypeYears, {year: yearObj.year, disabled: true});
+          return !!disabledYear;
+        },
       })
     });
 
@@ -70,7 +79,7 @@ class IndicativeGrantChangeReport {
         label: this.getFinancialYear(yearObj.year),
         field: 'someFieldExpressionForCompare',
         format(row){
-          return row ? row.resultsByYear[index] : null;
+          return row ? row[yearObj.year] : null;
         },
         changeAttribute(row){
           return `${yearObj.year}:totals`;

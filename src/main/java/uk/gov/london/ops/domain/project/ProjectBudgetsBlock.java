@@ -7,10 +7,10 @@
  */
 package uk.gov.london.ops.domain.project;
 
+import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.domain.attachment.ProjectBudgetsAttachment;
-import uk.gov.london.ops.util.GlaOpsUtils;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.web.model.AnnualSpendSummary;
 import uk.gov.london.ops.web.model.ProjectBudgetsAllYearSummary;
 import uk.gov.london.ops.web.model.ProjectBudgetsSummaryEntry;
@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 @Entity(name = "project_budgets")
 @DiscriminatorValue("PROJECT_BUDGETS")
 @JoinData(sourceTable = "project_budgets", sourceColumn = "id", targetTable = "project_block", targetColumn = "id", joinType = Join.JoinType.OneToOne,
-        comment = "the project budgets block is a subclass of the project block and shares a common key")
-public class ProjectBudgetsBlock extends NamedProjectBlock {
+        comment = "the project spend block is a subclass of the project block and shares a common key")
+public class ProjectBudgetsBlock extends BaseFinanceBlock {
 
     @Column(name = "from_date")
     private String fromDate;
@@ -59,9 +59,6 @@ public class ProjectBudgetsBlock extends NamedProjectBlock {
     @Transient
     private List<AnnualSpendSummary> annualSpendSummaries = new ArrayList<>();
 
-    @Transient
-    private Set<Integer> populatedYears = new HashSet<>();
-
     public ProjectBudgetsBlock() {}
 
     public ProjectBudgetsBlock(Project project) {
@@ -85,9 +82,6 @@ public class ProjectBudgetsBlock extends NamedProjectBlock {
         this.wbsCodes.clear();
         this.wbsCodes.addAll(projectBudgetsBlock.wbsCodes);
     }
-
-    @Override
-    protected void generateValidationFailures() {}
 
     @Override
     public boolean isComplete() {
@@ -193,20 +187,13 @@ public class ProjectBudgetsBlock extends NamedProjectBlock {
         return wbsCodes.stream().filter(wbsCode -> spendType.name().equals(wbsCode.getType())).collect(Collectors.toSet());
     }
 
-    public Set<Integer> getPopulatedYears() {
-        return populatedYears;
-    }
-
-    public void setPopulatedYears(Set<Integer> populatedYears) {
-        this.populatedYears = populatedYears;
-    }
-
     protected void copyBlockContentInto(NamedProjectBlock target) {
         final ProjectBudgetsBlock t = (ProjectBudgetsBlock)target;
         t.setFromDate(this.getFromDate());
         t.setToDate(this.getToDate());
         t.setRevenue(this.getRevenue());
         t.setCapital(this.getCapital());
+
         if(this.getWbsCodes() != null) {
             for(final WbsCode code : getWbsCodes()) {
                 t.getWbsCodes().add(code.copy());
@@ -262,13 +249,13 @@ public class ProjectBudgetsBlock extends NamedProjectBlock {
             ProjectBudgetsAllYearSummary otherYearSummaryRow = otherYearlySummary.getProjectBudgetsAllYearSummary();
 
             if (thisYearSummaryRow != null && otherYearSummaryRow != null) {
-                if (GlaOpsUtils.compareBigDecimals(thisYearSummaryRow.getForecastValueTotal(), otherYearSummaryRow.getForecastValueTotal()) != 0) {
+                if (GlaUtils.compareBigDecimals(thisYearSummaryRow.getForecastValueTotal(), otherYearSummaryRow.getForecastValueTotal()) != 0) {
                     differences.add(new ProjectDifference(thisYearSummaryRow, "forecastValueTotal"));
                 }
-                if (GlaOpsUtils.compareBigDecimals(thisYearSummaryRow.getActualValueTotal(), otherYearSummaryRow.getActualValueTotal()) != 0) {
+                if (GlaUtils.compareBigDecimals(thisYearSummaryRow.getActualValueTotal(), otherYearSummaryRow.getActualValueTotal()) != 0) {
                     differences.add(new ProjectDifference(thisYearSummaryRow, "actualValueTotal"));
                 }
-                if (GlaOpsUtils.compareBigDecimals(thisYearSummaryRow.getRemainingForecastAndActualsTotal(), otherYearSummaryRow.getRemainingForecastAndActualsTotal()) != 0) {
+                if (GlaUtils.compareBigDecimals(thisYearSummaryRow.getRemainingForecastAndActualsTotal(), otherYearSummaryRow.getRemainingForecastAndActualsTotal()) != 0) {
                     differences.add(new ProjectDifference(thisYearSummaryRow, "remainingForecastAndActualsTotal"));
                 }
             }
@@ -294,10 +281,10 @@ public class ProjectBudgetsBlock extends NamedProjectBlock {
             ProjectBudgetsSummaryEntry thisEntry = thisSummaryEntries.get(key);
             ProjectBudgetsSummaryEntry otherEntry = otherSummaryEntries.get(key);
             if (otherEntry != null) {
-                if (GlaOpsUtils.compareBigDecimals(thisEntry.getActualValue(), otherEntry.getActualValue()) != 0) {
+                if (GlaUtils.compareBigDecimals(thisEntry.getActualValue(), otherEntry.getActualValue()) != 0) {
                     differences.add(new ProjectDifference(thisEntry, "actualValue"));
                 }
-                if (GlaOpsUtils.compareBigDecimals(thisEntry.getForecastValue(), otherEntry.getForecastValue()) != 0) {
+                if (GlaUtils.compareBigDecimals(thisEntry.getForecastValue(), otherEntry.getForecastValue()) != 0) {
                     differences.add(new ProjectDifference(thisEntry, "forecastValue"));
                 }
                 iterator.remove();
@@ -361,30 +348,30 @@ public class ProjectBudgetsBlock extends NamedProjectBlock {
 
             if (otherSpendSummary != null) {
 
-                if (GlaOpsUtils.compareBigDecimals(thisSpendSummary.getTotals().getLeftToSpendCapitalInclCurrentMonth(),
+                if (GlaUtils.compareBigDecimals(thisSpendSummary.getTotals().getLeftToSpendCapitalInclCurrentMonth(),
                         otherSpendSummary.getTotals().getLeftToSpendCapitalInclCurrentMonth()) != 0) {
                     differences.add(new ProjectDifference(thisSpendSummary, "leftToSpendCapitalInclCurrentMonth"));
                 }
-                if (GlaOpsUtils.compareBigDecimals(thisSpendSummary.getTotals().getLeftToSpendRevenueInclCurrentMonth(),
+                if (GlaUtils.compareBigDecimals(thisSpendSummary.getTotals().getLeftToSpendRevenueInclCurrentMonth(),
                         otherSpendSummary.getTotals().getLeftToSpendRevenueInclCurrentMonth()) != 0) {
                     differences.add(new ProjectDifference(thisSpendSummary, "leftToSpendRevenueInclCurrentMonth"));
                 }
 
-                if (GlaOpsUtils.compareBigDecimals(thisSpendSummary.getTotals().getAvailableToForecastCapital(),
+                if (GlaUtils.compareBigDecimals(thisSpendSummary.getTotals().getAvailableToForecastCapital(),
                         otherSpendSummary.getTotals().getAvailableToForecastCapital()) != 0) {
                     differences.add(new ProjectDifference(thisSpendSummary, "availableToForecastCapital"));
                 }
-                if (GlaOpsUtils.compareBigDecimals(thisSpendSummary.getTotals().getAvailableToForecastRevenue(),
+                if (GlaUtils.compareBigDecimals(thisSpendSummary.getTotals().getAvailableToForecastRevenue(),
                         otherSpendSummary.getTotals().getAvailableToForecastRevenue()) != 0) {
                     differences.add(new ProjectDifference(thisSpendSummary, "availableToForecastRevenue"));
                 }
 
 
-                if (GlaOpsUtils.compareBigDecimals(thisSpendSummary.getAnnualBudgetCapital(),
+                if (GlaUtils.compareBigDecimals(thisSpendSummary.getAnnualBudgetCapital(),
                         otherSpendSummary.getAnnualBudgetCapital()) != 0) {
                     differences.add(new ProjectDifference(thisSpendSummary, "annualBudgetCapital"));
                 }
-                if (GlaOpsUtils.compareBigDecimals(thisSpendSummary.getAnnualBudgetRevenue(),
+                if (GlaUtils.compareBigDecimals(thisSpendSummary.getAnnualBudgetRevenue(),
                         otherSpendSummary.getAnnualBudgetRevenue()) != 0) {
                     differences.add(new ProjectDifference(thisSpendSummary, "annualBudgetRevenue"));
                 }
@@ -408,56 +395,42 @@ public class ProjectBudgetsBlock extends NamedProjectBlock {
         Totals otherTotals = other.getTotals();
 
         if (thisTotals != null && otherTotals != null) {
-            if (GlaOpsUtils.compareBigDecimals(thisTotals.getAvailableToForecastCapital(), otherTotals.getAvailableToForecastCapital()) != 0) {
+            if (GlaUtils.compareBigDecimals(thisTotals.getAvailableToForecastCapital(), otherTotals.getAvailableToForecastCapital()) != 0) {
                 differences.add(new ProjectDifference("totals", "availableToForecastCapital"));
             }
-        }
-        if (thisTotals != null && otherTotals != null) {
-            if (GlaOpsUtils.compareBigDecimals(thisTotals.getAvailableToForecastRevenue(), otherTotals.getAvailableToForecastRevenue()) != 0) {
+
+            if (GlaUtils.compareBigDecimals(thisTotals.getAvailableToForecastRevenue(), otherTotals.getAvailableToForecastRevenue()) != 0) {
                 differences.add(new ProjectDifference("totals", "availableToForecastRevenue"));
             }
-        }
-        
-        if (thisTotals != null && otherTotals != null) {
-            if (GlaOpsUtils.compareBigDecimals(thisTotals.getLeftToSpendOnProjectCapital(), otherTotals.getLeftToSpendOnProjectCapital()) != 0) {
+
+            if (GlaUtils.compareBigDecimals(thisTotals.getLeftToSpendOnProjectCapital(), otherTotals.getLeftToSpendOnProjectCapital()) != 0) {
                 differences.add(new ProjectDifference("totals", "leftToSpendOnProjectCapital"));
             }
-        }
-        if (thisTotals != null && otherTotals != null) {
-            if (GlaOpsUtils.compareBigDecimals(thisTotals.getApprovedProjectForecastCapital(), otherTotals.getApprovedProjectForecastCapital()) != 0) {
+
+            if (GlaUtils.compareBigDecimals(thisTotals.getApprovedProjectForecastCapital(), otherTotals.getApprovedProjectForecastCapital()) != 0) {
                 differences.add(new ProjectDifference("totals", "approvedProjectForecastCapital"));
             }
-        }
-        if (thisTotals != null && otherTotals != null) {
-            if (GlaOpsUtils.compareBigDecimals(thisTotals.getUnapprovedProjectForecastCapital(), otherTotals.getUnapprovedProjectForecastCapital()) != 0) {
+
+            if (GlaUtils.compareBigDecimals(thisTotals.getUnapprovedProjectForecastCapital(), otherTotals.getUnapprovedProjectForecastCapital()) != 0) {
                 differences.add(new ProjectDifference("totals", "unapprovedProjectForecastCapital"));
             }
-        }
-        if (thisTotals != null && otherTotals != null) {
-            if (GlaOpsUtils.compareBigDecimals(thisTotals.getLeftToSpendOnProjectRevenue(), otherTotals.getLeftToSpendOnProjectRevenue()) != 0) {
+
+            if (GlaUtils.compareBigDecimals(thisTotals.getLeftToSpendOnProjectRevenue(), otherTotals.getLeftToSpendOnProjectRevenue()) != 0) {
                 differences.add(new ProjectDifference("totals", "leftToSpendOnProjectRevenue"));
             }
-        }
-        if (thisTotals != null && otherTotals != null) {
-            if (GlaOpsUtils.compareBigDecimals(thisTotals.getApprovedProjectForecastRevenue(), otherTotals.getApprovedProjectForecastRevenue()) != 0) {
+
+            if (GlaUtils.compareBigDecimals(thisTotals.getApprovedProjectForecastRevenue(), otherTotals.getApprovedProjectForecastRevenue()) != 0) {
                 differences.add(new ProjectDifference("totals", "approvedProjectForecastRevenue"));
             }
-        }
-        if (thisTotals != null && otherTotals != null) {
-            if (GlaOpsUtils.compareBigDecimals(thisTotals.getUnapprovedProjectForecastRevenue(), otherTotals.getUnapprovedProjectForecastRevenue()) != 0) {
+
+            if (GlaUtils.compareBigDecimals(thisTotals.getUnapprovedProjectForecastRevenue(), otherTotals.getUnapprovedProjectForecastRevenue()) != 0) {
                 differences.add(new ProjectDifference("totals", "unapprovedProjectForecastRevenue"));
             }
         }
 
     }
 
-
-    @Override
-    public boolean allowMultipleVersions() {
-        return true;
-    }
-
-    public class Totals {
+    public static class Totals {
 
         private BigDecimal availableToForecastCapital;
         private BigDecimal availableToForecastRevenue;

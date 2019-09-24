@@ -8,7 +8,7 @@
 
 
 class UserAccountCtrl {
-  constructor(userProfile, userThresholds, UserService, $state, ConfirmationDialog, OrganisationService, ToastrUtil, $rootScope) {
+  constructor(userProfile, userThresholds, UserService, $state, ConfirmationDialog, OrganisationService, ToastrUtil, $rootScope, ModalDisplayService) {
     this.userProfile = userProfile;
     this.userThresholds = userThresholds;
     this.UserService = UserService;
@@ -17,7 +17,13 @@ class UserAccountCtrl {
     this.OrganisationService = OrganisationService;
     this.ToastrUtil = ToastrUtil;
     this.$rootScope = $rootScope;
-    this.showThresholds = !!userThresholds.length;
+    this.ModalDisplayService = ModalDisplayService;
+
+      this.showThresholds = !!userThresholds.length;
+      this.canSetThresholds = UserService.hasPermission('user.org.pending.threshold.set');
+      this.canEditPrimaryOrg = UserService.hasPermission('users.assign.primary');
+
+    this.userProfile.organisations = _.sortBy(this.userProfile.organisations, item => item.orgName.toLowerCase());
 
     this.orgIdToThresholdItem = {};
     (userThresholds || []).forEach(item => this.refreshThreshold(item));
@@ -33,11 +39,18 @@ class UserAccountCtrl {
 
     this.editable = (canSetThresholds && this.showThresholds) || canEditAnyOrg;
     this.readOnly = (this.editable && this.$state.params.editMode)? false : true;
+
+
+    this.showManagedBy = _.some(this.userProfile.organisations, (org) => {return !!org.managingOrgName});
     console.log('userProfile', this.userProfile)
   }
 
   edit() {
     this.readOnly = false;
+  }
+
+  primaryChange(organisationId, roleName) {
+    this.UserService.updatePrimaryOrganisation(this.userProfile.username, organisationId, roleName);
   }
 
   refreshThreshold(apiThreshold, disableEdit){
@@ -71,7 +84,7 @@ class UserAccountCtrl {
   approve(thresholdObj) {
     this.UserService.approveUserThreshold(thresholdObj.id.username, thresholdObj.id.organisationId).then(rsp => {
       this.refreshThreshold(rsp.data, true);
-    });
+    })
   }
 
   decline(thresholdObj) {
@@ -118,7 +131,16 @@ class UserAccountCtrl {
   approveUser(org) {
     this.$rootScope.showGlobalLoadingMask = true;
     this.OrganisationService.approveUser(org.orgId, this.userProfile.username)
-      .then(resp => this.refresh(true));
+      .then(resp => this.refresh(true))
+      .catch(err => {
+        let errInfo = err.data || {};
+        this.ModalDisplayService.standardError({
+          subHeader: 'Approval failed',
+          body: errInfo.description || 'Failed to approve user',
+          errorId: errInfo.id
+        });
+        this.$rootScope.showGlobalLoadingMask = false;
+      });
   }
 
   isAssignableRole(org) {
@@ -146,7 +168,7 @@ class UserAccountCtrl {
 
 }
 
-UserAccountCtrl.$inject = ['userProfile', 'userThresholds', 'UserService', '$state', 'ConfirmationDialog', 'OrganisationService', 'ToastrUtil', '$rootScope'];
+UserAccountCtrl.$inject = ['userProfile', 'userThresholds', 'UserService', '$state', 'ConfirmationDialog', 'OrganisationService', 'ToastrUtil', '$rootScope', 'ModalDisplayService'];
 
 
 angular.module('GLA')

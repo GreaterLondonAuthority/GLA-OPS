@@ -1,6 +1,6 @@
 <div class="project-grant">
   <div class="text-center">
-    <project-header on-back="$ctrl.back()" editable-block="$ctrl">Request negotiated grant rate</project-header>
+    <project-header on-back="$ctrl.back()" editable-block="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</project-header>
   </div>
 
   <spinner ng-if="!$ctrl.data && $ctrl.loading"></spinner>
@@ -43,34 +43,24 @@
     <grant-table data="$ctrl.data" is-readonly="$ctrl.readOnly" on-tenure-change="$ctrl.saveTenure(true)">
     </grant-table>
 
-    <div class="grant">
+    <div>
       <tenure-tiles tenures="$ctrl.tenureSummaryDetails"></tenure-tiles>
       <total-grant total="$ctrl.data.totalGrantEligibility"></total-grant>
       <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
     </div>
 
-    <div class="grant grant-claimed" ng-if="$ctrl.data.startOnSiteMilestoneAuthorised">
-      <section-header subheader="">
-        Claimed units
-      </section-header>
-      <div class="section__subheader">
-        A total of {{$ctrl.data.totalStartOnSiteApprovedUnits | number}} units were claimed as started on site and authorised on {{$ctrl.data.startOnSiteMilestoneAuthorised | date: 'dd/MM/yyyy'}}.
-      </div>
-      <div class="section__subheader" ng-if="$ctrl.data.completionMilestoneAuthorised">
-        A total of {{$ctrl.data.totalCompletionApprovedUnits | number}} units were claimed as completed and authorised on {{$ctrl.data.completionMilestoneAuthorised | date: 'dd/MM/yyyy'}}.
-      </div>
-      <tenure-tiles tenures="$ctrl.tenureClaimedDetails"></tenure-tiles>
-      <total-grant
-        title="TOTAL UNITS CLAIMED"
-        total="$ctrl.data.totalCompletionApprovedUnits || $ctrl.data.totalStartOnSiteApprovedUnits"
-        is-unit="true"></total-grant>
+    <claimed-units ng-if="$ctrl.data.startOnSiteMilestoneAuthorised || $ctrl.data.completionMilestoneAuthorised"
+                   start-milestone="$ctrl.data.startOnSiteMilestoneAuthorised"
+                   completion-milestone="$ctrl.data.completionMilestoneAuthorised"
+                   total-start-on-site="$ctrl.data.totalStartOnSiteApprovedUnits"
+                   total-completion="$ctrl.data.totalCompletionApprovedUnits"
+                   tenures="$ctrl.tenureClaimedDetails"
+                   title="TOTAL UNITS CLAIMED"
+                   total="$ctrl.data.totalCompletionApprovedUnits || $ctrl.data.totalStartOnSiteApprovedUnits"
+                   is-unit="true">
       <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
-    </div>
+    </claimed-units>
 
-    <div class="row">
-      <div class="col-xs-12 mtop30 mbottom30 text-center">
-        <button class="btn btn-primary" ng-click="$ctrl.submit()" ng-if="!$ctrl.readOnly">SAVE</button>
-      </div>
-    </div>
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
   </div>
 </div>

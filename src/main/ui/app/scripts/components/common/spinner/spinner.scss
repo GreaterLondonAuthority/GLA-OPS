@@ -19,6 +19,7 @@ spinner {
 
   .glyphicon-refresh-animate {
     font-size: 18px;
+    transform-origin: 48% 50%;
     @include animation('spin .7s infinite linear');
   }
 }

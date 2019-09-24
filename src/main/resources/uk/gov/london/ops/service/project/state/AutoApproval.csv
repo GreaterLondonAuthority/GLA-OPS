@@ -1,0 +1,17 @@
+STATUS_FROM,STATUS_TO,ROLES,PROGRAMME_STATE,COMMENTS_REQUIRED,PROJECT_COMPLETION,TRANSITION_TYPE,APPROVAL_WILL_CREATE_PAYMENTS,PROJECT_HISTORY_TRANSITION,PROJECT_HISTORY_DESCRIPTION,ACTION_NAME,NOTIFICATION_KEY,CLEAR_NEW_LABEL
+Draft,Closed (Abandoned),OPS_ADMIN | GLA_ORG_ADMIN | GLA_SPM | GLA_PM,ALL,true,ANY,,ANY,,,,,
+Draft,Closed (Rejected),OPS_ADMIN,ALL,true,ANY,,ANY,,,,,
+Draft,Active,"OPS_ADMIN | GLA_ORG_ADMIN | GLA_SPM | GLA_PM",ALL,false,COMPLETE,APPROVAL,ANY,,,,,true
+Active,Closed (Abandoned),"OPS_ADMIN | GLA_ORG_ADMIN | GLA_SPM | GLA_PM",ALL,false,ANY,,ANY,,,,,
+Active,Closed (Rejected),"OPS_ADMIN",ALL,false,ANY,,ANY,,,,,
+Active,Closed (Completed),"OPS_ADMIN | GLA_ORG_ADMIN | GLA_SPM | GLA_PM",ALL,false,ANY,,ANY,,,,,
+Closed,Draft,"OPS_ADMIN",ALL,false,ANY,,ANY,,,,,
+"Closed (Abandoned)",Draft,"OPS_ADMIN",ALL,false,ANY,,ANY,,,,,
+"Closed (Rejected)",Draft,"OPS_ADMIN",ALL,false,ANY,,ANY,,,,,
+"Closed","Active","OPS_ADMIN",ALL,false,ANY,,ANY,,,,,
+"Closed (Abandoned)",Active,"OPS_ADMIN",ALL,false,ANY,,ANY,,,,,
+"Closed (Rejected)",Active,"OPS_ADMIN",ALL,false,ANY,,ANY,,,,,
+"Closed (Completed)",Active,"OPS_ADMIN",ALL,false,ANY,,ANY,,,,,
+"Closed",Active (UnapprovedChanges),"OPS_ADMIN",ALL,true,ANY,,ANY,,,,,
+"Closed (Rejected)","Active (UnapprovedChanges)","OPS_ADMIN",ALL,true,ANY,,ANY,,,,,
+"Closed (Abandoned)","Active (UnapprovedChanges)","OPS_ADMIN",ALL,true,ANY,,ANY,,,,,

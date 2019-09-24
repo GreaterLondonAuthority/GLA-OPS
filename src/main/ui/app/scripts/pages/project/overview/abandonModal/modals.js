@@ -26,12 +26,27 @@ module.exports = {
         placeholder: 'Provide a brief explanation as to why this project is being abandoned',
         commentRequired: true
       },
+      reject: {
+        title: 'Reject Project',
+        label: 'Are you sure you want to reject this project? Once rejected the project will be closed and cannot be updated.',
+        actionBtnName: 'REJECT PROJECT',
+        hintMessage: null,
+        placeholder: 'Provide a brief explanation as to why this project is being rejected',
+        commentRequired: true
+      },
 
       warning: {
         title: 'Abandon Project',
         label: null,
         actionBtnName: null,
         hintMessage: 'Project cannot be abandoned at this stage.',
+        commentRequired: true
+      },
+      warningReject: {
+        title: 'Reject Project',
+        label: null,
+        actionBtnName: null,
+        hintMessage: 'Project cannot be rejected at this stage.',
         commentRequired: true
       },
 

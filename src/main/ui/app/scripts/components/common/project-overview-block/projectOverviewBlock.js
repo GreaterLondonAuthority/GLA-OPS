@@ -6,16 +6,56 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
 
 var gla = angular.module('GLA');
 
 class ProjectOverviewBlockCtrl {
-  constructor(){
+  constructor() {
+  }
+
+  $onInit(){
     this.complete = this.block.complete;
     this.projectIsActive = this.projectStatus === 'Active';
     this.projectIsClosed = this.projectStatus === 'Closed';
     this.isBlockUnapproved = !this.isLandProject && this.block.blockStatus === 'UNAPPROVED';
+    this.isBlockApproved = !this.isBlockUnapproved;
+    this.icon = this.getIcon();
+    this.blockState = this.getBlockState();
+    this.status = this.getStatus();
+    this.banner = this.getBanner();
+  }
+
+  isActiveOrClosed() {
+    return this.projectIsActive || this.projectIsClosed;
+  }
+
+  isGreenTheme() {
+    return this.isActiveOrClosed() && this.isBlockApproved && !(this.isLandProject && !this.complete)
+  }
+
+  getBlockState() {
+    return this.isGreenTheme() ? 'valid' : 'invalid'
+  }
+
+  getStatus() {
+    if (!this.isActiveOrClosed()) {
+      return this.complete ? 'SECTION COMPLETE' : 'INCOMPLETE';
+    } else if (this.projectIsActive && this.isLandProject) {
+      return null;
+    }
+    return this.isBlockUnapproved ? 'UNAPPROVED' : 'APPROVED'
+  }
+
+  getIcon() {
+    if (!this.isActiveOrClosed() && this.complete || this.isGreenTheme()) {
+      return 'glyphicon-ok';
+    } else if (!this.isLandProject) {
+      return 'glyphicon-exclamation-sign';
+    }
+  }
+
+  getBanner() {
+    return (this.isActiveOrClosed() && !this.complete) ? 'INCOMPLETE' : null
   }
 };
 
@@ -25,7 +65,6 @@ gla.component('projectOverviewBlock', {
   controller: ProjectOverviewBlockCtrl,
   bindings: {
     blockNumber: '<?',
-    complete: '<?',
     block: '<',
     projectStatus: '<',
     isLandProject: '<',

@@ -15,12 +15,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Created by chris on 07/12/2016.
  */
 @Entity(name = "question_answer_options")
-public class AnswerOption {
+public class AnswerOption implements Serializable {
 
     @Id()
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "answer_option_seq_gen")
@@ -77,4 +79,18 @@ public class AnswerOption {
         copy.setDisplayOrder(this.getDisplayOrder());
         return copy;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnswerOption that = (AnswerOption) o;
+        return Objects.equals(option, that.option);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(option);
+    }
+
 }

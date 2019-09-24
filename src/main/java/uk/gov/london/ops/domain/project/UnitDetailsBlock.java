@@ -9,17 +9,17 @@ package uk.gov.london.ops.domain.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.collections.CollectionUtils;
+import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.domain.template.TemplateTenureType;
-import uk.gov.london.ops.util.GlaOpsUtils;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static uk.gov.london.ops.util.GlaOpsUtils.nullSafeAdd;
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
 
 /**
  * Created by chris on 25/05/2017.
@@ -277,11 +277,6 @@ public class UnitDetailsBlock extends NamedProjectBlock {
     }
 
     @Override
-    public boolean allowMultipleVersions() {
-        return true;
-    }
-
-    @Override
     protected void copyBlockContentInto(NamedProjectBlock target) {
         super.copyBlockContentInto(target);
 
@@ -368,7 +363,7 @@ public class UnitDetailsBlock extends NamedProjectBlock {
         return new TenureProfiles(breakdown, totalUnits);
     }
 
-    public class TenureProfiles {
+    public static class TenureProfiles {
         List<TenureProfile> breakdown;
         int totalUnits;
 
@@ -386,7 +381,7 @@ public class UnitDetailsBlock extends NamedProjectBlock {
         }
     }
 
-    public class TenureProfile implements ComparableItem {
+    public static class TenureProfile implements ComparableItem {
         private int extId;
         private String tenureName;
         private int profiledUnits;
@@ -525,7 +520,7 @@ public class UnitDetailsBlock extends NamedProjectBlock {
             if (!Objects.equals(leftEntry.getMarketType(), rightEntry.getMarketType())) {
                 differences.add(new ProjectDifference(leftEntry, "marketType"));
             }
-            if (!GlaOpsUtils.areEqual(leftEntry.getMarketValue(), rightEntry.getMarketValue())) {
+            if (!GlaUtils.areEqual(leftEntry.getMarketValue(), rightEntry.getMarketValue())) {
                 differences.add(new ProjectDifference(leftEntry, "marketValue"));
             }
             if (!Objects.equals(leftEntry.getNbBeds(), rightEntry.getNbBeds())) {
@@ -534,22 +529,22 @@ public class UnitDetailsBlock extends NamedProjectBlock {
             if (!Objects.equals(leftEntry.getNbUnits(), rightEntry.getNbUnits())) {
                 differences.add(new ProjectDifference(leftEntry, "nbUnits"));
             }
-            if (!GlaOpsUtils.areEqual(leftEntry.getRentPercentageOfMarket(), rightEntry.getRentPercentageOfMarket())) {
+            if (!GlaUtils.areEqual(leftEntry.getRentPercentageOfMarket(), rightEntry.getRentPercentageOfMarket())) {
                 differences.add(new ProjectDifference(leftEntry, "rentPercentageOfMarket"));
             }
-            if (!GlaOpsUtils.areEqual(leftEntry.getNetWeeklyRent(), rightEntry.getNetWeeklyRent())) {
+            if (!GlaUtils.areEqual(leftEntry.getNetWeeklyRent(), rightEntry.getNetWeeklyRent())) {
                 differences.add(new ProjectDifference(leftEntry, "netWeeklyRent"));
             }
-            if (!GlaOpsUtils.areEqual(leftEntry.getWeeklyMarketRent(), rightEntry.getWeeklyMarketRent())) {
+            if (!GlaUtils.areEqual(leftEntry.getWeeklyMarketRent(), rightEntry.getWeeklyMarketRent())) {
                 differences.add(new ProjectDifference(leftEntry, "weeklyMarketRent"));
             }
-            if (!GlaOpsUtils.areEqual(leftEntry.getRentTotal(), rightEntry.getRentTotal())) {
+            if (!GlaUtils.areEqual(leftEntry.getRentTotal(), rightEntry.getRentTotal())) {
                 differences.add(new ProjectDifference(leftEntry, "rentTotal"));
             }
             if (!Objects.equals(leftEntry.getUnitType(), rightEntry.getUnitType())) {
                 differences.add(new ProjectDifference(leftEntry, "unitType"));
             }
-            if (!GlaOpsUtils.areEqual(leftEntry.getWeeklyServiceCharge(), rightEntry.getWeeklyServiceCharge())) {
+            if (!GlaUtils.areEqual(leftEntry.getWeeklyServiceCharge(), rightEntry.getWeeklyServiceCharge())) {
                 differences.add(new ProjectDifference(leftEntry, "weeklyServiceCharge"));
             }
         }
@@ -588,6 +583,11 @@ public class UnitDetailsBlock extends NamedProjectBlock {
         }
 
         return map;
+    }
+
+    @Override
+    public boolean isBlockRevertable() {
+        return true;
     }
 
 }

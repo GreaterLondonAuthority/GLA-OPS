@@ -7,6 +7,7 @@
  */
 package uk.gov.london.ops.web.api.project;
 
+import uk.gov.london.common.error.ApiError;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,12 +20,14 @@ import uk.gov.london.ops.domain.project.Milestone;
 import uk.gov.london.ops.domain.project.NamedProjectBlock;
 import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.domain.project.ProjectMilestonesBlock;
-import uk.gov.london.ops.domain.user.Role;
-import uk.gov.london.ops.exception.ApiError;
-import uk.gov.london.ops.exception.ValidationException;
 import uk.gov.london.ops.service.project.ProjectMilestonesService;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.service.project.ProjectService;
 
 import javax.validation.Valid;
+
+import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.ops.framework.web.APIUtils.verifyBinding;
 
 /**
  * Created by chris on 09/02/2017.
@@ -34,12 +37,15 @@ import javax.validation.Valid;
 @Api(
         description = "managing Project Milestone data"
 )
-public class ProjectMilestonesAPI extends BaseProjectAPI {
+public class ProjectMilestonesAPI {
+
+    @Autowired
+    private ProjectService service;
 
     @Autowired
     ProjectMilestonesService projectMilestonesService;
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/milestones/{blockId}", method = RequestMethod.PUT)
     @ApiOperation(value = "updates a project's milestones", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -57,7 +63,7 @@ public class ProjectMilestonesAPI extends BaseProjectAPI {
         return projectBlockById;
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/processingRoute/{blockId}", method = RequestMethod.PUT)
     @ApiOperation(value = "updates a project's processing route", notes = "")
     public ProjectMilestonesBlock updateProjectProcessingRoute(@PathVariable Integer id,@PathVariable Integer blockId,
@@ -69,7 +75,7 @@ public class ProjectMilestonesAPI extends BaseProjectAPI {
         return (ProjectMilestonesBlock) project.getProjectBlockById(blockId);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/milestones/{blockId}", method = RequestMethod.POST)
     @ApiOperation(value = "create a project milestones", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -83,7 +89,7 @@ public class ProjectMilestonesAPI extends BaseProjectAPI {
         return projectMilestonesService.createNewMilestone(projectId, blockId, milestone, autosave || !releaseLock);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/milestones/{blockId}/milestone/{milestoneId}/file/{fileId}", method = RequestMethod.PUT)
     @ApiOperation(value = "create a project attachment", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -95,7 +101,7 @@ public class ProjectMilestonesAPI extends BaseProjectAPI {
         return projectMilestonesService.attachMilestoneEvidence(projectId, blockId, milestoneId, fileId, releaseLock);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/milestones/{blockId}/milestone/{milestoneId}/attachment/{attachmentId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "remove a project attachment", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -107,7 +113,7 @@ public class ProjectMilestonesAPI extends BaseProjectAPI {
         return projectMilestonesService.removeMilestoneEvidence(projectId, blockId, milestoneId, attachmentId, releaseLock);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/milestones/{blockId}/milestone/{milestoneId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "create a project milestones", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -135,7 +141,7 @@ public class ProjectMilestonesAPI extends BaseProjectAPI {
         return true;
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER})
     @RequestMapping(value = "/projects/{projectId}/milestones/{blockId}", method = RequestMethod.GET)
     @ApiOperation(value = "get a project milestones block by id", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -144,7 +150,7 @@ public class ProjectMilestonesAPI extends BaseProjectAPI {
         return fromDB.getProjectBlockById(blockId);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/milestones/{milestoneId}/claim", method = RequestMethod.PUT)
     @ApiOperation(value = "claim a milestone", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -153,12 +159,20 @@ public class ProjectMilestonesAPI extends BaseProjectAPI {
         projectMilestonesService.claim(projectId, milestoneId, milestone);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/milestones/{milestoneId}/cancelClaim", method = RequestMethod.PUT)
     @ApiOperation(value = "cancel the claim of an existing milestone", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
     public void cancelClaim(@PathVariable Integer projectId, @PathVariable Integer milestoneId) {
         projectMilestonesService.cancelClaim(projectId, milestoneId);
+    }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @RequestMapping(value = "/projects/{projectId}/milestones/{milestoneId}/cancelReclaim", method = RequestMethod.PUT)
+    @ApiOperation(value = "cancel the reclaim of an existing milestone", notes = "")
+    @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
+    public void cancelReclaim(@PathVariable Integer projectId, @PathVariable Integer milestoneId) {
+        projectMilestonesService.cancelReclaim(projectId, milestoneId);
     }
 
 }

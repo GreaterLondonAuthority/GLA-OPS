@@ -1,0 +1,57 @@
+<div class="row no-gutter">
+  <div class="col-sm-6 mtop10 mbottom10">
+    <label ng-attr-for="{{$ctrl.commentsId}}" ng-if="$ctrl.rows.length && $ctrl.hasComments">
+      <input type="checkbox" ng-attr-id="{{$ctrl.commentsId}}" ng-model="$ctrl.showComments"> <span>Show comments</span>
+    </label>
+
+    <label ng-attr-for="{{$ctrl.noDataId}}" ng-if="!$ctrl.rows.length">
+      <input type="checkbox"
+             ng-attr-id="{{$ctrl.noDataId}}"
+             ng-disabled="$ctrl.readOnly"
+             ng-change="$ctrl.onNoDataClick()"
+             ng-model="$ctrl.noDataModel"> <span>{{$ctrl.noDataLabel}}</span>
+    </label>
+  </div>
+  <div class="col-sm-6 text-right" ng-if="!$ctrl.readOnly && $ctrl.categories.length && !$ctrl.noDataModel">
+    <button ng-click="$ctrl.onAdd()" class="btn btn-secondary btn-md mbottom10">
+      CREATE NEW ENTRY<span class="glyphicon glyphicon-plus"></span>
+    </button>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover table-bordered grant-entries">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th class="category-column">CATEGORY</th>
+      <th>VALUE £</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat-start="row in $ctrl.rows | orderBy:'category.name' track by row.id"
+        ng-click="!$ctrl.readOnly && $ctrl.onEdit({event: row})"
+        ng-class="{'category-row': !$ctrl.readOnly}">
+      <td>{{row.category.name}}</td>
+      <td class="delete-btn-container">
+        {{row.value | number}}
+        <delete-button
+          ng-if="!$ctrl.readOnly"
+          ng-click="$event.stopPropagation(); $ctrl.deleteRow({row:row})">
+        </delete-button>
+      </td>
+    </tr>
+    <tr ng-repeat-end ng-if="$ctrl.showComments && row.comments" class="comment-row">
+      <td colspan="2">{{row.comments}}</td>
+    </tr>
+    <tr ng-if="!$ctrl.rows.length">
+      <td colspan="2">Not provided</td>
+    </tr>
+    </tbody>
+    <tfoot ng-if="$ctrl.rows.length" class="separated">
+    <tr>
+      <th>TOTAL</th>
+      <th class="total">{{$ctrl.total | number}}</th>
+    </tr>
+    </tfoot>
+  </table>
+</div>

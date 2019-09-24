@@ -33,13 +33,7 @@ function TransitionService(UserService) {
           Submitted: {
             text: 'SUBMIT PROJECT',
             callback: 'onSubmitProject',
-            disableState: 'disableDrafSubmit',
-            // disableStateFunction: 'disableDrafSubmit'
-            // },
-            // // NOT IMPLEMENTED YET
-            // Closed: {
-            //  text: 'CLOSE',
-            //  callback: 'onCloseProject'
+            disableState: 'disableDrafSubmit'
           },
 
           Active: {
@@ -51,12 +45,6 @@ function TransitionService(UserService) {
           Draft: {
             text: 'WITHDRAW',
             callback: 'onWithdrawProject'
-            // },
-            // NOT IMPLEMENTED YET
-            // {
-            //   text: 'ASSESS',
-            //   callback: 'onAssessProject'
-            //
           }
         },
         Assess: {
@@ -190,16 +178,16 @@ function TransitionService(UserService) {
       return transitions;
     },
 
-    getTransitionId(status, subStatus) {
-      if (!status) {
+    getTransitionId(statusType, subStatusType) {
+      if (!statusType) {
         throw Error('Missing required parameter');
       }
 
-      if (subStatus) {
-        return `${status}_${subStatus}`
+      if (subStatusType) {
+        return `${statusType}_${subStatusType}`
       }
 
-      return status;
+      return statusType;
     },
 
     getAllowedTransitions(status, subStatus, isSubmitToApproveDisabled) {
@@ -219,30 +207,47 @@ function TransitionService(UserService) {
      */
     getTransitionButtons(project, isSubmitToApproveDisabled) {
       let buttons = [];
-      const allowedTransitionsInCurrentState = this.getAllowedTransitions(project.status, project.subStatus, isSubmitToApproveDisabled);
-      if (allowedTransitionsInCurrentState) {
-        _.forEach(project.allowedTransitions, (transition) => {
-          const toState = this.getTransitionId(transition.status, transition.subStatus);
-          let commentsRequired = transition.commentsRequired;
-          let btnConfig = allowedTransitionsInCurrentState[toState];
-          if (btnConfig && !btnConfig.menuItem) {
-            if (btnConfig.multiple) {
-              _.forEach(btnConfig.buttons, (button) => {
-                button.commentsRequired = commentsRequired || button.commentsRequired;
-                buttons.push(button);
-              });
-            } else {
-              btnConfig.commentsRequired = commentsRequired || btnConfig.commentsRequired;
-              buttons.push(btnConfig);
-            }
+      const allowedTransitionsInCurrentState = this.getAllowedTransitions(project.statusType, project.subStatusType, isSubmitToApproveDisabled) || {};
+      let order = 0;
+      _.forEach(project.allowedTransitions, (transition) => {
+        let btnConfig;
+
+        //New generic transitions
+        if (!this.isMenuItemTransition(transition) && transition.actionName) {
+          btnConfig = {
+            isGenericTransition: true,
+            order: order++,
+            callback: 'onTransition'
           }
-        });
-      }
+        }
+
+        //Old mapped transitions
+        if (!btnConfig) {
+          const toState = this.getTransitionId(transition.statusType, transition.subStatusType);
+          btnConfig = allowedTransitionsInCurrentState[toState];
+        }
+
+        //Combining properties of old & new.
+        if (btnConfig) {
+          if (btnConfig.multiple) {
+            _.forEach(btnConfig.buttons, (button) => {
+              button.transition = transition;
+              button.commentsRequired = transition.commentsRequired || button.commentsRequired;
+              buttons.push(button);
+            });
+          } else {
+            btnConfig.transition = transition;
+            btnConfig.commentsRequired = transition.commentsRequired || btnConfig.commentsRequired;
+            btnConfig.text = transition.actionName || btnConfig.text || `${transition.status}:${transition.subStatus}`;
+            buttons.push(btnConfig);
+          }
+        }
+      });
       return buttons;
     },
 
 
-    getMenuItems(project) {
+    getMenuItems(project, featureToggles) {
       let menuItems = [];
 
       if (this.isAbandonMenuItemVisible(project)) {
@@ -252,6 +257,15 @@ function TransitionService(UserService) {
           action: 'abandon-project',
           icon: 'glyphicon-remove',
           displayText: 'Abandon Project'
+        });
+      }
+      if (this.isRejectMenuItemVisible(project)) {
+        menuItems.push({
+          menuItem: true,
+          type: 'action',
+          action: 'reject-project',
+          icon: 'glyphicon-remove',
+          displayText: 'Reject Project'
         });
       }
 
@@ -275,6 +289,27 @@ function TransitionService(UserService) {
         });
       }
 
+      if (featureToggles.isMarkedForCorporateEnabled && UserService.hasPermission('corp.dash.proj.mark')) {
+        if (project.markedForCorporate) {
+          menuItems.push({
+            menuItem: true,
+            type: 'action',
+            action: 'unmark-project-corporate',
+            icon: 'glyphicon glyphicon-remove',
+            displayText: 'Unmark from Corporate'
+          });
+        } else {
+          menuItems.push({
+            menuItem: true,
+            type: 'action',
+            action: 'mark-project-corporate',
+            icon: 'glyphicon glyphicon-check',
+            displayText: 'Corporate Reporting'
+          });
+        }
+      }
+
+
       if (this.canReinstate(project)) {
         menuItems.push({
           menuItem: true,
@@ -285,6 +320,16 @@ function TransitionService(UserService) {
         })
       }
 
+      if (featureToggles.isLabelsFeatureEnabled && UserService.hasPermission('proj.add.label')) {
+        menuItems.push({
+          menuItem: true,
+          type: 'action',
+          action: 'add-label-to-project',
+          icon: 'glyphicon-tag',
+          displayText: 'Apply version label'
+        });
+      }
+
 
       return menuItems;
     },
@@ -292,7 +337,7 @@ function TransitionService(UserService) {
     isAbandonMenuItemVisible(project) {
       let status = this.status(project);
 
-      let isAbandonPending = project.status === 'Active' && project.subStatus === 'AbandonPending';
+      let isAbandonPending = project.statusType === 'Active' && project.subStatusType === 'AbandonPending';
       let canBeAbandoned = this.isTransitionAllowed(project.allowedTransitions, 'Closed', 'Abandoned');
       let canBeRequestAbandoned = this.isTransitionAllowed(project.allowedTransitions, 'Active', 'AbandonPending');
 
@@ -304,11 +349,17 @@ function TransitionService(UserService) {
       return !isMenuAlwaysHidden && (canBeAbandoned || canBeRequestAbandoned || hasAbandonPermission)
     },
 
-    isCompleteMenuItemVisible(project) {
-      let hasPermission = UserService.hasPermission('proj.complete');
-      return hasPermission && project.status === 'Active'
+    isRejectMenuItemVisible(project) {
+      let status = this.status(project);
+      let hasRejectPermission = UserService.hasPermission('proj.reject');
+      let isMenuAlwaysHidden = status.closed;
+      return !isMenuAlwaysHidden && hasRejectPermission;
     },
 
+    isCompleteMenuItemVisible(project) {
+      let hasPermission = UserService.hasPermission('proj.complete');
+      return hasPermission && project.statusType === 'Active'
+    },
 
 
     /**
@@ -342,15 +393,12 @@ function TransitionService(UserService) {
     status(project) {
       let allStatuses = ['draft', 'submitted', 'assess', 'active', 'returned', 'closed'];
       let result = {};
-      allStatuses.forEach(status => result[status] = (project.status.toLowerCase() === status));
+      allStatuses.forEach(status => result[status] = (project.statusType.toLowerCase() === status));
       return result;
     },
 
     getTransitionToClose(project) {
-      let transitionsToClose = [
-        {status: 'Closed', subStatus: 'Abandoned'},
-        {status: 'Active', subStatus: 'AbandonPending'},
-      ];
+      let transitionsToClose = this.getTransitionsToCloseProject();
 
       for (let i = 0; i < transitionsToClose.length; i++) {
         let transition = this.findTransition(project.allowedTransitions, transitionsToClose[i].status, transitionsToClose[i].subStatus);
@@ -361,8 +409,20 @@ function TransitionService(UserService) {
       return null;
     },
 
-    canReinstate(project){
-      return project.status === 'Closed';
+    canReinstate(project) {
+      return project.statusType === 'Closed';
+    },
+
+    isMenuItemTransition(transition) {
+      let menuItemTransitions = this.getTransitionsToCloseProject();
+      return !!this.findTransition(menuItemTransitions, transition.status, transition.subStatus);
+    },
+
+    getTransitionsToCloseProject() {
+      return [
+        {status: 'Closed', subStatus: 'Abandoned'},
+        {status: 'Active', subStatus: 'AbandonPending'},
+      ];
     }
   };
 }

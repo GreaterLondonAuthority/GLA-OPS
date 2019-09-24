@@ -1,0 +1,24 @@
+.messages-page {
+  .system-message-setup-item {
+    border: 1px solid #e2e2e2;
+    background-color: white;
+    padding: 10px;
+    .title{
+      color: black;
+      font-size: 15px;
+      font-family: "Gotham-medium", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+    }
+  }
+  .no-system-message{
+    color: $secondary-grey;
+  }
+}
+.system-messages-modal {
+  .checkbox {
+    width: 200px;
+    label {
+      margin-top: 5px;
+      margin-left: 5px;
+    }
+  }
+}

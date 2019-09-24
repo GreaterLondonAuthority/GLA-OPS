@@ -50,6 +50,11 @@ public interface Environment {
      */
     boolean initTestData();
 
+    /**
+     * Returns true if the environment should be initialised with test data.
+     */
+    boolean isTestEnvironment();
+
     String defPwHash();
 
     /**

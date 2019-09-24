@@ -47,7 +47,7 @@
             ng-if="$ctrl.number(spend.actual, 2) != null"
             ng-click="$ctrl.onShowMetadata({event: {data: $ctrl.data, spend: spend}})">{{$ctrl.number(spend.actual, 2)}} <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></span>
       <delete-button
-        ng-if="!$ctrl.readOnly && spend.actual === null"
+        ng-if="!$ctrl.readOnly && spend.actual == null"
         ng-click="$ctrl.onDelete({event: {data: spend}})">
       </delete-button>
     </td>

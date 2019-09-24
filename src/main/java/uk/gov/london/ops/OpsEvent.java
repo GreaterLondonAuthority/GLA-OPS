@@ -15,6 +15,11 @@ public class OpsEvent {
 
     public OpsEvent() {}
 
+    public OpsEvent(EventType eventType, String message) {
+        this.eventType = eventType;
+        this.message = message;
+    }
+
     public OpsEvent(EventType eventType, String message, Integer externalId) {
         this.eventType = eventType;
         this.message = message;

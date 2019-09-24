@@ -1,0 +1,32 @@
+tile {
+  .grant-prefix {
+    display: none;
+  }
+
+  &.space-between {
+    .grant-prefix {
+      display: inline;
+      position: absolute;
+      left: 4px;
+      top: 5px;
+      font-family: $font-family-bold;
+      color: $secondary-text;
+    }
+
+    .grant-property {
+      clear: both;
+      position: relative;
+      padding: 3px 15px;
+    }
+
+    .grant-name {
+      text-align: left;
+      float: left;
+    }
+
+    .grant-value {
+      text-align: right;
+      float: right;
+    }
+  }
+}

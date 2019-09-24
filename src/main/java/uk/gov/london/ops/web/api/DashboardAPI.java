@@ -37,4 +37,14 @@ public class DashboardAPI {
     public Map<String, Integer> getMetrics() {
         return service.getMetricsForCurrentUser();
     }
+
+
+    // This API is insecure, and not needed because the data is now available via the KeyDataInfoContributor
+    // Steve Leach, 16 Aug 2018
+
+//    @RequestMapping(value = "/dashboard/keydDataEntityCounts", method = RequestMethod.GET)
+//    @ApiOperation(value = "returns the summary of key data entity counts in the form of a map")
+//    public Map<String, String> getKeyDataEntityCounts() {
+//        return service.getSummaryOfKeyDataEntityCounts();
+//    }
 }

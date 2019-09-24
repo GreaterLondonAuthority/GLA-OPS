@@ -10,15 +10,21 @@ import ProjectBlockCtrl from '../ProjectBlockCtrl';
 import './profiled-unit-table/profiledUnitTable';
 
 class UnitsCtrl extends ProjectBlockCtrl {
-  constructor($state, $log, ProjectService, moment, project, $injector, unitsMetadata, UnitsService){
-    super(project, $injector);
+  constructor($state, $log, ProjectService, ProjectBlockService, moment, project, $injector, unitsMetadata, UnitsService){
+    super($injector);
 
     this.$state = $state;
     this.$log = $log;
     this.ProjectService = ProjectService;
+    this.ProjectBlockService = ProjectBlockService;
     this.UnitsService = UnitsService;
+
     this.unitsMetadata = unitsMetadata;
     this.moment = moment;
+  }
+
+  $onInit() {
+    super.$onInit();
     this.init();
   }
 
@@ -49,12 +55,12 @@ class UnitsCtrl extends ProjectBlockCtrl {
     this.summaryTiles = summaryTiles;
 
     this.tenureIdToName = this.unitsMetadata.tenureDetails.reduce((idToName, item)=>{
-      idToName[item.id] = item.name;
+      idToName[item.externalId] = item;
       return idToName;
     }, {});
 
     this.tableEntries = (this.projectBlock.tableEntries || []).map(item => {
-      item.tenureName = this.tenureIdToName[item.tenureId];
+      this.UnitsService.enrichTableEntry(item, this.tenureIdToName);
       return item;
     });
 
@@ -64,15 +70,19 @@ class UnitsCtrl extends ProjectBlockCtrl {
     this.hasLegacyRent = this.UnitsService.hasMarketType(this.unitsMetadata, this.UnitsService.LEGACY_RENT_MARKET_TYPE_ID);
     this.hiddenSalesColumns = this.UnitsService.hiddenSalesColumns(this.unitsMetadata);
 
-
     const allMarketTypes = this.UnitsService.uniqueMarketTypes(this.unitsMetadata) || [];
-    this.showRentMarketTypes = _.filter(allMarketTypes, mt => mt.availableForRental).length > 1;
-    this.showSalesMarketTypes = _.filter(allMarketTypes, mt => mt.availableForSales).length > 1;
+    let availableForRentalCount = _.filter(allMarketTypes, mt => mt.availableForRental).length;
+    let availableForSalesCount = _.filter(allMarketTypes, mt => mt.availableForSales).length;
+    this.showRentMarketTypes = availableForRentalCount > 1;
+    this.showSalesMarketTypes = availableForSalesCount > 1;
+
+    this.showRentUnits = availableForRentalCount > 0;
+    this.showSalesUnits = availableForSalesCount > 0;
   }
 
   addUnit(unit) {
     this.$rootScope.showGlobalLoadingMask = true;
-    this.UnitsService.addUnit(this.project.id, this.blockId, unit)
+    let p = this.UnitsService.addUnit(this.project.id, this.blockId, unit)
       .then((block) => {
         return this.ProjectService.getProjectBlock(this.project.id, this.blockId, true).then((rsp) => {
           this.projectBlock = rsp.data;
@@ -82,6 +92,8 @@ class UnitsCtrl extends ProjectBlockCtrl {
       .finally(()=>{
         this.$rootScope.showGlobalLoadingMask = false;
       });
+
+    this.addToRequestsQueue(p);
   }
 
 
@@ -117,14 +129,14 @@ class UnitsCtrl extends ProjectBlockCtrl {
   }
 
   sumUnitsByNumberOfPeople() {
-    return (this.blockData.type1Units * 1)
-      + (this.blockData.type2Units * 1)
-      + (this.blockData.type3Units * 1)
-      + (this.blockData.type4Units * 1)
-      + (this.blockData.type5Units * 1)
-      + (this.blockData.type6Units * 1)
-      + (this.blockData.type7Units * 1)
-      + (this.blockData.type8Units * 1);
+    return ((this.blockData.type1Units || 0) * 1)
+      + ((this.blockData.type2Units || 0) * 1)
+      + ((this.blockData.type3Units || 0) * 1)
+      + ((this.blockData.type4Units || 0) * 1)
+      + ((this.blockData.type5Units || 0) * 1)
+      + ((this.blockData.type6Units || 0) * 1)
+      + ((this.blockData.type7Units || 0) * 1)
+      + ((this.blockData.type8Units || 0) * 1);
   }
 
   onSaveData(releaseLock) {
@@ -143,22 +155,17 @@ class UnitsCtrl extends ProjectBlockCtrl {
       nbWheelchairUnits: this.blockData.nbWheelchairUnits,
       grossInternalArea: this.blockData.grossInternalArea
     };
-    return this.UnitsService.save(this.project.id, this.blockId, data, releaseLock);
+
+    return this.ProjectBlockService.updateBlock(this.project.id, this.blockData.id, data, releaseLock);
   }
 
   back() {
-    if (this.readOnly) {
-      this.returnToOverview();
-    } else {
-      this.onSaveData(true).then(()=>{
-        this.returnToOverview(this.blockId);
-      });
-    }
+     this.returnToOverview();
   }
 
   submit() {
-    this.onSaveData(true).then(()=>{
-      this.returnToOverview(this.blockId);
+    return this.$q.all(this.requestsQueue).then(() => {
+      return this.onSaveData(true);
     });
   }
 
@@ -169,7 +176,7 @@ class UnitsCtrl extends ProjectBlockCtrl {
   }
 }
 
-UnitsCtrl.$inject = ['$state', '$log', 'ProjectService', 'moment', 'project', '$injector', 'unitsMetadata', 'UnitsService'];
+UnitsCtrl.$inject = ['$state', '$log', 'ProjectService', 'ProjectBlockService', 'moment', 'project', '$injector', 'unitsMetadata', 'UnitsService'];
 
 angular.module('GLA')
   .controller('UnitsCtrl', UnitsCtrl);

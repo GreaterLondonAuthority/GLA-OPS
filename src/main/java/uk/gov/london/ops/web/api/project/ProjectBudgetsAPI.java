@@ -7,6 +7,7 @@
  */
 package uk.gov.london.ops.web.api.project;
 
+import uk.gov.london.common.error.ApiError;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,23 +20,28 @@ import uk.gov.london.ops.domain.project.NamedProjectBlock;
 import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.domain.project.ProjectBudgetsBlock;
 import uk.gov.london.ops.domain.project.SAPMetaData;
-import uk.gov.london.ops.domain.user.Role;
-import uk.gov.london.ops.exception.ApiError;
-import uk.gov.london.ops.exception.ValidationException;
-import uk.gov.london.ops.service.finance.FinanceService;
+import uk.gov.london.ops.payment.FinanceService;
 import uk.gov.london.ops.service.project.ProjectBudgetsService;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.service.project.ProjectService;
 import uk.gov.london.ops.web.model.AnnualSpendSummary;
 import uk.gov.london.ops.web.model.ProjectLedgerItemRequest;
 
 import javax.validation.Valid;
 import java.util.List;
 
+import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.ops.framework.web.APIUtils.verifyBinding;
+
 @RestController
 @RequestMapping("/api/v1")
 @Api(
-        description = "managing Project Budgets"
+        description = "managing Spend"
 )
-public class ProjectBudgetsAPI extends BaseProjectAPI {
+public class ProjectBudgetsAPI {
+
+    @Autowired
+    private ProjectService service;
 
     @Autowired
     ProjectBudgetsService projectBudgetsService;
@@ -43,29 +49,29 @@ public class ProjectBudgetsAPI extends BaseProjectAPI {
     @Autowired
     FinanceService financeService;
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER})
     @RequestMapping(value = "/projects/{id}/projectBudgets/{blockId}", method = RequestMethod.GET)
-    @ApiOperation(value = "get a project's project Budgets block, incl table totals", notes = "")
+    @ApiOperation(value = "get a project's project Spend block, incl table totals", notes = "")
     public ProjectBudgetsBlock getProjectBudgets(@PathVariable Integer id, @PathVariable Integer blockId) {
         // calling this method includes the table calculations
         return projectBudgetsService.getProjectBudgets(service.get(id), blockId);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/projectBudgets", method = RequestMethod.PUT)
-    @ApiOperation(value = "set a project's project Budgets details", notes = "")
+    @ApiOperation(value = "set a project's project Spend details", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
     public ProjectBudgetsBlock updateProjectBudgetsBlock(@PathVariable Integer id,
                                                      @RequestParam(name = "releaseLock", defaultValue = "false", required = false) boolean releaseLock,
                                                      @Valid @RequestBody ProjectBudgetsBlock projectBudgetsBlock, BindingResult bindingResult) {
-        verifyBinding("Invalid Project Budgets Block details!", bindingResult);
+        verifyBinding("Invalid Spend Block details!", bindingResult);
         Project fromDB = service.get(id);
         projectBudgetsService.updateProjectBudgets(fromDB, projectBudgetsBlock, releaseLock);
         return projectBudgetsService.getProjectBudgets(service.get(id),fromDB.getProjectBudgetsBlock().getId());
     }
 
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER})
     @RequestMapping(value = "/projects/{id}/{blockId}/annualSpendFor/{year}", method = RequestMethod.GET)
     @ApiOperation(value = "get annual spend details for the given year ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -83,7 +89,7 @@ public class ProjectBudgetsAPI extends BaseProjectAPI {
         return projectBudgetsService.getAnnualSpendForSpecificYear(projectBlockById.getId(), year);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/{blockId}/annualSpend/{year}", method = RequestMethod.PUT)
     @ApiOperation(value = "create annual spend details for the given year ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -104,21 +110,29 @@ public class ProjectBudgetsAPI extends BaseProjectAPI {
                 spendSummary.getAnnualBudgetRevenue(), spendSummary.getAnnualBudgetCapital(), autosave);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/payments", method = RequestMethod.POST)
-    @ApiOperation(value = "creates a payment in the project Budgets block for specific year")
+    @ApiOperation(value = "creates a payment in the project Spend block for specific year")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
-    public AnnualSpendSummary createOrUpdateProjectLedgerEntry(@PathVariable Integer id,
-                                                             @RequestParam(defaultValue = "true", required = false) boolean releaseLock,
-                                                             @RequestParam(required = false) Integer year,
-                                                             @Valid @RequestBody ProjectLedgerItemRequest lineItem,
-                                                             BindingResult bindingResult) {
+    public AnnualSpendSummary createOrUpdateSpendEntry(@PathVariable Integer id,
+                                                       @RequestParam(defaultValue = "true", required = false) boolean releaseLock,
+                                                       @RequestParam(required = false) Integer year,
+                                                       @Valid @RequestBody ProjectLedgerItemRequest lineItem,
+                                                       BindingResult bindingResult) {
         verifyBinding("Invalid Ledger Details!", bindingResult);
-        return service.createLedgerEntry(id, lineItem, year);
+        return service.createOrUpdateSpendEntry(id, lineItem, year);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
-    @RequestMapping(value = "/projects/{projectId}/blocks/{blockId}/ledgerEntry/{ledgerEntryId}", method = RequestMethod.DELETE)
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
+    @RequestMapping(value = "/projects/{projectId}/blocks/{blockId}/ledgerEntries", method = RequestMethod.POST)
+    @ApiOperation(value = "creates a project ledger entry", notes = "creates a project ledger entry")
+    public void createOrUpdateProjectLedgerEntry(@PathVariable Integer projectId, @PathVariable Integer blockId, @Valid @RequestBody ProjectLedgerItemRequest entry, BindingResult bindingResult) {
+        verifyBinding("Invalid Ledger Details!", bindingResult);
+        service.createOrUpdateProjectLedgerEntry(projectId, blockId, entry);
+    }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @RequestMapping(value = "/projects/{projectId}/blocks/{blockId}/ledgerEntries/{ledgerEntryId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "delete a project's block ledger entry", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
     public void deleteProjectLedgerEntry(@PathVariable Integer projectId, @PathVariable Integer blockId, @PathVariable Integer ledgerEntryId) {
@@ -130,7 +144,7 @@ public class ProjectBudgetsAPI extends BaseProjectAPI {
         financeService.deleteProjectLedgerEntry(ledgerEntryId);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/{blockId}/annualSpendForecast/{year}", method = RequestMethod.DELETE)
     @ApiOperation(value = "delete annual spend details for the given year, sap code and expenditure type ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -155,7 +169,7 @@ public class ProjectBudgetsAPI extends BaseProjectAPI {
 
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR, Role.GLA_FINANCE, Role.GLA_READ_ONLY})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_FINANCE, GLA_READ_ONLY})
     @RequestMapping(value = "/projects/{projectId}/projectBudgetsMetaData/{blockId}/categoryCode/{categoryId}/yearMonth/{yearMonth}", method = RequestMethod.GET)
     @ApiOperation(value = "get meta data for a receipt", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))

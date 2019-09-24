@@ -8,31 +8,27 @@
 package uk.gov.london.ops.domain.organisation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.domain.OpsEntity;
 import uk.gov.london.ops.domain.ProgrammeOrganisationID;
 import uk.gov.london.ops.domain.template.Programme;
-import uk.gov.london.ops.util.GlaOpsUtils;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static uk.gov.london.ops.domain.organisation.OrganisationBudgetEntry.Type.Initial;
-import static uk.gov.london.ops.domain.project.GrantType.DPF;
-import static uk.gov.london.ops.domain.project.GrantType.Grant;
-import static uk.gov.london.ops.domain.project.GrantType.RCGF;
+import static uk.gov.london.ops.domain.project.GrantType.*;
 
 @Entity(name = "organisation_programme")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class OrganisationProgramme implements OpsEntity<ProgrammeOrganisationID> {
 
     @EmbeddedId
@@ -53,6 +49,16 @@ public class OrganisationProgramme implements OpsEntity<ProgrammeOrganisationID>
 
     @Column(name="modified_on")
     private OffsetDateTime modifiedOn;
+
+
+    @JsonIgnore
+    @JoinData(joinType = Join.JoinType.Complex, sourceTable = "organisation_programme", targetTable = "strategic_units_for_tenure",
+            comment = "Complex 12M join using org_id and programme_id from each table to join")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumns({ @JoinColumn(name = "programme_id", referencedColumnName = "programme_id"),
+                    @JoinColumn(name = "org_id", referencedColumnName = "org_id")
+    })
+    private Set<StrategicPlannedUnitsForTenure> plannedUnits = new HashSet<>();
 
     @Transient
     private List<OrganisationBudgetEntry> budgetEntries;
@@ -161,7 +167,18 @@ public class OrganisationProgramme implements OpsEntity<ProgrammeOrganisationID>
     }
 
     private BigDecimal sum(Stream<OrganisationBudgetEntry> stream) {
-        return stream.map(OrganisationBudgetEntry::getAmount).reduce(BigDecimal.ZERO, GlaOpsUtils::addBigDecimals);
+        return stream.map(OrganisationBudgetEntry::getAmount).reduce(BigDecimal.ZERO, GlaUtils::addBigDecimals);
     }
 
+    public Set<StrategicPlannedUnitsForTenure> getPlannedUnits() {
+        return plannedUnits;
+    }
+
+    public void setPlannedUnits(Set<StrategicPlannedUnitsForTenure> plannedUnits) {
+        this.plannedUnits = plannedUnits;
+    }
+
+    public Programme getProgramme() {
+        return programme;
+    }
 }

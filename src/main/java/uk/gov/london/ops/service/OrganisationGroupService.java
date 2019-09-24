@@ -12,20 +12,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import uk.gov.london.common.CSVFile;
 import uk.gov.london.ops.domain.importdata.ImportErrorLog;
 import uk.gov.london.ops.domain.importdata.ImportJobType;
 import uk.gov.london.ops.domain.organisation.Organisation;
 import uk.gov.london.ops.domain.organisation.OrganisationGroup;
 import uk.gov.london.ops.domain.template.Programme;
 import uk.gov.london.ops.domain.user.User;
-import uk.gov.london.ops.exception.ForbiddenAccessException;
-import uk.gov.london.ops.exception.NotFoundException;
-import uk.gov.london.ops.exception.ValidationException;
 import uk.gov.london.ops.repository.OrganisationGroupRepository;
 import uk.gov.london.ops.repository.OrganisationRepository;
 import uk.gov.london.ops.repository.ProgrammeRepository;
 import uk.gov.london.ops.repository.ProjectRepository;
-import uk.gov.london.ops.util.CSVFile;
+import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
+import uk.gov.london.ops.framework.exception.NotFoundException;
+import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.web.model.project.FileImportResult;
 
 import java.io.IOException;
@@ -96,7 +96,7 @@ public class OrganisationGroupService {
     }
 
     public OrganisationGroup find(Integer id) {
-        OrganisationGroup organisationGroup = organisationGroupRepository.findOne(id);
+        OrganisationGroup organisationGroup = organisationGroupRepository.findById(id).orElse(null);
 
         if (organisationGroup == null) {
             throw new NotFoundException();
@@ -185,7 +185,7 @@ public class OrganisationGroupService {
     }
 
     public void delete(Integer id) {
-        organisationGroupRepository.delete(id);
+        organisationGroupRepository.deleteById(id);
     }
 
     /**

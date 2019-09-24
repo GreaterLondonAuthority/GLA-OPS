@@ -13,36 +13,31 @@ import ProjectBlockCtrl from '../ProjectBlockCtrl';
 
 class GrantSourceCtrl extends ProjectBlockCtrl {
   constructor($scope, $state, $log, project, ProjectService, $rootScope, $injector, template, GrantSourceService) {
-    super(project, $injector);
-
+    super($injector);
+    this.$scope = $scope;
+    this.$log = $log;
     this.$state = $state;
     this.ProjectService = ProjectService;
     this.$rootScope = $rootScope;
+    this.GrantSourceService = GrantSourceService;
+    this.template = template;
+  }
+
+  $onInit() {
+    super.$onInit();
     this.data = this.projectBlock;
     // console.log('this.projectBlock', this.projectBlock, template);
-    this.GrantSourceService = GrantSourceService;
-    this.config = this.GrantSourceService.getSourceVisibilityConfig(template);
-    this.blockMetaData = this.GrantSourceService.getBlockMetaData(template);
+    this.config = this.GrantSourceService.getSourceVisibilityConfig(this.template);
+    this.blockMetaData = this.GrantSourceService.getBlockMetaData(this.template);
 
     this.GrantSourceService.getGrantSourceBlock(this.project.id).then((resp)=>{
-      let data = resp.data;
-      if(!data.associatedProject && !data.associatedProjectFlagUpdatable){
-        this.showAssociatedProjectMarker = false;
-        this.enableAssociatedProjectMarker = false;
-      } else if(data.associatedProject && !data.associatedProjectFlagUpdatable){
-        this.showAssociatedProjectMarker = true;
-        this.enableAssociatedProjectMarker = false;
-      } else {
-        this.showAssociatedProjectMarker = true;
-        this.enableAssociatedProjectMarker = true;
-      }
+      this.associatedProjectConfig = this.GrantSourceService.getAssociatedProjectConfig(resp.data);
     });
 
 
 
 // TODO why not a simple ng-change
-    $scope.$watch('$ctrl.data.zeroGrantRequested', (zeroGrantRequested, previousValue) => {
-      $log.log('watch', zeroGrantRequested);
+    this.$scope.$watch('$ctrl.data.zeroGrantRequested', (zeroGrantRequested, previousValue) => {
       if (zeroGrantRequested) {
         this.data.grantValue = 0;
         this.data.recycledCapitalGrantFundValue = 0;
@@ -56,8 +51,7 @@ class GrantSourceCtrl extends ProjectBlockCtrl {
         this.data.strategicFunding = null;
       }
     });
-    $scope.$watch('$ctrl.data.associatedProject', (associatedProject, previousValue) => {
-      $log.log('watch', associatedProject);
+    this.$scope.$watch('$ctrl.data.associatedProject', (associatedProject, previousValue) => {
       if (associatedProject) {
         this.data.grantValue = 0;
         this.data.recycledCapitalGrantFundValue = 0;
@@ -89,13 +83,12 @@ class GrantSourceCtrl extends ProjectBlockCtrl {
    */
   submit() {
     this.$rootScope.showGlobalLoadingMask = true;
-    this.ProjectService.updateGrantSource(this.project.id, this.data).then(rsp => {
-      this.returnToOverview(this.blockId);
-    });
+    return this.ProjectService.updateGrantSource(this.project.id, this.data);
   }
 
   total() {
-    return +(this.data.grantValue || 0) + +(this.data.recycledCapitalGrantFundValue || 0) + +(this.data.disposalProceedsFundValue || 0)  + +(this.data.strategicFunding || 0)
+    return this.GrantSourceService.getTotal(this.data);
+
   }
 }
 

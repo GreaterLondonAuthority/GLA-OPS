@@ -39,7 +39,7 @@ class DateUtil {
     var now = chosen; //+chosen.split('/')[0];
     // NOTE: negative values are allowed to generate date ranges that are before
     // or after the current financial yearList
-    // Example: from date of project budgets block
+    // Example: from date of Spend block
     var start = _.isNumber(backLimit) > 0 ? now - backLimit : now;
     var end = _.isNumber(forwardLimit) > 0 ? now + forwardLimit : now;
 
@@ -115,6 +115,15 @@ class DateUtil {
     return list;
   }
 
+  static getQuaterLabels(){
+    return [
+      'Q1 April - June',
+      'Q2 July - Sept',
+      'Q3 Oct - Dec',
+      'Q4 Jan - March'
+    ];
+  }
+
   /**
    * Generate list of financial quarters
    * @param {Number} fYear - Financial Year
@@ -122,11 +131,13 @@ class DateUtil {
    */
   static generateQuarterList(fYear) {
     let list = [];
+    let labels = DateUtil.getQuaterLabels();
     let month = moment(`04/${fYear}`, 'MM/YYYY');
     for (let i = 0, max = 4; i < max; i++) {
       list.push({
-        label: `Q${i+1}`,
+        label: labels[i] || `Q${i+1}`,
         value: (month.month() + 1),
+        sectionNumber: i + 1,
         calendarYear: month.year(),
         financialYear: fYear
       });
@@ -151,6 +162,35 @@ class DateUtil {
       year = year.substring(0, 2) + years[1];
     }
     return year;
+  }
+
+  static getFirstMonthInQuarter(quarter) {
+    if (quarter == 1) {
+      return 4;
+    } else if (quarter == 2) {
+      return 7;
+    } else {
+      return quarter == 3 ? 10 : 1;
+    }
+  }
+
+  static getLastMonthInQuarter(quarter){
+    return DateUtil.getFirstMonthInQuarter(quarter) + 2;
+  }
+
+  static getActualYearFrom(financialYear, quarter) {
+    return quarter == 4 ? financialYear + 1 : financialYear;
+  }
+
+  static getFinancialYearMonthsBeforeInclusive(month){
+    let allMonths = DateUtil.getFinancialYearMonths();
+    let index = allMonths.indexOf(month);
+    return allMonths.splice(0, index + 1);
+  }
+
+  static getFinancialYearMonths(){
+    return [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+
   }
 }
 

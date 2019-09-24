@@ -1,13 +1,13 @@
 <div class="project-grant indicative-grant">
   <div class="text-center">
-    <project-header on-back="$ctrl.back()" editable-block="$ctrl">Enter indicative grant</project-header>
+    <project-header on-back="$ctrl.back()" editable-block="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</project-header>
   </div>
 
   <spinner ng-if="!$ctrl.data && $ctrl.loading"></spinner>
   <div ng-if="$ctrl.data">
 
     <div class="row table-title">
-      Enter the units by tenure type that are expected to start on site in the years specified below
+      {{$ctrl.title}}
     </div>
     <grant-table data="$ctrl.data" is-readonly="$ctrl.readOnly" on-tenure-change="$ctrl.saveTenure(true)">
     </grant-table>
@@ -18,9 +18,9 @@
         <div class="grant">
           <div class="row">
             <div class="grant-column"
-                 ng-class="'col-xs-{{tenure.grantBlocks.length > 4? 4 : 12/tenure.grantBlocks.length}}'"
+                 ng-class="'col-xs-{{$ctrl.tilesPerRow > 4? 3 : 12/$ctrl.tilesPerRow}}'"
                  ng-repeat="grant in tenure.grantBlocks track by grant.name">
-              <grant-block items="grant.items">{{ grant.name }}</grant-block>
+              <tile items="grant.items">{{ grant.name }}</tile>
             </div>
           </div>
         </div>
@@ -29,10 +29,6 @@
       <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
     </div>
 
-    <div class="row">
-      <div class="col-xs-12 mtop30 mbottom30 text-center">
-        <button class="btn btn-primary" ng-click="$ctrl.submit()" ng-if="!$ctrl.readOnly">SAVE</button>
-      </div>
-    </div>
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
   </div>
 </div>

@@ -13,9 +13,11 @@ import ForecastDataUtil from '../../../../util/ForecastDataUtil';
 class ForecastMonthRowCtrl extends ExpandableRow {
   constructor($scope) {
     super();
-
     this.$scope = $scope;
+  }
 
+  $onInit(){
+    super.init();
     this.monthName = this.monthData.monthName;
     this.total = this.monthData.monthlyTotal;
     this.spendBreakdown = _.orderBy(this.monthData.spendBreakdown, ['spendCategory']);

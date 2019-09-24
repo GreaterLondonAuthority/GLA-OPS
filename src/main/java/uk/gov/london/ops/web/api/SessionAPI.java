@@ -9,6 +9,7 @@ package uk.gov.london.ops.web.api;
 
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import uk.gov.london.ops.domain.user.User;
-import uk.gov.london.ops.mapper.UserMapper;
+import uk.gov.london.ops.organisation.implementation.UserMapper;
 import uk.gov.london.ops.service.PermissionService;
 import uk.gov.london.ops.service.UserService;
 import uk.gov.london.ops.web.model.Session;
@@ -44,6 +45,16 @@ public class SessionAPI {
     @Autowired
     UserService userService;
 
+    @Value("${session.idle.duration}")
+    private Integer sessionIdleDuration;
+
+    @Value("${session.timeout.duration}")
+    private Integer sessionTimeoutDuration;
+
+    @Value("${session.keep.alive.interval}")
+    private Integer sessionKeepAliveInterval;
+
+
     @RequestMapping(value = "/sessions", method = RequestMethod.POST)
     @ResponseBody
     public Session create(@RequestBody UsernameAndPassword usernameAndPassword, HttpServletRequest request) {
@@ -62,7 +73,9 @@ public class SessionAPI {
 
         UserModel userModel = userMapper.toModel(user);
         userModel.setPermissions(permissionService.getPermissionsForUser(user));
-
+        userModel.setIdleDuration(sessionIdleDuration);
+        userModel.setTimeoutDuration(sessionTimeoutDuration);
+        userModel.setKeepAliveInterval(sessionKeepAliveInterval);
         return new Session(id, userModel);
     }
 

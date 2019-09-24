@@ -6,19 +6,20 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-import DateUtil from '../../../../util/DateUtil';
-import OutputsUtil from '../OutputsUtil';
 
 /**
  * Annual Spend Forecast component
  */
 class OutputsWizardCtrl {
-  constructor($scope) {
+  constructor($scope, OutputsService) {
     this.$scope = $scope;
+    this.OutputsService = OutputsService;
+  }
 
+  $onInit(){
+    this.baseline = this.baseline || false;
     this.initDropdownConfigs();
     this.resetDropdownSelections();
-
     // generate financial month list
     let yW = this.$scope.$watch('$ctrl.year', value => {
       if(value) {
@@ -29,11 +30,12 @@ class OutputsWizardCtrl {
   }
 
   initDropdownConfigs() {
-    this.categories = OutputsUtil.getCategories();
-    this.unitConfig = OutputsUtil.getUnitConfig();
-    this.directOrIndirectChoices = OutputsUtil.getDirectOrIndirect();
+    this.unitConfig = this.OutputsService.getUnitConfig();
     this.forecastOrActualChoices = this.getForecastOrActualChoices();
-
+    this.directOrIndirectChoices = this.directOrIndirectChoices || [];
+    if (this.directOrIndirectChoices.length == 1) {
+      this.directOrIndirect = this.directOrIndirectChoices[0];
+    }
   }
 
   resetDropdownSelections() {
@@ -43,9 +45,12 @@ class OutputsWizardCtrl {
     this.selectedUnits = undefined;
     this.addOutputsMonth = undefined;
     this.outputsCategory = undefined;
-    this.directOrIndirect = undefined;
+    if (this.directOrIndirectChoices.length > 1) {
+      this.directOrIndirect = undefined;
+    }
     this.forcastOrActual = undefined;
     this.outputsValue = undefined;
+    this.outputsUnitCost = undefined;
   }
 
   categorySelected(items) {
@@ -59,10 +64,22 @@ class OutputsWizardCtrl {
     this.subCategories = items;
     if(this.subCategories.length === 1){
       this.subCategorySelected(this.subCategories[0]);
+    } else {
+      this.outputsCategoryCost = null;
+      this.outputsUnitCost = null;
+    }
+  }
+
+  updateUnitCost(subcategory){
+    // TODO should it be > 0?
+    if(this.categoriesCosts && this.categoriesCosts.length > 1){
+      this.outputsCategoryCost = (_.find(this.categoriesCosts, {outputCategoryConfigurationId: subcategory.id}) || {});
+      this.outputsUnitCost = this.outputsCategoryCost ? this.outputsCategoryCost.unitCost : null;
     }
   }
 
   subCategorySelected(item) {
+    this.updateUnitCost(item);
     if(this.selectedUnits && this.selectedUnits.id === this.unitConfig[item.valueType].id){
       return;
     }
@@ -103,8 +120,8 @@ class OutputsWizardCtrl {
     if(this.readOnly ||
       !this.addOutputsMonth ||
       !this.outputsCategory ||
-      (this.subCategories.length > 1 && !this.outputsSubCategory) ||
-      !this.directOrIndirect ||
+      (this.subCategories.length < 1 && !this.outputsSubCategory) ||
+      // (!this.directOrIndirect || true) ||
       !this.forcastOrActual ||
       !this.outputsValue ){
         return false;
@@ -112,6 +129,45 @@ class OutputsWizardCtrl {
 
     return true;
   }
+
+  canAddBaseline() {
+    if(this.readOnly ||
+      !this.outputsCategory ||
+      (this.subCategories.length > 1 && !this.outputsSubCategory) ||
+      this.outputsValue == null){
+        return false;
+    }
+
+    return true;
+  }
+
+  addBaselinedOutput() {
+    let config;
+    if(this.outputsCategory.length > 1) {
+      config = this.outputsSubCategory;
+    } else {
+      config = this.outputsCategory[0];
+    }
+    let output = {
+      event:
+        {
+          baseline: this.outputsValue,
+          config,
+          month: 0,
+          year: 0,
+          // outputType: this.directOrIndirect.key,
+        }
+    }
+    let p = this.onAddOutput(output);
+    if(p) {
+      p.then(() => {
+        this.resetDropdownSelections();
+      });
+    }else{
+      console.warn('onAddOutput should return a promise on success');
+    }
+  }
+
 
   addForecastOutput() {
       let config;
@@ -130,7 +186,7 @@ class OutputsWizardCtrl {
         config,
         month: this.addOutputsMonth.value,
         year: this.addOutputsMonth.calendarYear,
-        outputType: this.directOrIndirect.key,
+        outputType: this.displayOutputType ? this.directOrIndirect.key : 'DIRECT',
       }
     }).then(()=>{
       this.resetDropdownSelections();
@@ -138,11 +194,12 @@ class OutputsWizardCtrl {
   }
 }
 
-OutputsWizardCtrl.$inject = ['$scope'];
+OutputsWizardCtrl.$inject = ['$scope', 'OutputsService'];
 
 angular.module('GLA')
   .component('outputsWizard', {
     bindings: {
+      baseline: '<',
       year: '<',
       yearData: '=',
       onAddOutput: '&',
@@ -150,7 +207,13 @@ angular.module('GLA')
       periodType: '<',
       outputTypeName: '<',
       categoryName: '<',
-      subcategoryName: '<'
+      subcategoryName: '<',
+      categories: '<',
+      directOrIndirectChoices: '<',
+      displayOutputType: '<',
+      categoriesCosts: '<',
+      displayUnitCost:'<',
+      disabledMonths:'<?'
     },
     templateUrl: 'scripts/pages/project/outputs/wizard/outputsWizard.html',
     controller: OutputsWizardCtrl

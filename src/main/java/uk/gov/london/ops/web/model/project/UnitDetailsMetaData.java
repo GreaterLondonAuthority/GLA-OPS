@@ -7,8 +7,8 @@
  */
 package uk.gov.london.ops.web.model.project;
 
-import uk.gov.london.ops.domain.refdata.CategoryValue;
-import uk.gov.london.ops.domain.refdata.TenureType;
+import uk.gov.london.ops.domain.template.TemplateTenureType;
+import uk.gov.london.ops.refdata.CategoryValue;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class UnitDetailsMetaData {
 
     private List<CategoryValue> beds;
     private List<CategoryValue> unitDetails;
-    private List<TenureType> tenureDetails;
+    private List<TemplateTenureType> tenureDetails;
 
     public UnitDetailsMetaData() {
     }
@@ -42,11 +42,11 @@ public class UnitDetailsMetaData {
         this.unitDetails = unitDetails;
     }
 
-    public List<TenureType> getTenureDetails() {
+    public List<TemplateTenureType> getTenureDetails() {
         return tenureDetails;
     }
 
-    public void setTenureDetails(List<TenureType> tenureDetails) {
+    public void setTenureDetails(List<TemplateTenureType> tenureDetails) {
         this.tenureDetails = tenureDetails;
     }
 

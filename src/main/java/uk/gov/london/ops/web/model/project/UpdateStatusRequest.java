@@ -7,19 +7,20 @@
  */
 package uk.gov.london.ops.web.model.project;
 
-import uk.gov.london.ops.domain.project.Project;
+import uk.gov.london.ops.domain.project.state.ProjectStatus;
+import uk.gov.london.ops.domain.project.state.ProjectSubStatus;
 
 public class UpdateStatusRequest {
 
     /**
      * Mandatory
      */
-    private Project.Status status;
+    private String status;
 
     /**
      * Optional
      */
-    private Project.SubStatus subStatus;
+    private String subStatus;
 
     /**
      * Optional
@@ -28,27 +29,33 @@ public class UpdateStatusRequest {
 
     public UpdateStatusRequest() {}
 
-    public UpdateStatusRequest(Project.Status status, String comments) {
+    public UpdateStatusRequest(ProjectStatus status, String comments) {
+        this(status.name(), comments);
+    }
+
+    public UpdateStatusRequest(String status, String comments) {
         this.status = status;
         this.comments = comments;
     }
 
-    public UpdateStatusRequest(final Project.Status status,
-                               final Project.SubStatus subStatus,
-                               final String comments) {
+    public UpdateStatusRequest(ProjectStatus status, ProjectSubStatus subStatus, String comments) {
+        this(status.name(), subStatus.name(), comments);
+    }
+
+    public UpdateStatusRequest(String status, String subStatus, String comments) {
         this(status, comments);
         this.subStatus = subStatus;
     }
 
-    public Project.SubStatus getSubStatus() {
+    public String getSubStatus() {
         return subStatus;
     }
 
-    public Project.Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Project.Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

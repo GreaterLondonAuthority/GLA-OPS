@@ -6,171 +6,357 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-ProjectsCtrl.$inject = ['$log', 'UserService', 'SessionService', '$state', 'ProjectService', 'MessageModal', '$stateParams', 'ConfirmationDialog', 'ToastrUtil'];
 
-function ProjectsCtrl($log, UserService, SessionService, $state, ProjectService, MessageModal, $stateParams, ConfirmationDialog, ToastrUtil) {
-  this.user = UserService.currentUser();
-  this.currentPage = 1;
-  this.itemsPerPage = 50;
-  this.hasFilterSelections = true;
+class ProjectsCtrl {
+  constructor($log, UserService, SessionService, $state, ProjectService, MessageModal, $stateParams, ConfirmationDialog, ToastrUtil, TransferModal, $rootScope) {
+    this.$log = $log;
+    this.UserService = UserService;
+    this.SessionService = SessionService;
+    this.$state = $state;
+    this.ProjectService = ProjectService;
+    this.MessageModal = MessageModal;
+    this.$stateParams = $stateParams;
+    this.ConfirmationDialog = ConfirmationDialog;
+    this.ToastrUtil = ToastrUtil;
+    this.TransferModal = TransferModal;
+    this.$rootScope = $rootScope;
+  }
 
-  this.ToastrUtil = ToastrUtil;
+  $onInit(){
+    this.user = this.UserService.currentUser();
+    this.totalItems = 0;
+    this.indexStart = 0;
+    this.indexEnd = 0;
+    this.itemsPerPage = 50;
+    this.currentPage = 1;
+    this.$rootScope.showGlobalLoadingMask = true;
+    this.projects = [];
+
+    this._operationsConst = {
+      assess: 'ASSESS',
+      revert: 'REVERT',
+      delete: 'DELETE',
+      transfer: 'TRANSFER'
+    };
+
+    this.recommendationConst = {
+      'RecommendApproval': 'Recommend Approve',
+      'RecommendRejection': 'Recommend Reject'
+    };
+
+    this.subStatusConst = {
+      'ApprovalRequested': 'Approval Requested',
+      'UnapprovedChanges': 'Unapproved Changes',
+      'PaymentAuthorisationPending': 'Payment Authorisation Pending',
+      'AbandonPending': 'Abandon Pending'
+    };
 
 
-  this._operationsConst = {
-    assess: 'ASSESS',
-    revert: 'REVERT',
-    delete: 'DELETE'
-  };
+    this.canViewRecommendations = this.UserService.hasPermission('proj.view.recommendation');
+    this.groupedFilterDropdownItems = this.ProjectService.filterDropdownItems(this.canViewRecommendations, this.projectStates);
+    let filterDropdownItems = this.flatCheckboxes(this.groupedFilterDropdownItems);
+    filterDropdownItems.forEach(f => f.collapsed = true);
 
-  this.recommendationConst = {
-    'RecommendApproval': 'Recommend Approve',
-    'RecommendRejection': 'Recommend Reject'
-  };
+    this.defaultFilter = angular.copy(filterDropdownItems);
+    this.filterDropdownItems = this.applyCachedStatusFiltersState(filterDropdownItems);
+    this.initProgrammesDropdown();
+    this.initTemplatesDropdown();
 
-  this.subStatusConst = {
-    'ApprovalRequested': 'Approval Requested',
-    'UnapprovedChanges': 'Unapproved Changes',
-    'PaymentAuthorisationPending': 'Payment Authorisation Pending',
-    'AbandonPending': 'Abandon Pending'
-  };
+    this.canAssess = this.UserService.hasPermission('proj.assess');
+    this.canCreate = this.UserService.hasPermissionStartingWith('proj.create');
+    this.canTransfer = this.UserService.hasPermissionStartingWith('proj.transfer');
 
-  const defaultFilterState = {
-    active: true,
-    activeUnapprovedChanges: true,
-    activeApprovalRequested: true,
-    activePaymentAuthorisationPending: true,
-    activeAbandonPending: true,
-    assess: true,
-    assessRecommendApprove: true,
-    assessRecommendReject: true,
-    closed: false,
-    draft: true,
-    returned: true,
-    submitted: true,
-  };
 
-  this.saveFilterState = (filterDropdownItems) => {
-    let filterState = {};
-    _.forEach(filterDropdownItems, (filter) => {
-      filterState[filter.name] = filter.model;
+    this.searchOptions = this.ProjectService.searchOptions();
+
+    this.byProjectOption = _.find(this.searchOptions, {name: 'title'});
+    this.byProgrammeOption = _.find(this.searchOptions, {name: 'programmeName'});
+    this.byOrganisationOption = _.find(this.searchOptions, {name: 'organisationName'});
+
+    let projectsSearchState = this.getSearchParams();
+
+    if (projectsSearchState.organisationName) {
+      this.selectedSearchOption = this.byOrganisationOption;
+    } else if (projectsSearchState.programmeName) {
+      this.selectedSearchOption = this.byProgrammeOption;
+    } else {
+      this.selectedSearchOption = this.byProjectOption;
+    }
+    // this is used as a boolean  to determine whether we are in a search context ...
+    this.searchText = projectsSearchState.title || projectsSearchState.organisationName || projectsSearchState.programmeName;
+
+    // ... whereas this is used as the search text model
+    this.searchTextModel = this.searchText;
+    this.watchingProject = this.watchingProject == null ? false : this.watchingProject;
+    this.getProjects(true);
+  }
+
+  saveProjectStatusesToCache() {
+    let filterState = this.SessionService.getProjectsFilterState();
+    _.forEach(this.filterDropdownItems, (filter) => {
+      filterState[filter.name] = _.pick(filter, ['model', 'collapsed']);
     });
-    SessionService.setProjectsFilterState(filterState);
+    this.SessionService.setProjectsFilterState(filterState);
   };
 
-  this.applyFilterState = (filterDropdownItems) => {
-    let filterState = SessionService.getProjectsFilterState();
+  saveProgrammesToCache() {
+    let filterState = this.SessionService.getProjectsFilterState();
+    filterState.programmes = this.getSelectedCheckboxes(this.programmesDropdown);
+    filterState.templates = this.getSelectedCheckboxes(this.templatesDropdown);
+    this.SessionService.setProjectsFilterState(filterState);
+  };
+
+
+  applyCachedStatusFiltersState(filterDropdownItems) {
+    let filterState = this.SessionService.getProjectsFilterState();
     _.forEach(filterDropdownItems, (filter) => {
-      filter.model = _.isBoolean(filterState[filter.name]) ? filterState[filter.name] : defaultFilterState[filter.name];
+      if (_.isBoolean((filterState[filter.name] || {}).model) || _.isBoolean((filterState[filter.name] || {}).collapsed)) {
+        filter.model = filterState[filter.name].model;
+        filter.collapsed = filterState[filter.name].collapsed;
+      }
     });
     return filterDropdownItems;
   };
 
-  this.clearSearch = function () {
+  clearSearch() {
     this.setSearchParams({});
-    $state.go($state.current, $stateParams, {reload: true});
+    this.$state.go(this.$state.current, this.$stateParams, {reload: true});
   };
 
-  this.hasUrlParameter = function (){
-    return Object.keys($stateParams).some(key => $stateParams[key]);
+  hasUrlParameter () {
+    return Object.keys(this.$stateParams).some(key => this.$stateParams[key]);
   };
 
-  this.getSearchParams = function (){
-    if(this.hasUrlParameter()){
-      return $stateParams;
+  getSearchParams() {
+    if (this.hasUrlParameter()) {
+      return this.$stateParams;
     }
-    return SessionService.getProjectsSearchState();
+    return this.SessionService.getProjectsSearchState();
   };
 
-  this.setSearchParams = function (searchParams){
+  setSearchParams(searchParams) {
     searchParams = searchParams || {};
-    Object.keys($stateParams).forEach(key => $stateParams[key] = searchParams[key]);
-    SessionService.setProjectsSearchState(searchParams);
+    Object.keys(this.$stateParams).forEach(key => this.$stateParams[key] = searchParams[key]);
+    this.SessionService.setProjectsSearchState(searchParams);
   };
 
+  flatCheckboxes(groupedCheckbox) {
+    let checkboxes = [];
+    this.traverseCheckboxes(groupedCheckbox, (c) => checkboxes.push(c));
+    return checkboxes;
+  };
 
-  const canViewRecommendations = UserService.hasPermission('proj.view.recommendation');
-  let filterDropdownItems = ProjectService.filterDropdownItems(canViewRecommendations);
+  traverseCheckboxes(groupedCheckboxes, callback) {
+    (groupedCheckboxes || []).forEach(checkbox => {
+      if (checkbox.items && checkbox.items.length) {
+        this.traverseCheckboxes(checkbox.items, callback);
+      } else {
+        callback(checkbox);
+      }
+    })
+  };
 
+  getSelectedCheckboxes(checkboxesDropdown) {
+    const selections = checkboxesDropdown.reduce((selectedValues, item) => {
+      if (item.model) {
+        selectedValues.push(item.id)
+      }
+      return selectedValues;
+    }, []);
+    return selections;
+  };
 
-  this.filterDropdownItems = this.applyFilterState(filterDropdownItems);
+  initProgrammesDropdown() {
+    let selections = [];
+    if (this.$stateParams.programmeId) {
+      selections.push(this.$stateParams.programmeId);
+    } else {
+      selections = (this.SessionService.getProjectsFilterState() || {}).programmes || [];
+    }
 
+    let programmeDropdown = _.filter(this.allProgrammes, (p) => {
+      return p.status != 'Abandoned';
+    });
 
-  this.canAssess = UserService.hasPermission('proj.assess');
-  this.canRevert = false; // _.includes(permissions, 'proj.revert');
-  this.canDelete = false; // _.includes(permissions, 'proj.delete');
+    this.programmesDropdown = _.map(programmeDropdown, p => {
+      return {
+        id: p.id,
+        label: p.name,
+        model: selections.length ? selections.indexOf(p.id) !== -1 : p.model
+      }
+    });
+  };
 
-  this.searchOptions = ProjectService.searchOptions();
+  initTemplatesDropdown() {
+    let selections = [];
+    if (this.$stateParams.templateId) {
+      selections.push(this.$stateParams.templateId);
+    } else {
+      selections = (this.SessionService.getProjectsFilterState() || {}).templates || [];
+    }
 
-  let projectsSearchState = this.getSearchParams();
-  console.log('search model', projectsSearchState)
-  if (projectsSearchState.programmeName) {
-    this.selectedSearchOption = this.searchOptions[1];
-  }
-  else if (projectsSearchState.organisationId) {
-    this.selectedSearchOption = this.searchOptions[2];
-  }
-  else {
-    this.selectedSearchOption = this.searchOptions[0];
-  }
-  // this is used as a boolean  to determine whether we are in a search context ...
-  this.searchText = projectsSearchState.title || +projectsSearchState.organisationId || projectsSearchState.programmeName;
+    let templates = [];
+    this.allProgrammes.forEach(programme => {
+      if (programme.status !== 'Abandoned') {
+        programme.templates.forEach(template => {
+          templates.push(template);
+        });
+      }
+    });
 
-  // ... whereas this is used as the search text model
-  this.searchTextModel = this.searchText;
+    templates = _.sortBy(_.uniqBy(templates, 'id'), 'name');
 
-  this.select = function (searchOption) {
+    this.templatesDropdown = _.map(templates, t => {
+      return {
+        id: t.id,
+        label: t.name,
+        model: selections.length ? selections.indexOf(t.id) !== -1 : t.model
+      }
+    });
+  };
+
+  select(searchOption) {
     this.searchTextModel = null;
     this.selectedSearchOption = searchOption;
-    $log.log('this.selectedSearchOption', searchOption)
   };
 
-  this.search = function () {
+  search () {
     this.setSearchParams({
       [this.selectedSearchOption.name]: this.searchTextModel
     });
-    $state.go($state.current, $stateParams, {reload: true});
+    this.$state.go(this.$state.current, this.$stateParams, {reload: true});
   };
 
-
-
-
-  this.clearFiltersAndSearch = () => {
-    SessionService.clearProjectsState();
+  clearFiltersAndSearch() {
+    this.SessionService.clearProjectsState();
     this.clearSearch();
   };
 
-  this.getProjects = () => {
-    this.projects = [];
-    this.loading = true;
-    let projectsSearchState = this.getSearchParams();
-    // Object.assign(projectsSearchState, $stateParams);
-    ProjectService.getAllProjects(projectsSearchState.title, projectsSearchState.organisationId, projectsSearchState.programmeId, projectsSearchState.programmeName)
-      .then(data => {
-        this.loading = false;
-        this.projects = data;
-        this.updateFilters();
-      })
-      .catch(err => {
-        $log.error(err);
-      })
-      .finally(() => {
-        this.loading = false;
-      });
+  getStateParam(status, substatus) {
+    return substatus ? `${status}:${substatus}` : status;
   };
 
-  this.getProjects();
+  getStateParams(statusCheckbox) {
+    let states = [];
+    if (statusCheckbox.projectRecommentationKeys) {
+      statusCheckbox.projectRecommentationKeys.forEach(recommendationKey => {
+        states.push(this.getStateParam(statusCheckbox.projectStatusKey, recommendationKey));
+      })
+    } else if (statusCheckbox.projectSubStatusKeys && statusCheckbox.projectSubStatusKeys.length) {
+      statusCheckbox.projectSubStatusKeys.forEach(subStatus => {
+        states.push(this.getStateParam(statusCheckbox.projectStatusKey, subStatus));
+      })
+    } else {
+      states.push(this.getStateParam(statusCheckbox.projectStatusKey));
+    }
+    return states;
+  };
+
+  getSelectedStatuses() {
+    let states = [];
+    let filteredList = [];
+    _.forEach(this.filterDropdownItems, (statusCheckbox) => {
+      if (statusCheckbox.model) {
+        states = states.concat(this.getStateParams(statusCheckbox))
+      }
+    });
+    return states;
+  };
+
+  hasStateCheckboxFilterChanged() {
+    return this.filterDropdownItems.some(checkbox => {
+      let defaultModel = _.find(this.defaultFilter, {name: checkbox.name}).model;
+      return defaultModel != checkbox.model;
+    });
+  };
+
+  onProgrammeSelected() {
+    // deselect all templates
+    _.forEach(this.templatesDropdown, templateDropdown => { templateDropdown.model = false });
+
+    // selecting programmes should result in associated templates to be selected
+    const selectedProgrammes = this.getSelectedCheckboxes(this.programmesDropdown);
+
+    let templatesToBeSelected = [];
+    _.forEach(this.allProgrammes, (programme) => {
+      if (_.includes(selectedProgrammes, programme.id)) {
+        _.forEach(programme.templates, (template) => {
+          templatesToBeSelected.push(template.id);
+        });
+      }
+    });
+
+    _.forEach(this.templatesDropdown, (templateDropdown) => {
+      if (_.includes(templatesToBeSelected, templateDropdown.id)) {
+        templateDropdown.model = true;
+      }
+    });
+
+    // this will trigger the reevaluation of the component, and will result in "Filter applied" / "Deselect all" to be displayed
+    this.templatesDropdown = angular.copy(this.templatesDropdown);
+
+    this.getProjects(true);
+  };
+
+  onWatchedCheckboxClick() {
+    this.getProjects(true);
+  }
+
+  getProjects(showFirstPage) {
+    let projectsSearchState = this.getSearchParams();
+    let page = showFirstPage ? 0 : this.currentPage - 1;
+
+    let states = this.getSelectedStatuses();
+    const selectedProgrammes = this.getSelectedCheckboxes(this.programmesDropdown);
+    const selectedTemplates = this.getSelectedCheckboxes(this.templatesDropdown);
+    this.isDefaultFilterState = !this.hasStateCheckboxFilterChanged();
+    this.isDefaultProgrammeState = !selectedProgrammes.length;
+    this.isDefaultTemplateState = !selectedTemplates.length;
+
+    this.ProjectService.getProjects(
+      projectsSearchState.title,
+      projectsSearchState.organisationName,
+      projectsSearchState.programmeName,
+      states,
+      this.selectedSearchOption.name === this.byProgrammeOption.name ? null : selectedProgrammes,
+      selectedTemplates,
+      this.watchingProject,
+      page)
+      .then(rsp => {
+        if (showFirstPage) {
+          this.currentPage = 1;
+        }
+        this.projects = rsp.data.content;
+        this.totalItems = rsp.data.totalElements;
+
+        _.forEach(this.projects, (project) => {
+          if (!project.fullStatus) {
+            this.setFullStatus(project);
+          }
+        });
+        this.updateAllSelectedCheckBoxState();
+        this.saveProjectStatusesToCache();
+        this.saveProgrammesToCache();
+
+      })
+      .catch(err => {
+        this.$log.error(err);
+      })
+      .finally(() => {
+        this.$rootScope.showGlobalLoadingMask = false;
+      });
+  };
 
   /**
    * Create a new project handler
    */
-  this.createNewProject = () => {
+  createNewProject() {
     if (!this.programmes.length) {
       const modal = MessageModal.show({
         message: 'There are currently no programmes available.'
       });
     } else {
-      $state.go('projects-new', {
+      this.$state.go('projects-new', {
         programmes: this.programmes
       });
     }
@@ -179,44 +365,45 @@ function ProjectsCtrl($log, UserService, SessionService, $state, ProjectService,
   /**
    * Open project
    */
-  this.goToProjectOverview = (id) => {
-    $state.go('project.overview', {
+  goToProjectOverview(id) {
+    this.$state.go('project-overview', {
       'projectId': id
     });
   };
 
-  this.onAllCheckboxChange = () => {
-    _.forEach(this.filteredList, (project) => {
+  onAllCheckboxChange () {
+    _.forEach(this.projects, (project) => {
       project.isSelected = this.allSelected;
     });
   };
-  this.onProjectCheckboxClick = (project) => {
+
+  onProjectCheckboxClick() {
     this.updateAllSelectedCheckBoxState();
   };
-  this.updateAllSelectedCheckBoxState = () => {
-    const trueCount = _.groupBy(this.filteredList, 'isSelected').true;
-    this.allSelected = trueCount && trueCount.length === this.filteredList.length;
+
+  updateAllSelectedCheckBoxState() {
+    const trueCount = _.groupBy(this.projects, 'isSelected').true;
+    this.allSelected = trueCount && trueCount.length === this.projects.length;
   };
 
 
-
-  this.setToAssess = () => {
+  setToAssess() {
     const ids = [];
-    _.map(this.filteredList, (project) => {
+    _.map(this.projects, (project) => {
       if (project.isSelected) {
         ids.push(project.id);
       }
     });
 
     if (ids.length) {
-      ConfirmationDialog.show(
+      this.ConfirmationDialog.show(
         {
           message: 'Are you sure you want to set the selected projects with a status of Submitted to Assess?<br>Only projects with a current status of Submitted can be set to Assess status.',
           approveText: 'SET TO ASSESS',
           dismissText: 'CANCEL'
         }
       ).result.then(() => {
-        return ProjectService.projectBulkOperation(ids, this._operationsConst.assess).then((resp) => {
+        return this.ProjectService.projectBulkOperation(ids, this._operationsConst.assess).then((resp) => {
           const data = resp.data;
           if (data.successCount === ids.length) {
             this.ToastrUtil.success(`${data.successCount} project${data.successCount > 1 ? '(s)' : ''} successfully set to Assess status`);
@@ -231,104 +418,57 @@ function ProjectsCtrl($log, UserService, SessionService, $state, ProjectService,
     }
   };
 
-  this.showActions = () => {
+  transfer() {
+    const projects = [];
+    _.map(this.projects, (project) => {
+      if (project.isSelected) {
+        projects.push(project);
+      }
+    });
+
+    if (projects.length) {
+      this.TransferModal.show(projects).result.then(() => {
+        this.getProjects();
+      });
+    }
+  };
+
+  showActions() {
     // permission check
-    if (this.canAssess || this.canRevert || this.canDelete) {
-      return _.some(this.filteredList, 'isSelected');
+    if (this.canAssess) {// || this.canRevert || this.canDelete) {
+      return _.some(this.projects, 'isSelected');
     }
     return false;
   };
 
-  this.updateFilters = () => {
-    this.activeFilter = [];
-    let filteredList = [];
-    let isDefaultFilterState = true;
-    _.forEach(this.filterDropdownItems, (item) => {
-      if (item.model) {
-        if (item.projectRecommentationKey) {
-          this.activeFilter.push(item.projectStatusKey + item.projectRecommentationKey);
-        } else if (item.projectSubStatusKeys && item.projectSubStatusKeys.length) {
-          item.projectSubStatusKeys.forEach(subStatus => {
-            this.activeFilter.push(item.projectStatusKey + (subStatus || ''));
-          })
-        } else {
-          this.activeFilter.push(item.projectStatusKey);
-        }
-      }
-      if (item.model !== defaultFilterState[item.name]) {
-        isDefaultFilterState = false;
-      }
-    });
-    this.isDefaultFilterState = isDefaultFilterState;
-    this.filterCounts = _.countBy(this.filterDropdownItems, 'model');
-    this.hasFilterSelections = this.filterCounts.true > 0;
 
-    _.forEach(this.projects, (project) => {
-      if (!project.fullStatus) {
-        this.setFullStatus(project);
-      }
-
-      if (this.projectFilter(project)) {
-        filteredList.push(project);
-      } else {
-        project.isSelected = false;
-      }
-    });
-
-    this.filteredList = filteredList;
-    this.showPage(1);
-
-    this.updateAllSelectedCheckBoxState();
-
-    this.saveFilterState(this.filterDropdownItems);
-  };
-
-
-  this.setFullStatus = (project) => {
-    project.fullStatus = project.status;
-    if (this.subStatusConst[project.subStatus]) {
-      project.fullStatus += `: ${this.subStatusConst[project.subStatus]}`
-    } else if (project.status === 'Closed') {
-      project.fullStatus += `: ${project.subStatus || 'Rejected'}`
-    } else if (canViewRecommendations && project.recommendation && project.status === 'Assess') {
+  setFullStatus(project) {
+    project.fullStatus = project.statusName;
+    if (this.subStatusConst[project.subStatusName]) {
+      project.fullStatus += `: ${this.subStatusConst[project.subStatusName]}`
+    } else if (project.statusName === 'Closed') {
+      project.fullStatus += `: ${project.subStatusName || 'Rejected'}`
+    } else if (this.canViewRecommendations && project.recommendation && project.statusName === 'Assess') {
       project.fullStatus += `: ${this.recommendationConst[project.recommendation]}`
+    } else if (project.subStatusName) {
+      project.fullStatus += `: ${project.subStatusName}`
     }
   };
 
-  this.showPage = (pageNumber) => {
-    this.currentPage = pageNumber;
-    this.indexStart = (pageNumber - 1) * this.itemsPerPage;
-    let end = (pageNumber) * this.itemsPerPage;
-    this.indexEnd = (end > this.filteredList.length) ? this.filteredList.length : end;
-    this.projectsPage = this.filteredList.slice(this.indexStart, this.indexEnd);
-  };
-
-  this.projectFilter = (project) => {
-    const count = this.filterCounts;
-    if (count.false === this.filterDropdownItems.length) {
-      return false;
-    } else if (count.true === this.filterDropdownItems.length) {
-      return true;
-    } else {
-      let projectKey = project.status;
-      if (project.status === 'Assess') {
-        projectKey += (project.recommendation || '');
-      }
-      if (['Active', 'Closed'].some(status => status === project.status)) {
-        projectKey += (project.subStatus || '');
-      }
-      return this.activeFilter.indexOf(projectKey) !== -1;
-    }
-  };
-  this.updateFilters();
+  isAnyFilterApplied() {
+    return this.searchText || !this.isDefaultFilterState || !this.isDefaultProgrammeState || !this.isDefaultTemplateState
+  }
 }
 
-// angular.module('GLA').controller('ProjectsCtrl', ProjectsCtrl);
+ProjectsCtrl.$inject = ['$log', 'UserService', 'SessionService', '$state', 'ProjectService', 'MessageModal', '$stateParams', 'ConfirmationDialog', 'ToastrUtil', 'TransferModal', '$rootScope'];
+
 angular.module('GLA')
   .component('projectsPage', {
     templateUrl: 'scripts/pages/projects/projects.html',
     bindings: {
-      programmes: '<'
+      programmes: '<',
+      allProgrammes: '<',
+      projectStates: '<'
     },
     controller: ProjectsCtrl
   });

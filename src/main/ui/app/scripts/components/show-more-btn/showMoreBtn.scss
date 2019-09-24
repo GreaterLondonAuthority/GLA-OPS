@@ -1,0 +1,12 @@
+show-more-btn {
+  display: block;
+  color: $btn-primary-bg;
+  cursor: pointer;
+  font-family: $font-family-bolder;
+  .glyphicon{
+    margin-left: 2px;
+  }
+  &:hover {
+    color: $btn-primary-hover;
+  }
+}

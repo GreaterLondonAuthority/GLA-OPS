@@ -22,8 +22,13 @@
    }
 
 class ProjectDetailsChangeReport {
-  constructor($rootScope, $scope, ReferenceDataService, OrganisationGroupService, ReportService) {
+  constructor(ReferenceDataService, OrganisationGroupService, ReportService) {
+    this.ReferenceDataService = ReferenceDataService;
+    this.OrganisationGroupService = OrganisationGroupService;
+    this.ReportService = ReportService;
+  }
 
+  $onInit(){
 
     // let hasUnapproved = !!this.data.right;
     let left = this.data.left;
@@ -44,15 +49,15 @@ class ProjectDetailsChangeReport {
     }
     this.hiddenState = parseState('hidden', this.template);
 
-    ReferenceDataService.getBoroughs().then((data)=>{
+    this.ReferenceDataService.getBoroughs().then((data)=>{
       this.boroughs = data;
       if(left){
-        left.boroughObj = ReportService.findSelectedBorough(this.boroughs, left.borough);
-        left.ward = ReportService.findSelectedWard(left.boroughObj.wards, left.wardId);
+        left.boroughObj = this.ReportService.findSelectedBorough(this.boroughs, left.borough);
+        left.ward = this.ReportService.findSelectedWard(left.boroughObj.wards, left.wardId);
       }
       if(right){
-        right.boroughObj = ReportService.findSelectedBorough(this.boroughs,right.borough);
-        right.ward = ReportService.findSelectedWard(right.boroughObj.wards, right.wardId);
+        right.boroughObj = this.ReportService.findSelectedBorough(this.boroughs,right.borough);
+        right.ward = this.ReportService.findSelectedWard(right.boroughObj.wards, right.wardId);
       }
     });
 
@@ -60,15 +65,15 @@ class ProjectDetailsChangeReport {
 // left and right are the same
     let organisationGroupId = (left && left.organisationGroupId) || (right && right.organisationGroupId);
     if(organisationGroupId){
-      OrganisationGroupService.findById(organisationGroupId).then((data)=>{
+      this.OrganisationGroupService.findById(organisationGroupId).then((data)=>{
         let organisationGroup = data.data;
         this.organisations = organisationGroup.organisations;
 
         let leadOrg = organisationGroup ? _.find(organisationGroup.organisations, {id: organisationGroup.leadOrganisationId}): null;
         if(left) {
-            left.organisationGroup = organisationGroup;
-            left.orgName = organisationGroup ? organisationGroup.name : this.project.left.organisation.name;
-            left.leadOrg = leadOrg;
+          left.organisationGroup = organisationGroup;
+          left.orgName = organisationGroup ? organisationGroup.name : this.project.left.organisation.name;
+          left.leadOrg = leadOrg;
         }
         if(right){
           right.organisationGroup = organisationGroup;
@@ -100,11 +105,10 @@ class ProjectDetailsChangeReport {
       right: right,
       changes: changes
     };
-
   }
 }
 
-ProjectDetailsChangeReport.$inject = ['$rootScope', '$scope', 'ReferenceDataService', 'OrganisationGroupService', 'ReportService'];
+ProjectDetailsChangeReport.$inject = ['ReferenceDataService', 'OrganisationGroupService', 'ReportService'];
 
 angular.module('GLA')
   .component('projectDetailsChangeReport', {

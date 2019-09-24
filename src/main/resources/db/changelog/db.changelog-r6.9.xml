@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="618" author="ybouhass">
+        <createTable tableName="funding_claims_block">
+            <column name="id" type="INT4">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="619" author="ybouhass">
+        <addColumn tableName="template_block">
+            <column name="funding_claims_periods" type="varchar(1000)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="620" author="ybouhass">
+        <dropColumn tableName="template_block" columnName="funding_claims_periods" />
+
+        <addColumn tableName="template_block">
+            <column name="block_data" type="CLOB" remarks="stores the block data as JSON">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="622" author="ughari">
+        <addColumn tableName="template">
+            <column name="max_projects_for_template" type="INT4"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="623" author="ybouhass">
+        <createSequence sequenceName="funding_claims_entry_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="funding_claims_entry">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="funding_claims_entry_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="original_id" type="INT4" />
+            <column name="block_id" type="INT4" />
+            <column name="academic_year" type="INT4" />
+            <column name="period" type="INT4" remarks="month number for the learning year: 1 to 12, August to July" />
+            <column name="category_id" type="INT4" />
+            <column name="category_name" type="varchar(255)" />
+            <column name="display_order" type="INT4" />
+            <column name="actual_delivery" type="decimal" />
+            <column name="forecast_delivery" type="decimal" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="624" author="cmatias">
+        <dropTable tableName="template_blocks_enabled"/>
+    </changeSet>
+
+</databaseChangeLog>

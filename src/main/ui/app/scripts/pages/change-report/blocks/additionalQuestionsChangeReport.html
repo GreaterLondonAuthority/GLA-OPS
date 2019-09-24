@@ -11,7 +11,7 @@
 <!--</change-report-field>-->
 
 
-<div ng-repeat="item in $ctrl.questions | filter: $ctrl.questionFilter track by item.displayOrder">
+<div ng-repeat="item in $ctrl.questions | filter: $ctrl.questionFilter track by item.questionId">
   <change-report-field
     ng-attr-id="{{item.displayOrder}}"
     ng-class="{'text-area-field': item.isFreeText}"

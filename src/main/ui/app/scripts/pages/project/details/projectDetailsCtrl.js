@@ -8,39 +8,54 @@
 
 import ProjectBlockCtrl from '../ProjectBlockCtrl';
 
+/*
+ * 'null' here means 'organisationGroupId' is missing from the details block JSON body returned by the BE, meaning
+ * its individual bidding arrangement explicitly selected that should appear in the dropdown
+ */
+const INDIVIDUAL_BIDDING_ARRANGEMENT_SELECTED = null;
+
+// -1 here is an arbitrary value different to 'null' to show that the dropdown doesnt have a value selected
+const BIDDING_ARRANGEMENT_NOT_SELECTED = -1;
+
 class ProjectDetailsCtrl extends ProjectBlockCtrl{
   constructor($state, $log, project, template, ProjectService, organisationGroup, $injector, organisationGroups, OrganisationGroupService, boroughs, ProjectDetailsService) {
-    super(project, $injector);
-
-    const orgGroup = organisationGroup;
+    super($injector);
+    this.organisationGroup = organisationGroup;
+    this.organisationGroups = organisationGroups;
     this.$log = $log;
     this.$state = $state;
     this.ProjectService = ProjectService;
     this.OrganisationGroupService = OrganisationGroupService;
     this.ProjectDetailsService = ProjectDetailsService;
+    this.template = template;
+    this.boroughs = boroughs;
+  }
+
+  $onInit(){
+    super.$onInit();
+    // if no organisation group is selected, organisationGroupId value will be 'undefined', which breaks UI form field validation, forcing it null fixes that
+    if (!this.projectBlock.organisationGroupId) {
+      this.projectBlock.organisationGroupId = null;
+    }
 
     //-----TODO review lead org once we have multiple consortiums
     this.organisationGroupsIndividualOption = {
-      id: this.projectBlock.orgSelected ? null : -1,
+      id: this.projectBlock.orgSelected ? INDIVIDUAL_BIDDING_ARRANGEMENT_SELECTED : BIDDING_ARRANGEMENT_NOT_SELECTED,
       name: this.project.organisation.name
     };
-    this.organisationGroups = organisationGroups.slice();
+    this.organisationGroups = this.organisationGroups.slice();
     //We want to preselect 'Individual' option only if it was selected before. Not by default on project creation
     this.organisationGroups.push(this.organisationGroupsIndividualOption);
 
     //-----
 
-    this.updateOrganisationDetails(orgGroup);
+    this.updateOrganisationDetails(this.organisationGroup);
 
-    this.projectId = $state.params.projectId;
-    this.organisations = (organisationGroup || {}).organisations;
-
-    this.template = template;
+    this.projectId = this.$state.params.projectId;
+    this.organisations = (this.organisationGroup || {}).organisations;
 
     //Editable fields
     this.fields =  this.ProjectDetailsService.fields(this.template.detailsConfig);
-
-
 
     this.siteStatuses = [
       'Operational',
@@ -48,11 +63,7 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
       'Vacant (no buildings)'
     ];
 
-    this.$log.log('borough: ', boroughs);
-
-    this.boroughs = boroughs;
-
-    let selectedBorough = _.find(boroughs, {boroughName: this.projectBlock.borough}) || {};
+    let selectedBorough = _.find(this.boroughs, {boroughName: this.projectBlock.borough}) || {};
     this.wards = selectedBorough.wards || [];
   }
 
@@ -64,36 +75,28 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
     if (this.readOnly || this.loading) {
       this.returnToOverview();
     } else {
-      this.submit(form, false);
+      //TODO this shouldn't happen any more with STOP EDITING PATTERN
+      this.submit();
     }
   };
 
   /**
    * Submit
    */
-  submit(form, validate) {
-    if (validate && !form.$valid) return;
+  submit() {
+    if (this.newProjForm && !this.newProjForm.$valid) return;
 
     if (this.existingProjectWithLegacyCode) {
       this.projectBlock.legacyProjectCode = null;
     }
 
-    this.ProjectService.updateProject(this.projectBlock, this.projectId)
-      .then(resp => {
-        this.returnToOverview(this.blockId);
-      })
-      .catch(err => {
-        this.$log.error(err);
-        if (!validate) {
-          this.returnToOverview();
-        }
-      });
+    return this.ProjectService.updateProject(this.projectBlock, this.projectId);
   }
 
   changeBiddingArrangement() {
     this.projectBlock.orgSelected = true;
     this.organisationGroupsIndividualOption.id = null;
-    if (this.projectBlock.organisationGroupId === -1) {
+    if (this.projectBlock.organisationGroupId === BIDDING_ARRANGEMENT_NOT_SELECTED) {
       this.projectBlock.organisationGroupId = null;
 
     }

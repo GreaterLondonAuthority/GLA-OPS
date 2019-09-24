@@ -10,9 +10,9 @@ package uk.gov.london.ops.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.london.ops.domain.template.Contract;
-import uk.gov.london.ops.exception.NotFoundException;
-import uk.gov.london.ops.exception.ValidationException;
 import uk.gov.london.ops.repository.ContractRepository;
+import uk.gov.london.ops.framework.exception.NotFoundException;
+import uk.gov.london.ops.framework.exception.ValidationException;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ContractService {
     }
 
     public Contract find(Integer id) {
-        Contract contract = contractRepository.findOne(id);
+        Contract contract = contractRepository.findById(id).orElse(null);
         if (contract == null) {
             throw new NotFoundException();
         }

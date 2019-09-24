@@ -1,6 +1,6 @@
 <div class="project-units-block">
   <div class="row text-center">
-    <project-header on-back="$ctrl.back()" editable-block="$ctrl">Enter Unit Details</project-header>
+    <project-header on-back="$ctrl.back()" editable-block="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</project-header>
   </div>
   <spinner ng-if="$ctrl.loading"></spinner>
   <form class="form-gla" name="unitsForm" name="units" ng-if="!$ctrl.loading">
@@ -8,7 +8,7 @@
     <div class="row mTop30" vertilize-container>
       <div class="grant">
         <div class="col-xs-3 grant-column" ng-repeat="grant in $ctrl.summaryTiles track by grant.name">
-          <grant-block items="grant.items"><div vertilize>{{ grant.name }}</div></grant-block>
+          <tile items="grant.items"><div vertilize>{{ grant.name }}</div></tile>
         </div>
       </div>
     </div>
@@ -21,7 +21,7 @@
     </div>
     <hr class="mtop40 mbottom0">
 
-    <div class="row mTop30 rent-units" vertilize-container>
+    <div ng-if="$ctrl.showRentUnits" class="row mTop30 rent-units" vertilize-container>
       <section-header subheader="Add profiled unit information for all rent products">Enter Details of Rental Units</section-header>
       <profiled-unit-wizard
         ng-if="!$ctrl.readOnly"
@@ -39,7 +39,7 @@
         class="mtop15"></profiled-unit-table>
       <hr class="mtop40 mbottom0">
     </div>
-    <div class="row mTop30 sales-units" vertilize-container>
+    <div ng-if="$ctrl.showSalesUnits" class="row mTop30 sales-units" vertilize-container>
       <section-header subheader="Add profiled unit information for all sales products">Enter Details of Sales Units</section-header>
       <profiled-unit-wizard
         ng-if="!$ctrl.readOnly"
@@ -51,7 +51,6 @@
       <profiled-unit-table
         units="$ctrl.filteredSalesUnits"
         show-market-types="$ctrl.showSalesMarketTypes"
-        has-first-tranche-sales="!$ctrl.hiddenSalesColumns.firstTrancheSales"
         has-discounted-rate="!$ctrl.hiddenSalesColumns.discountOffMarketValue"
         has-legacy-sales="!$ctrl.hiddenSalesColumns.netWeeklyRent"
         class="mtop15"
@@ -111,7 +110,7 @@
             <div>{{$ctrl.blockData.refurbishedUnits}}</div>
           </td>
           <td style="width:25%" class="display-cell">
-            {{($ctrl.blockData.newBuildUnits * 1) + ($ctrl.blockData.refurbishedUnits * 1)}}
+            {{(($ctrl.blockData.newBuildUnits || 0) * 1) + (($ctrl.blockData.refurbishedUnits || 0)  * 1)}}
           </td>
         </tbody>
       </table>
@@ -247,9 +246,5 @@
       <hr class="mtop40 mbottom0">
     </div>
   </form>
-  <div class="row">
-    <div class="col-xs-12 mtop30 mbottom30 text-center">
-      <button class="btn btn-primary" ng-click="$ctrl.submit()" ng-if="!$ctrl.readOnly">SAVE</button>
-    </div>
-  </div>
+  <project-block-footer editable-block="$ctrl"></project-block-footer>
 </div>

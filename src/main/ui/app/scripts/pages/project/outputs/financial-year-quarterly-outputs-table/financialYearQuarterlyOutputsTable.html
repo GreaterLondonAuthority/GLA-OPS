@@ -1,0 +1,142 @@
+<div class="financial-year-outputs">
+  <table class="table table-bordered table-with-inputs">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>{{$ctrl.categoryTitle}}</th>
+      <th>FORECAST</th>
+      <th>ACTUAL</th>
+      <th>DIFFERENCE</th>
+      <th ng-if="$ctrl.blockConfig.showForecastTotalColumn">FORECAST <span class="text-nowrap">TOTAL £</span></th>
+      <th ng-if="$ctrl.blockConfig.showActualTotalColumn">ACTUAL <span class="text-nowrap">TOTAL £</span></th>
+      <th ng-if="$ctrl.showAdvancePaymentColumn"><span class="text-nowrap">ADVANCED PAYMENT</span> <span class="text-nowrap">BALANCE £</span></th>
+      <th><span ng-if="$ctrl.blockConfig.showClaimableAmountColumn">CLAIMABLE AMOUNT £</span></th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <!-- Quarter row-->
+    <tr class="quarter" ng-repeat-start="quarter in $ctrl.tableData track by $index">
+      <td class="text-nowrap" colspan="8">
+        <toggle-icon collapsed="quarter.collapsed" icon="'triangle'"
+                     on-collapse-change="$ctrl.onCollapseChange(row)"></toggle-icon>
+        <span class="name text-nowrap">Q{{$index + 1}}</span>
+        <span class="pull-right claim-link">
+            <span ng-if="!$ctrl.isEmptyClaimableQuarter(quarter)">
+              <a ng-if="quarter.claimable && !$ctrl.readOnly"
+                 ng-click="$ctrl.showQuarterlyClaimModal(quarter, null);$event.stopPropagation();">Claim </a>
+              <a ng-if="quarter.claim"
+                 ng-click="$ctrl.showQuarterlyClaimModal(quarter, quarter.claim);$event.stopPropagation();">
+                {{quarter.claim.claimStatus}}
+              </a>
+            </span>
+            <div ng-if="$ctrl.isEmptyClaimableQuarter(quarter)">No claim</div>
+          </span>
+      </td>
+    </tr>
+
+    <!-- Month row-->
+    <tr class="month" ng-if="!quarter.collapsed" ng-repeat-start="month in quarter.outputsMonths">
+      <td class="text-nowrap">
+        <toggle-icon collapsed="month.collapsed" icon="'triangle'"
+                     on-collapse-change="$ctrl.onCollapseChange(row)"></toggle-icon>
+        <span class="name text-nowrap">{{$ctrl.monthName(month.month)}}</span>
+      </td>
+      <td colspan="7"></td>
+    </tr>
+
+    <!-- Category row -->
+    <tr class="category" ng-if="!month.collapsed && !quarter.collapsed" ng-repeat="item in month.outputs track by item.config.id">
+      <td class="name">
+        <div class="bolder">{{item.config.category}}<span ng-if="$ctrl.getSubcategory(item)">:</span></div>
+        <div ng-if="$ctrl.getSubcategory(item)">{{$ctrl.getSubcategory(item)}}</div>
+        <div ng-if="$ctrl.selectedRecoveryOutputId === item.config.id && $ctrl.showAdvancePaymentColumn">(Recovery Output)</div>
+      </td>
+
+      <td>
+        <span
+          ng-if="item.forecast && !$ctrl.isQuarterEditable(quarter)">{{$ctrl.OutputsService.formatNumber(item.forecast, item.config.valueType)}}</span>
+        <input
+          aria-label="Outputs forecast cell"
+          change-on-blur="$ctrl.onRowChanged({event: {data: item}})"
+          maxlength="13"
+          ng-if="$ctrl.isQuarterEditable(quarter)"
+          ng-model="item.forecast"
+          number-mask="$ctrl.OutputsService.getUnitPrecision(item.config.valueType)"
+          type="text">
+      </td>
+
+      <td>
+        <span
+          ng-if="(item.actual && !$ctrl.isQuarterEditable(quarter)) || $ctrl.OutputsService.isFutureDate(item.month, item.year)">
+          {{$ctrl.OutputsService.formatNumber(item.actual, item.config.valueType)}}
+        </span>
+        <input
+          aria-label="Outputs actual cell"
+          change-on-blur="$ctrl.onRowChanged({event: {data: item}})"
+          maxlength="13"
+          ng-if="($ctrl.isQuarterEditable(quarter) && !$ctrl.OutputsService.isFutureDate(item.month, item.year))"
+          ng-model="item.actual"
+          number-mask="$ctrl.OutputsService.getUnitPrecision(item.config.valueType)"
+          type="text">
+      </td>
+
+      <td>
+        <span ng-if="item.difference">
+          {{$ctrl.OutputsService.formatDifference(item.difference, item.config.valueType)}}
+        </span>
+      </td>
+
+      <td ng-if="$ctrl.blockConfig.showForecastTotalColumn">{{$ctrl.formatNumber(item.forecastTotal)}}
+      </td>
+      <td ng-if="$ctrl.blockConfig.showActualTotalColumn">{{$ctrl.formatNumber(item.actualTotal)}}
+      </td>
+      <td ng-if="$ctrl.showAdvancePaymentColumn">
+        <span>{{$ctrl.populateAdvancePaymentColumn(item.remainingAdvancePayment,item.config.id)}}</span>
+      </td>
+
+      <td class="delete-btn-container">
+        <span>{{ item.claimableAmount > 0 ? $ctrl.formatNumber(item.claimableAmount) : 0 }}</span>
+        <delete-button
+          ng-click="$ctrl.onDelete({event: {data: item}})"
+          ng-if="$ctrl.isQuarterEditable(quarter)">
+        </delete-button>
+      </td>
+    </tr>
+
+    <!-- Month totals row -->
+    <tr class="month-totals" ng-if="!quarter.collapsed && $ctrl.blockConfig.showTotalProjectOutputsTable" ng-repeat-end>
+      <td>{{$ctrl.monthName(month.month)}} TOTALS</td>
+      <td>{{month.forecastTotal | number}}</td>
+      <td>{{month.actualTotal | number}}</td>
+      <td>{{$ctrl.OutputsService.formatDifference(month.differenceTotal)}}</td>
+      <td ng-if="$ctrl.blockConfig.showForecastTotalColumn">{{$ctrl.formatNumber(month.forecastTotalTotal)}}</td>
+      <td ng-if="$ctrl.blockConfig.showActualTotalColumn">{{$ctrl.formatNumber(month.actualTotalTotal)}}</td>
+      <td ng-if="$ctrl.showAdvancePaymentColumn">-</td>
+      <td><span ng-if="$ctrl.blockConfig.showClaimableAmountColumn">{{$ctrl.formatNumber(month.claimableAmountTotal)}}</span>
+      </td>
+    </tr>
+
+    <!-- Empty Quarter 'Not provided' row -->
+    <tr ng-if="$ctrl.blockConfig.showTotalProjectOutputsTable && !quarter.collapsed && !quarter.outputsMonths.length">
+      <td colspan="4">Not provided</td>
+      <td ng-if="$ctrl.blockConfig.showForecastTotalColumn"></td>
+      <td ng-if="$ctrl.blockConfig.showActualTotalColumn"></td>
+      <td ng-if="$ctrl.showAdvancePaymentColumn"></td>
+      <td><span ng-if="$ctrl.blockConfig.showClaimableAmountColumn"></span>
+      </td>
+    </tr>
+
+    <!-- Quarter totals row -->
+    <tr class="quarter-totals" ng-if="$ctrl.blockConfig.showTotalProjectOutputsTable && quarter.outputsMonths.length" ng-repeat-end>
+      <td>{{quarter.name}} TOTALS</td>
+      <td>{{quarter.forecastTotal | number}}</td>
+      <td>{{quarter.actualTotal | number}}</td>
+      <td>{{$ctrl.OutputsService.formatDifference(quarter.differenceTotal)}}</td>
+      <td ng-if="$ctrl.blockConfig.showForecastTotalColumn">{{$ctrl.formatNumber(quarter.forecastTotalTotal )}}</td>
+      <td ng-if="$ctrl.blockConfig.showActualTotalColumn">{{$ctrl.formatNumber(quarter.actualTotalTotal )}}</td>
+      <td ng-if="$ctrl.showAdvancePaymentColumn">-</td>
+      <td><span ng-if="$ctrl.blockConfig.showClaimableAmountColumn">{{$ctrl.formatNumber(quarter.claimableAmountTotal )}}</span>
+      </td>
+    </tr>
+  </table>
+</div>

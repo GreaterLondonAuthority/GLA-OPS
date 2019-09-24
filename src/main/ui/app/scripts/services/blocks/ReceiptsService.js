@@ -40,19 +40,6 @@ function ReceiptsService($http, config) {
       return $http.put(`${config.basePath}/projects/${projectId}/receipts/${forecastId}`, value);
     },
 
-    /**
-     * Delete the receipt
-     * @param projectId Project id
-     * @param id Receipt id
-     * @returns {*}
-     */
-    delete: (projectId, blockId, ledgerEntryId) => {
-      return $http({
-        url: `${config.basePath}/projects/${projectId}/blocks/${blockId}/ledgerEntry/${ledgerEntryId}`,
-        method: 'DELETE'
-      })
-    },
-
     getReceiptsMetadata(projectId, blockId, categoryCode, yearMonth){
       return $http.get(`${config.basePath}/projects/${projectId}/receiptsMetaData/${blockId}/categoryCode/${categoryCode}/yearMonth/${yearMonth}`);
     }

@@ -1,0 +1,30 @@
+<div class="table-responsive template-blocks">
+  <table class="table table-hover table-bordered blocks">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>DISPLAY ORDER</th>
+      <th>BLOCK TYPE</th>
+      <th>DISPLAY NAME</th>
+      <th>APPEARS ON STATUS</th>
+    </tr>
+    </thead>
+
+    <tbody ng-attr-ui-sortable="$ctrl.sortableOptions" ng-model="$ctrl.blocks">
+    <tr class="cursor-pointer"
+        ang-class="{'ui-sortable-helper': $last}"
+        ng-click="$ctrl.onSelectBlock({event: block})"
+        ng-repeat="block in $ctrl.blocks">
+      <td class="display-order">{{block.displayOrder}}</td>
+      <td class="type">{{block.block}}</td>
+      <td class="name">{{block.blockDisplayName}}</td>
+      <td class="delete-btn-container appears-on-status">{{block.blockAppearsOnStatus}}
+        <delete-button ng-click="$event.stopPropagation();$ctrl.deleteBlock(block);"
+                       ng-if="!$ctrl.readOnly"></delete-button>
+      </td>
+    </tr>
+    <tr class="bolder" ng-if="!$ctrl.blocks.length">
+      <td colspan="4">Not provided</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

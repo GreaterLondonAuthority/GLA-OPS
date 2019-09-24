@@ -10,7 +10,7 @@ import ProjectBlockCtrl from '../../ProjectBlockCtrl';
 
 class DeveloperLedGrantCtrl extends ProjectBlockCtrl{
   constructor($state, $log, project, ProjectService, orderBy, $rootScope, GrantService, ConfirmationDialog, $injector, FeatureToggleService, template){
-    super(project, $injector);
+    super($injector);
 
     this.$state = $state;
     this.$log = $log;
@@ -19,20 +19,25 @@ class DeveloperLedGrantCtrl extends ProjectBlockCtrl{
     this.$rootScope = $rootScope;
     this.GrantService = GrantService;
     this.ConfirmationDialog = ConfirmationDialog;
+    this.FeatureToggleService = FeatureToggleService;
+    this.template = template;
+  }
 
+  $onInit() {
+    super.$onInit();
     this.skipModal = false;
     this.lastRequestId = 0;
 
-    this.data = this.sortByDisplayOrder(this.projectBlock);
+    this.data = this.GrantService.sortTenureTypes(this.projectBlock);
     this.criteriaPreviousValue = this.data.affordableCriteriaMet;
-    this.tenureSummaryDetails = GrantService.developerLedGrantBlock(this.data);
-    this.tenureClaimedDetails =  GrantService.calculateClaimedTenure(this.data);
+    this.tenureSummaryDetails = this.GrantService.developerLedGrantBlock(this.data);
+    this.tenureClaimedDetails =  this.GrantService.calculateClaimedTenure(this.data, this.project);
     this.updateErrors(this.data.validationFailures);
     this.requestsQueue = [];
 
-    this.startOnSiteRestrictionText = template.startOnSiteRestrictionText;
+    this.startOnSiteRestrictionText = this.template.startOnSiteRestrictionText;
 
-    FeatureToggleService.isFeatureEnabled('StartOnSiteRestrictionText').then((resp)=>{
+    this.FeatureToggleService.isFeatureEnabled('StartOnSiteRestrictionText').then((resp)=>{
       this.showStartOnSiteMessage = resp.data && this.data.startOnSiteMilestoneAuthorised && this.startOnSiteRestrictionText;
     });
   }
@@ -44,11 +49,6 @@ class DeveloperLedGrantCtrl extends ProjectBlockCtrl{
     else {
       this.submit();
     }
-  };
-
-  sortByDisplayOrder (tenure) {
-    tenure.tenureTypeAndUnitsEntries = this.orderBy(tenure.tenureTypeAndUnitsEntries, 'tenureType.displayOrder');
-    return tenure;
   };
 
   criteriaChange () {
@@ -89,10 +89,10 @@ class DeveloperLedGrantCtrl extends ProjectBlockCtrl{
 
     let p =  this.ProjectService.updateProjectDeveloperLedGrant(this.project.id, this.cleanRequestData(this.data), !!autosave).then(rsp => {
       if (requestId == this.lastRequestId) {
-        var data = this.sortByDisplayOrder(rsp.data);
+        var data = this.GrantService.sortTenureTypes(rsp.data);
         //Need to merge to preserve focus inside table
         delete data.affordableCriteriaMet;
-        _.merge(this.data, data);
+        _.assign(this.data, data);
         this.tenureSummaryDetails = this.GrantService.developerLedGrantBlock(this.data);
         this.data.validationFailures = data.validationFailures;
         this.updateErrors(data.validationFailures);
@@ -108,11 +108,8 @@ class DeveloperLedGrantCtrl extends ProjectBlockCtrl{
    */
   submit () {
     this.$rootScope.showGlobalLoadingMask = true;
-    this.$q.all(this.requestsQueue).then(results => {
-      this.saveTenure(false, false)
-        .then(() => {
-          this.returnToOverview(this.blockId);
-        });
+    return this.$q.all(this.requestsQueue).then(results => {
+      return this.saveTenure(false, false);
     });
   }
 

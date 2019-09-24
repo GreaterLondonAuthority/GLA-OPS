@@ -8,8 +8,6 @@
     text-align: left;
   }
 
-
-
   .project-table {
     border: none;
     table > thead > tr > th {
@@ -33,9 +31,20 @@
     }
   }
 
+  .watched-filter-box {
+    //margin-left: 5px;
+    margin-top: 27px;
+  }
 
+  checkbox-watched-input {
+    width: 140px;
+    display: block;
+    float: left;
+  }
 
   .actions-panel {
+    margin: 10px 0;
+    padding-top: 10px;
     text-align: left;
     .actions-panel-title{
       padding-left: 5px;
@@ -47,8 +56,9 @@
       font-size: 13px;
     }
   }
-  .dropdown-menu{
-    width: 250px;
+
+  checkbox-filter .dropdown-menu.dropdown-menu{
+    width: 300px;
     background-color: #f7f7f7;
     color: #000;
     li {
@@ -80,4 +90,13 @@
     padding-left: 15px;
     padding-right: 15px;
   }
+
+  pagination {
+    padding-top: 16px;
+  }
+
+  .clear-filter-and-search-box {
+    text-align: right;
+  }
+
 }

@@ -9,6 +9,7 @@ package uk.gov.london.ops.domain.organisation;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 /**
  * A postal address.
@@ -16,7 +17,7 @@ import javax.persistence.Embeddable;
  * Created by sleach on 18/08/2016.
  */
 @Embeddable
-public class Address {
+public class Address implements Serializable {
     
     @Column(name="address1")
     private String address1;

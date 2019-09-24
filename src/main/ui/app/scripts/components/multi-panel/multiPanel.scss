@@ -2,21 +2,40 @@ multi-panel {
   display: block;
   margin: auto;
 
+  .multipanel-container{
+    padding: 20px;
+    position: relative;
+    .btn-edit{
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      margin: 20px;
+    }
+  }
+
   .multi-panel {
     .column {
-      padding: 20px;
       background-color: white;
+      padding: 0;
+      &:not(:last-child){
+        border-right: none;
+        border-bottom: 1px solid $alto-light;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+      }
+
+
     }
 
     .section {
+      padding-top: 5px;
       &:not(:last-child) {
-        border-bottom: 2px solid $alto-light;
-        padding-bottom: 10px;
+        border-bottom: 1px solid $alto-light;
+        padding-bottom: 20px;
         margin-bottom: 20px;
       }
 
       .section-header {
-        font-family: $font-family-default;
         font-size: 20px;
         margin-bottom: 20px;
       }
@@ -43,8 +62,35 @@ multi-panel {
       display: flex;
       justify-content: space-between;
       .column {
-        width: 49.9%;
+        width: 50%;
+        padding-left: 20px;
+        padding-bottom: 0px !important;
+        margin-bottom: 0px !important;
+
+        &:first-child{
+          padding-left: 0;
+          padding-right: 20px;
+        }
+
+        &:not(:last-child){
+          border-right: 1px solid $alto-light;
+          border-bottom: none;
+        }
       }
     }
+  }
+
+  .full-page-section{
+    width: 100%;
+
+    @include when-sm {
+      .field-value{
+        padding-left: 20px;
+      }
+    }
+  }
+
+  mp-field{
+    display: block;
   }
 }

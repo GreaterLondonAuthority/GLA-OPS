@@ -7,7 +7,7 @@
  */
 
 class PendingPaymentsCtrl {
-  constructor($log, PaymentService, UserService, orderByFilter, $state, $stateParams, ToastrUtil, MessageModal, DeclinePaymentsDialog, $anchorScroll, $location, InterestDialog) {
+  constructor($log, PaymentService, UserService, orderByFilter, $state, $stateParams, ToastrUtil, MessageModal, DeclinePaymentsDialog, $anchorScroll, $location, InterestDialog, ConfirmationDialog) {
     this.canViewSapVendorId = UserService.hasPermission('org.view.vendor.sap.id');
     this.PaymentService = PaymentService;
     this.orderByFilter = orderByFilter;
@@ -22,7 +22,10 @@ class PendingPaymentsCtrl {
     this.$anchorScroll = $anchorScroll;
     this.$anchorScroll.yOffset = 45;
     this.InterestDialog = InterestDialog;
+    this.ConfirmationDialog = ConfirmationDialog;
     this.canSetInterest = UserService.hasPermission('reclaim.payments.interest');
+    this.username = UserService.currentUser().username;
+
   }
 
   $onInit() {
@@ -62,21 +65,40 @@ class PendingPaymentsCtrl {
   }
 
   authorisePayments(groupToAuthorise) {
+    console.log('groupToAuthorise', groupToAuthorise);
     this.PaymentService.authoriseGroup(groupToAuthorise.id).then(() =>{
       let paymentType = groupToAuthorise.payments[0].reclaim? 'Reclaim': 'Payment';
       this.ToastrUtil.success(`${paymentType} authorised`);
       _.remove(this.paymentGroups, group => group === groupToAuthorise);
     }).catch(err => {
-      let errorMsg = 'Authorisation failed!';
+      let description = 'Authorisation failed!';
       if (err && err.data && err.data.description) {
-        errorMsg = err.data.description;
+        description = err.data.description;
+        let programmeId = this.getProgrammeIdForMissingRevenueWbsError(err);
+        if(programmeId){
+          description = `WBS Revenue code has not been provided. The WBS Revenue code must be added to the <a ng-click="$dismiss('cancel')"  ui-sref="programme({programmeId: ${programmeId}})">programme associated template</a> by an OPS admin.`;
+        }
       }
-      // `Payment cannot be authorised as the payment amount is greater than the remaining ${payment.source} balance`
-      this.MessageModal.show({
-        message: errorMsg
-      });
-      this.$log.error('failed:', err);
+      this.ConfirmationDialog.warn(description);
     });
+  }
+
+  isMissingRevenueWbsCodeError(err){
+    if (err && err.data && err.data.errors){
+      let wbsError = _.find(err.data.errors, {name: 'REVENUE_WBS_CODE_MISSING'});
+      if(wbsError){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getProgrammeIdForMissingRevenueWbsError(err){
+    if(this.isMissingRevenueWbsCodeError(err)){
+      let programmeField = _.find(err.data.errors, {description: 'programme id'});
+      return (programmeField || {}).name;
+    }
+    return null;
   }
 
   declinePayments(groupToDecline) {
@@ -107,7 +129,8 @@ class PendingPaymentsCtrl {
   }
 
   canAuthoriseGroup(group){
-    return this.canAuthoriseByManagingOrg[group.payments[0].managingOrganisationId];
+    let hasManagingOrganisationId = !! this.canAuthoriseByManagingOrg[group.payments[0].managingOrganisationId];
+    return hasManagingOrganisationId;
   }
 
   openInterestModal(group){
@@ -124,7 +147,7 @@ class PendingPaymentsCtrl {
   }
 }
 
-PendingPaymentsCtrl.$inject = ['$log', 'PaymentService', 'UserService', 'orderByFilter', '$state', '$stateParams', 'ToastrUtil', 'MessageModal', 'DeclinePaymentsDialog', '$anchorScroll', '$location', 'InterestDialog'];
+PendingPaymentsCtrl.$inject = ['$log', 'PaymentService', 'UserService', 'orderByFilter', '$state', '$stateParams', 'ToastrUtil', 'MessageModal', 'DeclinePaymentsDialog', '$anchorScroll', '$location', 'InterestDialog', 'ConfirmationDialog'];
 
 
 angular.module('GLA')

@@ -7,14 +7,20 @@
  */
 package uk.gov.london.ops.domain.organisation;
 
-import uk.gov.london.ops.util.jpajoins.NonJoin;
-
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import uk.gov.london.ops.framework.jpa.NonJoin;
 
 @Entity(name = "v_organisation_summaries")
 @NonJoin("Summary view, ignore join information")
 public class OrganisationSummary implements Serializable {
+
+    public static final Integer GLA_HNL_ID = 10000;
 
     @Id
     private Integer id;
@@ -31,19 +37,21 @@ public class OrganisationSummary implements Serializable {
     @Column(name="managing_organisation_name")
     private String managingOrganisationName;
 
-    @Column(name="email")
-    private String email;
-
     @Column(name="sap_vendor_id")
     private String sapVendorId;
-
-    @Column(name="user_reg_status")
-    @Enumerated(EnumType.STRING)
-    private RegistrationStatus userRegStatus;
 
     @Column(name="status")
     @Enumerated(EnumType.STRING)
     private OrganisationStatus status;
+
+    @Column(name="team_name")
+    private String teamName;
+
+    @Column(name="team_id")
+    private Integer teamId;
+
+    @Column(name="registration_allowed")
+    private Boolean registrationAllowed;
 
     public Integer getId() {
         return id;
@@ -85,14 +93,6 @@ public class OrganisationSummary implements Serializable {
         this.managingOrganisationName = managingOrganisationName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getSapVendorId() {
         return sapVendorId;
     }
@@ -101,15 +101,39 @@ public class OrganisationSummary implements Serializable {
         this.sapVendorId = sapVendorId;
     }
 
-    public RegistrationStatus getUserRegStatus() {
-        return userRegStatus;
-    }
-
-    public void setUserRegStatus(RegistrationStatus userRegStatus) {
-        this.userRegStatus = userRegStatus;
-    }
-
     public OrganisationStatus getStatus() { return status; }
 
     public void setStatus(OrganisationStatus status) { this.status = status; }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public Integer getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(Integer teamId) {
+        this.teamId = teamId;
+    }
+
+    public Boolean getRegistrationAllowed() {
+        return registrationAllowed;
+    }
+
+    public void setRegistrationAllowed(Boolean registrationAllowed) {
+        this.registrationAllowed = registrationAllowed;
+    }
+
+    /**
+     * @return true if the organisation is GLA House and Landing.
+     */
+    @JsonProperty(value = "isGlaHNL", access = JsonProperty.Access.READ_ONLY)
+    public Boolean getIsGlaHNL() {
+        return GLA_HNL_ID.equals(this.getId());
+    }
 }

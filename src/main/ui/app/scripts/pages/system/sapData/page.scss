@@ -1,0 +1,12 @@
+.sap-data {
+  .expanded-content{
+    background-color: $gla-grey;
+    .xml-content{
+      padding: 10px 30px;
+      word-break: break-all;
+    }
+  }
+  .checkbox-container{
+    padding-left: 0;
+  }
+}

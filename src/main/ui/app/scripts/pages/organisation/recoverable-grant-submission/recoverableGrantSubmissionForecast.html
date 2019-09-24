@@ -1,0 +1,212 @@
+<div class="recoverable-grant-submission-forecast">
+  <page-header on-back="$ctrl.stopEditing()" editable-block="$ctrl" stop-editing="true">
+    {{$ctrl.grantSource}} Commitments & Age analysis
+  </page-header>
+
+  <section-header>
+    Forecast {{$ctrl.grantSource}} commitments for {{$ctrl.organisation.name}}
+  </section-header>
+<form name="forecastGrantSubmissionForm">
+  <div class="row no-gutter">
+
+    <div class="col-sm-6 mtop10 mbottom10" ng-if="!$ctrl.totalEntries">
+      <label for="no-spend-data">
+        <input type="checkbox"
+
+               id="no-spend-data"
+               ng-disabled="$ctrl.readOnly"
+               ng-change="$ctrl.autoSave()"
+               ng-model="$ctrl.block.noSpentData"> <span>No forecast commitments expected over the next 3 years</span>
+      </label>
+    </div>
+    <div class="col-sm-6 mtop10 mbottom10" ng-if="$ctrl.totalEntries > 0">
+      <label for="show-all-entries">
+        <input type="checkbox"
+
+               id="show-all-entries"
+               ng-change="$ctrl.showAllEntriesFn()"
+               ng-model="$ctrl.showAllEntries"> <span>Show all</span>
+      </label>
+    </div>
+
+    <div class="col-sm-6 text-right" ng-if="!$ctrl.readOnly && !$ctrl.block.noSpentData && $ctrl.totalCategories > 0">
+      <button ng-click="$ctrl.showGrantIncomeModal()" class="btn btn-secondary btn-md mbottom10">
+        CREATE NEW ENTRY<span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered grant-entries">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th></th>
+        <th colspan="5">YEAR (Total)</th>
+        <th style="width: 20%;">VALUE £</th>
+      </tr>
+      </thead>
+      <tbody ng-repeat="year in $ctrl.block.yearBreakdown">
+
+      <tr ng-click="year.expanded = !year.expanded; $ctrl.showAllEntries = false;" class="bolder">
+        <td class="expandable" ng-if="!year.entries.length"></td>
+        <td class="expandable" ng-if="year.entries.length">
+          <span>
+            <i class="glyphicon glyphicon-triangle-bottom" ng-if="!year.expanded"></i>
+            <i class="glyphicon glyphicon-triangle-top" ng-if="year.expanded"></i>
+          </span>
+        </td>
+        <td colspan="5" >
+          {{year.financialYear | fYear}}
+        </td>
+        <td>
+          {{year.total | currency:'£':0}}
+        </td>
+      </tr>
+      <tr ng-repeat-start="entry in year.entries" class="category-row" ng-if="year.expanded" ng-click="!$ctrl.readOnly && $ctrl.showGrantIncomeModal(entry);">
+        <td></td>
+        <td colspan="5">
+          {{entry.category.name}}
+        </td>
+        <td class="delete-btn-container">
+          {{entry.value | currency:'£':0}}
+          <delete-button
+            ng-if="!$ctrl.readOnly"
+            ng-click="$event.stopPropagation(); $ctrl.deleteRow(entry)">
+          </delete-button>
+        </td>
+      </tr>
+      <tr ng-repeat-end class="comment-row" ng-if="year.expanded" ng-click="!$ctrl.readOnly && $ctrl.showGrantIncomeModal(entry);">
+        <td></td>
+        <td colspan="6"><div class="comment-entry">{{entry.comments}}</div></td>
+
+      </tr>
+      </tbody>
+      <tfoot ng-if="$ctrl.block.yearBreakdown.length" class="separated">
+      <tr>
+        <th></th>
+        <th colspan="5">TOTAL</th>
+        <th class="total">{{$ctrl.block.totalSpent | number}}</th>
+      </tr>
+      </tfoot>
+    </table>
+  </div>
+
+
+
+  <hr class="mtop40">
+
+  <div class="unexpected-unspent-section">
+    <section-header subheader="{{'The amount of '+$ctrl.grantSource+' balance (grant and interest) due to expire in each year as at 31 March '+($ctrl.financialYear + 1)}}">
+      {{$ctrl.grantSource}} by expiration year
+    </section-header>
+
+    <div class="closing-balance-section mtop20 mbottom30">
+      <div class="row">
+        <div class="col-sm-5 closing-balance-text no-padding">Closing balance for {{$ctrl.financialYear | fYear}}</div>
+        <div class="col-sm-5 closing-balance">{{$ctrl.block.closingBalance | currency: '£' : 0}}</div>
+      </div>
+    </div>
+
+    <div class="mtop20 unspent-grant-year0">
+      <label for="unspent-grant-year0">{{$ctrl.grantSource}} expiring in March {{$ctrl.financialYear + 1}}</label>
+      <div class="text-left unspent-grant-explanation-text">
+        Balance of grant and interest remaining in the fund for 3 years and more
+      </div>
+      <div id="unspent-grant-year0">
+        <span>{{$ctrl.block.sumOfTotalUnspentGrantAndInterest | currency:'£':0}}</span>
+      </div>
+    </div>
+
+    <div class="mtop20 unspent-grant-year1">
+      <label for="unspent-grant-year1">{{$ctrl.grantSource}} expiring in March {{$ctrl.financialYear + 2}}</label>
+      <div class="text-left unspent-grant-explanation-text">
+        Balance of grant and interest remaining in the fund for 2 years but fewer than 3 years
+      </div>
+      <div ng-if="$ctrl.readOnly">
+        <span>{{$ctrl.block.unspentGrantYear1 | currency:'£':0}}</span>
+      </div>
+
+      <div ng-if="!$ctrl.readOnly" class="inputUnspentGrant">
+        &pound;&nbsp;
+        <input id="unspent-grant-year1" type="text" name="unspentGrantYear1"
+               class="inputUnspentGrant__input"
+               ng-model="$ctrl.block.unspentGrantYear1"
+               change-on-blur="$ctrl.autoSave()"
+               number-mask="0"
+               maxlength="11"/>
+
+        <div class="error mtop10 mbottom30 text-left"
+             ng-if="forecastGrantSubmissionForm.unspentGrantYear1.$touched && $ctrl.block.unspentGrantYear1 == null">
+          Enter a value of £0 or more.
+        </div>
+      </div>
+    </div>
+
+    <div class="mtop20 unspent-grant-year2">
+      <label for="unspent-grant-year2">{{$ctrl.grantSource}} expiring in March {{$ctrl.financialYear + 3}}</label>
+      <div class="text-left unspent-grant-explanation-text">
+        Balance of grant and interest remaining in the fund for 1 year but fewer than 2 years
+      </div>
+      <div ng-if="$ctrl.readOnly">
+        <span>{{$ctrl.block.unspentGrantYear2 | currency:'£':0}}</span>
+      </div>
+
+      <div ng-if="!$ctrl.readOnly" class="inputUnspentGrant">
+        &pound;&nbsp;
+        <input id="unspent-grant-year2" type="text" name="unspentGrantYear2"
+               class="inputUnspentGrant__input"
+               ng-model="$ctrl.block.unspentGrantYear2"
+               change-on-blur="$ctrl.autoSave()"
+               number-mask="0"
+               maxlength="11"/>
+
+        <div class="error mtop10 mbottom30 text-left"
+             ng-if="forecastGrantSubmissionForm.unspentGrantYear2.$touched && $ctrl.block.unspentGrantYear2 == null">
+          Enter a value of £0 or more.
+        </div>
+      </div>
+    </div>
+
+    <div class="mtop20 unspent-grant-year3">
+      <label for="unspent-grant-year3">{{$ctrl.grantSource}} expiring in March {{$ctrl.financialYear + 4}}</label>
+      <div class="text-left unspent-grant-explanation-text">
+        Balance of grant and interest remaining in the fund for less than 1 year
+      </div>
+      <div ng-if="$ctrl.readOnly">
+        <span>{{$ctrl.block.unspentGrantYear3 | currency:'£':0}}</span>
+      </div>
+
+      <div ng-if="!$ctrl.readOnly" class="inputUnspentGrant">
+        &pound;&nbsp;
+        <input id="unspent-grant-year3" type="text" name="unspentGrantYear3"
+               class="inputUnspentGrant__input"
+               ng-model="$ctrl.block.unspentGrantYear3"
+               change-on-blur="$ctrl.autoSave()"
+               number-mask="0"
+               maxlength="11"/>
+        <div class="error mtop10 mbottom30 text-left"
+             ng-if="forecastGrantSubmissionForm.unspentGrantYear3.$touched && $ctrl.block.unspentGrantYear3 == null">
+          Enter a value of £0 or more.
+        </div>
+      </div>
+    </div>
+
+    <div class="row mtop40 unspent-grant-tally">
+      <label for="unspent-total">Total</label>
+      <div id="unspent-total" class="unspent-grant-tally-number">{{$ctrl.block.unspentGrantTotal | currency:'£':0}}</div>
+
+      <div class="error mtop10 mbottom30 text-left error-closing-balance"
+           ng-if="$ctrl.block.unspentGrantTotal != $ctrl.block.closingBalance">
+        The total funds by expiration year must equal the closing balance. Please amend before submitting
+      </div>
+
+    </div>
+
+
+
+    <div class="mtop30 mbottom30 text-center" ng-if="!$ctrl.readOnly">
+      <button class="btn btn-md btn-primary" ng-click="$ctrl.stopEditing()" ng-if="!$ctrl.readOnly">STOP EDITING<i class="glyphicon glyphicon-edit"></i></button>
+    </div>
+  </div>
+</form>
+</div>

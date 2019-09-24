@@ -8,15 +8,15 @@
 package uk.gov.london.ops.domain.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import uk.gov.london.ops.domain.template.TemplateTenureType;
-import uk.gov.london.ops.exception.ApiErrorItem;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by chris on 13/10/2016.
@@ -42,9 +42,9 @@ public class CalculateGrantBlock extends BaseGrantBlock {
         long totalGrant = 0;
         if (getTenureTypeAndUnitsEntries() != null) {
 
-            for (TenureTypeAndUnits tenureTypeAndUnitsEntry : getTenureTypeAndUnitsEntries()) {
-                if (isRowValid(tenureTypeAndUnitsEntry)) {
-                    totalGrant += this.getTotalGrant(tenureTypeAndUnitsEntry);
+            for (ProjectTenureDetails projectTenureDetailsEntry : getTenureTypeAndUnitsEntries()) {
+                if (isRowValid(projectTenureDetailsEntry)) {
+                    totalGrant += this.getTotalGrant(projectTenureDetailsEntry);
                 }
             }
         }
@@ -53,8 +53,8 @@ public class CalculateGrantBlock extends BaseGrantBlock {
 
 
     @Transient
-    public Long getTotalGrant(TenureTypeAndUnits typeAndUnits) {
-        Long eligibleUnits = new Long(getTotalGrantEligibleUnits(typeAndUnits));
+    public Long getTotalGrant(ProjectTenureDetails typeAndUnits) {
+        Long eligibleUnits = getTotalGrantEligibleUnits(typeAndUnits).longValue();
         return eligibleUnits * typeAndUnits.getTenureType().getTariffRate();
     }
 
@@ -62,15 +62,15 @@ public class CalculateGrantBlock extends BaseGrantBlock {
     public List<TenureSummaryDetails> getTenureSummaryDetails() {
         List<TenureSummaryDetails> details = new ArrayList<>();
 
-        List<TenureTypeAndUnits> list = getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> list = getTenureTypeAndUnitsEntriesSorted();
 
-        for (TenureTypeAndUnits tenureTypeAndUnits : list) {
+        for (ProjectTenureDetails projectTenureDetails : list) {
             TenureSummaryDetails tsd = new TenureSummaryDetails();
-            tsd.setName(tenureTypeAndUnits.getTenureType().getName());
-            if (isRowValid(tenureTypeAndUnits)) {
-                tsd.setGrantEligibleUnits(getTotalGrantEligibleUnits(tenureTypeAndUnits));
-                tsd.setGrantRate(tenureTypeAndUnits.getTenureType().getTariffRate());
-                tsd.setTotalGrant(tsd.getGrantEligibleUnits() * new Long(tsd.getGrantRate()));
+            tsd.setName(projectTenureDetails.getTenureType().getName());
+            if (isRowValid(projectTenureDetails)) {
+                tsd.setGrantEligibleUnits(getTotalGrantEligibleUnits(projectTenureDetails));
+                tsd.setGrantRate(projectTenureDetails.getTenureType().getTariffRate());
+                tsd.setTotalGrant(tsd.getGrantEligibleUnits() * tsd.getGrantRate().longValue());
             } else {
                 tsd.setGrantEligibleUnits(0);
                 tsd.setGrantRate(0);
@@ -84,7 +84,7 @@ public class CalculateGrantBlock extends BaseGrantBlock {
 
     @JsonIgnore
     @Transient
-    protected boolean isRowValid(TenureTypeAndUnits tenureItem) {
+    protected boolean isRowValid(ProjectTenureDetails tenureItem) {
         if (tenureItem.getTotalCost() != null && tenureItem.getTotalUnits() != null && tenureItem.getTotalUnits() != 0 && tenureItem.getTotalCost() != 0) {
             if (tenureItem.getTotalUnits() - (tenureItem.getS106Units() == null ? 0 : tenureItem.getS106Units()) >= 0) {
                 return true;
@@ -96,7 +96,7 @@ public class CalculateGrantBlock extends BaseGrantBlock {
 
     @JsonIgnore
     @Transient
-    public Integer getTotalGrantEligibleUnits(TenureTypeAndUnits tenureItem) {
+    public Integer getTotalGrantEligibleUnits(ProjectTenureDetails tenureItem) {
         if (tenureItem.getTenureType().isZeroUnitEntry()) {
             return 0;
         }
@@ -117,26 +117,28 @@ public class CalculateGrantBlock extends BaseGrantBlock {
 
         // must be at leave one row correctly filled, and other rows empty
         boolean atLeastOneValidRow = false;
-        for (TenureTypeAndUnits tenureTypeAndUnits : this.getTenureTypeAndUnitsEntries()) {
+        for (ProjectTenureDetails projectTenureDetails : this.getTenureTypeAndUnitsEntries()) {
 
-            if (isRowValid(tenureTypeAndUnits)) {
+            if (isRowValid(projectTenureDetails)) {
                 atLeastOneValidRow = true;
             } else {
-                long totalCost = tenureTypeAndUnits.getTotalCost() == null ? 0 : tenureTypeAndUnits.getTotalCost();
-                long s106 = tenureTypeAndUnits.getS106Units() == null ? 0 : tenureTypeAndUnits.getS106Units();
-                long units = tenureTypeAndUnits.getTotalUnits() == null ? 0 : tenureTypeAndUnits.getTotalUnits();
+                long totalCost = projectTenureDetails.getTotalCost() == null ? 0 : projectTenureDetails
+                    .getTotalCost();
+                long s106 = projectTenureDetails.getS106Units() == null ? 0 : projectTenureDetails.getS106Units();
+                long units = projectTenureDetails.getTotalUnits() == null ? 0 : projectTenureDetails
+                    .getTotalUnits();
 
 
                 if (totalCost == 0 && units != 0) {
-                    this.addErrorMessage(String.valueOf(tenureTypeAndUnits.getId()), "totalUnits", "Total cost cannot be zero if units are entered");
+                    this.addErrorMessage(String.valueOf(projectTenureDetails.getId()), "totalUnits", "Total cost cannot be zero if units are entered");
                 }
 
                 if (units == 0 && totalCost != 0) {
-                    this.addErrorMessage(String.valueOf(tenureTypeAndUnits.getId()), "totalCost", "Total units cannot be zero if cost is provided");
+                    this.addErrorMessage(String.valueOf(projectTenureDetails.getId()), "totalCost", "Total units cannot be zero if cost is provided");
                 }
 
                 if (units - s106 < 0) {
-                    this.addErrorMessage(String.valueOf(tenureTypeAndUnits.getId()), "s106Units", "The number of nil grant units must not exceed the total number of units");
+                    this.addErrorMessage(String.valueOf(projectTenureDetails.getId()), "s106Units", "The number of nil grant units must not exceed the total number of units");
                 }
             }
         }
@@ -153,13 +155,13 @@ public class CalculateGrantBlock extends BaseGrantBlock {
 
         CalculateGrantBlock otherCalculateGrantBlock = (CalculateGrantBlock) otherBlock;
 
-        List<TenureTypeAndUnits> thisTenure = this.getTenureTypeAndUnitsEntriesSorted();
-        List<TenureTypeAndUnits> otherTenure = otherCalculateGrantBlock.getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> thisTenure = this.getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> otherTenure = otherCalculateGrantBlock.getTenureTypeAndUnitsEntriesSorted();
 
         // compare each tenure type
         for (int i = 0; i < thisTenure.size(); i++) {
-            TenureTypeAndUnits thisUnits = thisTenure.get(i);
-            TenureTypeAndUnits otherUnits = otherTenure.get(i);
+            ProjectTenureDetails thisUnits = thisTenure.get(i);
+            ProjectTenureDetails otherUnits = otherTenure.get(i);
 
             if (!Objects.equals(thisUnits.getTotalUnits(), otherUnits.getTotalUnits())) {
                 differences.add(new ProjectDifference(thisUnits, "totalUnits"));
@@ -209,44 +211,30 @@ public class CalculateGrantBlock extends BaseGrantBlock {
         }
     }
 
-    @Transient
-    public void initialiseFromTenureTypes(Set<TemplateTenureType> tenureTypes) {
-        HashSet<TenureTypeAndUnits> tenureTypeAndUnitsEntries = new HashSet<>();
-        this.setTenureTypeAndUnitsEntries(tenureTypeAndUnitsEntries);
-        if (tenureTypes != null) {
-            for (TemplateTenureType tenureType : tenureTypes) {
-                TenureTypeAndUnits tenureEntry = new TenureTypeAndUnits(project);
-                tenureTypeAndUnitsEntries.add(tenureEntry);
-                tenureEntry.setTenureType(tenureType);
-                tenureEntry.setS106Units(0);
-                tenureEntry.setTotalUnits(0);
-                tenureEntry.setTotalCost(0L);
-            }
-        }
-    }
+
 
     @Override
-    public Integer calculateTotalUnits(TenureTypeAndUnits tenure) {
+    public Integer calculateTotalUnits(ProjectTenureDetails tenure) {
         return tenure.getTotalUnits();
     }
 
     @Override
-    public Integer calculateNilGrantUnits(TenureTypeAndUnits tenure) {
+    public Integer calculateNilGrantUnits(ProjectTenureDetails tenure) {
         return tenure.getS106Units();
     }
 
     @Override
-    public Long calculateDevCosts(TenureTypeAndUnits tenure) {
+    public Long calculateDevCosts(ProjectTenureDetails tenure) {
         return tenure.getTotalCost();
     }
 
     @Override
-    public Integer calculateGrantPerUnitCost(TenureTypeAndUnits tenure) {
+    public Integer calculateGrantPerUnitCost(ProjectTenureDetails tenure) {
         return tenure.getTenureType().getTariffRate();
     }
 
     @Override
-    public void calculateTotals(TenureTypeAndUnits tenureInfo) {
+    public void calculateTotals(ProjectTenureDetails tenureInfo) {
         if (tenureInfo.getTotalUnits() != null) {
             tenureInfo.setEligibleUnits(getTotalGrantEligibleUnits(tenureInfo));
         }
@@ -270,15 +258,15 @@ public class CalculateGrantBlock extends BaseGrantBlock {
 
         private void calculateTotals() {
             if (getTenureTypeAndUnitsEntries() != null) {
-                for (TenureTypeAndUnits tenureTypeAndUnitsEntry : getTenureTypeAndUnitsEntries()) {
-                    if (tenureTypeAndUnitsEntry.getTotalUnits() != null) {
-                        totalUnits += tenureTypeAndUnitsEntry.getTotalUnits();
+                for (ProjectTenureDetails projectTenureDetailsEntry : getTenureTypeAndUnitsEntries()) {
+                    if (projectTenureDetailsEntry.getTotalUnits() != null) {
+                        totalUnits += projectTenureDetailsEntry.getTotalUnits();
                     }
-                    if (tenureTypeAndUnitsEntry.getS106Units() != null) {
-                        totalS106Units += tenureTypeAndUnitsEntry.getS106Units();
+                    if (projectTenureDetailsEntry.getS106Units() != null) {
+                        totalS106Units += projectTenureDetailsEntry.getS106Units();
                     }
-                    if (tenureTypeAndUnitsEntry.getTotalCost() != null) {
-                        totalCost += tenureTypeAndUnitsEntry.getTotalCost();
+                    if (projectTenureDetailsEntry.getTotalCost() != null) {
+                        totalCost += projectTenureDetailsEntry.getTotalCost();
                     }
                 }
             }
@@ -297,5 +285,9 @@ public class CalculateGrantBlock extends BaseGrantBlock {
         }
     }
 
+    @Override
+    public boolean isBlockRevertable() {
+        return true;
+    }
 
 }

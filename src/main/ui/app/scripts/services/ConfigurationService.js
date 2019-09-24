@@ -25,13 +25,70 @@ function ConfigurationService(config, $http) {
     },
 
     /**
+     * Returns all messages configured by admin
+     * @returns {*}
+     */
+    getMessages() {
+      return $http({
+        url: `${config.basePath}/messages`,
+        method: 'GET'
+      });
+    },
+
+
+    /**
      * Returns 'Coming Soon' message configured by admin
      * @returns {*}
      */
     comingSoonMessage() {
       return $http({
         url: `${config.basePath}/messages/coming-soon`,
-        method: 'GET'
+        method: 'GET',
+        transformResponse: (data, headers, status) => {
+          return data;
+        }
+      });
+    },
+
+    /**
+     * Returns 'system outage' message configured by admin
+     * @returns {*}
+     */
+    systemOutageMessage() {
+      return $http({
+        url: `${config.basePath}/messages/system-outage`,
+        method: 'GET',
+        transformResponse: (data, headers, status) => {
+          return data;
+        }
+      });
+    },
+
+    /**
+     * Returns 'home page' message configured by admin
+     * @returns {*}
+     */
+    homePageMessage() {
+      return $http({
+        url: `${config.basePath}/messages/home-page`,
+        method: 'GET',
+        transformResponse: (data, headers, status) => {
+          return data;
+        }
+      });
+    },
+
+    /**
+     * Returns 'home page' message configured by admin
+     * @returns {*}
+     */
+    getMessage( messageKey) {
+      return $http({
+        url: `${config.basePath}/messages/${messageKey}`,
+        method: 'GET',
+        transformResponse: (data, headers, status) => {
+          return data;
+        }
       });
     },
 
@@ -40,12 +97,17 @@ function ConfigurationService(config, $http) {
      * @param message <{code, text}>
      * @returns {*}
      */
-    updateComingSoonMessage(message) {
+    udpateConfigMessage(message) {
       return $http({
-        url: `${config.basePath}/messages/coming-soon`,
+        url: `${config.basePath}/messages/${message.code}`,
         method: 'PUT',
         data: message
       });
+    },
+
+    isResizeCssPropertySupported() {
+      let textarea = document.createElement('textarea');
+      return textarea.style.resize != undefined;
     }
   }
 }

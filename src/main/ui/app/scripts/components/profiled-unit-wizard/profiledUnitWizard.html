@@ -1,5 +1,5 @@
 <div class="profiled-unit-wizard">
-  <div class="input-container wizzard">
+  <div class="input-container wizzard" ng-class="{'multi-line-labels': $ctrl.UnitsService.LEGACY_SALES_MARKET_TYPE_ID}">
     <div>
       <div class="form-group">
         <label for="{{'tenureType'+$ctrl.wizardType}}">Tenure</label><br/>
@@ -116,7 +116,7 @@
       </div>
     </div>
 
-    <div ng-if="$ctrl.unit.type === 'Sales' && $ctrl.unit.marketType.id !== $ctrl.UnitsService.DISCOUNTED_RATE_MARKET_TYPE_ID && $ctrl.unit.marketType.id !== $ctrl.UnitsService.LEGACY_SALES_MARKET_TYPE_ID" class="first-tranche-sales">
+    <div ng-if="$ctrl.unit.type === 'Sales' && $ctrl.unit.marketType.id !== $ctrl.UnitsService.DISCOUNTED_RATE_MARKET_TYPE_ID" class="first-tranche-sales">
       <div class="form-group">
         <label for="firstTrancheSales">Avg. First Tranche Sales %</label><br/>
         <input
@@ -154,7 +154,7 @@
       </div>
     </div>
 
-    <div ng-if="$ctrl.unit.type === 'Sales'">
+    <div ng-if="$ctrl.unit.type === 'Sales'" class="weekly-service-charge">
       <div class="form-group">
         <label for="weeklyServiceCharge">Avg. Weekly Service Charge £</label><br/>
         <input id="weeklyServiceCharge" ng-model="$ctrl.unit.weeklyServiceCharge" maxlength="14" number-mask="2" class="form-control" placeholder="Enter £"/>

@@ -32,6 +32,18 @@ function SessionService($sessionStorage) {
       $sessionStorage.projectsSearchState = {};
     },
 
+    setProgrammesSearchState(state) {
+      $sessionStorage.programmeSearchState = state;
+    },
+
+    getProgrammeSearchState() {
+      return $sessionStorage.programmeSearchState || {};
+    },
+
+    clearProgrammeSearchState() {
+      $sessionStorage.programmeSearchState = {};
+    },
+
     clearProjectsState() {
       this.resetProjectsFilterState();
       this.clearProjectsSearchState();
@@ -53,6 +65,37 @@ function SessionService($sessionStorage) {
       return $sessionStorage.orgFilter;
     },
 
+    setAuditHistoryFilter(auditHistoryFilter) {
+      $sessionStorage.auditHistoryFilter = auditHistoryFilter;
+    },
+
+    getAuditHistoryFilter(){
+      return $sessionStorage.auditHistoryFilter;
+    },
+
+    setQuestionsFilter(questionsFilter) {
+      $sessionStorage.questionsFilter = questionsFilter;
+    },
+
+    getQuestionsFilter(){
+      return $sessionStorage.questionsFilter;
+    },
+
+    setTemplatesFilter(templateFilter) {
+      $sessionStorage.templateFilter = templateFilter;
+    },
+
+    getTemplatesFilter(){
+      return $sessionStorage.templateFilter;
+    },
+
+    setCollapsedOrgSections(collapsedOrgSections) {
+      $sessionStorage.collapsedOrgSections = collapsedOrgSections;
+    },
+
+    getCollapsedOrgSections(){
+      return $sessionStorage.collapsedOrgSections;
+    },
 
 
     // Payments
@@ -105,7 +148,21 @@ function SessionService($sessionStorage) {
       return $sessionStorage.usersSearchState || {};
     },
 
+    setBannerMessageState(state) {
+      $sessionStorage.bannerMessageState = state;
+    },
 
+    getBannerMessageState() {
+      return $sessionStorage.bannerMessageState;
+    },
+
+    setTemplateBlock(state) {
+      $sessionStorage.templateBlock = state;
+    },
+
+    getTemplateBlock() {
+      return $sessionStorage.templateBlock;
+    },
 
     clear(){
       $sessionStorage.$reset();

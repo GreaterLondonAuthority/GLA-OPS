@@ -59,10 +59,10 @@ public class RequestedAndPaidRecord {
     @Column(name = "project_approved_total")
     Long projectApprovedTotal;
 
-    @Column(name = "total_requested")
+    @Column(name = "total_requested",  updatable=false)
     Long totalRequested;
 
-    @Column(name = "total_approved")
+    @Column(name = "total_approved",  updatable=false)
     Long totalApproved;
 
     @Column(name = "rcgf_paid")
@@ -170,5 +170,13 @@ public class RequestedAndPaidRecord {
 
     public void setIndicativeGrantApproved(Long indicativeGrantApproved) {
         this.indicativeGrantApproved = indicativeGrantApproved;
+    }
+
+    public void setTotalRequested(Long totalRequested) {
+        this.totalRequested = totalRequested;
+    }
+
+    public void setTotalApproved(Long totalApproved) {
+        this.totalApproved = totalApproved;
     }
 }

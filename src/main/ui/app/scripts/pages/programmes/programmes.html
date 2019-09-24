@@ -1,7 +1,6 @@
-<div ng-if="$ctrl.user.loggedOn" class="programmes">
-
+<div class="programmes">
   <page-header class="mbottom10" header="'Programmes'">
-    <ph-right ng-if="$ctrl.user.isAdmin">
+    <ph-right permission permission-only="'prog.manage'">
       <button ui-sref="programmes-new" class="btn btn-primary btn-md" id="newprogrammebtn">
         CREATE NEW<span class="glyphicon glyphicon-plus"></span>
       </button>
@@ -9,36 +8,75 @@
   </page-header>
 
 
+  <well class="row mbottom20 search-container">
+    <div class="col-sm-6 col-md-5 text-search search-filter">
+      <div>Search</div>
+      <search-field options="$ctrl.searchOptions"
+                    selected-option="$ctrl.selectedSearchOption"
+                    search-text="$ctrl.searchText"
+                    on-search="$ctrl.getProgrammeData()"
+                    on-clear="$ctrl.clearSearchText()"></search-field>
+    </div>
+
+    <div class="col-sm-6 col-md-2 search-filter">
+      <div class="text-nowrap">Programme status</div>
+      <checkbox-filter
+        id="programme-status"
+        filter-dropdown-items="$ctrl.programmeStatusDropdown"
+        on-change="$ctrl.getProgrammeData()"></checkbox-filter>
+    </div>
+
+    <div class="col-sm-6 col-md-2 search-filter" ng-if="$ctrl.programmeManagingOrganisationsDropdown.length > 1">
+      <div class="text-nowrap">Managing organisation</div>
+      <checkbox-filter
+        id="programme-managing-organisations"
+        filter-dropdown-items="$ctrl.programmeManagingOrganisationsDropdown"
+        on-change="$ctrl.getProgrammeData()"></checkbox-filter>
+    </div>
+
+    <div class="clear-filter-and-search-box pull-left">
+      <button
+        ng-if="$ctrl.isAnyFilterApplied()"
+        class="action-buttons action-buttons-reset"
+        ng-click="$ctrl.clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset all
+      </button>
+    </div>
+  </well>
 
   <div class="row mtop15 no-gutter">
-    <div class="col-xs-12" ng-show="programmes.length == 0">
+    <div class="col-xs-12" ng-show="$ctrl.programmes.length == 0">
       There are currently no programmes available
     </div>
 
-    <div class="col-xs-12 table-responsive" ng-show="programmes.length > 0">
+    <div class="col-xs-12 table-responsive" ng-show="$ctrl.programmes.length > 0">
       <table class="table table-hover table-bordered table-striped table-selectable-row programmes-table">
         <thead class="thead-inverse uppercase">
         <tr>
-          <th>ID</th>
-          <th>Name</th>
+          <th>Prog ID</th>
+          <th>Prog Name</th>
           <th>Enabled</th>
-          <th>Templates</th>
+          <th>Project types</th>
+          <th>Managing organisation</th>
           <th>Restricted</th>
-          <th>Created by</th>
-          <th>Created date</th>
+          <th>Status</th>
+          <th>Modified by</th>
+          <th>Modified on</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="row in programmes" ng-click="getDetails(row.id)">
+
+        <tr ng-repeat="row in $ctrl.programmes" ui-sref="programme({programmeId: row.id})">
           <td>{{row.id}}</td>
           <td>{{row.name}}</td>
           <td>{{row.enabled ? 'Y' : 'N'}}</td>
           <td>
             <div ng-repeat="template in row.templates | orderBy : 'name'" class="row">{{template.name}}</div>
           </td>
+          <td>{{row.managingOrganisationName}}</td>
           <td>{{row.restricted ? 'GLA' : 'All'}}</td>
-          <td>{{row.creatorName}}</td>
-          <td>{{row.createdOn | date: 'MMM d, yyyy'}}</td>
+          <td>{{row.status}}</td>
+          <td>{{row.modifierName}}</td>
+          <td>{{row.modifiedOn | date: 'MMM d, yyyy HH:mm'}}</td>
         </tr>
         </tbody>
       </table>

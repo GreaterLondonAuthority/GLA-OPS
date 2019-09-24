@@ -1,0 +1,5 @@
+<div class="milestone-actions">
+  <a ng-if="$ctrl.milestone.isCancelable" ng-click="$ctrl.onClaimCancel({$event:$ctrl.milestone})">Cancel</a>
+  <a ng-if="$ctrl.milestone.isClaimable" ng-click="$ctrl.onClaim({$event:$ctrl.milestone})">Claim</a>
+  <a ng-if="$ctrl.milestone.isRepayable" ng-click="$ctrl.onRepay({$event:$ctrl.milestone})">Repay</a>
+</div>

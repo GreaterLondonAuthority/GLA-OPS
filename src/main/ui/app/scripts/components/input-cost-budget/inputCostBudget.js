@@ -6,28 +6,31 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
 
-InputCostBudgetCtrl.$inject = ['$scope', '$element', '$attrs'];
-
-function InputCostBudgetCtrl($scope, $element, $attrs) {
-  var ctrl = this;
-  this.isSelected = (this.isSelected === true) ? true : false;
-  this.readOnly = (this.readOnly === true) ? true : false;
-
-  this.linkId = this.label.replace('£0 ', '').replace('(', '').replace(')', '').split(' ').join('-');
-
-  this.onCheckboxChange = function() {
-    if(ctrl.readOnly) return;
-    this.value = !!ctrl.isSelected ? this.value : null;
+class InputCostBudgetCtrl {
+  constructor() {
   }
 
-  this.onSelectedChange = function() {
-    if(ctrl.readOnly) return;
-    ctrl.isSelected = !ctrl.isSelected;
-    this.value = !!ctrl.isSelected ? this.value : null;
+  $onInit() {
+    this.isSelected = (this.isSelected === true) ? true : false;
+    this.readOnly = (this.readOnly === true) ? true : false;
+
+    this.linkId = this.label.replace('£0 ', '').replace('(', '').replace(')', '').split(' ').join('-');
+  }
+
+  onCheckboxChange() {
+    if (this.readOnly) return;
+    this.value = !!this.isSelected ? this.value : null;
+  }
+
+  onSelectedChange() {
+    if (this.readOnly) return;
+    this.isSelected = !this.isSelected;
+    this.value = !!this.isSelected ? this.value : null;
   }
 }
+
+InputCostBudgetCtrl.$inject = [];
 
 angular.module('GLA')
   .component('inputCostBudget', {

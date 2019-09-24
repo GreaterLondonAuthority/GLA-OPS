@@ -10,7 +10,7 @@ package uk.gov.london.ops.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import uk.gov.london.ops.domain.organisation.*;
 import uk.gov.london.ops.domain.user.Role;
 import uk.gov.london.ops.domain.user.User;
@@ -18,19 +18,23 @@ import uk.gov.london.ops.domain.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface OrganisationSummaryRepository extends JpaRepository<OrganisationSummary, Integer> , QueryDslPredicateExecutor<OrganisationSummary> {
+import static uk.gov.london.common.user.BaseRole.ORG_ADMIN;
 
-    default Page<OrganisationSummary> findAll(User user, String searchText, List<Integer> entityTypes, List<OrganisationStatus> orgStatuses, List<RegistrationStatus> userRegStatuses, Pageable pageable) {
+public interface OrganisationSummaryRepository extends JpaRepository<OrganisationSummary, Integer> , QuerydslPredicateExecutor<OrganisationSummary> {
+
+    default Page<OrganisationSummary> findAll(User user, String searchText, List<Integer> entityTypes, List<OrganisationStatus> orgStatuses, List<RegistrationStatus> userRegStatuses, List<OrganisationTeam> teams, Pageable pageable) {
         List<Integer> organisationIds = new ArrayList<>();
         for (Role role: user.getRoles()) {
-            if (role.isApproved() || Role.ORG_ADMIN.equals(role.getName())) {
+            if (role.isApproved() || ORG_ADMIN.equals(role.getName())) {
                 organisationIds.add(role.getOrganisation().getId());
             }
         }
 
         QOrganisationSummary query = new QOrganisationSummary();
-        query.build(organisationIds, searchText, entityTypes, orgStatuses, userRegStatuses);
+        query.build(organisationIds, searchText, entityTypes, orgStatuses, userRegStatuses, teams);
         return findAll(query.getPredicate(), pageable);
     }
+
+    List<OrganisationSummary> getOrganisationSummariesByEntityType(Integer org);
 
 }

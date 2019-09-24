@@ -71,7 +71,7 @@ function PasswordStrengthCtrl(UserService, _, $timeout) {
       UserService.passwordStrength(password).then(function (rsp) {
         if(lastRequestId !== 0) {
           ctrl.strength = config[rsp.data];
-          ctrl.isValid = +rsp.data > 0
+          ctrl.isValid = +rsp.data > 1;
         }
         $timeout.cancel(showLoadingIndicator);
       });

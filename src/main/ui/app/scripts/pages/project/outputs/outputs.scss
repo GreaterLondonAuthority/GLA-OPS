@@ -17,14 +17,7 @@
     margin-left: 20px;
   }
 
-  .section-toggle{
-    user-select: none;
-    .glyphicon {
-      top: 3px;
-      //color: $links;
-    }
-    cursor: pointer;
-  }
+
   //TODO make reusable
   .primary-row{
     cursor: pointer;
@@ -45,4 +38,23 @@
     border: 0;
   }
 
+
+  .assumption-cell{
+    font-family: $font-family-default;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    word-break: break-all;
+    padding: 5px;
+  }
+
+  .expandableTable table .expandableRow .primaryRow.primaryRowFocus {
+    border: none;
+    .focused-text{
+      text-decoration: underline;
+    }
+  }
+
+  .exceed-budget-text{
+    color: $red;
+  }
 }

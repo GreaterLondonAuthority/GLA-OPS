@@ -9,12 +9,13 @@
     <!--
     Change set to drop view will be run before tables are created/updated.
     -->
-    <changeSet id="DROP_VIEWS" author="team" failOnError="false"
+    <changeSet id="DROP_VIEWS" author="team" failOnError="true"
                runAlways="true" runOnChange="true">
         <!--
         DROP VIEWS
         -->
         <sql>
+
             DROP VIEW IF EXISTS v_dashboard_metrics;
             DROP VIEW IF EXISTS v_budget_reporting;
             DROP VIEW IF EXISTS v_budget_report;
@@ -31,14 +32,15 @@
             DROP VIEW IF EXISTS v_questions_1000;
             DROP VIEW IF EXISTS v_add_questions_1000;
             DROP VIEW IF EXISTS v_project_details;
+            DROP VIEW IF EXISTS v_dashboard_key_data_entity_counts;
             DROP VIEW IF EXISTS v_grant_source;
             DROP VIEW IF EXISTS v_design_standards;
             DROP VIEW IF EXISTS v_project_summaries;
             DROP VIEW IF EXISTS v_payment_summaries;
             DROP VIEW IF EXISTS v_project_permissions;
             DROP VIEW IF EXISTS v_total_grant;
-            DROP VIEW IF EXISTS v_project_block_active;
             DROP VIEW IF EXISTS v_organisation_programmes;
+            DROP VIEW IF EXISTS v_organisation_programmes_with_budgets;
             DROP VIEW IF EXISTS v_payments_and_requested_grant_values;
             DROP VIEW IF EXISTS v_requested_grant_values_by_org_and_prog;
             DROP VIEW IF EXISTS v_requested_indicative_values_by_org_and_prog;
@@ -47,12 +49,29 @@
             DROP VIEW IF EXISTS v_outputs_summary;
             DROP VIEW IF EXISTS v_receipt_totals;
             DROP VIEW IF EXISTS v_relevant_project_ledger_entries;
+            DROP VIEW IF EXISTS v_relevant_receipt_entries;
             DROP VIEW IF EXISTS v_current_year_month;
             DROP VIEW IF EXISTS v_associated_projects;
             DROP VIEW IF EXISTS v_start_on_site_status;
+            DROP VIEW IF EXISTS v_associated_sos_and_requested;
+            DROP VIEW IF EXISTS v_strategic_units_approved;
+            DROP VIEW IF EXISTS v_strategic_units_unapproved;
+            DROP VIEW IF EXISTS v_project_block_active;
+            DROP VIEW IF EXISTS v_project_funding_summary;
+            DROP VIEW IF EXISTS v_funding_budget_summary;
+            DROP VIEW IF EXISTS v_project_overview;
+            DROP VIEW IF EXISTS v_project_block_latest;
         </sql>
 
     </changeSet>
 
+    <changeSet id="drop_rule" author="team" dbms="postgresql"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <sql>
+            DROP RULE IF EXISTS delete_remove ON v_project_funding_summary;
+            DROP RULE IF EXISTS delete_remove ON v_budget_summaries;
+            DROP RULE IF EXISTS delete_remove ON v_funding_budget_summary;
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>

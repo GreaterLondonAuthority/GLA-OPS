@@ -11,8 +11,28 @@ import ManageRiskAndIssueCtrl from '../manageRiskAndIssueCtrl'
 class ManageProjectRiskCtrl extends ManageRiskAndIssueCtrl{
   constructor($injector){
     super($injector);
+  }
+
+  $onInit(){
+    this.blockSessionStorage = this.blockSessionStorage || {};
     this.blockSessionStorage.manageProjectRisksTablesState = this.blockSessionStorage.manageProjectRisksTablesState || [];
   }
+
+
+  onMarkCorporateChange(risk) {
+    this.blockSessionStorage.manageProjectRisksTablesState[risk.id] = true;
+    risk.actions.forEach(a => { a.markedForCorporateReporting = risk.markedForCorporateReporting } );
+    this.updateRisk(risk)
+  }
+
+
+
+  updateRisk(risk) {
+    return this.RisksService.updateNewRiskOrIssue(risk.projectId, risk.blockId, risk).then(()=>{
+      return;
+    });
+  }
+
 }
 
 ManageProjectRiskCtrl.$inject = ['$injector'];
@@ -28,7 +48,11 @@ angular.module('GLA')
       editRisk: '&',
       deleteRisk: '&',
       closeRisk: '&',
-      readOnly: '<'
+      readOnly: '<',
+      disableHideClosedFilter: '<',
+      header: '<',
+      projectMarkedCorporate: '<',
+      subheader: '<'
     },
     templateUrl: 'scripts/pages/project/risks/manage-project-risks/manageProjectRisk.html',
     controller: ManageProjectRiskCtrl

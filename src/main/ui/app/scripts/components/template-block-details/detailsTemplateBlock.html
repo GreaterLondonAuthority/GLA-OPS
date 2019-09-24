@@ -1,0 +1,19 @@
+<div class="details-template-block">
+  <div class="form-group" ng-repeat="field in $ctrl.configurableFields track by field.id">
+    <label ng-attr-for="{{field.id}}">{{field.label}}</label>
+
+    <ui-select ng-attr-id="{{field.id}}"
+               ng-attr-name="{{field.id}}"
+               ng-disabled="$ctrl.readOnly"
+               ng-model="$ctrl.template.detailsConfig[field.id]"
+               on-select="$ctrl.TODO($select.selected)"
+               search-enabled="false">
+      <ui-select-match placeholder="Requirement">
+        {{$select.selected.label}}
+      </ui-select-match>
+      <ui-select-choices repeat="requirement.id as requirement in $ctrl.requirementOptions track by requirement.id">
+        <span>{{requirement.label}}</span>
+      </ui-select-choices>
+    </ui-select>
+  </div>
+</div>

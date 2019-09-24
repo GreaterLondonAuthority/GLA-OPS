@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.london.ops.domain.OpsEntity;
 import uk.gov.london.ops.domain.project.GrantType;
 import uk.gov.london.ops.domain.user.User;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -73,6 +73,9 @@ public class OrganisationBudgetEntry implements OpsEntity<Integer> {
 
     @Column(name="approved_on")
     private LocalDate approvedOn;
+
+    @Column(name="comments")
+    private String comments;
 
     public OrganisationBudgetEntry() {}
 
@@ -200,6 +203,14 @@ public class OrganisationBudgetEntry implements OpsEntity<Integer> {
 
     public void setApprovedOn(LocalDate approvedOn) {
         this.approvedOn = approvedOn;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

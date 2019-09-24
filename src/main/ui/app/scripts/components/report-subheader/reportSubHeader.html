@@ -1,0 +1,7 @@
+<div class="row project-general-info mtop25">
+  <div class="col-xs-12 col-sm-4 no-padding text-xs-center text-sm-left last-approved-date">
+    <div ng-hide="!$ctrl.lastApproved || !$ctrl.project.stateModel.approvalRequired">Last Approved {{$ctrl.lastApproved | date: "dd/MM/yyyy"}}</div>
+  </div>
+  <div class="col-xs-12 col-sm-4 programme-name text-center">{{$ctrl.project.programme.name}}</div>
+  <div class="col-xs-12 col-sm-4 no-padding text-xs-center text-sm-right template-name">{{$ctrl.template.name}}</div>
+</div>

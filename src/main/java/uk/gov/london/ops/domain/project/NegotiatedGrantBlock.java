@@ -9,16 +9,17 @@ package uk.gov.london.ops.domain.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.util.StringUtils;
-import uk.gov.london.ops.domain.template.TemplateTenureType;
-import uk.gov.london.ops.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.spe.SimpleProjectExportConstants;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.common.GlaUtils;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -45,7 +46,7 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
     @Transient
     public Long getTotalGrantEligibility() {
         long total = 0L;
-        for (TenureTypeAndUnits tenureTypeAndUnit : this.getTenureTypeAndUnitsEntries()) {
+        for (ProjectTenureDetails tenureTypeAndUnit : this.getTenureTypeAndUnitsEntries()) {
             total += tenureTypeAndUnit.getGrantRequested() == null ? 0L : tenureTypeAndUnit.getGrantRequested();
         }
 
@@ -61,29 +62,31 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
     public List<TenureSummaryDetails> getTenureSummaryDetails() {
         List<TenureSummaryDetails> details = new ArrayList<>();
 
-        List<TenureTypeAndUnits> list = getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> list = getTenureTypeAndUnitsEntriesSorted();
 
-        for (TenureTypeAndUnits tenureTypeAndUnits : list) {
+        for (ProjectTenureDetails projectTenureDetails : list) {
             TenureSummaryDetails tsd = new TenureSummaryDetails();
-            tsd.setName(tenureTypeAndUnits.getTenureType().getName());
-            tsd.setGrantPerUnit(calculateGrantPerUnit(tenureTypeAndUnits));
-            tsd.setUnitDevelopmentCost(calculateUnitDevelopmentCost(tenureTypeAndUnits));
+            tsd.setName(projectTenureDetails.getTenureType().getName());
+            tsd.setGrantPerUnit(calculateGrantPerUnit(projectTenureDetails));
+            tsd.setUnitDevelopmentCost(calculateUnitDevelopmentCost(projectTenureDetails));
             details.add(tsd);
         }
         return details;
     }
 
-    private Integer calculateGrantPerUnit(TenureTypeAndUnits tenureTypeAndUnits) {
-        if (isRowValid(tenureTypeAndUnits)) {
-            return new Long(Math.round(tenureTypeAndUnits.getGrantRequested() / (double) tenureTypeAndUnits.getTotalUnits())).intValue();
+    private Integer calculateGrantPerUnit(ProjectTenureDetails projectTenureDetails) {
+        if (isRowValid(projectTenureDetails)) {
+            return new Long(Math.round(
+                projectTenureDetails.getGrantRequested() / (double) projectTenureDetails.getTotalUnits())).intValue();
         } else {
             return 0;
         }
     }
 
-    private Integer calculateUnitDevelopmentCost(TenureTypeAndUnits tenureTypeAndUnits) {
-        if (isRowValid(tenureTypeAndUnits)) {
-            return new Long(Math.round(tenureTypeAndUnits.getTotalCost() / (double) tenureTypeAndUnits.getTotalUnits())).intValue();
+    private Integer calculateUnitDevelopmentCost(ProjectTenureDetails projectTenureDetails) {
+        if (isRowValid(projectTenureDetails)) {
+            return new Long(Math.round(
+                projectTenureDetails.getTotalCost() / (double) projectTenureDetails.getTotalUnits())).intValue();
         } else {
             return 0;
         }
@@ -91,7 +94,7 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
 
     @JsonIgnore
     @Transient
-    protected boolean isRowValid(TenureTypeAndUnits tenureTypeAndUnit) {
+    protected boolean isRowValid(ProjectTenureDetails tenureTypeAndUnit) {
         boolean valid = false;
         int totalAffordableUnits = tenureTypeAndUnit.getTotalUnits() == null ? 0 : tenureTypeAndUnit.getTotalUnits();
         int supportedUnits = tenureTypeAndUnit.getSupportedUnits() == null ? 0 : tenureTypeAndUnit.getSupportedUnits();
@@ -114,7 +117,7 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
     }
 
     @Override
-    public void calculateTotals(TenureTypeAndUnits tenureInfo) {
+    public void calculateTotals(ProjectTenureDetails tenureInfo) {
         if (tenureInfo.getTotalUnits() != null) {
             tenureInfo.setEligibleUnits(tenureInfo.getTotalUnits());
         }
@@ -137,10 +140,10 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
         validateRows(this.getTenureTypeAndUnitsEntries());
     }
 
-    private void validateRows(Set<TenureTypeAndUnits> tenureTypeAndUnits) {
+    private void validateRows(Set<ProjectTenureDetails> projectTenuresDetails) {
         boolean oneRowValid = false;
 
-        for (TenureTypeAndUnits tenureTypeAndUnit : tenureTypeAndUnits) {
+        for (ProjectTenureDetails tenureTypeAndUnit : projectTenuresDetails) {
 
             long grantRequested = tenureTypeAndUnit.getGrantRequested() == null ? 0L : tenureTypeAndUnit.getGrantRequested();
             int totalAffordableUnits = tenureTypeAndUnit.getTotalUnits() == null ? 0 : tenureTypeAndUnit.getTotalUnits();
@@ -172,12 +175,12 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
     }
 
     @Override
-    public Integer calculateTotalUnits(TenureTypeAndUnits tenure) {
+    public Integer calculateTotalUnits(ProjectTenureDetails tenure) {
         return tenure.getTotalUnits();
     }
 
     @Override
-    public Integer calculateGrantPerUnitCost(TenureTypeAndUnits tenure) {
+    public Integer calculateGrantPerUnitCost(ProjectTenureDetails tenure) {
         return  this.calculateUnitDevelopmentCost(tenure);
     }
 
@@ -187,22 +190,6 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
 
     public void setJustification(String justification) {
         this.justification = justification;
-    }
-
-    @Transient
-    public void initialiseFromTenureTypes(Set<TemplateTenureType> tenureTypes) {
-        HashSet<TenureTypeAndUnits> tenureTypeAndUnitsEntries = new HashSet<>();
-        this.setTenureTypeAndUnitsEntries(tenureTypeAndUnitsEntries);
-        if (tenureTypes !=null) {
-            for (TemplateTenureType tenureType : tenureTypes) {
-                TenureTypeAndUnits tenureEntry = new TenureTypeAndUnits(project);
-                tenureTypeAndUnitsEntries.add(tenureEntry);
-                tenureEntry.setTenureType(tenureType);
-                tenureEntry.setAdditionalAffordableUnits(0);
-                tenureEntry.setS106Units(0);
-                tenureEntry.setTotalCost(0L);
-            }
-        }
     }
 
     @Override
@@ -236,13 +223,13 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
             differences.add(new ProjectDifference(this, "justification"));
         }
 
-        List<TenureTypeAndUnits> thisTenure = this.getTenureTypeAndUnitsEntriesSorted();
-        List<TenureTypeAndUnits> otherTenure = otherBlock.getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> thisTenure = this.getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> otherTenure = otherBlock.getTenureTypeAndUnitsEntriesSorted();
 
         // compare each tenure type
         for (int i = 0; i < thisTenure.size(); i++) {
-            TenureTypeAndUnits thisUnits = thisTenure.get(i);
-            TenureTypeAndUnits otherUnits = otherTenure.get(i);
+            ProjectTenureDetails thisUnits = thisTenure.get(i);
+            ProjectTenureDetails otherUnits = otherTenure.get(i);
 
             if (!Objects.equals(thisUnits.getGrantRequested(), otherUnits.getGrantRequested())) {
                 differences.add(new ProjectDifference(thisUnits, "grantRequested"));
@@ -255,6 +242,9 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
             }
             if (!Objects.equals(thisUnits.getTotalCost(), otherUnits.getTotalCost())) {
                 differences.add(new ProjectDifference(thisUnits, "totalCost"));
+            }
+            if (GlaUtils.compareBigDecimals(thisUnits.getPercentageOfTotalCost(), otherUnits.getPercentageOfTotalCost()) != 0) {
+                differences.add(new ProjectDifference(thisUnits, "percentageOfTotalCost"));
             }
         }
 
@@ -273,6 +263,10 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
 
         if (!Objects.equals(this.getTotals().getTotalSupportedUnits(), otherBlock.getTotals().getTotalSupportedUnits())) {
             differences.add(new ProjectDifference(this, "totals.totalSupportedUnits"));
+        }
+
+        if (GlaUtils.compareBigDecimals(this.getTotals().getPercentageOfTotalCost(), otherBlock.getTotals().getPercentageOfTotalCost()) != 0) {
+            differences.add(new ProjectDifference(this, "totals.percentageOfTotalCost"));
         }
 
         List<TenureSummaryDetails> thisSummary = this.getTenureSummaryDetails();
@@ -301,6 +295,9 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
         private Integer totalUnits = 0;
         private Integer totalSupportedUnits = 0;
         private Long totalCost = 0L;
+        private BigDecimal percentageOfTotalCost = null;
+
+
 
         private Totals() {
             calculateTotals();
@@ -308,19 +305,23 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
 
         private void calculateTotals() {
             if (getTenureTypeAndUnitsEntries() != null) {
-                for (TenureTypeAndUnits tenureTypeAndUnitsEntry : getTenureTypeAndUnitsEntries()) {
-                    if (tenureTypeAndUnitsEntry.getGrantRequested() != null) {
-                        totalGrantRequested += tenureTypeAndUnitsEntry.getGrantRequested();
+                for (ProjectTenureDetails projectTenureDetailsEntry : getTenureTypeAndUnitsEntries()) {
+                    if (projectTenureDetailsEntry.getGrantRequested() != null) {
+                        totalGrantRequested += projectTenureDetailsEntry.getGrantRequested();
                     }
-                    if (tenureTypeAndUnitsEntry.getTotalUnits() != null) {
-                        totalUnits += tenureTypeAndUnitsEntry.getTotalUnits();
+                    if (projectTenureDetailsEntry.getTotalUnits() != null) {
+                        totalUnits += projectTenureDetailsEntry.getTotalUnits();
                     }
-                    if (tenureTypeAndUnitsEntry.getSupportedUnits() != null) {
-                        totalSupportedUnits += tenureTypeAndUnitsEntry.getSupportedUnits();
+                    if (projectTenureDetailsEntry.getSupportedUnits() != null) {
+                        totalSupportedUnits += projectTenureDetailsEntry.getSupportedUnits();
                     }
-                    if (tenureTypeAndUnitsEntry.getTotalCost() != null) {
-                        totalCost += tenureTypeAndUnitsEntry.getTotalCost();
+                    if (projectTenureDetailsEntry.getTotalCost() != null) {
+                        totalCost += projectTenureDetailsEntry.getTotalCost();
                     }
+                }
+                if (totalGrantRequested != 0 && totalCost != 0) {
+                    percentageOfTotalCost = new BigDecimal((totalGrantRequested / (double) (totalCost))  * 100)
+                            .setScale(1, BigDecimal.ROUND_HALF_UP);
                 }
             }
         }
@@ -341,6 +342,13 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
             return totalCost;
         }
 
+        public BigDecimal getPercentageOfTotalCost() {
+            return percentageOfTotalCost;
+        }
     }
 
+    @Override
+    public boolean isBlockRevertable() {
+        return true;
+    }
 }

@@ -24,12 +24,69 @@
   .downloadButton {
     margin-top: 22px;
     color: $white;
-    max-width: 150px;
+    max-width: 200px;
     border-color: transparent;
   }
 
   .form {
     margin-left: -15px;
     margin-right: -15px;
+  }
+
+  .report-description{
+    margin-bottom: 20px;
+  }
+
+  //.ui-select-match-text {
+  //  display: inline-block;
+  //  overflow: hidden;
+  //  text-overflow: ellipsis;
+  //  width: 95%;
+  //}
+  .ui-select-toggle{display:flex;justify-content:space-between;}
+  .ui-select-match-text{overflow-x:hidden; text-overflow:ellipsis;}
+  .reports-status-text{
+    float:left;
+    margin-right: 10px;
+  }
+  spinner{
+    float: left;
+    display: inline-block;
+    min-height: 15px;
+    .glyphicon-refresh-animate{
+      font-size: 12px;
+    }
+  }
+
+  .error{
+    line-height: 1.25;
+    margin-bottom: 120px;
+  }
+
+  .status-col{
+    width: 150px;
+  }
+
+  .dropdown, checkbox-filter{
+    width: 100%;
+  }
+
+  .filter-dropdown-button{
+    line-height: 16px;
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .li-item-label{
+    font-size: 12px;
+  }
+
+  .reset-column{
+    padding-top: 28px;
+    font-family: $font-family-bolder;
+    .glyphicon-remove{
+      top: 2px;
+      padding-right: 5px;
+    }
   }
 }

@@ -1,6 +1,8 @@
 .decline-payement-dialog {
   label{
-    font-family: "Gotham-medium", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+    font-family: $font-family-bolder;
+    font-weight: normal;
+    margin-top: 20px;
   }
   .ui-select-match-text span{
     white-space: nowrap;

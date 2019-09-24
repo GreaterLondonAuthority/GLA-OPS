@@ -1,0 +1,40 @@
+<div class="label-modal">
+  <div class="modal-header text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.assumption.id? 'Edit' : 'Add'}} Assumption</h1>
+  </div>
+  <div class="modal-body text-left">
+    <div class="form-group">
+      <label for="assumption" class="mtop10">Description</label>
+      <textarea id="assumption"
+                ng-trim="false"
+                rows="5"
+                placeholder="Provide details of assumptions for this category, max 200 characters"
+                class="form-control"
+                ng-model="$ctrl.assumption.assumption"
+                maxlength="200"></textarea>
+      <remaining-characters text="$ctrl.assumption.assumption" max="200"></remaining-characters>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$ctrl.$close($ctrl.assumption)"
+          ng-disabled="!$ctrl.assumption.assumption">SAVE</button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

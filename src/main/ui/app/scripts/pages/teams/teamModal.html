@@ -1,0 +1,57 @@
+<div class="milestone-modal">
+  <div class="modal-header text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss('cancel')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.getTitle()}}</h1>
+  </div>
+  <div class="modal-body">
+    <form class="form-gla" role="form" name="modalForm">
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="managing-org">Managing Organisation</label>
+            <ui-select id="managing-org"
+                       ng-disabled="$ctrl.managingOrganisations.length < 2 || $ctrl.team.id"
+                       name="morg"
+                       ng-model="$ctrl.team.organisationId"
+                       on-select="$ctrl.onManagingOrgSelect()"
+                       required
+                       search-enabled="false">
+              <ui-select-match placeholder="Select team">
+                {{$select.selected.name}}
+              </ui-select-match>
+              <ui-select-choices repeat="org.id as org in $ctrl.managingOrganisations track by org.id">
+                <span>{{org.name}}</span>
+              </ui-select-choices>
+            </ui-select>
+            <div class="error-wrapper" role="alert" ng-if="(modalForm.morg.$touched && modalForm.morg.$error.required)">
+              <span class="error">Required</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="team-name">Enter Team Name</label>
+            <input id="team-name"
+                   type="text"
+                   name="name"
+                   class="form-control"
+                   placeholder="Team name"
+                   ng-model="$ctrl.team.name"
+                   maxlength="50"
+                   ng-change="$ctrl.validateTeamName($ctrl.team)"
+                   required/>
+            <div class="error-wrapper" role="alert" ng-if="modalForm.name.$touched && modalForm.name.$invalid || !$ctrl.isUniqueName">
+              <span class="error" ng-if="modalForm.name.$error.required">Required</span>
+              <span class="error" ng-if="!$ctrl.isUniqueName">Team already exist, enter an alternative team name</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$close($ctrl.team)" ng-disabled="modalForm.$invalid || !$ctrl.isUniqueName">SAVE</button>
+    <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$dismiss('cancel')">CANCEL</button>
+  </div>
+</div>

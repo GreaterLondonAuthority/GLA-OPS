@@ -74,7 +74,7 @@ class ProfiledUnitWizardCtrl {
         //'firstTrancheSales' is replaced with 'discountOffMarketValue' for this market type
         requiredFields[6] = 'discountOffMarketValue';
       }else if(this.unit.marketType && this.unit.marketType.id === this.UnitsService.LEGACY_SALES_MARKET_TYPE_ID){
-        requiredFields[6] = 'netWeeklyRent';
+        requiredFields.push('netWeeklyRent');
       }
     } else {
       requiredFields = ['tenure', 'marketType', 'nbBeds', 'unitType', 'nbUnits', 'netWeeklyRent', 'weeklyServiceCharge'];
@@ -90,7 +90,7 @@ class ProfiledUnitWizardCtrl {
 
   add() {
     let data = angular.copy(this.unit);
-    data.tenureId = this.unit.tenure.id;
+    data.tenureId = this.unit.tenure.externalId;
     delete data.tenure;
     this.onAdd({$event: data});
   }

@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface OrganisationProgrammeSummaryRepository extends JpaRepository<OrganisationProgrammeSummary, Integer> {
 
-    @Query(value = "select * from v_organisation_programmes where org_id = ?1", nativeQuery = true)
+    @Query(value = "select * from v_organisation_programmes_with_budgets where org_id = ?1", nativeQuery = true)
     List<OrganisationProgrammeSummary> findAllForOrganisation(Integer organisationId);
 
 }

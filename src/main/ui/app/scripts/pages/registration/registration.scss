@@ -3,31 +3,9 @@
     margin-top: 30px;
     text-align: center;
   }
-
-  .form-gla > .row{
-    margin: 0 -15px;
-  }
 }
 
-@include when-sm {
-  .registration {
-    password-strength {
-      margin-top: 22px;
-    }
 
-    .password-comment{
-      margin-top: -15px;
-    }
-
-    .form-gla > .row{
-      margin: 0 15px;
-    }
-
-    .organisation-name{
-      padding: 7px 0;
-    }
-  }
-}
 
 .thank-you {
   margin-top: 100px;
@@ -48,18 +26,3 @@
   }
 }
 
-.org-code-label{
-  margin-bottom: 0;
-}
-
-.organisation-name {
-  font-family: $font-family-bolder;
-  white-space: nowrap;
-}
-
-/* copy so we can turn it on/off independently  */
-.ng-invalid-copy {
-  border: 1px solid $error;
-  box-shadow: none;
-  /*box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(179, 35, 35, 0.6);*/
-}

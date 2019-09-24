@@ -8,9 +8,9 @@
 package uk.gov.london.ops.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import uk.gov.london.ops.domain.finance.LedgerStatus;
-import uk.gov.london.ops.domain.finance.LedgerType;
 import uk.gov.london.ops.domain.project.SpendType;
+import uk.gov.london.ops.payment.LedgerStatus;
+import uk.gov.london.ops.payment.LedgerType;
 
 import java.math.BigDecimal;
 
@@ -24,19 +24,33 @@ public class ProjectLedgerItemRequest {
 
     public enum LedgerEntryType {CAPITAL_EXPENDITURE, CAPITAL_CREDIT, REVENUE_EXPENDITURE, REVENUE_CREDIT}
 
+    private Integer id;
+
     @JsonIgnore
     private int projectId;
 
     @JsonIgnore
     private int blockId;
 
-    private int year;
+    private Integer year;
 
-    private int month;
+    private Integer month;
 
-    private int day;
+    private Integer day;
+
+    private Integer quarter;
 
     private Integer categoryId;
+
+    private String category;
+
+    private String subCategory;
+
+    private Integer externalId;
+
+    private LedgerType ledgerType;
+
+    private SpendType spendType;
 
     private LedgerEntryType entryType;
 
@@ -44,20 +58,46 @@ public class ProjectLedgerItemRequest {
 
     private BigDecimal actualValue;
 
-    public int getYear() {
+    private BigDecimal value;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
-    public int getMonth() {
+    public Integer getMonth() {
         return month;
     }
 
-    public void setMonth(int month) {
+    public void setMonth(Integer month) {
         this.month = month;
+    }
+
+    public Integer getDay() {
+        return day;
+    }
+
+    public void setDay(Integer day) {
+        this.day = day;
+    }
+
+    public Integer getQuarter() {
+        return quarter;
+    }
+
+    public void setQuarter(Integer quarter) {
+        this.quarter = quarter;
     }
 
     public int getProjectId() {
@@ -84,6 +124,84 @@ public class ProjectLedgerItemRequest {
         this.categoryId = categoryId;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
+    }
+
+    public Integer getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(Integer externalId) {
+        this.externalId = externalId;
+    }
+
+    public LedgerType getLedgerType() {
+        if (ledgerType != null) {
+            return ledgerType;
+        }
+
+        if (entryType == null) {
+            return null;
+        }
+
+        if (LedgerStatus.ACTUAL.equals(getLedgerStatus())) {
+            return LedgerType.PAYMENT;
+        }
+
+        switch (entryType) {
+
+            case CAPITAL_CREDIT:
+            case REVENUE_CREDIT:
+            case CAPITAL_EXPENDITURE:
+            case REVENUE_EXPENDITURE:
+                return LedgerType.PAYMENT;
+
+            default:
+                return null;
+        }
+    }
+
+    public void setLedgerType(LedgerType ledgerType) {
+        this.ledgerType = ledgerType;
+    }
+
+    public SpendType getSpendType() {
+        if (spendType != null) {
+            return spendType;
+        }
+
+        switch (entryType) {
+
+            case CAPITAL_CREDIT:
+            case CAPITAL_EXPENDITURE:
+                return SpendType.CAPITAL;
+
+            case REVENUE_CREDIT:
+            case REVENUE_EXPENDITURE:
+                return SpendType.REVENUE;
+
+            default:
+                return null;
+        }
+    }
+
+    public void setSpendType(SpendType spendType) {
+        this.spendType = spendType;
+    }
+
     public LedgerEntryType getEntryType() {
         return entryType;
     }
@@ -108,12 +226,19 @@ public class ProjectLedgerItemRequest {
         this.actualValue = actualValue;
     }
 
-    public int getDay() {
-        return day;
+    public BigDecimal getValue() {
+        BigDecimal v = value != null ? value : actualValue != null ? actualValue : forecastValue;
+
+        // credits are only positive values
+        if (v != null && (entryType == CAPITAL_EXPENDITURE || entryType == REVENUE_EXPENDITURE)) {
+            v = v.negate();
+        }
+
+        return v;
     }
 
-    public void setDay(int day) {
-        this.day = day;
+    public void setValue(BigDecimal value) {
+        this.value = value;
     }
 
     public String getFullDate() {
@@ -121,60 +246,8 @@ public class ProjectLedgerItemRequest {
     }
 
     @JsonIgnore
-    public SpendType getSpendType() {
-        switch (entryType) {
-
-            case CAPITAL_CREDIT:
-            case CAPITAL_EXPENDITURE:
-                return SpendType.CAPITAL;
-
-            case REVENUE_CREDIT:
-            case REVENUE_EXPENDITURE:
-                return SpendType.REVENUE;
-
-            default:
-                return null;
-        }
-    }
-
-    @JsonIgnore
-    public LedgerType getLedgerType() {
-        if (entryType == null) {
-            return null;
-        }
-
-        if (LedgerStatus.ACTUAL.equals(getLedgerStatus())) {
-            return LedgerType.PAYMENT;
-        }
-
-        switch (entryType) {
-
-            case CAPITAL_CREDIT:
-            case REVENUE_CREDIT:
-            case CAPITAL_EXPENDITURE:
-            case REVENUE_EXPENDITURE:
-                return LedgerType.PAYMENT;
-
-            default:
-                return null;
-        }
-    }
-
-    @JsonIgnore
     public LedgerStatus getLedgerStatus() {
         return actualValue != null ? LedgerStatus.ACTUAL : LedgerStatus.FORECAST;
-    }
-
-    @JsonIgnore
-    public BigDecimal getValue() {
-        BigDecimal value = actualValue != null ? actualValue : forecastValue;
-
-        // credits are only positive values
-        if (value != null && (entryType == CAPITAL_EXPENDITURE || entryType == REVENUE_EXPENDITURE)) {
-            value = value.negate();
-        }
-
-        return value;
     }
 
 }

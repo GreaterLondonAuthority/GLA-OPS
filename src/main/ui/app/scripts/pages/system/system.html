@@ -1,46 +1,48 @@
-<page-header>System Dashboard</page-header>
-<div class="text-center mtop40">
-  <div class="row">
-    <div id="system-description" class="col-xs-10 col-xs-offset-1 system-guidance">
-      The system dashboard, only available to technical administration staff, provides access to a range of technical operations
-      information.
-      <span ngShow="$ctrl.sysInfo.opsApplication['cloud-console-logon-url']" class="system-cloud-console-link">
-        Additional support features are available via the
-        <a target="_blank" ng-href="{{$ctrl.sysInfo.opsApplication['cloud-console-logon-url']}}">cloud infrastructure console</a>.
-      </span>
+<div class="system-page">
+
+  <page-header>System Dashboard</page-header>
+  <div class="text-center mtop40">
+    <div class="row">
+      <div id="system-description" class="col-xs-10 col-xs-offset-1 system-guidance">
+        The system dashboard, only available to technical administration staff, provides access to a range of technical operations
+        information.
+        <span ngShow="$ctrl.sysInfo.opsApplication['cloud-console-logon-url']" class="system-cloud-console-link">
+          Additional support features are available via the
+          <a target="_blank" ng-href="{{$ctrl.sysInfo.opsApplication['cloud-console-logon-url']}}">cloud infrastructure console</a>.
+        </span>
+      </div>
     </div>
-  </div>
-  <multi-panel class="system-console">
-    <well class="column">
-      <div class="section">
-        <div class="section-header">Application Information</div>
-        <mp-field label="'Release'">{{$ctrl.sysInfo.opsApplication.release}}</mp-field>
-        <mp-field label="'Build'">{{$ctrl.sysInfo.opsApplication.build}}</mp-field>
-        <mp-field label="'Built at'">{{$ctrl.sysInfo.build.time | date: $ctrl.dateFormat}}</mp-field>
-        <mp-field label="'Environment'">{{$ctrl.sysInfo.opsApplication.environment}}</mp-field>
-      </div>
-      <div class="section">
-        <div class="section-header">Runtime Information</div>
-        <mp-field label="'Server time'">{{$ctrl.sysInfo.opsApplication['server-time'] | date: $ctrl.dateFormat}}</mp-field>
-        <mp-field label="'Startup time'">{{$ctrl.sysInfo.opsApplication["app-start-time"] | date: $ctrl.dateFormat}}</mp-field>
-        <mp-field label="'Load average'">{{$ctrl.sysMetrics['systemload.average'] | number:1}}</mp-field>
-        <mp-field label="'Processors'">{{$ctrl.sysMetrics['processors'] | number:0}}</mp-field>
-        <mp-field label="'CPU index'">{{$ctrl.sysInfo.cpu_performance.iterations | number:0}}</mp-field>
-        <mp-field label="'Active threads'">{{$ctrl.sysMetrics['threads']}}</mp-field>
-        <mp-field label="'Peak threads'">{{$ctrl.sysMetrics['threads.peak']}}</mp-field>
-        <mp-field label="'Free memory'">{{$ctrl.sysMetrics['mem.free'] | number}} / {{$ctrl.sysMetrics['mem'] | number}} KB</mp-field>
-        <mp-field label="'GC (young)'">{{$ctrl.sysMetrics['gc.ps_scavenge.count']}} ({{$ctrl.sysMetrics['gc.ps_scavenge.time']|number}}ms)</mp-field>
-        <mp-field label="'GC (tenured)'">{{$ctrl.sysMetrics['gc.ps_marksweep.count']}} ({{$ctrl.sysMetrics['gc.ps_marksweep.time']|number}}ms)</mp-field>
-        <mp-field label="'Uptime'">{{$ctrl.sysMetrics['instance.uptime'] | number:0}}ms</mp-field>
-      </div>
-      <div class="section">
-        <div class="section-header">Data Initialiser</div>
-        <mp-field label="'Modules loaded'">{{$ctrl.sysInfo.dataInitialiser.modulesLoaded | number:0}}</mp-field>
-        <mp-field label="'Modules executed'">{{$ctrl.sysInfo.dataInitialiser.modulesExecuted | number:0}}</mp-field>
-        <mp-field label="'Steps executed'">{{$ctrl.sysInfo.dataInitialiser.stepsExecuted | number:0}}</mp-field>
-        <mp-field label="'Errors'">{{$ctrl.sysInfo.dataInitialiser.errors | number:0}}</mp-field>
-      </div>
-      <div class="section">
+    <multi-panel class="system-console">
+      <div class="column">
+        <div class="section">
+          <div class="section-header">Application Information</div>
+          <mp-field label="'Release'">{{$ctrl.sysInfo.opsApplication.release}}</mp-field>
+          <mp-field label="'Build'">{{$ctrl.sysInfo.opsApplication.build}}</mp-field>
+          <mp-field label="'Built at'">{{$ctrl.sysInfo.build.time | date: $ctrl.dateFormat}}</mp-field>
+          <mp-field label="'Environment'">{{$ctrl.sysInfo.opsApplication.environment}}</mp-field>
+        </div>
+        <div class="section">
+          <div class="section-header">Runtime Information</div>
+          <mp-field label="'Server time'">{{$ctrl.sysInfo.opsApplication['server-time'] | date: $ctrl.dateFormat}}</mp-field>
+          <mp-field label="'Startup time'">{{$ctrl.sysInfo.opsApplication["app-start-time"] | date: $ctrl.dateFormat}}</mp-field>
+          <mp-field label="'Load average'">{{$ctrl.sysMetrics['systemload.average'] | number:1}}</mp-field>
+          <mp-field label="'Processors'">{{$ctrl.sysMetrics['processors'] | number:0}}</mp-field>
+          <mp-field label="'CPU index'">{{$ctrl.sysInfo.cpu_performance.iterations | number:0}}</mp-field>
+          <mp-field label="'Active threads'">{{$ctrl.sysMetrics['threads']}}</mp-field>
+          <mp-field label="'Peak threads'">{{$ctrl.sysMetrics['threads.peak']}}</mp-field>
+          <mp-field label="'Free memory'">{{$ctrl.sysMetrics['mem.free'] | number}} / {{$ctrl.sysMetrics['mem'] | number}} KB</mp-field>
+          <mp-field label="'GC (young)'">{{$ctrl.sysMetrics['gc.ps_scavenge.count']}} ({{$ctrl.sysMetrics['gc.ps_scavenge.time']|number}}ms)</mp-field>
+          <mp-field label="'GC (tenured)'">{{$ctrl.sysMetrics['gc.ps_marksweep.count']}} ({{$ctrl.sysMetrics['gc.ps_marksweep.time']|number}}ms)</mp-field>
+          <mp-field label="'Uptime'">{{$ctrl.sysMetrics['instance.uptime'] | number:0}}ms</mp-field>
+        </div>
+        <div class="section data-initialiser">
+          <div class="section-header">Data Initialiser</div>
+          <mp-field label="'Modules loaded'">{{$ctrl.sysInfo.dataInitialiser.modulesLoaded | number:0}}</mp-field>
+          <mp-field label="'Modules executed'">{{$ctrl.sysInfo.dataInitialiser.modulesExecuted | number:0}}</mp-field>
+          <mp-field label="'Steps executed'">{{$ctrl.sysInfo.dataInitialiser.stepsExecuted | number:0}}</mp-field>
+          <mp-field label="'Errors'">{{$ctrl.sysInfo.dataInitialiser.errors | number:0}}</mp-field>
+        </div>
+        <div class="section">
           <div class="section-header">Scheduled Tasks</div>
           <div class="scheduled-tasks" ng-repeat="task in $ctrl.sysInfo.scheduledTasks">
             <mp-field label="'Task'">{{task.key}}</mp-field>
@@ -51,54 +53,110 @@
             <br>
           </div>
         </div>
-    </well>
-    <well class="column">
-      <div class="section">
-        <div class="section-header">Outbound SAP Interface</div>
-        <mp-field label="'SAP payments enabled?'">{{$ctrl.sysInfo.sapInterface.authPaymentEnabled}}</mp-field>
-        <mp-field label="'Last SAP payment run'">{{$ctrl.sysInfo.sapInterface.authPayLastRun | date: $ctrl.dateFormat}}</mp-field>
-        <mp-field label="'Payment executions'">{{$ctrl.sysInfo.sapInterface.authPaymentExecutions}}</mp-field>
+      </div>
+      <div class="column">
+        <div class="section">
+          <div class="section-header">Key Data Values</div>
+          <div ng-repeat="(key,value) in $ctrl.sysInfo.keyData">
+            <mp-field label="key">{{value}}</mp-field>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Outbound SAP Interface</div>
+          <mp-field label="'SAP payments enabled?'">{{$ctrl.sysInfo.sapInterface.authPaymentEnabled}}</mp-field>
+          <mp-field label="'Last SAP payment run'">{{$ctrl.sysInfo.sapInterface.authPayLastRun | date: $ctrl.dateFormat}}</mp-field>
+          <mp-field label="'Payment executions'">{{$ctrl.sysInfo.sapInterface.authPaymentExecutions}}</mp-field>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Inbound SAP Interface</div>
+          <a ui-sref="system-sapData">
+            <mp-field label="'SAP data errors'">{{$ctrl.sysInfo.sapInterface.sapDataTotalErrors}}</mp-field>
+          </a>
+
+          <mp-field label="'SAP data rows'">{{$ctrl.sysInfo.sapInterface.sapDataTotalRows}}</mp-field>
+          <mp-field label="'Local directory'">{{$ctrl.sysInfo.sapInterface.moveItLocalDir}}</mp-field>
+          <mp-field label="'Local files'">{{$ctrl.sysInfo.sapInterface.moveItLocalFiles}}</mp-field>
+          <mp-field label="'Remote directory'">{{$ctrl.sysInfo.sapInterface.moveItRemoteDir}}</mp-field>
+          <mp-field label="'Sync count'">{{$ctrl.sysInfo.sapInterface.moveItSyncCount}}</mp-field>
+          <mp-field label="'Sync paused'">{{$ctrl.sysInfo.sapInterface.moveItSyncPaused}}</mp-field>
+        </div>
+
+        <div class="section">
+          <div class="section-header">SMTP Outbound Email</div>
+          <mp-field label="'Sent emails'">{{$ctrl.sysInfo.emailService.sentEmails}}</mp-field>
+          <mp-field label="'Pending emails'">{{$ctrl.sysInfo.emailService.pendingEmails}}</mp-field>
+          <mp-field label="'SMTP server'">{{$ctrl.sysInfo.emailService.smtpPrimary}}
+            <br/>{{$ctrl.sysInfo.emailService.smtpSecondary}}</mp-field>
+          <mp-field label="'Last send time'">{{$ctrl.sysInfo.emailService.lastSendTime | date: $ctrl.dateFormat}}</mp-field>
+          <mp-field label="'Last poll time'">{{$ctrl.sysInfo.emailService.lastPollTime | date: $ctrl.dateFormat}}</mp-field>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Liquibase Information</div>
+          <mp-field label="'Last executed file'">{{$ctrl.sysInfo.changelogDetails.lastExecutedFileName}}</mp-field>
+          <mp-field label="'Last executed file time'">{{$ctrl.sysInfo.changelogDetails.lastExecutedFileTime | date: $ctrl.dateFormat}}</mp-field>
+          <mp-field label="'Entries'">{{$ctrl.sysInfo.changelogDetails.numberEntries}}</mp-field>
+          <mp-field label="'Not executed'">{{$ctrl.sysInfo.changelogDetails.numberNotExecuted}}</mp-field>
+        </div>
+
+        <div class="section" id="audit-activity">
+          <div class="section-header">Audit Activity</div>
+          <mp-field label="'Total audit events:'">{{$ctrl.sysInfo.auditSummary.numberAuditActivities}}</mp-field>
+          <mp-field label="'Most recent event'">{{$ctrl.sysInfo.auditSummary.mostRecentEventTime | date: $ctrl.dateFormat}}</mp-field>
+          <a target="_blank" ng-click="$ctrl.goToAuditActivity()">View history</a>
+        </div>
+
+        <div class="section" ng-if="$ctrl.isSqlEditorEnabled">
+          <div class="section-header">SQL Execution</div>
+          <mp-field label="'Number of approved & run updates:'">{{$ctrl.sysInfo.sqlExecutionSummary.approved}}</mp-field>
+          <mp-field label="'Number of updates awaiting approval:'">{{$ctrl.sysInfo.sqlExecutionSummary.pending}}</mp-field>
+          <mp-field label="'Number of rejected updates:'">{{$ctrl.sysInfo.sqlExecutionSummary.rejected}}</mp-field>
+
+          <a target="_blank" ng-click="$ctrl.goToSqlManager()">View details</a>
+        </div>
+
+        <div class="section" id="data-validation-errors-section">
+          <div class="section-header">Data Validation Errors</div>
+          <mp-field label="'Duplicate blocks:'" id="duplicate-block-validation" ng-class="{'validation-error':$ctrl.numberDuplicateBlockValidationErrors>0, 'duplicate-blocks': true}">
+            {{$ctrl.numberDuplicateBlockValidationErrors}}
+          </mp-field>
+          <mp-field label="'Test validation:'" id="test-validation" ng-class="{'validation-error':$ctrl.numberTestValidationErrors>0, 'test-validation': true}">
+            {{$ctrl.numberTestValidationErrors}}
+          </mp-field>
+
+          <a target="_blank" ng-click="$ctrl.goToValidationDetails()" id="validation-details-link">View details</a>
+        </div>
+
+        <div class="section">
+          <div class="section-header">Server Response</div>
+          <mp-field label="'Number of error responses:'" id="error-responses" ng-class="{'validation-error':$ctrl.numberServerErrors>0}">
+            {{$ctrl.numberServerErrors}}
+          </mp-field>
+        </div>
+
+        <div class="section" id="feature-toggles-section">
+          <div class="section-header">Feature Toggles</div>
+          <mp-field label="'Number of features toggled on:'"><span class="toggled-on-count">{{$ctrl.featureTogglesOnCount | number}}</span></mp-field>
+          <mp-field label="'Number of features toggled off:'"><span class="toggled-off-count">{{$ctrl.featureTogglesOffCount | number}}</span></mp-field>
+          <a ui-sref="system-features">View details</a>
+        </div>
+
       </div>
 
-      <div class="section">
-        <div class="section-header">Inbound SAP Interface</div>
-        <mp-field label="'SAP data errors'">{{$ctrl.sysInfo.sapInterface.sapDataTotalErrors}}</mp-field>
-        <mp-field label="'SAP data rows'">{{$ctrl.sysInfo.sapInterface.sapDataTotalRows}}</mp-field>
-        <mp-field label="'Local directory'">{{$ctrl.sysInfo.sapInterface.moveItLocalDir}}</mp-field>
-        <mp-field label="'Local files'">{{$ctrl.sysInfo.sapInterface.moveItLocalFiles}}</mp-field>
-        <mp-field label="'Remote directory'">{{$ctrl.sysInfo.sapInterface.moveItRemoteDir}}</mp-field>
-        <mp-field label="'Sync count'">{{$ctrl.sysInfo.sapInterface.moveItSyncCount}}</mp-field>
-        <mp-field label="'Sync paused'">{{$ctrl.sysInfo.sapInterface.moveItSyncPaused}}</mp-field>
-      </div>
+    </multi-panel>
 
-      <div class="section">
-        <div class="section-header">SMTP Outbound Email</div>
-        <mp-field label="'Sent emails'">{{$ctrl.sysInfo.emailService.sentEmails}}</mp-field>
-        <mp-field label="'Pending emails'">{{$ctrl.sysInfo.emailService.pendingEmails}}</mp-field>
-        <mp-field label="'SMTP server'">{{$ctrl.sysInfo.emailService.smtpPrimary}}
-          <br/>{{$ctrl.sysInfo.emailService.smtpSecondary}}</mp-field>
-        <mp-field label="'Last send time'">{{$ctrl.sysInfo.emailService.lastSendTime | date: $ctrl.dateFormat}}</mp-field>
-        <mp-field label="'Last poll time'">{{$ctrl.sysInfo.emailService.lastPollTime | date: $ctrl.dateFormat}}</mp-field>
-      </div>
-
-      <div class="section">
-        <div class="section-header">Liquibase Information</div>
-        <mp-field label="'Last executed file'">{{$ctrl.sysInfo.changelogDetails.lastExecutedFileName}}</mp-field>
-        <mp-field label="'Last executed file time'">{{$ctrl.sysInfo.changelogDetails.lastExecutedFileTime | date: $ctrl.dateFormat}}</mp-field>
-        <mp-field label="'Entries'">{{$ctrl.sysInfo.changelogDetails.numberEntries}}</mp-field>
-        <mp-field label="'Not executed'">{{$ctrl.sysInfo.changelogDetails.numberNotExecuted}}</mp-field>
-      </div>
+  </div>
 
 
-  
 
-    </well>
-  </multi-panel>
 
-  <span>
-    <button id="refresh-dash" class="btn btn-md btn-primary" ng-click="$ctrl.refresh()">REFRESH
-      <i class="glyphicon glyphicon-refresh"></i>
-    </button>
-  </span>
-
+  <div>
+    <span>
+      <button id="refresh-dash" class="btn btn-md btn-primary refreshBtn" ng-click="$ctrl.refresh()">REFRESH
+        <i class="glyphicon glyphicon-refresh"></i>
+      </button>
+    </span>
+  </div>
 </div>

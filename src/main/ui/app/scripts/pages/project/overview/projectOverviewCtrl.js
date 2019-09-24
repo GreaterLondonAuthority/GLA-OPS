@@ -7,62 +7,143 @@
  */
 
 import './TransitionService';
+import './labelModal/labelModal.js';
 
 ProjectOverviewCtrl.$inject = [
   '$stateParams', '$state', '$log', 'ProjectService', '$rootScope', '$location', '$anchorScroll',
   'ToastrUtil', 'MessageModal', 'ConfirmationDialog', 'UserService', 'AbandonModal', 'TransitionService',
-  'NotificationsService', 'TransferModal'
+  'NotificationsService', 'TransferModal', 'ErrorService', '$q', 'LabelModal'
 ];
 
 function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootScope, $location, $anchorScroll,
                              ToastrUtil, MessageModal, ConfirmationDialog, UserService, AbandonModal, TransitionService,
-                             NotificationsService, TransferModal) {
+                             NotificationsService, TransferModal, ErrorService, $q, LabelModal) {
 
-
-  this.isLandProject = this.template.autoApproval;
-
+  this.governanceSectionVisible = true;
+  this.internalBlocksSectionExpanded = true;
 
   this.$log = $log;
 
-  // this.project = project;
   this.MessageModal = MessageModal;
   this.ConfirmationDialog = ConfirmationDialog;
   this.AbandonModal = AbandonModal;
   this.TransferModal = TransferModal;
-  this.projectBlocks = this.project.projectBlocksSorted;
+  this.ErrorService = ErrorService;
+  this.ProjectService = ProjectService;
+  this.UserService = UserService;
 
-  this.submitted = (this.project.status.toLowerCase() === 'submitted');
-  this.assess = (this.project.status.toLowerCase() === 'assess');
-  this.returned = (this.project.status.toLowerCase() === 'returned');
-  this.active = (this.project.status.toLowerCase() === 'active');
-  this.draft = (this.project.status.toLowerCase() === 'draft');
-  this.closed = (this.project.status.toLowerCase() === 'closed');
 
-  const orgId = this.project.organisation.id;
-  this.canReject = UserService.hasPermission('proj.approve', orgId);
-  this.canRecommend = UserService.hasPermission('proj.recommend', orgId);
-  this.canReinstate= UserService.hasPermission('proj.reinstate', orgId);
-  this.canCreateConditionalMilestone = UserService.hasPermission(`proj.milestone.conditional.create`);
-  this.subStatusText = ProjectService.subStatusText(this.project);
 
-  let menuConfigItems = {
-    'ViewChangeReport': {
-      type: 'report',
-      uiSref: `change-report({projectId: ${this.project.id}})`,
-      displayText: 'Change Management Report'
-    },
-    'ViewProgrammeSummary': {
-      type: 'link',
-      //organisation/9999/programme/1006
-      uiSref: `organisation-programme({organisationId: ${this.project.organisation.id}, programmeId: ${this.project.programmeId}})`,
-      displayText: 'Programme Summary'
+  this.$onInit = () => {
+    /**
+     * Missing fields in overview project:
+     *
+     * programme.enabled
+     * allowedTransitions
+     * currentUserWatching //page header?
+     * labels
+     * approvalWillCreatePendingPayment
+     * approvalWillCreatePendingReclaim
+     * pendingContractSignature
+     * approvalWillCreatePendingGrantPayment
+     * allowedActions
+     * messages
+     * internalBlocksSorted
+     * projectBlocksSorted[i].hasUpdates in overview api is 'false' vs 'true'for example Auto Approval with Questions : PROGRESS UPDATE block
+     */
+
+    // console.log('overview', this.project);
+    // console.log('full', this.fullProject);
+    // this.project = this.fullProject;
+
+    this.isLandProject = !this.template.stateModel.approvalRequired;
+    this.projectBlocks = this.project.projectBlocksSorted;
+    this.projectBlocks.forEach(block =>{
+      let fullBlock = _.find(this.fullProject.projectBlocksSorted, {id: block.id});
+      block.hasUpdates = fullBlock.hasUpdates;
+      block.complete = (block.blockMarkedComplete != null? block.complete : fullBlock.complete);
+    });
+    this.internalBlocksSorted = this.fullProject.internalBlocksSorted || [];
+
+    this.showInternalBlocks = this.internalBlocksSorted.length && this.UserService.hasPermission('proj.view.internal.blocks');
+
+    this.submitted = (this.project.statusType.toLowerCase() === 'submitted');
+    this.assess = (this.project.statusType.toLowerCase() === 'assess');
+    this.returned = (this.project.statusType.toLowerCase() === 'returned');
+    this.active = (this.project.statusType.toLowerCase() === 'active');
+    this.draft = (this.project.statusType.toLowerCase() === 'draft');
+    this.closed = (this.project.statusType.toLowerCase() === 'closed');
+
+    const orgId = this.project.organisation.id;
+    this.canReject = this.UserService.hasPermission('proj.approve', orgId);
+    this.canRecommend = this.UserService.hasPermission('proj.recommend', orgId);
+    this.canReinstate= this.UserService.hasPermission('proj.reinstate', orgId);
+    this.canCreateConditionalMilestone = this.UserService.hasPermission(`proj.milestone.conditional.create`);
+    this.subStatusText = this.ProjectService.subStatusText(this.project);
+
+    this.menuConfigItems = {
+      'ViewSummaryReport': {
+        type: 'report',
+        uiSref: `summary-report({projectId: ${this.project.id}, showUnapproved: true})`,
+        displayText: 'Project Summary Report'
+      },
+      'ViewChangeReport': {
+        type: 'report',
+        uiSref: `change-report({projectId: ${this.project.id}})`,
+        displayText: 'Change Management Report'
+      },
+      'ViewProgrammeSummary': {
+        type: 'link',
+        //organisation/9999/programme/1006
+        uiSref: `organisation-programme({organisationId: ${this.project.organisation.id}, programmeId: ${this.project.programmeId}})`,
+        displayText: 'Programme Summary'
+      }
+
+    };
+
+
+    // MSGLA-778. Set a title for older projects created without title
+    if (!this.project.title) {
+      this.project.title = 'Project title Unspecified';
     }
 
+    this.autoApproval = !this.template.stateModel.approvalRequired && this.draft;
+    //TODO missing project.programme
+    this.programmeClosed = !this.fullProject.programme.enabled;
+
+    this.disableDrafSubmit = !this.project.complete || this.programmeClosed || this.assess || this.autoApproval;
+    this.disableReturnedSubmit = !this.project.complete || this.assess || this.autoApproval;
+
+    /**
+     * Pre-populate with project history
+     */
+    this.ProjectService.getProjectHistory(this.project.id)
+      .then(data => {
+        this.historyItems = data;
+        this.hasReturnTransitionInHistory = _.find(this.historyItems, {transition: 'Returned'});
+        // if the project is in draft status ...
+        if (!this.submitted && this.historyItems) {
+          // ... and the last project history entry is in unconfirmed ...
+          if (this.historyItems.length && (this.historyItems[0].transition || '').toLowerCase() === 'unconfirmed') {
+            // ... then display the last saved unconfirmed comment
+            this.comments = this.historyItems[0].comments;
+            this.originalComments = this.comments;
+          }
+        }
+        this.$log.debug(this.submitted, this.historyItems);
+      })
+      .catch(this.$log.error);
+
+    this.processTransitionState();
   };
+
 
   this.onActionClicked = (item) => {
     if (item.action === 'abandon-project') {
       this.abandonProject();
+    }
+    if (item.action === 'reject-project') {
+      this.rejectProject();
     }
     if (item.action === 'watch') {
       this.watchProject();
@@ -82,10 +163,24 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
     if (item.action === 'complete-project') {
       this.completeProject();
     }
+
+    if (item.action === 'mark-project-corporate') {
+      this.markProjectForCorporate(true);
+    }
+
+    if (item.action === 'unmark-project-corporate') {
+      this.markProjectForCorporate(false);
+    }
+
+    if (item.action === 'add-label-to-project') {
+      this.addLabel();
+    }
+
   };
 
   this.abandonProject = () => {
-    const modal = this.AbandonModal.show(this.project);
+    //TODO needs statusType and allowedTransitions
+    const modal = this.AbandonModal.show(this.fullProject);
     modal.result.then((data) => {
       if (data.requestAbandon) {
         return $state.reload().then(() => ToastrUtil.success('Abandon Requested'));
@@ -95,9 +190,23 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       }
     });
   };
+  this.rejectProject = () => {
+    const modal = this.AbandonModal.show(
+      this.fullProject,
+      TransitionService.findTransition(this.fullProject.allowedTransitions, 'Closed', 'Rejected'),
+      null,
+      true
+    );
+
+    modal.result.then((data) => {
+      $state.go('projects');
+      return ToastrUtil.success('Rejected');
+    });
+  };
 
   this.transferProject = () => {
-    const modal = this.TransferModal.show(this.project);
+    //TODO missing project.allowedActions
+    const modal = this.TransferModal.show(this.fullProject);
     modal.result.then(data => $state.reload());
   };
 
@@ -112,7 +221,7 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
     modal.result
       .then(() => {
         NotificationsService.watchProject(UserService.currentUser().username, this.project.id).then(() => {
-          this.project.currentUserWatching = true;
+          this.fullProject.currentUserWatching = true;
           $state.reload();
         });
       });
@@ -137,10 +246,25 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
 
   this.reinstateProject = () => {
     if(this.canReinstate){
-      const modal = this.AbandonModal.show(this.project);
-      modal.result.then(()=>{
-        return $state.reload().then(() => {return ToastrUtil.success('Reinstated')});
+      this.numberOfProjectAllowedPerOrg = this.template.numberOfProjectAllowedPerOrg;
+      ProjectService.canProjectBeAssignedToTemplate(this.project.templateId, this.project.organisation.id).then(rsp => {
+        if (rsp.data) {
+          const modal = this.AbandonModal.show(this.fullProject);
+          modal.result.then(() => {
+            return $state.reload().then(() => {
+              return ToastrUtil.success('Reinstated')
+            });
+          });
+        } else {
+          const modal = this.ConfirmationDialog.show({
+
+            message: `Only ${this.numberOfProjectAllowedPerOrg} ${this.numberOfProjectAllowedPerOrg > 1 ? 'projects' : 'project'} ${this.numberOfProjectAllowedPerOrg > 1 ? 'are' : 'is'} permitted for this project type`,
+            dismissText: 'CLOSE',
+            showApprove: false,
+          });
+        }
       });
+
     } else {
       const modal = this.ConfirmationDialog.show({
         message: 'Contact a GLA OPS administrator to reinstate this project.',
@@ -152,54 +276,54 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
 
   this.completeProject = () => {
     let errorMsg = null;
-    if(this.project.status === 'Active' && ['UnapprovedChanges', 'PaymentAuthorisationPending', 'ApprovalRequested'].indexOf(this.project.subStatus) !== -1){
+    if(this.project.statusType === 'Active' && ['UnapprovedChanges', 'PaymentAuthorisationPending', 'ApprovalRequested'].indexOf(this.project.subStatusType) !== -1){
       errorMsg = 'Cannot complete a project with unapproved or incomplete blocks';
     }
-    const modal = this.AbandonModal.show(this.project, {status: 'Closed', subStatus: 'Completed'}, errorMsg);
+    //AbandonModal needs project.statusType & project.allowedTransitions
+    const modal = this.AbandonModal.show(this.fullProject, {status: 'Closed', subStatus: 'Completed'}, errorMsg);
     modal.result.then(()=>{
       return $state.reload().then(() => {return ToastrUtil.success('Completed')});
     });
   };
 
-  this.autoApproval = this.template.autoApproval && this.draft;
-  this.programmeClosed = !this.project.programme.enabled;
+  this.markProjectForCorporate = (markForCorporate) => {
 
-  this.disableDrafSubmit = !this.project.complete || this.programmeClosed || this.assess || this.autoApproval;
-  this.disableReturnedSubmit = !this.project.complete || this.assess || this.autoApproval;
+    let modalTitle = markForCorporate ? 'Mark Project' : 'Unmark Project';
+
+    let modalMessage = markForCorporate
+      ? 'By selecting to mark a project for corporate reporting, you will be required to update additional fields.'
+      :'By selecting to unmark a project for corporate reporting, some fields will no longer appear on your project';
 
 
-  if ($stateParams.projectSectionSaved && !this.submitted) {
-    const block = _.find(this.projectBlocks, {
-      'id': $stateParams.projectSectionSaved
+    const modal = this.ConfirmationDialog.show({
+      title: modalTitle,
+      message: modalMessage,
+      approveText: modalTitle.toUpperCase(),
+      dismissText: 'CANCEL'
     });
 
-    if (block && block.complete) {
-      ToastrUtil.success('Saved: Section completed');
-    } else {
-      ToastrUtil.warning('Saved: Section incomplete');
-    }
-    // Once digested by ToastrUtil, rest state params
-    $stateParams.projectSectionSaved = null;
-  }
+    modal.result
+      .then(() => {
+        ProjectService.updateProjectMarkedForCorporate(this.project.id, markForCorporate).then(rsp => {
+          $state.reload();
+        });
+      });
+  };
 
-  /**
-   * Pre-populate with project history
-   */
-  ProjectService.getProjectHistory(this.project.id)
-    .then(data => {
-      this.historyItems = data;
-      // if the project is in draft status ...
-      if (!this.submitted && this.historyItems) {
-        // ... and the last project history entry is in unconfirmed ...
-        if (this.historyItems.length && (this.historyItems[0].transition || '').toLowerCase() === 'unconfirmed') {
-          // ... then display the last saved unconfirmed comment
-          this.comments = this.historyItems[0].comments;
-          this.originalComments = this.comments;
-        }
-      }
-      this.$log.debug(this.submitted, this.historyItems);
-    })
-    .catch(this.$log.error);
+  this.addLabel = () => {
+
+    let modalMessage = 'By selecting to unmark a project for corporate reporting, some fields will no longer appear on your project';
+
+    const modal = LabelModal.show(this.labelMessage, this.fullProject.labels, this.preSetLabels);
+    modal.result.then((label) => {
+      return ProjectService.addLabel(this.project.id, label).then(rsp => {
+        $state.reload().then(()=>{
+          return ToastrUtil.success('Label applied ');
+        });
+      });
+    }).catch(ErrorService.apiValidationHandler());
+  };
+
 
   /**
    * Goto block page
@@ -213,7 +337,8 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       'projectId': this.project.id,
       'blockPosition': this.projectBlocks.indexOf(block) + 1,
       'blockId': block.id,
-      'blockClick': true
+      'displayOrder': block.displayOrder,
+      'yearAvailableFrom': block.yearAvailableFrom,
     }, {reload: true});
   };
 
@@ -224,26 +349,6 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
     $state.go('projects');
   };
 
-  /**
-   *
-   */
-  this.goToSaveDiv = () => {
-    $location.hash('save-div');
-    $anchorScroll();
-  };
-
-  /**
-   *
-   */
-  this.getCommentsPlaceholder = () => {
-    if (this.submitted) {
-      return 'You can describe why you are withdrawing this project.';
-    } else if (this.assess || this.returned && this.canReject) {
-      return 'Add an explanatory comment';
-    } else {
-      return 'If you have any supporting comments, you can add them here.';
-    }
-  };
 
   /**
    * Returns the recommendation text for the project
@@ -282,30 +387,24 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
   /**
    * Form submit handler
    */
-  this.onSubmitProject = () => {
-    ProjectService.submitProject(this.project.id, this.comments)
+  this.onSubmitProject = (transition) => {
+    return ProjectService.transitionTo(this.project.id, transition, this.comments)
       .then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
+        return $state.go('projects');
       })
-      .catch(rsp => {
-        let error = rsp.data || {};
-        let msg = error.description || 'Can\'t submit the project';
-        this.MessageModal.show({
-          message: msg
-        })
-      });
+      .catch(ErrorService.apiValidationHandler());
   };
 
   /**
    * Form submit handler
    */
   this.onSaveProjectToActive = () => {
-    ProjectService.saveProjectToActive(this.project.id, this.comments)
+    return ProjectService.saveProjectToActive(this.project.id, this.comments)
       .then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Project saved as Active');
+        return $state.go('projects');
+        // ToastrUtil.success('Project saved as Active');
       })
       .catch(this.$log.error);
   };
@@ -315,7 +414,7 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
    * Form submit returned project handler
    */
   this.onSubmitReturnedProject = () => {
-    ProjectService.onSubmitReturnedProject(this.project.id, this.comments)
+    return ProjectService.onSubmitReturnedProject(this.project.id, this.comments)
       .then(resp => {
         this.originalComments = this.comments;
         $state.go('projects');
@@ -331,11 +430,11 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
 
 
   this.onWithdrawProject = () => {
-    ProjectService.withdrawProject(this.project.id, this.comments)
+    return ProjectService.withdrawProject(this.project.id, this.comments)
       .then(resp => {
         this.originalComments = this.comments;
-        ToastrUtil.success('You can now edit this project');
-        $state.reload();
+        // ToastrUtil.success('You can now edit this project');
+        return $state.reload();
       })
       .catch(this.$log.error);
   };
@@ -345,7 +444,7 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
    */
   this.saveComment = () => {
     if (this.hasNewComment()) {
-      ProjectService.saveProjectComment(this.project.id, this.comments)
+      return ProjectService.saveProjectComment(this.project.id, this.comments)
         .then(resp => {
           this.originalComments = this.comments;
           ToastrUtil.success('Comments were saved');
@@ -358,11 +457,11 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
    * on a project in assess mode
    */
   this.onRecommendForApproval = () => {
-    ProjectService.recommendApproval(this.project.id, this.comments)
+    return ProjectService.recommendApproval(this.project.id, this.comments)
       .then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Recommended Approve');
+        return $state.go('projects');
+        // ToastrUtil.success('Recommended Approve');
       })
       .catch(this.$log.error);
   };
@@ -372,11 +471,11 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
    * on a project in assess mode
    */
   this.onRecommendForReject = () => {
-    ProjectService.recommendReject(this.project.id, this.comments)
+    return ProjectService.recommendReject(this.project.id, this.comments)
       .then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Recommended Reject');
+        return $state.go('projects');
+        // ToastrUtil.success('Recommended Reject');
       })
       .catch(this.$log.error);
   }
@@ -391,11 +490,11 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       approveText: 'APPROVE',
       dismissText: 'CANCEL'
     });
-    modal.result.then(() => {
-      ProjectService.approve(this.project.id, this.comments).then(resp => {
+    return modal.result.then(() => {
+      return ProjectService.approve(this.project.id, this.comments).then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Approved');
+        return $state.go('projects');
+        // ToastrUtil.success('Approved');
       });
     });
   }
@@ -409,12 +508,18 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       approveText: 'REJECT',
       dismissText: 'CANCEL'
     });
-    modal.result.then(() => {
-      ProjectService.reject(this.project.id, this.comments).then(resp => {
+    return modal.result.then(() => {
+      return ProjectService.reject(this.project.id, this.comments).then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Rejected');
-      });
+        return $state.go('projects');
+        // ToastrUtil.success('Rejected');
+      }).catch(rsp => {
+        let error = rsp.data || {};
+        let msg = error.description || 'Can\'t reject the project';
+        this.MessageModal.show({
+          message: msg
+        })
+      });;
     });
   };
 
@@ -424,38 +529,38 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
    */
   this.onRequestApproval = () => {
     this.$log.log('request approval');
-    ProjectService.changeStatus(this.project.id, 'Active', 'ApprovalRequested', this.comments).then(resp => {
+    return ProjectService.changeStatus(this.project.id, 'Active', 'ApprovalRequested', this.comments).then(resp => {
       this.originalComments = this.comments;
-      $state.go('projects');
-      ToastrUtil.success('Approval Requested');
+      return $state.go('projects');
+      // ToastrUtil.success('Approval Requested');
     });
   };
 
 
   this.onReturnProject = () => {
-    ProjectService.returnProject(this.project.id, this.comments)
+    return ProjectService.returnProject(this.project.id, this.comments)
       .then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Returned');
+        return $state.go('projects');
+        // ToastrUtil.success('Returned');
       }).catch(this.$log.error);
   };
 
   this.onReturnFromApprovalRequested = () => {
-    ProjectService.onReturnFromApprovalRequested(this.project.id, this.comments)
+    return ProjectService.onReturnFromApprovalRequested(this.project.id, this.comments)
       .then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Returned');
+        return $state.go('projects');
+        // ToastrUtil.success('Returned');
       });
   }
 
   this.onApproveFromApprovalRequested = () => {
     let msg = 'Are you sure you want to approve the project changes?';
-    if (this.project.approvalWillCreatePendingPayment) {
+    if (this.fullProject.approvalWillCreatePendingPayment) {
       msg += '<br/><br/><span class="gla-alert">Approving these changes will create a pending payment!</span>';
     }
-    if (this.project.approvalWillCreatePendingReclaim) {
+    if (this.fullProject.approvalWillCreatePendingReclaim) {
       msg += '<br/><br/><span class="gla-alert">Approving these changes will create a pending reclaim!</span>';
     }
     var modal = this.ConfirmationDialog.show({
@@ -463,12 +568,12 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       approveText: 'APPROVE',
       dismissText: 'CANCEL'
     });
-    modal.result.then(() => {
-      ProjectService.onApproveFromApprovalRequested(this.project.id, this.comments)
+    return modal.result.then(() => {
+      return ProjectService.onApproveFromApprovalRequested(this.project.id, this.comments)
         .then(resp => {
           this.originalComments = this.comments;
-          $state.go('projects');
-          ToastrUtil.success('Project changes approved');
+          return $state.go('projects');
+          // ToastrUtil.success('Project changes approved');
         });
     });
   };
@@ -482,11 +587,11 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       approveText: 'APPROVE',
       dismissText: 'CANCEL'
     });
-    modal.result.then(() => {
-      ProjectService.approveAbandon(this.project.id, this.comments).then(resp => {
+    return modal.result.then(() => {
+      return ProjectService.approveAbandon(this.project.id, this.comments).then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Project Closed');
+        return $state.go('projects');
+        // ToastrUtil.success('Project Closed');
       }).catch(err => {
         this.ConfirmationDialog.warn(err.data ? err.data.description : null);
       });
@@ -502,16 +607,17 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       approveText: 'REJECT',
       dismissText: 'CANCEL'
     });
-    modal.result.then(() => {
-      ProjectService.rejectAbandon(this.project.id, this.comments).then(resp => {
+    return modal.result.then(() => {
+      return ProjectService.rejectAbandon(this.project.id, this.comments).then(resp => {
         this.originalComments = this.comments;
-        $state.go('projects');
-        ToastrUtil.success('Project Active');
+        return $state.go('projects');
+        // ToastrUtil.success('Project Active');
       });
     });
   };
 
   this.onRequestPaymentAuthorisation = () => {
+    let programmeId = this.project.programmeId;
     let validationMessage = this.validatePaymentRequest();
     if (validationMessage) {
       this.ConfirmationDialog.warn(validationMessage);
@@ -519,10 +625,10 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       let msg = 'Are you sure you want to approve the project changes?';
       // msg += '<br/><br/><span class="gla-alert">Approving these changes will create a pending payment!</span>';
 
-      if (this.project.approvalWillCreatePendingPayment) {
+      if (this.fullProject.approvalWillCreatePendingPayment) {
         msg += '<br/><br/><span class="gla-alert">Approving these changes will create a pending payment!</span>';
       }
-      if (this.project.approvalWillCreatePendingReclaim) {
+      if (this.fullProject.approvalWillCreatePendingReclaim) {
         msg += '<br/><br/><span class="gla-alert">Approving these changes will create a pending reclaim!</span>';
       }
 
@@ -532,15 +638,24 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
         dismissText: 'CANCEL'
       });
 
-      modal.result.then(() => {
-        ProjectService.onRequestPaymentAuthorisation(this.project.id, this.comments)
+      return modal.result.then(() => {
+        return ProjectService.onRequestPaymentAuthorisation(this.project.id, this.comments)
           .then(resp => {
             this.originalComments = this.comments;
-            $state.go('projects');
-            ToastrUtil.success('Project changes approved');
+            return $state.go('projects');
+            // ToastrUtil.success('Project changes approved');
           })
           .catch(err => {
-            this.ConfirmationDialog.warn(err.data ? err.data.description : null);
+            let description =  err.data ? err.data.description : null;
+            if(_.includes(err.data.description, 'WBS') || _.includes(err.data.description, 'cost element code')){
+              let split = description.split('programme');
+              if(split.length > 1){
+                description = split.join('<a ng-click="$dismiss(\'cancel\')"  ui-sref="programme({programmeId: '+programmeId+'})">programme</a>');
+              }
+            }
+
+            description = _.replace(description,'. ', '.<br>');
+            this.ConfirmationDialog.warn(description);
           });
       });
     }
@@ -549,8 +664,8 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
    * Returns null if valid and validation message if invalid
    */
   this.validatePaymentRequest = () => {
-    let showContractNotSignedMsg = this.project.pendingContractSignature;
-    let showMissingSapVendorIdMsg = this.project.approvalWillCreatePendingGrantPayment && !this.project.organisation.sapVendorId;
+    let showContractNotSignedMsg = this.fullProject.pendingContractSignature;
+    let showMissingSapVendorIdMsg = this.fullProject.approvalWillCreatePendingGrantPayment && !this.project.organisation.sapVendorId;
     let orgDetailsLink = `<a href="#/organisation/${this.project.organisation.id}" ng-click="$dismiss()">manage organisation</a>`;
 
     if (showMissingSapVendorIdMsg && showContractNotSignedMsg) {
@@ -575,7 +690,7 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
 
   // observe and execute only once
   const watcher = $rootScope.$on('$stateChangeStart', (event, toState, toParams, fromState, fromParams) => {
-    if (fromState.name === 'project.overview') {
+    if (fromState.name === 'project-overview') {
       if (fromParams.projectId.toString() === this.project.id.toString()) {
         this.saveComment();
       }
@@ -594,29 +709,31 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
     let linkMenuItems = [];
 
     //TODO should we mix report menu and state actions together? Doesn't look like the same thing
-    _.forEach(this.project.allowedActions, allowedAction => {
-      let config = menuConfigItems[allowedAction];
+    _.forEach(this.fullProject.allowedActions, allowedAction => {
+      let config = this.menuConfigItems[allowedAction];
       if (config) {
         if (config.type === 'report') {
           linkMenuItems.push(config);
-        } else if (config.type === 'action') {
-          alert('Never Called');
-          //TODO this never happens?
-          // actionMenuItems.push(config);
         } else {
           $log.error('Unknow menu item type');
         }
       } else {
-        $log.error('Unknown allowed menu item action: ', allowedAction);
+        $log.warn('Unknown allowed menu item action: ', allowedAction);
       }
     });
+
     if(linkMenuItems.length){
       linkMenuItems.push({hr:true});
     }
-    linkMenuItems.push(menuConfigItems['ViewProgrammeSummary']);
+    linkMenuItems.push(this.menuConfigItems['ViewProgrammeSummary']);
     linkMenuItems.push({hr:true});
-    let buttons = TransitionService.getTransitionButtons(this.project, !this.isSubmitToApproveEnabled);
-    this.actionMenuItems = TransitionService.getMenuItems(this.project);
+    //TODO uses project.statusType project.allowedTransitions
+    let buttons = TransitionService.getTransitionButtons(this.fullProject, !this.isSubmitToApproveEnabled);
+    let featureToggles = {
+      isMarkedForCorporateEnabled: this.isMarkedForCorporateEnabled,
+      isLabelsFeatureEnabled: this.isLabelsFeatureEnabled
+    };
+    this.actionMenuItems = TransitionService.getMenuItems(this.fullProject, featureToggles);
 
 
     this.linkMenuItems = linkMenuItems;
@@ -628,7 +745,7 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
     this.commentBoxVisibility = this.transitionButtons.length > 0;
     //If at least one button is enabled then enable comment box as well
     this.commentBoxEditability = this.transitionButtons.some(btn => !this[btn.disableState]);
-  }
+  };
 
   this.transitionButtonsCallback = (buttonCfg) => {
     if (buttonCfg.commentsRequired) {
@@ -639,7 +756,14 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
       }
     }
     this.missingComment = false;
-    this[buttonCfg.callback]();
+    let p = this[buttonCfg.callback]((buttonCfg || {}).transition);
+    if(p && p.then){
+      p.then((data => {
+        if (data) {
+          this.showTransitionToast((buttonCfg || {}).transition)
+        }
+      }));
+    }
   };
 
   this.jumpTo = (id) => {
@@ -647,7 +771,64 @@ function ProjectOverviewCtrl($stateParams, $state, $log, ProjectService, $rootSc
     $anchorScroll();
   };
 
-  this.processTransitionState();
+  this.toggleGovernanceSection = () => {
+    this.internalBlocksSectionExpanded = !this.internalBlocksSectionExpanded;
+  };
+
+  this.goToInternalBlock = (block) => {
+    switch (block.type) {
+      case 'Risk':
+        return $state.go('project.internal-risk', {projectId: this.project.id, blockId: block.id});
+      case 'Assessment':
+        return $state.go('project.internal-assessment', {projectId: this.project.id, blockId: block.id});
+      default:
+        console.error('Internal block not recognised:', block);
+    }
+  };
+
+  this.showTransitionToast = (transition) => {
+    let subStatus = ProjectService.getSubStatusText(transition.subStatus);
+    let fullStatus = `${transition.status} ${subStatus || ''}`.trim();
+    // TODO : this is shown even when there is an error
+    ToastrUtil.success(`Project updated: "${fullStatus}"`);
+    // ToastrUtil.success('Project status updated');
+  };
+
+  //Returns promise
+  this.preStateTransitionActions = (transition) => {
+    let modal = this.getConfirmationModal(transition);
+    return modal ? modal.result : $q.resolve();
+  };
+
+  this.postStateTransitionActions = (transition, rsp) => {
+    this.originalComments = this.comments;
+    return $state.go('projects');
+    // Moved to combine with old approach
+    // this.showTransitionToast(transition);
+  };
+
+
+  this.onTransition = (transition) => {
+    let p = this.preStateTransitionActions(transition);
+    return p.then(() => {
+      return ProjectService.changeStatus(this.project.id, transition.status, transition.subStatus, this.comments)
+        .then(rsp => {
+          return this.postStateTransitionActions(transition, rsp);
+        })
+        .catch(ErrorService.apiValidationHandler());
+    });
+  };
+
+
+  this.getConfirmationModal = (transition) => {
+    if (transition.statusType === 'Closed' && transition.subStatusType === 'Rejected') {
+      return this.ConfirmationDialog.show({
+        message: 'Are you sure you want to reject this project?',
+        approveText: 'REJECT',
+        dismissText: 'CANCEL'
+      });
+    }
+  };
 }
 
 angular.module('GLA')
@@ -655,8 +836,13 @@ angular.module('GLA')
     templateUrl: 'scripts/pages/project/overview/projectOverview.html',
     bindings: {
       isSubmitToApproveEnabled: '<',
+      isMarkedForCorporateEnabled: '<',
+      isLabelsFeatureEnabled: '<',
+      labelMessage: '<',
       project: '<',
-      template: '<'
+      fullProject: '<',
+      template: '<',
+      preSetLabels: '<'
     },
     controller: ProjectOverviewCtrl
   });

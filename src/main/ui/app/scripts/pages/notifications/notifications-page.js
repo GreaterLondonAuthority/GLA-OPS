@@ -7,8 +7,9 @@
  */
 
 class NotificationsPageCtrl {
-  constructor($rootScope, NotificationsService, FeatureToggleService) {
+  constructor($rootScope, NotificationsService, FeatureToggleService, MetadataService) {
     this.$rootScope = $rootScope;
+    this.MetadataService = MetadataService;
     this.NotificationsService = NotificationsService
     this.maxDisplay = this.$rootScope.envVars['notifications-max-display'];
     this.FeatureToggleService = FeatureToggleService;
@@ -32,10 +33,17 @@ class NotificationsPageCtrl {
       this.allLoaded = !data.last;
       this.$rootScope.showGlobalLoadingMask = false;
       _.forEach(data.content, (notification)=>{
+        notification.notification.text = this.decodeHtml(notification.notification.text);
         this.originalList.push(notification);
       });
       this.sortNotificationsIntoGroups();
     });
+  }
+
+  decodeHtml(html) {
+    var txt = document.createElement('textarea');
+    txt.innerHTML = html;
+    return txt.value;
   }
 
   sortNotificationsIntoGroups() {
@@ -71,10 +79,11 @@ class NotificationsPageCtrl {
   notificationDeleted() {
     this.originalList = [];
     this.loadNotificationsPage(0);
+    this.MetadataService.fireMetadataUpdate();
   }
 }
 
-NotificationsPageCtrl.$inject = ['$rootScope','NotificationsService', 'FeatureToggleService'];
+NotificationsPageCtrl.$inject = ['$rootScope','NotificationsService', 'FeatureToggleService', 'MetadataService'];
 
 
 angular.module('GLA')

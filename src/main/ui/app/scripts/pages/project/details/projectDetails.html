@@ -1,10 +1,10 @@
 <div class="project-details text-center">
-  <project-header on-back="$ctrl.back(newProjForm)"
-               editable-block="$ctrl">Enter project details</project-header>
+  <project-header on-back="$ctrl.back($ctrl.newProjForm)"
+               editable-block="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</project-header>
 
   <spinner ng-if="loading && !$ctrl.project"></spinner>
 
-  <form class="form-gla" role="form" name="newProjForm" style="margin-top: 30px" ng-if="$ctrl.project">
+  <form class="form-gla" role="form" name="$ctrl.newProjForm" style="margin-top: 30px" ng-if="$ctrl.project">
     <div class="row">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
         <div class="form-group">
@@ -17,8 +17,8 @@
                  placeholder="{{$ctrl.fields.title.placeholder}}"
                  ng-model="$ctrl.projectBlock.title"
                  maxlength="50" required />
-          <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.title.$touched">
-            <span class="error" ng-show="newProjForm.title.$error.required">Enter a title</span>
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.title.$touched">
+            <span class="error" ng-show="$ctrl.newProjForm.title.$error.required">Enter a title</span>
           </div>
         </div>
       </div>
@@ -174,6 +174,7 @@
           </textarea>
 
           <ui-select class="group-field borough__dropdown" id="project-borough"
+                     ng-if="!$ctrl.fields.borough.hidden"
                      ng-class="{disabled: $ctrl.readOnly}"
                      name="borough"
                      aria-label="Borough"
@@ -198,8 +199,8 @@
                  ng-model="$ctrl.projectBlock.postcode"
                  maxlength="10"
                  ng-pattern="/^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$/" />
-          <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.postcode.$touched">
-            <span class="error" ng-show="newProjForm.postcode.$error.pattern">Postcode must be entered in a standard format</span>
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.postcode.$touched">
+            <span class="error" ng-show="$ctrl.newProjForm.postcode.$error.pattern">Postcode must be entered in a standard format</span>
           </div>
         </div>
       </div>
@@ -222,8 +223,8 @@
                      ng-model="$ctrl.projectBlock.coordX"
                      maxlength="8" />
 
-              <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.xCoord.$touched">
-                <span class="error" id="invalidX" ng-show="newProjForm.xCoord.$error.pattern">Enter 6 digit X coordinate</span>
+              <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.xCoord.$touched">
+                <span class="error" id="invalidX" ng-show="$ctrl.newProjForm.xCoord.$error.pattern">Enter 6 digit X coordinate</span>
               </div>
             </div>
             <div class="col-md-5 col-md-offset-2">
@@ -238,8 +239,8 @@
                      ng-model="$ctrl.projectBlock.coordY"
                      maxlength="7" />
 
-              <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.yCoord.$touched">
-                <span class="error" id="invalidY" ng-show="newProjForm.yCoord.$error.pattern">Enter 6 digit Y coordinate</span>
+              <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.yCoord.$touched">
+                <span class="error" id="invalidY" ng-show="$ctrl.newProjForm.yCoord.$error.pattern">Enter 6 digit Y coordinate</span>
               </div>
             </div>
           </div>
@@ -247,7 +248,7 @@
       </div>
     </div>
 
-    <div class="row" ng-if="!$ctrl.fields.address.hidden">
+    <div class="row" ng-if="!$ctrl.fields.address.hidden && !$ctrl.fields.borough.hidden && !$ctrl.fields.wardId.hidden">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
         <div class="form-group">
           <label for="ward">{{$ctrl.fields.wardId.label}}</label>
@@ -299,8 +300,8 @@
                  placeholder="{{$ctrl.fields.mainContactEmail.placeholder}}"
                  maxlength="100"
                  autofocus />
-          <div class="error-wrapper" role="alert" ng-show="newProjForm.$submitted || newProjForm.email.$touched">
-            <span class="error" id="invalidEmail" ng-show="newProjForm.email.$error.pattern || newProjForm.email.$error.email">Enter a valid email address</span>
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.email.$touched">
+            <span class="error" id="invalidEmail" ng-show="$ctrl.newProjForm.email.$error.pattern || $ctrl.newProjForm.email.$error.email">Enter a valid email address</span>
           </div>
         </div>
       </div>
@@ -411,14 +412,6 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 mtop30 mbottom30">
-        <button class="btn btn-primary"
-                id="submitButton"
-                ng-if="!$ctrl.readOnly"
-                ng-click="$ctrl.submit(newProjForm, true)">SAVE
-        </button>
-      </div>
-    </div>
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
   </form>
 </div>

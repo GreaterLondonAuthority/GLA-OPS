@@ -10,24 +10,28 @@ import ProjectBlockCtrl from '../../ProjectBlockCtrl';
 
 class NegotiatedGrantCtrl extends ProjectBlockCtrl {
   constructor($state, project, ProjectService, orderBy, $rootScope, GrantService, $injector, FeatureToggleService, template){
-    super(project, $injector);
+    super($injector);
 
     this.$state = $state;
     this.ProjectService = ProjectService;
     this.orderBy = orderBy;
     this.$rootScope = $rootScope;
     this.GrantService = GrantService;
+    this.FeatureToggleService = FeatureToggleService;
+    this.template = template;
+  }
 
+  $onInit() {
+    super.$onInit();
     this.lastRequestId = 0;
-
-    this.data = this.sortByDisplayOrder(this.projectBlock);
-    this.tenureSummaryDetails =  GrantService.negotiatedGrantBlock(this.data);
-    this.tenureClaimedDetails =  GrantService.calculateClaimedTenure(this.data);
+    this.data = this.GrantService.sortTenureTypes(this.projectBlock);
+    this.tenureSummaryDetails =  this.GrantService.negotiatedGrantBlock(this.data);
+    this.tenureClaimedDetails =  this.GrantService.calculateClaimedTenure(this.data, this.project);
     this.updateErrors(this.data.validationFailures);
 
-    this.startOnSiteRestrictionText = template.startOnSiteRestrictionText;
+    this.startOnSiteRestrictionText = this.template.startOnSiteRestrictionText;
 
-    FeatureToggleService.isFeatureEnabled('StartOnSiteRestrictionText').then((resp)=>{
+    this.FeatureToggleService.isFeatureEnabled('StartOnSiteRestrictionText').then((resp)=>{
       this.showStartOnSiteMessage = resp.data && this.data.startOnSiteMilestoneAuthorised && this.startOnSiteRestrictionText;
     });
   }
@@ -43,24 +47,15 @@ class NegotiatedGrantCtrl extends ProjectBlockCtrl {
   };
 
 
-
-
-  sortByDisplayOrder  (tenure) {
-    tenure.tenureTypeAndUnitsEntries = this.orderBy(tenure.tenureTypeAndUnitsEntries, 'tenureType.displayOrder');
-    return tenure;
-  };
-
-
-
   saveTenure (showAnimation, t) {
     this.loading = !!showAnimation;
     var requestId = ++this.lastRequestId;
 
     let p = this.ProjectService.updateProjectNegotiatedGrant(this.project.id, this.cleanRequestData(this.data), !!showAnimation).then(rsp => {
       if(requestId == this.lastRequestId) {
-        var data = this.sortByDisplayOrder(rsp.data);
+        var data = this.GrantService.sortTenureTypes(rsp.data);
         //Need to merge to preserve focus inside table
-        _.merge(this.data, data);
+        _.assign(this.data, data);
         this.tenureSummaryDetails =  this.GrantService.negotiatedGrantBlock(this.data);
         this.data.validationFailures = data.validationFailures;
         this.updateErrors(data.validationFailures);
@@ -76,11 +71,8 @@ class NegotiatedGrantCtrl extends ProjectBlockCtrl {
    */
   submit () {
     this.$rootScope.showGlobalLoadingMask = true;
-    this.$q.all(this.requestsQueue).then(results => {
-      this.saveTenure(false)
-        .then(() => {
-          this.returnToOverview(this.blockId);
-        })
+    return this.$q.all(this.requestsQueue).then(results => {
+      return this.saveTenure(false);
     });
   }
 

@@ -9,14 +9,15 @@ package uk.gov.london.ops.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.london.ops.aop.LogMetrics;
+import uk.gov.london.ops.audit.AuditService;
 import uk.gov.london.ops.domain.EntityType;
 import uk.gov.london.ops.domain.organisation.Organisation;
-import uk.gov.london.ops.domain.project.Project;
+import uk.gov.london.ops.domain.project.BaseProject;
 import uk.gov.london.ops.domain.user.User;
-import uk.gov.london.ops.exception.ForbiddenAccessException;
 import uk.gov.london.ops.repository.OrganisationRepository;
 import uk.gov.london.ops.repository.ProjectRepository;
+import uk.gov.london.ops.framework.annotations.LogMetrics;
+import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 
 /**
  * Provides data access control functionality for GLA OPS.
@@ -41,7 +42,7 @@ public class DataAccessControlService {
     /**
      * Returns true if the specified user has access to the specified project.
      */
-    public boolean hasAccess(User user, Project project) {
+    public boolean hasAccess(User user, BaseProject project) {
         return hasAccess(user, project.getOrganisation()) || hasAccess(user, project.getManagingOrganisation());
     }
 
@@ -52,7 +53,7 @@ public class DataAccessControlService {
      *      if the user does not have access to the project
      */
     @LogMetrics
-    public void checkAccess(User user, Project project) {
+    public void checkAccess(User user, BaseProject project) {
         if (! hasAccess(user,project)) {
             auditService.auditActivityForUser(user.getUsername(), "User blocked from access to project " + project.getId());
 
@@ -66,7 +67,7 @@ public class DataAccessControlService {
      * @throws ForbiddenAccessException
      *      if the user does not have access to the project
      */
-    public void checkAccess(Project project) {
+    public void checkAccess(BaseProject project) {
         checkAccess(userService.loadCurrentUser(), project);
     }
 
@@ -76,13 +77,34 @@ public class DataAccessControlService {
      * @throws ForbiddenAccessException
      *      if the user does not have access to the project
      */
-    public void checkAccess(EntityType entityType, Integer entityId) {
+    public void checkProjectAccess(Integer projectId) {
+        String username = userService.currentUsername();
+        if (!projectRepository.checkAccessForProject(username, projectId)) {
+            auditService.auditActivityForUser(username, "User blocked from access to project " + projectId);
+            throw new ForbiddenAccessException("User " + username + " attempted to access a restricted project");
+        }
+    }
+
+    /**
+     * Checks that the current user has access to the specified project.
+     *
+     * @throws ForbiddenAccessException
+     *      if the user does not have access to the project
+     */
+    public void checkAccess(EntityType entityType, String entityId) {
         if (EntityType.project.equals(entityType)) {
-            checkAccess(projectRepository.findOne(entityId));
+            checkProjectAccess(Integer.parseInt(entityId));
         }
         else if (EntityType.organisation.equals(entityType)) {
-            checkAccess(organisationRepository.findOne(entityId));
+            checkAccess(organisationRepository.findById(Integer.parseInt(entityId)).orElse(null));
         }
+    }
+
+    /**
+     * Returns true if the current user has access to the specified organisation.
+     */
+    public boolean currentUserHasAccess(Organisation organisation) {
+        return userService.currentUser() != null && hasAccess(userService.currentUser(), organisation);
     }
 
     /**

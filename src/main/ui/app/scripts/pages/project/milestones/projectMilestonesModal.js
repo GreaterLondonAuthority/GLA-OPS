@@ -9,7 +9,7 @@
 
 function ProjectMilestoneModal($uibModal, $timeout) {
   return {
-    show: function (milestone, existingMilestones, isMonetaryValueType, descriptionHintText) {
+    show: function (milestone, existingMilestones, isMonetaryValueType, showDescription, descriptionHintText) {
       return $uibModal.open({
         bindToController: true,
         controllerAs: '$ctrl',
@@ -18,6 +18,7 @@ function ProjectMilestoneModal($uibModal, $timeout) {
         size: 'md',
         controller: [function () {
           this.isMonetaryValueType = isMonetaryValueType;
+          this.showDescription = showDescription;
           this.descriptionHintText = descriptionHintText;
           this.milestone = milestone;
           this.existingNamesMap = (existingMilestones || []).reduce((result, milestone) =>{

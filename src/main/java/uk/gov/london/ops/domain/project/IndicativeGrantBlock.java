@@ -8,15 +8,22 @@
 package uk.gov.london.ops.domain.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import uk.gov.london.ops.domain.template.IndicativeTenureConfiguration;
+import uk.gov.london.ops.domain.project.state.ProjectStatus;
+import uk.gov.london.ops.domain.template.IndicativeGrantTemplateBlock;
+import uk.gov.london.ops.domain.template.TemplateBlock;
 import uk.gov.london.ops.domain.template.TemplateTenureType;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.domain.template.TenureYear;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
 
 /**
  * Created by chris on 13/10/2016.
@@ -25,7 +32,8 @@ import java.util.*;
 @DiscriminatorValue("Indicative")
 @JoinData(sourceTable = "tenure_block", sourceColumn = "id", targetTable = "project_block", targetColumn = "id", joinType = Join.JoinType.OneToOne,
         comment = "the indicative grant block is a subclass of the project block and shares a common key")
-public class IndicativeGrantBlock extends BaseGrantBlock {
+public class
+IndicativeGrantBlock extends BaseGrantBlock {
 
 
     public IndicativeGrantBlock() {
@@ -39,16 +47,15 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
     @Transient
     public Long getTotalGrantEligibility() {
         long total = 0L;
-        for (TenureTypeAndUnits tenureTypeAndUnits : getTenureTypeAndUnitsEntries()) {
-            for (IndicativeTenureValue indicativeTenureValue : tenureTypeAndUnits.getIndicativeTenureValues()) {
+        for (ProjectTenureDetails projectTenureDetails : getTenureTypeAndUnitsEntries()) {
+            for (IndicativeTenureValue indicativeTenureValue : projectTenureDetails.getIndicativeTenureValues()) {
                 if (indicativeTenureValue.getUnits() != null) {
-                    total += indicativeTenureValue.getUnits() * tenureTypeAndUnits.getTenureType().getTariffRate();
+                    total += indicativeTenureValue.getUnits() * getTariffRate(projectTenureDetails, indicativeTenureValue);
                 }
             }
         }
         return total;
     }
-
 
     @Override
     public ProjectBlockType getBlockType() {
@@ -59,19 +66,19 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
     public List<TenureSummaryDetails> getTenureSummaryDetails() {
         List<TenureSummaryDetails> details = new ArrayList<>();
 
-        List<TenureTypeAndUnits> list = getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> list = getTenureTypeAndUnitsEntriesSorted();
 
-        for (TenureTypeAndUnits tenureTypeAndUnits : list) {
+        for (ProjectTenureDetails projectTenureDetails : list) {
 
-            for (IndicativeTenureValue indicativeTenureValue : tenureTypeAndUnits.getIndicativeTenureValuesSorted()) {
+            for (IndicativeTenureValue indicativeTenureValue : projectTenureDetails.getIndicativeTenureValuesSorted()) {
                 TenureSummaryDetails tsd = new TenureSummaryDetails();
-                tsd.setName(tenureTypeAndUnits.getTenureType().getName());
+                tsd.setName(projectTenureDetails.getTenureType().getName());
                 tsd.setYear(indicativeTenureValue.getYear());
 
                 if (indicativeTenureValue.getUnits() != null && indicativeTenureValue.getUnits() > 0) {
                     tsd.setGrantEligibleUnits(indicativeTenureValue.getUnits());
-                    tsd.setGrantRate(tenureTypeAndUnits.getTenureType().getTariffRate());
-                    tsd.setTotalGrant(indicativeTenureValue.getUnits() * new Long(tenureTypeAndUnits.getTenureType().getTariffRate()));
+                    tsd.setGrantRate(getTariffRate(projectTenureDetails, indicativeTenureValue));
+                    tsd.setTotalGrant(indicativeTenureValue.getUnits() * tsd.getGrantRate().longValue());
                 } else {
                     tsd.setGrantEligibleUnits(0);
                     tsd.setGrantRate(0);
@@ -89,8 +96,8 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
 
     @JsonIgnore
     @Transient
-    protected boolean isRowValid(TenureTypeAndUnits tenureTypeAndUnit) {
-        Project.Status status = this.project.getStatus();
+    protected boolean isRowValid(ProjectTenureDetails tenureTypeAndUnit) {
+        ProjectStatus status = this.project.getStatusType();
         boolean oneValid = false;
         for (IndicativeTenureValue indicativeTenureValue : tenureTypeAndUnit.getIndicativeTenureValues()) {
             if (indicativeTenureValue.getUnits() != null) {
@@ -100,12 +107,10 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
                 } else if (units > 0) {
                     oneValid = true;
                 } else if(units == 0) {
-                    if(!(status == Project.Status.Draft || status == Project.Status.Returned)) {
+                    if(!(status == ProjectStatus.Draft || status == ProjectStatus.Returned)) {
                         oneValid = true;
                     }
                 }
-            } else {
-                return false;
             }
         }
 
@@ -120,16 +125,33 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
     }
 
     @Override
-    public void calculateTotals(TenureTypeAndUnits tenureInfo) {
+    public void calculateTotals(ProjectTenureDetails tenureInfo) {
+        Long eligibleGrant = 0L;
+        for (IndicativeTenureValue indicativeTenureValue: tenureInfo.getIndicativeTenureValues()) {
+            eligibleGrant += getTariffRate(tenureInfo, indicativeTenureValue);
+        }
         tenureInfo.setEligibleUnits(totalIndicativeUnits(tenureInfo));
         tenureInfo.setGrantPerUnit(tenureInfo.getTenureType().getTariffRate());
-        tenureInfo.setEligibleGrant((long) (tenureInfo.getEligibleUnits() * tenureInfo.getGrantPerUnit()));
+        tenureInfo.setEligibleGrant(eligibleGrant);
     }
 
-    private int totalIndicativeUnits(TenureTypeAndUnits tenureInfo) {
+    private int getTariffRate(ProjectTenureDetails projectTenureDetails, IndicativeTenureValue indicativeTenureValue) {
+        for (TenureYear tenureYear: getProject().getTemplate().getTenureYears()) {
+            if (Objects.equals(tenureYear.getExternalId(), projectTenureDetails.getTenureType().getExternalId()) && Objects.equals(tenureYear.getYear(), indicativeTenureValue.getYear())) {
+                return tenureYear.getTariffRate();
+            }
+        }
+        return projectTenureDetails.getTenureType().getTariffRate();
+    }
+
+    private int totalIndicativeUnits(ProjectTenureDetails tenureInfo) {
         int totalUnits = 0;
         for (IndicativeTenureValue indicativeTenureValue : tenureInfo.getIndicativeTenureValues()) {
-            totalUnits += indicativeTenureValue.getUnits();
+//            Integer units = indicativeTenureValue.getUnits();
+//            if(units != null){
+                totalUnits = nullSafeAdd(totalUnits, indicativeTenureValue.getUnits());
+//                totalUnits += units;
+//            }
         }
         return totalUnits;
     }
@@ -142,10 +164,15 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
 
     }
 
-    private void validateRows(Set<TenureTypeAndUnits> tenureTypeAndUnits) {
+    private void validateRows(Set<ProjectTenureDetails> projectTenureTypeAndUnits) {
         boolean oneRowValid = false;
 
-        for (TenureTypeAndUnits tenureTypeAndUnit : tenureTypeAndUnits) {
+        IndicativeGrantTemplateBlock indicativeTemplateBlock = (IndicativeGrantTemplateBlock) project.getTemplate().getSingleBlockByType(ProjectBlockType.IndicativeGrant);
+        if (indicativeTemplateBlock.isAllowZeroUnits()) {
+            return;
+        }
+
+        for (ProjectTenureDetails tenureTypeAndUnit : projectTenureTypeAndUnits) {
 
             if (isRowValid(tenureTypeAndUnit)) {
                 oneRowValid = true;
@@ -163,10 +190,6 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
                         }
                     }
                 }
-                if (nullPresent) {
-                    this.addErrorMessage(String.valueOf(tenureTypeAndUnit.getId()), "Row",
-                            "No empty values are permitted for this row");
-                }
             }
         }
 
@@ -178,51 +201,39 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
 
     }
 
+    @Override
+    protected void initFromTemplateSpecific(TemplateBlock templateBlock) {
+        Map<Integer, ProjectTenureDetails> tenureTypeAndUnitsEntries = new HashMap<>();
 
+        Map<Integer, TemplateTenureType> tenureTypes = getProject().getTemplate().getTenureTypes().stream().collect(Collectors.toMap(TemplateTenureType::getExternalId, Function.identity()));
 
-    @Transient
-    public void initialiseFromTenureTypes(Set<TemplateTenureType> tenureTypes) {
-        HashSet<TenureTypeAndUnits> tenureTypeAndUnitsEntries = new HashSet<>();
-        this.setTenureTypeAndUnitsEntries(tenureTypeAndUnitsEntries);
-        if (tenureTypes !=null) {
-            for (TemplateTenureType tenureType : tenureTypes) {
-                TenureTypeAndUnits tenureEntry = new TenureTypeAndUnits(project);
-                tenureTypeAndUnitsEntries.add(tenureEntry);
-                tenureEntry.setTenureType(tenureType);
-                HashSet<IndicativeTenureValue> indicativeTenureValues = new HashSet<>();
-                tenureEntry.setIndicativeTenureValues(indicativeTenureValues);
-
-                int numberOfYears = Math.min(IndicativeTenureConfiguration.MAX_NUMBER_OF_TENURE_YEARS, getProject().getTemplate().getIndicativeTenureConfiguration().getIndicativeTenureNumberOfYears());
-                for (int i=0 ; i < numberOfYears ;  i++) {
-                    IndicativeTenureValue itv = new IndicativeTenureValue(getProject().getTemplate().getIndicativeTenureConfiguration().getIndicativeTenureStartYear() + i, 0);
-                    indicativeTenureValues.add(itv);
-                }
-
+        for (TenureYear tenureYear: getProject().getTemplate().getTenureYears()) {
+            ProjectTenureDetails tenureEntry = tenureTypeAndUnitsEntries.get(tenureYear.getExternalId());
+            if (tenureEntry == null) {
+                tenureEntry = new ProjectTenureDetails(project);
+                tenureEntry.setTenureType(tenureTypes.get(tenureYear.getExternalId()));
+                tenureTypeAndUnitsEntries.put(tenureYear.getExternalId(), tenureEntry);
             }
+
+            IndicativeTenureValue itv = new IndicativeTenureValue(tenureYear.getYear());
+            tenureEntry.getIndicativeTenureValues().add(itv);
         }
+
+        this.setTenureTypeAndUnitsEntries(new HashSet<>(tenureTypeAndUnitsEntries.values()));
     }
 
     @Transient
-    public Totals getTotals() {
+    public Map<Integer, Integer> getTotals() {
+        Map<Integer, Integer> totals = new HashMap<>();
 
-        int [] results = null;
-
-
-        for (TenureTypeAndUnits tenureTypeAndUnits : this.getTenureTypeAndUnitsEntries()) {
-            List<IndicativeTenureValue> valuesSorted = tenureTypeAndUnits.getIndicativeTenureValuesSorted();
-            if (results == null) {
-                results = new int[valuesSorted.size()];
+        for (ProjectTenureDetails projectTenureDetails : this.getTenureTypeAndUnitsEntries()) {
+            for (IndicativeTenureValue value: projectTenureDetails.getIndicativeTenureValuesSorted()) {
+                totals.putIfAbsent(value.getYear(), 0);
+                totals.put(value.getYear(), nullSafeAdd(totals.get(value.getYear()), value.getUnits()));
             }
-
-            for (int i = 0; i < valuesSorted.size(); i++) {
-                if (valuesSorted.get(i) != null && valuesSorted.get(i).getUnits() != null) {
-                    results[i] += valuesSorted.get(i).getUnits();
-                }
-            }
-
         }
 
-        return new Totals(results);
+        return totals;
     }
 
 
@@ -232,8 +243,8 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
 
         IndicativeGrantBlock otherIndicativeGrantBlock = (IndicativeGrantBlock) otherBlock;
 
-        List<TenureTypeAndUnits> thisTenure = this.getTenureTypeAndUnitsEntriesSorted();
-        List<TenureTypeAndUnits> otherTenure = otherIndicativeGrantBlock.getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> thisTenure = this.getTenureTypeAndUnitsEntriesSorted();
+        List<ProjectTenureDetails> otherTenure = otherIndicativeGrantBlock.getTenureTypeAndUnitsEntriesSorted();
 
         // compare each tenure type
         for (int i = 0; i < thisTenure.size(); i++) {
@@ -249,14 +260,13 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
 
         }
 
-        Totals thisTotals = this.getTotals();
-        Totals otherTotals = otherIndicativeGrantBlock.getTotals();
-        List<IndicativeTenureValue> thisUnits = thisTenure.get(0).getIndicativeTenureValuesSorted();
+        Map<Integer, Integer> thisTotals = this.getTotals();
+        Map<Integer, Integer> otherTotals = otherIndicativeGrantBlock.getTotals();
 
-        for (int i = 0; i < thisTotals.getResultsByYear().length; i++) {
+        for (Integer year: thisTotals.keySet()) {
             // compare totals row
-            if (!Objects.equals(thisTotals.getResultsByYear()[i], otherTotals.getResultsByYear()[i])) {
-                differences.add(new ProjectDifference(String.valueOf(thisUnits.get(i).getYear()), "totals"));
+            if (!Objects.equals(thisTotals.get(year), otherTotals.get(year))) {
+                differences.add(new ProjectDifference(String.valueOf(year), "totals"));
             }
         }
 
@@ -287,21 +297,9 @@ public class IndicativeGrantBlock extends BaseGrantBlock {
         }
     }
 
-
-
-
-    public class Totals {
-
-        int [] resultsByYear = null;
-
-        public Totals(int [] results) {
-           this.resultsByYear = results;
-        }
-
-        public int[] getResultsByYear() {
-            return resultsByYear;
-        }
+    @Override
+    public boolean isBlockRevertable() {
+        return true;
     }
-
 
 }

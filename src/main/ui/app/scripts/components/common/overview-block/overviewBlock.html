@@ -1,0 +1,22 @@
+<button class="overview-block"
+        ng-class="{'overview-block-green':$ctrl.blockState == 'valid','overview-block-amber':$ctrl.blockState == 'invalid', 'with-border': $ctrl.color}"
+        ng-style="{'border': $ctrl.color}">
+
+  <icon-new ng-if="$ctrl.newBlock"></icon-new>
+
+  <div class="block-overview-step-number" ng-style="{color: $ctrl.color}">{{::$ctrl.number}}</div>
+  <div class="block-overview-name project-block-name" ng-style="{color: $ctrl.color}">{{::$ctrl.name}}</div>
+
+
+  <div>
+    <div class="block-overview-status" ng-if="$ctrl.status || $ctrl.icon">
+      {{::$ctrl.status}} <span ng-if="$ctrl.icon" class="glyphicon" ng-class="$ctrl.icon"></span>
+    </div>
+  </div>
+
+  <div ng-if="$ctrl.banner">
+    <div>
+      <div class="block-overview-banner">{{::$ctrl.banner}}</div>
+    </div>
+  </div>
+</button>

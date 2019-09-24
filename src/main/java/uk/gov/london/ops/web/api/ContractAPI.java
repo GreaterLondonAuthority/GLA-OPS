@@ -12,10 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.london.ops.domain.template.Contract;
-import uk.gov.london.ops.domain.user.Role;
 import uk.gov.london.ops.service.ContractService;
 
 import java.util.List;
+
+import static uk.gov.london.common.user.BaseRole.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -25,25 +26,25 @@ public class ContractAPI {
     @Autowired
     private ContractService contractService;
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/contracts", method = RequestMethod.GET)
     public List<Contract> getAll() {
         return contractService.findAll();
     }
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.GET)
     public Contract get(@PathVariable Integer id) {
         return contractService.find(id);
     }
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/contracts", method = RequestMethod.POST)
     public Contract create(@RequestBody Contract contract) {
         return contractService.create(contract);
     }
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/contracts/{id}", method = RequestMethod.PUT)
     public void update(@PathVariable Integer id, @RequestBody Contract contract) {
         contractService.update(contract);

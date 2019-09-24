@@ -10,11 +10,12 @@ package uk.gov.london.ops.domain.organisation;
 import uk.gov.london.ops.domain.template.Contract;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity(name="organisation_contract")
-public class OrganisationContract {
+public class OrganisationContract implements Serializable {
 
     public enum Status { Blank, Signed, NotRequired }
 
@@ -125,6 +126,21 @@ public class OrganisationContract {
 
     public boolean isPendingSignature() {
         return status == null || status.equals(OrganisationContract.Status.Blank);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrganisationContract that = (OrganisationContract) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(contract, that.contract) &&
+                orgGroupType == that.orgGroupType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contract, orgGroupType);
     }
 
 }

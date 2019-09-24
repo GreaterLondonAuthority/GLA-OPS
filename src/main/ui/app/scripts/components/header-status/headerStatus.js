@@ -8,10 +8,20 @@
 
 
 class HeaderStatusCtrl {
+  constructor($transclude){
+    this.$transclude = $transclude;
+  }
 
+  $onInit(){
+    this.hasCenter = this.$transclude.isSlotFilled('hsCenter');
+    this.sidesCls = {
+      'col-sm-3': this.hasCenter,
+      'col-sm-6': !this.hasCenter
+    }
+  }
 }
 
-HeaderStatusCtrl.$inject = ['$scope'];
+HeaderStatusCtrl.$inject = ['$transclude'];
 
 
 angular.module('GLA')

@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 import uk.gov.london.ops.Environment;
 import uk.gov.london.ops.domain.attachment.ProjectBudgetsAttachment;
 import uk.gov.london.ops.domain.project.*;
-import uk.gov.london.ops.exception.ValidationException;
-import uk.gov.london.ops.mapper.AnnualSpendSummaryMapper;
-import uk.gov.london.ops.mapper.ProjectBudgetsSummaryMapper;
+import uk.gov.london.ops.payment.ProjectLedgerEntry;
+import uk.gov.london.ops.project.implementation.AnnualSpendSummaryMapper;
+import uk.gov.london.ops.project.implementation.ProjectBudgetsSummaryMapper;
 import uk.gov.london.ops.repository.AnnualSpendSummaryRecordRepository;
-import uk.gov.london.ops.service.finance.FinanceService;
+import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.web.model.AnnualSpendSummary;
 
 import javax.transaction.Transactional;
@@ -28,7 +28,7 @@ import java.util.Set;
 
 @Service
 @Transactional
-public class ProjectBudgetsService extends BaseProjectService implements PostCloneNotificationListener, EnrichmentRequiredListener  {
+public class ProjectBudgetsService extends BaseProjectFinanceService implements EnrichmentRequiredListener  {
 
     static final int MAX_WBS_CODES = 10;
 
@@ -38,15 +38,16 @@ public class ProjectBudgetsService extends BaseProjectService implements PostClo
     @Autowired
     AnnualSpendSummaryMapper annualSpendSummaryMapper;
 
-
-
     @Autowired
     private ProjectBudgetsSummaryMapper projectBudgetsSummaryMapper;
-    @Autowired
-    private FinanceService financeService;
 
     @Autowired
     private Environment environment;
+
+    @Override
+    ProjectBlockType getBlockType() {
+        return ProjectBlockType.ProjectBudgets;
+    }
 
     public ProjectBudgetsBlock getProjectBudgets(Project project, Integer blockid) {
         ProjectBudgetsBlock projectBlockById = (ProjectBudgetsBlock) project.getProjectBlockById(blockid);
@@ -55,11 +56,10 @@ public class ProjectBudgetsService extends BaseProjectService implements PostClo
 
     private ProjectBudgetsBlock getProjectBudgetsBlockIncludingCalculatedData(Project project, ProjectBudgetsBlock projectBudgetsBlock ) {
         // temporary update from annual spend
-        Set<Integer> populatedYears = financeService.getPopulatedYearsForBlock(projectBudgetsBlock.getId());
 
         int currentYearMonth = environment.now().getYear() * 100 + environment.now().getMonthValue();
 
-        projectBudgetsBlock.setPopulatedYears(populatedYears);
+        setPopulatedYears(projectBudgetsBlock);
         Integer from = projectBudgetsBlock.getFromFinancialYear();
         if (from != null) {
             Integer to = projectBudgetsBlock.getToFinancialYear();
@@ -79,7 +79,7 @@ public class ProjectBudgetsService extends BaseProjectService implements PostClo
             int nowYearMonth = now.getYear() * 100 + now.getMonthValue();
 
 
-            List<ProjectLedgerEntry> entries = projectLedgerRepository
+            List<ProjectLedgerEntry> entries = financeService
                     .findHistoricActualsAndFutureForecasts(
                             projectBudgetsBlock.getId(),
                             fromYearMonth,
@@ -94,13 +94,12 @@ public class ProjectBudgetsService extends BaseProjectService implements PostClo
     public Project updateProjectBudgets(Project project, ProjectBudgetsBlock projectBudgetsBlock, boolean releaseLock) {
         checkForLock(project.getSingleLatestBlockOfType(projectBudgetsBlock.getBlockType()));
 
-//        validateAmountsUpdate(project.getProjectBudgetsBlock(), projectBudgetsBlock);
-        validateWbsCodes(projectBudgetsBlock);
+        validateWbsCodes(projectBudgetsBlock, project.getId());
 
         Set<ProjectBudgetsAttachment> deletedAttachments = new HashSet<>(project.getProjectBudgetsBlock().getAttachments());
         deletedAttachments.removeAll(projectBudgetsBlock.getAttachments());
         for (ProjectBudgetsAttachment attachment: deletedAttachments) {
-            auditService.auditCurrentUserActivity("Attachment "+attachment.getFileName()+" was deleted on project Budgets block "+projectBudgetsBlock.getId());
+            auditService.auditCurrentUserActivity("Attachment "+attachment.getFileName()+" was deleted on project Spend block "+projectBudgetsBlock.getId());
         }
 
         // init data for new attachments
@@ -118,16 +117,7 @@ public class ProjectBudgetsService extends BaseProjectService implements PostClo
         return this.updateProject(project);
     }
 
-//    private void validateAmountsUpdate(ProjectBudgetsBlock existing, ProjectBudgetsBlock updated) {
-//        if (((existing.getRevenue() != null) && !existing.getRevenue().equals(updated.getRevenue())) ||
-//                ((existing.getCapital() != null) && !existing.getCapital().equals(updated.getCapital()))) {
-//            if (!updated.getAttachments().stream().filter(attachment -> attachment.getId() == null).findAny().isPresent()) {
-//                throw new ValidationException("updating amounts requires a new approval document");
-//            }
-//        }
-//    }
-
-    private void validateWbsCodes(ProjectBudgetsBlock projectBudgetsBlock) {
+    private void validateWbsCodes(ProjectBudgetsBlock projectBudgetsBlock, Integer projectId) {
         Set<WbsCode> capitalWbsCodes = projectBudgetsBlock.getWbsCodes(SpendType.CAPITAL);
         Set<WbsCode> revenueWbsCodes = projectBudgetsBlock.getWbsCodes(SpendType.REVENUE);
 
@@ -139,30 +129,10 @@ public class ProjectBudgetsService extends BaseProjectService implements PostClo
             throw new ValidationException("cannot enter more than "+MAX_WBS_CODES+" revenue wbs codes");
         }
 
-        for (WbsCode capitalWbsCode: capitalWbsCodes) {
-            for (WbsCode revenueWbsCode: revenueWbsCodes) {
-                if (revenueWbsCode.getCode().endsWith(capitalWbsCode.getCode().substring(capitalWbsCode.getCode().length() - 2))) {
-                    throw new ValidationException("revenue and capital wbs codes cannot end with the same last 2 digits");
-                }
+        for (WbsCode wbsCode: projectBudgetsBlock.getWbsCodes()) {
+            if (wbsCode.getId() == null && isWbsCodeUsedInProjectsOtherThan(wbsCode.getCode(), projectId)) {
+                throw new ValidationException("WBS code "+wbsCode.getCode()+" already used in a different project");
             }
-        }
-    }
-
-    @Override
-    public void handleBlockClone(Project project, Integer originalBlockId, Integer newBlockId) {
-        NamedProjectBlock projectBlockById = project.getProjectBlockById(originalBlockId);
-        // check if correct block type
-        if (projectBlockById != null && ProjectBlockType.ProjectBudgets.equals(projectBlockById.getBlockType())) {
-            financeService.cloneLedgerEntriesForBlock(originalBlockId, newBlockId);
-        }
-    }
-
-    @Override
-    public void handleProjectClone(Project oldProject, Integer originalBlockId, Project newProject, Integer newBlockId) {
-        NamedProjectBlock projectBlockById = oldProject.getProjectBlockById(originalBlockId);
-        // check if correct block type
-        if (projectBlockById != null && ProjectBlockType.ProjectBudgets.equals(projectBlockById.getBlockType())) {
-            financeService.cloneLedgerEntriesForBlock(originalBlockId, newProject.getId(), newBlockId);
         }
     }
 

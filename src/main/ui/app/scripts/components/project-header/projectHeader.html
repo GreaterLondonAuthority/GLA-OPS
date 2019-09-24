@@ -1,6 +1,8 @@
 <page-header
+  back-btn-name="$ctrl.backBtnName || 'PROJECT OVERVIEW'"
   on-back="$ctrl.onBack()"
   editable-block="$ctrl.editableBlock"
+  stop-editing="$ctrl.stopEditing !== false"
   header="$ctrl.project.title">
    <ng-transclude ng-if="!$ctrl.project"></ng-transclude>
    <ph-right ng-if="$ctrl.project && ($ctrl.linkMenuItems.length || $ctrl.actionMenuItems.length)">
@@ -40,32 +42,48 @@
          </ul>
        </div>
      </ph-right>
+
+  <ph-right ng-if="$ctrl.createBtnName">
+    <button class="btn btn-primary btn-md" ng-click="$ctrl.onCreate()">
+      {{$ctrl.createBtnName}}
+    </button>
+  </ph-right>
 </page-header>
 
 <!-- Project header status -->
 <div class="row subtitle-row" ng-if="$ctrl.editableBlock.project.id">
   <div class="col-xs-12  col-sm-4 no-padding text-xs-center text-sm-left  block-version"
        ng-class="{'col-sm-4': $ctrl.editableBlock.infoMessage, 'col-sm-8': !$ctrl.editableBlock.infoMessage }"
-       ng-if="$ctrl.editableBlock.version">
-    {{$ctrl.editableBlock.version}}
+       ng-if="$ctrl.editableBlock.version || $ctrl.editableBlock.revertable">
+    <span>{{$ctrl.editableBlock.version}}</span>
     <span class="text-nowrap">
       <a href="" ng-if="$ctrl.editableBlock.blockHistory.length > 1" ng-click="$ctrl.editableBlock.viewHistory()" class="view-history">View History</a>
-      <!-- Show IF can be deleted and is not locked by other user -->
-      <span ng-if="$ctrl.editableBlock.blockHistory.length > 1 && $ctrl.editableBlock.deletable && !($ctrl.editableBlock.lockDetails && !$ctrl.editableBlock.editable && $ctrl.currentUser != $ctrl.editableBlock.lockDetails.username)">| <a href="" ng-click="$ctrl.editableBlock.deleteBlock()" class="delete-block">Delete</a></span>
+      <!-- Show IF editable, if can be deleted and is not locked by other user -->
+
+      <span ng-if="(!($ctrl.editableBlock.lockDetails && !$ctrl.editableBlock.editable && $ctrl.currentUser != $ctrl.editableBlock.lockDetails.username)
+        && $ctrl.editableBlock.editable && $ctrl.editableBlock.readOnly)">
+        <span ng-if="$ctrl.editableBlock.blockHistory.length > 1 && $ctrl.editableBlock.deletable">|
+          <a href="" ng-click="$ctrl.editableBlock.deleteBlock()" class="delete-block">{{$ctrl.undoLinkText}}<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></a>
+        </span>
+        <span ng-if="$ctrl.editableBlock.blockHistory.length < 2 && $ctrl.editableBlock.revertable">
+          <a href="" ng-click="$ctrl.editableBlock.revertBlock()" class="revert-block">{{$ctrl.undoLinkText}}<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></a>
+        </span>
+      </span>
     </span>
   </div>
 
   <div class="col-xs-12 no-padding project-message green"
-       ng-class="{'col-sm-4' : $ctrl.editableBlock.version, 'col-sm-6 col-sm-offset-3' : !$ctrl.editableBlock.version}"
+       ng-class="{'col-sm-4' : $ctrl.editableBlock.version || $ctrl.editableBlock.revertable, 'col-sm-6 col-sm-offset-3' : !$ctrl.editableBlock.version && !$ctrl.editableBlock.revertable}"
        ng-if="$ctrl.editableBlock.infoMessage">
     <div>{{$ctrl.editableBlock.infoMessage}}</div>
   </div>
 
-  <div class="col-xs-12 no-padding text-sm-right  project-id"
-       ng-class="{'text-xs-center': $ctrl.editableBlock.infoMessage || $ctrl.editableBlock.version,
-         'col-sm-4': $ctrl.editableBlock.version,
-         'col-sm-3': !$ctrl.editableBlock.version,
-         'col-sm-offset-9' : !$ctrl.editableBlock.infoMessage && !$ctrl.editableBlock.version}">
+  <div class="col-xs-12 no-padding text-sm-right  project-id ukprn"
+       ng-class="{'text-xs-center': $ctrl.editableBlock.infoMessage || $ctrl.editableBlock.version || $ctrl.editableBlock.revertable,
+         'col-sm-4': $ctrl.editableBlock.version || $ctrl.editableBlock.revertable,
+         'col-sm-3': !$ctrl.editableBlock.version && !$ctrl.editableBlock.revertable,
+         'col-sm-offset-9' : !$ctrl.editableBlock.infoMessage && !$ctrl.editableBlock.version && !$ctrl.editableBlock.revertable}">
     Project <span>ID: <strong>P{{$ctrl.editableBlock.project.id}}</strong></span>
+    <div ng-if="$ctrl.showUkprn"> UKPRN: <strong>{{ $ctrl.editableBlock.project.organisation.ukprn || 'Not provided' }}</strong></div>
   </div>
 </div>

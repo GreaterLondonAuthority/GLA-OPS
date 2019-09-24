@@ -15,6 +15,7 @@ import uk.gov.london.ops.domain.organisation.Organisation;
 import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.domain.template.Programme;
 import uk.gov.london.ops.domain.template.Template;
+import uk.gov.london.ops.web.model.project.ProjectBlockHistoryItem;
 
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,11 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
             "where wbs.code = ?2 ", nativeQuery = true)
     Set<Project> findAllByPaymentsWBSCode(String blockType, String wbsCode);
 
+    @Query(value = "select p.id from Project p inner join v_project_block_active active on active.project_id = p.id and active.project_block_type in ('ProjectBudgets', 'Receipts') " +
+            "INNER JOIN wbs_code wbs on active.id = wbs.block_id " +
+            "where wbs.code = ?1 ", nativeQuery = true)
+    Set<Integer> findAllProjectIdsByWBSCode(String wbsCode);
+
     List<Project> findAllByOrderByLastModifiedDesc();
 
     @Query(value = "select * from Project p inner join v_project_block_active active on active.project_id = p.id and active.block_type = 'DETAILS' "  +
@@ -43,7 +49,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
     List<Project> findAllByOrganisation(Organisation organisation);
 
-    List<Project> findAllByOrganisationAndStatus(Organisation organisation, Project.Status status);
+    List<Project> findAllByOrganisationAndStatusName(Organisation organisation, String statusName);
 
     List<Project> findAllByOrganisationId(Integer organisationId);
 
@@ -63,10 +69,16 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     Long countByProgramme(Programme programme);
     List<Project> findAllByProgrammeAndTemplate(Programme programme, Template template);
     List<Project> findAllByProgrammeAndTemplateAndOrganisation(Programme programme, Template template, Organisation organisation);
-
     List<Project> findAllByTemplate(Template template);
 
-    Integer countByProgrammeAndStatus(Programme programme, Project.Status status);
+    Integer countByProgrammeAndStatusName(Programme programme, String statusName);
+
+    @Query(value = "SELECT * FROM project p " +
+            "inner join project_block pb on p.id  = pb.project_id and pb.project_block_type = ?1 " +
+            "inner join learning_grant_block lgb on lgb.id  = pb.id and lgb.grant_type = 'AEB_GRANT' " +
+            "inner join learning_grant_entry lge on lge.block_id = pb.id " +
+            "where  p.status= 'Active' and TO_CHAR(lge.payment_date, 'DD/MM/YYYY') = ?2 ", nativeQuery = true)
+    List<Project> findAllProjectsWithScheduledPaymentDue(String blockType, String date);
 
     @Query(value = "SELECT count(*) FROM Project p inner join v_project_block_active active on active.project_id = p.id and active.block_type = 'GRANT_SOURCE' "  +
             "INNER JOIN grant_source_block gsb on active.id = gsb.id " +
@@ -88,5 +100,27 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
             "inner join PROJECT_BLOCK_QUESTION pbq on pb.id = pbq.project_block_id " +
             "inner join template_question tq on tq.id = pbq.question_id where tq.question_id = ?1", nativeQuery = true)
     List<Project> findAllForQuestion(Integer questionId);
+
+    @Query(value = "select count(*) from project p inner join project_block pb on p.id=pb.project_id " +
+            "inner join PROJECT_BLOCK_QUESTION pbq on pb.id = pbq.project_block_id " +
+            "inner join template_question tq on tq.id = pbq.question_id where tq.question_id = ?1", nativeQuery = true)
+    Integer countByQuestion(Integer questionId);
+
+    @Query(value = "select case when count(1) > 0 then true else false end as permitted " +
+            " from v_project_permissions " +
+            " where  username = ?1 and project_id = ?2 ", nativeQuery = true)
+    Boolean checkAccessForProject(String username, Integer projectId);
+
+    @Query(value = "select new uk.gov.london.ops.web.model.project.ProjectBlockHistoryItem(p.id, pb.id, pb.blockStatus, pb.versionNumber, pb.lastModified, " +
+            "pb.modifiedBy, pb.approverUsername, pb.approvedOnStatus) from Project p join p.projectBlocks pb " +
+            "where p.id = ?1 and pb.displayOrder = ?2 order by pb.versionNumber")
+    List<ProjectBlockHistoryItem> getProjectHistoryForProjectAndDisplayOrder(Integer projectId, Integer displayOrder);
+
+
+    @Query(value = "select case when count(1) > 0 then true else false end as used " +
+        " from internal_risk_block where rating_id = ?1 ", nativeQuery = true)
+    Boolean isRiskRatingUsedForProject(Integer riskRatingId);
+
+    Integer countByTemplateAndOrganisationAndStatusNameIsNot(Template template, Organisation organisation, String statusName);
 
 }

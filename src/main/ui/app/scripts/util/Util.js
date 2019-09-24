@@ -8,11 +8,13 @@
 
 import NumberUtil from './NumberUtil';
 import StringUtil from './StringUtil';
+import DateUtil from './DateUtil';
 
 class Util {
   constructor(){
     this.Number = NumberUtil;
     this.String = StringUtil;
+    this.Date = DateUtil;
   }
 }
 

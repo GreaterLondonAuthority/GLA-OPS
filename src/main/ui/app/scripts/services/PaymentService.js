@@ -6,9 +6,9 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-PaymentService.$inject = ['$http', 'config', 'ProjectService'];
+PaymentService.$inject = ['$http', 'config', 'MilestonesService'];
 
-function PaymentService($http, config, ProjectService) {
+function PaymentService($http, config, MilestonesService) {
 
   return {
 
@@ -22,24 +22,23 @@ function PaymentService($http, config, ProjectService) {
 
       return $http.get(`${config.basePath}/payments/${paymentId}`).then(rsp => {
           let payment = rsp.data;
-          payment.source = this.getPaymentSource(payment);
-          payment.sourceType = this.ledgerTypeToGrantSource(payment.ledgerType);
-          return payment;
+          return this.enrichPayment(payment);
       });
     },/**
      * Return grouped payments by status. Defaults to ALL
      * @param status [PENDING | AUTHORISED | ALL]
      */
-    getPayments(projectIdOrName, orgName, statuses, sources, programmes, toDate, fromDate, paymentDirection, page, size, sort){
+    getPayments(projectIdOrName, orgName, programmeName, statuses, sources, programmes, toDate, fromDate, paymentDirection, page, size, sort){
       const cfg = {
         params: {
           page: page,
           size: size,
           sort: sort,
           relevantStatuses: statuses,
-          relevantSources: sources,
+          paymentSources: sources,
           project: projectIdOrName,
           organisation: orgName,
+          programme: programmeName,
           relevantProgrammes: programmes,
           paymentDirection: paymentDirection,
           toDate: toDate ? (moment(toDate).format('DD/MM/YYYY')) : null,
@@ -50,10 +49,7 @@ function PaymentService($http, config, ProjectService) {
 
       return $http.get(`${config.basePath}/payments`, cfg).then(rsp => {
         ((rsp.data && rsp.data.content) || []).map(payment => {
-
-          payment.source = this.getPaymentSource(payment);
-          payment.sourceType = this.ledgerTypeToGrantSource(payment.ledgerType);
-          return payment;
+          return this.enrichPayment(payment);
         });
         return rsp.data;
 
@@ -101,10 +97,15 @@ function PaymentService($http, config, ProjectService) {
       })
     },
 
+    resend(paymentId, wbsCode){
+      return $http.put(`${config.basePath}/payments/resend/${paymentId}?wbsCode=${wbsCode}`).then(rsp => rsp.data);
+    },
+
 
     getPaymentMilestone(payment) {
       if(payment && payment.category === 'Milestone') {
-        return ProjectService.getProjectBlock(payment.projectId, payment.blockId, false)
+        return MilestonesService.getMilestoneBlock(payment.projectId, payment.blockId)
+        // return MilestonesService.getProjectBlock(payment.projectId, payment.blockId, false)
           .then(resp => {
             let block = resp.data;
             if (payment.externalId) {
@@ -117,30 +118,27 @@ function PaymentService($http, config, ProjectService) {
       return null;
     },
 
+    enrichPayment(payment){
+      payment.source = this.getPaymentSource(payment);
+      payment.sourceType = this.getSpendTypeAndPaymentSource(payment);
+      return payment;
+    },
+
     transformPaymentGroup(paymentGroup) {
       let hasReclaim = false;
-      let hasInterestSet = true;
-
       paymentGroup.payments = (paymentGroup.payments || []).map(payment => {
-        payment.source = this.getPaymentSource(payment);
-        payment.sourceType = this.ledgerTypeToGrantSource(payment.ledgerType);
+        this.enrichPayment(payment);
 
         if(payment.reclaim){
           // if(paymentGroup.length>1){
           //   throw new Error('This reclaim logic only works for 1 reclaim');
           // }
           hasReclaim = true;
-          if(!_.isNumber(payment.interest)){
-            hasInterestSet = false;
-          }
         }
         return payment;
       });
 
       paymentGroup.hasReclaim = hasReclaim;
-      if(hasReclaim){
-        paymentGroup.hasInterestSet = hasInterestSet;
-      }
       return paymentGroup;
     },
 
@@ -156,15 +154,19 @@ function PaymentService($http, config, ProjectService) {
      * @return {*} Payment source
      */
     getPaymentSource(payment){
-      let source = this.ledgerTypeToGrantSource(payment.ledgerType);
-      return payment.reclaim? `Reclaim ${source}`: source;
+      let source = this.getSpendTypeAndPaymentSource(payment);
+       if(payment.reclaim) {
+         return payment.interestPayment? `${source} Interest` : `Reclaim ${source}`;
+       }
+      return source;
     },
 
-    ledgerTypeToGrantSource(ledgerType){
-      if(ledgerType === 'PAYMENT') {
-        return 'Grant';
+    getSpendTypeAndPaymentSource(payment){
+      if(payment.paymentSource === 'Grant' && payment.spendType) {
+        let capitalisedSpendType = payment.spendType.charAt(0).toUpperCase() + payment.spendType.slice(1).toLowerCase();
+        return capitalisedSpendType+' '+payment.paymentSource;
       }
-      return ledgerType;
+      return payment.paymentSource;
     },
 
     /**
@@ -199,6 +201,12 @@ function PaymentService($http, config, ProjectService) {
           maxLength: '50'
         },
         {
+          name: 'programme',
+          description: 'By Programme',
+          hint: 'Enter the programme name',
+          maxLength: '50'
+        },
+        {
           name: 'organisation',
           description: 'By Organisation',
           hint: 'Enter the org name or id',
@@ -210,16 +218,6 @@ function PaymentService($http, config, ProjectService) {
       let filterDropdownItems = [];
 
       filterDropdownItems.push({
-        checkedClass: 'rcgf',
-        ariaLabel: 'RCGF',
-        name: 'rcgf',
-        model: undefined,
-        label: 'RCGF',
-        sourceKey: 'RCGF'
-      });
-
-
-      filterDropdownItems.push({
         checkedClass: 'dpf',
         ariaLabel: 'DPF',
         name: 'dpf',
@@ -229,12 +227,30 @@ function PaymentService($http, config, ProjectService) {
       });
 
       filterDropdownItems.push({
+        checkedClass: 'esf',
+        ariaLabel: 'ESF',
+        name: 'esf',
+        model: undefined,
+        label: '  ESF',
+        sourceKey: 'ESF'
+      });
+
+      filterDropdownItems.push({
         checkedClass: 'grant',
         ariaLabel: 'Grant',
         name: 'grant',
         model: undefined,
         label: 'Grant',
-        sourceKey: 'PAYMENT'
+        sourceKey: 'Grant'
+      });
+
+      filterDropdownItems.push({
+        checkedClass: 'rcgf',
+        ariaLabel: 'RCGF',
+        name: 'rcgf',
+        model: undefined,
+        label: 'RCGF',
+        sourceKey: 'RCGF'
       });
 
       return filterDropdownItems;

@@ -7,9 +7,11 @@
  */
 package uk.gov.london.ops.web.model.project;
 
+import uk.gov.london.ops.domain.project.Label;
 import uk.gov.london.ops.domain.project.NamedProjectBlock;
 
 import java.time.OffsetDateTime;
+import java.util.Set;
 
 /**
  * Created by chris on 05/04/2017.
@@ -28,16 +30,28 @@ public class ProjectBlockHistoryItem {
 
     private String actionedBy;
 
-    public ProjectBlockHistoryItem() {
+    private String approvedOnStatus;
+
+    private Set<Label> labels;
+
+    public ProjectBlockHistoryItem(Integer projectId, Integer blockId, NamedProjectBlock.BlockStatus status, Integer blockVersion, OffsetDateTime versionUpdated, String modifiedBy,String actionedBy, String approvedOnStatus) {
+        this(projectId, blockId, status, blockVersion, versionUpdated, null, approvedOnStatus, (Set) null);
+        if (status.equals(NamedProjectBlock.BlockStatus.UNAPPROVED)) {
+            this.actionedBy = modifiedBy;
+        } else {
+            this.actionedBy = actionedBy;
+        }
     }
 
-    public ProjectBlockHistoryItem(Integer projectId, Integer blockId, NamedProjectBlock.BlockStatus status,  Integer blockVersion, OffsetDateTime versionUpdated, String actionedBy) {
+    public ProjectBlockHistoryItem(Integer projectId, Integer blockId, NamedProjectBlock.BlockStatus status, Integer blockVersion, OffsetDateTime versionUpdated, String actionedBy, String approvedOnStatus, Set<Label> labels) {
         this.projectId = projectId;
         this.blockId = blockId;
         this.status = status;
         this.blockVersion = blockVersion;
         this.versionUpdated = versionUpdated;
         this.actionedBy = actionedBy;
+        this.approvedOnStatus = approvedOnStatus;
+        this.labels = labels;
     }
 
     public Integer getProjectId() {
@@ -86,5 +100,21 @@ public class ProjectBlockHistoryItem {
 
     public void setStatus(NamedProjectBlock.BlockStatus status) {
         this.status = status;
+    }
+
+    public String getApprovedOnStatus() {
+        return approvedOnStatus;
+    }
+
+    public void setApprovedOnStatus(String approvedOnStatus) {
+        this.approvedOnStatus = approvedOnStatus;
+    }
+
+    public Set<Label> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<Label> labels) {
+        this.labels = labels;
     }
 }

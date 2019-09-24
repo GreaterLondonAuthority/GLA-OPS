@@ -6,9 +6,9 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-function ReclaimInfoModal($uibModal) {
+function ReclaimInfoModal($uibModal, MilestonesService) {
   return {
-    show: function (milestone) {
+    show: function (milestone, isMonetaryValue, showCancelReclaim) {
       return $uibModal.open({
         bindToController: true,
         controllerAs: '$ctrl',
@@ -18,13 +18,21 @@ function ReclaimInfoModal($uibModal) {
 
         controller: ['$uibModalInstance', function($uibModalInstance) {
           this.milestone = milestone;
+          this.isMonetaryValue = isMonetaryValue;
+          this.showCancelReclaim = showCancelReclaim;
+
+          this.cancelReclaim = function(/*milestone*/){
+            $uibModalInstance.close({
+              action: MilestonesService.claimActions.cancelReclaim
+            });
+          }
         }]
       });
     }
   };
 }
 
-ReclaimInfoModal.$inject = ['$uibModal'];
+ReclaimInfoModal.$inject = ['$uibModal', 'MilestonesService'];
 
 angular.module('GLA')
   .service('ReclaimInfoModal', ReclaimInfoModal);

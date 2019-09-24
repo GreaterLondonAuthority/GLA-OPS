@@ -30,7 +30,12 @@
     <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
       <div class="status-box">
         <div class="text-align-left">Programme</div>
-        <checkbox-filter id="programme-filter" filter-dropdown-items="$ctrl.programmeDropDownItems" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+        <checkbox-filter
+          id="programme-filter"
+          filter-dropdown-items="$ctrl.programmeDropDownItems"
+          on-change="$ctrl.updateFilters(true, $event)"
+          is-disabled="$ctrl.selectedSearchOption.name === $ctrl.byProgrammeOption.name"
+        ></checkbox-filter>
       </div>
     </div>
     <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
@@ -96,7 +101,7 @@
         <button
           ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState"
           class="action-buttons action-buttons-reset"
-          ng-click="$ctrl.clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset</button>
+          ng-click="$ctrl.clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset all</button>
       </div>
     </div>
   </well>
@@ -113,7 +118,7 @@
       <span ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState">0 results match your search. Check your filter selection and try again.</span>
     </div>
     <div class="table-responsive" ng-if="$ctrl.payments.length">
-      <table id="all-payments-table" class="table table-bordered table-striped-groups">
+      <table id="all-payments-table" class="table table-bordered table-striped-groups table-hover">
         <thead class="thead-inverse uppercase">
           <tr>
             <th>Project ID</th>
@@ -132,7 +137,7 @@
         <tbody>
           <tr ng-repeat-start="item in $ctrl.payments"
             ng-class="{'odd-row': $index % 2 === 1}"
-            class="clickable-row"
+            class="cursor-pointer"
             ui-sref="payment-summary({paymentId:item.id})">
             <td>P{{item.projectId}}</td>
             <td class="project-name">{{item.projectName}}</td>

@@ -12,7 +12,10 @@ function index(obj, i) {
   return obj[i];
 }
 class ChangeReportTable {
-  constructor($rootScope, $scope) {
+  constructor() {
+  }
+
+  $onInit(){
     this.hasRightValues = false;
     this.hasLeftValues = false;
     _.forEach(this.rows, (row)=>{
@@ -28,7 +31,6 @@ class ChangeReportTable {
       left: this.hasLeftValues,
       right: this.hasRightValues
     };
-    // console.log('sideControler', this.sideControler);
   }
 
   getValue(data, field) {
@@ -41,7 +43,7 @@ class ChangeReportTable {
   }
 }
 
-ChangeReportTable.$inject = ['$rootScope', '$scope'];
+ChangeReportTable.$inject = [];
 
 angular.module('GLA')
   .component('changeReportTable', {

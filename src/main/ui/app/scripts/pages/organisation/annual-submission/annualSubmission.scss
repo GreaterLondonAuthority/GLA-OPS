@@ -1,0 +1,24 @@
+annual-submission {
+  display: block;
+  width: 83.333%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: auto;
+
+  overview-block.block{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .comments-display {
+    white-space: pre-wrap;
+  }
+
+  .row.inverse-margin{
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+
+  .dateInput.form-control{
+    width: 100%;
+  }
+}

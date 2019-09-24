@@ -1,0 +1,22 @@
+<div class="includes-tables">
+
+  <change-report-field label="'Total Project Budget'"
+                       data="$ctrl.data"
+                       fields="'totalProjectSpend'"
+                       formats="'currency'"
+                       class="next-to-tables"></change-report-field>
+
+  <change-report-field label="'Advance Payment'"
+                       data="$ctrl.data"
+                       fields="'advancePayment'"
+                       formats="'currency'"
+                       class="next-to-tables"></change-report-field>
+
+  <change-report-table
+    rows="$ctrl.outputsCostsToCompare"
+    fields="$ctrl.outputsCostsFields"
+    changes="$ctrl.data.changes"
+    show-table-separators="$ctrl.data.right">
+  </change-report-table>
+
+</div>

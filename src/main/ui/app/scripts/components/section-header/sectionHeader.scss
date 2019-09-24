@@ -5,15 +5,34 @@ section-header {
   margin-top: 30/16 + 0rem;
   margin-bottom: 8/16 + 0rem;
 
-  .section__header {
+  .section-header {
     font-size: 20/16 + 0rem;
     font-family: $font-family-light;
+    .glyphicon{
+      top: 3px;
+    }
 
   }
 
-  .section__subheader{
+  .section-subheader{
     font-family: $font-family-default;
     color: $secondary-text;
     font-size: 14/16 + 0rem;
+    margin-top: 0;
+  }
+
+  &.section-toggle{
+    user-select: none;
+    .glyphicon {
+      top: 3px;
+    }
+    cursor: pointer;
+  }
+
+  &.with-button{
+    .section-title {
+      width: 100%;
+      line-height: 34px;
+    }
   }
 }

@@ -8,26 +8,26 @@
 
 
 class ExpandableRow {
-    constructor() {
-        this.isExpanded = false;
-        this.primaryRowFocus = false;
-        this.cellSelected = null;
+    init(){
+      this.isExpanded = false;
+      this.primaryRowFocus = false;
+      this.cellSelected = null;
 
-        // retrieve store
-        this.store =
-            this.sessionStorage[this.tableId] ?
-            this.sessionStorage[this.tableId] :
-            this.sessionStorage[this.tableId] = {};
+      // retrieve store
+      this.store =
+        this.sessionStorage[this.tableId] ?
+          this.sessionStorage[this.tableId] :
+          this.sessionStorage[this.tableId] = {};
 
-        // retrieve or initialise expanded list
-        this.store.expanded =
-            this.store.expanded ?
-            this.store.expanded :
-            [];
+      // retrieve or initialise expanded list
+      this.store.expanded =
+        this.store.expanded ?
+          this.store.expanded :
+          [];
 
-        // set component state
-        this.isExpanded = (this.store.expanded.indexOf(this.rowId) >= 0);
-        this.cellSelected = this.store.cellSelected;
+      // set component state
+      this.isExpanded = (this.store.expanded.indexOf(this.rowId) >= 0);
+      this.cellSelected = this.store.cellSelected;
     }
 
     /**

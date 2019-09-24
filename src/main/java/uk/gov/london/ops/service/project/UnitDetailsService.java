@@ -9,25 +9,22 @@ package uk.gov.london.ops.service.project;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.london.ops.audit.AuditService;
 import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.domain.project.ProjectBlockType;
 import uk.gov.london.ops.domain.project.UnitDetailsBlock;
 import uk.gov.london.ops.domain.project.UnitDetailsTableEntry;
-import uk.gov.london.ops.domain.refdata.CategoryValue;
-import uk.gov.london.ops.domain.refdata.TenureType;
 import uk.gov.london.ops.domain.template.TemplateTenureType;
 import uk.gov.london.ops.domain.user.User;
-import uk.gov.london.ops.exception.ValidationException;
-import uk.gov.london.ops.repository.CategoryValueRepository;
-import uk.gov.london.ops.repository.MarketTypeRepository;
-import uk.gov.london.ops.repository.TenureTypeRepository;
-import uk.gov.london.ops.service.AuditService;
+import uk.gov.london.ops.refdata.CategoryValue;
+import uk.gov.london.ops.refdata.RefDataService;
+import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.web.model.project.UnitDetailsMetaData;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,13 +37,7 @@ public class UnitDetailsService extends  BaseProjectService {
     AuditService auditService;
 
     @Autowired
-    CategoryValueRepository categoryValueRepository;
-
-    @Autowired
-    MarketTypeRepository marketTypeRepository;
-
-    @Autowired
-    TenureTypeRepository tenureTypeRepository;
+    RefDataService refDataService;
 
     /**
      * Delete an existing table row entry
@@ -78,7 +69,7 @@ public class UnitDetailsService extends  BaseProjectService {
         Project project = projectService.get(projectId);
         UnitDetailsBlock block = (UnitDetailsBlock) project.getSingleBlockByTypeAndId(ProjectBlockType.UnitDetails, blockId);
         checkForLock(block);
-
+        unitTableEntry.setProjectId(projectId);
         validateEntry(unitTableEntry);
 
         User currentUser = userService.currentUser();
@@ -131,8 +122,9 @@ public class UnitDetailsService extends  BaseProjectService {
     }
 
     void validateEntry(UnitDetailsTableEntry unitTableEntry) {
-        TenureType tenureType = tenureTypeRepository.findOne(unitTableEntry.getTenureId());
-        if (!tenureType.getMarketTypes().contains(unitTableEntry.getMarketType())) {
+        Project project = get(unitTableEntry.getProjectId());
+        TemplateTenureType templateTenureType = project.getTemplate().getTenureTypes().stream().filter(t -> t.getTenureType().getId().equals(unitTableEntry.getTenureId())).findFirst().orElse(null);
+        if (templateTenureType == null || templateTenureType.getMarketTypes().stream().noneMatch(t -> t.getId().equals(unitTableEntry.getMarketType().getId()))) {
             throw new ValidationException("Incorrect market type for the given tenure");
         }
 
@@ -145,30 +137,14 @@ public class UnitDetailsService extends  BaseProjectService {
     public UnitDetailsMetaData getUnitDetailsMetaDataForProject(Integer projectId) {
         Project project = projectService.get(projectId);
 
-        List<TenureType> tenureDetails = new ArrayList<>();
-        project.getTemplate().getTenureTypes().stream()
-                .sorted(Comparator.comparingInt(TemplateTenureType::getDisplayOrder))
-                .forEach(t -> tenureDetails.add(t.getTenureType()));
+        List<TemplateTenureType> tenureDetails = project.getTemplate().getTenureTypes().stream()
+                .sorted(Comparator.comparingInt(TemplateTenureType::getDisplayOrder)).collect(Collectors.toList());
 
         UnitDetailsMetaData metaData = new UnitDetailsMetaData();
-        metaData.setBeds(categoryValueRepository.findAllByCategoryOrderByDisplayOrder(CategoryValue.Category.Bedrooms));
-        metaData.setUnitDetails(categoryValueRepository.findAllByCategoryOrderByDisplayOrder(CategoryValue.Category.UnitTypes));
+        metaData.setBeds(refDataService.findAllByCategoryOrderByDisplayOrder(CategoryValue.Category.Bedrooms));
+        metaData.setUnitDetails(refDataService.findAllByCategoryOrderByDisplayOrder(CategoryValue.Category.UnitTypes));
         metaData.setTenureDetails(tenureDetails);
         return metaData;
-    }
-
-    public UnitDetailsBlock updateUnitDetails(Integer id, Integer blockId, UnitDetailsBlock updatedBlock, boolean releaseLock) {
-        Project project = get(id);
-        UnitDetailsBlock existingBlock = (UnitDetailsBlock) project.getSingleBlockByTypeAndId(ProjectBlockType.UnitDetails, blockId);
-
-        checkForLock(existingBlock);
-
-        existingBlock.merge(updatedBlock);
-
-        releaseOrRefreshLock(existingBlock, releaseLock);
-
-        updateProject(project);
-        return existingBlock;
     }
 
 }

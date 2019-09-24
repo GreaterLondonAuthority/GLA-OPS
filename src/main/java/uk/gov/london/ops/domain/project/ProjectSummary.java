@@ -7,14 +7,14 @@
  */
 package uk.gov.london.ops.domain.project;
 
-import uk.gov.london.ops.util.jpajoins.NonJoin;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.OffsetDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import java.time.OffsetDateTime;
+import uk.gov.london.ops.framework.jpa.NonJoin;
 
 /**
  * Project summary for use by API.
@@ -76,21 +76,25 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
     @Column
     OffsetDateTime lastModified;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    Project.Status status;
+    @Column(name = "status")
+    String statusName;
 
-
-    @Enumerated(EnumType.STRING)
     @Column(name = "substatus")
-    Project.SubStatus subStatus;
+    String subStatusName;
 
     @Column(name = "recommendation")
     @Enumerated(EnumType.STRING)
     Project.Recommendation recommendation;
 
+    @Column(name = "state")
+    private String state;
+
     @Column(name = "managing_organisation_id")
     private Integer managingOrganisationId;
+
+    @JsonIgnore
+    @Column(name = "subscriptions")
+    private String subscriptions;
 
     public String getTitle() {
         return title;
@@ -150,12 +154,20 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
         return lastModified;
     }
 
-    public Project.Status getStatus() {
-        return status;
+    public String getStatusName() {
+        return statusName;
     }
 
-    public Project.SubStatus getSubStatus() {
-        return subStatus;
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public String getSubStatusName() {
+        return subStatusName;
+    }
+
+    public void setSubStatusName(String subStatusName) {
+        this.subStatusName = subStatusName;
     }
 
     @Override
@@ -231,16 +243,20 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
         this.lastModified = lastModified;
     }
 
-    public void setStatus(Project.Status status) {
-        this.status = status;
-    }
-
     public Project.Recommendation getRecommendation() {
         return recommendation;
     }
 
     public void setRecommendation(Project.Recommendation recommendation) {
         this.recommendation = recommendation;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public Boolean isUnapprovedChanges() {
@@ -257,6 +273,14 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
 
     public void setManagingOrganisationId(Integer managingOrganisationId) {
         this.managingOrganisationId = managingOrganisationId;
+    }
+
+    public String getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(String subscriptions) {
+        this.subscriptions = subscriptions;
     }
 
 }

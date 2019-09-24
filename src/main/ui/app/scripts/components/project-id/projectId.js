@@ -6,9 +6,7 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
-
-var gla = angular.module('GLA');
+const gla = angular.module('GLA');
 
 gla.component('projectId', {
   templateUrl: 'scripts/components/project-id/projectId.html',

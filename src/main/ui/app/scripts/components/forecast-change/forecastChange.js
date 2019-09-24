@@ -10,6 +10,9 @@ import NumberUtil from '../../util/NumberUtil';
 
 class ForecastChangeCtrl {
   constructor($scope) {
+  }
+
+  $onInit(){
     this.originalSpend = angular.copy(this.spend);
     this.originalValue = this.isCapital ? this.originalSpend.capitalForecast : this.originalSpend.revenueForecast;
 

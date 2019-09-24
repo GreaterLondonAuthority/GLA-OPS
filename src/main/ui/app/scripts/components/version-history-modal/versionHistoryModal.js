@@ -14,17 +14,19 @@ function VersionHistoryModal($uibModal) {
         controllerAs: '$ctrl',
         animation: false,
         templateUrl: 'scripts/components/version-history-modal/versionHistoryModal.html',
-        size: 'md',
+        size: 'lg',
         controller: [function () {
           this.versionHistory = versionHistory || [];
-          this.autoApproval = !!(project || {}).autoApproval;
+          this.autoApproval = !project.stateModel.approvalRequired;
           this.actionedByTitle = this.autoApproval ? 'Saved by' : 'Actioned by';
-
           this.versionText = (historyItem, isFirstItem) => {
+
             if (this.autoApproval) {
               return isFirstItem ? 'Current version' : `Version ${historyItem.blockVersion}`;
+            } else if(historyItem.status === 'UNAPPROVED'){
+              return 'Unapproved version';
             } else {
-              return historyItem.status === 'UNAPPROVED' ? 'Unapproved version' : `Approved v${historyItem.blockVersion}`
+              return historyItem.approvedOnStatus? `${historyItem.approvedOnStatus} approved v${historyItem.blockVersion}` : `Approved v${historyItem.blockVersion}`;
             }
           }
         }]

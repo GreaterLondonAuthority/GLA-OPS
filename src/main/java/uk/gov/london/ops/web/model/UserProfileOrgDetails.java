@@ -13,10 +13,12 @@ public class UserProfileOrgDetails {
 
     private Integer orgId;
     private String orgName;
+    private String managingOrgName;
     private String role;
     private String roleName;
     private List<AssignableRole> assignableRoles;
     private boolean approved;
+    private boolean primary;
 //    private boolean canHaveThreshold;
 
 
@@ -35,6 +37,14 @@ public class UserProfileOrgDetails {
 
     public void setOrgName(String orgName) {
         this.orgName = orgName;
+    }
+
+    public String getManagingOrgName() {
+        return managingOrgName;
+    }
+
+    public void setManagingOrgName(String managingOrgName) {
+        this.managingOrgName = managingOrgName;
     }
 
     public String getRole() {
@@ -69,7 +79,15 @@ public class UserProfileOrgDetails {
         this.roleName = roleName;
     }
 
-//    public boolean getCanHaveThreshold() {
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
+    }
+
+    //    public boolean getCanHaveThreshold() {
 //        return canHaveThreshold;
 //    }
 //    public void setCanHaveThreshold(boolean canHaveThreshold){

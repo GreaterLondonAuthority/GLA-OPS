@@ -1,6 +1,6 @@
 <div class="design-standards">
   <div class="text-center">
-    <project-header on-back="$ctrl.back()" editable-block="$ctrl">Confirm design standards</project-header>
+    <project-header on-back="$ctrl.back()" editable-block="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</project-header>
   </div>
 
   <spinner ng-if="$ctrl.loading && !$ctrl.data"></spinner>
@@ -30,10 +30,6 @@
       <remaining-characters text="$ctrl.data.reasonForNotMeetingDesignGuide" max="1000"></remaining-characters>
     </div>
 
-    <div class="row">
-      <div class="col-xs-12 mtop30 mbottom30 text-center">
-        <button class="btn btn-primary" ng-click="$ctrl.submit()" ng-if="!$ctrl.readOnly">SAVE</button>
-      </div>
-    </div>
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
   </div>
 </div>

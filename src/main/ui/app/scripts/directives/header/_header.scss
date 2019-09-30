@@ -16,7 +16,7 @@
 
   .gla-ops {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 21px;
     font-weight: bold;
     font-family: $font-family-default;
@@ -67,11 +67,11 @@
     text-align: right;
   }
 
-  a.logout {
+  a.logout, .user-notification {
     font-weight: 900;
     display: block;
     position: relative;
-    z-index: 1005;
+    z-index: 0;
   }
 
   .gla-header-vbar {
@@ -92,7 +92,7 @@
       display: inline !important;
     }
 
-    a.logout{
+    a.logout, .user-notification{
       display: inline;
     }
 
@@ -106,5 +106,11 @@
     .gla-ops {
       margin-top: 0px;
     }
+  }
+
+  .badge.badge-pill{
+    padding: 3px 6px;
+    font-size: 11px;
+    cursor: pointer;
   }
 }

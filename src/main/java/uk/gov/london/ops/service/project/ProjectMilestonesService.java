@@ -9,37 +9,44 @@ package uk.gov.london.ops.service.project;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.london.ops.domain.attachment.AttachmentFile;
+import uk.gov.london.common.GlaUtils;
+import uk.gov.london.ops.domain.Requirement;
 import uk.gov.london.ops.domain.attachment.StandardAttachment;
 import uk.gov.london.ops.domain.project.*;
+import uk.gov.london.ops.domain.project.funding.FundingBlock;
+import uk.gov.london.ops.domain.project.state.ProjectStatus;
 import uk.gov.london.ops.domain.template.MilestonesTemplateBlock;
 import uk.gov.london.ops.domain.template.ProcessingRoute;
-import uk.gov.london.ops.domain.template.Requirement;
 import uk.gov.london.ops.domain.template.Template;
 import uk.gov.london.ops.domain.user.User;
-import uk.gov.london.ops.exception.ValidationException;
-import uk.gov.london.ops.mapper.MilestoneMapper;
-import uk.gov.london.ops.repository.FileRepository;
-import uk.gov.london.ops.service.finance.PaymentService;
+import uk.gov.london.ops.file.AttachmentFile;
+import uk.gov.london.ops.file.FileService;
+import uk.gov.london.ops.payment.PaymentGroup;
+import uk.gov.london.ops.payment.PaymentService;
+import uk.gov.london.ops.project.implementation.MilestoneMapper;
+import uk.gov.london.ops.framework.exception.ValidationException;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static uk.gov.london.ops.domain.project.ClaimStatus.Claimed;
 import static uk.gov.london.ops.domain.project.ClaimStatus.Pending;
-import static uk.gov.london.ops.util.GlaOpsUtils.nullSafeAdd;
 
 @Service
 @Transactional
-public class ProjectMilestonesService extends BaseProjectService implements PostCloneNotificationListener {
+public class ProjectMilestonesService extends BaseProjectService implements PostCloneNotificationListener, ProjectPaymentGenerator {
 
     @Autowired
     MilestoneMapper milestoneMapper;
 
     @Autowired
-    private FileRepository fileRepository;
+    private FileService fileService;
+
+    @Autowired
+    private ProjectFundingService fundingService;
 
     @Autowired
     private PaymentService paymentService;
@@ -69,7 +76,7 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
         milestone.setManuallyCreated(Boolean.TRUE);
         milestone.setMonetary(project.getTemplate().getAllowMonetaryMilestones());
 
-        if (currentUser.isGla() && Project.Status.Assess.equals(project.getStatus())) {
+        if (currentUser.isGla() && ProjectStatus.Assess.equals(project.getStatusType())) {
             milestone.setConditional(true);
             milestone.setRequirement(Requirement.mandatory);
         }
@@ -121,6 +128,16 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
         checkForLock(block);
 
         if (milestone.isManuallyCreated()) {
+            FundingBlock fundingBlock = project.getFundingBlock();
+            if (fundingBlock != null) {
+                List<Integer> yearsMilestoneUsed = fundingService.getYearsMilestoneUsed(project.getId(), fundingBlock.getId(), milestone.getSummary());
+                if (!yearsMilestoneUsed.isEmpty()) {
+                    String message = "You can't delete this milestone as payments are profiled against it in " + GlaUtils.getFinancialYearList(yearsMilestoneUsed, ", ") +
+                            ". You must delete the profiled payment(s) before you can delete the milestone.";
+                    throw new ValidationException(message);
+                }
+            }
+
             if (milestone.isClaimed()) {
                 throw new ValidationException("Cannot delete a "+milestone.getClaimStatus()+" milestone");
             }
@@ -133,7 +150,7 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
             releaseOrRefreshLock(block, !autosave);
 
             this.updateProject(project);
-            auditService.auditCurrentUserActivity(String.format("Removed milestone %d:%s from project with id: %d", milestone.getId(), milestone.getSummary(), project.getId()));
+            auditService.auditCurrentUserActivity(String.format("Removed milestone %d: %s from project with id: %d", milestone.getId(), milestone.getSummary(), project.getId()));
             return project;
         } else {
             throw new ValidationException("Unable to delete milestones that are not manually added.");
@@ -153,6 +170,10 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
             throw new ValidationException("cannot claim milestone in status "+existingMilestone.getClaimStatus());
         }
 
+        if (!milestonesBlock.isPaymentsEnabled() && existingMilestone.getMonetary()) {
+            throw new ValidationException("cannot claim monetary milestone when payments are disabled for this template. ");
+        }
+
         Map<GrantType, Long> maxClaims = milestonesBlock.getMaxClaims();
         if (Template.MilestoneType.MonetaryValue.equals(project.getTemplate().getMilestoneType())) { // as for monetary split the amount is calculated dynamically, we don't need to validate it here
             validateAmountClaimed(updatedMilestone.getClaimedGrant(), GrantType.Grant, maxClaims);
@@ -168,7 +189,7 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
         existingMilestone.setClaimStatus(Claimed);
 
         if (existingMilestone.getMonetaryValue() != null) {
-            existingMilestone.setMonetaryValue(new BigDecimal(nullSafeAdd(updatedMilestone.getClaimedGrant(), updatedMilestone.getClaimedRcgf(), updatedMilestone.getClaimedDpf())));
+            existingMilestone.setMonetaryValue(new BigDecimal(updatedMilestone.calculateTotalValueClaimed()));
         }
 
         updateProject(project);
@@ -199,6 +220,21 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
         updateProject(project);
     }
 
+    public void cancelReclaim(Integer projectId, Integer milestoneId) {
+        Project project = get(projectId);
+
+        ProjectMilestonesBlock milestonesBlock = project.getMilestonesBlock();
+
+        checkForLock(milestonesBlock);
+        Milestone existingMilestone = milestonesBlock.getMilestoneById(milestoneId);
+
+        existingMilestone.setReclaimedGrant(null);
+        existingMilestone.setReclaimedRcgf(null);
+        existingMilestone.setReclaimedDpf(null);
+        existingMilestone.setReclaimReason(null);
+        updateProject(project);
+    }
+
     public ProjectMilestonesBlock attachMilestoneEvidence(Integer projectId, Integer blockId, Integer milestoneId, Integer fileId, boolean releaseLock) {
 
         Project project = get(projectId);
@@ -220,7 +256,7 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
             throw new ValidationException("Unable to add more attachments as the limit has been reached.");
         }
 
-        AttachmentFile file = fileRepository.findOne(fileId);
+        AttachmentFile file = fileService.get(fileId);
 
         StandardAttachment standardAttachment = new StandardAttachment(file);
 
@@ -282,6 +318,18 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
         // check if correct block type
         if (projectBlockById != null && (ProjectBlockType.Milestones.equals(projectBlockById.getBlockType()))) {
             paymentService.clonePaymentGroupsForBlock(originalBlockId, newProject.getId(), newBlockId);
+        }
+    }
+
+    @Override
+    public PaymentGroup generatePaymentsForProject(Project project, String approvalRequestedBy) {
+        ProjectMilestonesBlock milestonesBlock = project.getMilestonesBlock();
+        if (milestonesBlock != null && (milestonesBlock.getApprovalWillCreatePendingPayment() || milestonesBlock.getApprovalWillCreatePendingReclaim())) {
+            // TODO / TechDebt to be fixed as part of GLA-23993
+            return paymentService.generatePaymentsForClaimedMilestones(project, approvalRequestedBy);
+        }
+        else {
+            return null;
         }
     }
 

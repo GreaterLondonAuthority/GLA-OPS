@@ -54,6 +54,9 @@ public class IndicativeTenureValue implements Comparable, ComparableItem {
     public IndicativeTenureValue() {
     }
 
+    public IndicativeTenureValue(Integer year) {
+        this.year = year;
+    }
     public IndicativeTenureValue(Integer year, Integer units) {
         this.year = year;
         this.units = units;

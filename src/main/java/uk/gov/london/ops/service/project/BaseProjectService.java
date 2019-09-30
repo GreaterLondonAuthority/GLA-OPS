@@ -7,31 +7,39 @@
  */
 package uk.gov.london.ops.service.project;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import uk.gov.london.ops.Environment;
-import uk.gov.london.ops.FeatureStatus;
+import uk.gov.london.ops.framework.feature.Feature;
+import uk.gov.london.ops.framework.feature.FeatureStatus;
+import uk.gov.london.ops.audit.ActivityType;
+import uk.gov.london.ops.audit.AuditService;
 import uk.gov.london.ops.domain.EntityType;
 import uk.gov.london.ops.domain.organisation.OrganisationGroup;
-import uk.gov.london.ops.domain.project.NamedProjectBlock;
-import uk.gov.london.ops.domain.project.Project;
+import uk.gov.london.ops.domain.project.*;
+import uk.gov.london.ops.domain.project.state.ProjectStatus;
+import uk.gov.london.ops.domain.project.state.ProjectSubStatus;
 import uk.gov.london.ops.domain.template.Contract;
+import uk.gov.london.ops.domain.template.InternalTemplateBlock;
 import uk.gov.london.ops.domain.template.TemplateBlock;
 import uk.gov.london.ops.domain.user.User;
-import uk.gov.london.ops.exception.ApiErrorItem;
-import uk.gov.london.ops.exception.ForbiddenAccessException;
-import uk.gov.london.ops.exception.NotFoundException;
-import uk.gov.london.ops.exception.ValidationException;
-import uk.gov.london.ops.repository.EntitySubscriptionRepository;
+import uk.gov.london.ops.notification.NotificationService;
+import uk.gov.london.ops.payment.PaymentService;
 import uk.gov.london.ops.repository.LockDetailsRepository;
-import uk.gov.london.ops.repository.ProjectLedgerRepository;
+import uk.gov.london.ops.repository.ProjectBlocOverviewRepository;
 import uk.gov.london.ops.repository.ProjectRepository;
+import uk.gov.london.ops.repository.ProjectStateRepository;
 import uk.gov.london.ops.service.*;
-import uk.gov.london.ops.service.finance.PaymentService;
 import uk.gov.london.ops.service.project.block.ProjectBlockActivityMap;
 import uk.gov.london.ops.service.project.state.*;
+import uk.gov.london.common.error.ApiErrorItem;
+import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
+import uk.gov.london.ops.framework.exception.NotFoundException;
+import uk.gov.london.ops.framework.exception.ValidationException;
 
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
@@ -40,10 +48,9 @@ import java.util.stream.Collectors;
 
 import static uk.gov.london.ops.domain.project.NamedProjectBlock.BlockStatus.LAST_APPROVED;
 import static uk.gov.london.ops.domain.project.NamedProjectBlock.BlockStatus.UNAPPROVED;
-import static uk.gov.london.ops.domain.project.Project.Status.Active;
-import static uk.gov.london.ops.domain.project.Project.Status.Closed;
-import static uk.gov.london.ops.domain.project.Project.SubStatus.*;
-import static uk.gov.london.ops.service.PermissionService.*;
+import static uk.gov.london.ops.domain.project.state.ProjectStatus.*;
+import static uk.gov.london.ops.domain.project.state.ProjectSubStatus.*;
+import static uk.gov.london.ops.service.PermissionType.*;
 
 @Transactional
 public class BaseProjectService {
@@ -58,6 +65,9 @@ public class BaseProjectService {
     DataAccessControlService dataAccessControlService;
 
     @Autowired
+    NotificationService notificationService;
+
+    @Autowired
     PaymentService paymentService;
 
     @Autowired
@@ -70,13 +80,13 @@ public class BaseProjectService {
     ManualApprovalProjectStateMachine manualApprovalProjectStateMachine;
 
     @Autowired
+    MultiAssessmentProjectStateMachine multiAssessmentProjectStateMachine;
+
+    @Autowired
     AutoApprovalProjectStateMachine autoApprovalProjectStateMachine;
 
     @Autowired
     ProjectBlockActivityMap projectBlockActivityMap;
-
-    @Autowired
-    EntitySubscriptionRepository entitySubscriptionRepository;
 
     @Autowired
     LockDetailsRepository lockDetailsRepository;
@@ -85,7 +95,10 @@ public class BaseProjectService {
     ProjectRepository projectRepository;
 
     @Autowired
-    ProjectLedgerRepository projectLedgerRepository;
+    ProjectBlocOverviewRepository projectBlocOverviewRepository;
+
+    @Autowired
+    ProjectStateRepository projectStateRepository;
 
     @Autowired
     Environment environment;
@@ -98,6 +111,9 @@ public class BaseProjectService {
 
     @Autowired
     OrganisationGroupService organisationGroupService;
+
+    @Autowired
+    OrganisationService organisationService;
 
     @Autowired
     FeatureStatus featureStatus;
@@ -124,6 +140,11 @@ public class BaseProjectService {
         }
 
         project.setProjectBlocksSorted(filterSortedProjectBlocks(project, unapprovedChanges ? UNAPPROVED : LAST_APPROVED));
+
+        if (permissionService.currentUserHasPermission(PROJ_VIEW_INTERNAL_BLOCKS.getPermissionKey())) {
+            project.setInternalBlocksSorted(filterSortedInternalBlocks(project));
+        }
+
         if (loadUsersFullNames) {
             setUsersFullNames(project.getProjectBlocksSorted());
         }
@@ -131,19 +152,22 @@ public class BaseProjectService {
         project.setPendingPayments(paymentService.hasPendingPayments(id));
         project.setReclaimedPayments(paymentService.hasReclaims(id));
 
+        if (project.getGrantSourceBlock() != null) {
+            enrichGrantSourceBlock(project);
+        }
+
+        for (EnrichmentRequiredListener enrichmentListener : enrichmentListeners) {
+            enrichmentListener.enrichProject(project, forComparison);
+        }
+
         setPendingContractSignatureFlag(project);
 
         setProjectMessages(project);
 
         calculateProjectPermissions(project, userService.currentUser());
 
-        project.setCurrentUserWatching(entitySubscriptionRepository.findFirstByUsernameAndEntityTypeAndEntityId(
-                userService.currentUser().getUsername(), EntityType.project, project.getId()) != null);
-        project.setNbWatchers(entitySubscriptionRepository.countByEntityTypeAndEntityId(EntityType.project, project.getId()));
-
-        for (EnrichmentRequiredListener enrichmentListener : enrichmentListeners) {
-            enrichmentListener.enrichProject(project, forComparison);
-        }
+        project.setCurrentUserWatching(notificationService.isUserSubscribed(userService.currentUser().getUsername(), EntityType.project, project.getId()));
+        project.setNbWatchers(notificationService.countByEntityTypeAndEntityId(EntityType.project, project.getId()));
 
         if (compareToStatus != null || compareToDate !=null) {
             if (unapprovedChanges) { // we are source being compared with previous version
@@ -154,8 +178,68 @@ public class BaseProjectService {
             }
 
         }
+//        logErrorsInProject(project);
 
         return project;
+    }
+
+    public BaseProject projectOverview(Integer id) {
+        List<ProjectBlockOverview> allByProjectIdOrderByDisplayOrder = projectBlocOverviewRepository.findAllByProjectIdOrderByDisplayOrder(id);
+
+        BaseProject project = null;
+        for (ProjectBlockOverview projectBlockOverview : allByProjectIdOrderByDisplayOrder) {
+            if (project == null) {
+                project = populateProject(projectBlockOverview);
+            }
+            project.getProjectBlocksSorted().add(populateProjectBlock(projectBlockOverview));
+        }
+        dataAccessControlService.checkAccess(project);
+
+        return project;
+    }
+
+    NamedProjectBlock populateProjectBlock(ProjectBlockOverview projectBlockOverview) {
+        SimpleProjectBlock spb = new SimpleProjectBlock();
+        spb.setId(projectBlockOverview.getProjectBlockId());
+        spb.setDisplayOrder(projectBlockOverview.getDisplayOrder());
+        spb.setVersionNumber(projectBlockOverview.getVersionNumber());
+        spb.setBlockAppearsOnStatus(projectBlockOverview.getBlockAppearsOnStatus());
+        spb.setBlockMarkedComplete(projectBlockOverview.getBlockMarkedComplete());
+        spb.setBlockDisplayName(projectBlockOverview.getBlockDisplayName());
+        spb.setBlockType(projectBlockOverview.getBlockType());
+        spb.setHidden(projectBlockOverview.isHidden());
+        spb.setNew(projectBlockOverview.isNew());
+        spb.setBlockStatus(projectBlockOverview.getBlockStatus());
+
+        if (projectBlockOverview.getLockedBy() != null) {
+            spb.setLockDetails(new LockDetails(new User(projectBlockOverview.getLockedBy()), 0));
+        }
+        return spb;
+
+    }
+
+    BaseProject populateProject(ProjectBlockOverview projectBlockOverview) {
+        BaseProject project = new BaseProject();
+        project.setOrganisation(projectBlockOverview.getOrganisation());
+        project.setManagingOrganisation(projectBlockOverview.getManagingOrganisation());
+        project.setId(projectBlockOverview.getProjectId());
+        project.setTitle(projectBlockOverview.getTitle());
+        project.setProjectBlocksSorted(new ArrayList<>());
+        project.setStatusName(projectBlockOverview.getStatusName());
+        project.setSubStatusName(projectBlockOverview.getSubStatusName());
+        project.setRecommendation(projectBlockOverview.getRecommendation());
+        project.setInfoMessage(projectBlockOverview.getInfoMessage());
+        project.setProgrammeId(projectBlockOverview.getProgrammeId());
+        project.setTemplateId(projectBlockOverview.getTemplateId());
+        project.setMarkedForCorporate(projectBlockOverview.isMarkedForCorporate());
+        return project;
+    }
+
+    private void logErrorsInProject(Project project) {
+        List<NamedProjectBlock> sortedProjectBlocks = project.getProjectBlocksSorted();
+        if(sortedProjectBlocks.size() > sortedProjectBlocks.stream().sorted(Comparator.comparingInt(NamedProjectBlock :: getDisplayOrder).reversed()).findFirst().get().getDisplayOrder()) {
+            log.error("Error found in project : " + project.getId() + ". Could be two latest versions showing for one block.");
+        }
     }
 
     void setPendingContractSignatureFlag(Project project) {
@@ -171,6 +255,7 @@ public class BaseProjectService {
     private Project getProjectForComparison(Project project, NamedProjectBlock.BlockStatus compareToStatus, String date) {
         Project projectToCompareTo = new Project(project.getId(),"");
         projectToCompareTo.setTemplate(project.getTemplate());
+        projectToCompareTo.setOrganisation(project.getOrganisation());
         projectToCompareTo.getProjectBlocks().addAll(project.getProjectBlocks());
         List<NamedProjectBlock> projectBlocksSorted = new ArrayList<>();
         if (compareToStatus != null) {
@@ -234,7 +319,19 @@ public class BaseProjectService {
         }
 
         Collection<NamedProjectBlock> applicableBlocks = UNAPPROVED.equals(blockStatus) ? project.getLatestProjectBlocks() : project.getLatestApprovedBlocks();
+        applicableBlocks = applicableBlocks.stream().filter(block -> !block.isHidden()).collect(Collectors.toList());
+
         return applicableBlocks.stream().sorted().collect(Collectors.toList());
+    }
+
+    List<InternalProjectBlock> filterSortedInternalBlocks(Project project) {
+        List<InternalProjectBlock> internalProjectBlocks = new ArrayList<>();
+        for (InternalProjectBlock block: project.getInternalBlocks()) {
+            if (!InternalBlockType.Assessment.equals(block.getType()) || !project.getProgrammeTemplate().getAssessmentTemplates().isEmpty()) {
+                internalProjectBlocks.add(block);
+            }
+        }
+        return internalProjectBlocks.stream().sorted().collect(Collectors.toList());
     }
 
     void setUsersFullNames(List<NamedProjectBlock> blocks) {
@@ -263,16 +360,16 @@ public class BaseProjectService {
      * @return the project corresponding to the given id or null if not found.
      */
     public Project get(Integer id) {
-        Project project = projectRepository.findOne(id);
+        Project project = projectRepository.findById(id).orElse(null);
         if (project != null && featureStatus != null) {
-            project.setReclaimEnabled(featureStatus.isEnabled(FeatureStatus.Feature.Reclaims));
+            project.setReclaimEnabled(featureStatus.isEnabled(Feature.Reclaims));
         }
         return project;
     }
 
 
     public List<Project> get(List<Integer> idList) {
-        return projectRepository.findAll(idList);
+        return projectRepository.findAllById(idList);
     }
 
 
@@ -304,8 +401,9 @@ public class BaseProjectService {
     protected void releaseOrRefreshLock(NamedProjectBlock blockToCheck, boolean releaseLock) {
         checkForLock(blockToCheck);
         if (releaseLock) {
-            lockDetailsRepository.delete(blockToCheck.getId());
+            lockDetailsRepository.deleteById(blockToCheck.getId());
             blockToCheck.setLockDetails(null);
+            auditService.auditCurrentUserActivity(EntityType.projectBlock, blockToCheck.getId(), ActivityType.StopEdit);
 
         } else {
             // refresh lock timeout
@@ -314,7 +412,7 @@ public class BaseProjectService {
     }
 
     protected void ensureRPCanModifyProject(Project project) {
-        if (!(Project.Status.Draft.equals(project.getStatus()) || Project.Status.Returned.equals(project.getStatus()) || Active.equals(project.getStatus()))) {
+        if (!(ProjectStatus.Draft.equals(project.getStatusType()) || ProjectStatus.Returned.equals(project.getStatusType()) || Active.equals(project.getStatusType()))) {
             throw new ValidationException("Unable to update a project that is not in Draft/Returned status.");
         }
     }
@@ -343,15 +441,34 @@ public class BaseProjectService {
     }
 
     void setProjectMessages(Project project) {
-        if (ApprovalRequested.equals(project.getSubStatus()) || PaymentAuthorisationPending.equals(project.getSubStatus())) {
+        if (Draft.equals(project.getStatusType()) && CollectionUtils.isNotEmpty(project.getHistory()) && ProjectHistory.Transition.Returned.equals(project.getLastHistoryEntry().getTransition())) {
+            project.getMessages().add(new ApiErrorItem("", "Project has been returned for further information. Update the project and resubmit."));
+        }
+
+        if (project.getProgramme() != null
+                && project.getProgramme().isInAssessment()
+                && project.getStatusType().equals(Submitted)
+                && Objects.equals(project.getTemplate().getStateModel(),StateModel.MultiAssessment)){
+            project.getMessages().add(new ApiErrorItem("", "Project is in assessment and can't be withdrawn."));
+        }
+
+        if (Submitted.equals(project.getStatusType())
+                && project.getProgramme().isEnabled()
+                && (!project.getProgramme().isInAssessment()
+                    || project.getProgramme().isInAssessment()
+                    && !Objects.equals(project.getTemplate().getStateModel(),StateModel.MultiAssessment))) {
+            project.getMessages().add(new ApiErrorItem("", "This project is submitted and must be withdrawn before being edited or abandoned"));
+        }
+
+        if (ApprovalRequested.equals(project.getSubStatusType()) || PaymentAuthorisationPending.equals(project.getSubStatusType())) {
             project.getMessages().add(new ApiErrorItem("", "The project is awaiting approval and cannot be edited at this stage"));
         }
 
-        if (AbandonPending.equals(project.getSubStatus())) {
+        if (AbandonPending.equals(project.getSubStatusType())) {
             project.getMessages().add(new ApiErrorItem("", "This project has a pending abandon request and cannot be updated"));
         }
 
-        if (Closed.equals(project.getStatus()) && project.hasReclaimedPayments()) {
+        if (Closed.equals(project.getStatusType()) && project.hasReclaimedPayments()) {
             project.getMessages().add(new ApiErrorItem("", "This project contains authorised or pending reclaim(s)"));
         }
     }
@@ -374,6 +491,8 @@ public class BaseProjectService {
                 project.currentState(),
                 roles,
                 project.getProgramme().isEnabled(),
+                project.getProgramme().isInAssessment(),
+                project.getHistory(),
                 project.isComplete(),
                 project.getApprovalWillCreatePendingPayment() || project.getApprovalWillCreatePendingReclaim());
         project.setAllowedTransitions(states);
@@ -381,19 +500,22 @@ public class BaseProjectService {
 
     void calculateAllowedActions(Project project) {
         List<Project.Action> allowedActions = new ArrayList<>();
-
-        if (permissionService.currentUserHasPermissionForOrganisation(PROJ_CHANGE_REPORT, project.getOrganisation().getId())) {
+        // order of summary report and change report is directly used by UI and should remain summary first then change
+        if (permissionService.currentUserHasPermissionForOrganisation(PROJ_SUMMARY_REPORT.getPermissionKey(), project.getOrganisation().getId())) {
+            allowedActions.add(Project.Action.ViewSummaryReport);
+        }
+        if (permissionService.currentUserHasPermissionForOrganisation(PROJ_CHANGE_REPORT.getPermissionKey(), project.getOrganisation().getId())) {
             allowedActions.add(Project.Action.ViewChangeReport);
         }
 
-        if (permissionService.currentUserHasPermissionForOrganisation(PROJ_TRANSFER, project.getOrganisation().getId())
-                && !Project.SubStatus.UnapprovedChanges.equals(project.getSubStatus())
-                && !Project.SubStatus.ApprovalRequested.equals(project.getSubStatus())
-                && !Project.SubStatus.PaymentAuthorisationPending.equals(project.getSubStatus())
+        if (permissionService.currentUserHasPermissionForOrganisation(PROJ_TRANSFER.getPermissionKey(), project.getOrganisation().getId())
+                && !ProjectSubStatus.UnapprovedChanges.equals(project.getSubStatusType())
+                && !ApprovalRequested.equals(project.getSubStatusType())
+                && !PaymentAuthorisationPending.equals(project.getSubStatusType())
                 && !project.anyBlocksLocked()) {
             allowedActions.add(Project.Action.Transfer);
         }
-        if (permissionService.currentUserHasPermissionForOrganisation(PROJ_REINSTATE, project.getOrganisation().getId())) {
+        if (permissionService.currentUserHasPermissionForOrganisation(PROJ_REINSTATE.getPermissionKey(), project.getOrganisation().getId())) {
             allowedActions.add(Project.Action.Reinstate);
         }
         project.setAllowedActions(allowedActions);
@@ -414,12 +536,14 @@ public class BaseProjectService {
     }
 
     private boolean isProjectEditable(Project project) {
-        return !(Project.Status.Draft.equals(project.getStatus()) && !project.getProgramme().isEnabled());
+        return !(ProjectStatus.Draft.equals(project.getStatusType()) && !project.getProgramme().isEnabled());
     }
 
     ProjectStateMachine stateMachineForProject(Project project) {
-        if (StateMachine.AUTO_APPROVAL.equals(project.getStateMachine())) {
+        if (StateModel.AutoApproval.equals(project.getStateModel())) {
             return autoApprovalProjectStateMachine;
+        } else if (StateModel.MultiAssessment.equals(project.getStateModel())) {
+            return multiAssessmentProjectStateMachine;
         } else {
             return manualApprovalProjectStateMachine;
         }
@@ -429,4 +553,48 @@ public class BaseProjectService {
     public Project getByLegacyProjectCode(Integer legacyCode) {
         return projectRepository.findFirstByLegacyProjectCode(legacyCode);
     }
+
+    public Set<Integer> findAllProjectIdsByWBSCode(String wbsCode) {
+        return projectRepository.findAllProjectIdsByWBSCode(wbsCode);
+    }
+
+    boolean isWbsCodeUsedInProjectsOtherThan(String wbsCode, Integer projectId) {
+        Set<Integer> projectIds = findAllProjectIdsByWBSCode(wbsCode);
+        projectIds.remove(projectId);
+        return projectIds.size() > 0;
+    }
+
+    protected void enrichGrantSourceBlock(Project project) {
+        GrantSourceBlock grantSourceBlock = project.getGrantSourceBlock();
+
+        grantSourceBlock.setAssociatedProjectFlagUpdatable(
+                project.isAssociatedProjectsEnabled()
+                        && !project.getMilestonesBlock().hasClaimedMilestones()
+                        && organisationService.isStrategic(project.getOrganisation().getId(), project.getProgrammeId())
+                        && !paymentService.hasPayments(project.getId())
+        );
+    }
+
+    protected NamedProjectBlock createBlockFromTemplate(Project project, TemplateBlock templateBlock) {
+        NamedProjectBlock namedProjectBlock = templateBlock.getBlock().newProjectBlockInstance();
+        namedProjectBlock.setProject(project);
+        namedProjectBlock.initFromTemplate(templateBlock);
+
+        namedProjectBlock.setNew(StringUtils.isNotEmpty(namedProjectBlock.getBlockAppearsOnStatus())
+                && Objects.equals(project.getStatusName(), templateBlock.getBlockAppearsOnStatus()));
+
+        namedProjectBlock.setHidden(StringUtils.isNotEmpty(templateBlock.getBlockAppearsOnStatus())
+                && !Objects.equals(project.getStatusName(), templateBlock.getBlockAppearsOnStatus()));
+
+        return namedProjectBlock;
+    }
+
+    protected void addInternalBlockToProject(Project project, InternalTemplateBlock internalTemplateBlock) {
+        InternalProjectBlock internalProjectBlock = internalTemplateBlock.getType().newBlockInstance();
+        internalProjectBlock.initFromTemplate(internalTemplateBlock);
+        internalProjectBlock.setProject(project);
+        project.getInternalBlocks().add(internalProjectBlock);
+    }
+
+
 }

@@ -1,0 +1,275 @@
+<div class="row no-gutter mtop15 mbottom15 add-milestone-row">
+  <div class="col-xs-12 text-right">
+    <button class="btn btn-secondary pull-right addNewMilestoneBtn"
+            ng-click="$ctrl.add()"
+            ng-if="!$ctrl.isAddBtnDisabled">
+      ADD NEW MILESTONE <b>+</b>
+    </button>
+  </div>
+</div>
+
+<spinner ng-if="!$ctrl.milestones && $ctrl.loading"></spinner>
+
+
+<div class="table-responsive">
+  <table id="milestones-table" class="table table-hover table-bordered table-with-inputs" ng-class="{multiline: $ctrl.isMonetaryValueType}">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>Milestone</th>
+      <th ng-if="$ctrl.showNaColumn">N/A</th>
+      <th>Date</th>
+      <th ng-if="$ctrl.showDescription">Description</th>
+      <th ng-if="$ctrl.isMonetaryValueType">Value £</th>
+      <th ng-if="$ctrl.showGrantColumn" style="width: 25%">{{ $ctrl.monetarySplitTitle || 'GRANT %' }}</th>
+      <th ng-if="$ctrl.showEvidenceColumn">Evidence</th>
+      <th ng-if="$ctrl.showStatusColumn">Status</th>
+      <th permission permission-only="'corp.dash.proj.mark'" ng-if="$ctrl.projectMarkedCorporate">Corporate Reporting</th>
+      <th ng-if="$ctrl.showClaimStatus">Claim Status</th>
+      <th ng-if="!$ctrl.readOnly">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-if="!$ctrl.milestones.length && !$ctrl.loading">
+      <td colspan="6">No milestones added</td>
+    </tr>
+    <tr ng-repeat-start="m in $ctrl.milestones"
+        ng-class="{'with-manual-indicator': m.manuallyCreated,'with-conditional-indicator': m.conditional, 'recently-added': m.id == $ctrl.addedMilestone.id}">
+      <td ng-class="{'with-manual-indicator': m.manuallyCreated, 'cursor-pointer': $ctrl.showPaymentsToggle(m)}"
+          ng-click="$ctrl.showPayments(m)">
+        <span class="manual-indicator" ng-class="{'conditional-indicator': m.conditional}" ng-if="m.manuallyCreated"></span>
+        <span ng-if="$ctrl.showPaymentsToggle(m)"
+              class="glyphicon expand-toggle"
+              ng-class="{'glyphicon-triangle-bottom': !m.expanded,'glyphicon-triangle-top': m.expanded }"></span>
+        {{ m.summary }}
+      </td>
+
+      <td ng-if="$ctrl.showNaColumn" ng-class="{'read-only': $ctrl.isNaFieldReadonly(m), 'cell-with-input': !$ctrl.isNaFieldReadonly(m)}">
+        <input type="checkbox"
+               ng-model="m.notApplicable"
+               style="width: auto; display: inline; margin-left: 8px; height: 28px"
+               ng-change="$ctrl.onNaChange(m)"
+               ng-if="!$ctrl.isNaFieldReadonly(m)">
+        <span ng-if="$ctrl.isNaFieldReadonly(m)">{{m.notApplicable? 'N/A' : ''}}</span>
+      </td>
+
+
+      <td ng-if="$ctrl.isMilestoneReadonly(m)" class="read-only text-nowrap">{{ m.notApplicable? 'N/A' : m.milestoneDate | date: 'dd / MM / yyyy' }}</td>
+      <td class="cell-with-input"
+          ng-if="!$ctrl.isMilestoneReadonly(m)"
+          ng-class="{'active-cell': isFocused, 'invalid-cell': m._invalidDate}">
+        <date-input is-focused="isFocused"
+                    on-blur="$ctrl.autoSave()"
+                    has-errors="m._invalidDate"
+                    ng-model="m.milestoneDate"
+                    clear="m.notApplicable"
+                    class="monetary-date"
+                    name="{{'date' + m.id}}"></date-input>
+      </td>
+
+
+      <td ng-if="$ctrl.isMilestoneReadonly(m) && $ctrl.showDescription" class="read-only multiline-text">{{m.description}}</td>
+      <td class="cell-with-input" ng-if="!$ctrl.isMilestoneReadonly(m) && $ctrl.showDescription"
+          ng-class="{'active-cell': isFocused}">
+            <textarea type="text"
+                      rows="5"
+                      ng-model="m.description"
+                      maxlength="200"
+                      aria-label="Description"
+                      ng-focus="m.isFocused = true"
+                      ng-blur="m.isFocused = false"
+                      change-on-blur="$ctrl.autoSave()"
+                      placeholder="{{$ctrl.descriptionHintText}}">
+            </textarea>
+      </td>
+
+
+      <td class="read-only" ng-if="$ctrl.isMilestoneReadonly(m) && $ctrl.isMonetaryValueType">
+        {{m.monetary ?  ((m.claimStatus === 'Approved'? m.unapprovedMonetaryValue : m.monetaryValue) | number) : 'N/A'}}
+      </td>
+      <td class="" ng-if="!$ctrl.isMilestoneReadonly(m) && $ctrl.isMonetaryValueType"
+          ng-class="{'active-cell': isFocused, 'read-only':!m.monetary, 'cell-with-input': m.monetary}">
+
+        <input type="text"
+               class="monetary-value"
+               name="{{'monetaryValue'+m.id}}"
+               ng-if="m.monetary"
+               ng-model="m.monetaryValue"
+               ng-focus="m.isFocused = true"
+               ng-blur="m.isFocused = false"
+               maxlength="13"
+               number-mask="0"
+               aria-label="Monetary value"
+               change-on-blur="$ctrl.autoSave()">
+        <span ng-if="!m.monetary" style="padding: 8px">N/A</span>
+      </td>
+
+      <td class="read-only"
+          ng-if="$ctrl.showGrantColumn && $ctrl.isMilestoneReadonly(m)">{{ m.monetary ? m.monetarySplit : 'N/A'}}
+      </td>
+      <td class="cell-with-input monetary-split-cell" ng-if="$ctrl.showGrantColumn && !$ctrl.isMilestoneReadonly(m)"
+          ng-class="{'active-cell': isFocused, 'invalid-cell': m._invaliMonetarySplit, 'read-only':!m.monetary, 'cell-with-input': m.monetary}">
+
+        <input class="monetary-split"
+               type="text"
+               ng-if="m.monetary"
+               name="{{'monetarySplit'+m.id}}"
+               ng-model="m.monetarySplit"
+               ng-change="$ctrl.onSplitChange(m)"
+               focus-me="$index === $ctrl.focusRow && !$ctrl.focusDate"
+               focus-reset="false"
+               ng-focus="m.isFocused = true"
+               ng-blur="m.isFocused = false"
+               maxlength="3"
+               numbers-only
+               aria-label="Monetary split"
+               change-on-blur="$ctrl.autoSave()">
+        <span ng-if="!m.monetary" style="padding: 8px">N/A</span>
+      </td>
+
+      <td class="read-only"
+          ng-if="$ctrl.showEvidenceColumn">
+        <div ng-if="!$ctrl.isEvidenceAllowed(m)">N/A</div>
+        <div ng-if="$ctrl.isEvidenceAllowed(m)">
+          <a ng-if="$ctrl.evidenceLinkText(m)" ng-click="$ctrl.showEvidenceModal(m)">{{$ctrl.evidenceLinkText(m)}}</a>
+          <span ng-if="!$ctrl.evidenceLinkText(m)">None added</span>
+        </div>
+      </td>
+
+      <td
+        ng-if="$ctrl.showStatusColumn"
+        class="read-only">
+        <span ng-if="m.notApplicable || !$ctrl.isAutoApproval || $ctrl.readOnly">{{ m.notApplicable? 'N/A' : m.milestoneStatus }}</span>
+        <span ng-if="!m.notApplicable && $ctrl.isAutoApproval && !$ctrl.readOnly">
+              <ui-select
+                class="milestone-status"
+                name="status"
+                ng-model="m.milestoneStatus"
+                search-enabled="false"
+                required autofocus
+                on-select="$ctrl.autoSave()"
+                ng-disabled="!m.isDateInPast"
+                style="width: 200px;">
+              <ui-select-match placeholder="Select a status">{{$select.selected.label}}</ui-select-match>
+
+              <ui-select-choices repeat="status.key as status in $ctrl.milstoneStatuses">
+                <span>{{ status.label }}</span>
+              </ui-select-choices>
+            </ui-select>
+            </span>
+      </td>
+
+      <td permission permission-only="'corp.dash.proj.mark'" ng-if="$ctrl.projectMarkedCorporate" ng-class="{'cell-with-input': !$ctrl.readOnly}">
+        <input type="checkbox"
+               ng-model="m.milestoneMarkedCorporate"
+               ng-change="$ctrl.autoSave()"
+               style="width: auto; display: inline; margin-left: 8px; height: 28px"
+               ng-if="!$ctrl.readOnly">
+        <span ng-if="$ctrl.readOnly">{{m.milestoneMarkedCorporate ? 'Yes' : 'No'}}</span>
+      </td>
+
+      <td class="read-only" ng-if="$ctrl.showClaimStatus">
+        <!--TODO this is only for readonly claimed modal after refactoring-->
+        <milestone-claim-status milestone="m"
+                      milestone-type="$ctrl.template.milestoneType"
+                      read-only="$ctrl.readOnly"
+                      open-claim-milestone-modal="$ctrl.openClaimMilestoneModal($event, false)"></milestone-claim-status>
+      </td>
+
+      <td ng-if="!$ctrl.readOnly" class="delete-btn-container">
+        <milestone-actions milestone="m"
+                           ng-if="$ctrl.showClaimStatus"
+                           on-claim="$ctrl.openClaimMilestoneModal($event, true)"
+                           on-repay="$ctrl.openClaimMilestoneModal($event, true)"
+                           on-claim-cancel="$ctrl.openClaimMilestoneModal($event, true)"></milestone-actions>
+        <delete-button ng-click="$ctrl.delete(m)" ng-if="m.manuallyCreated && !($ctrl.isMilestoneReadonly(m) || (m.conditional && !$ctrl.canDeleteConditionalMilestone))"></delete-button>
+      </td>
+    </tr>
+
+    <tr ng-if="m.expanded && m.payments.length" class="sub-heading">
+      <td ng-attr-colspan="{{$ctrl.columnCount}}">PAYMENT HISTORY</td>
+    </tr>
+    <tr ng-repeat-end ng-if="m.expanded && m.payments.length" ng-repeat="p in m.payments track by p.id" class="sub-row">
+      <td ng-attr-colspan="{{$ctrl.columnCount}}">{{ p.authorisedOn | date: "dd/MM/yyyy 'at' HH:mm"}} {{p.sourceType}} {{p.value > 0? 'payment' : p.interestPayment? 'interest' : 'reclaim'}} of {{p.value | currency:'£':0}} authorised by {{p.authorisor}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="row" ng-if="$ctrl.claimExceeded && !$ctrl.reclaimRemaining && !$ctrl.reclaimRemaining.RCGF && $ctrl.showExtraInfo">
+  <div class="col-xs-12 mtop15 text-center">
+    <span class="error">Claimed milestone(s) contains a value which exceeds the total amount of Grant Source requested</span>
+  </div>
+</div>
+<div class="row" ng-if="$ctrl.reclaimRemaining && $ctrl.showExtraInfo">
+    <div class="col-xs-12 mtop15 text-center" ng-if="$ctrl.hasReclaimRemaining()">
+    <span class="error">
+      You have been paid more than requested in the <a ui-sref="project.block.grant-source({projectId: $ctrl.grantSourceBlock.projectId, blockPosition: $ctrl.indexOfGrantSourceBlock, blockId: $ctrl.grantSourceBlock.id})">grant source</a> page,
+      either request more or edit milestones to repay
+      <span ng-repeat="r in $ctrl.remainingReclaims">
+        <span ng-if="!$first && !$last">, </span>
+        <span ng-if="$last && !$first">and </span>
+        <span>{{r.value | currency:'£':0}} {{r.type}}</span>
+      </span>
+      to continue with this project.
+    </span>
+  </div>
+
+
+</div>
+
+<div class="row" ng-if="$ctrl.showGrantColumn && ($ctrl.splitTotal() != 100) && $ctrl.showExtraInfo">
+  <div class="col-xs-12 mtop15 text-center">
+    <span class="error">Monetary split value should be 100% across the available milestones</span>
+  </div>
+</div>
+
+<div class="project-status-message" ng-if="$ctrl.showExtraInfo">
+
+  <div class="mtop15 text-center" ng-if="!$ctrl.projectBlock.valid">
+    <span class="error" ng-if="$ctrl.projectBlock.validationFailures.GRANT_SOURCE_EXCEEDED">Milestone value(s) must not exceed the <a ui-sref="project.block.grant-source({projectId: $ctrl.grantSourceBlock.projectId, blockPosition: $ctrl.indexOfGrantSourceBlock, blockId: $ctrl.grantSourceBlock.id})">grant source</a> available, adjust the value of grant source requested or vary the forecast value.</span>
+  </div>
+
+
+  <div class="mtop15 text-center" ng-if="!$ctrl.projectBlock.valid" ng-repeat="message in $ctrl.projectBlock.validationFailures">
+    <span class="error">{{message.description}}</span>
+  </div>
+</div>
+
+<span ng-if="$ctrl.isMonetaryValueType && $ctrl.showExtraInfo" id="monetary-milestones-tally">
+
+  <section-header class="mbottom20 mtop40">Totals</section-header>
+
+
+  <div class="monetary-value-totals" vertilize-container>
+      <div class="monetary-value-totals-col approved-claims">
+        <div class="section-header" vertilize>Approved claims</div>
+        <div ng-if="$ctrl.templateGrantTypes.Grant">Grant <div class="pull-right">{{($ctrl.projectBlock.totals.approved.values.Grant || 0) | currency:'£':0}}</div></div>
+        <div ng-if="$ctrl.templateGrantTypes.RCGF">RCGF <div class="pull-right">{{($ctrl.projectBlock.totals.approved.values.RCGF|| 0) | currency:'£':0}}</div></div>
+        <div ng-if="$ctrl.templateGrantTypes.DPF">DPF <div class="pull-right">{{($ctrl.projectBlock.totals.approved.values.DPF|| 0) | currency:'£':0}}</div></div>
+      </div>
+
+      <div class="monetary-value-totals-col claims-awaiting-approval">
+        <div class="section-header" vertilize>Claims awaiting approval</div>
+        <div ng-if="$ctrl.templateGrantTypes.Grant">Grant <div class="pull-right">{{($ctrl.projectBlock.totals.claimed.values.Grant || 0) | currency:'£':0}}</div></div>
+        <div ng-if="$ctrl.templateGrantTypes.RCGF">RCGF <div class="pull-right">{{($ctrl.projectBlock.totals.claimed.values.RCGF || 0) | currency:'£':0}}</div></div>
+        <div ng-if="$ctrl.templateGrantTypes.DPF">DPF <div class="pull-right">{{($ctrl.projectBlock.totals.claimed.values.DPF || 0) | currency:'£':0}}</div></div>
+      </div>
+
+      <div class="monetary-value-totals-col balance">
+        <div vertilize>
+          <div class="section-header">Balance</div>
+          <div class="section-subheader">Grant source - approved & claims awaiting approval</div>
+        </div>
+        <div ng-if="$ctrl.templateGrantTypes.Grant">Grant left to claim <div class="pull-right">{{($ctrl.projectBlock.totals.balance.values.Grant || 0) | currency:'£':0}}</div></div>
+        <div ng-if="$ctrl.templateGrantTypes.RCGF">RCGF left to claim <div class="pull-right">{{($ctrl.projectBlock.totals.balance.values.RCGF || 0) | currency:'£':0}}</div></div>
+        <div ng-if="$ctrl.templateGrantTypes.DPF">DPF left to claim <div class="pull-right">{{($ctrl.projectBlock.totals.balance.values.DPF || 0) | currency:'£':0}}</div></div>
+      </div>
+  </div>
+
+  <div class="monetary-value-totals-summary">
+      <div>{{($ctrl.projectBlock.totals.approved.total || 0) | currency:'£':0}}</div>
+      <div>{{($ctrl.projectBlock.totals.claimed.total || 0) | currency:'£':0}}</div>
+      <div>{{($ctrl.projectBlock.totals.balance.total || 0) | currency:'£':0}}</div>
+  </div>
+</span>
+
+

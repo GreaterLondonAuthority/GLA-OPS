@@ -1,0 +1,54 @@
+<div class="table-responsive" ng-if="$ctrl.fundingClaimsEntries && $ctrl.selectedPeriod">
+  <table class="table funding-claims-table table-hover table-bordered">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>FUNDING CLAIM CATEGORY</th>
+      <th>DELIVERY TO DATE £</th>
+      <th>FORECAST DELIVERY £</th>
+      <th>TOTAL DELIVERY £</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-class="{'cursor-pointer': !$ctrl.readOnly}"
+        ng-repeat="entry in $ctrl.fundingClaimsEntries | filter: {period: $ctrl.selectedPeriod.period, academicYear: $ctrl.selectedYear} | orderBy: 'displayOrder' track by entry.id">
+      <td> {{entry.categoryName}}</td>
+      <td>
+
+        <span ng-if="$ctrl.readOnly || !entry.actualsEditable">{{entry.actualDelivery | currency:'':2}}</span>
+        <input ng-if="!$ctrl.readOnly && entry.actualsEditable"
+               type="text"
+               name="value"
+               ng-model="entry.actualDelivery"
+               change-on-blur="$ctrl.onEntryChange({$event:entry})"
+               maxlength="13"
+               number-mask="2"
+               aria-label="Monetary value">
+      </td>
+      <td>
+        <span ng-if="$ctrl.readOnly">{{entry.forecastDelivery | currency:'':2}}</span>
+        <input ng-if="!$ctrl.readOnly"
+               type="text"
+               name="value"
+               ng-model="entry.forecastDelivery"
+               change-on-blur="$ctrl.onEntryChange({$event:entry})"
+               maxlength="13"
+               number-mask="2"
+               aria-label="Monetary value">
+      </td>
+      <td class="bolder"> {{entry.totalDelivery | currency:'£':2}}</td>
+    </tr>
+    </tbody>
+
+    <tfoot class="separated bolder">
+    <tr ng-if="$ctrl.totals[$ctrl.selectedPeriod.period]">
+      <td>TOTAL</td>
+      <td class="read-only">{{$ctrl.totals[$ctrl.selectedPeriod.period].actualTotal | currency:'£':2}}</td>
+      <td class="read-only">{{$ctrl.totals[$ctrl.selectedPeriod.period].forecastTotal | currency:'£':2}}</td>
+      <td class="read-only">{{$ctrl.totals[$ctrl.selectedPeriod.period].deliveryTotal | currency:'£':2}}</td>
+    </tr>
+    </tfoot>
+
+  </table>
+</div>
+

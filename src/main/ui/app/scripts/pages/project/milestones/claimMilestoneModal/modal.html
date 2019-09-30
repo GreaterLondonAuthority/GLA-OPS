@@ -15,8 +15,9 @@
       name="claimMilestoneForm">
 
       <div class="row mtop5" ng-if="$ctrl.isPercentageMilestone">
-        <div>{{$ctrl.milestone.monetarySplit}}% of the project's {{$ctrl.grantName }} claimed with this milestone</div>
-        <div class="text-center monetary-title">Total {{$ctrl.monetarySplitTitle || ""}} Grant Total:</div>
+        <div class="mbottom10">{{$ctrl.milestone.monetarySplit}}% of the project's {{$ctrl.grantName }} claimed with this milestone</div>
+        <div class="text-left mbottom10 mtop5 rounding-message">Payments are rounded so minor adjustments may occur to account for any remaining balance</div>
+        <div class="text-center monetary-title">{{$ctrl.monetarySplitTitle || ""}} Grant Total:</div>
         <div class="text-center monetary-amount bold">£{{$ctrl.claimableGrant | number:0}}</div>
       </div>
 

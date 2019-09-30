@@ -7,16 +7,13 @@
  */
 
 class ChangeReportFieldFiles {
-  constructor($rootScope, $scope, ReportService) {
+  constructor(ReportService) {
+    this.ReportService = ReportService;
+  }
+
+  $onInit(){
     this.data = this.data || {};
 
-    // let differences = _.cloneDeep(_.differenceBy(this.data.left.answer, this.data.right.answer, 'id'));
-    // _.forEach(differences, (dif) => {
-    //   dif.fileName = '-';
-    //   this.data.right.answer.push(dif);
-    // });
-
-    this.ReportService = ReportService;
     this.displayMode = this.ReportService.getReportDisplayMode();
 
     // TODO remove this when styling is in place
@@ -31,6 +28,7 @@ class ChangeReportFieldFiles {
 
     this.mappedFields = this.ReportService.mapFields(this.fields, this.formats);
   }
+
   getValue(data, field) {
 
     if(!data){
@@ -52,7 +50,7 @@ class ChangeReportFieldFiles {
   }
 }
 
-ChangeReportFieldFiles.$inject = ['$rootScope', '$scope', 'ReportService', 'numberFilter', 'currencyFilter', 'dateFilter'];
+ChangeReportFieldFiles.$inject = ['ReportService'];
 
 angular.module('GLA')
   .component('changeReportFieldFiles', {

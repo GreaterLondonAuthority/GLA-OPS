@@ -8,23 +8,25 @@
 
 import ProjectBlockCtrl from '../../ProjectBlockCtrl';
 
-class IndicativeGrantCtrl extends ProjectBlockCtrl{
-  constructor($state, project, ProjectService, orderBy, $rootScope, GrantService, ConfirmationDialog, $injector) {
-    super(project, $injector);
+class IndicativeGrantCtrl extends ProjectBlockCtrl {
+  constructor(project, template, GrantService, $injector) {
+    super($injector);
 
-    this.$state = $state;
-    this.ProjectService = ProjectService;
-    this.orderBy = orderBy;
-    this.$rootScope = $rootScope;
+    this.template = template;
     this.GrantService = GrantService;
-    this.ConfirmationDialog = ConfirmationDialog;
+  }
 
+  $onInit() {
+    super.$onInit();
     this.skipModal = false;
     this.lastRequestId = 0;
 
-    this.data = this.sortByDisplayOrder(this.projectBlock);
+    this.title = this.GrantService.indicativeGrantSectionTitle(this.template, !this.readOnly);
+    this.data = this.GrantService.enhanceIndicativeBlock(this.projectBlock);
     this.criteriaPreviousValue = this.data.affordableCriteriaMet;
-    this.tenureSummaryDetailsRows = GrantService.indicativeGrantBlocks(this.data);
+    this.tenureSummaryDetailsRows = this.GrantService.indicativeGrantBlocks(this.data);
+    let tenureWithMostTiles = _.maxBy(this.tenureSummaryDetailsRows, 'grantBlocks.length');
+    this.tilesPerRow = tenureWithMostTiles.grantBlocks.length;
     this.updateErrors(this.data.validationFailures);
   }
 
@@ -38,11 +40,6 @@ class IndicativeGrantCtrl extends ProjectBlockCtrl{
     }
   };
 
-
-  sortByDisplayOrder(tenure) {
-    tenure.tenureTypeAndUnitsEntries = this.orderBy(tenure.tenureTypeAndUnitsEntries, 'tenureType.displayOrder');
-    return tenure;
-  };
 
   criteriaChange() {
     if (this.skipModal) {
@@ -64,19 +61,19 @@ class IndicativeGrantCtrl extends ProjectBlockCtrl{
       );
   };
 
-  saveTenure (showAnimation, t) {
+  saveTenure(showAnimation, t) {
     this.loading = !!showAnimation;
     var requestId = ++this.lastRequestId;
 
     let p = this.ProjectService.updateProjectIndicativeGrant(this.project.id, this.cleanRequestData(this.data), !!showAnimation).then(rsp => {
       if (requestId == this.lastRequestId) {
-        var data = this.sortByDisplayOrder(rsp.data);
+        let projectBlock = this.GrantService.enhanceIndicativeBlock(rsp.data);
         //Need to merge to preserve focus inside table
-        _.merge(this.data, data);
+        _.assign(this.data, projectBlock);
         this.tenureSummaryDetailsRows = this.GrantService.indicativeGrantBlocks(this.data);
         this.criteriaPreviousValue = this.data.affordableCriteriaMet;
-        this.data.validationFailures = data.validationFailures;
-        this.updateErrors(data.validationFailures);
+        this.data.validationFailures = projectBlock.validationFailures;
+        this.updateErrors(projectBlock.validationFailures);
         this.loading = false;
       }
     });
@@ -90,16 +87,16 @@ class IndicativeGrantCtrl extends ProjectBlockCtrl{
    */
   submit() {
     this.$rootScope.showGlobalLoadingMask = true;
-    this.$q.all(this.requestsQueue).then(results => {
-      this.saveTenure(false)
-        .then(() => {
-          this.returnToOverview(this.blockId);
-        })
+    return this.$q.all(this.requestsQueue).then(results => {
+      return this.saveTenure(false);
     });
   };
 
   cleanRequestData(data) {
-    var requestBody = angular.copy(data);
+    let requestBody = angular.copy(data);
+    requestBody.tenureTypeAndUnitsEntries.forEach(tt => {
+      tt.indicativeTenureValuesSorted = tt.indicativeTenureValuesSorted.filter(t => !t.disabled);
+    });
     delete requestBody.tenureSummaryDetails;
     delete requestBody.totals;
     delete requestBody.validationFailures;
@@ -112,8 +109,22 @@ class IndicativeGrantCtrl extends ProjectBlockCtrl{
   }
 }
 
-IndicativeGrantCtrl.$inject = ['$state', 'project', 'ProjectService', 'orderByFilter', '$rootScope', 'GrantService', 'ConfirmationDialog', '$injector'];
+IndicativeGrantCtrl.$inject = ['project', 'template', 'GrantService', '$injector'];
 
 
 angular.module('GLA')
   .controller('IndicativeGrantCtrl', IndicativeGrantCtrl);
+
+
+/*
+angular.module('GLA')
+  .component('indicative-grant-page', {
+    templateUrl: 'scripts/pages/project/grant/indicative-grant/indicativeGrant.html',
+    bindings: {
+      organisationTypes: '<',
+      organisation: '<',
+      showUsers: '<?'
+    },
+    controller: OrganisationCtrl,
+  });
+*/

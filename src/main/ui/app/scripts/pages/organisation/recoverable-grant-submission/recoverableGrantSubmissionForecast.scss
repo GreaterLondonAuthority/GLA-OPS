@@ -1,0 +1,86 @@
+.recoverable-grant-submission-forecast{
+  width: 83.333%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin: auto;
+
+  .unspent-grant-explanation-text {
+    color: $secondary-grey;
+  }
+
+  .unspent-grant-tally{
+    font-size: 1.25rem;
+    font-family: "Gotham-light", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+    font-family: $font-family-bolder;
+  }
+
+  .unspent-grant-tally-number {
+    color: $secondary-grey;
+  }
+
+  .category-row, .comment-row {
+    background-color: $table-bg-hover;
+  }
+
+  .comment-row {
+    .comment-entry{
+      margin-left: 100px;
+      max-width: 500px;
+    }
+    td {
+      border-top: 0;
+    }
+  }
+
+  .expandable {
+    width: 30px;
+  }
+  .unexpected-unspent-section {
+    input {
+      max-width: 200px;
+    }
+  }
+
+  .inputUnspentGrant {
+    display: block;
+    position: relative;
+    margin-top: 0.5rem;
+    box-sizing: border-box;
+
+    input[type="text"] {
+      border: 1px solid $gla-grey;
+      padding: 0.2rem 0.5rem 0.1rem 0.5rem;
+
+      &:focus {
+        border: 1px solid $form-field-active;
+        outline: none;
+      }
+    }
+
+    .inputUnspentGrant__input {
+      &.disabled {
+        opacity: 0.5;
+
+        input[type="text"] {
+          background-color: transparent;
+        }
+      }
+    }
+
+  }
+
+  .closing-balance-text {
+    font-size: 20px;
+  }
+
+  .closing-balance{
+    font-size: 20px;
+    font-family: $font-family-bolder;
+  }
+
+  .section-header{
+    display: block;
+  }
+
+
+}

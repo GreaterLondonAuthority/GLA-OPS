@@ -1,0 +1,9 @@
+<div class="text-center show-more-button">
+  <span ng-transclude>
+    <span ng-if="!$ctrl.collapsed">VIEW ALL</span>
+    <span ng-if="$ctrl.collapsed">VIEW LESS</span>
+  </span>
+  <div class="glyphicon"
+       ng-class="{'glyphicon-triangle-top': $ctrl.collapsed, 'glyphicon-triangle-bottom': !$ctrl.collapsed}">
+  </div>
+</div>

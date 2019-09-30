@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,7 +51,9 @@ public class GlaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/sysops/**").hasAnyRole("OPS_ADMIN","TECH_ADMIN")
+//                .antMatchers("/api/v1/support/sql/update/**").access("hasIpAddress('127.0.0.1') or true")
                 .antMatchers("/**").permitAll();
+
 
         http.formLogin()
                 // this will disable redirect after login success or failure
@@ -69,6 +72,7 @@ public class GlaWebSecurityConfig extends WebSecurityConfigurerAdapter {
                     delayBeforeSendingAuthenticationFailure();
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 });
+
 
         http.logout()
                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
@@ -92,6 +96,12 @@ public class GlaWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
 }

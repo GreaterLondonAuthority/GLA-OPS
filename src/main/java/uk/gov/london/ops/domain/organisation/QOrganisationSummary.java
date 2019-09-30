@@ -13,7 +13,7 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -32,6 +32,8 @@ public class QOrganisationSummary extends EntityPathBase<OrganisationSummary> {
 
     public final StringPath name = createString("name");
 
+    public final NumberPath<Integer> teamId = createNumber("teamId", Integer.class);
+
     public final NumberPath<Integer> entityType = createNumber("entityType", Integer.class);
 
     public final NumberPath<Integer> managingOrganisationId = createNumber("managingOrganisationId", Integer.class);
@@ -46,7 +48,7 @@ public class QOrganisationSummary extends EntityPathBase<OrganisationSummary> {
         super(OrganisationSummary.class, forVariable("organisationSummary"));
     }
 
-    public void build(List<Integer> organisations, String searchText, List<Integer> entityTypes, List<OrganisationStatus> orgStatuses, List<RegistrationStatus> userRegStatuses) {
+    public void build(List<Integer> organisations, String searchText, List<Integer> entityTypes, List<OrganisationStatus> orgStatuses, List<RegistrationStatus> userRegStatuses, List<OrganisationTeam> teams) {
         Predicate[] predicates = new Predicate[] {
                 this.id.in(organisations),
                 this.managingOrganisationId.in(organisations)
@@ -77,6 +79,20 @@ public class QOrganisationSummary extends EntityPathBase<OrganisationSummary> {
         if (CollectionUtils.isNotEmpty(userRegStatuses)) {
             predicateBuilder.and(this.userRegStatus.in(userRegStatuses));
         }
+
+        if (CollectionUtils.isNotEmpty(teams)) {
+            List<Predicate> predicateList = new ArrayList<>();
+            for (OrganisationTeam team : teams) {
+                if (team.getTeamId() != null) {
+                    predicateList.add(this.managingOrganisationId.eq(team.getOrganisationId()).and(this.teamId.eq(team.getTeamId())));
+                } else {
+                    predicateList.add(this.managingOrganisationId.eq(team.getOrganisationId()).and(this.teamId.isNull()));
+
+                }
+            }
+            predicateBuilder.andAnyOf(predicateList.toArray(new Predicate[]{}));
+        }
+
     }
 
     public Predicate getPredicate() {

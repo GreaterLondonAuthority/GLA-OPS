@@ -7,16 +7,16 @@
       <h2>INTEREST</h2>
     </div>
     <div class="modal-body">
-      <label>Interest amount in £</label>
-      <span ng-repeat="item in $ctrl.interests">
-        <label ng-attr-for="{{'interest-amount-'+item.id}}">{{item.paymentLabel}}</label><br/>
+      <div class="label mbottom0">Interest amount in £</div>
+      <div ng-repeat="item in $ctrl.interests">
+        <label ng-attr-for="{{'interest-amount-'+item.id}}">{{item.paymentLabel}}</label>
         <input ng-attr-id="{{'interest-amount-'+item.id}}"
                ng-model="item.interest"
-               maxlength="14"
-               number-mask="2"
+               maxlength="10"
+               number-mask="0"
                class="form-control"
                placeholder="Enter interest £"/>
-      </span>
+      </div>
 
     </div>
     <div class="modal-footer">

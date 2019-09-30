@@ -38,6 +38,7 @@ function CreateDelegatedModal($uibModal, moment) {
             this.dataBlock.grantType = grantTypeObj.grantType;
             this.dataBlock.strategic = grantTypeObj.strategic;
             this.dataBlock.type = grantTypeObj.type;
+            this.dataBlock.label = grantTypeObj.label;
           };
 
           if (this.grantTypes.length == 1) {

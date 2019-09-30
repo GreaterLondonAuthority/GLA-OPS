@@ -6,47 +6,35 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
-
-var gla = angular.module('GLA');
-
-gla.component('grantTable', {
-  bindings: {
-    data: '<data',
-    isReadonly: '<isReadonly',
-    onTenureChange: '&'
-  },
-  controller: GrantTableController,
-  templateUrl: 'scripts/pages/project/grant/grant-table/grantTable.html',
-});
 
 //TODO make generic cell component
-function GrantTableController(){
-  this.tenureChange = function(t){
-    t.totalUnits = t.totalUnits || 0;
-    t.s106Units = t.s106Units || 0;
-    t.totalCost = t.totalCost || 0;
+class GrantTableController {
 
-    t.grantRequested = t.grantRequested || 0;
-    t.supportedUnits = t.supportedUnits || 0;
-
-    t.additionalAffordableUnits = t.additionalAffordableUnits || 0;
-    t.additionalAffordableUnits = t.additionalAffordableUnits || 0;
-
-    t.units = t.units || 0;
-
+  tenureChange(t) {
     this.onTenureChange();
-  };
+  }
 
-  this.hasErrors = function (m, fieldName) {
-    var errors = this.data.validationFailures || {};
-    var rowErrors = errors[m.id];
+  hasErrors(m, fieldName) {
+    let errors = this.data.validationFailures || {};
+    let rowErrors = errors[m.id];
     if (!rowErrors) {
       return false;
     }
-    var el = _.find(rowErrors, {'name': fieldName});
+    let el = _.find(rowErrors, {'name': fieldName});
     return !!el;
-  };
+  }
 }
 
 GrantTableController.$inject = [];
+
+
+angular.module('GLA')
+  .component('grantTable', {
+    bindings: {
+      data: '<data',
+      isReadonly: '<isReadonly',
+      onTenureChange: '&'
+    },
+    controller: GrantTableController,
+    templateUrl: 'scripts/pages/project/grant/grant-table/grantTable.html',
+  });

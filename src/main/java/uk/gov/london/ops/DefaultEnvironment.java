@@ -8,7 +8,6 @@
 package uk.gov.london.ops;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -47,12 +46,13 @@ public class DefaultEnvironment implements Environment {
     @Value("${urls.reportserver}")
     String reportServerUrl;
 
+    @Value("${p.spring.env.isTestEnvironment}")
+    String isTestEnvironment;
+
     @Value("${urls.about}")
     String aboutUrl;
 
     String profile = null;
-
-    Clock clock = Clock.system(ZoneId.of("Z"));
 
     @Override
     public String shortName() {
@@ -109,13 +109,17 @@ public class DefaultEnvironment implements Environment {
     }
 
     public Clock clock() {
-
-        return clock;
+        return EnvironmentUtils.clock();
     }
 
     @Override
     public boolean initTestData() {
         return (initTestDataConfig != null) && (initTestDataConfig.equalsIgnoreCase("true"));
+    }
+
+    @Override
+    public boolean isTestEnvironment() {
+        return (isTestEnvironment != null) && (isTestEnvironment.equalsIgnoreCase("true"));
     }
 
     @Override
@@ -125,6 +129,6 @@ public class DefaultEnvironment implements Environment {
 
     @Override
     public OffsetDateTime now() {
-        return OffsetDateTime.now(clock);
+        return EnvironmentUtils.now();
     }
 }

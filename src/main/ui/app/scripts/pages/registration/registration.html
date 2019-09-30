@@ -1,4 +1,4 @@
-<div class="row registration" ng-if="!$ctrl.done">
+<div class="row registration">
   <page-header>Register to create your account</page-header>
 
 
@@ -7,161 +7,17 @@
   </div>
 
   <div class="col-xs-12 col-ms-10 col-sm-8 col-md-7 center-col">
+    <user-registration-form
+      on-form-validity-change="$ctrl.onFormValidityChange($event)"
+      show-org-lookup="true"
+      errors="$ctrl.errors">
+    </user-registration-form>
 
-    <form class="form-gla" role="form" name="regForm">
-      <div class="row">
-        <div class="col-xs-12 form-group org-code-label">
-          <label for="login-orgcode">Enter a GLA-OPS organisation code or IMS provider code</label>
-        </div>
-
-        <div class="col-xs-12 col-sm-6">
-          <div class="form-group">
-            <input id="login-orgcode" type="text" name="orgcode"
-                   ng-class="{true: 'ng-invalid-copy'}[$ctrl.orgCodeValidationError]"
-                   class="form-control" ng-minlength="3" ng-model="regdata.orgCode" placeholder="GLA or IMS code" ng-change="$ctrl.checkOrgCode()" required autofocus tabindex="1" focus-me="true"/>
-            <div class="error-wrapper" role="alert" ng-show="regForm.$submitted || regForm.orgcode.$touched">
-              <span class="error" ng-show="regForm.orgcode.$error.required">Enter your GLA or IMS code</span>
-              <span class="error" ng-show="regForm.orgcode.$error.minlength">Enter at least 3 characters</span>
-              <span class="error" ng-show="$ctrl.orgCodeValidationError">GLA or IMS code not recognised</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-6" ng-if="$ctrl.orgName && !$ctrl.orgCodeValidationError">
-          <div class="form-group organisation-name" ng-attr-title="{{$ctrl.orgName}}">
-            {{$ctrl.orgName}}
-          </div>
-        </div>
-
-        <div class="clearfix"></div>
-
-        <div class="col-xs-12 col-ms-6 col-sm-6">
-          <div class="form-group">
-            <label for="login-fname">First name</label>
-            <input id="login-fname" type="text" name="fname" class="form-control" ng-model="regdata.firstName" placeholder="First name" required tabindex="1"/>
-            <div class="error-wrapper" role="alert" ng-show="regForm.$submitted || regForm.fname.$touched">
-              <span class="error" ng-show="regForm.fname.$error.required">Enter your first name</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-ms-6 col-sm-6">
-          <div class="form-group">
-            <label for="login-sname">Surname</label>
-            <input id="login-sname" type="text" name="sname" class="form-control" ng-model="regdata.lastName" placeholder="Surname" required tabindex="1"/>
-            <div class="error-wrapper" role="alert" ng-show="regForm.$submitted || regForm.sname.$touched">
-              <span class="error" ng-show="regForm.sname.$error.required">Enter your surname</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12">
-          <div class="form-group">
-            <label for="login-email">Email address</label>
-            <input id="login-email" type="email" name="email" class="form-control" ng-model="regdata.email"
-                   placeholder="Organisation email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" required autofocus tabindex="1"/>
-            <div class="error-wrapper registration-email-error" role="alert" ng-show="regForm.$submitted || regForm.email.$touched">
-              <span class="error" ng-show="regForm.email.$error.required">Enter your email address</span>
-              <span class="error" ng-show="regForm.email.$error.pattern || regForm.email.$error.email">Check your email</span>
-              <span class="error" ng-show="$ctrl.errors.username">Email address already registered</span>
-              <span class="error" ng-show="$ctrl.errors.Email">{{$ctrl.errors.Email}}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12" id="second-email">
-          <div class="form-group">
-            <label for="login-email2">Confirm Email address</label>
-            <input id="login-email2" type="email" name="email2" class="form-control" ng-model="regdata.emailConfirmation"
-                   placeholder="Re-enter organisation email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" match="regForm.email" required autofocus tabindex="1"/>
-            <div class="error-wrapper" role="alert" ng-show="regForm.$submitted || regForm.email2.$touched">
-              <span class="error" ng-show="regForm.email2.$error.required || regForm.email2.$error.email">Enter your email address</span>
-              <span class="error" ng-show="regForm.email2.$error.match">The two email addresses must match</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-6">
-          <div class="form-group">
-            <label for="login-phone">Contact number</label>
-            <input id="login-phone" type="text" name="phone" ng-maxlength="11" class="form-control" ng-model="regdata.phoneNumber" placeholder="Contact number" onkeypress='return event.charCode >= 48 && event.charCode <= 57' required tabindex="1"/>
-            <div class="error-wrapper" role="alert" ng-show="regForm.$submitted || regForm.phone.$touched">
-              <span class="error" ng-show="regForm.phone.$error.required">Enter your contact number</span>
-              <span class="error" ng-show="regForm.phone.$error.maxlength">Check your contact number</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="clearfix"></div>
-
-        <div class="col-xs-12 col-sm-6">
-          <div class="form-group" id="first-password">
-            <label for="login-pass">Create password</label>
-            <input id="login-pass" type="password" ng-minlength="8" name="pass" class="form-control" ng-model="regdata.password" placeholder="At least 8 characters" ng-change="$ctrl.passwordChanged()" ng-model-options="{ debounce: 100 }" required tabindex="1"/>
-            <div class="error-wrapper" role="alert" ng-show="regForm.$submitted || regForm.pass.$touched">
-              <span class="error" ng-show="regForm.pass.$error.required">Enter a password</span>
-              <span class="error" ng-show="regForm.pass.$error.minlength">Enter at least 8 characters</span>
-              <span class="error" ng-show="$ctrl.errors.password">{{$ctrl.errors.password}}</span>
-            </div>
-            <div>{{passwd}}</div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-sm-6">
-          <div class="form-group">
-             <password-strength password="regForm.pass.$viewValue" is-valid="$ctrl.isPasswordStrongEnough"></password-strength>
-          </div>
-        </div>
-
-        <div class="col-xs-12">
-          <div class="form-group">
-            <password-strength-explanation tab-index="2"></password-strength-explanation>
-          </div>
-        </div>
-
-        <div class="clearfix"></div>
-
-        <div class="col-xs-12 col-sm-6" id="second-password">
-          <div class="form-group">
-            <label for="login-passw">Re-enter password</label>
-            <input id="login-passw" type="password" name="passv" class="form-control" ng-model="regdata.passwordConfirmation" placeholder="Re-enter password" match="regForm.pass" required tabindex="1"/>
-            <div class="error-wrapper" role="alert" ng-show="regForm.$submitted || regForm.passv.$touched">
-              <span class="error" ng-show="regForm.passv.$error.required">Confirm your password</span>
-              <span class="error" ng-show="regForm.passv.$error.match">Password doesn't match!</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 text-center mtop30 mbottom30">
-          <button ng-disabled="
-            regForm.fname.$error.required ||
-            regForm.surname.$error.required ||
-            regForm.email.$error.required ||
-            regForm.email.$error.email ||
-            regForm.email2.$error.match ||
-            regForm.phone.$error.required ||
-            regForm.pass.$error.required ||
-            regForm.pass.$error.minlength ||
-            regForm.passv.$error.required ||
-            regForm.passv.$error.match ||
-            regForm.orgcode.$error.required ||
-            regForm.orgcode.$error.minlength ||
-            !$ctrl.isPasswordStrongEnough ||
-            $ctrl.orgCodeValidationError" class="btn btn-primary" ng-click="$ctrl.submit()" tabindex="2">REGISTER</button>
-        </div>
-
-
-      </div>
-      <div class="mbottom30 text-center">
-        <a  ui-sref="home" class="pageLink" id="logonLink" tabindex="2">Already have an account? Log in here</a>
-      </div>
-    </form>
-
+    <div class="text-center mtop30 mbottom30">
+      <button ng-disabled="!$ctrl.isFormValid" class="btn btn-primary" ng-click="$ctrl.submit()" tabindex="2">REGISTER</button>
+    </div>
+    <div class="mbottom30 text-center">
+      <a  ui-sref="home" class="pageLink" id="logonLink" tabindex="2">Already have an account? Log in here</a>
+    </div>
   </div>
-</div>
-
-<div class="thank-you" ng-if="$ctrl.done">
-  <div><i class="glyphicon glyphicon-ok"></i></div>
-  <h3>Thank you for registering on GLA-OPS</h3>
-  <h4>You will receive an email confirmation once your registration has been approved.</h4>
 </div>

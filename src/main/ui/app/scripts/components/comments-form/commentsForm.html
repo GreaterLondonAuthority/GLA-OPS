@@ -1,0 +1,25 @@
+<form class="comments-form">
+  <div class="form-group">
+    <label for="comments" ng-if="$ctrl.label">{{$ctrl.label}}</label>
+    <textarea id="comments"
+              aria-label="Comments"
+              class="form-control"
+              name="comments"
+              placeholder="{{$ctrl.placeholder}}"
+              ng-model="$ctrl.comment"
+              maxlength="1000"
+              ng-trim="false"
+              rows="5">
+    </textarea>
+    <remaining-characters text="$ctrl.comment" max="1000"></remaining-characters>
+  </div>
+
+  <div class="row text-center">
+    <div class="col-sm-6 text-sm-right">
+      <button class="btn btn-primary btn-md" ng-disabled="!$ctrl.comment" ng-click="$ctrl.save()">SAVE COMMENT</button>
+    </div>
+    <div class="col-sm-6 text-sm-left">
+      <button class="btn btn-secondary btn-md" ng-disabled="!$ctrl.comment" ng-click="$ctrl.clear()">DISCARD COMMENT</button>
+    </div>
+  </div>
+</form>

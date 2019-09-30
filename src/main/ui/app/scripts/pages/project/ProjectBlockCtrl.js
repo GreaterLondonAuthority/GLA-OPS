@@ -7,13 +7,16 @@
  */
 
 class ProjectBlockCtrl {
-  constructor(project, $injector) {
+  constructor($injector){
     this.ProjectService = $injector.get('ProjectService');
+    this.UserService = $injector.get('UserService');
     this.$log = $injector.get('$log');
     this.$state = $injector.get('$state');
     this.$stateParams = $injector.get('$stateParams');
     this.$rootScope = $injector.get('$rootScope');
     this.$sessionStorage = $injector.get('$sessionStorage');
+    this.$location = $injector.get('$location');
+    this.$anchorScroll = $injector.get('$anchorScroll');
     this.ConfirmationDialog = $injector.get('ConfirmationDialog');
     this.ProjectBlockService = $injector.get('ProjectBlockService');
     this.VersionHistoryModal = $injector.get('VersionHistoryModal');
@@ -21,10 +24,20 @@ class ProjectBlockCtrl {
     this.$q = $injector.get('$q');
     this.dateFilter = $injector.get('dateFilter');
     this.MessageModal = $injector.get('MessageModal');
-    this.blockHistory = _.orderBy(this.$state.$current.locals.globals.history || [], 'blockVersion', 'desc');
+    this.TemplateService = $injector.get('TemplateService');
+    this.ErrorService = $injector.get('ErrorService');
+  }
 
+  /**
+   * Called by angular unless overridden in superclass and needs to be called manually
+   */
+  $onInit() {
+    //TODO we shouldn't use resolves (this.$state.$current.local) indirectly.
+    this.blockHistory = _.orderBy(this.$state.$current.locals.globals.history || [], 'blockVersion', 'desc');
+    this.isBlockRevertEnabled = this.$state.$current.locals.globals.isBlockRevertEnabled;
+    let project = this.project || this.$state.$current.locals.globals.project;
     this.project = project;
-    this.active = (project.status.toLowerCase() === 'active');
+    this.active = (project.statusType.toLowerCase() === 'active');
     this.blockVersion = this.$state.params.version ? +this.$state.params.version : null;
 
     if (this.$state.$current.locals.globals.block) {
@@ -37,25 +50,33 @@ class ProjectBlockCtrl {
     }
 
     this.currentHistoryItem = _.find(this.blockHistory, {blockId: this.blockId});
-    if(this.currentHistoryItem && this.currentHistoryItem.actionedBy){
+    if (this.currentHistoryItem && this.currentHistoryItem.actionedBy) {
       this.actionedBy = this.currentHistoryItem.actionedBy;
     }
 
 
     this.lockDetails = this.projectBlock.lockDetails;
     this.infoMessage = this.projectBlock.infoMessage;
+    this.editable = this.projectBlock.editable;
 
-    this.editable = (this.projectBlock.allowedActions || []).indexOf('EDIT') != -1;
-    this.deletable = (this.projectBlock.allowedActions || []).indexOf('DELETE') != -1;
+    // if permission proj.revert.block.*
+    let hasRevertBlockPermission = this.UserService.hasPermission('proj.revert.block', this.project.organisation.id);
+
+    this.deletable = (this.projectBlock.allowedActions || []).indexOf('DELETE') != -1 && hasRevertBlockPermission;
+    this.revertable = this.isBlockRevertEnabled && this.projectBlock.blockReversionAllowed && hasRevertBlockPermission;
     this.$log.log('isDeletable', this.deletable);
 
     this.$log.log('project block', this.projectBlock);
 
-    if (this.active && this.projectBlock) {
-      if(this.project.autoApproval){
+
+    if ((this.revertable || this.hasApprovedVersion()) && this.projectBlock) {
+      if (!this.project.stateModel.approvalRequired) {
         this.version = `Last updated on ${this.dateFilter(this.projectBlock.lastModified, 'dd/MM/yyyy')} by ${this.actionedBy}`;
-      }else if (this.projectBlock.versionNumber && this.projectBlock.approvalTime) {
+      } else if (this.projectBlock.versionNumber && this.projectBlock.approvalTime) {
         this.version = `Version ${this.projectBlock.versionNumber} Approved on ${this.dateFilter(this.projectBlock.approvalTime, 'dd/MM/yyyy')}`;
+        if(this.projectBlock.approvedOnStatus){
+          this.version = `${this.projectBlock.approvedOnStatus} ${this.version}`
+        }
         this.approved = true;
       } else if (this.projectBlock.lastModified) {
         this.version = `Unapproved Version Saved on ${this.dateFilter(this.projectBlock.lastModified, 'dd/MM/yyyy')}`;
@@ -76,6 +97,33 @@ class ProjectBlockCtrl {
       this.$sessionStorage[this.blockId] ?
         this.$sessionStorage[this.blockId] :
         this.$sessionStorage[this.blockId] = {};
+
+    if(this.$stateParams.afterEdit){
+      this.showBlockCompletenessToast();
+    }
+
+    this.initialised = true;
+  }
+
+
+  jumpTo(id) {
+    this.$location.hash(id);
+    this.$anchorScroll();
+  }
+
+  $postLink(){
+    if(!this.initialised){
+      this.throwError('Subclasses of ProjectBlockCtrl overriding $onInit should call super.$onInit()')
+    }
+
+    if(!this.project){
+      this.throwError(`Subclasses of ProjectBlockCtrl should have 'project' in its resolve or in bindings`)
+    }
+  }
+
+  throwError(msg){
+    alert(msg);
+    throw new Error(msg);
   }
 
   edit() {
@@ -85,8 +133,10 @@ class ProjectBlockCtrl {
           //Block might be a new one if 'unapproved' block is created on request
           const block = resp.data;
           //Get lock and reload to show in edit mode
-          //TODO why do we reload?
+
           this.$state.params.blockId = block.id;
+          this.$state.params.afterEdit = false;
+
           this.$state.transitionTo(this.$state.current, this.$state.params, {
             reload: true,
             inherit: false
@@ -129,11 +179,10 @@ class ProjectBlockCtrl {
   /**
    * Return to project overview
    */
-  returnToOverview(projectSectionSaved) {
+  returnToOverview() {
     this.clearBlockSessionStorage();
-    this.$state.go('project.overview', {
+    this.$state.go('project-overview', {
       projectId: this.project.id,
-      projectSectionSaved: projectSectionSaved
     }, {
       reload: true
     });
@@ -148,27 +197,88 @@ class ProjectBlockCtrl {
   }
 
   deleteBlock() {
-    let modal = this.ConfirmationDialog.delete('Are you sure you want to delete the edited version of this block?<br>This deletion cannot be reverted.');
-    modal.result
-      .then(() => {
-        this.ProjectBlockService.deleteBlock(this.projectBlock.projectId, this.projectBlock.id).then(() => {
-          this.ToastrUtil.success('Block deleted');
-          this.$stateParams.version = null;
-          let previousBlock = _.find(this.blockHistory, {blockVersion: this.projectBlock.versionNumber - 1});
-          this.$stateParams.blockId = previousBlock.blockId;
-          this.$state.go(this.$state.current.name, this.$stateParams, {reload: true});
-        })
-          .catch(rsp => {
-            let error = rsp.data || {};
-            let msg = error.description || "Block can't be deleted";
-            this.MessageModal.show({
-              message: msg
-            })
+    let modal = this.ConfirmationDialog.show({
+      message: 'Are you sure you want to undo all the changes made since the last time the block was approved?',
+      approveText: 'YES',
+      dismissText: 'CLOSE'
+    });
+
+    modal.result.then(() => {
+      this.ProjectBlockService.deleteBlock(this.projectBlock.projectId, this.projectBlock.id).then(() => {
+        this.ToastrUtil.success('Block deleted');
+        this.$stateParams.version = null;
+        let previousBlock = _.find(this.blockHistory, {blockVersion: this.projectBlock.versionNumber - 1});
+        this.$stateParams.blockId = previousBlock.blockId;
+        this.$state.go(this.$state.current.name, this.$stateParams, {reload: true});
+      }).catch(rsp => {
+          let error = rsp.data || {};
+          let msg = error.description || 'Block can\'t be deleted';
+          this.MessageModal.show({
+            message: msg
           })
-      });
+        })
+    });
   }
 
+  revertBlock() {
+    let modal = this.ConfirmationDialog.show({
+      message: 'Are you sure you want to undo all changes made to this block?<br><br>This cannot be reverted.',
+      approveText: 'YES',
+      dismissText: 'CLOSE'
+    });
+    modal.result.then(() => {
+      this.ProjectBlockService.revertBlock(this.projectBlock.projectId, this.projectBlock.id).then((rsp) => {
+        console.log('newBlock', rsp);
+        this.ToastrUtil.success('Block deleted');
+        this.$stateParams.version = null;
+        this.$stateParams.blockId = rsp.data.id;
+        this.$state.go(this.$state.current.name, this.$stateParams, {reload: true});
+      }).catch(rsp => {
+        let error = rsp.data || {};
+        let msg = error.description || 'Block changes can\'t be deleted';
+        this.MessageModal.show({
+          message: msg
+        })
+      })
+    });
+  }
 
+  hasApprovedVersion(){
+    return _.some(this.blockHistory, item => item.status !== 'UNAPPROVED');
+  }
+
+  stopEditing() {
+    if (!this.submit) {
+      let errorMsg = 'submit method must be implemented in each of the project block';
+      console.error(errorMsg);
+      alert(errorMsg);
+    } else {
+      this.$rootScope.showGlobalLoadingMask = true;
+      // TODO refactored to use this.$q here instead of inside each individual submit method in every block: GLA-21696
+      // this.$q.all(this.requestsQueue).then(() => {
+      let p = this.submit();
+      if (p && p.then) {
+        p.then(() => {
+          this.readOnly = true;
+          this.$stateParams.afterEdit = true;
+          this.$state.go(this.$state.current, this.$stateParams, {reload: true});
+        }).catch(err => {
+          console.error(err);
+        });
+      } else {
+        this.$rootScope.showGlobalLoadingMask = false;
+        console.warn('Should return a promise.');
+      }
+    }
+  }
+
+  showBlockCompletenessToast(){
+    if (this.projectBlock && this.projectBlock.complete) {
+      this.ToastrUtil.success('Saved: Section completed');
+    } else {
+      this.ToastrUtil.warning('Saved: Section incomplete');
+    }
+  }
 }
 
 export default ProjectBlockCtrl;

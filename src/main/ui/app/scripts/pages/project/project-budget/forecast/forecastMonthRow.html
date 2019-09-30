@@ -58,7 +58,7 @@
             ng-if="$ctrl.formatNumberWithCR(spend.revenueActual, 2) != null"
             ng-click="$ctrl.onShowMetadata({event: {data: $ctrl.monthData, spend: spend, spendType: 'REVENUE'}})">{{$ctrl.formatNumberWithCR(spend.revenueActual, 2)}} <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></span>
       <delete-button
-        ng-if="!$ctrl.readOnly && spend.capitalActual === null && spend.revenueActual === null"
+        ng-if="!$ctrl.readOnly && spend.capitalActual == null && spend.revenueActual == null"
         ng-click="$ctrl.onDelete(spend)">
       </delete-button>
     </td>

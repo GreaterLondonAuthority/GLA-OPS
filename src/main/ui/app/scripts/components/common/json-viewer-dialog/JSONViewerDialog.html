@@ -1,0 +1,24 @@
+<div class="json-viewer-dialog">
+  <div class="modal-body text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss('cancel')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <!--<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" ng-class="{'info': $ctrl.config.info}"></span>-->
+    <h1 class="title" ng-if="$ctrl.config.title">{{$ctrl.config.title}}</h1>
+    <div class="text-left"><b ng-if="$ctrl.config.textAreaLabel">{{::$ctrl.config.textAreaLabel}}</b></div>
+    <span ng-class="{'has-error':$ctrl.errorMsg}">
+      <div class="viewer text-left">
+        <textarea ng-if="$ctrl.config.readonly" readonly>{{$ctrl.config.data | json}}</textarea>
+        <textarea ng-if="!$ctrl.config.readonly" ng-model="$ctrl.config.data"></textarea>
+      </div>
+      <div class="viewer-errors error" ng-if="$ctrl.errorMsg">
+        {{$ctrl.errorMsg}}
+      </div>
+    </span>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center dismiss-btn min-padding" ng-if="$ctrl.config.showDismiss" type="button" ng-click="$dismiss('cancel')">{{::$ctrl.config.dismissText}}</button>
+    <button class="btn btn-default btn-primary btn-center approve-btn min-padding" ng-if="$ctrl.config.showApprove" type="button" ng-click="$close()">{{::$ctrl.config.approveText}}</button>
+    <button class="btn btn-default btn-primary btn-center approve-btn min-padding" ng-if="$ctrl.config.showAddBtn" type="button" ng-click="$ctrl.onAdd($ctrl.config.data)">ADD</button>
+  </div>
+</div>

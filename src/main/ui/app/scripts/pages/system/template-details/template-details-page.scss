@@ -1,0 +1,36 @@
+.templates-questions-page{
+  ul{
+    padding-left: 5px;
+  }
+}
+
+.template-details-page{
+  .viewer{
+    textarea{
+      width: 100%;
+      height: 50vh;
+    }
+  }
+  .has-error {
+    .viewer{
+      textarea{
+        width: 100%;
+      }
+    }
+    .viewer-errors {
+      text-align: left;
+      overflow: scroll;
+      width: 100%;
+      max-height: 20vh;
+    }
+  }
+
+  .jsoneditor-poweredBy{
+    display: none;
+  }
+
+  .jsoneditor{
+    background: white;
+    height: 50vh;
+  }
+}

@@ -36,10 +36,15 @@ delete-button {
     width: $deleteButtonSmallSize;
     height: $deleteButtonSmallSize;
     font-size: 8px;
+    right: -$deleteButtonSmallSize/2;
   }
 }
 
 .delete-btn-container{
   position: relative;
+}
+
+.input-with-delete-btn{
+  padding-right: 20px;
 }
 

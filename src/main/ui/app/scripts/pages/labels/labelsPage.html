@@ -1,0 +1,38 @@
+<div class="labels-page page">
+  <page-header header="'Labels Management'">
+    <ph-right>
+      <button class="btn btn-primary btn-md" ng-click="$ctrl.showLabelModal({})">
+        CREATE NEW <span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </ph-right>
+  </page-header>
+
+  <div ng-show="$ctrl.labels.length > 0">
+  <table  id="pre-set-labels-table" class="table table-hover table-bordered table-striped-groups">
+    <thead class="thead-inverse uppercase">
+    <tr class="primaryRow">
+      <th>LABEL NAME</th>
+      <th>OWNER</th>
+      <th>STATUS</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr class="secondaryRow cursor-pointer" ng-repeat="preSetLabel in $ctrl.labels"
+        ng-click="$ctrl.showLabelModal(preSetLabel)">
+      <td>{{preSetLabel.labelName}}</td>
+      <td>{{preSetLabel.managingOrganisationName}}</td>
+      <td class="delete-btn-container">
+        <span>{{preSetLabel.status}}</span>
+        <delete-button  ng-if="!preSetLabel.used"
+                        ng-click="$ctrl.delete(preSetLabel); $event.stopPropagation();">
+        </delete-button>
+      </td>
+    </tr>
+
+    </tbody>
+  </table>
+  </div>
+
+</div>
+

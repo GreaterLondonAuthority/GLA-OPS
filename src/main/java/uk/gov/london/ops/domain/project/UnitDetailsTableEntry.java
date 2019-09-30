@@ -8,11 +8,11 @@
 package uk.gov.london.ops.domain.project;
 
 import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.domain.refdata.CategoryValue;
-import uk.gov.london.ops.domain.template.MarketType;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
-import uk.gov.london.ops.util.jpajoins.NonJoin;
+import uk.gov.london.ops.refdata.CategoryValue;
+import uk.gov.london.ops.refdata.MarketType;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
+import uk.gov.london.ops.framework.jpa.NonJoin;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

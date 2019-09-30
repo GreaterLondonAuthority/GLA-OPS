@@ -1,0 +1,16 @@
+.ui-wrapper{
+  padding-bottom: 0px !important;
+  box-sizing: content-box !important;
+
+  //Show handle as triangle in the corner
+  .ui-resizable-handle{
+    background-image: url(../images/ui-icons_444444_256x240.png);
+    background-position: -64px -224px;
+    cursor: se-resize;
+    width: 12px;
+    height: 12px;
+    right: 2px;
+    bottom: 2px;
+    left: auto;
+  }
+}

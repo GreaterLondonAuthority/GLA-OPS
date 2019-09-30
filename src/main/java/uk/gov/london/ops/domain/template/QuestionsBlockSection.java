@@ -22,17 +22,21 @@ public class QuestionsBlockSection implements Serializable {
     private Integer externalId;
 
     @Column(name = "display_order")
-    private Integer displayOrder;
+    private Double displayOrder;
 
     @Column(name = "text")
     private String text;
 
     public QuestionsBlockSection() {}
 
-    public QuestionsBlockSection(Integer externalId, Integer displayOrder, String text) {
+    public QuestionsBlockSection(Integer externalId, Double displayOrder, String text) {
         this.externalId = externalId;
         this.displayOrder = displayOrder;
         this.text = text;
+    }
+
+    public QuestionsBlockSection(Integer externalId, Integer displayOrder, String text) {
+        this(externalId, new Double(displayOrder), text);
     }
 
     public Integer getId() {
@@ -51,11 +55,11 @@ public class QuestionsBlockSection implements Serializable {
         this.externalId = externalId;
     }
 
-    public Integer getDisplayOrder() {
+    public Double getDisplayOrder() {
         return displayOrder;
     }
 
-    public void setDisplayOrder(Integer displayOrder) {
+    public void setDisplayOrder(Double displayOrder) {
         this.displayOrder = displayOrder;
     }
 

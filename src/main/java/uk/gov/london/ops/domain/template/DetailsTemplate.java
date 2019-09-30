@@ -7,13 +7,16 @@
  */
 package uk.gov.london.ops.domain.template;
 
+import uk.gov.london.ops.domain.Requirement;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.io.Serializable;
 
 @Embeddable
-public class DetailsTemplate {
+public class DetailsTemplate implements Serializable {
 
     @Column(name="address_requirement")
     @Enumerated(EnumType.STRING)
@@ -22,6 +25,10 @@ public class DetailsTemplate {
     @Column(name="borough_requirement")
     @Enumerated(EnumType.STRING)
     private Requirement boroughRequirement;
+
+    @Column(name="ward_requirement")
+    @Enumerated(EnumType.STRING)
+    private Requirement wardIdRequirement;
 
     @Column(name="postcode_requirement")
     @Enumerated(EnumType.STRING)
@@ -74,6 +81,14 @@ public class DetailsTemplate {
     @Column(name="planning_permission_reference_requirement")
     @Enumerated(EnumType.STRING)
     private Requirement planningPermissionReferenceRequirement = Requirement.optional;
+
+    public Requirement getWardIdRequirement() {
+        return wardIdRequirement;
+    }
+
+    public void setWardIdRequirement(Requirement wardIdRequirement) {
+        this.wardIdRequirement = wardIdRequirement;
+    }
 
     public Requirement getAddressRequirement() {
         return addressRequirement;

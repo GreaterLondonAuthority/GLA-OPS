@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="625" author="cmelville">
+        <addColumn tableName="project_block">
+            <column name="block_marked_complete" defaultValueBoolean="false" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="626" author="usujana">
+	   <insert tableName="organisation_entity_type">
+		  <column name="id" value="6" />
+		  <column name="entity_type" value="Learning Provider" />
+	   </insert>
+    </changeSet>
+    <changeSet id="627" author="cmelville">
+        <sql>update project_block set block_marked_complete = null</sql>
+    </changeSet>
+
+    <changeSet id="628" author="ybouhass">
+        <renameColumn tableName="notification" oldColumnName="type" newColumnName="sub_type" />
+        <addColumn tableName="notification">
+            <column name="type" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="629" author="ybouhass">
+        <createTable tableName="notification_type">
+            <column name="type" type="varchar(255)" />
+            <column name="trigger" type="varchar(1000)" />
+            <column name="text" type="varchar(1000)" />
+            <column name="entity_type" type="varchar(255)" />
+            <column name="sub_type" type="varchar(20)" />
+            <column name="email_subject" type="varchar(1000)" />
+            <column name="email_template" type="varchar(4000)" />
+            <column name="roles_notified" type="varchar(1000)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="630" author="jdimsa">
+        <createSequence sequenceName="funding_claims_variation_seq" startValue="10000" incrementBy="1" />
+        <addColumn tableName="funding_claims_block">
+            <column name="variation_requested" defaultValueBoolean="false" type="BOOLEAN"/>
+        </addColumn>
+        <createTable tableName="funding_claims_variation">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="funding_claims_variation_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="original_id" type="INT4" />
+            <column name="project_id" type="INT4" />
+            <column name="block_id" type="INT4" />
+            <column name="allocation" type="decimal" />
+            <column name="description" type="varchar(2000)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="631" author="ybouhass">
+        <modifyDataType tableName="risk_rating" columnName="display_order" newDataType="decimal(5,2)" />
+    </changeSet>
+
+</databaseChangeLog>

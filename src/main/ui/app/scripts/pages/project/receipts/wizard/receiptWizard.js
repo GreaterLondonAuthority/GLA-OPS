@@ -49,7 +49,6 @@ class ReceiptWizardCtrl {
         minMode: 'month',
         maxMode: 'month',
         yearColumns: 3,
-        yearColumns: 3,
         initDate: new Date(`${year}-04-01`),
         minDate: new Date(`${year}-04-01`),
         maxDate: new Date(`${year + 1}-03-31`),

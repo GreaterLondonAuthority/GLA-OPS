@@ -8,7 +8,7 @@
 
 'use strict';
 
-function ClaimMilestoneModal($uibModal) {
+function ClaimMilestoneModal($uibModal, Util) {
   return {
     // show: function (milestone, maxClaims, readOnly, grantValue, monetarySplitTitle, zeroGrantRequested, milestoneType, associatedProject) {
     show: function (milestone, config) {
@@ -75,7 +75,7 @@ function ClaimMilestoneModal($uibModal) {
           ctrl.monetarySplitTitle = config.monetarySplitTitle;
           ctrl.grantName = `${config.monetarySplitTitle || ''} grant`.trim();
 
-          ctrl.claimableGrant = (config.grantValue || 0) * milestone.monetarySplit/100;
+          ctrl.claimableGrant = Util.Number.roundHalfDown((config.grantValue || 0) * milestone.monetarySplit/100);
 
           ctrl.claim = function(){
             let claimedGrant;
@@ -105,7 +105,7 @@ function ClaimMilestoneModal($uibModal) {
   };
 }
 
-ClaimMilestoneModal.$inject = ['$uibModal'];
+ClaimMilestoneModal.$inject = ['$uibModal', 'Util'];
 
 angular.module('GLA')
   .service('ClaimMilestoneModal', ClaimMilestoneModal);

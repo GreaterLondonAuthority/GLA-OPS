@@ -13,7 +13,7 @@ function BudgetService($resource, $http, config, UserService) {
   return {
 
     /**
-     * Retrieve the project project budgets data
+     * Retrieve the project spend data
      * @param {Number} projectId
      * @return {Object} promise
      */

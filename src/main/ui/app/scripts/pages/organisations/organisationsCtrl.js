@@ -7,7 +7,7 @@
  */
 
 class OrganisationsCtrl {
-  constructor($rootScope, $state, $stateParams, OrganisationService, RequestOrganisationAccessModal, ToastrUtil, UserService, organisationTypes, SessionService) {
+  constructor($rootScope, $state, $stateParams, OrganisationService, RequestOrganisationAccessModal, ToastrUtil, UserService, organisationTypes, SessionService, NotificationsService, watchedOrganisations, ConfirmationDialog, managingOrganisationsTeams, canFilterByTeams) {
     $rootScope.showGlobalLoadingMask = true;
     this.$rootScope = $rootScope;
     this.$state = $state;
@@ -18,14 +18,23 @@ class OrganisationsCtrl {
     this.UserService = UserService;
     this.SessionService = SessionService;
     this.organisationTypes = organisationTypes;
+    this.watchedOrganisations = watchedOrganisations;
+    this.NotificationsService = NotificationsService;
+    this.ConfirmationDialog = ConfirmationDialog;
+    this.canFilterByTeams = canFilterByTeams;
+    this.managingOrganisationsTeams= managingOrganisationsTeams;
+
     this.showFilters = true;
     this.loading = true;
     this.cachedOrgsFilter = SessionService.getOrganisationsFilter();
+    //Clear sections cache for specific org selection
+    SessionService.setCollapsedOrgSections(null);
 
     this.initSearchDropdown();
     this.initOrgTypeDropdown();
     this.initOrgStatusDropdown();
     this.initRegistrationsDropdown();
+    this.initTeamDropDown();
 
 
     this.user = UserService.currentUser();
@@ -68,24 +77,63 @@ class OrganisationsCtrl {
       });
       return items;
     }, []);
-    this.showResetCheckboxes = false;
   };
 
   initOrgStatusDropdown() {
+    this.orgStatusDropdownDefaults = [
+      {
+        status: 'Approved',
+        model: false
+      },
+      {
+        status: 'Pending',
+        model: false
+      },
+      {
+        status: 'Inactive',
+        model: false
+      },
+      {
+        status: 'Rejected',
+        model: false
+      }
+    ];
     const selections = (this.cachedOrgsFilter || {}).orgStatuses || [];
-    this.orgStatusDropdown = ['Approved', 'Pending'].map(status => {
+    this.orgStatusDropdown = this.orgStatusDropdownDefaults.map(s => {
       return {
-        id: status,
-        label: status,
-        model: selections.indexOf(status) === -1 ? false : true
+        id: s.status,
+        label: s.status,
+        model: selections.length ? selections.indexOf(s.status) !== -1 : s.model
       }
     });
-    this.showResetCheckboxes = false;
   };
 
   initRegistrationsDropdown() {
     const selections = (this.cachedOrgsFilter || {}).userRegStatuses || [];
     this.userRegStatusDropdown = this.OrganisationService.userRegStatuses(selections);
+  }
+
+  initTeamDropDown() {
+    this.teamsDropdown = angular.copy(this.managingOrganisationsTeams);
+    (this.teamsDropdown || []).forEach(group => {
+      (group.items || []).forEach(t => t.collapsed = true);
+    });
+
+    const selections = (this.cachedOrgsFilter || {}).teamStatuses || [];
+    if(selections.length){
+      _.forEach(this.teamsDropdown, (group)=>{
+        _.forEach(group.items, team =>{
+
+          let teamStatus = _.find(selections, {
+            organisationId: team.organisationId,
+            teamId: team.teamId
+          });
+          if(teamStatus){
+            team.model = true;
+          }
+        })
+      });
+    }
   }
 
 
@@ -100,13 +148,29 @@ class OrganisationsCtrl {
     if (this.user.approved) {
       const orgTypes = this.getSelectedCheckboxes(this.orgTypeDropdown);
       const orgStatuses = this.getSelectedCheckboxes(this.orgStatusDropdown);
-      const userRegStatuses = this.getSelectedCheckboxes(this.userRegStatusDropdown);
-      this.showReset = orgTypes.length || orgStatuses.length || userRegStatuses.length || this.searchText;
+      const teamStatuses = [];
+      _.forEach(this.teamsDropdown, (group)=>{
+        _.forEach(group.items, team =>{
+          if(team.model){
+            teamStatuses.push({
+              organisationId: team.organisationId,
+              teamId: team.teamId
+            });
+          }
+        })
+      });
 
+      const isOrgStatusesChanged = this.orgStatusDropdownDefaults.some(s => {
+        let isChecked = orgStatuses.indexOf(s.status) !== -1;
+        return s.model != isChecked;
+      });
+
+      const userRegStatuses = this.getSelectedCheckboxes(this.userRegStatusDropdown);
+      this.showReset = orgTypes.length || isOrgStatusesChanged || userRegStatuses.length || teamStatuses.length || this.searchText;
 
 
       this.updateBrowserUrl();
-      this.OrganisationService.retrieveAll(page, size, sort, userRegStatuses, this.searchText, orgTypes, orgStatuses).then(response => {
+      this.OrganisationService.retrieveAll(page, size, sort, userRegStatuses, this.searchText, orgTypes, orgStatuses, teamStatuses).then(response => {
         this.lastSearchText = this.searchText;
         this.$rootScope.showGlobalLoadingMask = false;
         this.loading = false;
@@ -115,7 +179,7 @@ class OrganisationsCtrl {
         }
         this.orgCollection = response.data.content;
         if (initialLoad && !this.searchText) {
-          this.showFilters = this.orgCollection.length > 1 || (this.cachedOrgsFilter || {}).showFilters;
+          this.showFilters = this.orgCollection.length > 0 || (this.cachedOrgsFilter || {}).showFilters;
         }
 
         this.SessionService.setOrganisationsFilter({
@@ -124,6 +188,7 @@ class OrganisationsCtrl {
           orgTypes,
           orgStatuses,
           userRegStatuses,
+          teamStatuses
         });
 
         this.totalItems = response.data.totalElements;
@@ -172,11 +237,12 @@ class OrganisationsCtrl {
     this.initOrgTypeDropdown();
     this.initOrgStatusDropdown();
     this.initRegistrationsDropdown();
+    this.initTeamDropDown();
     this.getOrganisations(true);
   }
 
   getDetails(orgId) {
-    this.$state.go('organisation', {'orgId': orgId});
+    this.$state.go('organisation.view', {'orgId': orgId});
   }
 
   sortBy(columnName) {
@@ -201,9 +267,44 @@ class OrganisationsCtrl {
   updateBrowserUrl() {
     this.$state.go(this.$state.current, {searchText: this.searchText}, {notify: false});
   }
+
+  toggleWatch(organisation) {
+
+    if(this.watchedOrganisations[organisation.id]){
+      const modal = this.ConfirmationDialog.show({
+        title: 'Stop watching this organisation',
+        message: 'By selecting to stop watching this organisation you will cease to receive all relevant notifications for this organisation.',
+        approveText: 'STOP WATCHING ORGANISATION',
+        dismissText: 'CANCEL'
+      });
+
+      modal.result
+        .then(() => {
+          this.NotificationsService.unwatchOrganisation(this.UserService.currentUser().username, organisation.id).then(() => {
+            this.$state.reload();
+          });
+        });
+    } else {
+      const modal = this.ConfirmationDialog.show({
+        title: 'Watch Organisation',
+        message: 'By selecting to watch a organisation you will receive all relevant notifications for this organisation.',
+        approveText: 'WATCH ORGANISATION',
+        dismissText: 'CANCEL'
+      });
+
+      modal.result
+        .then(() => {
+          this.NotificationsService.watchOrganisation(this.UserService.currentUser().username, organisation.id).then(() => {
+            this.$state.reload();
+          });
+        });
+    }
+
+
+  }
 }
 
-OrganisationsCtrl.$inject = ['$rootScope', '$state', '$stateParams', 'OrganisationService', 'RequestOrganisationAccessModal', 'ToastrUtil', 'UserService', 'organisationTypes', 'SessionService'];
+OrganisationsCtrl.$inject = ['$rootScope', '$state', '$stateParams', 'OrganisationService', 'RequestOrganisationAccessModal', 'ToastrUtil', 'UserService', 'organisationTypes', 'SessionService', 'NotificationsService', 'watchedOrganisations', 'ConfirmationDialog', 'managingOrganisationsTeams', 'canFilterByTeams'];
 
 
 angular.module('GLA')

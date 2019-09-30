@@ -9,14 +9,20 @@
 import './consortium-form/consortiumForm.js'
 
 class ConsortiumsCtrl {
-  constructor($log, OrganisationGroupService, $stateParams, UserService) {
-    this.createdConsortiumId = $stateParams.createdConsortiumId;
+  constructor(OrganisationGroupService, $stateParams) {
+    this.OrganisationGroupService = OrganisationGroupService;
+    this.$stateParams = $stateParams;
+
+  }
+
+  $onInit(){
+    this.createdConsortiumId = this.$stateParams.createdConsortiumId;
     this.sortedBy = 'name';
     this.sortReversed = false;
     this.groups = [];
     this.isLoading = true;
 
-    OrganisationGroupService.findAll()
+    this.OrganisationGroupService.findAll()
       .then(resp => {
         this.groups = resp.data;
 
@@ -57,7 +63,7 @@ class ConsortiumsCtrl {
   }
 }
 
-ConsortiumsCtrl.$inject = ['$log', 'OrganisationGroupService', '$stateParams', 'UserService'];
+ConsortiumsCtrl.$inject = ['OrganisationGroupService', '$stateParams'];
 
 angular.module('GLA')
   .controller('ConsortiumsCtrl', ConsortiumsCtrl);

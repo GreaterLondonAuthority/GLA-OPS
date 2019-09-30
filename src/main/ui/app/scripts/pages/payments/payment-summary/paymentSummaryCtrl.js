@@ -7,28 +7,39 @@
  */
 
 import './reclaim-modal/reclaimModal.js'
+import './resend-modal/resendModal.js'
 
 class PaymentSummaryCtrl {
-  constructor($stateParams, UserService, ReclaimModal, PaymentService, $state, dateFilter, numberFilter, currencyFilter) {
-    this.canViewSapVendorId = UserService.hasPermission('org.view.vendor.sap.id');
+  constructor($stateParams, UserService, ReclaimModal, ResendModal, PaymentService, $state, dateFilter, numberFilter, currencyFilter, ConfirmationDialog, ToastrUtil, ErrorService) {
+    this.$stateParams = $stateParams;
+    this.UserService = UserService;
+    this.ReclaimModal = ReclaimModal;
+    this.ResendModal = ResendModal;
     this.PaymentService = PaymentService;
+    this.$state = $state;
     this.dateFilter = dateFilter;
     this.numberFilter = numberFilter;
     this.currencyFilter = currencyFilter;
-    this.$state = $state;
-    this.payment = this.payment || _.find(this.paymentGroup.payments, {id: $stateParams.paymentId * 1});
-    this.isDeclined = PaymentService.isDeclined(this.payment);
-    this.isPending = PaymentService.isPending(this.payment);
-    this.isAuthorised = PaymentService.isAuthorised(this.payment);
-    this.source = this.payment.ledgerType === 'PAYMENT' ? 'Grant' : this.PaymentService.getPaymentSource(this.payment);
+    this.ConfirmationDialog = ConfirmationDialog;
+    this.ToastrUtil = ToastrUtil;
+    this.ErrorService = ErrorService;
+  }
+
+  $onInit(){
+    this.canViewSapVendorId = this.UserService.hasPermission('org.view.vendor.sap.id');
+    this.payment = this.payment || _.find(this.paymentGroup.payments, {id: this.$stateParams.paymentId * 1});
+    this.isDeclined = this.PaymentService.isDeclined(this.payment);
+    this.isPending = this.PaymentService.isPending(this.payment);
+    this.isAuthorised = this.PaymentService.isAuthorised(this.payment);
+    this.source = this.PaymentService.getPaymentSource(this.payment);
     this.statusText = (this.isPending ? 'Pending' : (this.isAuthorised ? 'Authorised' : 'Declined'));
     this.declineReason = this.paymentGroup.declineReason ? this.paymentGroup.declineReason.displayValue : null;
     this.declineComments = this.paymentGroup.declineComments;
-    this.ReclaimModal = ReclaimModal;
 
+    this.resendable  = this.payment.resendable && this.UserService.hasPermission('payments.resend');
     let totalReclaimAmount = (this.reclaims || []).reduce(
       (total, reclaim) => {
-        if(reclaim.ledgerStatus !== 'Declined'){
+        if(reclaim.ledgerStatus !== 'Declined' && !reclaim.interestPayment){
           total += reclaim.value;
         }
         return total;
@@ -40,14 +51,19 @@ class PaymentSummaryCtrl {
       r._description = this.historyMessage(r);
     });
 
-    console.log('reclaims', this.reclaims, this.allowedReclaimAmount);
     this.showReclaimBtn = this.isReclaimEnabled &&
-      UserService.hasPermission('payments.reclaim.create') &&
+      this.UserService.hasPermission('payments.reclaim.create') &&
       this.isAuthorised &&
-      this.project.status === 'Closed' &&
-      this.allowedReclaimAmount > 0;
-  }
+      this.project.statusType === 'Closed' &&
+      this.allowedReclaimAmount > 0 && !this.payment.interestPayment;
 
+    this.labels = {
+      paymentTitle: this.getPaymentTitle(this.payment),
+      reclaimValue: this.payment.interestPayment? 'Reclaim Interest:' : 'Reclaim Value:'
+    };
+
+    this.showMilestoneSection = this.payment.category !== 'Skills';
+  }
 
   reclaim() {
     let modal = this.ReclaimModal.show(this.allowedReclaimAmount, this.source);
@@ -57,7 +73,17 @@ class PaymentSummaryCtrl {
       this.$state.go('pending-payments', {
         'paymentId': data.id
       });
-    });
+    }).catch(this.ErrorService.apiValidationHandler());
+  }
+
+  resendPayments() {
+    let modal = this.ResendModal.show(this.payment);
+    modal.result.then((wbsCode) => {
+      return this.PaymentService.resend(this.payment.id, wbsCode);
+    }).then((data) => {
+      this.$state.go(this.$state.current, this.$stateParams, {reload: true});
+      this.ToastrUtil.success(`Payment file sent`);
+    }).catch(this.ErrorService.apiValidationHandler());
   }
 
 
@@ -89,9 +115,17 @@ class PaymentSummaryCtrl {
 
     return `${formattedActionDate} ${reclaimTitle} of ${reclaimValue} ${actionName} by ${actionedBy}`
   }
+
+  getPaymentTitle(payment) {
+    if (payment.reclaim) {
+      return payment.interestPayment? 'Interest on Reclaim' : 'Reclaim Payment';
+    } else {
+      return 'Payment'
+    }
+  }
 }
 
-PaymentSummaryCtrl.$inject = ['$stateParams', 'UserService', 'ReclaimModal', 'PaymentService', '$state', 'dateFilter', 'numberFilter', 'currencyFilter'];
+PaymentSummaryCtrl.$inject = ['$stateParams', 'UserService', 'ReclaimModal', 'ResendModal', 'PaymentService', '$state', 'dateFilter', 'numberFilter', 'currencyFilter', 'ConfirmationDialog', 'ToastrUtil', 'ErrorService'];
 
 
 angular.module('GLA')

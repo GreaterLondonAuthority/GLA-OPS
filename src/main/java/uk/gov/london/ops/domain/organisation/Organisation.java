@@ -7,24 +7,49 @@
  */
 package uk.gov.london.ops.domain.organisation;
 
+import static javax.persistence.CascadeType.ALL;
+import static uk.gov.london.common.GlaUtils.generateRandomId;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.london.ops.domain.project.Project;
-import uk.gov.london.ops.domain.template.Contract;
-import uk.gov.london.ops.domain.user.User;
-import uk.gov.london.ops.service.ManagedEntityInterface;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
-import uk.gov.london.ops.util.jpajoins.NonJoin;
-import uk.gov.london.ops.web.model.ContractModel;
-import uk.gov.london.ops.web.model.UserModel;
-
-import javax.persistence.*;
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
+import org.apache.commons.lang3.StringUtils;
+import uk.gov.london.common.organisation.BaseOrganisation;
+import uk.gov.london.common.organisation.OrganisationType;
+import uk.gov.london.ops.annualsubmission.AnnualSubmission;
+import uk.gov.london.ops.domain.project.Project;
+import uk.gov.london.ops.domain.template.Contract;
+import uk.gov.london.ops.domain.user.User;
+import uk.gov.london.ops.notification.NotificationTargetEntity;
+import uk.gov.london.ops.service.ManagedEntityInterface;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
+import uk.gov.london.ops.framework.jpa.NonJoin;
+import uk.gov.london.ops.web.model.ContractModel;
+import uk.gov.london.ops.web.model.UserModel;
 
 /**
  * A business or organised group of people with a particular purpose.
@@ -36,7 +61,7 @@ import java.util.stream.Collectors;
  * Created by sleach on 17/08/2016.
  */
 @Entity
-public class Organisation implements Serializable, ManagedEntityInterface {
+public class Organisation extends BaseOrganisation implements Serializable, ManagedEntityInterface, NotificationTargetEntity {
 
     public static final Integer GLA_OPS_ID = 8000;
     public static final Integer GLA_HNL_ID = 10000;
@@ -58,14 +83,62 @@ public class Organisation implements Serializable, ManagedEntityInterface {
     @Column(name="ims_number")
     private String imsNumber;
 
+    @Column(name="registration_key")
+    private String registrationKey;
+
+    private String createdBy;
+
+    @Column(name = "created_on")
+    private OffsetDateTime createdOn;
+
+    @Transient
+    private String createdByName;
+
+    @Transient
+    private String approvedByName;
+
+    @Transient
+    private String rejectedByName;
+
+    @Transient
+    private String inactivatedByName;
+
     @Column(name="email")
     private String email;
+
+    @Column(name="change_status_reason")
+    @Enumerated(EnumType.STRING)
+    private OrganisationChangeStatusReason changeStatusReason;
+
+    @Column(name="change_status_reason_details")
+    private String changeStatusReasonDetails;
+
+    private String approvedBy;
+
+    @Column(name = "approved_on")
+    private OffsetDateTime approvedOn;
+
+    private String rejectedBy;
+
+    @Column(name = "rejected_on")
+    private OffsetDateTime rejectedOn;
+
+    private String inactivatedBy;
+
+    @Column(name = "inactivated_on")
+    private OffsetDateTime inactivatedOn;
 
     @Column(name="ceo_title")
     private String ceoTitle;
 
     @Column(name="ceo_name")
     private String ceoName;
+
+    @Column(name="contact")
+    private String contactEmail;
+
+    @Transient
+    private String glaContactFullName;
 
     @Column(name="primary_contact_first_name")
     private String primaryContactFirstName;
@@ -95,8 +168,15 @@ public class Organisation implements Serializable, ManagedEntityInterface {
     @NonJoin("This is the id of the vendor in SAP, an external system to OPS")
     private String sapVendorId;
 
+    @Column(name="ukprn")
+    private Integer ukprn;
+
+    @Column(name="registration_allowed")
+    private Boolean registrationAllowed;
+
     @Embedded
     private Address address;
+
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(cascade = {})
@@ -107,6 +187,10 @@ public class Organisation implements Serializable, ManagedEntityInterface {
     @ManyToOne(cascade = {})
     @JoinColumn(name = "parent_organisation_id")
     private Organisation parentOrganisation;
+
+
+    @Column(name = "duplicate_organisation_id")
+    private Integer duplicateOrganisationId;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = {}) // do not change to EAGER as it will destroy org list loading performance
@@ -127,13 +211,22 @@ public class Organisation implements Serializable, ManagedEntityInterface {
     private RegistrationStatus userRegStatus;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = OrganisationContract.class)
+    @OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true, targetEntity = OrganisationContract.class)
     @JoinColumn(name = "organisation_id", nullable = false)
     private List<OrganisationContract> contractEntities = new ArrayList<>();
 
     @Column(name="status")
     @Enumerated(EnumType.STRING)
     private OrganisationStatus status = OrganisationStatus.Pending;
+
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+
+    @JoinData(joinType = Join.JoinType.OneToMany, sourceColumn = "id", targetColumn = "organisation_id", targetTable = "team",  comment = "")
+    @OneToMany(fetch = FetchType.LAZY,  cascade = ALL, orphanRemoval = true, mappedBy = "organisation", targetEntity = Team.class)
+    private Set<Team> managedTeams = new HashSet<>();
 
     @Transient
     private List<UserModel> users;
@@ -143,6 +236,12 @@ public class Organisation implements Serializable, ManagedEntityInterface {
 
     @Transient
     private List<OrganisationProgrammeSummary> programmes;
+
+    @Transient
+    private List<AnnualSubmission> annualSubmissions;
+
+    @Transient
+    private Set<OrganisationAction> allowedActions = new HashSet<>();
 
     public Organisation() {
         // Empty
@@ -160,6 +259,11 @@ public class Organisation implements Serializable, ManagedEntityInterface {
      */
     public Integer getId() {
         return id;
+    }
+
+    @Override
+    public String getIdAsString() {
+        return id != null ? id.toString() : null;
     }
 
     public void setId(Integer id) {
@@ -202,6 +306,46 @@ public class Organisation implements Serializable, ManagedEntityInterface {
 
     public void setImsNumber(String imsNumber) {
         this.imsNumber = imsNumber;
+    }
+
+    public String getRegistrationKey() {
+        return registrationKey;
+    }
+
+    public void setRegistrationKey(String registrationKey) {
+        this.registrationKey = registrationKey;
+    }
+
+    public void populateRegistrationKey() {
+        setRegistrationKey(generateRandomId());
+    }
+
+
+    public OffsetDateTime getApprovedOn() {
+        return approvedOn;
+    }
+
+    public void setApprovedOn(OffsetDateTime approvedOn) {
+        this.approvedOn = approvedOn;
+    }
+
+
+
+    public OffsetDateTime getRejectedOn() {
+        return rejectedOn;
+    }
+
+    public void setRejectedOn(OffsetDateTime rejectedOn) {
+        this.rejectedOn = rejectedOn;
+    }
+
+
+    public OffsetDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(OffsetDateTime createdOn) {
+        this.createdOn = createdOn;
     }
 
     public String getEmail() {
@@ -308,6 +452,14 @@ public class Organisation implements Serializable, ManagedEntityInterface {
         return sapVendorId;
     }
 
+    public Integer getUkprn() {
+        return ukprn;
+    }
+
+    public void setUkprn(Integer ukprn) {
+        this.ukprn = ukprn;
+    }
+
     public Organisation getManagingOrganisation() {
         return managingOrganisation;
     }
@@ -330,6 +482,14 @@ public class Organisation implements Serializable, ManagedEntityInterface {
 
     public String getParentOrganisationName() {
         return parentOrganisation == null ? null : parentOrganisation.getName();
+    }
+
+    public Integer getDuplicateOrganisationId() {
+        return duplicateOrganisationId;
+    }
+
+    public void setDuplicateOrganisationId(Integer duplicateOrganisationId) {
+        this.duplicateOrganisationId = duplicateOrganisationId;
     }
 
     /**
@@ -380,12 +540,52 @@ public class Organisation implements Serializable, ManagedEntityInterface {
         this.contractEntities = contractEntities;
     }
 
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public String getGlaContactFullName() {
+        return glaContactFullName;
+    }
+
+    public void setGlaContactFullName(String glaContactFullName) {
+        this.glaContactFullName = glaContactFullName;
+    }
+
     public OrganisationStatus getStatus() {
         return status;
     }
 
     public void setStatus(OrganisationStatus status) {
         this.status = status;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public Set<Team> getManagedTeams() {
+        return managedTeams;
+    }
+
+    public void setManagedTeams(Set<Team> managedTeams) {
+        this.managedTeams = managedTeams;
+    }
+
+    public void addManagedTeam(Team team) {
+        if (managedTeams == null) {
+            managedTeams = new HashSet<>();
+        }
+        team.setOrganisation(this);
+        this.managedTeams.add(team);
     }
 
     public Set<ContractModel> getContracts() {
@@ -402,6 +602,123 @@ public class Organisation implements Serializable, ManagedEntityInterface {
 
     public void setProgrammes(List<OrganisationProgrammeSummary> programmes) {
         this.programmes = programmes;
+    }
+
+    public List<AnnualSubmission> getAnnualSubmissions() {
+        return annualSubmissions;
+    }
+
+    public void setAnnualSubmissions(List<AnnualSubmission> annualSubmissions) {
+        this.annualSubmissions = annualSubmissions;
+    }
+
+    public Set<OrganisationAction> getAllowedActions() {
+        return allowedActions;
+    }
+
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public String getRejectedBy() {
+        return rejectedBy;
+    }
+
+    public void setRejectedBy(String rejectedBy) {
+        this.rejectedBy = rejectedBy;
+    }
+
+
+    public OrganisationChangeStatusReason getChangeStatusReason() {
+        return changeStatusReason;
+    }
+
+    public void setChangeStatusReason(OrganisationChangeStatusReason changeStatusReason) {
+        this.changeStatusReason = changeStatusReason;
+    }
+
+    public String getChangeStatusReasonDetails() {
+        if (StringUtils.isNotEmpty(changeStatusReasonDetails)) {
+            return changeStatusReasonDetails;
+        }
+        else if (changeStatusReason != null && changeStatusReason == OrganisationChangeStatusReason.Duplicate) {
+            return "Organisation is duplicate of " + duplicateOrganisationId;
+        }
+        else if (changeStatusReason != null) {
+            return changeStatusReason.getDescription();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public void setChangeStatusReasonDetails(String changeStatusReasonDetails) {
+        this.changeStatusReasonDetails = changeStatusReasonDetails;
+    }
+
+    public String getInactivatedBy() {
+        return inactivatedBy;
+    }
+
+    public void setInactivatedBy(String inactivatedBy) {
+        this.inactivatedBy = inactivatedBy;
+    }
+
+    public OffsetDateTime getInactivatedOn() {
+        return inactivatedOn;
+    }
+
+    public void setInactivatedOn(OffsetDateTime inactivatedOn) {
+        this.inactivatedOn = inactivatedOn;
+    }
+
+    public void setCreatedByName(String createdByName) {
+        this.createdByName = createdByName;
+    }
+
+    public String getCreatedByName() {
+        return createdByName;
+    }
+
+    public String getApprovedByName() {
+        return approvedByName;
+    }
+
+    public void setApprovedByName(String approvedByByName) {
+        this.approvedByName = approvedByByName;
+    }
+
+    public String getRejectedByName() {
+        return rejectedByName;
+    }
+
+    public void setRejectedByName(String rejectedByName) {
+        this.rejectedByName = rejectedByName;
+    }
+
+    public String getInactivatedByName() {
+        return inactivatedByName;
+    }
+
+    public void setInactivatedByName(String inactivatedByName) {
+        this.inactivatedByName = inactivatedByName;
+    }
+
+    public void setAllowedActions(Set<OrganisationAction> allowedActions) {
+        this.allowedActions = allowedActions;
     }
 
     public boolean isPendingContractSignature(Contract contract, OrganisationGroup.Type orgGroupType) {
@@ -426,22 +743,44 @@ public class Organisation implements Serializable, ManagedEntityInterface {
         return OrganisationStatus.Approved.equals(status);
     }
 
-    public List<User> getUsers(String ... roles) {
-        List<User> users = new ArrayList<>();
-        for (User user: userEntities) {
-            for (String role: roles) {
-                if (user.getRole(this).getName().equals(role)) {
-                    users.add(user);
+    public boolean isRejected() {
+        return OrganisationStatus.Rejected.equals(status);
+    }
+
+    public boolean isInactive() {
+        return OrganisationStatus.Inactive.equals(status);
+    }
+
+    public Set<User> getUsers(String ... roles) {
+        Set<User> users = new HashSet<>();
+        if (userEntities != null) {
+            for (User user: userEntities) {
+                for (String role: roles) {
+                    if (user.getRole(this).getName().equals(role)) {
+                        users.add(user);
+                    }
                 }
             }
         }
         return users;
     }
 
-    public List<String> getUsernames(String ... roles) {
+    public Set<String> getUsernames(String ... roles) {
         return getUsers(roles).stream()
                 .map(User::getUsername)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+    }
+
+    public Boolean getRegistrationAllowed() {
+        return registrationAllowed;
+    }
+
+    public void setRegistrationAllowed(Boolean registrationAllowed) {
+        this.registrationAllowed = registrationAllowed;
+    }
+
+    public boolean isCorporateOrganisation() {
+        return name != null && name.equalsIgnoreCase("GLA Corporate Governance");
     }
 
     @Override
@@ -459,4 +798,39 @@ public class Organisation implements Serializable, ManagedEntityInterface {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
+    public void changeStatus(OrganisationStatus status, String username, OffsetDateTime dateTime) {
+        switch (status) {
+            case Approved:
+                setApprovedBy(username);
+                setApprovedOn(dateTime);
+                break;
+            case Rejected:
+                setRejectedBy(username);
+                setRejectedOn(dateTime);
+                break;
+            case Inactive:
+                setInactivatedBy(username);
+                setInactivatedOn(dateTime);
+                break;
+        }
+        this.setStatus(status);
+    }
+
+    @Override
+    @JsonIgnore
+    public OrganisationType getType() {
+        return OrganisationType.fromId(entityType);
+    }
+
+    @Override
+    public void setType(OrganisationType organisationType) {
+        setEntityType(organisationType.id());
+    }
+
+    public boolean isAnnualReturnsEnabled() {
+        return getType() != null && getType().isAnnualReturnsEnabled();
+    }
+
+
 }

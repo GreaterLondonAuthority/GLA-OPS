@@ -1,0 +1,103 @@
+.summary-report.summary-report {
+  .report-block .report-block-content{
+    padding-top: 5px;
+  }
+
+  .show-approved {
+    label {
+      margin: 12px 10px 10px 10px;
+      float: left;
+    }
+    .checkbox {
+      float: left;
+      margin-top: 7px;
+    }
+  }
+
+  a.collapse-all-toggle {
+    font-family: $font-family-bolder;
+  }
+
+  .report-label {
+    margin-top: 20px;
+    font-size: 16px;
+    font-family: $font-family-default;
+    font-weight: bold;
+  }
+
+  .report-value {
+    color: $secondary-text;
+  }
+
+  //---- start single column -------------
+  .report-field-row-right{
+    display: none;
+  }
+
+  .report-field-left{
+    padding-right: 0 !important;
+  }
+
+  outputs-summary-report{
+    .row-toggle{
+      display: none;
+    }
+    .primary-row{
+      cursor: default;
+    }
+
+    .output-summaries-title{
+      font-family: $font-family-bolder;
+      margin-bottom: 5px;
+    }
+  }
+
+  milestones-summary-report{
+    milestones-table{
+      a {
+        text-decoration: none;
+        color: $primary-text;
+        cursor: auto;
+      }
+      .add-milestone-row{
+        //display: none;
+        margin-top: 0 !important;
+      }
+    }
+  }
+
+  grant-table{
+    margin-top: 5px;
+  }
+
+  total-grant{
+    margin-top: 15px;
+    hr{
+      display: none;
+    }
+  }
+
+  grant-source-change-report {
+    &.hide-grant-sources {
+      .gs-rcgf, .gs-dpf, .gs-affordable-housing-grant {
+        display: none;
+      }
+    }
+
+
+    &.hide-strategic-partnership-funding{
+      .gs-strategic-project-funding{
+        display: none;
+      }
+    }
+
+    &.hide-strategic-partnership-funding-amount{
+      .gs-strategic-project-funding-amount{
+        display: none;
+      }
+    }
+  }
+
+  //---- end single column
+}
+

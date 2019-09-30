@@ -1,0 +1,37 @@
+<div class="table-responsive mtop15 outputs-costs" ng-class="{'readonly-mode': $ctrl.readOnly}">
+  <table class="table table-hover table-bordered table-striped table-with-inputs">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>CATEGORY</th>
+      <th>SUBCATEGORY</th>
+      <th>UNIT COST £</th>
+      <th ng-if="$ctrl.showRecoveryColumn">RECOVERY OUTPUT</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="entry in $ctrl.block.categoriesCosts | orderBy: 'outputCategoryConfigurationId'">
+      <td>{{$ctrl.getOutputCategory(entry.outputCategoryConfigurationId).category}}</td>
+      <td>{{$ctrl.getOutputCategory(entry.outputCategoryConfigurationId).subcategory}}</td>
+      <td>
+        <span ng-if="$ctrl.readOnly">{{entry.unitCost}}</span>
+        <input
+          ng-if="!$ctrl.readOnly"
+          type="text"
+          maxlength="13"
+          ng-model="entry.unitCost"
+          number-mask="2">
+      </td>
+
+      <td ng-if="$ctrl.showRecoveryColumn">
+        <div class="radio">
+          <label><input type="radio" id='regular' name="recoveryOutputOption"
+                        ng-model="$ctrl.block.selectedRecoveryOutputId"
+                        ng-value="entry.outputCategoryConfigurationId"
+                        ng-disabled="$ctrl.readOnly"></label>
+        </div>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>

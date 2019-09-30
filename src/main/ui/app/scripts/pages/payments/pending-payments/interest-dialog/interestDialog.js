@@ -6,7 +6,7 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-function InterestDialog($uibModal, $timeout, _) {
+function InterestDialog($uibModal, _) {
   return {
     show(group) {
       return $uibModal.open({
@@ -20,7 +20,7 @@ function InterestDialog($uibModal, $timeout, _) {
 
             let interests = [];
             _.forEach(group.payments, (payment) => {
-              if(payment.reclaim){
+              if(payment.reclaim && !payment.interestPayment){
                 let interest = payment.interest;
                 if(_.isNumber(interest)){
                   if(interest <= 0){
@@ -60,7 +60,7 @@ function InterestDialog($uibModal, $timeout, _) {
   }
 }
 
-InterestDialog.$inject = ['$uibModal', '$timeout', '_'];
+InterestDialog.$inject = ['$uibModal', '_'];
 
 angular.module('GLA')
   .service('InterestDialog', InterestDialog);

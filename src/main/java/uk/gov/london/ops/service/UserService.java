@@ -7,8 +7,26 @@
  */
 package uk.gov.london.ops.service;
 
+import static uk.gov.london.common.GlaUtils.getRequestIp;
+import static uk.gov.london.common.user.BaseRole.GLA_ORG_ADMIN;
+import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
+import static uk.gov.london.common.user.BaseRole.ORG_ADMIN;
+import static uk.gov.london.ops.notification.NotificationType.PendingSpendAuthorityThresholdApproval;
+import static uk.gov.london.ops.notification.NotificationType.UserRequestAccess;
+import static uk.gov.london.ops.service.PermissionType.AUTHORISE_PAYMENT;
+
 import com.nulabinc.zxcvbn.Strength;
 import com.nulabinc.zxcvbn.Zxcvbn;
+import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.transaction.Transactional;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,24 +43,33 @@ import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uk.gov.london.ops.Environment;
-import uk.gov.london.ops.aop.LogMetrics;
-import uk.gov.london.ops.domain.Email;
+import uk.gov.london.ops.audit.ActivityType;
+import uk.gov.london.ops.audit.AuditService;
+import uk.gov.london.ops.domain.EntityType;
 import uk.gov.london.ops.domain.organisation.Organisation;
-import uk.gov.london.ops.domain.user.*;
-import uk.gov.london.ops.exception.ForbiddenAccessException;
-import uk.gov.london.ops.exception.NotFoundException;
-import uk.gov.london.ops.exception.ValidationException;
-import uk.gov.london.ops.mapper.UserMapper;
+import uk.gov.london.ops.domain.user.PasswordResetToken;
+import uk.gov.london.ops.domain.user.Role;
+import uk.gov.london.ops.domain.user.User;
+import uk.gov.london.ops.domain.user.UserOrgFinanceThreshold;
+import uk.gov.london.ops.domain.user.UserOrgKey;
+import uk.gov.london.ops.domain.user.UserSummary;
+import uk.gov.london.ops.framework.annotations.LogMetrics;
+import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
+import uk.gov.london.ops.framework.exception.NotFoundException;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.notification.Email;
+import uk.gov.london.ops.notification.EmailService;
+import uk.gov.london.ops.notification.NotificationService;
+import uk.gov.london.ops.organisation.implementation.UserMapper;
 import uk.gov.london.ops.repository.PasswordResetTokenRepository;
 import uk.gov.london.ops.repository.UserOrgFinanceThresholdRepository;
 import uk.gov.london.ops.repository.UserRepository;
 import uk.gov.london.ops.repository.UserSummaryRepository;
-import uk.gov.london.ops.web.model.*;
-
-import javax.transaction.Transactional;
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.Set;
+import uk.gov.london.ops.web.model.CreatePasswordResetTokenResponse;
+import uk.gov.london.ops.web.model.UserPasswordReset;
+import uk.gov.london.ops.web.model.UserProfile;
+import uk.gov.london.ops.web.model.UserProfileOrgDetails;
+import uk.gov.london.ops.web.model.UserRegistration;
 
 @Transactional
 @Service
@@ -78,6 +105,12 @@ public class UserService implements UserDetailsService {
     DataAccessControlService dataAccessControlService;
 
     @Autowired
+    PermissionService permissionService;
+
+    @Autowired
+    NotificationService notificationService;
+
+    @Autowired
     UserOrgFinanceThresholdRepository userOrgFinanceThresholdRepository;
 
     static final String SYSTEM_USER_NAME = "GLA-OPS system";
@@ -107,7 +140,7 @@ public class UserService implements UserDetailsService {
      */
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findOne(username.toLowerCase());
+        User user = userRepository.findById(username.toLowerCase()).orElse(null);
         if (user == null) {
             throw new UsernameNotFoundException("User "+username+" not found!");
         }
@@ -121,7 +154,7 @@ public class UserService implements UserDetailsService {
      * @throws NotFoundException if no user with the given username if found. That will result in a 404 http error.
      */
     public User find(String username) throws NotFoundException {
-        User user = userRepository.findOne(username);
+        User user = userRepository.findById(username).orElse(null);
         if (user == null) {
             throw new NotFoundException("Username not found:" + username);
         }
@@ -134,15 +167,15 @@ public class UserService implements UserDetailsService {
      * @return null if not existing.
      */
     public User get(String username) throws NotFoundException {
-        return userRepository.findOne(username);
+        return userRepository.findById(username).orElse(null);
     }
 
 
-    private boolean canAssignRoles(Set<Role> roles, Integer orgId){
+    boolean canAssignRoles(Set<Role> roles, Integer orgId){
         for(Role role : roles){
             if(role.getOrganisation().getId().equals(orgId)){
                 String roleName = role.getName();
-                if(roleName.equals(Role.GLA_ORG_ADMIN) || roleName.equals(Role.ORG_ADMIN)){
+                if(roleName.equals(GLA_ORG_ADMIN) || roleName.equals(ORG_ADMIN)){
                     return true;
                 }
             }
@@ -170,11 +203,14 @@ public class UserService implements UserDetailsService {
                 Integer orgId = role.getOrganisation().getId();
                 userOrgDetails.setOrgId(orgId);
                 userOrgDetails.setOrgName(role.getOrganisation().getName());
-                if (role.isApproved()) {
-                    userOrgDetails.setRole(role.getDescription());
-                    userOrgDetails.setRoleName(role.getName());
+                // we don't want to display the managing organisation if the user is in a managing organisation
+                if (!role.getOrganisation().isManagingOrganisation()) {
+                    userOrgDetails.setManagingOrgName(role.getOrganisation().getManagingOrganisationName());
                 }
+                userOrgDetails.setRole(role.getDescription());
+                userOrgDetails.setRoleName(role.getName());
                 userOrgDetails.setApproved(role.isApproved());
+                userOrgDetails.setPrimary(role.isPrimaryOrganisationForUser() == null? false : role.isPrimaryOrganisationForUser());
                 // if current user roles allow him to change...
                 if(isOpsAdmin || this.canAssignRoles(currentUser.getRoles(), orgId)){
                     userOrgDetails.setAssignableRoles(organisationService.getAssignableRoles(orgId));
@@ -185,7 +221,7 @@ public class UserService implements UserDetailsService {
             }
         }
 
-        if (userProfile.getOrganisations().isEmpty()) {
+        if (!user.equals(currentUser) && userProfile.getOrganisations().isEmpty()) {
             throw new ForbiddenAccessException("you do not have access to this user!");
         }
 
@@ -212,12 +248,12 @@ public class UserService implements UserDetailsService {
                 pageable);
     }
 
-    public void register(UserRegistration registration) {
-        if (userRepository.findOne(registration.getEmail().toLowerCase()) != null) {
+    public User register(UserRegistration registration) {
+        if (userRepository.existsById(registration.getEmail().toLowerCase())) {
             throw new ValidationException("username", "Email address is already registered");
         }
 
-        Organisation organisation = organisationService.findByOrgIdOrImsNumber(registration.getOrgCode());
+        Organisation organisation = organisationService.findByOrgCode(registration.getOrgCode());
         if (organisation == null) {
             throw new ValidationException("Invalid IMS number");
         }
@@ -230,10 +266,16 @@ public class UserService implements UserDetailsService {
         saveNewPassword(user,user.getPassword(), false);
 
         organisationService.updateOrganisationUserRegStatus(organisation);
+
+        Map<String, Object> model = new HashMap<String, Object>() {{
+            put("organisation", organisation);
+        }};
+        notificationService.createNotification(UserRequestAccess, user, model);
+        return user;
     }
 
     public void setPassword(String username, String password) {
-        User user = userRepository.findOne(username);
+        User user = userRepository.findById(username).orElse(null);
         if (user == null) {
             throw new NotFoundException("User not found: " + username);
         }
@@ -261,6 +303,47 @@ public class UserService implements UserDetailsService {
         }
 
         return null;
+    }
+
+    /**
+     * Find users without primary role
+     */
+    public Set<User> getUsersWithoutAssignedPrimaryOrganisation() {
+        return userRepository.findAllUsersWithoutPrimaryRole();
+    }
+
+    /**
+     * assigns a default role using rules specified in GLA-22953
+     */
+    public void assignDefaultPrimaryOrganisation(User user) {
+        Set<Role> superiorRoles = this.getSuperiorRoles(user);
+
+        user.getRoles().forEach(r -> r.setPrimaryOrganisationForUser(false));
+        if (superiorRoles != null && superiorRoles.size() > 0) {
+            List<Role> list = superiorRoles.stream().sorted(Comparator.comparingInt(Role::getId)).collect(Collectors.toList());
+            list.get(0).setPrimaryOrganisationForUser(true);
+        }
+        userRepository.save(user);
+    }
+
+    Set<Role> getSuperiorRoles(User user) {
+        Set<Role> approvedRoles = user.getApprovedRoles();
+        if (approvedRoles.size() <= 1) {
+            return user.getRoles();
+        }
+
+        Map<String, Set<Role>> roleMap = approvedRoles.stream().collect(Collectors.groupingBy(Role::getName,  Collectors.toSet()));
+        String higestPriorityRole = Role.getHighestPriorityRole(roleMap.keySet());
+        return roleMap.get(higestPriorityRole);
+
+    }
+
+    /**
+     * Returns the username of the currently active user, or null if there isn't one.
+     */
+    public String currentUsername() {
+        User currentUser = currentUser();
+        return currentUser == null ? null : currentUser.getUsername();
     }
 
     /**
@@ -304,7 +387,7 @@ public class UserService implements UserDetailsService {
      * @throws NotFoundException if the given username if not found.
      */
     public CreatePasswordResetTokenResponse createPasswordResetToken(String username) {
-        User user = userRepository.findOne(username);
+        User user = userRepository.findById(username).orElse(null);
 
         // only send the message if we recognise the user
         if (user != null) {
@@ -325,6 +408,7 @@ public class UserService implements UserDetailsService {
 
             return new CreatePasswordResetTokenResponse(email.getId());
         } else {
+            auditFailedUserSecurityActivity(username, "attempt to reset password for non-existing user");
             return null;
         }
 
@@ -334,31 +418,38 @@ public class UserService implements UserDetailsService {
      * @throws NotFoundException if no password reset entity associated with the given token is found.
      * @throws ValidationException if the reset token is expired.
      */
+    @Transactional(dontRollbackOn = {NotFoundException.class, ValidationException.class})
     public PasswordResetToken getPasswordResetToken(Integer id, String token) {
-        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findOne(id);
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findById(id).orElse(null);
         if (passwordResetToken == null) {
+            auditFailedUserSecurityActivity("anonymous", "token with id "+id+" not found");
             throw new NotFoundException();
         }
 
         if (!passwordEncoder.matches(token, passwordResetToken.getToken())) {
+            auditFailedUserSecurityActivity(passwordResetToken.getUsername(), "token mismatch");
             throw new NotFoundException();
         }
 
         if (passwordResetToken.getExpiryDate().isBefore(environment.now())) {
+            auditFailedUserSecurityActivity(passwordResetToken.getUsername(), "password reset token expired");
             throw new ValidationException("password reset token expired");
         }
 
         if (passwordResetToken.isUsed()) {
+            auditFailedUserSecurityActivity(passwordResetToken.getUsername(), "password reset token already used");
             throw new ValidationException("password reset token already used");
         }
 
         return passwordResetToken;
     }
 
+    @Transactional(dontRollbackOn = {NotFoundException.class, ValidationException.class})
     public void resetUserPassword(String username, UserPasswordReset userPasswordReset) {
         PasswordResetToken passwordResetToken = getPasswordResetToken(userPasswordReset.getId(), userPasswordReset.getToken());
 
         if (!passwordResetToken.getUsername().equals(username)) {
+            auditFailedUserSecurityActivity(username, "username does not match while resetting password");
             throw new ValidationException("username does not match");
         }
 
@@ -371,6 +462,11 @@ public class UserService implements UserDetailsService {
         passwordResetTokenRepository.save(passwordResetToken);
     }
 
+    private void auditFailedUserSecurityActivity(String username, String message) {
+        String sourceIp = getRequestIp();
+        auditService.auditActivityForUser(username, message+(sourceIp != null ? (" from "+sourceIp) : ""));
+    }
+
     /**
      * Changes the password for the user and saves the updated user entity to the database.
      * Weak passwords will be rejected with a ValidationException thrown.
@@ -381,7 +477,7 @@ public class UserService implements UserDetailsService {
             auditService.auditCurrentUserActivity("Password changed for user " + user.getUsername());
         }
         user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
     }
 
     void checkPasswordStrength(String newPassword) {
@@ -405,7 +501,7 @@ public class UserService implements UserDetailsService {
         // need to re-inflate current user.
         User currentUser = currentUser();
         if (currentUser != null) {
-            currentUser = userRepository.findOne(currentUser.getUsername());
+            currentUser = userRepository.findById(currentUser.getUsername()).orElse(null);
         }
 
         if (currentUser == null) { // unlike outside test environment
@@ -417,7 +513,7 @@ public class UserService implements UserDetailsService {
         Organisation organisation = organisationService.find(organisationId);
 
         // if not a OPS Admin we need to check we're of the same organisation.
-        if (!currentUser.hasRole(Role.OPS_ADMIN)) {
+        if (!currentUser.hasRole(OPS_ADMIN)) {
             if (!currentUser.getOrganisations().contains(organisation) || userToUpdate.getRole(organisation) == null) {
                 throw new ValidationException("roleName ", String.format("User %s is not a member of the organisation: %s.", username, organisation.getName()));
             }
@@ -427,9 +523,22 @@ public class UserService implements UserDetailsService {
         userToUpdate.addApprovedRole(roleName, organisation);
         userRepository.save(userToUpdate);
 
+        if (shouldAutoSubscribeToOrganisation(username, roleName, organisationId)) {
+            notificationService.subscribe(username, EntityType.organisation, organisationId);
+        }
+
         organisationService.updateOrganisationUserRegStatus(organisation);
 
+        if (!permissionService.userHasPermissionForOrganisation(userToUpdate, AUTHORISE_PAYMENT.getPermissionKey(), organisationId)) {
+            clearFinanceThreshold(username, organisationId);
+        }
+
         auditService.auditCurrentUserActivity(String.format("Role %s assigned to user %s", roleName, username));
+    }
+
+    public boolean shouldAutoSubscribeToOrganisation(String username, String roleName, Integer organisationId){
+        return Stream.of(GLA_ORG_ADMIN, ORG_ADMIN).anyMatch(r -> r.equals(roleName)) &&
+                !notificationService.isSubscribed(username, EntityType.organisation, organisationId);
     }
 
     public Strength passwordStrength(String password) {
@@ -446,11 +555,11 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(String username) {
-        userRepository.delete(username);
+        userRepository.deleteById(username);
     }
 
     public void deleteUserIfExists(String username) {
-        if (userRepository.exists(username)) {
+        if (userRepository.existsById(username)) {
             deleteUser(username);
         }
     }
@@ -470,21 +579,29 @@ public class UserService implements UserDetailsService {
             throw new ValidationException("Unable to assign threshold to organisation that is not a managing organisation");
         }
 
-        auditService.auditCurrentUserActivity(String.format("User %s created a pending threshold of %d for org: %d for user %s",
-                currentUser.getUsername(), pendingThreshold, orgId, username ));
+        UserOrgFinanceThreshold existing = userOrgFinanceThresholdRepository.findById(new UserOrgKey(username, orgId)).orElse(null);
 
-        UserOrgFinanceThreshold existing = userOrgFinanceThresholdRepository.findOne(new UserOrgKey(username, orgId));
+
         if (existing == null) {
             existing = new UserOrgFinanceThreshold(username, orgId);
         }
 
-        existing.setPendingThreshold(pendingThreshold == null ? 0 : pendingThreshold);
+        auditService.auditCurrentUserActivity(String.format("User %s created a pending threshold of %d for org: %d for user %s",
+                currentUser.getUsername(), pendingThreshold, orgId, username ),
+                ActivityType.Requested, username, orgId, new BigDecimal(pendingThreshold));
+
+
+        existing.setPendingThreshold(pendingThreshold == null ? 0L : pendingThreshold);
         existing.setRequesterUsername(currentUser.getUsername());
 
         existing = userOrgFinanceThresholdRepository.save(existing);
 
         return existing;
 
+    }
+
+    public UserOrgFinanceThreshold getFinanceThreshold(String username, Integer orfId) {
+        return userOrgFinanceThresholdRepository.findById(new UserOrgKey(username, orfId)).orElse(null);
     }
 
     public Set<UserOrgFinanceThreshold> getFinanceThresholds(String username) {
@@ -511,19 +628,31 @@ public class UserService implements UserDetailsService {
     }
 
     public UserOrgFinanceThreshold approvePendingThreshold(String username, Integer orgId) {
-        UserOrgFinanceThreshold existing = userOrgFinanceThresholdRepository.findOne(new UserOrgKey(username, orgId));
+        UserOrgFinanceThreshold existing = userOrgFinanceThresholdRepository.findById(new UserOrgKey(username, orgId)).orElse(null);
         User currentUser = currentUser();
 
         validateThresholdApproval(existing, currentUser);
 
         auditService.auditCurrentUserActivity(String.format(
                 "Approved a pending threshold for %s of %d for org: %d, that was originally requested by %s",
-                username, existing.getPendingThreshold(), orgId, existing.getRequesterUsername()));
+                username, existing.getPendingThreshold(), orgId, existing.getRequesterUsername()),
+                ActivityType.Approved,
+                username, orgId, new BigDecimal(existing.getPendingThreshold()));
 
         existing.setApprovedThreshold(existing.getPendingThreshold());
         existing.setApproverUsername(currentUser.getUsername());
         existing.setRequesterUsername(null);
         existing.setPendingThreshold(null);
+
+        User requester = this.get(existing.getId().getUsername());
+        Organisation organisation = organisationService.find(orgId);
+
+        Map<String, Object> model = new HashMap<String, Object>() {{
+            put("organisation", organisation);
+            put("approvedThreshold", String.format("%,d", existing.getApprovedThreshold()));
+        }};
+
+        notificationService.createNotification(PendingSpendAuthorityThresholdApproval, requester, model);
 
         return userOrgFinanceThresholdRepository.save(existing);
     }
@@ -552,17 +681,43 @@ public class UserService implements UserDetailsService {
     }
 
     public UserOrgFinanceThreshold declineThreshold(String username, Integer orgId) {
-        UserOrgFinanceThreshold existing = userOrgFinanceThresholdRepository.findOne(new UserOrgKey(username, orgId));
+        UserOrgFinanceThreshold existing = userOrgFinanceThresholdRepository.findById(new UserOrgKey(username, orgId)).orElse(null);
         if (existing == null || existing.getPendingThreshold() == null) {
             throw new ValidationException("Unable to decline pending threshold as no existing threshold found.");
         }
 
         auditService.auditCurrentUserActivity(String.format(
                 "Declined a pending threshold for %s of %d for org: %d, that was originally requested by %s",
-                username, existing.getPendingThreshold(), orgId, existing.getRequesterUsername()));
+                username, existing.getPendingThreshold(), orgId, existing.getRequesterUsername()),
+                ActivityType.Declined, username, orgId, null);
 
         existing.setPendingThreshold(null);
         existing.setRequesterUsername(null);
         return userOrgFinanceThresholdRepository.save(existing);
+    }
+
+    public void clearFinanceThreshold(String username, Integer orgId) {
+        UserOrgFinanceThreshold existing = userOrgFinanceThresholdRepository.findById(new UserOrgKey(username, orgId)).orElse(null);
+        if (existing != null) {
+            existing.clear();
+            userOrgFinanceThresholdRepository.save(existing);
+        }
+    }
+
+    public void setPrimaryOrgForUser(String username, Integer orgId, String role) {
+        User user = get(username);
+        boolean roleFound = false;
+        for (Role approvedRole : user.getApprovedRoles()) {
+            if (approvedRole.getOrganisation().getId().equals(orgId) && approvedRole.getName().equals(role)) {
+                roleFound = true;
+                approvedRole.setPrimaryOrganisationForUser(true);
+            } else {
+                approvedRole.setPrimaryOrganisationForUser(false);
+            }
+        }
+        if (!roleFound) {
+            throw new ValidationException("Unable to find approved role in primary organisation for user "+username);
+        }
+        userRepository.save(user);
     }
 }

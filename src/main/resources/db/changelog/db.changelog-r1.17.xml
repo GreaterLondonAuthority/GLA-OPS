@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="407" author="ybouhass">
+        <createSequence sequenceName="annual_submission_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="annual_submission">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="annual_submission_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="organisation_id" type="INT4" remarks="organisation id">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="financial_year" type="INT4" remarks="financial year">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="status" type="varchar(20)" remarks="Draft, Submitted or Approved">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="408" author="ybouhass">
+        <createSequence sequenceName="annual_submission_category_seq" startValue="10000" incrementBy="1" />
+        <createTable tableName="annual_submission_category">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="annual_submission_category_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="varchar(255)" remarks="category name">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="type" type="varchar(20)" remarks="Generated or Spent">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="status_type" type="varchar(20)" remarks="Actual or Forecast">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="comments_required" type="boolean" defaultValue="false" remarks="flag to determine whether comments are required">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <createSequence sequenceName="annual_submission_block_seq" startValue="10000" incrementBy="1" />
+        <createTable tableName="annual_submission_block">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="annual_submission_block_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="annual_submission_id" type="INT4" remarks="id for the annual_submission table" />
+
+            <column name="no_generated_data" type="boolean" defaultValue="false" remarks="set to true when there are no generated entries for this block">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="no_spent_data" type="boolean" defaultValue="false" remarks="set to true when there are no spent entries for this block">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="status_type" type="varchar(20)" remarks="Actual or Forecast">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="grant_type" type="varchar(20)" remarks="RCGF or DPF">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="locked_by" type="varchar(255)" remarks="lock owner" />
+
+            <column name="lock_timeout_time" type="TIMESTAMP" remarks="time by which the lock will be expired" />
+        </createTable>
+
+        <createSequence sequenceName="annual_submission_entry_seq" startValue="10000" incrementBy="1" />
+        <createTable tableName="annual_submission_entry">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="annual_submission_entry_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="block_id" type="INT4" remarks="id for the annual_submission_block table" />
+
+            <column name="category_id" type="INT4" remarks="id for the annual_submission_category table">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="value" type="INT4" remarks="monetary value">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="comments" type="varchar(200)" />
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="annual_submission_id"
+                                 baseTableName="annual_submission_block"
+                                 constraintName="fk_annual_submission_block_annual_submission"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="annual_submission"/>
+
+        <createIndex indexName="annual_submission_block_annual_submission_id_idx" tableName="annual_submission_block">
+            <column name="annual_submission_id" type="INT4" />
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="block_id"
+                                 baseTableName="annual_submission_entry"
+                                 constraintName="fk_annual_submission_entry_annual_submission_block"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="annual_submission_block"/>
+
+        <createIndex indexName="annual_submission_entry_block_id_idx" tableName="annual_submission_entry">
+            <column name="block_id" type="INT4" />
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="category_id"
+                                 baseTableName="annual_submission_entry"
+                                 constraintName="fk_annual_submission_entry_annual_submission_category"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="annual_submission_category"/>
+
+        <createIndex indexName="annual_submission_entry_category_id_idx" tableName="annual_submission_entry">
+            <column name="category_id" type="INT4" />
+        </createIndex>
+
+    </changeSet>
+
+
+    <changeSet id="409" author="ybouhass">
+        <sql>delete from annual_submission_category</sql>
+        <addColumn tableName="annual_submission_category">
+            <column name="grant_type" type="varchar(20)" remarks="RCGF or DPF">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="410" author="cmelville">
+        <createSequence sequenceName="finance_category_seq" startValue="10000" incrementBy="1" />
+        <addColumn tableName="finance_category">
+            <column name="modified_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="411" author="rbettison">
+        <createSequence sequenceName="database_update_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="database_updates" >
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="database_update_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sql" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approved" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approved_by" type="VARCHAR(255)"/>
+            <column name="approved_on" type="TIMESTAMP"/>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="ppd_tested" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rows_affected" type="INT4"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="412" author="ybouhass">
+        <addColumn tableName="annual_submission_block">
+            <column name="total_unspent_grant" type="INT4" />
+            <column name="interested_accumulated" type="INT4" />
+            <column name="balance_rollover_confirmed" type="BOOLEAN" defaultValue="false" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="413" author="ybouhass">
+        <addColumn tableName="annual_submission_block">
+            <column name="unspent_grant_year_1" type="INT4" />
+            <column name="unspent_grant_year_2" type="INT4" />
+            <column name="unspent_grant_year_3" type="INT4" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="414" author="ybouhass">
+        <addColumn tableName="annual_submission_entry">
+            <column name="financial_year" type="INT4" remarks="financial year" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="415" author="ybouhass">
+        <addColumn tableName="annual_submission">
+            <column name="submission_comments" type="varchar(200)" remarks="submission comments" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="416" author="ybouhass">
+        <modifyDataType tableName="notification" columnName="target_entity_id" newDataType="varchar(255)" />
+    </changeSet>
+
+</databaseChangeLog>

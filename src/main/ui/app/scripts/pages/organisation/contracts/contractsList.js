@@ -9,9 +9,14 @@
 const DEFAULT_NUMBER_CONTRACTS_SHOWN = 3;
 class ContractsList {
   constructor($rootScope, $scope, OrganisationService, UserService) {
+    this.OrganisationService = OrganisationService;
+    this.UserService = UserService;
+  }
+
+  $onInit(){
     this.showAll = false;
     this.showHowMany = DEFAULT_NUMBER_CONTRACTS_SHOWN;
-    this.canEditContracts = UserService.hasPermission('org.edit.contract');
+    this.canEditContracts = this.UserService.hasPermission('org.edit.contract') && (this.org.allowedActions || []).indexOf('EDIT') != -1;;
     this.contractStatusMap = {
       'NotRequired': 'Not Required',
       'Signed': 'Signed',
@@ -22,11 +27,12 @@ class ContractsList {
       SIGNED: 'Signed',
       NOT_REQUIRED: 'NotRequired'
     };
-    this.OrganisationService = OrganisationService;
   }
 
   statusCheckboxClicked(contract, status) {
-    let contractClone = _.clone(contract)
+    console.warn(`e2e statusCheckboxClicked: ${new Date().getTime()}, ${status}, ${JSON.stringify(contract, null, 2)}`);
+
+    let contractClone = _.clone(contract);
     contractClone.status = contractClone.status === status ? 'Blank' : status;
     this.OrganisationService.updateContractStatus(this.org.id, contractClone.id, contractClone).then(()=>{
       this.refreshDetails();

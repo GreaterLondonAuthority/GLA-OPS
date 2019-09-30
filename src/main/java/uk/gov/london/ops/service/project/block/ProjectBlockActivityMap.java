@@ -7,17 +7,19 @@
  */
 package uk.gov.london.ops.service.project.block;
 
-import liquibase.util.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.london.ops.aop.LogMetrics;
+import uk.gov.london.common.CSVFile;
 import uk.gov.london.ops.domain.project.NamedProjectBlock;
 import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.domain.project.ProjectBlockType;
+import uk.gov.london.ops.domain.project.state.ProjectStatus;
+import uk.gov.london.ops.domain.project.state.ProjectSubStatus;
 import uk.gov.london.ops.domain.user.User;
 import uk.gov.london.ops.service.PermissionService;
-import uk.gov.london.ops.util.CSVFile;
+import uk.gov.london.ops.framework.annotations.LogMetrics;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -28,7 +30,7 @@ import java.util.Objects;
 
 import static uk.gov.london.ops.domain.project.NamedProjectBlock.Action.DELETE;
 import static uk.gov.london.ops.domain.project.NamedProjectBlock.Action.EDIT;
-import static uk.gov.london.ops.domain.project.Project.Status.Active;
+import static uk.gov.london.ops.domain.project.state.ProjectStatus.Active;
 
 @Component
 public class ProjectBlockActivityMap {
@@ -44,7 +46,7 @@ public class ProjectBlockActivityMap {
      */
     final CSVFile.CSVMapper<BlockActionRule> csvMapper = csvRow -> new BlockActionRule(
             NamedProjectBlock.Action.valueOf(csvRow.getString("BLOCK_ACTION")),
-            Project.Status.valueOf(csvRow.getString("PROJECT_STATUS")),
+            ProjectStatus.valueOf(csvRow.getString("PROJECT_STATUS")),
             csvRow.getString("PROJECT_SUB_STATUS"),
             csvRow.getString("BLOCK_TYPE"),
             csvRow.getString("BLOCK_STATUS"),
@@ -107,13 +109,13 @@ public class ProjectBlockActivityMap {
     }
 
     private boolean matchesStatus(BlockActionRule rule, Project project) {
-        return rule.getStatus().equals(project.getStatus());
+        return rule.getStatus().equals(project.getStatusType());
     }
 
     private boolean matchesSubStatus(BlockActionRule rule, Project project) {
         return ANY_MATCH.equals(rule.getSubStatus())
-                || (StringUtils.isEmpty(rule.getSubStatus()) && project.getSubStatus() == null)
-                || (StringUtils.isNotEmpty(rule.getSubStatus()) && Project.SubStatus.valueOf(rule.getSubStatus()).equals(project.getSubStatus()));
+                || (StringUtils.isEmpty(rule.getSubStatus()) && project.getSubStatusName() == null)
+                || (StringUtils.isNotEmpty(rule.getSubStatus()) && ProjectSubStatus.valueOf(rule.getSubStatus()).equals(project.getSubStatusType()));
     }
 
     private boolean matchesBlockType(BlockActionRule rule, NamedProjectBlock block) {
@@ -167,7 +169,7 @@ public class ProjectBlockActivityMap {
 
     private boolean activeBlockCanBeEdited(Project project, NamedProjectBlock block) {
         // Blocks on active projects can only be edited if they support version control
-        return !Active.equals(project.getStatus()) || block.allowMultipleVersions();
+        return !Active.equals(project.getStatusType()) || block.allowMultipleVersions();
     }
 
     public boolean isActionAllowed(Project project, NamedProjectBlock block, User currentUser, NamedProjectBlock.Action action) {

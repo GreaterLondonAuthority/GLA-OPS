@@ -8,11 +8,12 @@
 
 class ChangeReportField {
   constructor($rootScope, $scope, ReportService) {
-    this.data = this.data || {};
-
     this.ReportService = ReportService;
-    this.displayMode = this.ReportService.getReportDisplayMode();
+   }
 
+  $onInit(){
+    this.data = this.data || {};
+    this.displayMode = this.ReportService.getReportDisplayMode();
     // TODO remove this when styling is in place
     this.emptyField = '-';
 
@@ -25,8 +26,8 @@ class ChangeReportField {
 
     this.mappedFields = this.ReportService.mapFields(this.fields, this.formats);
   }
-  getValue(data, field) {
 
+  getValue(data, field) {
     if(!data){
       return;
     }

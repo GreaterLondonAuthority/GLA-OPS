@@ -9,10 +9,10 @@ package uk.gov.london.ops.domain.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.domain.outputs.OutputCategoryConfiguration;
-import uk.gov.london.ops.domain.outputs.OutputType;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.refdata.OutputCategoryConfiguration;
+import uk.gov.london.ops.refdata.OutputType;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -28,7 +28,7 @@ import static uk.gov.london.ops.domain.project.OutputTableEntry.Source.WebUI;
 @Entity(name = "OUTPUT_TABLE_ENTRY")
 public class OutputTableEntry implements OpsEntity<Integer> {
 
-    public static enum Source{PCS, WebUI}
+    public static enum Source {PCS, WebUI}
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "output_seq_gen")
@@ -63,6 +63,9 @@ public class OutputTableEntry implements OpsEntity<Integer> {
     @Column(name = "actual")
     private BigDecimal actual;
 
+    @Column(name = "baseline")
+    private BigDecimal baseline;
+
     @Column(name = "created_on")
     private OffsetDateTime createdOn;
 
@@ -85,9 +88,21 @@ public class OutputTableEntry implements OpsEntity<Integer> {
     private OutputType outputType;
 
 
-    @Column(name="source")
+    @Column(name = "source")
     @Enumerated(EnumType.STRING)
     private Source source;
+
+    @Transient
+    private BigDecimal unitCost;
+
+    @Transient
+    private BigDecimal remainingAdvancePayment;
+
+    @Transient
+    private BigDecimal claimableAmount;
+
+    @Column(name = "amount_claimed")
+    private BigDecimal amountClaimed;
 
     public OutputTableEntry() {
         this.source = WebUI;
@@ -124,6 +139,23 @@ public class OutputTableEntry implements OpsEntity<Integer> {
         this.source = source;
         updateYearMonth();
     }
+
+    public BigDecimal getForecastTotal() {
+        if (unitCost != null && forecast != null) {
+            return unitCost.multiply(forecast);
+        }
+        return BigDecimal.ZERO;
+    }
+
+    public BigDecimal getActualTotal() {
+        if (unitCost != null && actual != null) {
+            return unitCost.multiply(actual);
+        }
+        return BigDecimal.ZERO;
+    }
+
+
+
 
     @Override
     public Integer getId() {
@@ -240,6 +272,14 @@ public class OutputTableEntry implements OpsEntity<Integer> {
         this.modifiedOn = modifiedOn;
     }
 
+    public BigDecimal getBaseline() {
+        return baseline;
+    }
+
+    public void setBaseline(BigDecimal baseline) {
+        this.baseline = baseline;
+    }
+
     @Override
     public String getModifiedBy() {
         return modifiedBy;
@@ -274,6 +314,36 @@ public class OutputTableEntry implements OpsEntity<Integer> {
         return actual.subtract(forecast);
     }
 
+    public BigDecimal getUnitCost() {
+        return unitCost;
+    }
 
+    public void setUnitCost(BigDecimal unitCost) {
+        this.unitCost = unitCost;
+    }
+
+    public BigDecimal getRemainingAdvancePayment() {
+        return remainingAdvancePayment;
+    }
+
+    public void setRemainingAdvancePayment(BigDecimal remainingAdvancePayment) {
+        this.remainingAdvancePayment = remainingAdvancePayment;
+    }
+
+    public BigDecimal getAmountClaimed() {
+        return amountClaimed;
+    }
+
+    public void setAmountClaimed(BigDecimal amountClaimed) {
+        this.amountClaimed = amountClaimed;
+    }
+
+    public BigDecimal getClaimableAmount() {
+        return claimableAmount;
+    }
+
+    public void setClaimableAmount(BigDecimal claimableAmount) {
+        this.claimableAmount = claimableAmount;
+    }
 }
 

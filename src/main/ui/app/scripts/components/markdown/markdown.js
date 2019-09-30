@@ -11,6 +11,9 @@ const gla = angular.module('GLA');
 
 class MarkdownCtrl {
   constructor() {
+  }
+
+  $onInit(){
     if(this.text) {
       let textWithoutHtml = StringUtil.removeHtml(this.text);
       this.html = StringUtil.replaceMarkdownUrl(textWithoutHtml);

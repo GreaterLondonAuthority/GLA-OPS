@@ -7,9 +7,9 @@
  */
 package uk.gov.london.ops.domain.project;
 
-import uk.gov.london.ops.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static uk.gov.london.ops.spe.SimpleProjectExportConstants.ReportPrefix;
+import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.ReportPrefix;
 
 /**
  * Created by chris on 10/11/2016.
@@ -28,7 +28,7 @@ import static uk.gov.london.ops.spe.SimpleProjectExportConstants.ReportPrefix;
 @DiscriminatorValue("GRANT_SOURCE")
 @JoinData(sourceTable = "grant_source_block", sourceColumn = "id", targetTable = "project_block", targetColumn = "id", joinType = Join.JoinType.OneToOne,
         comment = "the grant source block is a subclass of the project block and shares a common key")
-public class GrantSourceBlock extends NamedProjectBlock {
+public class GrantSourceBlock extends NamedProjectBlock implements FundingSourceProvider {
 
     public static final String ZERO_GRANT_REQUESTED = ReportPrefix.gs_.name() + "zero_grant_requested";
     public static final String ASSOCIATED_PROJECT = ReportPrefix.gs_.name() + "associated_project";
@@ -238,19 +238,6 @@ public class GrantSourceBlock extends NamedProjectBlock {
     }
 
     @Override
-    public boolean allowMultipleVersions() {
-        return true;
-    }
-
-    public Map<GrantType, Long> getGrantsRequested() {
-        Map<GrantType, Long> grantsRequested = new HashMap<>();
-        grantsRequested.put(GrantType.Grant, grantValue != null ? grantValue : 0);
-        grantsRequested.put(GrantType.RCGF, recycledCapitalGrantFundValue != null ? recycledCapitalGrantFundValue : 0);
-        grantsRequested.put(GrantType.DPF, disposalProceedsFundValue != null ? disposalProceedsFundValue : 0);
-        return grantsRequested;
-    }
-
-    @Override
     protected void compareBlockSpecificContent(NamedProjectBlock other, ProjectDifferences differences) {
         GrantSourceBlock otherGrantSourceBlock = (GrantSourceBlock) other;
 
@@ -283,4 +270,19 @@ public class GrantSourceBlock extends NamedProjectBlock {
         }
     }
 
+    @Override
+    public boolean isBlockRevertable() {
+        return true;
+    }
+
+
+
+    @Override
+    public Map<GrantType, Long> getFundingRequested() {
+        Map<GrantType, Long> existingRequests = new HashMap<>();
+        existingRequests.put(GrantType.Grant, grantValue != null ? grantValue : 0);
+        existingRequests.put(GrantType.RCGF, recycledCapitalGrantFundValue != null ? recycledCapitalGrantFundValue : 0);
+        existingRequests.put(GrantType.DPF, disposalProceedsFundValue != null ? disposalProceedsFundValue : 0);
+        return existingRequests;
+    }
 }

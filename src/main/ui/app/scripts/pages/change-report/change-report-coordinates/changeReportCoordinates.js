@@ -12,13 +12,17 @@ function index(obj, i) {
   return obj[i];
 }
 class ChangeReportCoodinates {
-  constructor($rootScope, $scope, ReportService) {
-    this.data = this.data || {};
-    this.fields = angular.isArray(this.fields) ? this.fields : [this.fields];
-    this.displayMode = ReportService.getReportDisplayMode();
-    this.emptyField = '-';
+  constructor(ReportService) {
     this.ReportService = ReportService;
   }
+
+  $onInit(){
+    this.data = this.data || {};
+    this.fields = angular.isArray(this.fields) ? this.fields : [this.fields];
+    this.displayMode = this.ReportService.getReportDisplayMode();
+    this.emptyField = '-';
+  }
+
   getValue(data, field) {
     if(!data){
       return;
@@ -35,7 +39,7 @@ class ChangeReportCoodinates {
   }
 }
 
-ChangeReportCoodinates.$inject = ['$rootScope', '$scope', 'ReportService'];
+ChangeReportCoodinates.$inject = ['ReportService'];
 
 angular.module('GLA')
   .component('changeReportCoodinates', {

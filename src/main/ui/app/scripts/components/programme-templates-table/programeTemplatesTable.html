@@ -1,0 +1,19 @@
+<div>
+  <div ng-repeat="template in $ctrl.programme.templatesByProgramme track by (template.id.templateId || template.id)" class="programme-template">
+
+    <section-header2 collapsed="template.collapsed"
+                     on-collapse-change="$ctrl.collapseChanged()">{{template.templateName || template.name}} ({{template.id.templateId || template.id}})</section-header2>
+
+    <programme-project-type class="mbottom20"
+                            project-type="template"
+                            assessment-templates="$ctrl.assessmentTemplates"
+                            read-only="$ctrl.readOnly"
+                            programme="$ctrl.programme"
+                            projects-count="$ctrl.projectsCount[template.id.templateId]"
+                            gla-roles="$ctrl.glaRoles"
+                            allow-change-in-use-assessment-template="$ctrl.allowChangeInUseAssessmentTemplate"
+                            on-delete="$ctrl.onDelete({$event: $event})"
+                            ng-if="!template.collapsed"></programme-project-type>
+
+  </div>
+</div>

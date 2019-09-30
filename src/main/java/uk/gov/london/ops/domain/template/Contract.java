@@ -8,9 +8,10 @@
 package uk.gov.london.ops.domain.template;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity(name="contract")
-public class Contract {
+public class Contract implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contract_seq_gen")

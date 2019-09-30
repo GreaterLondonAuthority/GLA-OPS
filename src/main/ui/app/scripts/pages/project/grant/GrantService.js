@@ -10,7 +10,7 @@
 
 function GrantService(numberFilter, orderByFilter, ReportService) {
   return {
-    extractErrors: function (tenure, errors) {
+    extractErrors(tenure, errors) {
       var allErrors = [];
       var errors = errors || {};
       var errorBlock = (tenure.key === 'NegotiatedGrant' || tenure.key === 'DeveloperLedGrant') ? 'Block2' : 'Block1';
@@ -27,26 +27,38 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
       return allErrors;
     },
 
-    negotiatedGrantBlock: function (apiData) {
+    negotiatedGrantBlock(apiData) {
       var summaryDetails = apiData.tenureSummaryDetails || [];
       return summaryDetails.map(negotiatedGrantBlock);
     },
 
-    calculateGrantBlock: function (apiData) {
+    calculateGrantBlock(apiData) {
       var summaryDetails = apiData.tenureSummaryDetails || [];
       return summaryDetails.map(calculateGrantBlock);
     },
-    calculateClaimedTenure: function (apiData) {
+
+    calculateClaimedTenure(apiData, project) {
+      let milestones = [];
+      _.forOwn(project.projectBlocksSorted, (value, key) => {
+        if (value.type == 'ProjectMilestonesBlock') {
+          _.forOwn(value.milestones, (value, key) => {
+            milestones.push(value.externalId);
+          });
+        }
+      });
       var summaryDetails = apiData.tenureTypeAndUnitsEntries || [];
+      _.forOwn(summaryDetails, (value, key) => {
+        value['milestones'] = milestones;
+      });
       return summaryDetails.map(calculateClaimedTenure);
     },
 
-    developerLedGrantBlock: function (apiData) {
+    developerLedGrantBlock(apiData) {
       var summaryDetails = apiData.tenureSummaryDetails || [];
       return summaryDetails.map(developerLedGrantBlock);
     },
 
-    indicativeGrantBlocks: function(apiData){
+    indicativeGrantBlocks(apiData) {
       var summaryDetails = apiData.tenureSummaryDetails || [];
       var groupedDetails = _.groupBy(summaryDetails, 'name');
       var tenureTypesAndUnits = apiData.tenureTypeAndUnitsEntries || [];
@@ -59,8 +71,8 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
       return summaryDetailsRows;
     },
 
-    sortTenureTypes: function (grantBlock) {
-      if(grantBlock) {
+    sortTenureTypes(grantBlock) {
+      if (grantBlock) {
         grantBlock.tenureTypeAndUnitsEntries = orderByFilter(grantBlock.tenureTypeAndUnitsEntries, 'tenureType.displayOrder');
       }
       return grantBlock;
@@ -72,7 +84,7 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
      * @param rightBlock
      * @returns {{left: *, right: *, tenuresToCompare: *, summariesToCompare: Array, totalsToCompare: Array}}
      */
-    prepareReportData: function (leftBlock, rightBlock) {
+    prepareReportData(leftBlock, rightBlock) {
       this.sortTenureTypes(leftBlock);
       this.sortTenureTypes(rightBlock);
 
@@ -89,16 +101,16 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
         return {name: rightRow.name};
       };
 
-      let leftSummaries =  (leftBlock || {}).tenureSummaryDetails || [];
-      let rightSummaries =  (rightBlock || {}).tenureSummaryDetails || [];
+      let leftSummaries = (leftBlock || {}).tenureSummaryDetails || [];
+      let rightSummaries = (rightBlock || {}).tenureSummaryDetails || [];
 
       let leftTotals = (leftBlock || {}).totals;
       let rightTotals = (rightBlock || {}).totals;
 
-      if(leftTotals) {
+      if (leftTotals) {
         leftTotals.comparisonId = (leftBlock || {}).comparisonId;
       }
-      if(rightTotals) {
+      if (rightTotals) {
         rightTotals.comparisonId = (rightBlock || {}).comparisonId;
       }
 
@@ -112,6 +124,44 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
           right: rightTotals
         }]
       }
+    },
+
+    indicativeGrantSectionTitle(template, isEditMode) {
+      let defaultTextReadOnly = 'units by tenure type that are expected to start on site in the years specified below';
+      let defaultTextEdit = `Enter the ${defaultTextReadOnly}`;
+      let config = (template || {}).indicativeTenureConfiguration || {};
+      let text = isEditMode ? config.indicativeTenureTextEdit : config.indicativeTenureTextReadOnly;
+      let defaultText = _.upperFirst(isEditMode ? defaultTextEdit : defaultTextReadOnly);
+      return text || defaultText;
+    },
+
+    enhanceIndicativeBlock(projectBlock){
+      if(!projectBlock){
+        return projectBlock;
+      }
+
+      let block =  this.sortTenureTypes(projectBlock);
+      let allYears = block.tenureTypeAndUnitsEntries.reduce((years, tt) => (years || []).concat(tt.indicativeTenureValuesSorted), []);
+      let minYear = (_.minBy(allYears, 'year') || {}).year;
+      let maxYear = (_.maxBy(allYears, 'year') || {}).year;
+      let amountOfYears = minYear? maxYear - minYear + 1 : 0;
+      block.tenureTypeAndUnitsEntries.forEach(tt => {
+        for(let i = 0; i < amountOfYears; i++){
+          let year = minYear + i;
+          let yearConfig = tt.indicativeTenureValuesSorted[i];
+          if(!yearConfig || yearConfig.year !== year){
+            tt.indicativeTenureValuesSorted.splice(i, 0, {year, disabled: true});
+          }
+        }
+      });
+      return block;
+    },
+
+    getYesNoAnswer(questionAnswer){
+      if (_.isBoolean(questionAnswer)) {
+        return questionAnswer ? 'Yes' : 'No'
+      }
+      return 'Not provided'
     }
   };
 
@@ -154,18 +204,28 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
   }
 
   function calculateClaimedTenure(summaryBlock) {
+    let items = [];
+    _.forOwn(summaryBlock.milestones, (key, value) => {
+      if (key == 3003) {
+        items.push(
+          {
+            itemName: 'Total Units at Start on Site',
+            itemValue: numberFilter(summaryBlock.totalUnitsAtStartOnSite) || '-'
+          }
+        )
+      }
+      if (key == 3004) {
+        items.push(
+          {
+            itemName: 'Total Units at Completion',
+            itemValue: numberFilter(summaryBlock.totalUnitsAtCompletion) || '-'
+          }
+        )
+      }
+    });
     return {
       name: summaryBlock.tenureType.name,
-      items: [
-        {
-          itemName: 'Total Units at Start on Site',
-          itemValue: numberFilter(summaryBlock.totalUnitsAtStartOnSite)
-        },
-        {
-          itemName: 'Total Units at Completion',
-          itemValue: numberFilter(summaryBlock.totalUnitsAtCompletion) || '-'
-        }
-      ]
+      items: items
     }
   }
 
@@ -189,8 +249,6 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
       ]
     }
   }
-
-
 
 
   function indicativeGrantBlock(summaryBlock) {

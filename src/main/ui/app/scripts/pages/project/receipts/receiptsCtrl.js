@@ -12,13 +12,18 @@ import ForecastDataUtil from '../../../util/ForecastDataUtil';
 import DateUtil from '../../../util/DateUtil';
 
 class ReceiptsCtrl extends ProjectBlockCtrl {
-  constructor(project, $injector, $log, ReceiptsService, ActualsMetadataModal) {
-    super(project, $injector);
+  constructor($injector, $log, ReceiptsService, ActualsMetadataModal, FinanceService, ProjectService) {
+    super($injector);
     this.ReceiptsService = ReceiptsService;
+    this.FinanceService = FinanceService;
+    this.ProjectService = ProjectService;
     this.ActualsMetadataModal = ActualsMetadataModal;
-    this.data = this.projectBlock || {};
     this.$log = $log;
+  }
 
+  $onInit(){
+    super.$onInit()
+    this.data = this.projectBlock || {};
     this.currentYear = null;
 
     // shouldn't be done at a controler level, should be done once and reused
@@ -28,15 +33,17 @@ class ReceiptsCtrl extends ProjectBlockCtrl {
         this.currentFinancialYearConst = year;
         // TODO refractor this into a better session management
         this.yearSelected(this.blockSessionStorage.financialYear ||
-           {
-             label:'',
-             financialYear: year
-           }
+          {
+            label:'',
+            financialYear: year
+          }
         );
       });
 
     this.loadCategoryData();
   }
+
+
 
 
   /**
@@ -64,7 +71,7 @@ class ReceiptsCtrl extends ProjectBlockCtrl {
     //     console.log('old this.categories', resp.data)
     //   });
 
-    return this.ProjectService.getReceiptCategories()
+    return this.FinanceService.getReceiptCategories()
       .then(categories => {
         this.categories = categories;
         console.log('this.categories', categories)
@@ -186,7 +193,7 @@ class ReceiptsCtrl extends ProjectBlockCtrl {
 
   delete(receipt){
     this.$rootScope.showGlobalLoadingMask = true;
-    let p = this.ReceiptsService.delete(this.project.id, this.blockId, receipt.forecastId)
+    let p = this.ProjectService.deleteLedgerEntry(this.project.id, this.blockId, receipt.forecastId)
       .then(resp => {
         return this.loadDataForYear(this.currentYear.financialYear.financialYear);
       })
@@ -209,22 +216,19 @@ class ReceiptsCtrl extends ProjectBlockCtrl {
     if (this.readOnly || !this.data) {
       this.returnToOverview();
     } else {
-      this.onSave();
+      this.submit();
     }
   };
 
   /**
    * Save handler
    */
-  onSave() {
-    this.ReceiptsService.updateReceipts(this.project.id, this.data)
-      .then(resp => {
-        this.returnToOverview(this.blockId);
-      });
+  submit() {
+    return this.ReceiptsService.updateReceipts(this.project.id, this.data);
   }
 }
 
-ReceiptsCtrl.$inject = ['project', '$injector', '$log', 'ReceiptsService', 'ActualsMetadataModal'];
+ReceiptsCtrl.$inject = ['$injector', '$log', 'ReceiptsService', 'ActualsMetadataModal', 'FinanceService', 'ProjectService'];
 
 angular.module('GLA')
   .controller('ReceiptsCtrl', ReceiptsCtrl);

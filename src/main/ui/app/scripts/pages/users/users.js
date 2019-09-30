@@ -7,18 +7,34 @@
  */
 
 class UsersCtrl {
-  constructor($state, $stateParams, UserService, SessionService) {
+  constructor($state, $stateParams, UserService, SessionService, $q) {
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.SessionService = SessionService;
     this.UserService = UserService;
-    this.searchOptions = UserService.searchOptions();
-    this.registrationStatusOptions = this.applyFilterState(UserService.getRegistrationStatusOptions());
-    this.isGLASearch = UserService.hasPermission('users.search.gla');
-    this.userRoleOptions = this.applyFilterState(UserService.getUserRoleOptions(this.isGLASearch));
-    this.organisationTypeOptions = this.applyFilterState(UserService.getOrganisationTypesOptions(this.organisationTypes));
-    this.spendAuthorityOptions= this.applyFilterState(UserService.getSpendAuthorityOptions(this));
+    this.$q = $q;
+  }
+
+  $onInit() {
+    this.searchOptions = this.UserService.searchOptions();
+    this.registrationStatusOptions = this.applyFilterState(this.UserService.getRegistrationStatusOptions());
+    this.isGLASearch = this.UserService.hasPermission('users.search.gla');
+    this.userRoleOptions = this.applyFilterState(this.UserService.getUserRoleOptions(this.isGLASearch));
+    this.organisationTypeOptions = this.applyFilterState(this.UserService.getOrganisationTypesOptions(this.organisationTypes));
+    this.spendAuthorityOptions= this.applyFilterState(this.UserService.getSpendAuthorityOptions(this));
     let usersSearchState = this.getSearchParams();
+    this.requestsQueue = [];
+
+    // Pagination variables
+    this.totalItems = 0;
+    this.itemsPerPage = 50;
+
+    //Current page starts by 1 in UI but by 0 in backend
+    this.currentPage = 1;
+    this.sortByName = 'name';
+    this.sortReverse = false;
+
+
     if (usersSearchState.organisation) {
       this.selectedSearchOption = this.searchOptions[1];
       this.searchTextModel = usersSearchState.organisation;
@@ -30,9 +46,6 @@ class UsersCtrl {
     this.searchText = this.searchTextModel;
     //
     this.updateFilters(true);
-  }
-
-  $onInit() {
   }
 
   select(searchOption) {
@@ -126,14 +139,26 @@ class UsersCtrl {
     data.organisationTypes = _.map(_.filter(this.organisationTypeOptions, {model:true}), 'key') || [];
     data.spendAuthority = _.map(_.filter(this.spendAuthorityOptions, {model:true}), 'key') || [];
 
-    this.UserService.getUsers(data).then(rsp => {
-      this.users = rsp.data.content;
-    });
+    data.page = resetPage ? 0 : this.currentPage - 1;
+
+    this.$q.all(this.requestsQueue).then(() => {
+      let p = this.UserService.getUsers(data).then(rsp => {
+        this.users = rsp.data.content;
+
+        if (resetPage) {
+          this.currentPage = 1;
+        }
+        this.totalItems = rsp.data.totalElements;
+
+      });
+      this.requestsQueue.push(p);
+      p.finally(() => _.remove(this.requestsQueue, p));
+    })
   }
 
 }
 
-UsersCtrl.$inject = ['$state', '$stateParams', 'UserService', 'SessionService'];
+UsersCtrl.$inject = ['$state', '$stateParams', 'UserService', 'SessionService', '$q'];
 
 angular.module('GLA').controller('UsersCtrl', UsersCtrl);
 

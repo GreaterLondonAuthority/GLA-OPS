@@ -13,16 +13,20 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.london.ops.domain.project.ProjectAction;
 import uk.gov.london.ops.domain.project.ProjectRiskAndIssue;
 import uk.gov.london.ops.domain.project.ProjectRisksBlock;
-import uk.gov.london.ops.domain.user.Role;
-import uk.gov.london.ops.exception.ApiError;
+import uk.gov.london.common.error.ApiError;
+import uk.gov.london.ops.service.project.ProjectService;
 
 import javax.validation.Valid;
+
+import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.ops.framework.web.APIUtils.verifyBinding;
 
 /**
  * REST API for managing Projects.
@@ -34,25 +38,14 @@ import javax.validation.Valid;
 @Api(
         description = "managing Project risk data"
 )
-public class ProjectRisksAPI extends BaseProjectAPI {
+public class ProjectRisksAPI {
 
     Logger log = LoggerFactory.getLogger(getClass());
 
+    @Autowired
+    private ProjectService service;
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
-    @RequestMapping(value = "/projects/{projectId}/risks/{blockId}", method = RequestMethod.PUT)
-    @ApiOperation(value = "set a project's risk level", notes = "")
-    @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
-    public ProjectRisksBlock updateProjectRisk(@PathVariable Integer projectId,
-                                                  @PathVariable Integer blockId,
-                                                  @Valid @RequestBody ProjectRisksBlock risksBlock,
-                                                  @RequestParam(name = "releaseLock", defaultValue = "false", required = false) boolean releaseLock,
-                                                  BindingResult bindingResult) {
-        verifyBinding("Invalid Risk details!", bindingResult);
-        return service.updateProjectRisks(projectId, blockId, risksBlock, releaseLock);
-    }
-
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/risks/{blockId}/risk", method = RequestMethod.POST)
     @ApiOperation(value = "create a project risk ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -65,7 +58,7 @@ public class ProjectRisksAPI extends BaseProjectAPI {
         return service.createProjectRisk(projectId, blockId, risk, releaseLock);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/risks/{blockId}/risk/{riskId}/action", method = RequestMethod.POST)
     @ApiOperation(value = "add a mitigation/action ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -79,7 +72,7 @@ public class ProjectRisksAPI extends BaseProjectAPI {
         return service.addActionToRisk(projectId, blockId, riskId, action, releaseLock);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/risks/{blockId}/risk/{riskId}/action/{actionId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "deleted mitigation/action ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -92,7 +85,7 @@ public class ProjectRisksAPI extends BaseProjectAPI {
     }
 
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/risks/{blockId}/risk/{riskId}", method = RequestMethod.PUT)
     @ApiOperation(value = "updates a project risk ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -106,7 +99,7 @@ public class ProjectRisksAPI extends BaseProjectAPI {
         service.updateProjectRisk(projectId, blockId, riskId, risk, releaseLock);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/risks/{blockId}/risk/{riskId}/close", method = RequestMethod.PUT)
     @ApiOperation(value = "deleted mitigation/action ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -117,7 +110,7 @@ public class ProjectRisksAPI extends BaseProjectAPI {
         service.closeProjectRisk(projectId, blockId, riskId, releaseLock);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/risks/{blockId}/risk/{riskId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "deletes a project risk ", notes = "")
     public void deleteProjectRisk(@PathVariable Integer projectId,

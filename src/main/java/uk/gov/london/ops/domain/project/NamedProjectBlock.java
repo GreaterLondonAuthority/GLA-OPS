@@ -8,17 +8,28 @@
 package uk.gov.london.ops.domain.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.StringUtils;
+import uk.gov.london.common.error.ApiErrorItem;
 import uk.gov.london.ops.OpsEvent;
-import uk.gov.london.ops.aop.LogMetrics;
+import uk.gov.london.ops.domain.project.funding.FundingBlock;
+import uk.gov.london.ops.domain.project.outputs.OutputsCostsBlock;
+import uk.gov.london.ops.domain.project.question.ProjectQuestionsBlock;
+import uk.gov.london.ops.domain.project.skills.FundingClaimsBlock;
+import uk.gov.london.ops.domain.project.skills.LearningGrantBlock;
+import uk.gov.london.ops.domain.project.subcontracting.SubcontractingBlock;
 import uk.gov.london.ops.domain.template.TemplateBlock;
-import uk.gov.london.ops.exception.ApiErrorItem;
-import uk.gov.london.ops.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.payment.PaymentSource;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.service.project.state.StateTransition;
+import uk.gov.london.ops.framework.annotations.LogMetrics;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -32,7 +43,6 @@ import static uk.gov.london.ops.domain.project.NamedProjectBlock.BlockStatus.UNA
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name="block_type")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
         property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = BaseGrantBlock.class),
@@ -44,10 +54,17 @@ import static uk.gov.london.ops.domain.project.NamedProjectBlock.BlockStatus.UNA
         @JsonSubTypes.Type(value = ProjectDetailsBlock.class),
         @JsonSubTypes.Type(value = DesignStandardsBlock.class),
         @JsonSubTypes.Type(value = ProjectBudgetsBlock.class),
-        @JsonSubTypes.Type(value = ProjectRisksBlock.class)
+        @JsonSubTypes.Type(value = ProjectRisksBlock.class),
+        @JsonSubTypes.Type(value = FundingBlock.class),
+        @JsonSubTypes.Type(value = ProgressUpdateBlock.class),
+        @JsonSubTypes.Type(value = LearningGrantBlock.class),
+        @JsonSubTypes.Type(value = UnitDetailsBlock.class),
+        @JsonSubTypes.Type(value = OutputsCostsBlock.class),
+        @JsonSubTypes.Type(value = SubcontractingBlock.class),
+        @JsonSubTypes.Type(value = FundingClaimsBlock.class)
 })
 @DiscriminatorValue("BASE")
-public abstract class NamedProjectBlock implements Comparable, ComparableItem {
+public abstract class   NamedProjectBlock implements Serializable, Comparable, ComparableItem {
 
     public enum BlockStatus {UNAPPROVED, APPROVED, LAST_APPROVED}
 
@@ -58,7 +75,7 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
             comment = "This id is shared amongst all child blocks, for example tenure_block, design_standards, outputs,project_details_block etc")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_block_seq_gen")
     @SequenceGenerator(name = "project_block_seq_gen", sequenceName = "project_block_seq", initialValue = 10000, allocationSize = 1)
-    private Integer id;
+    protected Integer id;
 
     @Column(name = "last_modified")
     protected OffsetDateTime lastModified;
@@ -76,6 +93,9 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
     @Column(name = "block_status")
     @Enumerated(EnumType.STRING)
     protected BlockStatus blockStatus = BlockStatus.UNAPPROVED;
+
+    @Column(name = "approved_on_status")
+    protected String approvedOnStatus;
 
     @Column(name = "approver_name")
     protected String approverUsername;
@@ -103,22 +123,32 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
     private LockDetails lockDetails;
 
     @Column(name = "block_appears_on_status")
-    private Project.Status blockAppearsOnStatus;
+    private String blockAppearsOnStatus;
 
     @Column(name = "hidden")
     private boolean hidden;
 
+    @Column(name = "is_new")
+    private boolean isNew;
+
+    @Column(name = "block_marked_complete")
+    private Boolean blockMarkedComplete;
+
     @Column(name = "info_message")
     private String infoMessage;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {})
+    @JoinTable(name = "project_block_label",
+            joinColumns = @JoinColumn(name = "project_block_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id", referencedColumnName = "id"))
+    private Set<Label> labels = new HashSet<>();
 
     @Transient
     protected Map<String, List<ApiErrorItem>> errors;
 
     @Transient
     protected Collection<Action> allowedActions;
-
-    @Transient
-    private boolean newBlock= false;
 
     @Transient
     private String modifiedByName;
@@ -128,6 +158,9 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
 
     @Transient
     private ProjectDifferences differences;
+
+    @Column(name = "payment_sources")
+    private String paymentSourcesString;
 
     public NamedProjectBlock() {
     }
@@ -149,15 +182,11 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
         return getValidationFailures().size() == 0;
     }
 
-    public void updateNewBlock() {
-        this.setNewBlock(
-                this.getBlockAppearsOnStatus() != null
-                        && project.getStatus().equals(this.getBlockAppearsOnStatus())
-                        && UNAPPROVED.equals(this.blockStatus)
-                        && this.versionNumber == 1);
-    }
-
     public abstract boolean isComplete();
+
+    public boolean isAbleToPersistIsComplete() {
+        return true;
+    }
 
     /**
      * Merges values from another project structure into the block.
@@ -167,6 +196,9 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
     public void merge(NamedProjectBlock block) {
     }
 
+    public void resetErrorMessages() {
+        this.errors = null;
+    }
 
     /**
      * Retrieves a list of validation failures specifically for the UI, the key
@@ -287,6 +319,14 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
         this.blockStatus = blockStatus;
     }
 
+    public String getApprovedOnStatus() {
+        return approvedOnStatus;
+    }
+
+    public void setApprovedOnStatus(String approvedOnStatus) {
+        this.approvedOnStatus = approvedOnStatus;
+    }
+
     public String getApproverUsername() {
         return approverUsername;
     }
@@ -311,7 +351,6 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
         this.versionNumber = versionNumber;
     }
 
-    @JsonIgnore
     public boolean isEditable() {
         return allowedActions != null && allowedActions.contains(Action.EDIT);
     }
@@ -340,19 +379,19 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
         }
     }
 
-    public boolean isNewBlock() {
-        return newBlock;
+    /**
+     * @return if the block has updates, for example new questions in the block as a result of a state transition.
+     */
+    @JsonProperty(value = "hasUpdates", access = JsonProperty.Access.READ_ONLY)
+    public boolean hasUpdates() {
+        return false;
     }
 
-    public void setNewBlock(boolean newBlock) {
-        this.newBlock = newBlock;
-    }
-
-    public Project.Status getBlockAppearsOnStatus() {
+    public String getBlockAppearsOnStatus() {
         return blockAppearsOnStatus;
     }
 
-    public void setBlockAppearsOnStatus(Project.Status blockAppearsOnStatus) {
+    public void setBlockAppearsOnStatus(String blockAppearsOnStatus) {
         this.blockAppearsOnStatus = blockAppearsOnStatus;
     }
 
@@ -362,6 +401,15 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    @JsonProperty("newBlock")
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean isNew) {
+        this.isNew = isNew;
     }
 
     public String getInfoMessage() {
@@ -394,6 +442,45 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
 
     public void setDifferences(ProjectDifferences differences) {
         this.differences = differences;
+    }
+
+    public Set<Label> getLabels() {
+        return labels;
+    }
+
+    public void setBlockMarkedComplete(Boolean blockMarkedComplete) {
+        this.blockMarkedComplete = blockMarkedComplete;
+    }
+
+    public void setLabels(Set<Label> labels) {
+        this.labels = labels;
+    }
+
+    public Boolean getBlockMarkedComplete() {
+        return blockMarkedComplete;
+    }
+
+    @JsonIgnore
+    public String getPaymentSourcesString() {
+        return paymentSourcesString;
+    }
+
+    public void setPaymentSourcesString(String paymentSourcesString) {
+        this.paymentSourcesString = paymentSourcesString;
+    }
+
+
+    public Set<PaymentSource> getPaymentSources() {
+        Set<PaymentSource> sources = new HashSet<>();
+        if(this.getPaymentSourcesString() != null && !this.getPaymentSourcesString().isEmpty()){
+            String[] sourceItems = this.getPaymentSourcesString().split(",");
+
+            for (String paymentSource : sourceItems) {
+                sources.add(PaymentSource.valueOf(paymentSource));
+            }
+        }
+
+        return sources;
     }
 
     @JsonIgnore
@@ -439,6 +526,8 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
         target.setLatestVersion(true);
         target.setModifiedBy(modifiedBy);
         target.setLastModified(modifiedOn);
+        target.setInfoMessage(getInfoMessage());
+        target.setNew(isNew());
     }
 
     /**
@@ -485,6 +574,7 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
         this.setBlockDisplayName(templateBlock.displayName());
         this.setBlockAppearsOnStatus(templateBlock.getBlockAppearsOnStatus());
         this.setInfoMessage(templateBlock.getInfoMessage());
+        this.setPaymentSourcesString(templateBlock.getPaymentSourcesString());
         this.initFromTemplateSpecific(templateBlock);
     }
 
@@ -507,14 +597,20 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
     }
 
     public boolean allowMultipleVersions() {
-        return false;
+        return true;
     }
 
-    public void approve(String username, OffsetDateTime approvalTime) {
+    public final void approve(String username, OffsetDateTime approvalTime) {
         this.setBlockStatus(LAST_APPROVED);
         this.setLastModified(approvalTime);
         this.setApprovalTime(approvalTime);
         this.setApproverUsername(username);
+        this.setApprovedOnStatus(project.getStatusName());
+        this.performPostApprovalActions(username, approvalTime);
+    }
+
+    protected void performPostApprovalActions(String username, OffsetDateTime approvalTime) {
+
     }
 
     public boolean isApproved() {
@@ -522,15 +618,13 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
     }
 
     public boolean editRequiresCloning(OffsetDateTime now) {
-        if (!Project.Status.Active.equals(project.getStatus())) {
-            return false;
-        }
-
         if (blockStatus.equals(NamedProjectBlock.BlockStatus.UNAPPROVED)) {
-            return project.isAutoApproval() && (lastModified != null && (!now.getMonth().equals(lastModified.getMonth()) || now.getYear() != lastModified.getYear()));
+            return !project.getStateModel().isApprovalRequired() &&
+                    (lastModified != null && (!now.getMonth().equals(lastModified.getMonth()) || now.getYear() != lastModified.getYear()));
         }
-
-        return this.equals(project.getLatestBlockOfType(blockType, displayOrder));
+        else { // else the block is APPROVED
+            return this.equals(project.getLatestBlockOfType(blockType, displayOrder));
+        }
     }
 
     @Override
@@ -541,4 +635,60 @@ public abstract class NamedProjectBlock implements Comparable, ComparableItem {
     public void handleEvent(OpsEvent opsEvent) {
 
     }
+
+    /**
+     * This method is called when a project changes state.
+     * @param stateTransition state transition the project has just been through.
+     */
+    public final void handleStateTransition(StateTransition stateTransition) {
+        if (this.isHidden() && StringUtils.isNotEmpty(this.getBlockAppearsOnStatus()) && project.getStatusName().equals(this.getBlockAppearsOnStatus())) {
+            this.setHidden(false);
+            project.getLatestProjectBlocks().add(this);
+            this.setNew(true);
+        }
+        else if (stateTransition.isClearNewLabel() && this.isComplete()) {
+            this.setNew(false);
+        }
+
+        handleStateTransitionSpecific(stateTransition);
+    }
+
+    /**
+     * Optional block specific implementation method  called when a project state changes.
+     * * @param stateTransition state transition the project has just been through.
+     */
+    protected void handleStateTransitionSpecific(StateTransition stateTransition) {}
+
+    @JsonIgnore
+    public boolean isBlockRevertable() {
+        return false;
+    }
+
+    public final boolean isBlockReversionAllowed() {
+        return isBlockRevertable() && !isApproved() && versionNumber == 1 && lastModified != null;
+
+    }
+
+    /**
+     * @return true if approving this block on an Active project will result in a pending payment being generated.
+     */
+    public boolean getApprovalWillCreatePendingPayment() {
+        return false;
+    }
+
+    /**
+     * @return true if approving this block on an Active project will result in a grant pending payment being generated.
+     * By grant pending payment we mean a payment that will be processed to SAP.
+     */
+    public boolean getApprovalWillCreatePendingGrantPayment() {
+        return getApprovalWillCreatePendingPayment();
+    }
+
+    /**
+     * @return true if approving this block on an Active project will result in a pending reclaim payment being generated.
+     */
+    public boolean getApprovalWillCreatePendingReclaim() {
+        return false;
+    }
+
 }

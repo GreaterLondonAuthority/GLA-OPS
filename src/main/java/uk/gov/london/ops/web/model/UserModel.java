@@ -7,6 +7,7 @@
  */
 package uk.gov.london.ops.web.model;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -16,7 +17,7 @@ import java.util.*;
  * This ensures that any sensitive attributes of the User entity are
  * protected by default, and only available in the API by explicit design.
  */
-public class UserModel {
+public class UserModel implements Serializable {
 
     private String username;
     private String firstName;
@@ -28,6 +29,12 @@ public class UserModel {
     private OffsetDateTime lastLoggedOn;
     private Set<String> permissions = new HashSet<>();
     private boolean approved;
+    private String fullName;
+
+    // Durations in seconds
+    private Integer idleDuration = 1;
+    private Integer timeoutDuration = 5;
+    private Integer keepAliveInterval = 5 * 60;
 
     public static final String PRIMARY_ROLE_OPS_ADMIN = "Admin";
     public static final String PRIMARY_ROLE_USER = "Unapproved User";
@@ -57,6 +64,15 @@ public class UserModel {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getFullName() {
+
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getPrimaryRole() {
@@ -113,5 +129,29 @@ public class UserModel {
 
     public void setOrganisations(Set<OrganisationModel> organisations) {
         this.organisations = organisations;
+    }
+
+    public Integer getIdleDuration() {
+        return idleDuration;
+    }
+
+    public void setIdleDuration(Integer idleDuration) {
+        this.idleDuration = idleDuration;
+    }
+
+    public Integer getTimeoutDuration() {
+        return timeoutDuration;
+    }
+
+    public void setTimeoutDuration(Integer timeoutDuration) {
+        this.timeoutDuration = timeoutDuration;
+    }
+
+    public Integer getKeepAliveInterval() {
+        return keepAliveInterval;
+    }
+
+    public void setKeepAliveInterval(Integer keepAliveInterval) {
+        this.keepAliveInterval = keepAliveInterval;
     }
 }

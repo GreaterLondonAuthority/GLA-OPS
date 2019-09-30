@@ -10,10 +10,10 @@ package uk.gov.london.ops.domain.project;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.util.StringUtils;
 import uk.gov.london.ops.domain.template.TemplateBlock;
-import uk.gov.london.ops.exception.ValidationException;
-import uk.gov.london.ops.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.util.*;
@@ -132,11 +132,6 @@ public class ProjectRisksBlock extends NamedProjectBlock {
     protected void initFromTemplateSpecific(TemplateBlock templateBlock) {}
 
     @Override
-    public boolean allowMultipleVersions() {
-        return true;
-    }
-
-    @Override
     protected void compareBlockSpecificContent(NamedProjectBlock otherBlock, ProjectDifferences differences) {
         super.compareBlockSpecificContent(otherBlock, differences);
 
@@ -185,4 +180,8 @@ public class ProjectRisksBlock extends NamedProjectBlock {
         return projectRiskAndIssues.stream().filter(r -> r.getId().equals(id)).findFirst().orElse(null);
     }
 
+    @Override
+    public boolean isBlockRevertable() {
+        return true;
+    }
 }

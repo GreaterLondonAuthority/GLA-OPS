@@ -7,24 +7,24 @@
  */
 
 
-class ChangeReportCtrl {
-  constructor($state, $location, $log, $anchorScroll, ReportService, ProjectService) {
-    this.$log = $log;
-    this.$state = $state;
-    this.$location = $location;
-    this.$anchorScroll = $anchorScroll;
-    this.ReportService = ReportService;
-    this.$anchorScroll.yOffset = 50;
-    this.showCollapseAll = true;
+import CollapsibleReportCtr from '../../controllers/collapsibleReportCtrl.js';
+
+
+
+class ChangeReportCtrl extends CollapsibleReportCtr {
+  constructor($injector) {
+    super($injector);
     this.ReportService.setHalfWidth();
+  }
+
+  $onInit(){
     this.comparisonDate = new Date();
     if (this.$state.params.comparisonDate) {
       this.comparisonDate = moment(this.$state.params.comparisonDate).subtract(1, 'Month').toDate();
     }
-    this.subStatusText = ProjectService.subStatusText(this.latestProject);
 
     let dateFirstActive;
-    for(var i=0;i<this.projectHistory.length;i++) {
+    for(let i=0;i<this.projectHistory.length;i++) {
       if(this.projectHistory[i].transition === 'Approved') {
         dateFirstActive = this.projectHistory[i].createdOn;
       }
@@ -43,62 +43,14 @@ class ChangeReportCtrl {
     };
 
 
-    this.typeConfig = {
-      ProjectDetailsBlock: {
-        supported: true
-      },
-      ProjectBudgetsBlock: {
-        supported: true
-      },
-      CalculateGrantBlock: {
-        supported: true
-      },
-      NegotiatedGrantBlock: {
-        supported: true
-      },
-      DeveloperLedGrantBlock: {
-        supported: true
-      },
-      IndicativeGrantBlock: {
-        supported: true
-      },
-      GrantSourceBlock: {
-        supported: true
-      },
-      DesignStandardsBlock: {
-        supported: true
-      },
-      ProjectRisksBlock: {
-        supported: true
-      },
-      ProjectQuestionsBlock: {
-        supported: true
-      },
-      OutputsBlock: {
-        supported: true
-      },
-      ReceiptsBlock: {
-        supported: true
-      },
-      UnitDetailsBlock: {
-        supported: true
-      },
-      ProjectMilestonesBlock: {
-        supported: true
-      }
-    };
-
     let approvalTimes = this.latestProject.projectBlocksSorted.map(item => {
       return item.approvalTime;
     });
     //TODO probably should use last modified date on lastApprovedProject
     this.lastApproved = _.max(approvalTimes);
     this.numberOfUnapprovedBlocks = _.filter(this.latestProject.projectBlocksSorted, {blockStatus: 'UNAPPROVED'}).length;
-    this.blocksToCompare = [];
 
-    let latestBlocks = this.latestProject.projectBlocksSorted;
-    let lastApprovedBlocks = this.lastApprovedProject.projectBlocksSorted;
-    this.blocksToCompare = [];
+
 
     /**
      * Pre-populate with project history
@@ -108,55 +60,10 @@ class ChangeReportCtrl {
       this.latestComment = this.latestComment || (item.comments ? item : undefined);
     });
 
+    this.blocksToCompare = this.ReportService.getBlocksToCompare(this.latestProject, this.lastApprovedProject, this.template, this.currentFinancialYear);
 
-    for (let i = 0; i < latestBlocks.length; i++) {
-      let type = (latestBlocks[i] || lastApprovedBlocks[i]).type;
-      // if(this.typeConfig[type].supported){
-      let left = lastApprovedBlocks[i] || {};
-      let right = latestBlocks[i] || {};
-
-      let hasUnapproved = right.blockStatus !== 'LAST_APPROVED';
-      let item = {
-        config: this.typeConfig[type],
-        left: lastApprovedBlocks[i],
-        right: hasUnapproved ? latestBlocks[i] : undefined,
-        type: latestBlocks[i].type,
-        blockDisplayName: latestBlocks[i].blockDisplayName,
-        blockDisplayCls: latestBlocks[i].blockDisplayName.toLowerCase().split(' ').join('-'),
-        id: latestBlocks[i].id,
-        expanded: true,
-        context: {
-          project: {
-            left: this.lastApprovedProject,
-            right: this.latestProject
-          },
-          template: this.template,
-          currentFinancialYear: this.currentFinancialYear
-        }
-      };
-      //Add derived properties
-      item.versionObj = {
-        left: {
-          versionString: 'There is no approved version of this block'
-        }
-      };
-      if (item.left) {
-        item.versionObj.left.versionString = this.ReportService.version(item.left, this.lastApprovedProject.autoApproval);
-      }
-
-      if (item.right) {
-        item.versionObj.right = {
-          versionString: this.ReportService.version(item.right, this.latestProject.autoApproval) || 'New unedited block'
-        };
-      }
-      item.changes = this.ReportService.changeTracker(item);
-
-
-      this.blocksToCompare.push(item);
-      // }
-    }
     if (this.latestComment) {
-      this.transitionMap = ProjectService.getTransitionMap();
+      this.transitionMap = this.ProjectService.getTransitionMap();
       this.blocksToCompare.push({
         type: 'ProjectHistory',
         blockDisplayName: 'Project History',
@@ -167,52 +74,30 @@ class ChangeReportCtrl {
       });
     }
 
+    if ((this.latestProject.internalBlocksSorted || []).length && this.UserService.hasPermission('proj.view.internal.blocks')) {
+      this.blocksToCompare.push({
+        type: 'InternalBlocks',
+        blockDisplayName: 'GLA governance activities',
+        blockDisplayCls: 'internal-blocks',
+        id: 'internal-blocks-id',
+        expanded: true
+      });
+    }
 
-    // this.$log.log('AAAAA', this.latestProject, this.lastApprovedProject, this.template);
     this.data = {
       left: this.lastApprovedProject,
       right: this.latestProject
     };
 
-    this.showDatePicker = this.isDatePickerEnabled && this.latestProject.autoApproval && lastApprovedBlocks.length && latestBlocks.length;
+    this.showDatePicker = this.isDatePickerEnabled && !this.latestProject.stateModel.approvalRequired && this.lastApprovedProject.projectBlocksSorted.length && this.latestProject.projectBlocksSorted.length;
   }
 
   onBack() {
-    this.$state.go('project.overview', {
+    this.$state.go('project-overview', {
       projectId: this.latestProject.id,
     }, {
       reload: true
     });
-  }
-
-  toggleAllSections(item) {
-    this.blocksToCompare.forEach(item => {
-      item.expanded = !this.showCollapseAll;
-    });
-    if (this.latestComment) {
-      this.latestComment.expanded = !this.showCollapseAll;
-    }
-    this.showCollapseAll = !this.showCollapseAll;
-  }
-
-  toggleBlock(item) {
-    item.expanded = !item.expanded;
-    this.showCollapseAll = this.blocksToCompare.some((item) => item.expanded);
-  }
-
-  jumpTo(id) {
-    this.$location.hash(id);
-    this.$anchorScroll();
-  }
-
-  hasTables(item) {
-    let blockTypes = ['Grant', 'Milestones', 'Risk', 'OutputsBlock', 'Budgets', 'ReceiptsBlock'];
-    for (let i = 0; i < blockTypes.length; i++) {
-      if (item.type.indexOf(blockTypes[i]) > -1) {
-        return true;
-      }
-    }
-    return false;
   }
 
   onComparisonDateChange(reportDate) {
@@ -221,11 +106,8 @@ class ChangeReportCtrl {
   }
 }
 
-ChangeReportCtrl.$inject = ['$state', '$location', '$log', '$anchorScroll', 'ReportService', 'ProjectService'];
+ChangeReportCtrl.$inject = ['$injector'];
 
-
-// angular.module('GLA')
-//   .controller('ChangeReportCtrl', ChangeReportCtrl);
 
 angular.module('GLA')
   .component('changeReportPage', {
@@ -237,6 +119,7 @@ angular.module('GLA')
       projectHistory: '<',
       currentFinancialYear: '<',
       isDatePickerEnabled: '<?',
+      internalRiskComments: '<?',
     },
     controller: ChangeReportCtrl
   });

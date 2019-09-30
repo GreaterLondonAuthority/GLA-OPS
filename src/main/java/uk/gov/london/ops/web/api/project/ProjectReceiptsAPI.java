@@ -17,24 +17,26 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.london.ops.domain.project.ReceiptsBlock;
 import uk.gov.london.ops.domain.project.SAPMetaData;
-import uk.gov.london.ops.domain.user.Role;
-import uk.gov.london.ops.exception.ApiError;
 import uk.gov.london.ops.service.project.ProjectReceiptsService;
+import uk.gov.london.common.error.ApiError;
 import uk.gov.london.ops.web.model.ProjectLedgerItemRequest;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.ops.framework.web.APIUtils.verifyBinding;
+
 @RestController
 @RequestMapping("/api/v1")
 @Api(description = "managing Project receipts block")
-public class ProjectReceiptsAPI extends BaseProjectAPI {
+public class ProjectReceiptsAPI {
 
     @Autowired
     ProjectReceiptsService projectReceiptsService;
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER})
     @RequestMapping(value = "/projects/{id}/receipts/{blockId}", method = RequestMethod.GET)
     @ApiOperation(value = "get receipts block details for the given year ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -43,7 +45,7 @@ public class ProjectReceiptsAPI extends BaseProjectAPI {
         return projectReceiptsService.getProjectReceiptsBlock(id, blockId, year);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/receipts", method = RequestMethod.PUT)
     @ApiOperation(value = "set a project's receipts block", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -55,7 +57,7 @@ public class ProjectReceiptsAPI extends BaseProjectAPI {
         return projectReceiptsService.updateProjectReceiptsBlock(id, receiptsBlock, autosave);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/receipts", method = RequestMethod.POST)
     @ApiOperation(value = "create receipt entry")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -67,7 +69,7 @@ public class ProjectReceiptsAPI extends BaseProjectAPI {
         return projectReceiptsService.addReceiptEntry(id, year, itemRequest);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/receipts/{forecastId}", method = RequestMethod.PUT)
     @ApiOperation(value = "edit a receipt forecast value", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -75,7 +77,7 @@ public class ProjectReceiptsAPI extends BaseProjectAPI {
         projectReceiptsService.editReceiptForecast(projectId, forecastId, value);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR, Role.GLA_FINANCE, Role.GLA_READ_ONLY})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_FINANCE, GLA_READ_ONLY})
     @RequestMapping(value = "/projects/{projectId}/receiptsMetaData/{blockId}/categoryCode/{categoryId}/yearMonth/{yearMonth}", method = RequestMethod.GET)
     @ApiOperation(value = "get meta data for a receipt", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))

@@ -1,0 +1,82 @@
+<div>
+  <div class="modal-header text-center">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-mousedown="$dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.title}}</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form name="entryForm">
+      <div class="form-group" ng-if="$ctrl.requiresYearSelection">
+        <label for="year">Year spend is expected</label>
+        <ui-select id="year"
+                   required
+                   ng-model="$ctrl.entry.financialYear"
+                   on-select="$ctrl.onYearSelect($select.selected)"
+                   ng-disabled="$ctrl.entry.id"
+                   search-enabled="false">
+          <ui-select-match placeholder="Select year">
+            {{$select.selected.financialYear | fYear}}
+          </ui-select-match>
+          <ui-select-choices repeat="category.financialYear as category in $ctrl.years | orderBy: 'name'">
+            <span>{{category.financialYear | fYear}}</span>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category</label>
+        <ui-select id="category"
+                   required
+                   ng-model="$ctrl.entry.category"
+                   on-select="$ctrl.onCategorySelect($select.selected)"
+                   ng-disabled="$ctrl.entry.id || ($ctrl.requiresYearSelection && !$ctrl.entry.financialYear) || $ctrl.categories.length == 0"
+                   search-enabled="false">
+          <ui-select-match placeholder="Select category">
+            {{$select.selected.name}}
+          </ui-select-match>
+          <ui-select-choices repeat="category in $ctrl.categories | orderBy: 'name'">
+            <span>{{category.name}}</span>
+          </ui-select-choices>
+        </ui-select>
+        <div class="error mtop10 mbottom30 text-left" ng-if="$ctrl.entry.financialYear && $ctrl.categories.length == 0">
+          No categories entries left for {{$ctrl.entry.financialYear | fYear}}, please select another year or edit entry from table.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="value" class="label">Value</label>
+        <input id="value"
+               required
+               number-mask="0"
+               ng-model="$ctrl.entry.value"
+               placeholder="Enter value £"
+               class="form-control"
+               ng-disabled="$ctrl.requiresYearSelection && !$ctrl.entry.financialYear || $ctrl.requiresYearSelection && $ctrl.categories.length == 0"
+        />
+      </div>
+      <div class="form-group">
+        <label for="comments">Supporting comments <span ng-if="!$ctrl.entry.category.commentsRequired">(Optional)</span></label>
+        <textarea id="comments"
+                  ng-required="$ctrl.entry.category.commentsRequired"
+                  ng-trim="false"
+                  class="form-control"
+                  rows="5"
+                  placeholder="e.g. project name, unit numbers or Org"
+                  name="comments"
+                  ng-model="$ctrl.entry.comments"
+                  maxlength="200"
+                  ng-disabled="$ctrl.requiresYearSelection && !$ctrl.entry.financialYear || $ctrl.requiresYearSelection && $ctrl.categories.length == 0">
+         </textarea>
+        <remaining-characters text="$ctrl.entry.comments" max="200"></remaining-characters>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-center"
+            ng-disabled="entryForm.$invalid"
+            ng-click="$close($ctrl.entry)">{{$ctrl.btnName}}</button>
+  </div>
+</div>

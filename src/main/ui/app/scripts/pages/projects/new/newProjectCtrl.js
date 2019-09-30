@@ -19,7 +19,7 @@ class NewProjectCtrl{
     this.organisations = this.user.organisations || [];
     this.templates = [];
     this.title = null;
-    this.selectedOrganisation = this.organisations.length === 1 ? this.organisations[0] : null;
+    this.selectedOrganisation = null;
     this.selectedProgramme = null;
     this.selectedTemplate = null;
     this.consortium = null;
@@ -27,6 +27,8 @@ class NewProjectCtrl{
     this.showMissingProfileOrgAdmin = false;
     this.showMissingProfileProjectEditor = false;
     this.showPendingProfileProjectEditor = false;
+    this.availableOrganisationsForProgramme = [];
+    this.availableOrganisationsForProgrammeAndUser = [];
 
     this.programmeSelected = (programme) => {
 
@@ -34,32 +36,28 @@ class NewProjectCtrl{
       this.showMissingProfileProjectEditor = false;
       this.showPendingProfileProjectEditor = false;
 
-      let filteredRoles = _.filter(this.user.roles, {organisationId: this.selectedOrganisation.id, approved: true});
-      let relevantRole = _.find(filteredRoles, (role) => {
-         return role.managingOrganisationId === programme.managingOrganisationId ||
-          role.organisationId === programme.managingOrganisationId;
+      this.availableOrganisationsForProgramme = _.filter(this.organisations, (org) => {
+        return org.managingOrganisationId === programme.managingOrganisationId || org.id === programme.managingOrganisationId;
       });
-      // if relevant role, then all good
-      if(!relevantRole){
 
+      this.availableOrganisationsForProgrammeAndUser = [];
+      _.forIn(this.availableOrganisationsForProgramme, (value, key) => {
+        if(UserService.hasPermission('proj.create', value.id)) {
+          this.availableOrganisationsForProgrammeAndUser.push(value);
+        }
+      });
 
+      this.selectedOrganisation = this.availableOrganisationsForProgrammeAndUser.length === 1 ? this.availableOrganisationsForProgrammeAndUser[0] : null;
+
+      if(!this.availableOrganisationsForProgrammeAndUser.length){
         this.pendingProfile = _.find(this.user.roles, {managingOrganisationId: programme.managingOrganisationId, orgStatus: 'Pending'});
 
         if(this.pendingProfile) {
           this.showPendingProfileProjectEditor = true;
-        } else if(_.find(filteredRoles, {name: 'ROLE_ORG_ADMIN'})){
-          // if no relevant role but has role as org admin for selected org (show message with link)
-          this.showMissingProfileOrgAdmin = true;
-        } else if(_.find(filteredRoles, {name: 'ROLE_PROJECT_EDITOR'})) {
-          // if no relevant role and doesn't have role as org admin (show other message)
-          this.showMissingProfileProjectEditor = true;
         }
       }
 
-
-
-
-      this.templates = _.orderBy(programme.templates, 'name');
+      this.templates = _.filter(_.orderBy(programme.templates, 'name'), {status: 'Active'});
     };
 
     // if (this.$state.params.programmes) {
@@ -71,6 +69,12 @@ class NewProjectCtrl{
     //       this.programmes = _.orderBy(resp.data, 'name');
     //     });
     // }
+  }
+
+  canProjectBeAssignedToTemplate(){
+    this.ProjectService.canProjectBeAssignedToTemplate(this.selectedTemplate.id, this.selectedOrganisation.id).then(rsp => {
+      this.showMaxProjectsForTemplateError = rsp.data === false;
+    });
   }
 
   /**
@@ -102,7 +106,7 @@ class NewProjectCtrl{
         this.isSaving = false;
         if (!resp) return;
         const createdProjectId = resp.data;
-        this.$state.go('project.overview', {
+        this.$state.go('project-overview', {
           'projectId': createdProjectId
         });
       })

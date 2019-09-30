@@ -10,12 +10,12 @@
     </div>
     <br>
     <input-cost-budget
-      ng-if="$ctrl.showAssociatedProjectMarker"
+      ng-if="$ctrl.associatedProjectConfig.showMarker"
       label="This project is using strategic partnership funding"
       is-selected="$ctrl.data.associatedProject"
       value="$ctrl.data.associatedProject"
       hide-value="true"
-      read-only="$ctrl.readOnly || !$ctrl.enableAssociatedProjectMarker || $ctrl.data.zeroGrantRequested">
+      read-only="$ctrl.readOnly || !$ctrl.associatedProjectConfig.enableMarker || $ctrl.data.zeroGrantRequested">
     </input-cost-budget>
 
     <input-cost-budget
@@ -26,7 +26,7 @@
       value="$ctrl.data.strategicFunding"
       read-only="$ctrl.readOnly || $ctrl.data.zeroGrantRequested">
     </input-cost-budget>
-    <div class="row gla-alert mtop10" ng-if="!$ctrl.readOnly && !$ctrl.enableAssociatedProjectMarker && $ctrl.data.associatedProject">
+    <div class="row gla-alert mtop10" ng-if="!$ctrl.readOnly && !$ctrl.associatedProjectConfig.enableMarker && $ctrl.data.associatedProject">
       <span class="glyphicon glyphicon-exclamation-sign"></span>
       <span>This project cannot be removed from the strategic allocation as a milestone has been claimed</span>
     </div>
@@ -83,10 +83,6 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xs-12 mtop30 mbottom30 text-center">
-        <button class="btn btn-primary" ng-click="$ctrl.submit()" ng-if="!$ctrl.readOnly">SAVE</button>
-      </div>
-    </div>
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
   </div>
 </div>

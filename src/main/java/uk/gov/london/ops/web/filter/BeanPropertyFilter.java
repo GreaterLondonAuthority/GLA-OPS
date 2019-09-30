@@ -16,10 +16,11 @@ import com.fasterxml.jackson.databind.ser.PropertyFilter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.london.ops.annotations.PermissionRequired;
 import uk.gov.london.ops.domain.user.User;
 import uk.gov.london.ops.service.PermissionService;
+import uk.gov.london.ops.service.PermissionType;
 import uk.gov.london.ops.service.UserService;
+import uk.gov.london.ops.framework.annotations.PermissionRequired;
 
 import java.util.Set;
 
@@ -44,14 +45,14 @@ public class BeanPropertyFilter implements PropertyFilter {
             writer.serializeAsField(pojo, jgen, provider);
             return;
         }
-        String[] permissionRequired = writer.getAnnotation(PermissionRequired.class).value();
+        PermissionType[] permissionRequired = writer.getAnnotation(PermissionRequired.class).value();
         User user = userService.currentUser();
 
         Set<String> permissionsForUser = permissionService.getPermissionsForUser(user);
         boolean showProperty = false;
-        for (String required : permissionRequired) {
+        for (PermissionType required : permissionRequired) {
             for (String userPermission : permissionsForUser) {
-                if (required.equals(userPermission)) {
+                if (required.getPermissionKey().equals(userPermission)) {
                     showProperty = true;
                 }
             }

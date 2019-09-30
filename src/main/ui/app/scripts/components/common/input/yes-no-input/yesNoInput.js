@@ -6,20 +6,27 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
+class YesNoInputCtrl {
+  constructor() {
+  }
 
-YesNoInputCtrl.$inject = ['$scope', '$element', '$attrs'];
-
-function YesNoInputCtrl($scope, $element, $attrs) {
-  var ctrl = this;
+  $onInit(){
+    this.yesValue = this.mode == 'bool' ? true : 'yes';
+    this.noValue = this.mode == 'bool' ? false : 'no';
+  }
 }
+
+YesNoInputCtrl.$inject = [];
+
 
 angular.module('GLA')
   .component('yesNoInput', {
     bindings: {
       name: '@',
+      mode: '@',
       ngModel: '=',
-      isDisabled: '='
+      isDisabled: '=',
+      onChange: '&'
     },
     templateUrl: 'scripts/components/common/input/yes-no-input/yesNoInput.html',
     controller: YesNoInputCtrl

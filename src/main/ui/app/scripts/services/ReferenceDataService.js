@@ -13,6 +13,14 @@ function ReferenceDataService($http, config) {
   return {
     getBoroughs() {
       return $http.get(`${config.basePath}/boroughs`, {cache: true}).then(rsp => rsp.data);
+    },
+
+    getConfigItemsByExternalId(externalId){
+      return $http.get(`${config.basePath}/configItems/${externalId}`).then(rsp => rsp.data);
+    },
+
+    getBlockTypes(){
+      return $http.get(`${config.basePath}/templates/projectBlockTypes`).then(rsp => rsp.data);
     }
   };
 }

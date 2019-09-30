@@ -1,0 +1,19 @@
+<div class="includes-tables">
+
+  <div>
+    <div class="report-label mtop10">Total Project Budget</div>
+    <div class="report-value" default-value="'Not provided'">£{{$ctrl.block.totalProjectSpend | number}}</div>
+  </div>
+
+  <div>
+    <div class="report-label mtop10">Advance Payment</div>
+    <div class="report-value" default-value="'Not provided'">£{{$ctrl.block.advancePayment | number}}</div>
+  </div>
+
+  <output-unit-cost project="$ctrl.project"
+                    block="$ctrl.block"
+                    read-only="true"
+                    show-recovery-column="false"></output-unit-cost>
+
+
+</div>

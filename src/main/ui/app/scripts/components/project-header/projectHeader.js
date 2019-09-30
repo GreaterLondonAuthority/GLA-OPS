@@ -8,6 +8,11 @@
 
 
 class ProjectHeaderCtrl {
+
+  $onInit(){
+    this.undoLinkText = 'Undo unapproved changes';
+  }
+
   get hasVersion(){
     return this.editableBlock && this.editableBlock.approvalTime
   }
@@ -22,6 +27,8 @@ angular.module('GLA')
   transclude: true,
   bindings: {
     onBack: '&?',
+    backBtnName: '<?',
+    stopEditing: '<?',
     editableBlock: '<?',
     mouseDownState: '=',
     subtitle: '@',
@@ -29,7 +36,10 @@ angular.module('GLA')
     // showProjectMenu: '<?'
     linkMenuItems: '<?',
     actionMenuItems: '<?',
-    onActionClicked: '&?'
+    onActionClicked: '&?',
+    onCreate: '&?',
+    createBtnName: '<?',
+    showUkprn: '<?'
   },
   controller: ProjectHeaderCtrl
 });

@@ -1,7 +1,15 @@
-.organisationProgramme {
+.organisation-programme {
 
   .allocated-budget-amount {
     font-weight: bold;
+  }
+
+  #delegated-approval-table{
+    &.edit-mode{
+      tbody tr{
+        cursor: pointer;
+      }
+    }
   }
 
   #mdApprovalEntry {
@@ -72,5 +80,45 @@
 
   .grant-totals-summary{
     padding-left: 15px;
+  }
+  #strategic-partnership-unit-summary-table{
+    tr>th{
+      width: 25%;
+    }
+    //td {
+    //  line-height: 24px;
+    //}
+    .input-cell{
+      padding: 0
+    }
+  }
+
+  .budget-entry-row {
+    td {
+      border-top: 1px solid #aaaaaa;
+    }
+  }
+
+  .comments-title-row {
+    td {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .comment-label {
+      font-family: $font-family-bolder;
+      margin-bottom: 6px;
+    }
+  }
+
+  .comments-content-row {
+    white-space:pre-wrap;
+    word-wrap:break-word;
+    word-break: break-all;
+  }
+
+  .additional-approvals-toggle{
+    font-size: 14px;
+    font-family: $font-family-default;
   }
 }

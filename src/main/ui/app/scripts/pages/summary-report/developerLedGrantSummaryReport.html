@@ -1,0 +1,13 @@
+<div class="includes-tables">
+  <div>
+    <div class="report-label mtop10">Are 40% or more of the habitable rooms on the entire development, including open market sale and open market rent, affordable?</div>
+    <div class="report-value">{{$ctrl.affordableCriteriaMet}}</div>
+  </div>
+
+  <div>
+    <div class="report-label">Units & Tenure</div>
+    <grant-table data="$ctrl.data" is-readonly="true"></grant-table>
+  </div>
+
+  <total-grant total="$ctrl.data.totalGrantEligibility"></total-grant>
+</div>

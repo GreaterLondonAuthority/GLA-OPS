@@ -9,5 +9,7 @@ package uk.gov.london.ops.domain.organisation;
 
 public enum OrganisationStatus {
     Pending,
-    Approved
+    Approved,
+    Rejected,
+    Inactive
 }

@@ -19,6 +19,13 @@ class MonthSelectorCtrl {
       }
     });
   }
+
+  isDisabled(monthItem){
+    if(this.disabledMonths && this.disabledMonths.length){
+      return this.disabledMonths.indexOf(monthItem.value) !== -1;
+    }
+    return false;
+  }
 }
 
 MonthSelectorCtrl.$inject = ['$scope'];
@@ -33,6 +40,7 @@ angular.module('GLA')
     year: '<',
     onMonthSelected: '&?',
     selectedMonth: '=',
+    disabledMonths: '<?',
     readOnly: '<?'
   },
   controller: MonthSelectorCtrl

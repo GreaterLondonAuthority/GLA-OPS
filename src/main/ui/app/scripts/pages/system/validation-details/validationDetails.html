@@ -1,0 +1,23 @@
+<page-header on-back="$ctrl.back()" header="'Data Validation Details'">
+</page-header>
+
+<div class="row">
+  <div class="col-xs-12 sql-update-table table-responsive no-padding">
+    <table id="validation-details-table" class="table table-hover table-bordered table-striped">
+      <thead class="thead-inverse uppercase" id="validation-details-table-headers">
+      <tr>
+        <th>Validation Type</th>
+        <th>Details</th>
+      </tr>
+      </thead>
+      <tbody id="validation-details-table-body">
+        <tr ng-repeat="failure in $ctrl.sysInfo.dataValidation.validationFailures" class="validation-failure-row">
+          <td class="validation-failure-type">
+            <span class="update-id">{{ failure.validationType }}</span>
+          </td>
+          <td class="validation-failure-detail"><div class="title-cell">{{ failure.detail }}</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

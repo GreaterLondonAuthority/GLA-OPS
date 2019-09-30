@@ -7,12 +7,13 @@
  */
 package uk.gov.london.ops.domain.project;
 
-import uk.gov.london.ops.domain.outputs.OutputCategoryConfiguration;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.refdata.OutputCategoryConfiguration;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * Created by chris on 02/02/2017.
@@ -41,6 +42,8 @@ public class OutputTableSummaryRecord implements  Comparable, ComparableItem {
     @Column(name="value_type")
     @Enumerated(EnumType.STRING )
     private OutputCategoryConfiguration.InputValueType valueType;
+    @Column(name="baseline")
+    private Double baseline;
     @Column(name="forecast")
     private Double forecast;
     @Column(name="actual")
@@ -153,6 +156,14 @@ public class OutputTableSummaryRecord implements  Comparable, ComparableItem {
         this.total = total;
     }
 
+    public Double getBaseline() {
+        return baseline;
+    }
+
+    public void setBaseline(Double baseline) {
+        this.baseline = baseline;
+    }
+
     @Override
     public int compareTo(Object o) {
         OutputTableSummaryRecord other = (OutputTableSummaryRecord) o;
@@ -166,6 +177,39 @@ public class OutputTableSummaryRecord implements  Comparable, ComparableItem {
     public String getComparisonId() {
         return (this.getFinancialYear() + "-" + this.getOutputType() + "-" + this.getCategory() ) + (subcategory == null ? "" : "-" + subcategory);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OutputTableSummaryRecord that = (OutputTableSummaryRecord) o;
+        return Objects.equals(financialYear, that.financialYear) &&
+                Objects.equals(outputType, that.outputType) &&
+                Objects.equals(category, that.category) &&
+                Objects.equals(subcategory, that.subcategory);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(financialYear, outputType, category, subcategory);
+    }
+
+    @Override
+    public String toString() {
+        return "OutputTableSummaryRecord{" +
+                "id=" + id +
+                ", financialYear=" + financialYear +
+                ", projectId=" + projectId +
+                ", blockId=" + blockId +
+                ", outputType='" + outputType + '\'' +
+                ", category='" + category + '\'' +
+                ", subcategory='" + subcategory + '\'' +
+                ", valueType=" + valueType +
+                ", baseline=" + baseline +
+                ", forecast=" + forecast +
+                ", actual=" + actual +
+                ", total=" + total +
+                '}';
+    }
+
 }
-
-

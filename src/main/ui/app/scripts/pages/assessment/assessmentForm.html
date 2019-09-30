@@ -1,0 +1,151 @@
+<div class="assessment edit-mode">
+
+  <page-header back-btn-name="'ASSESSMENT OVERVIEW'" editable-block="$ctrl" header="$ctrl.assessmentTemplate.name"
+               on-back="$ctrl.onBack()" stop-editing="true">
+  </page-header>
+
+  <header-status>
+    <hs-left class="row text-nowrap"
+             ng-if="$ctrl.assessment.createdOn && $ctrl.assessment.creatorName && !($ctrl.assessment.modifiedOn && $ctrl.assessment.modifierName)">
+      Created on {{($ctrl.assessment.createdOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.assessment.creatorName}} for {{$ctrl.assessment.usersPrimaryOrganisationName}}
+    </hs-left>
+    <hs-left class="row text-nowrap" ng-if="$ctrl.assessment.modifiedOn && $ctrl.assessment.modifierName">
+      <div>Last updated on {{($ctrl.assessment.modifiedOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.assessment.modifierName}} for {{$ctrl.assessment.usersPrimaryOrganisationName}}
+      </div>
+      <div>Status: {{$ctrl.AssessmentService.getAssessmentStatus($ctrl.assessment)}}</div>
+    </hs-left>
+    <hs-right>ID: <b id="assessment-id">{{$ctrl.assessment.id}}</b></hs-right>
+  </header-status>
+
+
+  <form class="form-gla" name="sections">
+    <div class="mbottom30"></div>
+
+    <div class="row no-gutter mtop10 animationIf section-block"
+         ng-repeat="section in $ctrl.assessment.sections | orderBy:'id' track by section.id">
+
+      <div class="col-xs-12 col-sm-8 center-col section-border">
+
+        <div class="assessment-section-header">
+          <span class="section-title">Section {{$index+1}}: {{section.title}}</span>
+          <span class="section-title pull-right" ng-if="$ctrl.assessmentTemplate.includeWeight">{{section.weight}}% of total</span>
+        </div>
+
+
+        <div class="section form-group">
+
+          <div class="section-comments mtop10" ng-if="section.commentsRequirement !== 'hidden'">
+            <label class="sub-heading" for="section-comments-{{section.id}}">General comments<span ng-if="section.commentsRequirement === 'optional'"> (optional)</span>
+            </label>
+
+            <textarea class="form-control" cols="50" id="section-comments-{{section.id}}"
+                      name="section-comments-{{section.id}}"
+                      ng-attr-maxlength="400"
+                      ng-change="$ctrl.save()" ng-disabled="$ctrl.assessmentCompleted" ng-if="!$ctrl.readOnly" ng-model="section.comments" ng-model-options='{ debounce: 300 }'
+                      ng-trim="false"
+                      placeholder="{{section.commentsRequirement === 'optional' ? 'optional' : ''}}"
+                      rows="4">
+            </textarea>
+            <remaining-characters max="400" ng-if="!$ctrl.readOnly" text="section.comments"></remaining-characters>
+            <p class="word-wrap" ng-if="$ctrl.readOnly">{{section.comments}}</p>
+          </div>
+
+          <div class="criteria form-group"
+               ng-repeat="criteria in section.criteriaList | orderBy:'id' track by criteria.id">
+
+            <span class="sub-heading" ng-if="$first">Criteria</span>
+
+            <div>
+              <span class="block">
+                <span class="circle">
+                  <p>{{$index+1}}</p>
+                </span>
+              </span>
+              {{criteria.title}}
+            </div>
+
+            <div class="criteria-score mtop10" ng-if="criteria.answerType === 'Score'">
+
+              <label ng-attr-for="criteria-score-{{criteria.id}}">Score: {{criteria.score}}</label>
+              <label ng-if="$ctrl.readOnly">{{criteria.score}}<span ng-if="criteria.score != null">/{{$ctrl.maxScore.score}}</span></label>
+              <label class="pull-right right-side-hint-text">{{criteria.weight}}% of section</label>
+              <ui-select class="search-dropdown"
+                         ng-attr-id="criteria-score-{{criteria.id}}"
+                         ng-attr-name="criteria-score-{{criteria.id}}"
+                         ng-disabled="$ctrl.assessmentCompleted"
+                         ng-if="!$ctrl.readOnly"
+                         ng-model="criteria.score"
+                         on-select="$ctrl.save()"
+                         required
+                         search-enabled="false">
+                <ui-select-match>{{$select.selected.score}} {{$select.selected.name}}</ui-select-match>
+                <ui-select-choices repeat="score.score as score in $ctrl.assessmentTemplate.scores | orderBy: 'score'">
+                  <span>{{score.score}} {{score.name}}</span>
+                </ui-select-choices>
+              </ui-select>
+            </div>
+
+            <div class="criteria-score mtop10" ng-if="criteria.answerType === 'PassFail'">
+              <label ng-attr-for="criteria-failed-{{criteria.id}}">Pass / Fail:</label>
+              <span ng-if="$ctrl.readOnly">{{$ctrl.getFailedCriteriaText(criteria.failed)}}</span>
+              <ui-select class="search-dropdown"
+                         ng-attr-id="criteria-failed-{{criteria.id}}"
+                         ng-attr-name="criteria-failed-{{criteria.id}}"
+                         ng-disabled="$ctrl.assessmentCompleted"
+                         ng-if="!$ctrl.readOnly"
+                         ng-model="criteria.failed"
+                         on-select="$ctrl.save()"
+                         required
+                         search-enabled="false">
+                <ui-select-match allow-clear="true">{{$select.selected.label}}</ui-select-match>
+                <ui-select-choices repeat="item.value as item in $ctrl.failedCriteriaDropdown">
+                  <span>{{item.label}}</span>
+                </ui-select-choices>
+              </ui-select>
+            </div>
+
+            <div class="criteria-comments mtop10" ng-if="criteria.commentsRequirement !== 'hidden'">
+              <label ng-attr-for="criteria-comments-{{criteria.id}}">Comments<span
+                ng-if="criteria.commentsRequirement === 'optional'"> (optional)</span></label>
+              <textarea class="form-control" cols="50" ng-attr-id="criteria-comments-{{criteria.id}}"
+                        ng-attr-maxlength="400"
+                        ng-attr-name="criteria-comments-{{criteria.id}}"
+                        ng-attr-placeholder="{{criteria.commentsRequirement === 'optional' ? 'optional' : ''}}"
+                        ng-change="$ctrl.save()" ng-disabled="$ctrl.assessmentCompleted" ng-if="!$ctrl.readOnly" ng-model="criteria.comments" ng-model-options='{ debounce: 300 }'
+                        ng-trim="false"
+                        rows="4">
+              </textarea>
+              <remaining-characters max="400" ng-if="!$ctrl.readOnly" text="criteria.comments"></remaining-characters>
+              <p class="word-wrap" ng-if="$ctrl.readOnly">{{criteria.comments}}</p>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="row no-gutter mtop10 animationIf section-block" ng-click="$ctrl.autoSave()" ng-if="!$ctrl.readOnly">
+      <div class="col-xs-12 col-sm-6 center-col">
+        <div class="mtop10 mbottom10" ng-if="!$ctrl.assessment.complete">
+         All required sections must be complete before you can mark the assessment as completed.
+        </div>
+
+        <input class="complete-assessment-checkbox allow-in-readonly"
+               id="complete"
+               ng-disabled="!$ctrl.assessment.complete"
+               ng-model="$ctrl.assessmentCompleted"
+               type="checkbox"/>
+        <span>
+          <label for="complete" ng-class="{'active-text': $ctrl.assessment.complete, 'disabled-text': !$ctrl.assessment.complete}">Mark assessment as completed</label>
+        </span>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="mtop30 mbottom30 text-center" ng-if="!$ctrl.readOnly">
+    <button class="btn btn-md btn-primary" ng-click="$ctrl.stopEditing()" ng-if="!$ctrl.readOnly">STOP EDITING<i
+      class="glyphicon glyphicon-edit"></i></button>
+  </div>
+
+</div>

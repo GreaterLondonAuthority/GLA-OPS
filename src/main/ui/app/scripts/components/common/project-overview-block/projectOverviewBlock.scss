@@ -1,33 +1,4 @@
 project-overview-block {
-  .new-block {
-    position: absolute;
-    top: 0;
-    padding: 6px 8px 0px 8px;
-    background: $navy;
-    color: $white;
-    width: 56px;
-  }
-
-  &:hover {
-    .new-block {
-      padding-top: 5px;
-    }
-
-    .arrow-down{
-      top: 25px;
-    }
-  }
-
-  .arrow-down {
-    width: 0;
-    height: 0;
-    border-left: 28px solid transparent;
-    border-right: 28px solid transparent;
-    border-top: 14px solid $navy;
-    position: absolute;
-    top: 26px;
-  }
-
 
   .project-block {
     background-color: white;
@@ -44,12 +15,12 @@ project-overview-block {
     &.active-block.block-unapproved:hover,
     &:hover{
       border: 1px solid $form-field-active;
-      padding: 9px;
+      //padding: 9px;
     }
 
     &:focus{
       border: 1px solid $form-field-active;
-      padding: 9px;
+      //padding: 9px;
     }
 
     .project-block-step-number {

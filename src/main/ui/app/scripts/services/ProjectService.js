@@ -32,7 +32,7 @@ function ProjectService($resource, $http, config, UserService) {
      * Retrieve list of all project status
      * @returns {Object} promise
      */
-    getAllStatus: function () {
+    getAllStatus() {
       return $resource(`${config.basePath}/projects/status`)
         .query({})
         .$promise;
@@ -43,15 +43,38 @@ function ProjectService($resource, $http, config, UserService) {
      * Retrieve list of all projects
      * @returns {Object} promise
      */
-    getAllProjects: function (idOrTitle, organisationId, programmeId, programmeName) {
+    getAllProjects(idOrTitle, organisationName, programmeId, programmeName) {
       return $resource(`${config.basePath}/projects`)
         .query({
           title: idOrTitle,
-          organisationId: organisationId,
+          organisationName: organisationName,
           programmeId: programmeId,
           programmeName: programmeName
         })
         .$promise;
+    },
+
+    /**
+     * Retrieve list of all projects
+     * @returns {Object} promise
+     */
+    getProjects(idOrTitle, organisationName, programmeName, states, programmes, templates, watchingProject, page) {
+      let cfg = {
+        params: {
+          project: idOrTitle,
+          organisation: organisationName,
+          programme: programmeName,
+          states: states,
+          programmes: programmes, //Array now
+          templates: templates,
+          size: 50,
+          watchingProject: watchingProject,
+          page: page,
+          sort: 'lastModified,desc'
+        }
+      };
+
+      return $http.get(`${config.basePath}/projects`, cfg);
     },
 
 
@@ -60,7 +83,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @returns {Object} promise
      */
-    createProject: function (data) {
+    createProject(data) {
       return $http({
         url: config.basePath + '/projects',
         method: 'POST',
@@ -75,7 +98,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id
      * @return {Object} promise
      */
-    updateProject: function (data, id) {
+    updateProject(data, id) {
       return $http({
         url: config.basePath + '/projects/' + id + '/details',
         method: 'PUT',
@@ -85,11 +108,21 @@ function ProjectService($resource, $http, config, UserService) {
     },
 
     /**
+     * Retrieve project overview by id
+     * @param {Number} id - project id
+     * @returns {Object} promise
+     */
+    getProjectOverview(id, params) {
+      params = params || {};
+      return $http.get(`${config.basePath}/projectOverview/${id}/`, params);
+    },
+
+    /**
      * Retrieve project by id
      * @param {Number} id - project id
      * @returns {Object} promise
      */
-    getProject: function (id, params) {
+    getProject(id, params) {
       params = params || {};
       return $http({
         url: config.basePath + '/projects/' + id,
@@ -98,15 +131,10 @@ function ProjectService($resource, $http, config, UserService) {
       });
     },
 
-    /**
-     * Retrieve template by id
-     * @param {Number} id - template id
-     * @return {Object} promise
-     */
-    getTemplate: function (id) {
+    canProjectBeAssignedToTemplate(templateId, organisationId) {
       return $http({
-        url: config.basePath + '/templates/' + id,
-        method: 'GET'
+        url: config.basePath + `/projects/template/${templateId}/organisation/${organisationId}/createAllowed`,
+        method: 'GET',
       });
     },
 
@@ -116,7 +144,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} questionsId - block id
      * @return {Object} promise
      */
-    getProjectQuestionsData: function (projectId, questionsId) {
+    getProjectQuestionsData(projectId, questionsId) {
       return $http({
         url: `${config.basePath}/projects/${projectId}/questions/${questionsId}`,
         method: 'GET'
@@ -128,7 +156,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @return {Object} promise
      */
-    getProjectHistory: function (id) {
+    getProjectHistory(id) {
       return $resource(config.basePath + '/projects/:id/history')
         .query({
           id: id
@@ -141,7 +169,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @return {Object} promise
      */
-    getDesignStandards: function (id) {
+    getDesignStandards(id) {
       return $resource(config.basePath + '/projects/:id/design')
         .get({
           id: id
@@ -154,7 +182,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @return {Object} promise
      */
-    getGrantSource: function (id) {
+    getGrantSource(id) {
       return $resource(config.basePath + '/projects/:id/grant')
         .get({
           id: id
@@ -167,7 +195,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @return {Object} promise
      */
-    getProjectCalculateGrant: function (id) {
+    getProjectCalculateGrant(id) {
       return $resource(config.basePath + '/projects/:id/calculateGrant')
         .get({
           id: id
@@ -180,7 +208,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @return {Object} promise
      */
-    getProjectNegotiatedGrant: function (id) {
+    getProjectNegotiatedGrant(id) {
       return $resource(config.basePath + '/projects/:id/negotiatedGrant')
         .get({
           id: id
@@ -194,7 +222,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @return {Object} promise
      */
-    getProjectDeveloperLedGrant: function (id) {
+    getProjectDeveloperLedGrant(id) {
       return $resource(`${config.basePath}/projects/:id/developerLedGrant`)
         .get({
           id: id
@@ -207,7 +235,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @return {Object} promise
      */
-    getProjectIndicativeGrant: function (id) {
+    getProjectIndicativeGrant(id) {
       return $resource(`${config.basePath}/projects/:id/indicativeGrant`)
         .get({
           id: id
@@ -220,24 +248,10 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {String} legacyProjectCode - legacy project code
      * @return {Object} promise
      */
-    lookupProjectIdByLegacyProjectCode: function (legacyProjectCode) {
+    lookupProjectIdByLegacyProjectCode(legacyProjectCode) {
       return $http({
         url: config.basePath + '/projects/' + legacyProjectCode + '/id',
         method: 'GET'
-      });
-    },
-
-    /**
-     * Update project design standards
-     * @param {Number} id - project id
-     * @param {Object} data
-     * @return {Object} promise
-     */
-    updateDesignStandards: function (id, data) {
-      return $http({
-        url: config.basePath + '/projects/' + id + '/design',
-        method: 'PUT',
-        data: data
       });
     },
 
@@ -247,7 +261,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
-    updateGrantSource: function (id, data) {
+    updateGrantSource(id, data) {
       return $http({
         url: config.basePath + '/projects/' + id + '/grant',
         method: 'PUT',
@@ -261,7 +275,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
-    updateProjectCalculateGrant: function (id, data, autosave) {
+    updateProjectCalculateGrant(id, data, autosave) {
       return $http({
         url: `${config.basePath}/projects/${id}/calculateGrant?autosave=${!!autosave}`,
         method: 'PUT',
@@ -275,7 +289,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
-    updateProjectNegotiatedGrant: function (id, data, autosave) {
+    updateProjectNegotiatedGrant(id, data, autosave) {
       return $http({
         url: `${config.basePath}/projects/${id}/negotiatedGrant?autosave=${!!autosave}`,
         method: 'PUT',
@@ -289,7 +303,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
-    updateProjectDeveloperLedGrant: function (id, data, autosave) {
+    updateProjectDeveloperLedGrant(id, data, autosave) {
       return $http({
         url: `${config.basePath}/projects/${id}/developerLedGrant?autosave=${!!autosave}`,
         method: 'PUT',
@@ -303,7 +317,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
-    updateProjectIndicativeGrant: (id, data, autosave) => {
+    updateProjectIndicativeGrant(id, data, autosave) {
       return $http({
         url: `${config.basePath}/projects/${id}/indicativeGrant?autosave=${!!autosave}`,
         method: 'PUT',
@@ -387,7 +401,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
-    saveProjectComment: (id, data) => {
+    saveProjectComment(id, data) {
       return $http({
         url: config.basePath + '/projects/' + id + '/draftcomment',
         method: 'PUT',
@@ -402,7 +416,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data - blockData
      * @return {Object} promise
      */
-    updateProjectAnswers: (projectId, blockId, data) => {
+    updateProjectAnswers(projectId, blockId, data) {
       return $http({
         url: `${config.basePath}/projects/${projectId}/questions/${blockId}`,
         method: 'PUT',
@@ -417,7 +431,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
-    updateProjectMilestones: (id, blockId, data, keepLock) => {
+    updateProjectMilestones(id, blockId, data, keepLock) {
       return $http({
         url: `${config.basePath}/projects/${id}/milestones/${blockId}?autosave=${keepLock}`,
         method: 'PUT',
@@ -432,7 +446,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} blockId - block id
      * @return {Object} promise
      */
-    addProjectMilestones: (id, blockId, data) => {
+    addProjectMilestones(id, blockId, data) {
       return $http({
         url: `${config.basePath}/projects/${id}/milestones/${blockId}`,
         method: 'POST',
@@ -447,7 +461,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} milestoneId
      * @return {Object} promise
      */
-    deleteProjectMilestone: (projectId, blockId, milestoneId) => {
+    deleteProjectMilestone(projectId, blockId, milestoneId) {
       return $http({
         url: `${config.basePath}/projects/${projectId}/milestones/${blockId}/milestone/${milestoneId}`,
         method: 'DELETE'
@@ -460,7 +474,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} blockId
      * @param {Number} routeId
      */
-    updateProjectProcessingRoute: (projectId, blockId, routeId) => {
+    updateProjectProcessingRoute(projectId, blockId, routeId) {
       return $http({
         url: `${config.basePath}/projects/${projectId}/processingRoute/${blockId}`,
         method: 'PUT',
@@ -469,13 +483,61 @@ function ProjectService($resource, $http, config, UserService) {
     },
 
 
-
-    getProjectBudget: (projectId, blockId, year) => {
+    getProjectBudget(projectId, blockId, year) {
       return $http({
         url: `${config.basePath}/projects/${projectId}/${blockId}/annualSpendFor/${year}`,
         method: 'GET'
       });
     },
+
+    /**
+     * Update if project is marked for corporate or not
+     * @param projectId
+     * @param markedForCorporate (boolean)
+     */
+    updateProjectMarkedForCorporate(projectId, markedForCorporate) {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/markedForCorporate`,
+        method: 'PUT',
+        data: markedForCorporate
+      });
+    },
+
+    isProjectMarkedForCorporate(projectId) {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/markedForCorporate`,
+        method: 'GET'
+      });
+    },
+
+
+    /**
+     * update the ledger entry (e.g. receipt, funding ...)
+     * @param projectId Project id
+     * @param Block id
+     * @param entry ledger entry
+     * @returns {*}
+     */
+    postLedgerEntry(projectId, blockId, entry) {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/blocks/${blockId}/ledgerEntries`,
+        method: 'POST',
+        data: entry
+      });
+    },
+
+    /**
+     * Delete the ledger entry (e.g. receipt, funding ...)
+     * @param projectId Project id
+     * @param id Receipt id
+     * @returns {*}
+     */
+    deleteLedgerEntry(projectId, blockId, entryId) {
+        return $http({
+          url: `${config.basePath}/projects/${projectId}/blocks/${blockId}/ledgerEntries/${entryId}`,
+          method: 'DELETE'
+        });
+      },
 
     /**
      * Retrieve SAP category codes
@@ -484,36 +546,19 @@ function ProjectService($resource, $http, config, UserService) {
      * receipt: for receipts block
      * @returns {Object} promise
      */
-    getSapCategoryCodes: (type) => {
-      if (type === 'receipt') {
-        return $http({
-          url: `${config.basePath}/finance/receiptCategories`,
-          method: 'GET'
-        })
-      }
-      else {
-        return $http({
-          url: `${config.basePath}/finance/spendCategories`,
-          method: 'GET'
-        })
-      }
-    },
-
-    getFinanceCategories(){
-      return $http.get(`${config.basePath}/finance/categories`, {cache: true});
-    },
-
-    getReceiptCategories(){
-      return this.getFinanceCategories().then(rsp => {
-        return _.filter(rsp.data, {receiptStatus: 'ReadWrite'});
-      })
-    },
-
-    getSpendCategories(){
-      return this.getFinanceCategories().then(rsp => {
-        return _.filter(rsp.data, {spendStatus: 'ReadWrite'});
-      })
-    },
+    getSapCategoryCodes(type) {
+        if (type === 'receipt') {
+          return $http({
+            url: `${config.basePath}/finance/receiptCategories`,
+            method: 'GET'
+          })
+        } else {
+          return $http({
+            url: `${config.basePath}/finance/spendCategories`,
+            method: 'GET'
+          })
+        }
+      },
 
 
     /**
@@ -523,74 +568,74 @@ function ProjectService($resource, $http, config, UserService) {
      *
      * @returns {Object} promise
      */
-    unlockBlock: (projectId, blockId) => {
-      return $http({
-        url: `${config.basePath}/projects/${projectId}/unlock/${blockId}`,
-        method: 'PUT'
-      })
-    },
+    unlockBlock(projectId, blockId) {
+        return $http({
+          url: `${config.basePath}/projects/${projectId}/unlock/${blockId}`,
+          method: 'PUT'
+        })
+      },
 
     /**
      * Retrieve the project block
      * @returns {Object} promise
      */
-    getProjectBlock: (projectId, blockId, tryLock) => {
-      return $http({
-        url: `${config.basePath}/projects/${projectId}/${blockId}?tryLock=${!!tryLock}`,
-        method: 'GET'
-      });
-    },
+    getProjectBlock (projectId, blockId, tryLock) {
+        return $http({
+          url: `${config.basePath}/projects/${projectId}/${blockId}?tryLock=${!!tryLock}`,
+          method: 'GET'
+        });
+      },
 
     /**
      * Retrieve the current set financial year
      * @returns {Object} promise
      */
-    getCurrentFinancialYear: () => {
-      return $http({
-        url: `${config.basePath}/finance/currentFinancialYear`,
-        method: 'GET'
-      });
-    },
+    getCurrentFinancialYear() {
+        return $http({
+          url: `${config.basePath}/finance/currentFinancialYear`,
+          method: 'GET'
+        });
+      },
 
     /**
      * Mark a list of projects (passed as ID's) to be moved into assessed status
      * @param  [Interger] ids list of project id's
      * @return http promise
      */
-    projectBulkOperation: (ids, operation) => {
-      return $http({
-        url: `${config.basePath}/projects/bulkOperation`,
-        method: 'PUT',
-        data: {
-          operation: operation,
-          projects: ids
-        }
-      })
-    },
+    projectBulkOperation(ids, operation) {
+        return $http({
+          url: `${config.basePath}/projects/bulkOperation`,
+          method: 'PUT',
+          data: {
+            operation: operation,
+            projects: ids
+          }
+        })
+      },
 
     /**
      * Update the project recommendation status to `RecommendApproval`
      * @param projectId
      */
-    recommendApproval: (projectId, comment) => {
-      return $http({
-        url: `${config.basePath}/projects/${projectId}/recommendation/RecommendApproval`,
-        method: 'PUT',
-        data: comment
-      });
-    },
+    recommendApproval(projectId, comment) {
+        return $http({
+          url: `${config.basePath}/projects/${projectId}/recommendation/RecommendApproval`,
+          method: 'PUT',
+          data: comment
+        });
+      },
 
     /**
      * Update the project recommendation status to `RecommendReject`
      * @param projectId
      */
-    recommendReject: (projectId, comment) => {
-      return $http({
-        url: `${config.basePath}/projects/${projectId}/recommendation/RecommendRejection`,
-        method: 'PUT',
-        data: comment
-      });
-    },
+    recommendReject(projectId, comment) {
+        return $http({
+          url: `${config.basePath}/projects/${projectId}/recommendation/RecommendRejection`,
+          method: 'PUT',
+          data: comment
+        });
+      },
 
     /**
      * approve a project. this project status will change to active
@@ -601,14 +646,15 @@ function ProjectService($resource, $http, config, UserService) {
     },
 
     /**
-     * Reject a project. this project status will change to active
+     * Reject a project. this project status will change to closed rejected
      * @param  {Interger} projectId
      */
     reject(projectId, comment) {
       return this.changeStatus(projectId, 'Closed', 'Rejected', comment);
     },
+
     /**
-     * Abandon a project. this project status will change to active
+     * Abandon a project. this project status will change to closed abandoned
      * @param  {Interger} projectId
      */
     abandon(projectId, comment) {
@@ -630,6 +676,7 @@ function ProjectService($resource, $http, config, UserService) {
     completeProject(projectId, comment) {
       return this.changeStatus(projectId, 'Closed', 'Completed', comment);
     },
+
     /**
      * Request to reinstate a project. this project status will change to last state (but not sub state
      * @param  {Interger} projectId
@@ -642,10 +689,6 @@ function ProjectService($resource, $http, config, UserService) {
       });
     },
 
-
-    getBlockId(project, displayOrder) {
-
-    },
     /**
      * Updates the project status
      * @param {Integer} projectId
@@ -665,152 +708,121 @@ function ProjectService($resource, $http, config, UserService) {
       });
     },
 
+
+    /**
+     * Transition to
+     * @param projectId
+     * @param status
+     * @param subStatus
+     * @param comments
+     * @param validateOnly
+     * @returns {*}
+     */
+    transitionTo(projectId, transition, comment) {
+      return this.changeStatus(projectId, transition.status, transition.subStatus, comment);
+    },
+
+
+    /**
+     * Look up a list of project IDs given a WBS code
+     * @returns {Object} promise
+     */
+    findAllProjectIdsByWBSCode: (wbsCode) => {
+      return $http({
+        url: `${config.basePath}/projects/wbsLookup?wbsCode=${wbsCode}`,
+        method: 'GET'
+      });
+    },
+
     validateTransition(projectId, transition) {
       return this.changeStatus(projectId, transition.status, transition.subStatus, null, true);
     },
 
-    filterDropdownItems(canViewRecommendations) {
+    addLabel(projectId, label) {
+      return $http.post(`${config.basePath}/projects/${projectId}/labels`, label)
+    },
+
+    filterDropdownItems(canViewRecommendations, projectStates) {
+      let labels = {
+        'Assess': 'Awaiting Recommendation'
+      };
+
       let filterDropdownItems = [];
 
-      filterDropdownItems.push({
-        checkedClass: 'active',
-        ariaLabel: 'Filter projects by active status',
-        name: 'active',
-        // default value set in applyFilterState
-        model: undefined,
-        label: 'Active',
-        projectStatusKey: 'Active',
-        projectSubStatusKeys: ['ApprovedChanges', 'UnapprovedChanges', 'PaymentAuthorisationPending', null]
+      let groupStatuses = _.groupBy(projectStates, 'status');
+
+      let keys = Object.keys(groupStatuses);
+      // Closed should be at the bottom of the filter. So zzz will come last
+      keys = _.sortBy(keys, status => status === 'Closed' ? 'zzz' : status.toLowerCase());
+
+      keys.forEach(status => {
+        let item = {
+          id: status,
+          label: status,
+          name: status
+        };
+
+        if (groupStatuses[status].length === 1) {
+          item.model = status !== 'Closed';
+          item.projectStatusKey = status;
+        } else {
+          item.items = [];
+          groupStatuses[status].forEach(state => {
+            if (status === 'Assess') {
+              item.items = this.getAssessChildrenItems(canViewRecommendations);
+            } else {
+              let subStatusLabel = labels[`${status}${state.subStatus || ''}`] || _.startCase(state.subStatus) || 'No Changes';
+              item.items.push({
+                name: `${status}${state.subStatus}`,
+                model: status !== 'Closed',
+                label: subStatusLabel,
+                ariaLabel: `${status}: ${subStatusLabel}`,
+                projectStatusKey: status,
+                projectSubStatusKeys: state.subStatus === 'Rejected' ? [state.subStatus, null] : [state.subStatus]
+              });
+            }
+          });
+          item.items = _.sortBy(item.items, subStatus => subStatus.label.toLowerCase());
+        }
+        filterDropdownItems.push(item);
       });
-
-
-      filterDropdownItems.push({
-        checkedClass: 'activeUnapprovedChanges',
-        ariaLabel: 'Filter projects by active unapproved changes status',
-        name: 'activeUnapprovedChanges',
-        // default value set in applyFilterState
-        model: undefined,
-        label: 'Active: Unapproved Changes',
-        projectStatusKey: 'Active',
-        projectSubStatusKeys: ['UnapprovedChanges']
-      });
-
-      filterDropdownItems.push({
-        checkedClass: 'activeApprovalRequested',
-        ariaLabel: 'Filter projects by active approval requested status',
-        name: 'activeApprovalRequested',
-        // default value set in applyFilterState
-        model: undefined,
-        label: 'Active: Approval Requested',
-        projectStatusKey: 'Active',
-        projectSubStatusKeys: ['ApprovalRequested']
-      });
-
-      filterDropdownItems.push({
-        checkedClass: 'activePaymentAuthorisationPending',
-        ariaLabel: 'Filter projects by active payment authorisation pending status',
-        name: 'activePaymentAuthorisationPending',
-        // default value set in applyFilterState
-        model: undefined,
-        label: 'Active: Payment Authorisation Pending',
-        projectStatusKey: 'Active',
-        projectSubStatusKeys: ['PaymentAuthorisationPending']
-      });
-
-      filterDropdownItems.push({
-        checkedClass: 'activeAbandonPending',
-        ariaLabel: 'Filter projects by active abandon pending status',
-        name: 'activeAbandonPending',
-        // default value set in applyFilterState
-        model: undefined,
-        label: 'Active: Abandon Pending',
-        projectStatusKey: 'Active',
-        projectSubStatusKeys: ['AbandonPending']
-      });
-
-      filterDropdownItems.push({
-        checkedClass: 'assess',
-        ariaLabel: 'Filter projects by assess status',
-        name: 'assess',
-        // default value set in applyFilterState
-        model: undefined,
-        label: 'Assess',
-        projectStatusKey: 'Assess'
-      });
-
-
-      if (canViewRecommendations) {
-        filterDropdownItems = _.concat(filterDropdownItems, [{
-          checkedClass: 'assessRecommendApprove',
-          ariaLabel: 'Filter projects by assess recommend approve status',
-          name: 'assessRecommendApprove',
-          // default value set in applyFilterState
-          model: undefined,
-          label: 'Assess: Recommend approve',
-          projectStatusKey: 'Assess',
-          projectRecommentationKey: 'RecommendApproval'
-        },
-          {
-            checkedClass: 'assessRecommendReject',
-            ariaLabel: 'Filter projects by assess recommend reject status',
-            name: 'assessRecommendReject',
-            // default value set in applyFilterState
-            model: undefined,
-            label: 'Assess: Recommend reject',
-            projectStatusKey: 'Assess',
-            projectRecommentationKey: 'RecommendRejection'
-          }]);
-      }
-
-      filterDropdownItems = _.concat(filterDropdownItems, [
-        {
-          checkedClass: 'closed',
-          ariaLabel: 'Filter projects by closed status',
-          name: 'closed',
-          // default value set in applyFilterState
-          model: undefined,
-          label: 'Closed',
-          projectStatusKey: 'Closed',
-          projectSubStatusKeys: ['Rejected', 'Abandoned', 'Completed', null]
-        },
-        {
-          checkedClass: 'closedCompleted',
-          ariaLabel: 'Filter projects by closed completed status',
-          name: 'closedCompleted',
-          model: undefined,
-          label: 'Closed: Completed',
-          projectStatusKey: 'Closed',
-          projectSubStatusKeys: ['Completed']
-        },
-        {
-          checkedClass: 'draft',
-          ariaLabel: 'Filter projects by draft status',
-          name: 'draft',
-          // default value set in applyFilterState
-          model: undefined,
-          label: 'Draft',
-          projectStatusKey: 'Draft'
-        },
-        {
-          checkedClass: 'returned',
-          ariaLabel: 'Filter projects by returned status',
-          name: 'returned',
-          // default value set in applyFilterState
-          model: undefined,
-          label: 'Returned',
-          projectStatusKey: 'Returned'
-        },
-        {
-          checkedClass: 'submitted',
-          ariaLabel: 'Filter projects by submitted status',
-          name: 'submitted',
-          // default value set in applyFilterState
-          model: undefined,
-          label: 'Submitted',
-          projectStatusKey: 'Submitted'
-        }]);
 
       return filterDropdownItems;
+    },
+
+    getAssessChildrenItems(canViewRecommendations) {
+      if (canViewRecommendations) {
+        return [{
+          name: 'assessRecommendApprove',
+          model: true,
+          label: 'Recommend Approve',
+          projectStatusKey: 'Assess',
+          projectRecommentationKeys: ['RecommendApproval']
+        }, {
+          name: 'assessRecommendReject',
+          model: true,
+          label: 'Recommend Reject',
+          projectStatusKey: 'Assess',
+          projectRecommentationKeys: ['RecommendRejection']
+        }, {
+          checkedClass: 'assess',
+          name: 'assessNull',
+          model: true,
+          label: 'Awaiting Recommendation',
+          projectStatusKey: 'Assess',
+          projectRecommentationKeys: [null]
+
+        }];
+      } else {
+        return [{
+          checkedClass: 'assess',
+          name: 'assessAll',
+          model: true,
+          label: 'Awaiting Recommendation',
+          projectStatusKey: 'Assess',
+          projectRecommentationKeys: [null, 'RecommendApproval', 'RecommendRejection']
+        }];
+      }
     },
 
     searchOptions() {
@@ -825,36 +837,45 @@ function ProjectService($resource, $http, config, UserService) {
           name: 'programmeName',
           description: 'By Programme',
           hint: 'Enter the programme name',
-          maxLength: ''
+          maxLength: '50'
         },
         {
-          name: 'organisationId',
-          description: 'By Org Code',
-          hint: 'Enter the full GLA org code number',
-          maxLength: '8'
+          name: 'organisationName',
+          description: 'By Organisation',
+          hint: 'Enter the org name or id',
+          maxLength: '50'
         }
       ];
     },
-    hasParentCondition(value) {
-      return !!value.parentId;
-    },
 
-    isParentConditionMet(value, array, match) {
-      let parentQuestion = _.find(array, match || {id: value.parentId});
-      return parentQuestion.answer === value.parentAnswerToMatch;
-    },
-
-    transferProject(projectId, orgId) {
-      return $http.put(`${config.basePath}/projects/${projectId}/organisation`, orgId);
+    transferProject(projectIds, orgId) {
+      projectIds = _.isArray(projectIds) ? projectIds : [projectIds];
+      return $http({
+        method: 'PUT',
+        url: `${config.basePath}/projects/transfer`,
+        params: {
+          // projectIds: projectIds,
+          organisationId: orgId
+        },
+        data: projectIds
+      })
     },
 
     subStatusText(project) {
-      if (project.recommendation && project.status !== 'Active' && project.status !== 'Closed'
+      if (project.recommendation && project.statusName !== 'Active' && project.statusName !== 'Closed'
         && UserService.hasPermission('proj.view.recommendation')) {
         return this.recommendationText(project);
       }
 
-      switch (project.subStatus) {
+      return this.getSubStatusText(project.subStatusName);
+    }
+    ,
+    getProjectStates() {
+      return $http.get(`${config.basePath}/projects/filters/statuses`);
+    },
+
+    getSubStatusText(subStatusCode) {
+      switch (subStatusCode) {
         case 'UnapprovedChanges':
           return 'Unapproved Changes';
         case 'ApprovalRequested':
@@ -865,12 +886,15 @@ function ProjectService($resource, $http, config, UserService) {
           return 'Payment Authorisation Pending';
         case 'Abandoned':
           return 'Abandoned';
+        case 'Rejected':
+          return 'Rejected';
         case 'Completed':
           return 'Completed';
         default:
-          return null;
+          return subStatusCode;
       }
-    },
+    }
+    ,
 
     recommendationText(project) {
       switch (project.recommendation) {
@@ -881,7 +905,123 @@ function ProjectService($resource, $http, config, UserService) {
         default:
           return null;
       }
+    },
+
+    /**
+     * Update project subcontractors
+     * @param {Number} id - project id
+     * @param {Number} blockId - block id
+     * @param {Object} data
+     * @return {Object} promise
+     */
+    updateProjectSubcontractors: (id, blockId, data) => {
+      return $http({
+        url: `${config.basePath}/projects/${id}/subcontractors/${blockId}`,
+        method: 'PUT',
+        data: data
+      });
+    },
+
+
+    /**
+     * Add project subcontractors
+     * @param {Number} id - project id
+     * @param {Number} blockId - block id
+     * @return {Object} promise
+     */
+    addProjectSubcontractor(id, blockId, data) {
+      return $http({
+        url: `${config.basePath}/projects/${id}/subcontractors/${blockId}`,
+        method: 'POST',
+        data: data
+      });
+    },
+
+    /**
+     * Add subcontractor deliverable
+     * @param {Number} id - project id
+     * @param {Number} blockId - block id
+     * @param {Number} subcontractorId - subcontractor id
+     * @return {Object} promise
+     */
+    addProjectSubcontractorDeliverable(id, blockId, subcontractorId, data) {
+      return $http({
+        url: `${config.basePath}/projects/${id}/block/${blockId}/subcontractor/${subcontractorId}/deliverable`,
+        method: 'POST',
+        data: data
+      });
+    },
+
+    /**
+     * update subcontractor deliverable
+     * @param {Number} id - project id
+     * @param {Number} blockId - block id
+     * @param {Number} subcontractorId - subcontractor id
+     * @param {Number} deliverableId - deliverable Id
+     * @return {Object} promise
+     */
+    updateProjectSubcontractorDeliverable(id, blockId, subcontractorId, deliverableId,  data) {
+      return $http({
+        url: `${config.basePath}/projects/${id}/block/${blockId}/subcontractor/${subcontractorId}/deliverable/${deliverableId}`,
+        method: 'PUT',
+        data: data
+      });
+    },
+
+    /**
+     * Delete project subcontractors
+     * @param {Number} projectId - project id
+     * @param {Number} blockId - block id
+     * @param {Number} subcontractorId
+     * @return {Object} promise
+     */
+    deleteProjectSubcontractor: (projectId, blockId, subcontractorId) => {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/subcontractors/${blockId}/subcontractor/${subcontractorId}`,
+        method: 'DELETE'
+      });
+    },
+
+    /**
+     * Delete project subcontractor deliverable
+     * @param {Number} projectId - project id
+     * @param {Number} blockId - block id
+     * @param {Number} subcontractorId
+     * @param {Number} deliverableId
+     * @return {Object} promise
+     */
+    deleteProjectDeliverable: (projectId, blockId, subcontractorId, deliverableId) => {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/block/${blockId}/subcontractor/${subcontractorId}/deliverable/${deliverableId}`,
+        method: 'DELETE'
+      });
+    },
+
+    getDeliverableFeeCalculation: (projectId, blockId, value, fee) => {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/block/${blockId}/getDeliverableFeeCalculation`,
+        method: 'GET',
+        params: {
+          value: value,
+          fee: fee
+        }
+      });
+    },
+
+    claim(projectId, blockId, claim){
+      let claimRequest = {
+        entityId: claim.entityId,
+        year: claim.year,
+        claimTypePeriod: claim.claimTypePeriod,
+        claimType: claim.claimType
+      };
+      return $http.post(`${config.basePath}/projects/${projectId}/block/${blockId}/claim`, claimRequest)
+    },
+
+    cancelClaim(projectId, blockId, claimId){
+      return $http.delete(`${config.basePath}/projects/${projectId}/block/${blockId}/claim/${claimId}`);
     }
+
   };
 }
 

@@ -13,18 +13,19 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       template: '<ui-view class="project-block"></ui-view>',
       controller: function (project, $state, $stateParams) {
         let block = project.projectBlocksSorted[$stateParams.blockPosition - 1];
-        if (!$stateParams.blockClick) {
-          let blockType = block.blockType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-          $state.go(`project.block.${blockType}`, {
-            'projectId': $stateParams.projectId,
-            'blockPosition': $stateParams.blockPosition,
-            'blockId': block.id
-          });
-        }
+        let blockType = block.blockType.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+        $state.go(`project.block.${blockType}`, {
+          'projectId': $stateParams.projectId,
+          'blockPosition': $stateParams.blockPosition,
+          'blockId': block.id,
+          'displayOrder': block.displayOrder,
+          'yearAvailableFrom': block.yearAvailableFrom
+        });
       },
       params: {
-        blockClick: false,
-        version: null
+        version: null,
+        afterEdit: null,
+        displayOrder:null
       }
     })
 
@@ -52,16 +53,15 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       controller: 'ProjectMilestonesCtrl',
       controllerAs: '$ctrl',
       resolve: blockResolves({
-        // milestoneBlock: ['MilestonesService', '$stateParams', (MilestonesService, $stateParams) => {
-        //   return MilestonesService.getMilestoneBlock($stateParams.projectId, $stateParams.blockId).then(res => res.data);
-        // }],
-        // milestoneBlockHistory: ['ProjectBlockService', '$stateParams', (ProjectBlockService, $stateParams) => {
-        //   return ProjectBlockService.getHistory($stateParams.projectId, $stateParams.blockId).then(rsp => rsp.data);
-        //   // return MilestonesService.getMilestoneBlock($stateParams.projectId, $stateParams.blockId).then(res => res.data);
-        // }],
         payments: ['$stateParams', 'PaymentService', ($stateParams, PaymentService) => {
           let paymentStatuses = PaymentService.authorisedStatuses();
-          return PaymentService.getPayments($stateParams.projectId, null, paymentStatuses);
+          return PaymentService.getPayments($stateParams.projectId, null, null, paymentStatuses);
+        }],
+        claimFeatureEnabled: ['FeatureToggleService', (FeatureToggleService) => {
+          return FeatureToggleService.isFeatureEnabled('payments').then(rsp => rsp.data);
+        }],
+        isMonetaryValueReclaimsEnabled: ['FeatureToggleService', (FeatureToggleService) => {
+          return FeatureToggleService.isFeatureEnabled('MonetaryValueReclaims').then(rsp => rsp.data);
         }]
       })
     })
@@ -74,8 +74,8 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
     })
 
     .state('project.block.questions', {
-      templateUrl: 'scripts/pages/project/questions/questions.html',
-      controller: 'QuestionsCtrl',
+      templateUrl: 'scripts/pages/project/questions/questionsPage.html',
+      controller: 'QuestionsPageCtrl',
       controllerAs: '$ctrl',
       resolve: blockResolves()
     })
@@ -126,12 +126,35 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       templateUrl: 'scripts/pages/project/outputs/outputs.html',
       controller: 'OutputsCtrl',
       controllerAs: '$ctrl',
+      resolve: blockResolves({
+        outputsMessage: ['ConfigurationService', (ConfigurationService) => {
+          return ConfigurationService.getMessage('outputs-baseline-message-key').then(rsp => rsp.data);
+        }],
+
+        currentFinancialYear: ['ProjectService', (ProjectService) => {
+          return ProjectService.getCurrentFinancialYear().then(rsp => rsp.data);
+        }]
+       }
+      )
+    })
+
+    .state('project.block.outputs-costs', {
+      templateUrl: 'scripts/pages/project/outputs-costs/outputsCosts.html',
+      controller: 'OutputsCostsCtrl',
+      controllerAs: '$ctrl',
       resolve: blockResolves()
     })
 
     .state('project.block.receipts', {
       templateUrl: 'scripts/pages/project/receipts/receipts.html',
       controller: 'ReceiptsCtrl',
+      controllerAs: '$ctrl',
+      resolve: blockResolves()
+    })
+
+    .state('project.block.progress-updates', {
+      templateUrl: 'scripts/pages/project/progress-updates/progressUpdates.html',
+      controller: 'ProgressUpdatesCtrl',
       controllerAs: '$ctrl',
       resolve: blockResolves()
     })
@@ -156,16 +179,97 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
           return RisksService.getRiskCategories();
         }]
       })
+    })
+    .state('project.block.funding', {
+      template: '<project-funding-page project="$resolve.project" project-funding="$resolve.projectFunding" current-financial-year="$resolve.currentFinancialYear" template="$resolve.template"></project-funding-page>',
+      resolve: blockResolves({
+        projectFunding: ['$sessionStorage', '$stateParams', 'ProjectFundingService', 'currentFinancialYear', ($sessionStorage, $stateParams, ProjectFundingService, currentFinancialYear)=>{
+          // this.$sessionStorage[this.blockId]
+
+          // let year = $stateParams.yearAvailableFrom > 0 ? currentFinancialYear + $stateParams.yearAvailableFrom : $stateParams.selectedYear ||
+          let year = $stateParams.selectedYear ||
+            $sessionStorage[$stateParams.blockId] && $sessionStorage[$stateParams.blockId].selectedYear ||
+            currentFinancialYear;
+
+          return ProjectFundingService.getProjectFunding($stateParams.projectId, $stateParams.blockId, year).then((resp)=>{
+            return resp.data;
+          });
+        }],
+        currentFinancialYear: ['ProjectService', (ProjectService)=>{
+          return ProjectService.getCurrentFinancialYear()
+            .then(resp => {
+              return resp.data;
+            });
+        }]
+      }),
+      params:{
+        selectedYear: undefined,
+        yearAvailableFrom: null
+      }
+    })
+
+    .state('project.block.learning-grant', {
+      template: `<learning-grant project="$resolve.project"
+                                 learning-grant="$resolve.learningGrant"
+                                 payments-enabled="$resolve.paymentsEnabled"
+                                 template="$resolve.template"
+                                 current-academic-year="$resolve.currentAcademicYear"></learning-grant>`,
+      resolve: blockResolves({
+        learningGrant: ['$stateParams', '$sessionStorage', 'ProjectSkillsService', ($stateParams, $sessionStorage, ProjectSkillsService)=>{
+          let year = $sessionStorage[$stateParams.blockId] && $sessionStorage[$stateParams.blockId].selectedYear;
+          return ProjectSkillsService.getLearningGrantBlock($stateParams.projectId, year).then(resp => resp.data);
+        }],
+        paymentsEnabled: ['FeatureToggleService', (FeatureToggleService) => {
+          return FeatureToggleService.isFeatureEnabled('SkillsPayments').then(rsp => rsp.data);
+        }],
+        currentAcademicYear: ['SkillProfilesService', (SkillProfilesService) => {
+          return SkillProfilesService.getCurrentAcademicYear().then(rsp => rsp.data);
+        }]
+      }),
+      params:{
+        selectedYear: undefined
+      }
+    })
+
+    .state('project.block.subcontracting', {
+      template: `<subcontractors project="$resolve.project"
+                                 template="$resolve.template",
+                                 deliverable-types="$resolve.deliverableTypes"></subcontractors>`,
+      resolve: blockResolves({
+        deliverableTypes: ['TemplateService', 'template', (TemplateService, template) => {
+          return TemplateService.getAvailableDeliverableTypes(template.id).then(rsp => rsp.data);
+        }]
+      })
+    })
+
+    .state('project.block.funding-claims', {
+      template: `<funding-claims project="$resolve.project"
+                                   funding-claims="$resolve.fundingClaims"
+                                   learning-grant="$resolve.learningGrant"
+                                   template="$resolve.template"
+                                   current-academic-year="$resolve.currentAcademicYear"></funding-claims>`,
+      resolve: blockResolves({
+        fundingClaims: ['$stateParams', '$sessionStorage', 'ProjectSkillsService', ($stateParams, $sessionStorage, ProjectSkillsService)=>{
+          return ProjectSkillsService.getFundingClaimsBlock($stateParams.projectId).then(resp => resp.data);
+        }],
+        learningGrant: ['$stateParams', '$sessionStorage', 'ProjectSkillsService', ($stateParams, $sessionStorage, ProjectSkillsService)=>{
+          let year = $sessionStorage[$stateParams.blockId] && $sessionStorage[$stateParams.blockId].selectedYear;
+          return ProjectSkillsService.getLearningGrantBlock($stateParams.projectId, year).then(resp => resp.data);
+        }],
+        currentAcademicYear: ['SkillProfilesService', (SkillProfilesService) => {
+          return SkillProfilesService.getCurrentAcademicYear().then(rsp => rsp.data);
+        }]
+      }),
+      params:{
+        selectedYear: undefined
+      }
     });
 }]);
 
 function blockResolves(customResolves) {
   let resolve = {
     history: ['$stateParams', 'ProjectBlockService', 'project', ($stateParams, ProjectBlockService, project) => {
-      if (project.status.toLowerCase() === 'active') {
-        return ProjectBlockService.getHistory($stateParams.projectId, $stateParams.blockId).then(rsp => rsp.data);
-      }
-      return [];
+      return ProjectBlockService.getHistory($stateParams.projectId, $stateParams.displayOrder).then(rsp => rsp.data);
     }],
 
     block: ['history', '$stateParams', 'ProjectService', (history, $stateParams, ProjectService) => {
@@ -179,6 +283,10 @@ function blockResolves(customResolves) {
       if (blockId && blockId !== $stateParams.blockId) {
         return ProjectService.getProjectBlock($stateParams.projectId, blockId).then(rsp => rsp.data);
       }
+    }],
+
+    isBlockRevertEnabled: ['FeatureToggleService', (FeatureToggleService) => {
+      return FeatureToggleService.isFeatureEnabled('AllowBlockRevert').then(rsp => rsp.data);
     }]
   };
 

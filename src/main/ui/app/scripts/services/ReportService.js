@@ -6,7 +6,7 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-ReportService.$inject = ['$http', 'config', 'numberFilter', 'currencyFilter', 'dateFilter'];
+ReportService.$inject = ['$http', 'config', 'numberFilter', 'currencyFilter', 'dateFilter', '$q', '$timeout'];
 
 function index(obj, i) {
   if (!obj) {
@@ -19,7 +19,7 @@ function index(obj, i) {
   }
 }
 
-function ReportService($http, config, numberFilter, currencyFilter, dateFilter) {
+function ReportService($http, config, numberFilter, currencyFilter, dateFilter, $q, $timeout) {
   let displayModes = {
     HALF_SCREEN: {
       id: 'half',
@@ -72,7 +72,7 @@ function ReportService($http, config, numberFilter, currencyFilter, dateFilter) 
         return defaultValue;
       }
 
-      if(!format){
+      if (!format) {
         return value;
       }
 
@@ -130,7 +130,7 @@ function ReportService($http, config, numberFilter, currencyFilter, dateFilter) 
       } else if (block.lastModified) {
         return `Unapproved changes on ${this.dateFilter(block.lastModified, 'dd/MM/yyyy')} by ${block.modifiedByName}`;
       }
-      return null;
+      return 'New unedited block';
     },
 
     //  this.showingRight = (rightBlock) => {
@@ -324,6 +324,128 @@ function ReportService($http, config, numberFilter, currencyFilter, dateFilter) 
 
     getReports() {
       return $http.get(`${config.basePath}/reports`);
+    },
+
+    generateReport(url) {
+      return $http.get(`${url}`);
+    },
+    generateReportWithParameters(reportName, filters) {
+      return $http.post(`${config.basePath}/generate/csv/${reportName }`, filters).then(rsp => rsp.data)
+    },
+
+    getFilterDropDowns(programmeIds, reportName) {
+      let cfg = {
+        params: {
+          programmes: programmeIds
+        }
+      };
+
+      return $http.get(`${config.basePath}/reports/${reportName}/filters`, cfg).then(rsp => rsp.data);
+    },
+
+    /**
+     * TODO rename/review parameters to make sense more for both change & summary report.
+     * TODO Maybe name it 'left & right' but it assumes you always have right which we don't eventually in summary report
+     * @param latestProject
+     * @param lastApprovedProject
+     * @param template
+     * @param currentFinancialYear
+     * @returns {Array}
+     */
+    getBlocksToCompare(latestProject, lastApprovedProject, template, currentFinancialYear) {
+      let latestBlocks = latestProject.projectBlocksSorted || [];
+      let lastApprovedBlocks = lastApprovedProject.projectBlocksSorted || [];
+
+      let blocksToCompare = [];
+      for (let i = 0; i < latestBlocks.length; i++) {
+        let right = latestBlocks[i] || {};
+
+        let hasUnapproved = right.blockStatus !== 'LAST_APPROVED';
+        let item = {
+          left: lastApprovedBlocks[i],
+          right: hasUnapproved ? latestBlocks[i] : undefined,
+          type: latestBlocks[i].type,
+          blockDisplayName: latestBlocks[i].blockDisplayName,
+          blockDisplayCls: latestBlocks[i].blockDisplayName.toLowerCase().split(' ').join('-'),
+          id: latestBlocks[i].id,
+          expanded: true,
+          context: {
+            project: {
+              left: lastApprovedProject,
+              right: latestProject
+            },
+            template: template,
+            currentFinancialYear: currentFinancialYear
+          }
+        };
+        //Add derived properties
+        item.versionObj = {
+          left: {
+            versionString: 'There is no approved version of this block'
+          }
+        };
+        if (item.left) {
+          item.versionObj.left.versionString = this.version(item.left, !lastApprovedProject.stateModel.approvalRequired);
+        }
+
+        if (item.right) {
+          item.versionObj.right = {
+            versionString: this.version(item.right, !latestProject.stateModel.approvalRequired)
+          };
+        }
+        item.changes = this.changeTracker(item);
+
+
+        blocksToCompare.push(item);
+      }
+      return blocksToCompare;
+    },
+
+    /**
+     * Gets same data structure as in comparison report and then removes the right side blocks;
+     * @param project
+     * @param template
+     * @param currentFinancialYear
+     */
+    getBlocksToCompareForSummaryReport(project, template, currentFinancialYear) {
+      let blocksToCompare = this.getBlocksToCompare(project, project, template, currentFinancialYear);
+      blocksToCompare.forEach(block => delete block.right);
+      return blocksToCompare;
+    },
+
+
+
+    getGeneratedReports() {
+      return $http.get(`${config.basePath}/userReports/`);
+    },
+
+
+    pollReports(callback) {
+      let poll = {
+        /* interval: 1000, */
+        isStopped: false,
+        stop() {
+          this.isStopped = true;
+        },
+/* 
+        nextInterval() {
+          let interval = this.interval;
+          this.interval = this.interval * 2;
+          return interval;
+        } */
+      };
+
+      let tick = () => {
+       /*  let interval = poll.nextInterval(); */
+        this.getGeneratedReports().then(rsp => {
+            callback(rsp);
+          if (!poll.isStopped) {
+            $timeout(tick, 500);
+          }
+        });
+      };
+      tick();
+      return poll;
     }
   }
 }

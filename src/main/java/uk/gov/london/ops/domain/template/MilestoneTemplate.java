@@ -7,7 +7,8 @@
  */
 package uk.gov.london.ops.domain.template;
 
-import uk.gov.london.ops.util.jpajoins.NonJoin;
+import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.jpa.NonJoin;
 
 import javax.persistence.*;
 import java.util.Objects;

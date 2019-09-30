@@ -25,7 +25,7 @@ const fs = require('fs');
 
 
 module.exports = (grunt) => {
-  grunt.loadNpmTasks('grunt-selenium-webdriver');
+  // grunt.loadNpmTasks('grunt-selenium-webdriver');
   grunt.loadNpmTasks('grunt-protractor-runner');
   grunt.loadNpmTasks('grunt-connect-proxy');
   grunt.loadNpmTasks('grunt-copyright');
@@ -35,6 +35,7 @@ module.exports = (grunt) => {
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
+  let serveStatic = require('serve-static');
 
   // Automatically load required Grunt tasks
   require('jit-grunt')(grunt, {
@@ -114,17 +115,13 @@ module.exports = (grunt) => {
       proxies: [
         {
           context: ['/api', '/sysops'],
-          host: process.env.API_URL || '',
-          // host: 'localhost',
-          port: process.env.API_PORT || 80,
-          // port: 8080,
-          https: false,
+          host: process.env.API_URL || 'ops-dev.london.gov.uk',
+          port: process.env.API_PORT || 443,
+          https: utils.isHttps(),
           xforward: false,
           changeOrigin: true,
           headers: {
-            'host': process.env.API_URL || '',
-            // 'Access-Control-Allow-Origin': '*'
-            // 'host': 'localhost'
+            'host': process.env.API_URL || 'ops-dev.london.gov.uk'
           }
         }
       ],
@@ -135,16 +132,16 @@ module.exports = (grunt) => {
           middleware: (connect) => {
             return [
               require('grunt-connect-proxy/lib/utils').proxyRequest,
-              connect.static('.tmp'),
+              serveStatic('.tmp'),
               connect().use(
                 '/bower_components',
-                connect.static('./bower_components')
+                serveStatic('./bower_components')
               ),
               connect().use(
                 '/app/styles',
-                connect.static('./app/styles')
+                serveStatic('./app/styles')
               ),
-              connect.static(appConfig.app)
+              serveStatic(appConfig.app)
             ];
           }
         }
@@ -154,13 +151,13 @@ module.exports = (grunt) => {
           port: 9001,
           middleware: (connect) => {
             return [
-              connect.static('.tmp'),
-              connect.static('test'),
+              serveStatic('.tmp'),
+              serveStatic('test'),
               connect().use(
                 '/bower_components',
-                connect.static('./bower_components')
+                serveStatic('./bower_components')
               ),
-              connect.static(appConfig.app)
+              serveStatic(appConfig.app)
             ];
           }
         }
@@ -344,7 +341,7 @@ module.exports = (grunt) => {
         flow: {
           html: {
             steps: {
-              js: ['concat', 'uglifyjs'],
+              js: ['concat', 'uglify'],
               css: ['cssmin']
             },
             post: {
@@ -364,7 +361,7 @@ module.exports = (grunt) => {
                     }
                   }
                 }
-              }]
+                }]
             }
           }
         }
@@ -401,15 +398,13 @@ module.exports = (grunt) => {
     //     }
     //   }
     // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
+    uglify: {
+      generated: {
+        options: {
+          mangle: false
+        }
+      }
+    },
     // concat: {
     //   dist: {}
     // },
@@ -567,6 +562,7 @@ module.exports = (grunt) => {
             capabilities: {
               shardTestFiles: false,
               maxInstances: 1,
+              acceptInsecureCerts : true
             },
             cucumberOpts: {
               tags: testConfig.cucumberFilterTags(['@run'])
@@ -731,9 +727,7 @@ module.exports = (grunt) => {
     }
 
     grunt.task.run([
-      // 'selenium_start',
       `protractor:${e2eConfig}`,
-      // 'selenium_stop'
     ]);
   });
 

@@ -1,5 +1,5 @@
 <div id="filter-dropdown" class="btn-group" uib-dropdown is-open="status.isopen">
-  <a type="button" class="btn filter-dropdown-button" uib-dropdown-toggle>
+  <a type="button" class="btn filter-dropdown-button" uib-dropdown-toggle ng-disabled="$ctrl.isDisabled">
     {{$ctrl.title}} <span class="caret"></span>
   </a>
   <ul class="dropdown-menu filter-dropdown" uib-dropdown-menu role="menu" aria-labelledby="filter-dropdown">
@@ -9,16 +9,26 @@
         <a ng-href="" ng-click="$ctrl.toggleAllFilters($event, true)" ng-if="!$ctrl.hasFilterSelections">Select All</a>
       </div>
     </li>
-    <li role="menuitem" ng-repeat="item in $ctrl.filterDropdownItems">
+    <li role="menuitem"
+        ng-repeat="item in $ctrl.dropdownItems"
+        ng-if="item.items.length || !item.groupId || !item.collapsed"
+        ng-class="{group: item.items.length, 'group-item': item.groupId, 'filter-item': !item.items.length}">
+
       <div class="checkbox" ng-class="{checked: item.model, unchecked: !item.model, focused: item.focused}">
         <input type="checkbox"
-               aria-label="{{item.ariaLabel}}"
+               aria-label="{{item.ariaLabel || item.label}}"
                name="{{item.name}}"
                ng-model="item.model"
                ng-click="$event.stopPropagation();"
-               ng-change="$ctrl.onCheckboxesChange()">
+               ng-change="$ctrl.onCheckboxesChange(item)">
       </div>
-      <div class="li-item-label">{{item.label}}</div>
+      <div class="li-item-label">
+        <span ng-click="$event.stopPropagation();">{{item.label}}</span>
+        <span class="glyphicon link"
+              ng-class="{'glyphicon-plus': item.collapsed, 'glyphicon-minus': !item.collapsed}"
+              ng-if="item.items.length"
+              ng-click="$ctrl.toggle(item);$event.stopPropagation();"></span>
+      </div>
     </li>
   </ul>
 </div>

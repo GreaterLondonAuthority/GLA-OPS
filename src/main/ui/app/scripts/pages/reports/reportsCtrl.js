@@ -6,313 +6,325 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-function ReportsCtrl($timeout, ProgrammeService, FeatureToggleService, $q, config, programmes, reports) {
-  this.DOWNLOAD = 'DOWNLOAD';
-  this.GENERATING = 'GENERATING';
-  this.linkLabel = this.DOWNLOAD;
-  this.allProgrammes = programmes || [];
 
-  this.boroughReportLinkForcedToDisabled = false;
-  this.enabled = {};
-  this.enabled.programmeSelector = false;
-  this.enabled.boroughReportLink = false;
+//TODO use 'Select report type' placeholder instead of adding/removing option to the dropdown
+class ReportsCtrl{
+  constructor(ProgrammeService, FeatureToggleService, $q, config, ReportService, ConfirmationDialog, UserService, TemplateService) {
+    this.config = config;
+    this.$q = $q;
+    this.FeatureToggleService = FeatureToggleService;
+    this.ProgrammeService = ProgrammeService;
+    this.TemplateService = TemplateService;
+    this.ReportService = ReportService;
+    this.ConfirmationDialog = ConfirmationDialog;
+    this.UserService = UserService;
+  }
 
-  this.reportTypes = [];
+  $onInit() {
+    this.linkLabel = 'GENERATE';
+    this.allProgrammes = this.programmes || [];
+    // console.log('this.programmes', this.programmes)
 
-  this.milestones = [
-    {
-      id: -1,
-      description: 'Current / Latest'
-    },
-    {
-      id: 3005,
-      description: 'Acquisition'
-    },
-    {
-      id: 3003,
-      description: 'Start on Site'
-    },
-    {
-      id: 3004,
-      description: 'Completion'
-    }
-  ];
+    this.boroughReportLinkForcedToDisabled = false;
+    this.enabled = {};
+    this.enabled.programmeSelector = false;
+    this.enabled.boroughReportLink = false;
 
+    this.canRunJasper = this.UserService.hasPermission('reports.jasper');
+    this.showStaticReports = this.UserService.hasPermission('reports.view.static');
+    this.showStaticReports = false;
+    this.viewInteralReports = this.UserService.hasPermission('reports.internal.view');
 
-  $q.all({
-    programmeReportEnabled: FeatureToggleService.isFeatureEnabled('outputCSV').then(rsp => rsp.data),
-    affordableHousingReportEnabled: FeatureToggleService.isFeatureEnabled('AffordableHousingReport').then(rsp => rsp.data)
+    this.reportTypes = [];
+    this.reportsAvailable = !!this.reports.length;
+    this.filterDropDowns = {};
+    this.filterSingleSelectValues = {};
+    this.programmeIds = [];
 
-  }).then(data => {
-    this.reportTypes = [{
-      name: 'BOROUGH_REPORT',
-      description: 'Borough report',
-      url: (programmeId) => `${config.basePath}/report/borough/csv?programme=${programmeId}`,
-      extraParams: true
-    }];
-
-    if (data.programmeReportEnabled) {
-      this.reportTypes.push({
-        name: 'PROGRAMME_REPORT',
-        description: 'Programme report',
-        url: (programmeId) => `${config.basePath}/programmes/${programmeId}/csvexport`
-      });
-    }
-
-
-    const REPORT_TYPE = 'AffordableHousing';
-    if(data.affordableHousingReportEnabled && this.isReportSupported(this.allProgrammes, REPORT_TYPE)){
-      this.reportTypes.push({
-        name: 'AFFORDABLE_HOUSING',
-        description: '(In development) Affordable Housing',
-        url: (programmeId) => `${config.basePath}/report/affordableHousing/csv?programme=${programmeId}&milestoneId=${this.selectedMilestone.id || -1}`,
-        filterProgramme: REPORT_TYPE,
-        showMilestonesDropdown: true,
-        extraParams: true
-      });
-    }
-
-    (reports || []).forEach(report => {
-      this.reportTypes.push({
-        name: report.name,
-        description: report.name,
-        url: (programmeId) => `${config.basePath}/report/csv/${report.name}?programme=${programmeId}`,
-        extraParams: true
-      });
+    this.reportStatusMap = {
+      'inProgress': 'In progress',
+      'noResults': 'No results',
+      'Complete': 'Complete'
+    };
+    this.reportTypes = [];
+    (this.reports || []).forEach(report => {
+      if(this.viewInteralReports || report.external){
+        let reportFiltersList = report.reportFiltersList;
+        if(!this.viewInteralReports){
+          reportFiltersList = _.filter(reportFiltersList, {external: true});
+        }
+        this.reportTypes.push({
+          name: report.name,
+          description: report.description,
+          sqlFilter: report.sqlFilter,
+          singleSelect: report.singleSelect,
+          url: (programmeId) => `${this.config.basePath}/generate/csv/${report.name}?programme=${programmeId}`,
+          extraParams: true,
+          filters: reportFiltersList
+        });
+      }
     });
 
-    this.selectedReportType = {
-      name: null,
-      description: 'SELECT REPORT TYPE'
-    };
-    this.resetExtraParameters();
-  });
 
-  this.resetExtraParameters = function(){
-    this.projectTypeParameter = '';
-    this.boroughParameter = '';
-    this.projectStatusParameter = '';
-  };
+    this.startPolling();
+  }
 
+  getLabel(filter) {
+    return _.startCase(filter.name);
+  }
 
-  this.selectReportType = function (selectedReportType) {
+  selectReportType(selectedReportType) {
     this.selectedReportType = selectedReportType;
-    this.resetExtraParameters();
     this.updateProgrammes(selectedReportType);
-    this.loadBoroughReportFilters();
+    this.loadDependentFilters();
     this.updateEnableElements();
-    this.updateReportUrl();
-  };
+  }
+
+  hasTooManyPendingReports(){
+    return this.pendingReportsCount > 3
+  }
 
 
   //Programmes
-  this.updateProgrammes = function (selectedReportType) {
-    this.programmes = [];
-    //TODO why do we do this? should be a placeholder instead
-    this.selectedProgramme = {name: null, description: 'SELECT A PROGRAMME'};
-    this.selectedMilestone = {name: null, description: 'SELECT A MILESTONE'};
+  updateProgrammes (selectedReportType) {
+    if(selectedReportType!=null) {
 
-    if (this.selectedReportType.name) {
-        this.enabled.programmeSelector = true;
-        this.programmeId = null;
-        this.allProgrammes.forEach((programme)=>{
+      this.showProgrammeFilter = !!_.find(selectedReportType.filters, {name: 'Programme'});
+      this.programmes = [];
+      //TODO why do we do this? should be a placeholder instead
+      this.enabled.programmeSelector = true;
+      this.programmeId = null;
+      this.allProgrammes.forEach((programme)=>{
+        if(programme.status != 'Abandoned'){
           this.programmes.push({
-            name: programme.id,
-            description: programme.name,
+            id: programme.id,
+            label: programme.name,
             supportedReports: programme.supportedReports
           });
-        });
-        this.filterProgrammes(selectedReportType);
-    } else {
+        }
+      });
+      this.filterProgrammes(selectedReportType);
+    }
+    else {
       this.filteredProgrammes = [];
       this.enabled.programmeSelector = false;
     }
   };
 
-  this.filterProgrammes = (selectedReportType) => {
-    this.filteredProgrammes = [];
+  filterProgrammes(selectedReportType) {
+    let filteredProgrammes = [];
+
     _.forEach(this.programmes, (programme)=>{
+      // TODO this can never be true !
       if(selectedReportType.filterProgramme){
         if(programme.supportedReports && programme.supportedReports.indexOf(selectedReportType.filterProgramme) !== -1){
-          this.filteredProgrammes.push(programme);
+          filteredProgrammes.push(programme);
         }
       } else {
-        this.filteredProgrammes.push(programme);
+        filteredProgrammes.push(programme);
       }
     });
+
+    this.filteredProgrammes = filteredProgrammes;
+    console.log('this.filteredProgrammes', this.filteredProgrammes);
   };
 
-  this.isReportSupported = (prgrammes, reportType) => {
+  isReportSupported (programmes, reportType) {
     return programmes.some(programme => {
       return (programme.supportedReports || []).indexOf(reportType) !== -1
     });
   };
 
-  this.selectProgramme = function (programme) {
-    this.resetExtraParameters();
-    this.programmeId = programme.name;
+  selectProgramme (programme) {
+    this.programmeIds = _.filter(this.filteredProgrammes, {model: true}).map(p => p.id);
     this.updateEnableElements();
-    this.loadBoroughReportFilters();
-    this.updateReportUrl();
+    this.loadDependentFilters();
   };
 
-  this.loadBoroughReportFilters = function () {
-    if (this.programmeId && this.selectedReportType.extraParams) {
-      //Project type
-      ProgrammeService.getTemplateByProgramme(this.programmeId).then(resp => {
-        this.projectTypes = [];
-        this.projectTypes.push({name: null, description: 'ALL'})
-        this.selectedProjectType = this.projectTypes[0]
-        if (resp) {
-          for (var i = 0; i < resp.length; i++) {
-            this.projectTypes.push({name: resp[i].id, description: resp[i].name})
-          }
-        }
-      });
+  getFilterDropDowns(filter) {
+    return this.filterDropDowns[filter.name];
+  }
 
-      //Project Status
-      ProgrammeService.getStatusesByProgramme(this.programmeId).then(resp => {
-        this.projectStatus = []
-        this.projectStatus.push({name: null, description: 'ALL'})
-        this.selectedProjectStatus = this.projectStatus[0];
-        if (resp.data) {
-          for (var i = 0; i < resp.data.length; i++) {
-            this.projectStatus.push({name: resp.data[i], description: resp.data[i]})
-          }
-        }
-      });
-
-
-      //Borough
-      ProgrammeService.getBoroughsByProgramme(this.programmeId).then(resp => {
-        this.boroughs = []
-        this.boroughs.push({name: null, description: 'ALL'});
-        this.selectedBorough = this.boroughs[0]
-        if (resp.data) {
-          for (var i = 0; i < resp.data.length; i++) {
-            this.boroughs.push({name: resp.data[i], description: resp.data[i]})
-          }
-        }
-      });
-
-
-    } else {
+  loadDependentFilters () {
+    this.filterSingleSelectValues = {};
+    if(this.selectedReportType !=null) {
+      if (this.programmeIds.length && this.selectedReportType.extraParams) {
+        this.ReportService.getFilterDropDowns(this.programmeIds, this.selectedReportType.name).then(data => {
+          let info = [];
+          _.forEach(data, (key, value) => {
+            _.forEach(key, (key, value) => {
+              info.push({
+                'id':value,
+                'label':key
+              });
+            });
+            this.filterDropDowns[value] = info;
+            info = [];
+          });
+        });
+      }
+    }
+    else {
       this.disableFilters();
     }
   }
 
-  this.disableFilters = function () {
-    this.projectTypes = [];
-    this.projectTypes.push({name: null, description: 'ALL'});
-    this.selectedProjectType = this.projectTypes[0];
-
-    this.projectStatus = [];
-    this.projectStatus.push({name: null, description: 'ALL'});
-    this.selectedProjectStatus = this.projectStatus[0];
-    this.projectStatusParameter = '';
-
-    this.boroughs = [];
-    this.boroughs.push({name: null, description: 'ALL'});
-    this.selectedBorough = this.boroughs[0];
-
+  disableFilters () {
     this.enabled.projectType = false;
     this.enabled.borough = false;
     this.enabled.projectStatus = false;
-    this.resetExtraParameters();
   };
 
-  this.selectProjectType = function (projectType) {
-    this.projectTypeParameter = projectType.name != null
-      ? '&projectType=' + projectType.name
-      : '';
-    this.updateReportUrl();
-  };
-
-  this.selectBorough = function (borough) {
-    this.boroughParameter = borough.name != null ? '&borough=' + borough.name : '';
-    this.updateReportUrl();
-  };
-
-  this.selectProjectStatus = function (projectStatus) {
-    this.projectStatusParameter = projectStatus.name != null
-      ? '&status=' + projectStatus.name
-      : '';
-    this.updateReportUrl();
-  };
-
-
-  this.updateEnableElements = function () {
-    if (!this.selectedReportType.name || !this.programmeId) {
+  updateEnableElements () {
+    if (!this.selectedReportType) {
       this.disableFilters();
       this.enabled.boroughReportLink = false
-    } else if (this.programmeId) {
-      this.enableReportLink();
-      if (this.selectedReportType.extraParams) {
-        this.enabled.projectType = true;
-        this.enabled.borough = true;
-        this.enabled.projectStatus = true;
-      } else {
-        this.disableFilters();
-      }
-    } else {
-      this.disableFilters();
     }
-
-    if(this.selectedReportType.name === 'AFFORDABLE_HOUSING' && !this.selectedMilestone.id){
-      this.enabled.boroughReportLink = false
+    else{
+      this.enabled.programmeSelector = !!_.find(this.selectedReportType.filters, {name: 'Programme'}); //_.includes(this.selectedReportType.filters, 'Programme');
+      this.enabled.projectType = !!_.find(this.selectedReportType.filters, {name: 'TemplateType'}) && this.enabled.programmeSelector;//_.includes(this.selectedReportType.filters, 'TemplateType') && this.enabled.programmeSelector;
+      this.enabled.borough = !!_.find(this.selectedReportType.filters, {name: 'Borough'}) && this.enabled.programmeSelector;//_.includes(this.selectedReportType.filters, 'Borough') && this.enabled.programmeSelector;
+      this.enabled.projectStatus = !!_.find(this.selectedReportType.filters, {name: 'ProjectType'}) && this.enabled.programmeSelector;//_.includes(this.selectedReportType.filters, 'ProjectType') && this.enabled.programmeSelector;
+    }
+    if(!this.enabled.projectStatus) {
+      this.projectStatus = [];
+    }
+    if(!this.enabled.projectType) {
+      this.projectTypes = [];
+    }
+    if(!this.enabled.borough) {
+      this.boroughs = [];
     }
   };
 
-  this.onFormChange = function(){
+  onFormChange (){
     this.updateEnableElements();
-    this.updateReportUrl();
   };
 
-  //TODO shouldn't we use service instead of URL
-  this.updateReportUrl = function () {
-    if (this.selectedReportType.url && this.programmeId) {
-      this.reportUrl = this.selectedReportType.url(this.programmeId);
-      this.reportUrl += this.projectTypeParameter;
-      this.reportUrl += this.boroughParameter;
-      this.reportUrl += this.projectStatusParameter;
-    } else {
-      this.reportUrl = '';
-    }
-
-    // console.log('url', this.reportUrl);
-  };
-
-  //todo temporally fix to simulate waiting loading
-  this.generatingLink = function () {
-    this.linkLabel = this.GENERATING;
-    this.boroughReportLinkForcedToDisabled = true;
-    this.enabled.boroughReportLink = false;
-    const _this = this;
-    $timeout(function () {
-      _this.boroughReportLinkForcedToDisabled = false;
-      _this.enableReportLink();
-    }, 5000)
-  };
-
-  this.enableReportLink = function () {
-    if (!this.boroughReportLinkForcedToDisabled && this.programmeId) {
-      this.linkLabel = this.DOWNLOAD;
+  enableReportLink () {
+    if (!this.boroughReportLinkForcedToDisabled && this.programmeIds.length) {
       this.enabled.boroughReportLink = true
     }
   };
 
+  getFiltersObject() {
+    let filtersObject = [];
+    _.forEach(this.filterDropDowns, (filterDropDown, key) => {
+        this.processSelected(filterDropDown, key, filtersObject);
+    });
+    let programmeFilter = {
+      'filter':'Programme',
+      'parameters': this.programmeIds
+    };
+    filtersObject.push(programmeFilter);
+    return filtersObject;
+  }
 
-  this.enable = function () {
-    this.selectedReportType = {name: null, description: 'SELECT REPORT TYPE'};
-    //programme
-    this.selectedProgramme = {name: null, description: 'SELECT A PROGRAMME'};
-    this.enabled.programmeSelector = false;
-    this.programmeId = null;
-    this.updateEnableElements();
+  processSelected(filterDropDown, key, filtersObject) {
+    let filter = {
+      'filter': key,
+      'parameters': []
+    };
+    _.forEach(filterDropDown, (key, value) => {
+      if (key.model == true) {
+        filter.parameters.push(key.id);
+      }
+    });
+
+    if(this.filterSingleSelectValues[key]){
+      filter.parameters.push(this.filterSingleSelectValues[key]);
+    }
+
+    if(filter.parameters.length) {
+      filtersObject.push(filter);
+    }
+  }
+
+  downloadCSV () {
+    if(!this.isFormValid()){
+      return;
+    }
+    this.boroughReportLinkForcedToDisabled = true;
+    this.enabled.boroughReportLink = false;
+
+    //TODO we can use service methods instead of url params. It was a direct html link before but now we don't need it
+    //TODO form this.filters object from items selected in checkboxes!
+    this.ReportService.generateReportWithParameters(this.selectedReportType.name, this.getFiltersObject())
+      .then((content) => {
+        if(this.poll && !this.poll.isStopped){
+          //Stop to check results immediately, not after a long timeout if polling was running for a long time already;
+          this.poll.stop();
+        }
+        this.startPolling();
+        this.resetFilters();
+        this.boroughReportLinkForcedToDisabled = false;
+      })
+      .catch(err => {
+        let errInfo = err.data || {};
+        this.ConfirmationDialog.warn(errInfo.description || 'Report cannot be produced!');
+      })
+  }
+
+  resetFilters() {
+    this.showProgrammeFilter = false;
+    this.selectedReportType = null;
+    this.programmeIds = [];
+    this.filterSingleSelectValues = {};
+    this.selectReportType(this.selectedReportType);
+  }
+
+  isAnyFilterApplied() {
+    if(this.selectedReportType!=null) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  startPolling(){
+    this.poll = this.ReportService.pollReports((rsp)=>{
+      console.log('rsp', rsp.data);
+      this.generatedReports = rsp.data;
+      this.pendingReportsCount = _.filter(this.generatedReports, {status: 'inProgress'}).length;
+      console.log('this.pendingReportsCount', this.pendingReportsCount);
+      if(this.pendingReportsCount === 0){
+        this.poll.stop();
+      }
+    });
+  }
+
+  $onDestroy () {
+    console.log('on destroy', this.poll);
+    if(this.poll){
+      this.poll.stop();
+    }
+  };
+
+  isFormValid(){
+    return this.selectedReportType && this.programmeIds.length && !this.hasTooManyPendingReports() && !this.hasSqlQueryParamsMissing();
+  }
+
+  hasSqlQueryParamsMissing(){
+    return _.some((this.selectedReportType || {}).filters, f => {
+      return f.sqlFilter && f.singleSelect && this.filterSingleSelectValues[f.name] == null;
+    });
   }
 }
 
-ReportsCtrl.$inject = ['$timeout', 'ProgrammeService', 'FeatureToggleService', '$q', 'config', 'programmes', 'reports'];
+ReportsCtrl.$inject = ['ProgrammeService', 'FeatureToggleService', '$q', 'config', 'ReportService', 'ConfirmationDialog', 'UserService', 'TemplateService'];
+
 
 angular.module('GLA')
-  .controller('ReportsCtrl', ReportsCtrl);
+  .component('reportsPage', {
+    templateUrl: 'scripts/pages/reports/reports.html',
+    bindings: {
+      envVars: '<',
+      programmes: '<',
+      reports: '<',
+      programmeReportEnabled: '<',
+      affordableHousingReportEnabled: '<',
+      boroughReportEnabled: '<'
+    },
+    controller: ReportsCtrl
+  });

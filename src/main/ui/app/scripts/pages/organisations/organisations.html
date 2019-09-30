@@ -8,13 +8,13 @@
       REQUEST ACCESS<span class="glyphicon glyphicon-plus"></span>
     </button>
 
-    <button permission set-permission="{only: 'org.manage.register'}"
-            ui-sref="organisations-new" class="btn btn-primary btn-md mleft10">
+    <button permission set-permission="{only: 'org.manage.approve'}"
+            ui-sref="organisation.new" class="btn btn-primary btn-md mleft10">
       REGISTER NEW<span class="glyphicon glyphicon-plus"></span>
     </button>
 
-    <button permission set-permission="{only: 'org.manage.create.profile'}"
-            ui-sref="organisations-new-profile" class="btn btn-primary btn-md mleft10">
+    <button permission permission-except="'org.manage.approve'"
+            ui-sref="organisation.new-profile" class="btn btn-primary btn-md mleft10">
       CREATE NEW PROFILE<span class="glyphicon glyphicon-plus"></span>
     </button>
   </div>
@@ -47,13 +47,11 @@
         on-change="$ctrl.search()"></checkbox-filter>
     </div>
 
-
-    <div class="col-sm-6 col-md-2 reg-stat search-filter">
-      <div>User reg. status</div>
-      <checkbox-filter
-        id="user-reg-status"
-        filter-dropdown-items="$ctrl.userRegStatusDropdown"
-        on-change="$ctrl.search()"></checkbox-filter>
+    <div ng-if="$ctrl.canFilterByTeams" class="col-sm-6 col-md-2 team-filter">
+      <div class="text-align-left">Team</div>
+      <checkbox-filter filter-dropdown-items="$ctrl.teamsDropdown"
+         on-change="$ctrl.search($event)"
+         grouped="true"></checkbox-filter>
     </div>
 
     <div class="col-sm-12 col-md-12 col-lg-1" ng-class="{'reset-column' : $ctrl.showReset}">
@@ -75,10 +73,6 @@
 
 
     <div class="row">
-      <div class="col-xs-12 org-search-result-message no-padding" ng-if="$ctrl.user.approved && $ctrl.orgCollection.length == 0">
-        There are no {{$ctrl.status}} registrations.
-      </div>
-
       <div class="col-xs-12 org-table table-responsive no-padding">
 
         <table class="table table-hover table-bordered table-striped organisations-table table-selectable-row">
@@ -103,8 +97,8 @@
                     ng-class="{reverse: $ctrl.sortReverse}"></span>
             </th>
             <th>
-              PRIMARY CONTACT
-              <span class="sortorder" ng-if="$ctrl.sortByName === 'email'" ng-class="{reverse: $ctrl.sortReverse}"></span>
+              TEAM
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'teamName'" ng-class="{reverse: $ctrl.sortReverse}"></span>
             </th>
             <th>
               SAP ID
@@ -114,8 +108,7 @@
               ORG. STATUS
             </th>
             <th>
-              User reg. status
-              <span class="sortorder" ng-if="$ctrl.sortByName === 'userRegStatus'" ng-class="{reverse: $ctrl.$ctrl.sortReverse}"></span>
+              GLA Watching
             </th>
           </tr>
           </thead>
@@ -123,13 +116,13 @@
           <tbody>
           <tr ng-repeat="row in $ctrl.orgCollection" ng-click="$ctrl.getDetails(row.id)">
             <td>{{row.id}}</td>
-            <td>{{row.name}}</td>
+            <td class="org-name">{{row.name}}</td>
             <td>{{$ctrl.organisationTypes[row.entityType]}}</td>
             <td>{{row.managingOrganisationName}}</td>
-            <td>{{row.email}}</td>
+            <td>{{row.teamName}}</td>
             <td>{{row.sapVendorId}}</td>
             <td>{{row.status}}</td>
-            <td class="registration-status-{{row.userRegStatus.toLowerCase()}}">{{row.userRegStatus}}</td>
+            <td><a ng-click="$event.stopPropagation(); $ctrl.toggleWatch(row)">{{$ctrl.watchedOrganisations[row.id] ? 'Stop watching' : 'Watch'}}</a></td>
           </tr>
           </tbody>
         </table>

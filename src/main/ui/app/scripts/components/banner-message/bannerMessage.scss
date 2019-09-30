@@ -1,0 +1,33 @@
+.gla-banner-message {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  z-index: 1001;
+  font-size: 13px;
+  background-color: white;
+
+  a,
+  a:hover,
+  a:focus,
+  a:active:hover,
+  a:active:focus {
+    color: $accent-color;
+    text-decoration: none;
+    font-family: $font-family-bold;
+  }
+
+  .close-button{
+    cursor: pointer;
+    font-size: 18px;
+    color: #777777;
+  }
+
+  .banner-message-text{
+    text-align: left;
+    flex-grow: 1;
+    i {
+      color: $red;
+    }
+  }
+}

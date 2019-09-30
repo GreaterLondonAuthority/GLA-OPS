@@ -7,23 +7,21 @@
  */
 package uk.gov.london.ops.domain.template;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import uk.gov.london.ops.domain.project.Project;
 import uk.gov.london.ops.domain.project.ProjectBlockType;
+import uk.gov.london.ops.payment.PaymentSource;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.common.GlaUtils.listToCsString;
 
 /**
  * Created by chris on 09/12/2016.
@@ -37,16 +35,21 @@ import javax.persistence.SequenceGenerator;
 
 @JsonSubTypes({
         @JsonSubTypes.Type(value = GrantSourceTemplateBlock.class),
+        @JsonSubTypes.Type(value = IndicativeGrantTemplateBlock.class),
         @JsonSubTypes.Type(value = MilestonesTemplateBlock.class),
         @JsonSubTypes.Type(value = OutputsTemplateBlock.class),
         @JsonSubTypes.Type(value = QuestionsTemplateBlock.class),
         @JsonSubTypes.Type(value = ReceiptsTemplateBlock.class),
-        @JsonSubTypes.Type(value = RisksTemplateBlock.class)
+        @JsonSubTypes.Type(value = RisksTemplateBlock.class),
+        @JsonSubTypes.Type(value = FundingTemplateBlock.class),
+        @JsonSubTypes.Type(value = LearningGrantTemplateBlock.class),
+        @JsonSubTypes.Type(value = OutputsCostsTemplateBlock.class),
+        @JsonSubTypes.Type(value = SubcontractingTemplateBlock.class),
+        @JsonSubTypes.Type(value = FundingClaimsTemplateBlock.class)
 })
 
 @DiscriminatorValue("BASE")
-public class TemplateBlock implements Comparable {
-
+public class TemplateBlock implements Serializable, Comparable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "template_block_seq_gen")
@@ -64,10 +67,17 @@ public class TemplateBlock implements Comparable {
     protected Integer displayOrder;
 
     @Column(name = "block_appears_on_status")
-    private Project.Status blockAppearsOnStatus;
+    private String blockAppearsOnStatus;
 
     @Column(name = "info_message")
     private String infoMessage;
+
+    @Column(name = "grant_types")
+    private String paymentSourcesString;
+
+    @JsonIgnore
+    @Column(name = "block_data")
+    protected String blockData;
 
     public TemplateBlock() {
     }
@@ -124,11 +134,11 @@ public class TemplateBlock implements Comparable {
         this.displayOrder = displayOrder;
     }
 
-    public Project.Status getBlockAppearsOnStatus() {
+    public String getBlockAppearsOnStatus() {
         return blockAppearsOnStatus;
     }
 
-    public void setBlockAppearsOnStatus(Project.Status blockAppearsOnStatus) {
+    public void setBlockAppearsOnStatus(String blockAppearsOnStatus) {
         this.blockAppearsOnStatus = blockAppearsOnStatus;
     }
 
@@ -138,6 +148,42 @@ public class TemplateBlock implements Comparable {
 
     public void setInfoMessage(String infoMessage) {
         this.infoMessage = infoMessage;
+    }
+
+    public String getPaymentSourcesString() {
+        return paymentSourcesString;
+    }
+
+    public void setPaymentSourcesString(String paymentSourcesString) {
+        this.paymentSourcesString = paymentSourcesString;
+    }
+
+    public List<String> getGrantTypes() {
+        return this.getPaymentSources().stream().map(e -> e.getGrantType().name()).collect(Collectors.toList());
+    }
+
+    // these are really PaymentSources
+    // left for template compatibility atm
+    public void setGrantTypes(List<String> grantTypes) {
+        if (paymentSourcesString == null) {
+            this.paymentSourcesString = listToCsString(grantTypes);
+        }
+    }
+
+    public Set<PaymentSource> getPaymentSources() {
+        if (paymentSourcesString == null || paymentSourcesString.length() ==0) {
+            return Collections.emptySet();
+        }
+        List<String> strings = Arrays.asList(paymentSourcesString.split(","));
+        return strings.stream().map(m -> PaymentSource.valueOf(m)).collect(Collectors.toSet());
+    }
+
+    public String getBlockData() {
+        return blockData;
+    }
+
+    public void setBlockData(String blockData) {
+        this.blockData = blockData;
     }
 
     /**
@@ -180,14 +226,15 @@ public class TemplateBlock implements Comparable {
         clone.setBlockAppearsOnStatus(this.getBlockAppearsOnStatus());
         clone.setBlockDisplayName(this.getBlockDisplayName());
         clone.setDisplayOrder(this.getDisplayOrder());
+        clone.setInfoMessage(this.getInfoMessage());
+        clone.setPaymentSourcesString(this.getPaymentSourcesString());
+        clone.setBlockData(this.getBlockData());
         updateCloneFromBlock(clone);
         return clone;
     }
 
     // subclasses override this method
     public void updateCloneFromBlock(TemplateBlock clone) {
-
-
 
     }
 }

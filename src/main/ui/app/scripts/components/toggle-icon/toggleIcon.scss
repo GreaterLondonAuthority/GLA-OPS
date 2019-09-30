@@ -1,0 +1,11 @@
+toggle-icon {
+  display: inline-block;
+  cursor: pointer;
+
+  .glyphicon {
+    color: $accent-color;
+    //margin-right: 5px;
+  }
+}
+
+

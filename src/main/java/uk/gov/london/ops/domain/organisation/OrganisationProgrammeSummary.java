@@ -10,10 +10,11 @@ package uk.gov.london.ops.domain.organisation;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Entity(name = "v_organisation_programmes")
-public class OrganisationProgrammeSummary {
+@Entity(name = "v_organisation_programmes_with_budgets")
+public class OrganisationProgrammeSummary implements Serializable {
 
     @Id
     private Integer id;

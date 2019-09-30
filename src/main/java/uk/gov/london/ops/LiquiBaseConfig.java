@@ -16,14 +16,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import uk.gov.london.ops.domain.project.NamedProjectBlock;
 
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by dieppa on 05/04/17.
@@ -69,11 +69,12 @@ public class LiquiBaseConfig implements InfoContributor {
     public Map<String, Object> summariseLiquibase() {
 
         List<Map<String, Object>> data = getChangeLogInfo();
+        List<Map<String, Object>> filteredData = data.stream().filter(entry -> !((String)entry.get("FILENAME")).contains("db.changelog-createViews.xml")).collect(Collectors.toList());
         int numberNotExecuted = 0;
         Timestamp lastExecutedTime = null;
         Object lastExecutedFileName = null;
 
-        for(Map<String, Object> entry: data) {
+        for(Map<String, Object> entry: filteredData) {
             Object o = entry.get("DATEEXECUTED");
             if(o instanceof Timestamp) {
                 Timestamp t = (Timestamp)o;
@@ -91,7 +92,7 @@ public class LiquiBaseConfig implements InfoContributor {
         }
 
         Map<String, Object> summary = new TreeMap<>();
-        summary.put("numberEntries", data.size());
+        summary.put("numberEntries", filteredData.size());
         summary.put("lastExecutedFileName", lastExecutedFileName);
         summary.put("lastExecutedFileTime", lastExecutedTime);
         summary.put("numberNotExecuted", numberNotExecuted);

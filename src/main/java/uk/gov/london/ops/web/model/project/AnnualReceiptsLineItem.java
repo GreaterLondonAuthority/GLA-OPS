@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.web.model.project;
 
-import uk.gov.london.ops.util.GlaOpsUtils;
+import uk.gov.london.common.GlaUtils;
 
 import java.math.BigDecimal;
 
@@ -73,10 +73,10 @@ public class AnnualReceiptsLineItem {
     }
 
     public void addActual(BigDecimal actual) {
-        this.actual = GlaOpsUtils.addBigDecimals(this.actual, actual);
+        this.actual = GlaUtils.addBigDecimals(this.actual, actual);
     }
 
     public void addForecast(BigDecimal forecast) {
-        this.forecast = GlaOpsUtils.addBigDecimals(this.forecast, forecast);
+        this.forecast = GlaUtils.addBigDecimals(this.forecast, forecast);
     }
 }

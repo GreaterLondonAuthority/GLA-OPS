@@ -9,8 +9,8 @@ package uk.gov.london.ops.domain.template;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import uk.gov.london.ops.domain.project.ProjectBlockType;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -22,8 +22,8 @@ public class MilestonesTemplateBlock extends TemplateBlock {
 
     public enum EvidenceApplicability {NOT_APPLICABLE, NEW_MILESTONES_ONLY, ALL_MILESTONES}
 
-    @JoinData(joinType = Join.JoinType.OneToMany, sourceTable = "template_block", targetColumn = "id", targetTable = "processing_route",
-            comment = "")
+    @JoinData(joinType = Join.JoinType.OneToMany, sourceTable = "template_block", sourceColumn = "id",
+            targetColumn = "template_block_id", targetTable = "processing_route", comment = "")
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = ProcessingRoute.class)
     @JoinColumn(name="template_block_id")
     private Set<ProcessingRoute> processingRoutes = new HashSet<>();
@@ -34,11 +34,16 @@ public class MilestonesTemplateBlock extends TemplateBlock {
     @Column(name = "milestone_description_enabled")
     private boolean descriptionEnabled;
 
+    @Column(name = "show_milestone_status")
+    private Boolean showMilestoneStatus;
+
     @Column(name = "evidence_applicability")
     @Enumerated(EnumType.STRING)
     private EvidenceApplicability evidenceApplicability;
 
-    public MilestonesTemplateBlock() {}
+    public MilestonesTemplateBlock() {
+        super(ProjectBlockType.Milestones);
+    }
 
     public MilestonesTemplateBlock(Integer displayOrder) {
         super(displayOrder, ProjectBlockType.Milestones);
@@ -94,6 +99,14 @@ public class MilestonesTemplateBlock extends TemplateBlock {
         this.evidenceApplicability = evidenceApplicability;
     }
 
+    public Boolean getShowMilestoneStatus() {
+        return showMilestoneStatus;
+    }
+
+    public void setShowMilestoneStatus(Boolean showMilestoneStatus) {
+        this.showMilestoneStatus = showMilestoneStatus;
+    }
+
     @JsonIgnore
     public boolean hasDefaultProcessingRoute() {
         return getDefaultProcessingRoute() != null;
@@ -113,6 +126,8 @@ public class MilestonesTemplateBlock extends TemplateBlock {
         MilestonesTemplateBlock cloned = (MilestonesTemplateBlock) clone;
         cloned.setMaxEvidenceAttachments(this.getMaxEvidenceAttachments());
         cloned.setDescriptionEnabled(this.isDescriptionEnabled());
+        cloned.setShowMilestoneStatus(this.getShowMilestoneStatus());
+        cloned.setEvidenceApplicability(this.getEvidenceApplicability());
         Set<ProcessingRoute> source = this.getProcessingRoutes();
         for (ProcessingRoute processingRoute : source) {
             ProcessingRoute cloneRoute = new ProcessingRoute();

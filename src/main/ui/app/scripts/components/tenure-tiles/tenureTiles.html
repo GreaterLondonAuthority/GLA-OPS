@@ -1,5 +1,5 @@
-<div class="row" style="margin: 30px 0 0 0" vertilize-container>
+<div class="row tenure-tiles" vertilize-container>
   <div class="col-xs-3 grant-column" ng-repeat="grant in $ctrl.tenures track by grant.name">
-    <grant-block items="grant.items"><div vertilize>{{ grant.name }}</div></grant-block>
+    <tile items="grant.items"><div vertilize>{{ grant.name }}</div></tile>
   </div>
 </div>

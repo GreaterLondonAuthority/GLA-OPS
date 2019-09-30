@@ -8,8 +8,15 @@
 package uk.gov.london.ops.domain;
 
 public enum EntityType {
+    annualSubmission,
+    annualSubmissionBlock,
+    assessmentTemplate,
+    internalRiskBlock,
     ledger,
     organisation,
+    payment,
+    paymentGroup,
     project,
-    paymentGroup
+    projectBlock,
+    user
 }

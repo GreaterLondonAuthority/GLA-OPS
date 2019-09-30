@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import uk.gov.london.ops.domain.OpsEntity;
 import uk.gov.london.ops.domain.template.Programme;
 import uk.gov.london.ops.service.ManagedEntityInterface;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;

@@ -1,124 +1,118 @@
 <div class="reports">
   <page-header class="no-padding mbottom10">Reports</page-header>
 
-  <well>
-    <section-header>ReportServer</section-header>
-    <div>Access to <a ng-href="{{envVars['reportServer-url']}}" target="_blank">report server</a> is restricted. If you
-      need access contact your manager.
-    </div>
+  <well class="report-server" ng-if="$ctrl.canRunJasper">
+    <section-header>OPS reporting tool</section-header>
+    <div>Reports can be created in the <a ng-href="{{$ctrl.envVars['reportServer-url']}}" target="_blank">OPS reporting tool</a>.
+      Contact the GLA OPS team if you require a log-in.</div>
   </well>
 
 
-  <well class="mtop30">
-    <section-header>Export reports</section-header>
-    <div class="row form">
-      <div class="col-md-2 form-group">
-        <label for="reportOption">Report Type</label><br/>
-        <ui-select id="reportOption"
-                   name="reportOption"
-                   class="search-dropdown"
-                   ng-model="$ctrl.selectedReportType"
-                   search-enabled="false"
-                   on-select="$ctrl.selectReportType($select.selected)"
-                   required>
-          <ui-select-match>{{$ctrl.selectedReportType.description}}</ui-select-match>
-          <ui-select-choices repeat="reportType in $ctrl.reportTypes">
-            <span>{{reportType.description}}</span>
-          </ui-select-choices>
-        </ui-select>
+  <well class="mtop30 export-reports">
+    <div ng-if="!$ctrl.reportsAvailable">
+      There are no reports available for you to download.
+    </div>
+    <div ng-if="$ctrl.hasTooManyPendingReports()" class="error">
+      You can’t generate anymore reports for download as the limit of 4 concurrent reports has been reached. Once a report is ready to download you can generate a new one.
+    </div>
+    <div ng-if="$ctrl.reportsAvailable" class="reports-filter">
+      <section-header>Export reports</section-header>
+      <div class="row form">
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="reportOption">Report Title</label><br/>
+          <ui-select id="reportOption"
+                     name="reportOption"
+                     class="search-dropdown"
+                     ng-model="$ctrl.selectedReportType"
+                     search-enabled="false"
+                     on-select="$ctrl.selectReportType($select.selected)"
+                     placeholder="None selected">
+            <ui-select-match placeholder="None selected">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="reportType in $ctrl.reportTypes | orderBy:'name'">
+              <span>{{reportType.name}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+        <div class="col-xs-12 report-description" ng-if="$ctrl.selectedReportType.description">{{$ctrl.selectedReportType.description}}</div>
       </div>
 
-      <div class="col-md-2 form-group" ng-if="$ctrl.selectedReportType.showMilestonesDropdown">
-        <label for="milestoneOption">Milestone</label><br/>
-        <ui-select id="milestoneOption"
-                   name="milestone-option-name"
-                   class="search-dropdown"
-                   ng-model="$ctrl.selectedMilestone"
-                   on-select="$ctrl.onFormChange()"
-                   search-enabled="false">
-          required>
-          <ui-select-match>{{$ctrl.selectedMilestone.description}}</ui-select-match>
-          <ui-select-choices repeat="milestone in $ctrl.milestones">
-            <span>{{milestone.description}}</span>
-          </ui-select-choices>
-        </ui-select>
-      </div>
+      <div class="row form">
+        <div class="col-md-4 col-sm-12 form-group" ng-if="$ctrl.showProgrammeFilter">
+          <label for="programmeOption">Programme</label><br/>
+          <checkbox-filter id="programmeOption"
+                           is-disabled="!$ctrl.enabled.programmeSelector"
+                           filter-dropdown-items="$ctrl.filteredProgrammes"
+                           on-change="$ctrl.selectProgramme()"></checkbox-filter>
 
-      <div class="col-md-2 form-group">
-        <label for="programmeOption">Programme</label><br/>
-        <ui-select id="programmeOption"
-                   name="programme-option-name"
-                   class="search-dropdown"
-                   ng-model="$ctrl.selectedProgramme"
-                   search-enabled="false"
-                   on-select="$ctrl.selectProgramme($select.selected)"
-                   ng-disabled="!$ctrl.enabled.programmeSelector">
-          required>
-          <ui-select-match>{{$ctrl.selectedProgramme.description}}</ui-select-match>
-          <ui-select-choices repeat="programme in $ctrl.filteredProgrammes">
-            <span>{{programme.description}}</span>
-          </ui-select-choices>
-        </ui-select>
-      </div>
+        </div>
 
-      <div class="col-md-2 form-group">
-        <label for="projectTypeOption">Project Type</label><br/>
-        <ui-select id="projectTypeOption"
-                   name="project-type-option"
-                   class="search-dropdown"
-                   ng-model="$ctrl.selectedProjectType"
-                   search-enabled="false"
-                   on-select="$ctrl.selectProjectType($select.selected)"
-                   ng-disabled="!$ctrl.enabled.projectType">
-          <ui-select-match>{{$ctrl.selectedProjectType.description}}</ui-select-match>
-          <ui-select-choices repeat="projectType in $ctrl.projectTypes">
-            <span>{{projectType.description}}</span>
-          </ui-select-choices>
-        </ui-select>
-      </div>
+        <div class="col-md-4 col-sm-12 form-group filter" ng-repeat="filter in $ctrl.selectedReportType.filters" ng-if="filter.name != 'Programme' && $ctrl.programmeIds.length">
+          <label ng-attr-for="{{filter.name}}">{{$ctrl.getLabel(filter)}}</label><br/>
+          <checkbox-filter ng-attr-id="{{filter.name}}"
+                           ng-if="!filter.singleSelect"
+                           filter-dropdown-items="$ctrl.getFilterDropDowns(filter)"
+                           is-disabled="!$ctrl.getFilterDropDowns(filter).length"></checkbox-filter>
 
+          <ui-select ng-attr-id="{{filter.name}}"
+                     ng-if="filter.singleSelect"
+                     class="search-dropdown"
+                     ng-model="$ctrl.filterSingleSelectValues[filter.name]"
+                     search-enabled="false"
+                     ng-disabled="!$ctrl.getFilterDropDowns(filter).length"
+                     placeholder="None selected">
+            <ui-select-match placeholder="None selected">{{$select.selected.label}}</ui-select-match>
+            <ui-select-choices repeat="item.id as item in $ctrl.getFilterDropDowns(filter)">
+              <span>{{item.label}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
 
-      <div class="col-md-2 form-group">
-        <label for="projectStatus">Project Status</label><br/>
-        <ui-select id="projectStatus"
-                   name="project-status"
-                   class="search-dropdown"
-                   ng-model="$ctrl.selectedProjectStatus"
-                   search-enabled="false"
-                   on-select="$ctrl.selectProjectStatus($select.selected)"
-                   ng-disabled="!$ctrl.enabled.projectStatus">
-          <ui-select-match>{{$select.selected.description}}</ui-select-match>
-          <ui-select-choices repeat="status in $ctrl.projectStatus">
-            <span>{{status.description}}</span>
-          </ui-select-choices>
-        </ui-select>
-      </div>
-
-      <div class="col-md-2 form-group">
-        <label for="borough">Borough</label><br/>
-        <ui-select id="borough"
-                   name="borough-name"
-                   class="search-dropdown"
-                   ng-model="$ctrl.selectedBorough"
-                   search-enabled="false"
-                   on-select="$ctrl.selectBorough($select.selected)"
-                   ng-disabled="!$ctrl.enabled.borough">
-          <ui-select-match>{{$select.selected.description}}</ui-select-match>
-          <ui-select-choices repeat="borough in $ctrl.boroughs">
-            <span>{{borough.description}}</span>
-          </ui-select-choices>
-        </ui-select>
-      </div>
-
-
-      <div class="col-md-2 form-group" ng-class="{'col-md-offset-10': $ctrl.selectedReportType.showMilestonesDropdown}">
-        <a class="link downloadButton btn btn-primary btn-md form-control"
-           ng-disabled="!$ctrl.enabled.boroughReportLink"
-           ng-href="{{$ctrl.reportUrl}}"
-           ng-click="$ctrl.generatingLink()">
-          {{$ctrl.linkLabel}}<span class="glyphicon glyphicon-download-alt"/>
-        </a>
+        <div class="col-md-4 col-sm-12 reset-column">
+          <a
+            ng-if="$ctrl.isAnyFilterApplied()"
+            class="action-buttons action-buttons-reset"
+            ng-click="$ctrl.resetFilters()"><span class="glyphicon glyphicon-remove"></span>Reset all</a>
+        </div>
       </div>
     </div>
   </well>
+  <div class="text-center">
+    <a class="link downloadButton btn btn-primary btn-md form-control" id="generate-button"
+       ng-disabled="!$ctrl.isFormValid()"
+       ng-attr-data-url="{{$ctrl.reportUrl}}"
+       ng-click="$ctrl.downloadCSV()">
+      {{$ctrl.linkLabel}}<span class="glyphicon glyphicon-download-alt"/>
+    </a>
+  </div>
+
+  <div class="mtop20">
+    <div class="table-responsive mtop10">
+      <table class="table table-bordered table-striped reports-table">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>START DATE</th>
+          <th>START TIME</th>
+          <th>REPORT NAME</th>
+          <th class="status-col">STATUS</th>
+          <th>ACTIONS</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="r in $ctrl.generatedReports | orderBy: '-startTime'">
+          <td>{{r.startTime | date: "dd/MM/yyyy"}}</td>
+          <td>{{r.startTime | date: "HH:mm"}}</td>
+          <td>{{r.name}}</td>
+          <td><div class="reports-status-text">{{$ctrl.reportStatusMap[r.status] || r.status}}</div> <spinner style="float:left;" ng-if="r.status == 'inProgress'" text="''"></spinner></td>
+          <td>
+            <a ng-if="r.status === 'Complete'"
+               ng-href="/api/v1/file/{{r.attachmentFileId}}"
+               download
+               target="_blank">Download</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>

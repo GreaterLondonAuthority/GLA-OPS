@@ -12,6 +12,10 @@ class NewOrganisationProfileCtrl extends NewOrganisationCtrl {
   constructor($injector, managingOrganisations) {
     super($injector);
     this.managingOrganisations = managingOrganisations;
+  }
+
+  $onInit() {
+    super.$onInit();
     this.title = 'Create a new organisation profile';
     this.btnText = 'REQUEST NEW PROFILE';
     this.isProfile = true;
@@ -29,16 +33,18 @@ class NewOrganisationProfileCtrl extends NewOrganisationCtrl {
 
     _.assign(this.labels, {
       orgType: 'Organisation type for this profile',
-      orgName: 'New organisation profile name'
+      orgName: 'New organisation profile name',
+      managingOrg: 'The GLA department you will be dealing with (managing organisation)'
     });
 
+    this.isCopyOrgEnabled = this.UserService.hasPermission('org.manage.copy');
 
-    if(this.userOrganisations.length === 1){
+    if(this.isCopyOrgEnabled && this.userOrganisations.length === 1){
       this.$rootScope.showGlobalLoadingMask = true;
       this.orgToCopyFrom = this.userOrganisations[0].id;
       this.copyFrom(this.orgToCopyFrom);
     } else {
-      this.org.managingOrganisationId = this.$state.params.managingOrgId * 1;
+      this.org.managingOrganisationId = this.$state.params.managingOrgId? this.$state.params.managingOrgId * 1 : null;
     }
   }
 
@@ -63,6 +69,8 @@ class NewOrganisationProfileCtrl extends NewOrganisationCtrl {
 }
 
 NewOrganisationProfileCtrl.$inject = ['$injector', 'managingOrganisations'];
+
+export default NewOrganisationProfileCtrl;
 
 
 angular.module('GLA')

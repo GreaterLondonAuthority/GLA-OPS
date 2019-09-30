@@ -53,10 +53,6 @@ function UnitsService($http, config, ReportService) {
       return $http.get(`${config.basePath}/projects/${projectId}/units/metadata`);
     },
 
-    save(projectId, blockId, block, releaseLock){
-      return $http.put(`${config.basePath}/projects/${projectId}/units/${blockId}?releaseLock=${!!releaseLock}`, block);
-    },
-
     prepareReportData(left, right, tenureIdToName) {
       let reportData = {};
       let tenureSummariesToCompare = [];
@@ -96,8 +92,8 @@ function UnitsService($http, config, ReportService) {
       reportData.buildTypeTotalText = {}
       let buildTypeLeft = [];
       let total = 0;
-      if(left){
-        total = left.newBuildUnits * 1 + left.refurbishedUnits * 1;
+      if (left) {
+        total = (left.newBuildUnits || 0) * 1 + (left.refurbishedUnits || 0) * 1;
         buildTypeLeft.push({
           id: 1,
           buildType: 'UNITS',
@@ -106,20 +102,20 @@ function UnitsService($http, config, ReportService) {
           total: total,
           comparisonId: left.comparisonId
         });
-        reportData.buildTypeTotalText.left  = {text: 'The total build type split must match the total of '+ total +' units in the project'};
+        reportData.buildTypeTotalText.left = {text: 'The total build type split must match the total of ' + total + ' units in the project'};
       }
       let buildTypeRight = [];
-      if(right){
-          total = right.newBuildUnits * 1 + right.refurbishedUnits * 1;
-          buildTypeRight.push({
-            id: 1,
-            buildType: 'UNITS',
-            newBuildUnits: right.newBuildUnits,
-            refurbishedUnits: right.refurbishedUnits,
-            total: total,
-            comparisonId: right.comparisonId
-          });
-          reportData.buildTypeTotalText.right  = {text: 'The total build type split must match the total of '+ total +' units in the project'};
+      if (right) {
+        total = (right.newBuildUnits || 0) * 1 + (right.refurbishedUnits || 0) * 1;
+        buildTypeRight.push({
+          id: 1,
+          buildType: 'UNITS',
+          newBuildUnits: right.newBuildUnits,
+          refurbishedUnits: right.refurbishedUnits,
+          total: total,
+          comparisonId: right.comparisonId
+        });
+        reportData.buildTypeTotalText.right = {text: 'The total build type split must match the total of ' + total + ' units in the project'};
       }
 
       let buildTypeFilter = function (row) {
@@ -131,7 +127,7 @@ function UnitsService($http, config, ReportService) {
       reportData.byNumberOfPeopleText = {};
       let byNumberOfPeopleLeft = [];
       if(left){
-        total = 1 * left.type1Units + 1 * left.type2Units + 1 * left.type3Units + 1 * left.type4Units + 1 * left.type5Units + 1 * left.type6Units + 1 * left.type7Units + 1 * left.type8Units;
+        total = 1 * (left.type1Units || 0) + 1 * (left.type2Units || 0) + 1 * (left.type3Units || 0) + 1 * (left.type4Units || 0) + 1 * (left.type5Units || 0) + 1 * (left.type6Units || 0) + 1 * (left.type7Units || 0) + 1 * (left.type8Units || 0);
         byNumberOfPeopleLeft = [{
           id: 1,
           people: 'UNITS',
@@ -150,7 +146,7 @@ function UnitsService($http, config, ReportService) {
       }
       let byNumberOfPeopleRight = [];
       if(right){
-        total = 1 * right.type1Units + 1 * right.type2Units + 1 * right.type3Units + 1 * right.type4Units + 1 * right.type5Units + 1 * right.type6Units + 1 * right.type7Units + 1 * right.type8Units
+        total = 1 * (right.type1Units || 0) + 1 * (right.type2Units || 0) + 1 * (right.type3Units || 0) + 1 * (right.type4Units || 0) + 1 * (right.type5Units || 0) + 1 * (right.type6Units || 0) + 1 * (right.type7Units || 0) + 1 * (right.type8Units || 0);
         byNumberOfPeopleRight = [{
           id: 1,
           people: 'UNITS',
@@ -190,15 +186,23 @@ function UnitsService($http, config, ReportService) {
     },
 
     hiddenSalesColumns(unitsMetadata) {
-      let hasSingleMarketType = this.uniqueSalesMarketTypes(unitsMetadata).length === 1;
       let hasLegacySalesMarketType =  this.hasMarketType(unitsMetadata, this.LEGACY_SALES_MARKET_TYPE_ID);
 
       let hiddenFields = {
-        firstTrancheSales: hasSingleMarketType && hasLegacySalesMarketType,
         discountOffMarketValue: !this.hasMarketType(unitsMetadata, this.DISCOUNTED_RATE_MARKET_TYPE_ID),
         netWeeklyRent: !hasLegacySalesMarketType
       };
       return hiddenFields
+    },
+
+    enrichTableEntry(tableEntryInsideBlock, tenureIdToMetadataEntry, ){
+      let metadataApiTenureType = tenureIdToMetadataEntry[tableEntryInsideBlock.tenureId];
+      if(metadataApiTenureType) {
+        let metadataApiMarketType = _.find(metadataApiTenureType.marketTypes, {id: tableEntryInsideBlock.marketType.id}) || {};
+        tableEntryInsideBlock.tenureName = metadataApiTenureType.name;
+        tableEntryInsideBlock.marketType.name = metadataApiMarketType.name || tableEntryInsideBlock.marketType.name;
+      }
+      return tableEntryInsideBlock;
     }
   };
 }

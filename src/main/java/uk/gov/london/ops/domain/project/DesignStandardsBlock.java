@@ -8,9 +8,9 @@
 package uk.gov.london.ops.domain.project;
 
 import org.springframework.util.StringUtils;
-import uk.gov.london.ops.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static uk.gov.london.ops.spe.SimpleProjectExportConstants.ReportPrefix;
+import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.ReportPrefix;
 
 /**
  * Created by chris on 10/11/2016.
@@ -86,11 +86,6 @@ public class DesignStandardsBlock extends NamedProjectBlock {
         }
     }
 
-    @Override
-    public boolean allowMultipleVersions() {
-        return true;
-    }
-
     @Transient
     @Override
     public boolean isComplete() {
@@ -131,4 +126,8 @@ public class DesignStandardsBlock extends NamedProjectBlock {
         }
     }
 
+    @Override
+    public boolean isBlockRevertable() {
+        return true;
+    }
 }

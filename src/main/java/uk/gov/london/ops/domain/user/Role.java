@@ -9,69 +9,25 @@ package uk.gov.london.ops.domain.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import uk.gov.london.common.user.BaseRole;
 import uk.gov.london.ops.domain.organisation.Organisation;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Entity(name="user_roles")
-public class Role implements GrantedAuthority, Serializable {
-
-    public static final String OPS_ADMIN        = "ROLE_OPS_ADMIN";
-    public static final String GLA_ORG_ADMIN    = "ROLE_GLA_ORG_ADMIN";
-    public static final String GLA_SPM          = "ROLE_GLA_SPM";
-    public static final String GLA_PM           = "ROLE_GLA_PM";
-    public static final String GLA_FINANCE      = "ROLE_GLA_FINANCE";
-    public static final String GLA_READ_ONLY    = "ROLE_GLA_READ_ONLY";
-    public static final String ORG_ADMIN        = "ROLE_ORG_ADMIN";
-    public static final String PROJECT_EDITOR   = "ROLE_PROJECT_EDITOR";
-    public static final String TECH_ADMIN       = "ROLE_TECH_ADMIN";
-
-    public static final String OPS_ADMIN_DESC       = "OPS Admin";
-    public static final String GLA_ORG_ADMIN_DESC   = "GLA Organisation Admin";
-    public static final String GLA_SPM_DESC         = "Senior Project Manager";
-    public static final String GLA_PM_DESC          = "Project Manager";
-    public static final String GLA_FINANCE_DESC     = "GLA Finance";
-    public static final String GLA_READ_ONLY_DESC   = "GLA Read Only";
-    public static final String ORG_ADMIN_DESC       = "Organisation Admin";
-    public static final String PROJECT_EDITOR_DESC  = "Project Editor";
-    public static final String TECH_ADMIN_DESC      = "Technical Admin";
-
-    public static final List<String> ALL_ROLES = Arrays.asList(
-            OPS_ADMIN,
-            GLA_ORG_ADMIN,
-            GLA_SPM,
-            GLA_PM,
-            GLA_FINANCE,
-            GLA_READ_ONLY,
-            ORG_ADMIN,
-            PROJECT_EDITOR,
-            TECH_ADMIN
-    );
-
-    private static final Map<String, String> ROLES_DESCRIPTIONS = new HashMap<String, String>() {{
-        put(OPS_ADMIN, OPS_ADMIN_DESC);
-        put(GLA_ORG_ADMIN, GLA_ORG_ADMIN_DESC);
-        put(GLA_SPM, GLA_SPM_DESC);
-        put(GLA_PM, GLA_PM_DESC);
-        put(GLA_FINANCE, GLA_FINANCE_DESC);
-        put(GLA_READ_ONLY, GLA_READ_ONLY_DESC);
-        put(ORG_ADMIN, ORG_ADMIN_DESC);
-        put(PROJECT_EDITOR, PROJECT_EDITOR_DESC);
-        put(TECH_ADMIN, TECH_ADMIN_DESC);
-    }};
+public class Role extends BaseRole implements GrantedAuthority, Serializable {
 
     // if changing this, change v_user_summaries case statement
-    public static final List<String> THRESHOLD_ROLES =  Arrays.asList(
+    private static final List<String> THRESHOLD_ROLES = Arrays.asList(
             OPS_ADMIN,
             GLA_ORG_ADMIN,
             GLA_SPM
     );
-
-    public boolean isThresholdRole() {
-        return THRESHOLD_ROLES.contains(this.getName());
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_roles_seq_gen")
@@ -91,6 +47,9 @@ public class Role implements GrantedAuthority, Serializable {
     @Column(name="approved")
     private Boolean approved;
 
+    @Column(name="primary_org_for_user")
+    private Boolean primaryOrganisationForUser;
+
     @Column(name="approved_on")
     @Temporal(TemporalType.TIMESTAMP)
     private Date approvedOn;
@@ -108,6 +67,10 @@ public class Role implements GrantedAuthority, Serializable {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -155,11 +118,15 @@ public class Role implements GrantedAuthority, Serializable {
     }
 
     public String getDescription() {
-        return getDescription(this.name);
+        return BaseRole.getDescription(this.name);
     }
 
-    public static String getDescription(String role) {
-        return ROLES_DESCRIPTIONS.get(role);
+    public Boolean isPrimaryOrganisationForUser() {
+        return primaryOrganisationForUser == null ? false : primaryOrganisationForUser;
+    }
+
+    public void setPrimaryOrganisationForUser(Boolean primaryOrganisationForUser) {
+        this.primaryOrganisationForUser = primaryOrganisationForUser;
     }
 
     public void approve() {
@@ -183,38 +150,38 @@ public class Role implements GrantedAuthority, Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Role role = (Role) o;
-
-        if (username != null ? !username.equals(role.username) : role.username != null) return false;
-        return !(organisation != null ? !organisation.equals(role.organisation) : role.organisation != null);
-
+        return Objects.equals(name, role.name) &&
+                Objects.equals(username, role.username) &&
+                Objects.equals(organisation, role.organisation);
     }
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (organisation != null ? organisation.hashCode() : 0);
-        return result;
-    }
-
-    /**
-     * @return the complete list of valid assignable user roles.
-     */
-    public static final List<String> availableRoles() {
-        return ALL_ROLES;
+        return Objects.hash(name, username, organisation);
     }
 
     public static String getDefaultForOrganisation(Organisation organisation) {
         if (organisation.isManagingOrganisation()) {
-            return Role.GLA_PM;
-        }
-        else {
-            return Role.PROJECT_EDITOR;
+            return GLA_PM;
+        } else {
+            // if no users on this org then must be first reg
+            if (organisation.getUserEntities()== null || organisation.getUserEntities().size() == 0) {
+                return ORG_ADMIN;
+            }
+            if(organisation.isTechSupportOrganisation()) {
+                return TECH_ADMIN;
+            }
+            return PROJECT_EDITOR;
         }
     }
 
     public String getSimpleName() {
         return name.replace("ROLE_", "");
     }
+
+    public boolean isThresholdRole() {
+        return THRESHOLD_ROLES.contains(this.getName());
+    }
+
 }

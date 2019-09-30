@@ -10,7 +10,7 @@ angular.module('GLA').directive('glaHeader', function () {
   return {
     restrict: 'E',
     templateUrl: 'scripts/directives/header/gla-header.tpl.html',
-    controller: function ($scope, UserService) {
+    controller: function ($scope, UserService, MetadataService) {
       $scope.userData = UserService.currentUser();
 
       $scope.logout = function() {
@@ -25,6 +25,13 @@ angular.module('GLA').directive('glaHeader', function () {
       // Listen for logout event
       $scope.$on('user.logout', function () {
         $scope.userData = UserService.currentUser();
+      });
+
+      MetadataService.subscribe((data)=>{
+
+        $scope.$evalAsync(()=>{
+          $scope.numberOfUnreadNotifications = data.numberOfUnreadNotifications;
+        });
       });
     }
   };

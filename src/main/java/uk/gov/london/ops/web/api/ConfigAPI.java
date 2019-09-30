@@ -17,10 +17,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.london.ops.Environment;
-import uk.gov.london.ops.domain.user.Role;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static uk.gov.london.common.user.BaseRole.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -33,16 +34,33 @@ public class ConfigAPI {
     @Value("${notifications.max.display}")
     private String notificationsMaxDisplay;
 
+    @Value("${annual.submissions.first.year}")
+    private Integer annualSubmissionsFirstYear;
+
+    @Value("${annual.submissions.nb.future.years}")
+    private Integer annualSubmissionsNbFutureYears;
+
+    @Value("${annual.submissions.dpf.last.year}")
+    private Integer annualSubmissionsDpfLastYear;
+
+    @Value("${annual.submissions.agreement.url}")
+    private String annualSubmissionsAgreementUrl;
+
     @RequestMapping(value = "/config", method = RequestMethod.GET)
     @ApiOperation(value="returns a map of config values")
-    public Map<String, String> get() {
-        Map<String, String> map = new HashMap<>();
+    public Map<String, Object> get() {
+        Map<String, Object> map = new HashMap<>();
         map.put("env-name", environment.shortName());
         map.put("system-environment", environment.summary());
         map.put("ga-account", environment.gaAccount());
         map.put("reportServer-url", environment.reportServerUrl());
         map.put("about-url", environment.aboutUrl());
+        map.put("is-test-env", environment.isTestEnvironment());
         map.put("notifications-max-display", notificationsMaxDisplay);
+        map.put("annual-submissions-first-year", annualSubmissionsFirstYear);
+        map.put("annual-submissions-nb-future-years", annualSubmissionsNbFutureYears);
+        map.put("annual-submissions-dpf-last-year", annualSubmissionsDpfLastYear);
+        map.put("annual-submissions-agreement-url", annualSubmissionsAgreementUrl);
         return map;
     }
 
@@ -50,7 +68,7 @@ public class ConfigAPI {
      * Returns the log level of the specified logger path.
      */
     @RequestMapping(value="/config/logger/{name}", method = RequestMethod.GET)
-    @Secured({Role.OPS_ADMIN})
+    @Secured({OPS_ADMIN})
     public String getLogLevel(@PathVariable String name) {
         Logger logger = LoggerFactory.getLogger(name);
         if (logger instanceof ch.qos.logback.classic.Logger) {
@@ -76,7 +94,7 @@ public class ConfigAPI {
      * Sets the log level of the specified logger path.
      */
     @RequestMapping(value="/config/logger/{name}", method = RequestMethod.PUT)
-    @Secured({Role.OPS_ADMIN})
+    @Secured({OPS_ADMIN})
     public void setLogLevel(@PathVariable String name, @RequestBody String value) {
         Logger logger = LoggerFactory.getLogger(name);
         if (logger instanceof ch.qos.logback.classic.Logger) {

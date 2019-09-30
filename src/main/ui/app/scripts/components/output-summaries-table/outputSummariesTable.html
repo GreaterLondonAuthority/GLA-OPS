@@ -1,0 +1,75 @@
+<div class="table-responsive">
+  <table class="table outputs-summary">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th ng-if="$ctrl.displayOutputType">OUTPUT TYPE</th>
+      <th ng-if="!$ctrl.displayValue"></th>
+      <th ng-if="$ctrl.displayValue">VALUE</th>
+      <th>CATEGORY</th>
+      <th ng-if="$ctrl.showBaseline">BASELINED</th>
+      <th>FORECAST</th>
+      <th>ACTUAL</th>
+      <th>TOTALS</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat-start="r in $ctrl.outputSummaries | orderBy:['outputType', 'category']" ng-click="$ctrl.onToggleRow({$event: r})" class="primary-row summary-row">
+      <td ng-if="$ctrl.displayOutputType">
+        <span class="glyphicon row-toggle" ng-class="{'glyphicon-triangle-bottom': r.collapsed, 'glyphicon-triangle-top': !r.collapsed}"></span>
+        <span class="text-capitalize">{{r.outputType | lowercase}}</span>
+      </td>
+      <td ng-if="!$ctrl.displayValue"></td>
+      <td ng-if="$ctrl.displayValue">
+        <span class="glyphicon row-toggle"
+              ng-if="!$ctrl.displayOutputType"
+              ng-class="{'glyphicon-triangle-bottom': r.collapsed, 'glyphicon-triangle-top': !r.collapsed}"></span>
+        <span class="text-capitalize">{{$ctrl.unitConfig[r.valueType].label}}</span>
+      </td>
+      <td>{{r.category}}</td>
+      <td style="color: green" ng-if="$ctrl.showBaseline">
+        <i ng-if="r.allSubcategoriesBaselined" class="glyphicon glyphicon-ok"/>
+      </td>
+      <td>{{$ctrl.formatNumber(r.forecast, r.valueType)}}</td>
+      <td>{{$ctrl.formatNumber(r.actual, r.valueType)}}</td>
+      <td>{{$ctrl.formatNumber(r.total, r.valueType)}}</td>
+      <td></td>
+
+    </tr>
+
+
+    <tr ng-if="!r.collapsed" class="sub-heading">
+      <td ng-if="$ctrl.displayOutputType"></td>
+      <td>YEAR</td>
+      <td>SUB CATEGORY</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <!--GLA-13493-->
+      <td ng-if="$ctrl.showBaseline"></td>
+    </tr>
+
+
+    <tr ng-repeat-end ng-repeat="s in r.subcategories | orderBy:['financialYear', 'subcategory']" ng-if="!r.collapsed" class="secondary-row">
+      <td ng-if="$ctrl.displayOutputType"></td>
+      <td>{{s.financialYear}}/{{s.financialYear + 1 | limitTo:2:2}}</td>
+      <td>{{s.subcategory}}</td>
+      <td style="color: green" ng-if="$ctrl.showBaseline">
+        <i ng-if="s.baseline >= 0" class="glyphicon glyphicon-ok"/>
+      </td>
+      <td>{{$ctrl.formatNumber(s.forecast, s.valueType)}}</td>
+      <td>{{$ctrl.formatNumber(s.actual, s.valueType)}}</td>
+      <!--GLA-13493-->
+      <td>{{$ctrl.formatNumber(s.total, s.valueType)}}</td>
+      <td ng-if="!$ctrl.displayValue"></td>
+      <td ng-if="$ctrl.displayValue"></td>
+
+    </tr>
+
+    <tr ng-if="!$ctrl.outputSummaries.length">
+      <td colspan="5">Not provided</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

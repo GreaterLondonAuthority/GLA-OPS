@@ -8,9 +8,10 @@
 package uk.gov.london.ops.domain.project;
 
 import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
-import uk.gov.london.ops.util.jpajoins.NonJoin;
+import uk.gov.london.ops.service.project.state.ProjectState;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
+import uk.gov.london.ops.framework.jpa.NonJoin;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,7 +23,9 @@ public class ProjectHistory implements OpsEntity<Integer>, Serializable {
     public enum HistoryEventType {
         StateTransition,
         MilestoneClaimApproved,
-        Transfer
+        QuarterlyClaimApproved,
+        Transfer,
+        Label
     }
 
     public enum Transition {
@@ -87,10 +90,21 @@ public class ProjectHistory implements OpsEntity<Integer>, Serializable {
     @Transient
     private String createdByLastName;
 
+    @Column(name = "status")
+    private String statusName;
+
+    @Column(name = "substatus")
+    private String subStatusName;
+
     public ProjectHistory() {}
 
     public ProjectHistory(Transition transition) {
         this.transition = transition;
+    }
+
+    public ProjectHistory(Transition transition, OffsetDateTime createdOn) {
+        this(transition);
+        this.createdOn = createdOn;
     }
 
     public ProjectHistory(HistoryEventType historyEventType, String description) {
@@ -207,4 +221,23 @@ public class ProjectHistory implements OpsEntity<Integer>, Serializable {
 
     }
 
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public String getSubStatusName() {
+        return subStatusName;
+    }
+
+    public void setSubStatusName(String subStatusName) {
+        this.subStatusName = subStatusName;
+    }
+
+    public ProjectState getProjectState() {
+        return new ProjectState(statusName, subStatusName);
+    }
 }

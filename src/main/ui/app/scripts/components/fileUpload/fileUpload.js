@@ -19,28 +19,33 @@
  */
 class FileUploadCtrl {
   constructor(config, $scope, $timeout, $log, $element) {
-    var self = this;
-    this.MAX_FILE_SIZE_MO = 5;
-    this.URL_PREFIX = config.basePath;
-    this.MAX_FILE_SIZE = this.MAX_FILE_SIZE_MO * 1024;
-
+    this.config = config;
     this.$scope = $scope;
+    this.$timeout = $timeout;
     this.$log = $log;
     this.$element = $element;
-    this._id = self.componentInputId ?(self.componentInputId): 'fileInput';
+  }
+
+  $onInit(){
+    this.MAX_FILE_SIZE_MO = this.maxFileSizeInMb || 5;
+    this.URL_PREFIX = this.config.basePath;
+    this.MAX_FILE_SIZE = this.MAX_FILE_SIZE_MO * 1024;
+    this.POST_URL = this.postUrl || '/file';
+
+
+    this._id = this.componentInputId ?(this.componentInputId): 'fileInput';
 
     // this.multiple = this.multiple ? this.multiple : false; //not working yet
 
     // controlling disabled state in code, due to a bug in the handling in html
 
     // offset bidding to ensure element is rendered (mainly a issue with unit test)
-    $timeout(function() {
-      self.$log.log(self._id);
-      self.fileInputEl = self.getFileInput();
-      self.fileInput = self.fileInputEl[0];
-      self.fileInput.addEventListener('change', self.handleSelected.bind(self));
+    this.$timeout(() => {
+      this.$log.log(this._id);
+      this.fileInputEl = this.getFileInput();
+      this.fileInput = this.fileInputEl[0];
+      this.fileInput.addEventListener('change', this.handleSelected.bind(this));
     });
-
   }
 
   getFileInput(){
@@ -157,7 +162,7 @@ class FileUploadCtrl {
     for (let prop in this.uploadParams) {
       data.append(prop, this.uploadParams[prop]);
     };
-    xhr.open('POST', `${this.URL_PREFIX}/file`);
+    xhr.open('POST', `${this.URL_PREFIX  + this.POST_URL}`);
     xhr.send(data);
   };
 
@@ -212,7 +217,9 @@ angular.module('GLA')
       onError: '&',
       isDisabled: '<',
       context: '<',
-      componentInputId: '<'
+      componentInputId: '<',
+      maxFileSizeInMb: '<',
+      postUrl: '<'
     },
     templateUrl: 'scripts/components/fileUpload/fileUpload.html',
     controller: FileUploadCtrl

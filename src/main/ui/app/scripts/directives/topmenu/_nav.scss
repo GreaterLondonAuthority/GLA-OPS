@@ -246,3 +246,11 @@ top-menu {
     }
   }
 }
+.nav.navbar-nav{
+  .badge-danger {
+    margin-right: 5px;
+  }
+}
+.badge-danger{
+  background-color: $red;
+}

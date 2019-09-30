@@ -12,6 +12,7 @@ angular.module('GLA')
     templateUrl: 'scripts/components/multi-panel/mp-field/mpField.html',
     transclude: true,
     bindings: {
-      label: '<'
+      label: '<',
+      mpDefault: '<?'
     }
   });

@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.domain.project;
 
-import uk.gov.london.ops.domain.finance.LedgerSource;
+import uk.gov.london.ops.payment.LedgerSource;
 
 import java.math.BigDecimal;
 

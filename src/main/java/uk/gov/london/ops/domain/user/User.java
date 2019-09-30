@@ -10,7 +10,10 @@ package uk.gov.london.ops.domain.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.security.core.userdetails.UserDetails;
+import uk.gov.london.common.user.BaseUser;
 import uk.gov.london.ops.domain.organisation.Organisation;
+import uk.gov.london.ops.notification.NotificationTargetEntity;
+import uk.gov.london.ops.framework.exception.ValidationException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,8 +24,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static uk.gov.london.common.GlaUtils.nullSafeConcat;
+import static uk.gov.london.common.user.BaseRole.*;
+
 @Entity(name="users")
-public class User implements UserDetails, Serializable {
+public class User extends BaseUser implements UserDetails, Serializable, NotificationTargetEntity {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -65,6 +71,10 @@ public class User implements UserDetails, Serializable {
         this.username = username;
         this.password = password;
         this.enabled = true;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -159,22 +169,45 @@ public class User implements UserDetails, Serializable {
         getRoles().add(role);
     }
 
+    public void addApprovedRoleAndPrimaryOrganisationForUser(String roleName, Organisation organisation, boolean primaryOrg) {
+        Role role = new Role(roleName, getUsername(), organisation);
+        role.approve();
+        getRoles().add(role);
+        role.setPrimaryOrganisationForUser(primaryOrg);
+    }
+
     public void addUnapprovedRole(String roleName, Organisation organisation) {
         getRoles().add(new Role(roleName, getUsername(), organisation));
     }
 
-    public Role getRole(Integer organisationId) {
-        Role role = null;
-        for (Role r: roles) {
-            if (r.getOrganisation() != null && r.getOrganisation().getId().equals(organisationId)) {
-                role = r;
-            }
-        }
-        return role;
+    public boolean hasRoleInOrganisation(String role, Integer organisationId) {
+        return getApprovedRoles().stream().anyMatch(r -> r.getName().equals(role) && r.getOrganisation().getId().equals(organisationId));
     }
 
+    public Set<Role> getRolesInOrganisation(Integer organisationId) {
+        return roles.stream().filter(r -> r.getOrganisation() != null && r.getOrganisation().getId().equals(organisationId)).collect(Collectors.toSet());
+    }
+
+    @Deprecated
+    public Role getRole(Integer organisationId) {
+        Set<Role> rolesInOrganisation = getRolesInOrganisation(organisationId);
+        if (rolesInOrganisation.isEmpty()) {
+            return null;
+        }
+        Set<String> roleNames = rolesInOrganisation.stream().map(Role::getName).collect(Collectors.toSet());
+        String highestPriorityRole = getHighestPriorityRole(roleNames);
+
+        return rolesInOrganisation.stream().filter(r -> r.getName().equals(highestPriorityRole))
+                .findFirst().orElseThrow(() -> new ValidationException("Unable to find matching role: " + highestPriorityRole));
+    }
+
+    @Deprecated
     public Role getRole(Organisation organisation) {
         return getRole(organisation.getId());
+    }
+
+    public Set<Role> getRolesInOrganisation(Organisation organisation) {
+        return getRolesInOrganisation(organisation.getId());
     }
 
     public Date getRegisteredOn() {
@@ -194,31 +227,24 @@ public class User implements UserDetails, Serializable {
     }
 
     /**
-     * @return true if the user has the GLA role (Admin, SPM or PM).
-     */
-    public boolean isGla() {
-        return hasRole(Role.OPS_ADMIN) || hasRole(Role.GLA_ORG_ADMIN) || hasRole(Role.GLA_SPM) || hasRole(Role.GLA_PM) || hasRole(Role.GLA_FINANCE) || hasRole(Role.GLA_READ_ONLY);
-    }
-
-    /**
      * @return true if the user has the OPS admin role.
      */
     public boolean isOpsAdmin() {
-        return hasRole(Role.OPS_ADMIN);
+        return hasRole(OPS_ADMIN);
     }
 
     /**
      * @return true if the user has the GLA admin role.
      */
     public boolean isGlaOrgAdmin() {
-        return hasRole(Role.GLA_ORG_ADMIN);
+        return hasRole(GLA_ORG_ADMIN);
     }
 
     /**
      * @return true if the user has an org admin role.
      */
     public boolean isOrgAdmin() {
-        return hasRole(Role.ORG_ADMIN);
+        return hasRole(ORG_ADMIN);
     }
 
     /**
@@ -226,11 +252,15 @@ public class User implements UserDetails, Serializable {
      */
     public boolean isOrgAdmin(Organisation organisation) {
         Role role = getRole(organisation);
-        return role != null && Role.ORG_ADMIN.equals(role.getName());
+        return role != null && ORG_ADMIN.equals(role.getName());
     }
 
-    public boolean hasRole(String role) {
-        return roles.stream().filter(Role::isApproved).map(Role::getName).collect(Collectors.toList()).contains(role);
+    /**
+     * @return true if the user is a read only user in the given organisation.
+     */
+    public boolean isReadOnly(Integer organisationId) {
+        Role role = getRole(organisationId);
+        return role != null && (GLA_READ_ONLY.equals(role.getName()) || PROJECT_READER.equals(role.getName()));
     }
 
     public boolean isApproved() {
@@ -242,6 +272,15 @@ public class User implements UserDetails, Serializable {
         return false;
     }
 
+
+    public Organisation getPrimaryOrganisation() {
+        return this.getApprovedRoles().stream()
+                .filter(r -> r.isPrimaryOrganisationForUser() == null ? false : r.isPrimaryOrganisationForUser())
+                .map(Role::getOrganisation).findFirst()
+                .orElse(null);
+
+    }
+
     public boolean inOrganisation(Integer organisationId) {
         return CollectionUtils.isNotEmpty(getApprovedRolesForOrg(organisationId));
     }
@@ -250,8 +289,12 @@ public class User implements UserDetails, Serializable {
         return CollectionUtils.isNotEmpty(getApprovedRolesForOrgs(organisation));
     }
 
+    public boolean isManagedBy(Organisation managingOrganisation){
+        return getOrganisations().stream().anyMatch(o -> managingOrganisation.equals(o.getManagingOrganisation()));
+    }
+
     public String getFullName() {
-        return firstName+" "+lastName;
+        return nullSafeConcat(firstName, lastName);
     }
 
     @Override
@@ -302,7 +345,13 @@ public class User implements UserDetails, Serializable {
     }
 
     public Set<Role> getApprovedRoles() {
-        return roles.stream().filter(r -> r.isApproved() && r.getOrganisation().isApproved()).collect(Collectors.toSet());
+        return roles.stream().filter(r -> r.isApproved() && (r.getOrganisation() != null && r.getOrganisation().isApproved())).collect(Collectors.toSet());
+    }
+
+
+    @Override
+    public String getIdAsString() {
+        return this.username != null ? username : null;
     }
 
 }

@@ -11,6 +11,10 @@ const gla = angular.module('GLA');
 
 gla.component('multiPanel', {
   templateUrl: 'scripts/components/multi-panel/multiPanel.html',
-  transclude: true
+  transclude: true,
+  bindings: {
+    editable: '<?',
+    onEdit: '&'
+  }
 });
 

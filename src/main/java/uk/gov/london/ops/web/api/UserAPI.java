@@ -18,21 +18,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.london.ops.domain.EntityType;
-import uk.gov.london.ops.domain.user.Role;
 import uk.gov.london.ops.domain.user.UserOrgFinanceThreshold;
 import uk.gov.london.ops.domain.user.UserSummary;
-import uk.gov.london.ops.exception.ApiError;
-import uk.gov.london.ops.exception.ValidationException;
 import uk.gov.london.ops.service.DataAccessControlService;
+import uk.gov.london.ops.service.PermissionType;
 import uk.gov.london.ops.service.UserService;
+import uk.gov.london.ops.framework.annotations.PermissionRequired;
+import uk.gov.london.common.error.ApiError;
 import uk.gov.london.ops.web.model.*;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Set;
+
+import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.ops.framework.web.APIUtils.verifyBinding;
 
 /**
  * SpringMVC controller for User API endpoint.
@@ -52,7 +56,7 @@ public class UserAPI {
     @Autowired
     private DataAccessControlService dataAccessControlService;
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.ORG_ADMIN, Role.PROJECT_EDITOR, Role.TECH_ADMIN})
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ApiOperation(  value="get all user data",
             notes="retrieves a list of all registered users")
@@ -79,39 +83,42 @@ public class UserAPI {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     @ApiResponses(@ApiResponse(code=400, message="validation error", response=ApiError.class))
     public void register(@Valid @RequestBody UserRegistration registration, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException("Invalid registration request!", bindingResult.getFieldErrors());
-        }
-
+        verifyBinding("Invalid registration request!", bindingResult);
         userService.register(registration);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY, Role.ORG_ADMIN, Role.PROJECT_EDITOR, Role.TECH_ADMIN})
+    @PreAuthorize("isAuthenticated()") // users without roles should still access their profile
     @RequestMapping(value = "/users/{username}/", method = RequestMethod.GET)
     public UserProfile getUser(@PathVariable String username) {
         return userService.getUserProfile(username);
     }
 
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.GLA_FINANCE, Role.GLA_READ_ONLY})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY})
     @RequestMapping(value = "/userThresholds/{username}/", method = RequestMethod.GET)
     public Set<UserOrgFinanceThreshold> getUserThresholds(@PathVariable String username) {
         return userService.getFinanceThresholds(username);
     }
 
-    @Secured({Role.OPS_ADMIN,  Role.GLA_FINANCE})
+    @Secured({OPS_ADMIN,  GLA_FINANCE})
     @RequestMapping(value = "/userThresholds/{username}/organisation/{orgId}/pendingThreshold/", method = RequestMethod.PUT)
     public UserOrgFinanceThreshold createPendingThreshold(@PathVariable String username, @PathVariable Integer orgId,@Valid  @RequestBody Long pendingAmount  ) {
         return userService.createPendingThreshold(username, orgId, pendingAmount);
     }
 
-    @Secured({Role.OPS_ADMIN,  Role.GLA_FINANCE})
+    @Secured({OPS_ADMIN,  GLA_FINANCE})
     @RequestMapping(value = "/userThresholds/{username}/organisation/{orgId}/approve/", method = RequestMethod.PUT)
     public UserOrgFinanceThreshold approveThreshold(@PathVariable String username, @PathVariable Integer orgId) {
         return userService.approvePendingThreshold(username, orgId);
     }
 
-    @Secured({Role.OPS_ADMIN,  Role.GLA_FINANCE})
+    @PermissionRequired(PermissionType.USERS_ASSIGN_PRIMARY)
+    @RequestMapping(value = "/users/{username}/makePrimaryOrganisation/{orgId}/roleName/{roleName}", method = RequestMethod.PUT)
+    public void setPrimaryOrgForUser(@PathVariable String username, @PathVariable Integer orgId, @PathVariable String roleName) {
+        userService.setPrimaryOrgForUser(username, orgId, roleName);
+    }
+
+    @Secured({OPS_ADMIN,  GLA_FINANCE})
     @RequestMapping(value = "/userThresholds/{username}/organisation/{orgId}/decline/", method = RequestMethod.PUT)
     public UserOrgFinanceThreshold declineThreshold(@PathVariable String username, @PathVariable Integer orgId) {
         return userService.declineThreshold(username, orgId);
@@ -132,20 +139,18 @@ public class UserAPI {
     @RequestMapping(value = "/users/{username}/password", method = RequestMethod.PUT)
     public void resetPassword(@PathVariable String username, @Valid @RequestBody UserPasswordReset userPasswordReset,
                               BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException("Invalid user password reset request!", bindingResult.getFieldErrors());
-        }
+        verifyBinding("Invalid user password reset request!", bindingResult);
         userService.resetUserPassword(username, userPasswordReset);
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.ORG_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, ORG_ADMIN})
     @RequestMapping(value = "/users/{username}/role", method = RequestMethod.PUT)
     @ApiOperation(value="assigns a new role to the given user")
     public void assignRole(@PathVariable String username, @RequestBody RoleModel role) {
         userService.assignRole(username, role.getName(), role.getOrganisationId());
     }
 
-    @Secured(Role.OPS_ADMIN)
+    @Secured(OPS_ADMIN)
     @RequestMapping(value = "/admin/users/{username}/password", method = RequestMethod.PUT)
     public String setPassword(@PathVariable String username, @RequestBody String password) {
         userService.setPassword(username,password);
@@ -159,9 +164,9 @@ public class UserAPI {
         return userService.passwordStrength(password).getScore();
     }
 
-    @Secured({Role.OPS_ADMIN, Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM, Role.ORG_ADMIN, Role.PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN,  GLA_READ_ONLY, PROJECT_READER, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, TECH_ADMIN})
     @RequestMapping(value = "/checkCurrentUserAccess", method = RequestMethod.GET)
-    public void checkCurrentUserAccess(@RequestParam EntityType entityType, @RequestParam Integer entityId) {
+    public void checkCurrentUserAccess(@RequestParam EntityType entityType, @RequestParam String entityId) {
         dataAccessControlService.checkAccess(entityType, entityId);
     }
 

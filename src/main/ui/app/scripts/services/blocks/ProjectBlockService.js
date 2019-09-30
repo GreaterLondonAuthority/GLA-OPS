@@ -14,10 +14,10 @@ function ProjectBlockService($http, config) {
     /**
      * Get block history
      * @param projectId project id
-     * @param blockId id of the block
+     * @param displayOrder of the block
      */
-    getHistory(projectId, blockId){
-      return $http.get(`${config.basePath}/projects/${projectId}/${blockId}/history`);
+    getHistory(projectId, displayOrder){
+      return $http.get(`${config.basePath}/projects/${projectId}/displayOrder/${displayOrder}/history`);
     },
 
     approveBlock(projectId, blockId){
@@ -26,6 +26,18 @@ function ProjectBlockService($http, config) {
 
     deleteBlock(projectId, blockId){
       return $http.delete(`${config.basePath}/projects/${projectId}/blocks/${blockId}`);
+    },
+
+    revertBlock(projectId, blockId){
+      return $http.put(`${config.basePath}/projects/${projectId}/block/${blockId}/revert`);
+    },
+
+    updateBlock(projectId, blockId, block, releaseLock) {
+      return $http.put(`${config.basePath}/projects/${projectId}/blocks/${blockId}?releaseLock=${!!releaseLock}`, block, releaseLock)
+    },
+
+    updateInternalBlock(projectId, block){
+      return $http.put(`${config.basePath}/projects/${projectId}/internalBlocks/${block.id}`, block);
     }
   };
 }

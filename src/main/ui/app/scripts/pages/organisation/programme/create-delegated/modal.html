@@ -21,8 +21,9 @@
                    search-enabled="false"
                    on-select="$ctrl.onGrantTypeSelect($select.selected)"
                    required
-                   ng-model="$ctrl.grantType">
-          <ui-select-match placeholder="Select">{{$select.selected.label}}</ui-select-match>
+                   ng-model="$ctrl.dataBlock.label">
+          <!--<ui-select-match placeholder="Select">{{$select.selected.label}}</ui-select-match>-->
+          <ui-select-match placeholder="Select">{{$select.selected}}</ui-select-match>
           <ui-select-choices repeat="grantType in $ctrl.grantTypes">
             <span>{{grantType.label}}</span>
           </ui-select-choices>
@@ -76,6 +77,21 @@
                required
                maxlength="50"/>
       </div>
+
+      <div class="form-group">
+        <label for="comments">Comments</label>
+        <textarea id="comments"
+                  ng-trim="false"
+                  class="form-control"
+                  rows="5"
+                  placeholder=""
+                  name="comments"
+                  ng-model="$ctrl.dataBlock.comments"
+                  maxlength="200">
+         </textarea>
+        <remaining-characters text="$ctrl.dataBlock.comments" max="200"></remaining-characters>
+      </div>
+
     </form>
   </div>
 

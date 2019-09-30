@@ -51,7 +51,8 @@ class FinancialYearCtrl {
     this.yearList = DateUtil.generateDatesObjects(this.currentFinancialYear, this.back, this.forward);
     this.selectedYear = _.find(this.yearList, {financialYear: (this.selectedYear && this.selectedYear.financialYear) || this.currentFinancialYear});
   }
-}
+
+  }
 
 FinancialYearCtrl.$inject = ['$scope', '$timeout'];
 

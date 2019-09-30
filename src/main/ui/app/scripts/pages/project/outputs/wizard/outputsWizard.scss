@@ -17,3 +17,20 @@
     width: auto;
   }
 }
+
+@include when-md {
+  .baseline-wizard {
+    .inputs-row{
+      display: flex;
+
+      .form-group{
+        flex-basis: 100%;
+        float: none;
+      }
+
+      .button-container{
+        flex-wrap: wrap;
+      }
+    }
+  }
+}

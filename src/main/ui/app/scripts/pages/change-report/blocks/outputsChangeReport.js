@@ -7,8 +7,6 @@
  */
 
 
-//TODO move to OutputsService
-import OutputsUtil from '../../project/outputs/OutputsUtil';
 import DateUtil from '../../../util/DateUtil';
 
 class OutputsChangeReport {
@@ -19,16 +17,22 @@ class OutputsChangeReport {
 
 
   $onInit() {
-
-
     this.title = this.getTitle();
-    let unitConfig = OutputsUtil.getUnitConfig();
+    let unitConfig = this.OutputsService.getUnitConfig();
 
     let comparableRows = this.getComparableOutputGroups(this.data.left, this.data.right);
     this.comparableOutputGroups = this.ReportService.groupComparableRows(comparableRows, 'financialYear', true);
 
     this.data.changes.addDeletions(comparableRows);
 
+    this.outputsCostsBlock = (_.find(this.project.projectBlocksSorted, {type: 'OutputsCostsBlock'})  || {});
+
+    if (this.outputsCostsBlock.advancePayment) {
+      this.advancePaymentsToCompare = [{
+        left: this.data.left ? this.data.left.advancePaymentClaim : null,
+        right: this.data.right ? this.data.right.advancePaymentClaim : null
+      }];
+    }
 
     this.outputsFields = [
       {
@@ -67,7 +71,23 @@ class OutputsChangeReport {
       }
     ];
 
-
+    this.advancePaymentFields = [
+      {
+        field: 'amount',
+        label: 'AGREED PAYMENT £',
+        format: 'numeric',
+        defaultValue: this.outputsCostsBlock.advancePayment
+      },
+      {
+        field: 'claimedOn',
+        label: 'CLAIM DATE',
+        format: 'date'
+      },
+      {
+        field: 'claimStatus',
+        label: 'CLAIM STATUS'
+      }
+    ];
 
   }
 
@@ -105,7 +125,8 @@ OutputsChangeReport.$inject = ['OutputsService', 'ReportService'];
 angular.module('GLA')
   .component('outputsChangeReport', {
     bindings: {
-      data: '<'
+      data: '<',
+      project: '<'
     },
     templateUrl: 'scripts/pages/change-report/blocks/outputsChangeReport.html',
     controller: OutputsChangeReport

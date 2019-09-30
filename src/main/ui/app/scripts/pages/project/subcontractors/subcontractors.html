@@ -1,0 +1,183 @@
+<div class="subcontractors-page medium-page">
+  <div class="row text-center">
+    <project-header editable-block="$ctrl" on-back="$ctrl.back()">{{$ctrl.projectBlock.blockDisplayName}}
+    </project-header>
+  </div>
+  <div class="row" ng-if="$ctrl.projectBlock.validationFailures.question.length">
+    <div class="col-xs-12 mtop15 text-center">
+      <div class="error-wrapper error" ng-repeat="error in $ctrl.projectBlock.validationFailures.question">
+        {{error.description}}
+      </div>
+    </div>
+  </div>
+
+  <div class="questions mtop30">
+    <div class="form-group question">
+      <label class="question-text" for="q1">{{$ctrl.templateConfig.hasSubcontractorsTitle}}</label>
+      <yes-no-input id="q1"
+                    is-disabled="$ctrl.readOnly"
+                    mode="bool"
+                    name="{{question.id}}"
+                    ng-if="!$ctrl.readOnly"
+                    on-change="$ctrl.save(false)"
+                    ng-model="$ctrl.projectBlock.hasSubcontractors">
+      </yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.hasSubcontractors)}}</div>
+    </div>
+
+    <div class="form-group question" ng-if="$ctrl.projectBlock.hasSubcontractors && $ctrl.templateConfig.question2">
+      <label for="q2">{{$ctrl.templateConfig.question2}}</label>
+      <yes-no-input id="q2"
+                    is-disabled="$ctrl.readOnly"
+                    mode="bool"
+                    name="{{question.id}}"
+                    ng-if="!$ctrl.readOnly"
+                    on-change="$ctrl.save(false)"
+                    ng-model="$ctrl.projectBlock.question2">
+      </yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.question2)}}</div>
+
+    </div>
+
+    <div class="form-group question" ng-if="$ctrl.projectBlock.hasSubcontractors && $ctrl.templateConfig.question3">
+      <label for="q3">{{$ctrl.templateConfig.question3}}</label>
+      <yes-no-input id="q3"
+                    is-disabled="$ctrl.readOnly"
+                    mode="bool"
+                    name="{{question.id}}"
+                    ng-if="!$ctrl.readOnly"
+                    on-change="$ctrl.save(false)"
+                    ng-model="$ctrl.projectBlock.question3">
+      </yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.question3)}}</div>
+    </div>
+
+    <div class="form-group question" ng-if="$ctrl.projectBlock.hasSubcontractors && $ctrl.templateConfig.question4">
+      <label for="q4">{{$ctrl.templateConfig.question4}}</label>
+      <yes-no-input id="q4"
+                    is-disabled="$ctrl.readOnly"
+                    mode="bool"
+                    name="{{question.id}}"
+                    ng-if="!$ctrl.readOnly"
+                    on-change="$ctrl.save(false)"
+                    ng-model="$ctrl.projectBlock.question4">
+      </yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.question4)}}</div>
+    </div>
+
+    <div class="form-group question" ng-if="$ctrl.projectBlock.hasSubcontractors && $ctrl.templateConfig.question5">
+      <label for="q5">{{$ctrl.templateConfig.question5}}</label>
+      <yes-no-input id="q5"
+                    is-disabled="$ctrl.readOnly"
+                    mode="bool"
+                    name="{{question.id}}"
+                    ng-if="!$ctrl.readOnly"
+                    on-change="$ctrl.save(false)"
+                    ng-model="$ctrl.projectBlock.question5">
+      </yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.question5)}}</div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="$ctrl.projectBlock.validationFailures.table.length && $ctrl.projectBlock.hasSubcontractors">
+    <div class="col-xs-12 mtop15 text-center">
+      <div class="error-wrapper error" ng-repeat="error in $ctrl.projectBlock.validationFailures.table">
+        {{error.description}}
+      </div>
+    </div>
+  </div>
+
+  <div class="subcontractors-list row no-gutter"  ng-if="$ctrl.projectBlock.hasSubcontractors">
+
+    <div class="col-sm-6" style="padding-top: 20px" > 
+      <span ng-if="$ctrl.projectBlock.subcontractors.length != 0">
+        <a class="text-nowrap" href="" ng-click="$ctrl.toggleExpansion()">{{$ctrl.showExpandAll? 'Expand all' : 'Collapse all'}}</a>
+      </span>
+    </div>
+    <div class="col-sm-6 text-right" ng-if="!$ctrl.readOnly">
+      <button class="btn btn-md btn-secondary mbottom10" ng-click="$ctrl.showProjectSubcontractorModal({}, $ctrl.showUKPRN)">
+        ADD SUBCONTRACTOR <b>+</b>
+      </button>
+    </div>
+  </div>
+
+
+
+    <div class="table-responsive" ng-if="$ctrl.projectBlock.hasSubcontractors">
+      <table class="table subcontractors-table table-hover table-bordered collapsible">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th></th>
+          <th>SUBCONTRACTOR</th>
+          <th ng-if="$ctrl.showUKPRN">UKPRN</th>
+          <th>CONTRACT VALUE</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody >
+          <td></td>
+          <td colspan="2"  ng-if="($ctrl.projectBlock.subcontractors.length == 0)">Not Provided</td>
+          <tr ng-class="{'cursor-pointer': !$ctrl.readOnly}" ng-repeat-start="subcontractor in $ctrl.projectBlock.subcontractors | orderBy: 'organisationName'">
+            <!--ng-click="$ctrl.showProjectSubcontractorModal(subcontractor, $ctrl.showUKPRN)"-->
+            <td >
+            <toggle-icon ng-if="subcontractor.deliverables.length != 0"  collapsed="subcontractor.collapsed" on-collapse-change="$ctrl.onCollapseChange($event)"></toggle-icon>
+            </td>
+            <td ng-click="!$ctrl.readOnly && $ctrl.showProjectSubcontractorModal(subcontractor, $ctrl.showUKPRN)">  {{subcontractor.organisationName}}</td>
+            <td ng-click="!$ctrl.readOnly && $ctrl.showProjectSubcontractorModal(subcontractor, $ctrl.showUKPRN)" ng-if="$ctrl.showUKPRN">{{subcontractor.identifier}}</td>
+            <td ng-click="!$ctrl.readOnly && $ctrl.showProjectSubcontractorModal(subcontractor, $ctrl.showUKPRN)" >
+              {{subcontractor.contractValue | currency:'£':2}}
+            </td>
+            <td class="delete-btn-container text-center">
+              <span ng-if="!$ctrl.readOnly" ><a ng-click="$ctrl.showDeliverableModal(subcontractor, {})">+ add {{$ctrl.deliverableName.toLowerCase()}}</a></span>
+              <delete-button ng-click="$ctrl.delete(subcontractor); $event.stopPropagation();"
+                             ng-if="!$ctrl.readOnly">
+              </delete-button>
+            </td>
+          </tr>
+          <tr ng-if="subcontractor.deliverables.length != 0 && !subcontractor.collapsed"  class="deliverable-title">
+            <th width="50px"></th>
+            <th class="child-row">{{$ctrl.deliverableName}} Type</th>
+            <th>{{$ctrl.quantityName}}</th>
+            <th>{{$ctrl.valueName}}</th>
+            <th colspan="2">{{$ctrl.feeName}}</th>
+          </tr>
+          <tr ng-class="{'cursor-pointer': !$ctrl.readOnly}" ng-click="!$ctrl.readOnly && $ctrl.showDeliverableModal(subcontractor, deliverable)" ng-if="subcontractor.deliverables.length != 0 && !subcontractor.collapsed" ng-repeat-start="deliverable in subcontractor.deliverables | orderBy: 'id'">
+            <td></td>
+            <td>
+              <div class="deliverable-type-cell">
+                <toggle-icon collapsed="deliverable.collapsed" ng-if="deliverable.comments"></toggle-icon>
+                <div class="multiline-text word-break deliverable-type">
+                  {{$ctrl.lookupDisplayValue(deliverable)}}
+                </div>
+              </div>
+            </td>
+            <td>{{deliverable.quantity | number}}</td>
+            <td>{{deliverable.value  | currency:'£':2}}</td>
+            <td class="delete-btn-container" colspan="2">
+              <div ng-class="{'deliverable-fee-above-threshold': deliverable.feeCalculation.feePercentageExceeded}">
+                <span>{{deliverable.fee | currency:'£':2}}</span><span ng-if="deliverable.feeCalculation.feePercentage"> ({{deliverable.feeCalculation.feePercentage}}%)</span>
+              </div>
+              <delete-button class="small" ng-click="$ctrl.deleteDeliverable(subcontractor, deliverable); $event.stopPropagation();"
+                             ng-if="!$ctrl.readOnly">
+              </delete-button>
+            </td>
+          </tr>
+          <tr  ng-repeat-end class="no-hover-row extra-row comments-title-row"  ng-if="deliverable.comments.length && !subcontractor.collapsed  && !deliverable.collapsed"  >
+            <td ></td>
+
+            <td colspan="5" class="child-row">
+              <div>
+                <div class="comment-label">Comments:</div>
+                <div class="multiline-text word-break">{{deliverable.comments}}</div>
+              </div>
+            </td>
+          </tr >
+          <tr ng-if="false" ng-repeat-end></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <project-block-footer editable-block="$ctrl"></project-block-footer>
+</div>

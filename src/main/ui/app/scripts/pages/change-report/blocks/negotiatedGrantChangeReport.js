@@ -21,7 +21,8 @@ class NegotiatedGrantChangeReport {
         label: 'TENURE TYPE'
       },
       {
-        field: 'grantRequested',format: 'currency',
+        field: 'grantRequested',
+        format: 'currency',
         label: '£ GRANT REQUESTED',
       },
       {
@@ -33,8 +34,14 @@ class NegotiatedGrantChangeReport {
         label: 'OF WHICH SUPPORTED & SPECIALISED UNITS',
       },
       {
-        field: 'totalCost',format: 'currency',
+        field: 'totalCost',
+        format: 'currency',
         label: 'TOTAL DEVELOPMENT COSTS £',
+      },
+      {
+        field: 'percentageOfTotalCost',
+        format: 'number|1',
+        label: 'GRANT AS % COSTS',
       }
     ];
 
@@ -54,7 +61,8 @@ class NegotiatedGrantChangeReport {
 
     this.totalsFields = [
       {
-        field: 'totalGrantRequested', format: 'currency',
+        field: 'totalGrantRequested',
+        format: 'currency',
         label: '£ GRANT REQUESTED',
       },
       {
@@ -66,8 +74,14 @@ class NegotiatedGrantChangeReport {
         label: 'OF WHICH SUPPORTED & SPECIALISED UNITS',
       },
       {
-        field: 'totalCost',  format: 'currency',
+        field: 'totalCost',
+        format: 'currency',
         label: 'TOTAL DEVELOPMENT COSTS £',
+      },
+      {
+        field: 'percentageOfTotalCost',
+        format: 'number|1',
+        label: 'GRANT AS % COSTS'
       }
     ];
     this.totalsFields.forEach(item =>{

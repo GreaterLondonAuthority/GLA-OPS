@@ -1,0 +1,29 @@
+template-blocks {
+  display: block;
+
+  .ui-sortable-helper{
+    background-color: $table-sub-header !important;
+    display: table;
+    cursor: move;
+  }
+
+  table {
+    td {
+      &.display-order {
+        width: 20%;
+      }
+
+      &.type {
+        width: 25%;
+      }
+
+      &.name {
+        width: 35%;
+      }
+
+      &.appears-on-status {
+        width: 20%;
+      }
+    }
+  }
+}

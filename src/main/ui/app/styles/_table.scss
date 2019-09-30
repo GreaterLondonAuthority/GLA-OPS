@@ -34,6 +34,23 @@ table.table {
       background-color: $table-sub-header;
     }
   }
+
+  &.collapsible{
+    td,th{
+      &:first-child, th:first-child {
+        padding: 0;
+        vertical-align: middle;
+        width: 30px;
+
+        toggle-icon {
+          padding: 8px;
+        }
+      }
+      &:nth-child(2){
+        padding-left: 0px;
+      }
+    }
+  }
 }
 
 .table-selectable-row {
@@ -153,6 +170,11 @@ table.table-with-inputs {
       color: $primary-text;
     }
   }
+}
+
+table > tfoot.separated > tr > th{
+  border-top-width: 3px;
+  font-family: $font-family-bolder;
 }
 
 .table-responsive {

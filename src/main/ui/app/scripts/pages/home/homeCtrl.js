@@ -6,7 +6,6 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-'use strict';
 
 HomeCtrl.$inject = ['$scope', '$state', '$log', 'ConfigurationService', 'UserService', '$rootScope', '$location'];
 
@@ -15,6 +14,10 @@ function HomeCtrl($scope, $state, $log, ConfigurationService, UserService, $root
     UserService.logout();
   }
   var ctrl = this;
+
+  ConfigurationService.comingSoonMessage().then((resp)=>{
+    this.comingSoonMessage = resp.data;
+  });
 
   $rootScope.showGlobalLoadingMask = false;
 
@@ -55,17 +58,13 @@ function HomeCtrl($scope, $state, $log, ConfigurationService, UserService, $root
     );
   };
 
-  $scope.data = {
-    message: 'Coming soon!'
-  };
+  // $scope.data = {
+  //   message: 'Coming soon!'
+  // };
 
   this.clearErrors = function () {
     ctrl.error = false;
   };
-
-  ConfigurationService.comingSoonMessage().then(function (response) {
-    $scope.data.message = response.data.text;
-  });
 }
 
 angular.module('GLA')

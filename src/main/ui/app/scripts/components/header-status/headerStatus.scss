@@ -1,6 +1,10 @@
 header-status{
   display: block;
 
+  hs-left, hs-right{
+    display: block;
+  }
+
   .status-left, .status-right{
     font-weight: bold;
   }

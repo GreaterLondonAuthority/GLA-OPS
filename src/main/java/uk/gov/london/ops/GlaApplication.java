@@ -7,6 +7,7 @@
  */
 package uk.gov.london.ops;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -15,13 +16,10 @@ import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MissingRequiredPropertiesException;
-import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -32,12 +30,13 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.context.support.StandardServletEnvironment;
+import uk.gov.london.ops.framework.calendar.AcademicCalendar;
+import uk.gov.london.ops.framework.calendar.FinancialCalendar;
 import uk.gov.london.ops.web.filter.BeanPropertyFilter;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Properties;
 
 @SpringBootApplication
@@ -58,6 +57,7 @@ public class GlaApplication extends SpringBootServletInitializer {
 	@PostConstruct
 	public void setup() {
 		FilterProvider filters = new SimpleFilterProvider().addFilter("roleBasedFilter", beanPropertyFilter);
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		mapper.setFilterProvider(filters);
 	}
 
@@ -73,7 +73,7 @@ public class GlaApplication extends SpringBootServletInitializer {
 	public static PropertiesFactoryBean mapper() {
 		PropertiesFactoryBean bean = new PropertiesFactoryBean();
 		bean.setLocation(new ClassPathResource(
-				"uk/gov/london/ops/mapper/simple_data_export_mappings.properties"));
+				"uk/gov/london/ops/report/simple_data_export_mappings.properties"));
 		return bean;
 	}
 
@@ -81,7 +81,7 @@ public class GlaApplication extends SpringBootServletInitializer {
 	public static PropertiesFactoryBean boroughHeaderMapper() throws IOException {
 		PropertiesFactoryBean bean = new PropertiesFactoryBean();
 		bean.setLocation(new ClassPathResource(
-				"uk/gov/london/ops/mapper/borough_report_header_mappings.properties"));
+				"uk/gov/london/ops/report/borough_report_header_mappings.properties"));
         return bean;
 	}
 
@@ -89,7 +89,7 @@ public class GlaApplication extends SpringBootServletInitializer {
 	public static PropertiesFactoryBean milestoneReportMapper() throws IOException {
 		PropertiesFactoryBean bean = new PropertiesFactoryBean();
 		bean.setLocation(new ClassPathResource(
-				"uk/gov/london/ops/mapper/milestone_summary_report.properties"));
+				"uk/gov/london/ops/report/milestone_summary_report.properties"));
         return bean;
 	}
 
@@ -98,8 +98,19 @@ public class GlaApplication extends SpringBootServletInitializer {
 		return new StandardServletEnvironment();
 	}
 
+	@Bean(name = "financialCalendar")
+	public FinancialCalendar financialCalendar() {
+		return new FinancialCalendar();
+	}
+
+	@Bean(name = "academicCalendar")
+	public AcademicCalendar academicCalendar() {
+		return new AcademicCalendar();
+	}
+
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		setRegisterErrorPageFilter(false);
 		return application.sources(GlaApplication.class);
 	}
 

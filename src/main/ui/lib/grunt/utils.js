@@ -25,6 +25,20 @@ module.exports = {
     });
     copyrightText += os.EOL + ' */';
     return copyrightText;
+  },
+
+  isLocalApi(){
+    return process.env.API_URL && (process.env.API_URL.indexOf('localhost') > -1 ||
+                                   process.env.API_URL.indexOf('0.0.0.0') > -1 ||
+                                   process.env.API_URL.indexOf('127.0.0.1') > -1);
+  },
+
+  isHttps(){
+    if(process.env.API_HTTPS && process.env.API_HTTPS.length){
+      return process.env.API_HTTPS === 'true';
+    }
+
+    return !this.isLocalApi();
   }
 };
 

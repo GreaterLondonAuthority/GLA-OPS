@@ -7,12 +7,34 @@
  */
 
 
-var gla = angular.module('GLA');
+const gla = angular.module('GLA');
+
+class SectionHeader {
+  constructor($element) {
+    this.$element = $element;
+  }
+
+  $onInit() {
+    this.isCollapsible = this.$element[0].hasAttribute('collapsed');
+  }
+
+  onSectionClick(){
+    this.collapsed = !this.collapsed;
+    this.onCollapseChange({
+      $event: this.collapsed
+    })
+  }
+}
+
+SectionHeader.$inject = ['$element'];
 
 gla.component('sectionHeader', {
   templateUrl: 'scripts/components/section-header/section-header.html',
+  controller: SectionHeader,
   bindings: {
-    subheader: '@'
+    subheader: '@',
+    collapsed: '=?',
+    onCollapseChange: '&'
   },
   transclude: true
 });

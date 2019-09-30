@@ -10,7 +10,9 @@ package uk.gov.london.ops.web.model;
 import uk.gov.london.ops.domain.organisation.OrganisationContract;
 import uk.gov.london.ops.domain.organisation.OrganisationGroup;
 
-public class ContractModel {
+import java.io.Serializable;
+
+public class ContractModel implements Serializable {
 
     private Integer id;
     private Integer contractId;

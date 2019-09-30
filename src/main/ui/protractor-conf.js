@@ -17,8 +17,6 @@ mkdirp.sync(cucumberReportDir);
 
 exports.config = {
   baseUrl: config.baseURL,
-  //Comment out to run in Chrome
-  // seleniumAddress: 'http://127.0.0.1:4444/wd/hub',
   allScriptsTimeout: 20000,
   getPageTimeout: 20000,
   framework: 'custom',
@@ -31,13 +29,22 @@ exports.config = {
       'test/features/projects-filter.feature'
     ],
     project: [
+      'test/features/project-skills.feature',
+      'test/features/learning-grant-block.feature',
+      'test/features/learning-grant-block-claim.feature',
       'test/features/project-outputs-wizard-config.feature',
       'test/features/project-outputs-wizard-input.feature',
       'test/features/project-outputs-table.feature',
       'test/features/project-outputs-summary-table.feature',
+      'test/features/project-outputs-baseline.feature',
+      'test/features/project-outputs-assumption.feature',
+      'test/features/project-outputs-costs.feature',
+      'test/features/project-outputs-claim.feature',
       'test/features/project-overview.feature',
       'test/features/project-details.feature',
       'test/features/project-details-history.feature',
+      'test/features/project-funding.feature',
+      'test/features/project-funding-claims.feature',
       'test/features/project-milestones.feature',
       'test/features/project-milestones-update.feature',
       'test/features/project-milestones-approve-claim.feature',
@@ -74,8 +81,11 @@ exports.config = {
       'test/features/project-return.feature',
       'test/features/project-approve.feature',
       'test/features/project-abandon.feature',
+      'test/features/project-abandon-approve-reject.feature',
+      'test/features/project-transfer.feature',
       'test/features/project-complete.feature',
       'test/features/project-reject.feature',
+      'test/features/project-reject-menu.feature',
       'test/features/closed-programme.feature',
       'test/features/project-request-approval.feature',
       'test/features/project-return-from-approval-requested.feature',
@@ -87,14 +97,19 @@ exports.config = {
       'test/features/project-save-to-active.feature',
       'test/features/project-land-version-control.feature',
       'test/features/project-risks.feature',
-      'test/features/project-abandon.feature',
-      'test/features/project-abandon-approve-reject.feature',
-      'test/features/project-transfer.feature'
+      'test/features/project-new.feature',
+      'test/features/project-internal-block-risk.feature',
+      'test/features/project-multi-assessment.feature',
+      'test/features/project-labels.feature',
+      'test/features/project-subcontracting.feature',
+      'test/features/funding-claims-block.feature',
+
     ],
     programmes: [
-      'test/features/programmes.feature'
+      'test/features/programmes.feature',
+      'test/features/programmes-filter.feature'
     ],
-    reports: [
+    changeReports: [
       'test/features/change-report.feature',
       'test/features/change-report-details.feature',
       'test/features/change-report-additional-questions.feature',
@@ -110,8 +125,28 @@ exports.config = {
       'test/features/change-report-outputs.feature',
       'test/features/change-report-budgets.feature',
       'test/features/change-report-receipts.feature',
+      'test/features/change-report-funding.feature',
+      'test/features/change-report-learning-grant.feature',
+      'test/features/change-report-outputs-cost.feature',
       'test/features/reporting.feature',
-      'test/features/reports-page.feature'
+      'test/features/reports-page.feature',
+    ],
+    summaryReports: [
+      'test/features/summary-report.feature',
+      'test/features/summary-report-details.feature',
+      'test/features/summary-report-additional-questions.feature',
+      'test/features/summary-report-design-standards.feature',
+      'test/features/summary-report-outputs.feature',
+      'test/features/summary-report-risks-and-issues.feature',
+      'test/features/summary-report-budgets.feature',
+      'test/features/summary-report-milestones.feature',
+      'test/features/summary-report-calculate-grant.feature',
+      'test/features/summary-report-developer-led-grant.feature',
+      'test/features/summary-report-negotiated-grant.feature',
+      'test/features/summary-report-indicative-grant.feature',
+      'test/features/summary-report-funding.feature',
+      'test/features/summary-report-learning-grant.feature',
+      'test/features/summary-report-ouputs-cost.feature'
     ],
     payments: [
       'test/features/pending-payments.feature',
@@ -133,7 +168,13 @@ exports.config = {
       'test/features/organisation-edit.feature',
       'test/features/organisation-profile.feature',
       'test/features/organisation-programmes.feature',
+      'test/features/organisation-recoverable-grant.feature',
+      'test/features/organisation-recoverable-grant-submission.feature',
       'test/features/organisations-managing.feature',
+      'test/features/organisation-registration.feature',
+      'test/features/organisation-reject.feature',
+      'test/features/organisation-inactive.feature',
+      'test/features/organisation-teams.feature',
       'test/features/consortiums.feature'
     ],
     user: [
@@ -151,12 +192,28 @@ exports.config = {
       'test/features/sticky-nav.feature',
       'test/features/top-menu.feature',
       'test/features/cookie-warning.feature',
-      'test/features/server-errors.feature',
+      // 'test/features/server-errors.feature',
       'test/features/financial-year.feature',
+      'test/features/swagger-api-doc.feature',
       'test/features/system-dashboard.feature',
+      'test/features/system-templates-questions.feature',
+      'test/features/system-templates.feature',
+      'test/features/audit-history.feature',
+      'test/features/assessments.feature',
+      'test/features/permissions.feature',
+      'test/features/labels-management.feature',
+      'test/features/all-notifications.feature',
+      'test/features/project-overrides.feature',
+      'test/features/outputs-configuration.feature'
     ],
     notifications: [
       'test/features/notifications.feature'
+    ],
+    admin: [
+      'test/features/finance-categories.feature',
+      'test/features/system-messages.feature',
+      'test/features/system-features.feature',
+      'test/features/skill-profiles.feature'
     ]
   },
 
@@ -164,18 +221,14 @@ exports.config = {
   capabilities: {
     // browserName: 'phantomjs',
     browserName: 'chrome',
+    acceptInsecureCerts : true,
     //browserName: 'firefox',
 
     shardTestFiles: true, // tests are split between instances
     maxInstances: process.env.E2E_MAX_INSTANCES || 6, // maximum number of instances it can spawn
 
-    'phantomjs.binary.path': require('phantomjs-prebuilt').path,
-    'phantomjs.cli.args': '--debug=true --webdriver --webdriver-logfile=webdriver.log --webdriver-loglevel=DEBUG',
-
-
     chromeOptions: {
-      // binary: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome',
-      binary: process.env.CHROME_PATH,
+      binary: process.env.CHROME_BIN,
       args: ['--headless', '--disable-gpu'],
       prefs: {
         'credentials_enable_service': false,

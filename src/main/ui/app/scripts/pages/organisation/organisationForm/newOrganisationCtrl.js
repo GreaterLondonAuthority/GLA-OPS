@@ -11,10 +11,14 @@ import OrganisationFormCtrl from './organisationFormCtrl';
 class NewOrganisationCtrl extends OrganisationFormCtrl {
   constructor($injector) {
     super($injector);
+  }
+
+  $onInit() {
     this.initOrganisation();
     this.isNew = true;
     this.title = 'Register an organisation';
-    // this.org.managingOrganisationId = this.$state.params.managingOrgId;
+    this.isValidRegKey = true;
+    super.$onInit();
   }
 
   initOrganisation() {
@@ -28,14 +32,23 @@ class NewOrganisationCtrl extends OrganisationFormCtrl {
   }
 
   submit() {
+    this.errors = null;
     let data = this.OrganisationService.formModelToApiData(this.org);
     this.OrganisationService.createOrganisation(data).then(resp => {
-      this.$state.go('organisations');
-      if (this.isProfile) {
+      if (this.orgWithUser) {
+        this.$state.go('confirm-org-and-user-created');
+      } else if (this.isProfile) {
+        this.$state.go('organisations');
         this.ToastrUtil.success(`Organisation profile requested, awaiting GLA approval`);
       } else {
+        this.$state.go('organisations');
         this.ToastrUtil.success(`Your organisation ${this.org.name} has been registered`);
       }
+    }).catch(err => {
+      this.errors = {};
+      err.data.errors.map(e => {
+        this.errors[e.name] = e.description
+      });
     })
   }
 }

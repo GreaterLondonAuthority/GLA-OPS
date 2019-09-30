@@ -5,7 +5,7 @@
       There are currently no payments awaiting authorisation
     </div>
     <div class="table-responsive" ng-if="$ctrl.paymentGroups.length">
-      <table class="table table-bordered">
+      <table id="pending-payments-table" class="table table-bordered">
         <thead class="thead-inverse uppercase">
         <tr>
           <th ng-click="$ctrl.sortBy('projectId')">Project ID</th>
@@ -35,19 +35,21 @@
 
           <tr ng-show="$ctrl.canViewSapVendorId && ((group.hasReclaim && $ctrl.canSetInterest)|| $ctrl.canAuthoriseGroup(group) || $ctrl.showSapIdError(group))">
             <td colspan="8" class="payment-row">
-              <span ng-if="$ctrl.showSapIdError(group)" class="error">
+              <div ng-if="$ctrl.showSapIdError(group) " class="error">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                <span>SAP vendor ID has not been provided. A vendor ID must be added to the <a class="org-details" ui-sref="organisation({orgId: group.payments[0].organisationId})">manage organisation</a> section to allow payment authorisation.</span>
-              </span>
-              <!--<span ng-show="!group.hasReclaim && $ctrl.canAuthoriseGroup(group) && !$ctrl.showSapIdError(group)">-->
-                <!--<button class="btn btn-md btn-primary btn-authorise" ng-click="$ctrl.authorisePayments(group)">AUTHORISE<i class="glyphicon glyphicon-ok"></i></button>-->
-                <!--<button class="btn btn-md btn-secondary btn-decline" ng-click="$ctrl.declinePayments(group)">DECLINE<i class="glyphicon glyphicon-remove"></i></button>-->
-              <!--</span>-->
-              <span ng-if="!$ctrl.showSapIdError(group)">
-                <button ng-if=" (((group.hasReclaim && group.hasInterestSet) || !group.hasReclaim) && $ctrl.canAuthoriseGroup(group))" class="btn btn-md btn-primary btn-authorise" ng-click="$ctrl.authorisePayments(group)">AUTHORISE<i class="glyphicon glyphicon-ok"></i></button>
-                <button ng-if="group.hasReclaim && $ctrl.canSetInterest" class="btn btn-md btn-primary btn-interest" ng-click="$ctrl.openInterestModal(group)">{{group.hasInterestSet ? 'EDIT INTEREST' : 'SET INTEREST'}}<i class="glyphicon glyphicon-credit-card"></i></button>
+                <span>SAP vendor ID has not been provided. A vendor ID must be added to the <a class="org-details" ui-sref="organisation.view({orgId: group.payments[0].organisationId})">manage organisation</a> section to allow payment authorisation.</span>
+              </div>
+
+              <div ng-if="!$ctrl.showSapIdError(group)">
+                <button ng-if=" (((group.hasReclaim && group.interestAssessed) || !group.hasReclaim) && $ctrl.canAuthoriseGroup(group)) && !group.thresholdExceeded" class="btn btn-md btn-primary btn-authorise" ng-click="$ctrl.authorisePayments(group)">AUTHORISE<i class="glyphicon glyphicon-ok"></i></button>
+                <button ng-if="group.hasReclaim && $ctrl.canSetInterest" class="btn btn-md btn-primary btn-interest" ng-click="$ctrl.openInterestModal(group)">{{group.interestAssessed ? 'EDIT INTEREST' : 'SET INTEREST'}}<i class="glyphicon glyphicon-credit-card"></i></button>
                 <button ng-if="$ctrl.canAuthoriseGroup(group)" class="btn btn-md btn-secondary btn-decline" ng-click="$ctrl.declinePayments(group)">DECLINE<i class="glyphicon glyphicon-remove"></i></button>
-              </span>
+                <span ng-if="group.thresholdExceeded" class="error">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  <span>You can't authorise this payment as your <a class="user-account" ui-sref="user-account({userId:$ctrl.username})">authorised spend limit</a> is below this amount.</span>
+                </span>
+              </div>
+
             </td>
           </tr>
 

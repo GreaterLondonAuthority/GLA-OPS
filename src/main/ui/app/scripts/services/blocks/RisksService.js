@@ -6,14 +6,12 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
+const INTERNAL_RISK_BLOCK_TYPE = 'Risk';
+
 RisksService.$inject = ['$http', 'config', 'orderByFilter'];
 
 function RisksService($http, config, orderByFilter) {
   return {
-
-    save(projectId, blockId, block, releaseLock){
-      return $http.put(`${config.basePath}/projects/${projectId}/risks/${blockId}?releaseLock=${!!releaseLock}`, block);
-    },
 
     getRiskCategories: (id) => {
       return $http({
@@ -209,7 +207,7 @@ function RisksService($http, config, orderByFilter) {
         }
 
         if (risk.residualProbabilityRating && risk.residualImpactRating) {
-          let result = risk.residualProbabilityRating * risk.residualImpactRating
+          let result = risk.residualProbabilityRating * risk.residualImpactRating;
           risk.computedResidualRating = result;
           sortString += (99-result) + ':'
         } else {
@@ -226,6 +224,22 @@ function RisksService($http, config, orderByFilter) {
         sortString += ':' + risk.title;
         risk.sortOrder = sortString;
       }
+    },
+
+    getInternalRiskFromProject(project){
+      return _.find(project.internalBlocksSorted, {type: INTERNAL_RISK_BLOCK_TYPE});
+    },
+
+    getInternalRiskTemplateConfig(template){
+      return _.find(template.internalBlocks, {type: INTERNAL_RISK_BLOCK_TYPE});
+    },
+
+    getInternalRiskNoRatingLabel(){
+      return 'No risk assessment carried out';
+    },
+
+    updateInternalRisk(){
+      return $http.put(`${config.basePath}/projects/${projectId}/milestones/${blockId}/milestone/${milestoneId}/file/${fileId}`);
     }
   };
 }

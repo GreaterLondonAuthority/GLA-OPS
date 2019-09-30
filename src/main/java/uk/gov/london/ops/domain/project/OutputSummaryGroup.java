@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.domain.project;
 
-import uk.gov.london.ops.domain.outputs.OutputCategoryConfiguration;
+import uk.gov.london.ops.refdata.OutputCategoryConfiguration;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -49,6 +49,9 @@ public class OutputSummaryGroup implements Comparable, ComparableItem {
         addTotal(record.getTotal());
     }
 
+    public boolean isAllSubcategoriesBaselined() {
+        return subcategories.stream().noneMatch(s -> s.getBaseline() == null);
+    }
     public List<OutputTableSummaryRecord> getSubcategories() {
         return subcategories;
     }

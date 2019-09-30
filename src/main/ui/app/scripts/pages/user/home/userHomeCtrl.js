@@ -7,8 +7,23 @@
  */
 
 'use strict';
+class UserHomeCtrl {
+  constructor(UserService) {
+    this.user = UserService.currentUser();
+  }
+}
+
+
+UserHomeCtrl.$inject = ['UserService'];
 
 angular.module('GLA')
-  .controller('UserHomeCtrl', ['UserService', function (UserService) {
-    this.user = UserService.currentUser();
-  }]);
+  .component('userHomePage', {
+    templateUrl: 'scripts/pages/user/home/userHome.html',
+    bindings: {
+      userDashboardMetricsToggle: '<',
+      dashboardMetrics: '<',
+      homePageMessage: '<'
+    },
+    controller: UserHomeCtrl,
+    controllerAs: '$ctrl'
+  });

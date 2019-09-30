@@ -10,16 +10,16 @@ package uk.gov.london.ops.domain.project;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.util.StringUtils;
-import uk.gov.london.ops.domain.refdata.CategoryValue;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.refdata.CategoryValue;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.util.*;
 
+import static uk.gov.london.common.GlaUtils.nullSafeMultiply;
 import static uk.gov.london.ops.domain.project.ProjectDifference.DifferenceType.Addition;
 import static uk.gov.london.ops.domain.project.ProjectDifference.DifferenceType.Deletion;
-import static uk.gov.london.ops.util.GlaOpsUtils.nullSafeMultiply;
 
 /**
  * Created by chris on 17/08/2017.
@@ -61,13 +61,18 @@ public class ProjectRiskAndIssue implements ComparableItem {
 
     @Column(name = "initial_probability_rating")
     private Integer initialProbabilityRating;
+
     @Column(name = "initial_impact_rating")
     private Integer initialImpactRating;
 
     @Column(name = "residual_probability_rating")
     private Integer residualProbabilityRating;
+
     @Column(name = "residual_impact_rating")
     private Integer residualImpactRating;
+
+    @Column(name = "risk_marked_corporate")
+    private boolean markedForCorporateReporting;
 
     @JoinData(joinType = Join.JoinType.MultiColumn,
             comment = "initial_impact_rating and initial_probability_rating join to risk_level impact and probability")
@@ -154,6 +159,14 @@ public class ProjectRiskAndIssue implements ComparableItem {
         this.initialProbabilityRating = initialProbabilityRating;
     }
 
+    public boolean isMarkedForCorporateReporting() {
+        return markedForCorporateReporting;
+    }
+
+    public void setMarkedForCorporateReporting(boolean markedForCorporateReporting) {
+        this.markedForCorporateReporting = markedForCorporateReporting;
+    }
+
     public Integer getInitialImpactRating() {
         return initialImpactRating;
     }
@@ -234,6 +247,15 @@ public class ProjectRiskAndIssue implements ComparableItem {
         this.initialImpactRating = other.initialImpactRating;
         this.residualProbabilityRating = other.residualProbabilityRating;
         this.residualImpactRating = other.residualImpactRating;
+        this.markedForCorporateReporting = other.markedForCorporateReporting;
+
+        if (other.getActions() != null) {
+            for (ProjectAction action : other.actions) {
+                Optional<ProjectAction> first = this.getActions().stream().filter(a -> a.getId().equals(action.getId())).findFirst();
+                first.ifPresent(projectAction -> projectAction.setMarkedForCorporateReporting(action.isMarkedForCorporateReporting()));
+            }
+        }
+
     }
 
     public ProjectRiskAndIssue copy() {
@@ -248,6 +270,7 @@ public class ProjectRiskAndIssue implements ComparableItem {
         copy.setType(getType());
         copy.setStatus(getStatus());
         copy.setOriginalId(getOriginalId());
+        copy.setMarkedForCorporateReporting(isMarkedForCorporateReporting());
 
         for (ProjectAction action : actions) {
             copy.getActions().add(action.copy());

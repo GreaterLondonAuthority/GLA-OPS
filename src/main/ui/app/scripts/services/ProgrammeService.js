@@ -16,10 +16,15 @@ function ProgrammeService($resource, $http, config) {
      * Retrieve list of all programmes relevant to that user
      * @returns {Object} promise
      */
-    getProgrammes: function () {
+    getProgrammes: function (params) {
       return $http({
         url: config.basePath + '/programmes',
-        method: 'GET'
+        method: 'GET',
+        params: _.merge({
+          page: 0,
+          size: 1000,
+          sort: 'name,asc',
+        }, params)
       });
     },
 
@@ -28,13 +33,7 @@ function ProgrammeService($resource, $http, config) {
      * @returns {Object} promise
      */
     getEnabledProgrammes: function () {
-      return $http({
-        url: config.basePath + '/programmes',
-        method: 'GET',
-        params: {
-          enabled: true
-        }
-      });
+      return this.getProgrammes({enabled: true});
     },
 
     /**
@@ -42,34 +41,14 @@ function ProgrammeService($resource, $http, config) {
      * @param {Number} programmeId
      * @returns {Object} promise
      */
-    getProgramme: function(programmeId) {
+    getProgramme: function (programmeId, enrich) {
       return $http({
         url: config.basePath + '/programmes/' + programmeId,
-        method: 'GET'
+        method: 'GET',
+        params: {
+          enrich: enrich
+        }
       })
-    },
-
-    /**
-     * Retrieve all available templates
-     */
-    getAllProjectTemplates: function () {
-      return $http({
-        url: config.basePath + '/templates',
-        method: 'GET'
-      });
-    },
-
-
-    /**
-     * Retrieve list of all templates by programme
-     * @returns {Object} promise
-     */
-    getTemplateByProgramme: function (programmeId) {
-      return $resource(`${config.basePath}/templates`)
-        .query({
-          programmeId:  programmeId
-        })
-        .$promise;
     },
 
 
@@ -78,7 +57,7 @@ function ProgrammeService($resource, $http, config) {
      */
     getBoroughsByProgramme: function (programmeId) {
       return $http({
-        url: config.basePath + '/programmes/'+programmeId+'/borough',
+        url: config.basePath + '/programmes/' + programmeId + '/borough',
         method: 'GET'
       });
     },
@@ -89,11 +68,10 @@ function ProgrammeService($resource, $http, config) {
      */
     getStatusesByProgramme: function (programmeId) {
       return $http({
-        url: config.basePath + '/programmes/'+programmeId+'/status',
+        url: config.basePath + '/programmes/' + programmeId + '/status',
         method: 'GET'
       });
     },
-
 
 
     /**
@@ -112,29 +90,67 @@ function ProgrammeService($resource, $http, config) {
      */
     updateProgramme: function (data, programmeId) {
       return $http({
-        url: config.basePath + '/programmes/'+programmeId,
+        url: config.basePath + '/programmes/' + programmeId,
         method: 'PUT',
         data: data,
         serialize: false
       })
     },
 
-    getProgrammeNumberOfProjects: function(programmeId) {
+    getProgrammeNumberOfProjects: function (programmeId) {
       return $http({
-        url: config.basePath + '/programmes/'+programmeId+'/projectCountPerTemplate'
+        url: config.basePath + '/programmes/' + programmeId + '/projectCountPerTemplate'
       });
     },
 
     /**
      * Enable / disable a programme.
      */
-    updateEnabled: function(programmeId, enabled) {
+    updateEnabled: function (programmeId, enabled) {
       return $http({
-        url: config.basePath + '/programmes/'+programmeId+'/enabled',
+        url: config.basePath + '/programmes/' + programmeId + '/enabled',
         method: 'PUT',
         data: enabled,
         serialize: false
       })
+    },
+
+    getWbsCodeTypes() {
+      return [{
+        key: null,
+        label: 'Not provided'
+      }, {
+        key: 'Capital',
+        label: 'Capital'
+      }, {
+        key: 'Revenue',
+        label: 'Revenue'
+      }];
+    },
+
+    labels() {
+      return {
+        programmeInfo: {
+          managingOrganisation: 'Managing organisation',
+          status: 'Programme status',
+          glaInternal: 'Programme restricted for GLA internal use only',
+          enableForProjects: 'Programme enabled for new projects',
+          markForAssessment: 'Programme marked for assessment',
+          totalProjects: 'Total submitted projects',
+          financialYear: 'Financial year',
+        },
+
+        projectType: {
+          wbsCapital: 'WBS Capital',
+          wbsRevenue: 'WBS Revenue',
+          ceCode: 'CE Code',
+          paymentDefault: 'Payment Default',
+          status: 'Status',
+          statusModel: 'Status model',
+          paymentsEnabled: 'Payment claims enabled',
+          assessmentTemplates: 'Assessment templates'
+        }
+      }
     }
   }
 }

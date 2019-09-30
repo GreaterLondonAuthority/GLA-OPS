@@ -7,8 +7,8 @@
  */
 package uk.gov.london.ops.domain.user;
 
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -99,4 +99,17 @@ public class UserOrgFinanceThreshold {
     public void setApproverUsername(String approverUsername) {
         this.approverUsername = approverUsername;
     }
+
+    public boolean isPending() {
+        return pendingThreshold != null;
+    }
+
+
+    public void clear() {
+        setApprovedThreshold(null);
+        setPendingThreshold(null);
+        setRequesterUsername(null);
+        setApproverUsername(null);
+    }
+
 }

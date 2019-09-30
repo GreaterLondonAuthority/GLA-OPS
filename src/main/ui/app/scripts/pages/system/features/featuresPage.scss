@@ -1,0 +1,28 @@
+features-page {
+  display: block;
+  @include when-md {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .status-text{
+    display: inline-block;
+    min-width: 60px;
+  }
+
+  button.btn.btn-md.status-btn {
+    &,
+    &:active {
+      margin-top: -1px;
+      margin-left: 15px;
+      padding-top: 4px;
+      padding-bottom: 2px;
+      min-width: 90px;
+    }
+  }
+
+  .table > tbody > tr > td{
+    vertical-align: middle;
+  }
+
+}

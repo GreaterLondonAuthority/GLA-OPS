@@ -1,8 +1,23 @@
-.system-console {
-  width: 83.333%;
-  padding: 15px;
-}
+.system-page {
+  .system-console {
+    width: 83.333%;
+    padding: 15px;
+  }
 
-.system-guidance {
-  font-style: italic;
+  .system-guidance {
+    font-style: italic;
+  }
+
+  .refreshBtn {
+    display: block;
+    margin: 0 auto;
+  }
+
+  .validation-error{
+    color: $red;
+    font-family: $font-family-bolder;
+  }
+  a .field-label{
+    color: #5ca9c4 !important;
+  }
 }

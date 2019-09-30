@@ -8,12 +8,14 @@
 package uk.gov.london.ops.domain.template;
 
 import uk.gov.london.ops.domain.project.ProjectBlockType;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by chris on 19/12/2016.
@@ -22,8 +24,8 @@ import java.util.Set;
 @DiscriminatorValue("QUESTIONS")
 public class QuestionsTemplateBlock extends TemplateBlock {
 
-    @JoinData(joinType = Join.JoinType.Complex, sourceTable = "template_block"
-              , comment = "Join from template_block to template_question via join table TEMPLATE_BLOCK_QUESTION  ")
+    @JoinData(joinType = Join.JoinType.Complex, sourceTable = "template_block", sourceColumn = "-",
+              comment = "Join from template_block to template_question via join table TEMPLATE_BLOCK_QUESTION  ")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "TEMPLATE_BLOCK_QUESTION",
@@ -32,7 +34,8 @@ public class QuestionsTemplateBlock extends TemplateBlock {
     )
     private Set<TemplateQuestion> questions = new HashSet<>();
 
-    @JoinData(joinType = Join.JoinType.OneToMany, sourceTable = "template_block", targetColumn = "id", targetTable = "questions_block_section", comment = "")
+    @JoinData(joinType = Join.JoinType.ManyToOne, sourceTable = "questions_block_section", sourceColumn = "template_block_id",
+            targetColumn = "id", targetTable = "template_block", comment = "")
     @OneToMany(cascade = CascadeType.ALL, targetEntity = QuestionsBlockSection.class)
     @JoinColumn(name = "template_block_id")
     private Set<QuestionsBlockSection> sections = new HashSet<>();
@@ -45,8 +48,8 @@ public class QuestionsTemplateBlock extends TemplateBlock {
         super(blockName);
     }
 
-    public QuestionsTemplateBlock(Integer displayOrder, ProjectBlockType block) {
-        super(displayOrder, block);
+    public QuestionsTemplateBlock(Integer displayOrder) {
+        super(displayOrder, ProjectBlockType.Questions);
     }
 
     public QuestionsTemplateBlock(Integer displayOrder, ProjectBlockType block, String blockDisplayName) {
@@ -60,6 +63,11 @@ public class QuestionsTemplateBlock extends TemplateBlock {
 
         for (TemplateQuestion question : questions) {
             TemplateQuestion clonedQuestion = new TemplateQuestion(question.getDisplayOrder(), question.getQuestion(), question.getRequirement());
+            clonedQuestion.setParentId(question.getParentId());
+            clonedQuestion.setSectionId(question.getSectionId());
+            clonedQuestion.setParentAnswerToMatch(question.getParentAnswerToMatch());
+            clonedQuestion.setAppearsOnStatus(question.getAppearsOnStatus());
+            clonedQuestion.setAppearsOnSubStatus(question.getAppearsOnSubStatus());
             cloned.getQuestions().add(clonedQuestion);
         }
 
@@ -88,6 +96,10 @@ public class QuestionsTemplateBlock extends TemplateBlock {
 
     public TemplateQuestion getQuestionById(Integer id) {
         return questions.stream().filter(tq -> tq.getQuestion().getId().equals(id)).findFirst().orElse(null);
+    }
+
+    public List<TemplateQuestion> getQuestionsByParentId(Integer parentId) {
+        return questions.stream().filter(tq -> parentId.equals(tq.getParentId())).collect(Collectors.toList());
     }
 
 }

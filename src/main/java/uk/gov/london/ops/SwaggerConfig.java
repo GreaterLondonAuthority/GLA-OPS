@@ -34,7 +34,7 @@ public class SwaggerConfig {
                 "This is the API for GLA Open Project System.",
                 "API TOS",
                 "Terms of service",
-                new Contact("Steve Leach","",""),
+                new Contact("","",""),
                 "License of API",
                 "API license URL");
         return apiInfo;

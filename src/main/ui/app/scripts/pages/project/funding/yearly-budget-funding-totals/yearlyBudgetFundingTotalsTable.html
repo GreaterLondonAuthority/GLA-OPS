@@ -1,0 +1,41 @@
+<div class="table-responsive yearly-budget-funding-totals-table">
+  <table class="table table-bordered table-striped" id="total-funding-table">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th class="year-column-cell">YEAR</th>
+      <th ng-if="$ctrl.showCapitalGla">{{$ctrl.capClaimedLabel}}</th>
+      <th ng-if="$ctrl.showCapitalOther">{{$ctrl.capOtherLabel}}</th>
+      <th ng-if="$ctrl.showRevenueGla">{{$ctrl.revClaimedLabel}}</th>
+      <th ng-if="$ctrl.showRevenueOther">{{$ctrl.revOtherLabel}}</th>
+      <th>TOTAL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-if="$ctrl.yearlyData.length === 0"><td colspan="6"><b>No budget added to any year, select a year to add expected annual budget</b></td></tr>
+    <tr ng-repeat="year in $ctrl.totalBudget.years" ng-click="$ctrl.goToUserProfile(user)">
+      <td class="">{{year.yearLabel}}</td>
+      <td ng-if="$ctrl.showCapitalGla">{{year.capitalValue | number}}</td>
+      <td ng-if="$ctrl.showCapitalOther">{{year.capitalMatchFundValue | number}}</td>
+      <td ng-if="$ctrl.showRevenueGla">{{year.revenueValue | number}}</td>
+      <td ng-if="$ctrl.showRevenueOther">{{year.revenueMatchFundValue | number}}</td>
+      <td>{{year.total | number}}</td>
+    </tr>
+    <tr class="divider"><td colspan="6"></tr>
+    <tr class="footer-row">
+      <td class="year-column-cell">TOTALS</td>
+      <td ng-if="$ctrl.showCapitalGla">{{$ctrl.totals.totalCapitalValue | number}}</td>
+      <td ng-if="$ctrl.showCapitalOther">{{$ctrl.totals.totalCapitalMatchFund | number}}</td>
+      <td ng-if="$ctrl.showRevenueGla">{{$ctrl.totals.totalRevenueValue | number}}</td>
+      <td ng-if="$ctrl.showRevenueOther">{{$ctrl.totals.totalRevenueMatchFund | number}}</td>
+      <td>{{$ctrl.totals.totalProjectBudget | number}}</td>
+    </tr>
+    <!--<tr class="footer-row">-->
+      <!--<td class="year-column-cell">TOTAL PROJECT BUDGET</td>-->
+      <!--<td colspan="4" class="year-column-cell">-->
+        <!--{{($ctrl.totals.totalProjectBudget || 0) | number}}-->
+      <!--</td>-->
+    <!--</tr>-->
+    </tbody>
+  </table>
+</div>
+

@@ -7,8 +7,6 @@
  */
 package uk.gov.london.ops.service.project.state;
 
-import uk.gov.london.ops.domain.project.Project;
-
 /**
  * Created by chris on 13/03/2017.
  */

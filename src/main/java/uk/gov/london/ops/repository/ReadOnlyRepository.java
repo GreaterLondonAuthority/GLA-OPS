@@ -11,6 +11,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * Use when JPA entities are read only can still extend with custom methods like normal JPA interfaces
@@ -19,7 +20,7 @@ import java.io.Serializable;
 @NoRepositoryBean
 public interface ReadOnlyRepository<T, ID extends Serializable> extends Repository<T, ID> {
 
-    T findOne(ID var1);
+    Optional<T> findById(ID var1);
 
     Iterable<T> findAll();
 

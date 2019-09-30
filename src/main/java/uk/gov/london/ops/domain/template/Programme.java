@@ -8,23 +8,29 @@
 package uk.gov.london.ops.domain.template;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang3.StringUtils;
 import uk.gov.london.ops.domain.organisation.Organisation;
+import uk.gov.london.ops.domain.project.SpendType;
 import uk.gov.london.ops.domain.user.User;
 import uk.gov.london.ops.service.ManagedEntityInterface;
-import uk.gov.london.ops.util.jpajoins.NonJoin;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
+import uk.gov.london.ops.framework.jpa.NonJoin;
 
 import javax.persistence.*;
+import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static uk.gov.london.ops.util.GlaOpsUtils.csStringToList;
-import static uk.gov.london.ops.util.GlaOpsUtils.listToCsString;
+import static uk.gov.london.common.GlaUtils.csStringToList;
+import static uk.gov.london.common.GlaUtils.listToCsString;
 
 /**
  * A collection or summary of sub-programmes or projects that have been given common objective which meets an overall strategic aim.
@@ -32,9 +38,14 @@ import static uk.gov.london.ops.util.GlaOpsUtils.listToCsString;
  * @author Steve Leach
  */
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Programme implements Serializable, ManagedEntityInterface {
 
     public static final String SUPPORTED_REPORT_AFF_HSG = "AffordableHousing";
+
+    public enum Status {
+        Active, Archived, Abandoned
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "programme_seq_gen")
@@ -45,17 +56,18 @@ public class Programme implements Serializable, ManagedEntityInterface {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {})
-    @JoinTable(name = "programme_template",
-            joinColumns = @JoinColumn(name = "programme_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "template_id", referencedColumnName = "id"))
-    private Set<Template> templates;
+    @JoinData(sourceTable = "programme", joinType = Join.JoinType.Complex, comment = "Inverse of join table relationship")
+    @OneToMany(mappedBy = "programme", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProgrammeTemplate> templatesByProgramme = new HashSet<>();
 
     @Column(name = "restricted")
     private boolean restricted = false;
 
     @Column(name = "enabled")
     private boolean enabled = false;
+
+    @Column(name = "in_assessment")
+    private boolean inAssessment = false;
 
     @JsonIgnore
     @ManyToOne(cascade = {})
@@ -64,6 +76,14 @@ public class Programme implements Serializable, ManagedEntityInterface {
 
     @Column(name = "created_on")
     private OffsetDateTime createdOn;
+
+    @JsonIgnore
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "modified_by")
+    private User modifier;
+
+    @Column(name = "modified_on")
+    private OffsetDateTime modifiedOn;
 
     @Column(name="wbs_code")
     @NonJoin("SAP Payment code")
@@ -78,8 +98,15 @@ public class Programme implements Serializable, ManagedEntityInterface {
     @Column(name = "supported_reports")
     private String supportedReportsString;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.Active;
+
     @Transient
     private Integer nbSubmittedProjects;
+
+    @Column(name="financial_year")
+    private Integer financialYear = null;
 
 
     public Programme() {
@@ -95,6 +122,11 @@ public class Programme implements Serializable, ManagedEntityInterface {
         return id;
     }
 
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -103,12 +135,29 @@ public class Programme implements Serializable, ManagedEntityInterface {
         this.name = name;
     }
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public Set<Template> getTemplates() {
-        return templates;
+        return templatesByProgramme.stream().map(pt -> pt.getTemplate()).collect(Collectors.toSet());
     }
 
-    public void setTemplates(Set<Template> templates) {
-        this.templates = templates;
+
+    @JsonIgnore
+    public Set<ProgrammeTemplateAssessmentTemplate> getProgrammeTemplateAssessmentTemplates() {
+
+        Set<ProgrammeTemplateAssessmentTemplate> assessmentTemplates = new HashSet<>();
+        for (ProgrammeTemplate programmeTemplate : this.templatesByProgramme) {
+            assessmentTemplates.addAll(programmeTemplate.getAssessmentTemplates());
+        }
+        return assessmentTemplates;
+    }
+
+
+    public Set<ProgrammeTemplate> getTemplatesByProgramme() {
+        return templatesByProgramme;
+    }
+
+    public void setTemplatesByProgramme(Set<ProgrammeTemplate> templatesByProgramme) {
+        this.templatesByProgramme = templatesByProgramme;
     }
 
     public boolean isRestricted() {
@@ -127,6 +176,14 @@ public class Programme implements Serializable, ManagedEntityInterface {
         this.enabled = enabled;
     }
 
+    public boolean isInAssessment() {
+        return inAssessment;
+    }
+
+    public void setInAssessment(boolean inAssessment) {
+        this.inAssessment = inAssessment;
+    }
+
     public User getCreator() {
         return creator;
     }
@@ -143,12 +200,36 @@ public class Programme implements Serializable, ManagedEntityInterface {
         this.createdOn = createdOn;
     }
 
+    public User getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(User modifier) {
+        this.modifier = modifier;
+    }
+
+    public OffsetDateTime getModifiedOn() {
+        return modifiedOn;
+    }
+
+    public void setModifiedOn(OffsetDateTime modifiedOn) {
+        this.modifiedOn = modifiedOn;
+    }
+
     public Integer getNbSubmittedProjects() {
         return nbSubmittedProjects;
     }
 
     public void setNbSubmittedProjects(Integer nbSubmittedProjects) {
         this.nbSubmittedProjects = nbSubmittedProjects;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
@@ -176,43 +257,137 @@ public class Programme implements Serializable, ManagedEntityInterface {
         this.supportedReportsString = listToCsString(supportedReports);
     }
 
+    public Integer getFinancialYear() {
+        return financialYear;
+    }
+
+    public void setFinancialYear(Integer financialYear) {
+        this.financialYear = financialYear;
+    }
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getCreatorName() {
         return creator != null ? creator.getFullName() : null;
     }
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public String getModifierName() {
+        return modifier != null ? modifier.getFullName() : null;
+    }
+
     public Template getTemplate(String templateName) {
-        for (Template template: templates) {
-            if (template.getName().equals(templateName)) {
-                return template;
+        for (ProgrammeTemplate templateProgramme: templatesByProgramme) {
+            if (templateProgramme.getTemplate().getName().equals(templateName)) {
+                return templateProgramme.getTemplate();
             }
         }
         return null;
     }
 
-    public String getWbsCode() {
-        return wbsCode;
+    public ProgrammeTemplate getProgrammeTemplateByTemplateID(Integer templateID) {
+        return this.getTemplatesByProgramme().stream().filter(p -> p.getId().getTemplateId().equals(templateID)).findFirst().orElse(null);
     }
 
-    public void setWbsCode(String wbsCode) {
-        this.wbsCode = wbsCode;
+    public String getWbsCodeForTemplate(Integer templateId) {
+        ProgrammeTemplate programmeTemplate = getProgrammeTemplate(templateId);
+        return programmeTemplate != null ? programmeTemplate.getDefaultWbsCode() : null;
     }
 
-    public boolean hasWbsCode() {
-        return !StringUtils.isEmpty(wbsCode);
+    public String getWbsCodeForTemplate(Integer templateId, SpendType spendType) {
+        ProgrammeTemplate programmeTemplate = getProgrammeTemplate(templateId);
+        if (programmeTemplate != null) {
+            if (SpendType.CAPITAL.equals(spendType)) {
+                return programmeTemplate.getCapitalWbsCode();
+            }
+
+            if (SpendType.REVENUE.equals(spendType)) {
+                return programmeTemplate.getRevenueWbsCode();
+            }
+        }
+
+        return null;
     }
 
+    public String getCeCodeForTemplate(Integer templateId) {
+        ProgrammeTemplate programmeTemplate = getProgrammeTemplate(templateId);
+        return programmeTemplate != null ? programmeTemplate.getCeCode() : null;
+    }
+
+    public String getRevenueWbsCodeForTemplate(Integer templateId) {
+        ProgrammeTemplate programmeTemplate = getProgrammeTemplate(templateId);
+        return programmeTemplate != null ? programmeTemplate.getRevenueWbsCode() : null;
+    }
+
+    private ProgrammeTemplate getProgrammeTemplate(Integer templateId) {
+        return templatesByProgramme.stream().filter(t -> t.getId().getTemplateId().equals(templateId)).findFirst().orElse(null);
+    }
+
+    public boolean defaultWbsCodeSetForTemplate(Integer templateId) {
+        ProgrammeTemplate programmeTemplate = getProgrammeTemplate(templateId);
+        return programmeTemplate != null && programmeTemplate.getDefaultWbsCodeType() != null;
+    }
+
+    public void setWbsCodeForTemplate(Integer templateId, ProgrammeTemplate.WbsCodeType type, String wbsCode) {
+        ProgrammeTemplate programmeTemplate = getProgrammeTemplate(templateId);
+        if (programmeTemplate != null) {
+            programmeTemplate.setWbsCode(type, wbsCode);
+        }
+        else {
+            throw new ValidationException(String.format("Unable to find Template ID %d on Programme with ID %d", templateId, this.getId()));
+        }
+    }
+
+    public void setCeCodeForTemplate(Integer templateId, String ceCode) {
+        ProgrammeTemplate programmeTemplate = getProgrammeTemplate(templateId);
+        if (programmeTemplate != null) {
+            programmeTemplate.setCeCode(ceCode);
+        }
+        else {
+            throw new ValidationException(String.format("Unable to find Template ID %d on Programme with ID %d", templateId, this.getId()));
+        }
+    }
+
+    public void addTemplate(Template template)  {
+        ProgrammeTemplate programmeTemplate = new ProgrammeTemplate(this, template);
+        programmeTemplate.setId(new ProgrammeTemplateID(template.getId(), this.getId()));
+        this.getTemplatesByProgramme().add(programmeTemplate);
+    }
+
+    public void addTemplates(Collection<Template> templates)  {
+        for (Template template : templates) {
+            this.addTemplate(template);
+        }
+    }
+
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public Set<String> getGrantTypes() {
         Set<String> grantTypes = new HashSet<>();
-        for (Template template: templates) {
-            grantTypes.addAll(template.getGrantTypes());
+        for (ProgrammeTemplate templateProgramme: templatesByProgramme) {
+            if (templateProgramme.getTemplate() != null) {
+                grantTypes.addAll(templateProgramme.getTemplate().getGrantTypes());
+            }
         }
         return grantTypes;
     }
 
     public boolean hasIndicativeTemplate() {
-        for (Template template: templates) {
-            if (template.getIndicativeTenureConfiguration() != null) {
+        for (ProgrammeTemplate templateProgramme: templatesByProgramme) {
+            if (templateProgramme.getTemplate().getIndicativeTenureConfiguration() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isTemplatePresent(Integer templateId) {
+        if (templateId == null) {
+            return false;
+        }
+        for (ProgrammeTemplate programmeTemplate : this.getTemplatesByProgramme()) {
+            if (programmeTemplate.getId() != null && templateId.equals(programmeTemplate.getId().getTemplateId())) {
+                return true;
+            } else if (programmeTemplate.getTemplate() != null && templateId.equals(programmeTemplate.getTemplate().getId())) {
                 return true;
             }
         }

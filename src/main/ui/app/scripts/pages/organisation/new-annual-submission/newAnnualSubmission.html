@@ -1,0 +1,39 @@
+<page-header class="no-padding">New annual submission</page-header>
+
+
+
+<section-header>
+  Recoverable grant for {{$ctrl.organisation.name}}
+</section-header>
+<div class="col-xs-12 mtop15 no-padding form-group">
+  <div class="row">
+    <div class=" col-md-4">
+      <label for="submission-year">Select year</label>
+      <ui-select id="submission-year"
+                 name="submission year"
+                 class="search-dropdown"
+                 ng-model="$ctrl.selectedYear"
+                 search-enabled="false"
+                 ng-disabled="$ctrl.remainingYears.length == 0"
+                 on-select="$ctrl.onSelect($select.selected)"
+                 required>
+        <ui-select-match>{{$ctrl.selectedYear.label}}</ui-select-match>
+        <ui-select-choices repeat="year in $ctrl.remainingYears">
+          <span>{{year.label}}</span>
+        </ui-select-choices>
+      </ui-select>
+    </div>
+  </div>
+
+  <div class="mtop15 row">
+    <button
+      class="btn btn-primary btn-md mleft15 mright10"
+      ng-click="$ctrl.createNew()"
+      ng-disabled="!$ctrl.selectedYear">CREATE NEW</button>
+
+    <a
+      ui-sref="organisation.view({orgId: $ctrl.orgId})"
+      class="btn btn-secondary btn-md">CANCEL</a>
+  </div>
+</div>
+

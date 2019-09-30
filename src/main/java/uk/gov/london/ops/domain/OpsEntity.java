@@ -7,9 +7,10 @@
  */
 package uk.gov.london.ops.domain;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
-public interface OpsEntity<IdType> {
+public interface OpsEntity<IdType> extends Serializable {
 
     IdType getId();
 

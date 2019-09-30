@@ -6,75 +6,71 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
+import './recoverable-grant/recoverableGrant.js'
+import './inactive-modal/inactiveModal.js'
 
 
 class OrganisationCtrl {
-  constructor($rootScope, $state, $log, OrganisationService, UserService, ConfirmationDialog, ToastrUtil) {
+  constructor($rootScope, $state, $stateParams, $log, OrganisationService, UserService, ConfirmationDialog, ToastrUtil, SessionService, OrganisationRejectModal, OrganisationInactiveModal) {
     this.$rootScope = $rootScope;
     this.$state = $state;
+    this.$stateParams = $stateParams;
     this.OrganisationService = OrganisationService;
     this.UserService = UserService;
     this.ConfirmationDialog = ConfirmationDialog;
+    this.OrganisationRejectModal = OrganisationRejectModal;
+    this.OrganisationInactiveModal = OrganisationInactiveModal;
     this.ToastrUtil = ToastrUtil;
-
-    this.users = [];
+    this.SessionService = SessionService;
     this.$log = $log;
-    this.editable = UserService.hasPermission('org.edit.details', $state.params.orgId);
-    this.canViewSapId = UserService.hasPermission('org.view.vendor.sap.id', $state.params.orgId);
-    this.userRoleEditOverride = UserService.hasPermission('org.edit.any.role');
+  }
+
+  $onInit(){
+    this.canViewSapId = this.UserService.hasPermission('org.view.vendor.sap.id', this.$state.params.orgId);
+    this.userRoleEditOverride = this.UserService.hasPermission('org.edit.any.role');
     this.readOnly = true;
-    this.userRoles = this.availableUserRoles;
-    this.showUsers = !!(this.availableUserRoles || []).length;
-
-    this.userRolesMap = (this.userRoles || []).reduce((result, role) => {
-      result[role.name] = role;
-      return result;
-    }, {});
-
-    this.defaultRole = _.find(this.userRoles, {default: true});
 
     this.setData(this.organisation);
+    this.isManagingOrganisation = this.org ? this.org.entityType === 1 : false;
+    this.imsNumberLabel = this.OrganisationService.getImsLabel(this.org);
 
-    this.imsNumberLabel = OrganisationService.getImsLabel(this.org);
-    this.userRegStatusDropdown = this.OrganisationService.userRegStatuses();
+    if (this.organisation && this.organisation.ukprn) {
+      this.OrganisationService.countOccuranceOfUkprn(this.organisation.ukprn).then(rsp => this.occuranceOfUkprn = rsp.data);
+    }
+
+    let collapsedSectionsByDefault = {
+      details: false,
+      governance: false,
+      programmes: false,
+      contracts: false,
+      grant: false
+    };
+
+    let collapsedSectionsCache = this.SessionService.getCollapsedOrgSections();
+    this.collapsedSections = collapsedSectionsCache || collapsedSectionsByDefault;
+    this.isLearningProvider = this.OrganisationService.isLearningProvider(this.org);
+  }
+
+  onCollapseChange() {
+    this.SessionService.setCollapsedOrgSections(this.collapsedSections);
   }
 
   refreshDetails() {
     this.$rootScope.showGlobalLoadingMask = true;
-
-    // retrieve details
-    // console.warn('e2e debug2:' + this.$state.params.orgId);
-    this.OrganisationService.getDetails(this.$state.params.orgId)
-      .then(response => {
-        // console.warn('e2e debug3:' + JSON.stringify(response, null, 2));
-
-        this.setData(response);
-        this.$rootScope.showGlobalLoadingMask = false;
-      });
-  }
-
-  setUserRegFilter() {
-    const selections = this.userRegStatusDropdown.reduce((selectedValues, item) => {
-      if (item.model) {
-        selectedValues.push(item.id)
-      }
-      return selectedValues;
-    }, []);
-
-    if (selections.length === 1) {
-      this.userRegFilter = {approved: selections[0] === 'Approved'};
-    } else {
-      this.userRegFilter = null;
-    }
+    return this.$state.go(this.$state.current, this.$stateParams, {reload: true}).then(()=>{
+      this.$rootScope.showGlobalLoadingMask = false;
+    });
   }
 
 
   setData(apiData) {
-    // console.warn('e2e setData:' + new Date());
-    // console.warn('e2e setData:' + JSON.stringify(apiData, null, 2));
+    this.org = apiData;
+    this.users = apiData.users;
 
-    this.org = apiData.data;
-    this.users = apiData.data.users;
+    this.editable = (this.org.allowedActions || []).indexOf('EDIT') != -1;
+    let canEditGovernance = this.UserService.hasPermission('org.edit.governance');
+    this.editableGovernance = canEditGovernance && (this.org.allowedActions || []).indexOf('EDIT') != -1;
+
 
     //filter role matching this organisation
     this.users = _.each(this.users, user => {
@@ -85,87 +81,84 @@ class OrganisationCtrl {
   }
 
 
-  edit() {
-    this.$state.go('organisation-edit', {
+  edit(section) {
+    this.$state.go('organisation.edit', {
       orgId: this.org.id,
-      orgDetails: this.org
+      orgDetails: this.org,
+      section: section
     });
   }
 
+  approveOrg() {
+    let isInactive = this.org.status === 'Inactive';
+    let message;
 
-  approveUser(user) {
-    this.$rootScope.showGlobalLoadingMask = true;
+    if(isInactive){
+      message = `Are you sure you want this organisation to be active?`;
+    } else{
+      let users = this.users.filter(u => u.currentOrgRole.name === 'ROLE_ORG_ADMIN').map(u => `${u.firstName} ${u.lastName} (${u.username})`).join()
+      message = `<p>${users} has requested this organisation registration.</p>
+                 <p>Approving the registration will approve the user and assign them the Org Admin role.</p>`;
+    }
 
-    this.OrganisationService.approveUser(this.org.id, user.username)
-      .then(resp => {
-        this.refreshDetails();
-      })
-      .catch(error => {
-        this.$log.error('could not approve user ' + user.username);
-      });
-  }
-
-  approveOrg(){
-    this.OrganisationService.approveOrganisation(this.org.id).then((resp)=>{
-      // console.warn('e2e debug:' + JSON.stringify(resp, null, 2));
-      this.ToastrUtil.success('Organisation approved');
-      this.refreshDetails();
+    let modal = this.ConfirmationDialog.show({
+      message: message,
+      approveText: 'APPROVE',
+      showDismiss: false,
+      info: true
     });
-  }
-
-  remove(user) {
-    var message = '<p>Are  you sure you want to remove <strong>' + user.firstName + ' ' + user.lastName +
-      '</strong> from ' + this.org.name + '?</p> ' + user.firstName + ' ' + user.lastName +
-      ' will remain registered on GLA OPS but will no longer be assigned to ' + this.org.name + '.';
-
-    var modal = this.ConfirmationDialog.delete(message);
 
     modal.result
       .then(() => {
         this.$rootScope.showGlobalLoadingMask = true;
-        this.OrganisationService.removeUserFromOrganisation(this.org.id, user.username)
-          .then(() => {
-            _.remove(this.org.users, user);
-            this.$rootScope.showGlobalLoadingMask = false;
-            this.ToastrUtil.success('User removed from ' + this.org.name);
+        this.OrganisationService.approveOrganisation(this.org.id).then((resp) => {
+          this.refreshDetails().then(()=>{
+            this.ToastrUtil.success(isInactive? 'Organisation approved' : 'Organisation & Org Admin approved');
           });
+        });
       });
   }
 
+  rejectOrg() {
+    let modal = this.OrganisationRejectModal.show();
+    modal.result.then((params) => {
+      this.$rootScope.showGlobalLoadingMask = true;
 
-  getRoleDescription(roleId, user) {
-    //let role = this.assignableRole(roleId);
-    let role = this.userRolesMap[roleId];
-    if (!role) {
-      role = _.find(user.roles, {organisationId: this.org.id, name: roleId});
-    }
-    return (role || {}).description || 'Role Not Found';
+      // update here
+      this.OrganisationService.rejectOrganisation(this.org.id, params.reason.value, params.reasonText).then((resp) => {
+        this.refreshDetails().then(()=>{
+            this.ToastrUtil.success('Organisation & Org Admin rejected');
+        });
+      });
+    });
   }
 
-  assignableRole(roleId) {
-    // check if new permission || existing logic
-    if(this.userRoleEditOverride) {
-      return true;
-    }
-    return this.userRolesMap[roleId];
-  };
+  inactivateOrganisation(){
+    let modal = this.OrganisationInactiveModal.show();
 
+    modal.result
+      .then((params) => {
+        this.$rootScope.showGlobalLoadingMask = true;
 
-  userRoleUpdated(user, roleId) {
-    this.$rootScope.showGlobalLoadingMask = true;
-    this.UserService.updateUserRole(user.username, this.org.id, roleId)
-      .then(resp => {
-        this.$log.log(resp);
-        this.refreshDetails();
+        // update here
+        this.OrganisationService.inactivateOrganisation(this.org.id, params.reason.value, params.reasonText, params.duplicateOrgId).then((resp) => {
+          this.refreshDetails().then(()=>{
+            this.ToastrUtil.success('This organisation is now inactive');
+          });
+        });
       });
   }
 
   back() {
     this.$state.go('organisations');
   }
+
+  isApproved(){
+    return this.org.status === 'Approved'
+  }
 }
 
-OrganisationCtrl.$inject = ['$rootScope', '$state', '$log', 'OrganisationService', 'UserService', 'ConfirmationDialog', 'ToastrUtil'];
+OrganisationCtrl.$inject = ['$rootScope', '$state', '$stateParams', '$log', 'OrganisationService', 'UserService', 'ConfirmationDialog', 'ToastrUtil', 'SessionService', 'OrganisationRejectModal', 'OrganisationInactiveModal'];
 
 
 angular.module('GLA')
@@ -174,7 +167,9 @@ angular.module('GLA')
     bindings: {
       organisationTypes: '<',
       organisation: '<',
-      availableUserRoles: '<'
+      showUsers: '<?',
+      remainingYears: '<',
+      showDuplicateOrgAsLink: '<'
     },
     controller: OrganisationCtrl,
   });

@@ -7,14 +7,18 @@
  */
 
 class ChangeReportTile {
-  constructor($rootScope, $scope) {
+  constructor() {
+
+  }
+
+  $onInit(){
     this.hasRightValues = false;
     _.forEach(this.rows, (row)=>{if(row.right){this.hasRightValues = true}});
   }
 
 }
 
-ChangeReportTile.$inject = ['$rootScope', '$scope'];
+ChangeReportTile.$inject = [];
 
 angular.module('GLA')
   .component('changeReportTiles', {

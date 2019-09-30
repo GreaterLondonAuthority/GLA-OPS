@@ -10,7 +10,7 @@ package uk.gov.london.ops.service.project.state;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import uk.gov.london.ops.util.CSVFile;
+import uk.gov.london.common.CSVFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class ManualApprovalProjectStateMachine extends ProjectStateMachine {
     @Override
     @PostConstruct
     void loadAllowedTransitions() throws IOException {
-        allowedTransitions = CSVFile.fromResource(this, "project-state-transitions.csv").loadData(csvMapper);
+        allowedTransitions = CSVFile.fromResource(this, StateModel.ChangeControlled.name() + ".csv").loadData(csvMapper);
         log.debug("Transitions loaded from CSV file");
     }
 

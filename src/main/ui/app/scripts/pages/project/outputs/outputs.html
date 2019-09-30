@@ -1,76 +1,131 @@
-<div class="outputs">
+<div class="outputs outputs-block">
   <div class="text-center">
     <project-header
       on-back="$ctrl.onBack()"
-      editable-block="$ctrl">Outputs
+      editable-block="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}
     </project-header>
   </div>
 
-  <section-header ng-click="$ctrl.toggleSection()" class="section-toggle" id="outputs-summary-title">
-    <span class="glyphicon" ng-class="{'glyphicon-triangle-bottom': !$ctrl.sectionExpanded, 'glyphicon-triangle-top': $ctrl.sectionExpanded}"></span>
-    <span>{{$ctrl.outputsSummaryTitle}}</span>
-    <a class="link" href="" ng-click="$ctrl.toggleOutputs();$event.stopPropagation()" ng-if="$ctrl.sectionExpanded && $ctrl.outputSummaries.length">
-      <span ng-if="!$ctrl.outputsExpanded">Expand all outputs</span>
-      <span ng-if="$ctrl.outputsExpanded">Collapse all outputs</span>
-    </a>
-  </section-header>
-
-  <div aclass="table-responsive">
-    <table class="table" ng-if="$ctrl.sectionExpanded" id="outputs-summary">
-      <thead class="thead-inverse uppercase">
-        <tr>
-          <th>OUTPUT TYPE</th>
-          <th>VALUE</th>
-          <th>CATEGORY</th>
-          <th>FORECAST</th>
-          <th>ACTUAL</th>
-          <th>TOTALS</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat-start="r in $ctrl.outputSummaries | orderBy:['outputType', 'category']" ng-click="$ctrl.toggleRow(r)" class="primary-row">
-          <td>
-            <span class="glyphicon" ng-class="{'glyphicon-triangle-bottom': r.collapsed, 'glyphicon-triangle-top': !r.collapsed}"></span>
-            <span class="text-capitalize">{{r.outputType | lowercase}}</span>
-          </td>
-          <td>{{$ctrl.unitConfig[r.valueType].label}}</td>
-          <td>{{r.category}}</td>
-          <td>{{$ctrl.formatNumber(r.forecast, r.valueType)}}</td>
-          <td>{{$ctrl.formatNumber(r.actual, r.valueType)}}</td>
-          <td>{{$ctrl.formatNumber(r.total, r.valueType)}}</td>
-        </tr>
-
-
-        <tr ng-if="!r.collapsed" class="sub-heading">
-          <td></td>
-          <td>YEAR</td>
-          <td>SUB CATEGORY</td>
-          <td></td>
-          <td></td>
-          <!--GLA-13493-->
-          <td></td>
-        </tr>
-
-
-        <tr ng-repeat-end ng-repeat="s in r.subcategories | orderBy:['financialYear', 'subcategory']" ng-if="!r.collapsed" class="secondary-row">
-          <td></td>
-          <td>{{s.financialYear}}/{{s.financialYear + 1 | limitTo:2:2}}</td>
-          <td>{{s.subcategory}}</td>
-          <td>{{$ctrl.formatNumber(s.forecast, s.valueType)}}</td>
-          <td>{{$ctrl.formatNumber(s.actual, s.valueType)}}</td>
-          <!--GLA-13493-->
-          <td>{{$ctrl.formatNumber(s.total, s.valueType)}}</td>
-        </tr>
-
-        <tr ng-if="!$ctrl.outputSummaries.length">
-          <td colspan="5">Not provided</td>
-        </tr>
-      </tbody>
-    </table>
+    <div ng-if="$ctrl.blockConfig.showTotalProjectOutputsTable" class="outputs-section">
+    <section-header ng-click="$ctrl.toggleSection()" class="section-toggle" id="outputs-summary-title">
+      <span class="glyphicon" ng-class="{'glyphicon-triangle-bottom': !$ctrl.sectionExpanded, 'glyphicon-triangle-top': $ctrl.sectionExpanded}"></span>
+      <span>{{$ctrl.outputsSummaryTitle}}</span>
+      <a class="link no-print" href="" ng-click="$ctrl.toggleOutputs();$event.stopPropagation()" ng-if="$ctrl.sectionExpanded && $ctrl.outputSummaries.length">
+        <span ng-if="!$ctrl.outputsExpanded">Expand all outputs</span>
+        <span ng-if="$ctrl.outputsExpanded">Collapse all outputs</span>
+      </a>
+    </section-header>
+    <div class="error-wrapper mbottom5">
+      <span class="error">{{$ctrl.validationFailures.Baselines[0].description}}</span>
+    </div>
+    <output-summaries-table ng-if="$ctrl.sectionExpanded"
+                            on-toggle-row="$ctrl.toggleRow($event)"
+                            output-summaries="$ctrl.outputSummaries"
+                            template="$ctrl.template"
+                            display-output-type="$ctrl.displayOutputType"
+                            display-value="$ctrl.blockConfig.showValueColumn">
+    </output-summaries-table>
   </div>
 
 
-  <hr class="mtop40">
+  <div ng-if="$ctrl.project.advancePaymentAmount">
+    <hr class="mtop40" ng-if="$ctrl.blockConfig.showTotalProjectOutputsTable">
+    <section-header>
+      Advance Payment
+    </section-header>
+    <div class="row no-gutter mtop30" >
+      <div class="col-xs-12 table-responsive">
+        <table class="table table-hover table-bordered" id="claims-table">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th>AGREED PAYMENT £</th>
+            <th>CLAIM DATE</th>
+            <th>CLAIM STATUS</th>
+          </tr>
+          </thead>
+          <tbody ng-if="$ctrl.projectBlock.advancePaymentClaim">
+          <tr >
+            <td>
+              {{$ctrl.project.advancePaymentAmount | number }}
+            </td>
+            <td>
+              {{$ctrl.projectBlock.advancePaymentClaim.claimedOn | date: "dd/MM/yyyy"}}
+            </td>
+            <td>
+              <a href="" ng-click="$ctrl.showClaimModal($ctrl.projectBlock.advancePaymentClaim, $ctrl.project.advancePaymentAmount)">{{$ctrl.projectBlock.advancePaymentClaim.claimStatus}}</a>
+            </td>
+          </tr>
+          </tbody>
+          <tbody ng-if="!$ctrl.projectBlock.advancePaymentClaim">
+          <tr>
+            <td>
+              {{$ctrl.project.advancePaymentAmount | number }}
+            </td>
+            <td>
+            </td>
+            <td>
+              <a href="" ng-if="!$ctrl.readOnly && $ctrl.projectBlock.claimable" ng-click="$ctrl.showClaimModal(null, $ctrl.project.advancePaymentAmount)" >Claim</a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div ng-if="$ctrl.blockConfig.showBaselines" class="baseline-section">
+    <hr class="mtop40" ng-if="$ctrl.blockConfig.showTotalProjectOutputsTable">
+
+    <section-header ng-click="$ctrl.toggleBaseline()" class="section-toggle" id="baseline-title" >
+      <span class="glyphicon" ng-class="{'glyphicon-triangle-bottom': !$ctrl.baselineExpanded, 'glyphicon-triangle-top': $ctrl.baselineExpanded}"></span>
+      <span>Baseline for output category type</span>
+    </section-header>
+
+
+    <div ng-if="$ctrl.baselineExpanded">
+      <div class="multiline-text mbottom10" ng-if="!$ctrl.readOnly">
+        <span class="section-subheader">{{$ctrl.outputsMessage}}</span>
+      </div>
+      <form role="form" name="baselineForm">
+        <div class="col-xs-12 text-center no-gutter-outputs">
+          <outputs-wizard
+            ng-if="$ctrl.configLoaded && !$ctrl.readOnly"
+            year="$ctrl.currentYear"
+            baseline=true
+            read-only="$ctrl.readOnly"
+            on-add-output="$ctrl.onAddBaselineOutput(event)"
+            period-type="$ctrl.periodType"
+            output-type-name="$ctrl.outputTypeName"
+            category-name="$ctrl.categoryName"
+            direct-or-indirect-choices="$ctrl.outputTypes"
+            categories="$ctrl.categories"
+            subcategory-name="$ctrl.subcategoryName"
+            display-output-type="$ctrl.displayOutputType"
+            display-unit-cost="$ctrl.displayUnitCost">
+          </outputs-wizard>
+        </div>
+      </form>
+    </div>
+
+    <outputs-baselines-table categories="$ctrl.categories"
+                             category-name="$ctrl.categoryName"
+                             column-offsets="$ctrl.baselineColumnOffsets"
+                             display-output-type="$ctrl.displayOutputType"
+                             display-value="$ctrl.blockConfig.showValueColumn"
+                             ng-if="$ctrl.baselineExpanded && $ctrl.baselineTableData.length"
+                             on-delete="$ctrl.onBaselineRowDeleted(event)"
+                             on-row-changed="$ctrl.onBaselineRowChanged(event)"
+                             read-only="$ctrl.readOnly"
+                             expanded-categories="$ctrl.blockSessionStorage.expandedBaslineCategories"
+                             table-data="$ctrl.baselineTableData"
+                             table-id="'baselinesTable'"></outputs-baselines-table>
+
+    <div ng-if="$ctrl.readOnly && $ctrl.baselineExpanded && !$ctrl.baselineTableData.length">
+      Not provided
+    </div>
+
+  </div>
+  <hr class="mtop40" ng-if="$ctrl.blockConfig.showTotalProjectOutputsTable">
 
   <form role="form" name="asForm">
     <div class="col-xs-12 mtop30 text-center">
@@ -89,60 +144,93 @@
     <section-header subheader="Add outputs to a financial year">
       Outputs by financial year
     </section-header>
-    <div class="col-xs-12 text-center no-gutter-outputs">
+    <div class="col-xs-12 text-center no-gutter-outputs no-padding mbottom30">
       <outputs-wizard
         ng-if="$ctrl.configLoaded && !$ctrl.readOnly"
         year="$ctrl.currentYear"
         read-only="$ctrl.readOnly"
+        baseline=false
         on-add-output="$ctrl.onAddOutput(event)"
         period-type="$ctrl.periodType"
         output-type-name="$ctrl.outputTypeName"
         category-name="$ctrl.categoryName"
-        subcategory-name="$ctrl.subcategoryName">
+        direct-or-indirect-choices="$ctrl.outputTypes"
+        categories="$ctrl.categories"
+        subcategory-name="$ctrl.subcategoryName"
+        display-output-type="$ctrl.displayOutputType"
+        categories-costs="$ctrl.categoriesCosts"
+        disabled-months="$ctrl.disabledMonths"
+        display-unit-cost="$ctrl.displayUnitCost">
       </outputs-wizard>
     </div>
-    <div class="row no-gutter mtop30" ng-if="$ctrl.tableData.length">
-      <div class="col-xs-12 expandableTable table-responsive">
-        <table class="table table-hover table-bordered table-with-inputs mtop15" id="outputs-table">
-            <thead>
-                <tr class="mainHeader">
-                    <th ng-style="{'width': $ctrl.tableColumnOffsets[0]}">{{$ctrl.categoryName.toUpperCase()}}</th>
-                    <th ng-style="{'width': $ctrl.tableColumnOffsets[1]}">{{$ctrl.outputTypeName.toUpperCase()}}</th>
-                    <th ng-style="{'width': $ctrl.tableColumnOffsets[2]}">VALUE</th>
-                    <th ng-style="{'width': $ctrl.tableColumnOffsets[3]}">{{$ctrl.periodType === 'Quarterly' ? 'QUARTER' : 'MONTH'}}</th>
-                    <th ng-style="{'width': $ctrl.tableColumnOffsets[4]}">FORECAST</th>
-                    <th ng-style="{'width': $ctrl.tableColumnOffsets[5]}">ACTUAL</th>
-                    <th ng-style="{'width': $ctrl.tableColumnOffsets[6]}">DIFFERENCE</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="item in $ctrl.tableData">
-                    <td colspan="7">
-                        <forecast-category-row
-                          session-storage="$ctrl.blockSessionStorage"
-                          table-id="outputsTable"
-                          row-id="item[0].config.category"
-                          data="item"
-                          current-financial-year="$ctrl.realCurrentYear"
-                          column-offsets="$ctrl.tableColumnOffsets"
-                          on-row-changed="$ctrl.onRowChanged(event)"
-                          on-delete="$ctrl.onRowDeleted(event)"
-                          read-only="$ctrl.readOnly"
-                          period-type="$ctrl.periodType">
-                        </forecast-category-row>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+
+    <financial-year-monthly-outputs-table ng-if="$ctrl.tableData.length && !$ctrl.showQuarterlyOutputs"
+                                          block-config="$ctrl.blockConfig"
+                                          block-id="$ctrl.projectBlock.id"
+                                          categories-to-assumptions="$ctrl.categoriesToAssumptions"
+                                          category-name="$ctrl.categoryName"
+                                          column-offsets="$ctrl.tableColumnOffsets"
+                                          current-financial-year="$ctrl.realCurrentYear"
+                                          display-output-type="$ctrl.displayOutputType"
+                                          display-value="$ctrl.blockConfig.showValueColumn"
+                                          financial-year="$ctrl.getYear()"
+                                          on-assumption-change="$ctrl.onAssumptionChange(event)"
+                                          on-delete="$ctrl.onRowDeleted(event)"
+                                          on-delete-assumption="$ctrl.onDeleteAssumption(event)"
+                                          on-row-changed="$ctrl.onRowChanged(event)"
+                                          output-type-name="$ctrl.outputTypeName"
+                                          period-type="$ctrl.periodType"
+                                          project-id="$ctrl.project.id"
+                                          read-only="$ctrl.readOnly"
+                                          expanded-categories="$ctrl.blockSessionStorage.expandeOutputsTableCategories"
+                                          show-assumptions="$ctrl.blockConfig.showAssumptions"
+                                          table-column-offsets-header="$ctrl.tableColumnOffsetsHeader"
+                                          table-data="$ctrl.tableData"
+                                          table-id="'outputsTable'"></financial-year-monthly-outputs-table>
+
+
+  <div class="error-wrapper mbottom5">
+    <span class="error error-quarterly">{{$ctrl.validationFailures.Budget[0].description}}</span>
   </div>
 
-  <div class="col-xs-12 text-center mtop30 mbottom15">
-    <button class="btn btn-primary"
-            ng-click="$ctrl.unlockAndExit()"
-            mouse-event-for-autosave
-            ng-if="!$ctrl.readOnly">SAVE
-    </button>
+    <div class="exceed-budget-text mbottom5" ng-if="$ctrl.projectBlock.projectBudgetExceeded">
+      The actual total exceeds the approved total project budget. Please adjust your total project budget or check that your actual figures below are correct.
+    </div>
+
+    <div class="mbottom5" ng-if="$ctrl.projectBlock.forecastsExceedingProjectBudget">
+      The forecast total exceeds the approved total project budget. Please adjust your total project budget  or check that your forecast figures below are correct before claiming.
+    </div>
+
+  <financial-year-quarterly-outputs-table
+      id="quarterly-outputs"
+      old="false"
+      ng-if="$ctrl.showQuarterlyOutputs"
+      financial-year="$ctrl.getYear()"
+      project-id="$ctrl.project.id"
+      block-id="$ctrl.projectBlock.id"
+      category-title="$ctrl.categoryName.toUpperCase()"
+      table-data="$ctrl.quarters"
+      block-config="$ctrl.blockConfig"
+      on-row-changed="$ctrl.onRowChanged(event)"
+      on-delete="$ctrl.onRowDeleted(event)"
+      read-only="$ctrl.readOnly"
+      on-claim="$ctrl.refreshData(event)"
+      on-cancel-claim="$ctrl.refreshData(event)"
+      selected-year="$ctrl.currentYear"
+      recovery-output-id="$ctrl.outputsCostBlock.selectedRecoveryOutputId"
+      claimable="$ctrl.claimable"
+      show-advanced-payment-column="$ctrl.showAdvancedPaymentColumn"
+      advance-payment-status="$ctrl.projectBlock.advancePaymentClaim.claimStatus"
+      show-advance-payment-column="$ctrl.outputsBlock.showAdvancePaymentColumn"
+      latest-claim="$ctrl.latestClaim">
+    </financial-year-quarterly-outputs-table>
+
+
+    <div class="mtop10" ng-if="$ctrl.projectBlock.nextClaimableQuarter && $ctrl.showQuarterlyOutputs">The next quarter to be claimed is Q{{$ctrl.projectBlock.nextClaimableQuarter.quarter}} {{$ctrl.projectBlock.nextClaimableQuarter.year | fYear}}.</div>
+
+
+    <div class="col-xs-12 mtop30 no-padding">
+    <project-block-footer editable-block="$ctrl" class="mtop30"></project-block-footer>
   </div>
 
   </form>

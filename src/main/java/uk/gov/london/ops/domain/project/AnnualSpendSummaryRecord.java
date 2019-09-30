@@ -7,9 +7,9 @@
  */
 package uk.gov.london.ops.domain.project;
 
-import uk.gov.london.ops.domain.finance.LedgerStatus;
-import uk.gov.london.ops.util.jpajoins.Join;
-import uk.gov.london.ops.util.jpajoins.JoinData;
+import uk.gov.london.ops.payment.LedgerStatus;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

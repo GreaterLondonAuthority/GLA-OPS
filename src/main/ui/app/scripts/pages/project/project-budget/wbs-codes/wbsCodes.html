@@ -21,7 +21,8 @@
            maxlength="20"
            ng-disabled="$ctrl.readOnly"
            ng-model="$ctrl.code"
-           aria-label="WBS code">
+           aria-label="{{'WBS code ' + $ctrl.type | lowercase}}"
+           ng-keypress="$ctrl.clearErrorMessage()">
     <span class="input-group-btn mtop15">
       <button class="btn btn-secondary btn-md add-btn"
               ng-attr-id="{{'add-wbscode-'+ $ctrl.type | lowercase}}"
@@ -32,4 +33,7 @@
     </span>
   </div>
   <div class="error-wrapper error" ng-if="$ctrl.code.length > 1 && !$ctrl.isValid($ctrl.code)">WBS codes must be individual</div>
+  <div class="error-wrapper error" ng-if="$ctrl.code.length > 1 && $ctrl.projectIdsUsingWbsCode.length > 0">
+    WBS code is already associated with {{$ctrl.projectIdsUsingWbsCode.length > 1 ? 'projects' : 'project'}}: {{$ctrl.projectIdsUsingWbsCode.join()}}
+  </div>
 </div>

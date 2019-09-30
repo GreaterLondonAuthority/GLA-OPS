@@ -1,0 +1,30 @@
+<div class="assessment-list readonly-mode page">
+  <page-header header="'Assessments'"></page-header>
+
+  <table id="assessment-list-table" class="table table-hover table-bordered table-striped mtop20">
+    <thead class="thead-inverse uppercase" id="assessment-list-table-headers">
+    <tr>
+      <th class="text-nowrap">Created By</th>
+      <th>Project Title</th>
+      <th>Org Name</th>
+      <th>Assessment Type</th>
+      <th>Project Status</th>
+      <th>Assessment Status</th>
+      <th>Created On</th>
+      <th>Modified On</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="assessment in $ctrl.assessments" ui-sref="assessment({id: assessment.id, backNavigatesTo: 'assessments'})" id="{{assessment.id}}">
+      <td >{{ assessment.creatorName }}</td>
+      <td >{{ assessment.projectTitle }}</td>
+      <td >{{ assessment.usersPrimaryOrganisationName }}</td>
+      <td >{{ assessment.assessmentTemplateName }}</td>
+      <td >{{ assessment.projectStatus }}</td>
+      <td >{{ $ctrl.AssessmentService.getAssessmentStatus(assessment)}} </td>
+      <td >{{ assessment.createdOn | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td >{{ assessment.modifiedOn | date: 'dd/MM/yyyy HH:mm' }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

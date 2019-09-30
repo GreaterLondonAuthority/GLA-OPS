@@ -1,6 +1,6 @@
 <div class="total__spend">
 
-  <project-header on-back="$ctrl.back()" editable-block="$ctrl" subtitle="">{{$ctrl.data.blockDisplayName || 'Project Budgets'}}</project-header>
+  <project-header on-back="$ctrl.back()" editable-block="$ctrl" subtitle="">{{$ctrl.data.blockDisplayName}}</project-header>
 
   <div class="col-xs-10 col-xs-offset-1 form-top-error mtop15" ng-if="$ctrl.errors">
     <p class="error">Sorry, an error has occurred.</p>
@@ -25,7 +25,7 @@
                 <label for="project-budgets-from-date">From</label><br/>
                 <financial-year id="project-budgets-from-date"
                   ng-if="$ctrl.realCurrentYear && $ctrl.fromDateSelected"
-                  back="20"
+                  from="1997"
                   forward="5"
                   current-financial-year-const="$ctrl.realCurrentYear"
                   on-select="$ctrl.onFromDateChange()"
@@ -284,11 +284,12 @@
         <label for="annualSpend-currentYear">Financial Year</label>
 
         <financial-year id="annualSpend-currentYear"
-          ng-if="$ctrl.realCurrentYearAnnualSpend"
-          current-financial-year-const="$ctrl.realCurrentYearAnnualSpend"
-          on-select="$ctrl.yearSelected(selectedYear)"
-          selected-year="$ctrl.currentYearAnnualSpend.financialYear"
-          populated-years="$ctrl.populatedYears"></financial-year>
+                        ng-if="$ctrl.realCurrentYearAnnualSpend"
+                        current-financial-year-const="$ctrl.realCurrentYearAnnualSpend"
+                        on-select="$ctrl.yearSelected(selectedYear)"
+                        populated-years="$ctrl.populatedYears"
+                        selected-year="$ctrl.currentYearAnnualSpend.financialYear"
+                        from="1997"></financial-year>
       </div>
     </div>
 
@@ -399,10 +400,6 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-xs-12 mtop40 mbottom30 text-center">
-        <button class="btn btn-primary" ng-if="!$ctrl.readOnly" ng-click="$ctrl.submit()">SAVE</button>
-      </div>
-    </div>
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
   </form>
 </div>

@@ -6,66 +6,129 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-ProgrammeCtrl.$inject = ['$state', '$log', 'UserService', 'ProgrammeService', 'FeatureToggleService'];
-
-function ProgrammeCtrl($state, $log, UserService, ProgrammeService, FeatureToggleService) {
-  this.user = UserService.currentUser();
-  // this.csvDownloadEnabled = false;
-
-  UserService.hasPermission('org.edit.contract');
-
-  // this.editable = true;
-  this.editMode = false;
+//TODO change path
+import '../programme/programme-template-modal/programmeTemplateModal';
+import DataUtil from '../../util/DateUtil';
 
 
-  this.programme = {
-    name: undefined,
-    templates: [],
-    enabled: false,
-    restricted: false
+class ProgrammeCtrl {
+  constructor($state, $log, UserService, ProgrammeService, AssessmentService, ProgrammeTemplateModal, $rootScope, ConfirmationDialog, $animate, $timeout) {
+    this.user = UserService.currentUser();
+    this.UserService = UserService;
+    this.ProgrammeService = ProgrammeService;
+    this.AssessmentService = AssessmentService;
+    this.ProgrammeTemplateModal = ProgrammeTemplateModal;
+    this.ConfirmationDialog = ConfirmationDialog;
+    this.$animate = $animate;
+    this.$timeout = $timeout;
+    this.$rootScope = $rootScope;
+    this.$state = $state;
+    this.$log = $log;
   };
-  this.templatesList = [];
 
-  this.submitenabled = false;
-  this.loading = true;
+  $onInit() {
+    this.newTemplateWbsDefault = null;
 
-  // this.templates = [];
-  this.selectedTemplate = null;
-  // this.restricted = false;
 
-  this.projectsCount = {};
+    // static
+    this.wbsCodeTypes = this.ProgrammeService.getWbsCodeTypes();
+    this.UserService.hasPermission('org.edit.contract');
 
-  this.isSaving = false;
-  this.managingOrganisations = UserService.currentUserOrganisations();
+    // this.editable = true;
+    this.editMode = false;
+    this.statuses = ['Active', 'Archived', 'Abandoned'];
+    this.newTemplateWbsCode = null;
+    this.programme = this.programme || {
+      name: undefined,
+      templates: [],
+      enabled: false,
+      restricted: false
+    };
+    this.templatesList = this.templatesList || [];
 
-  this.onManagingOrganisation = (selectedOrg) => {
-    this.programme.managingOrganisation = selectedOrg;
-  }
+    this.submitenabled = false;
+    this.loading = true;
 
-  if($state.params.programmeId){
-    this.newProgrammeMode = false;
-    this.readOnly = true;
-  } else {
-    this.newProgrammeMode = true;
-    this.readOnly = false;
+    // this.templates = [];
+    this.selectedTemplate = null;
+    // this.restricted = false;
 
-    if(this.managingOrganisations.length === 1){
-      let managingOrg = this.managingOrganisations[0];
-      this.onManagingOrganisation(managingOrg);
-      this.programme.managingOrganisationName= managingOrg.name;
-      this.programme.managingOrganisationId= managingOrg.id;
+    this.projectsCount = {};
+
+    this.isSaving = false;
+    this.managingOrganisations = this.UserService.currentUserOrganisations();
+    this.templateIdToProgrammeTemplate = (this.programme.templatesByProgramme || []).reduce((templateIdToProgrammeTemplate, templateProgramme) => {
+      templateIdToProgrammeTemplate[templateProgramme.id.templateId] = templateProgramme;
+      return templateIdToProgrammeTemplate;
+    }, {});
+
+    this.programme.templates.forEach(t => t.usedInAssessment = this.templateIdToProgrammeTemplate[t.id].usedInAssessment);
+    this.availableTemplates = this.getAvailableTemplates(this.templatesList, this.programme);
+
+
+    this.templateIdToTemplate = (this.templatesList || []).reduce((templateIdToTemplate, template) => {
+      templateIdToTemplate[template.id] = template;
+      return templateIdToTemplate;
+    }, {});
+
+    this.setStateModelForProgrammeTemplates(this.programme);
+    this.programme.inAssessment = !!this.programme.inAssessment;
+
+    this.programme.financialYearLabel = DataUtil.toFinancialYearString(this.programme.financialYear || DataUtil.getFinancialYear2(moment()));
+
+    this.title = this.newProgrammeMode? 'Create a new programme' : this.programme.name;
+    this.showExpandAll = false;
+    this.labels = this.ProgrammeService.labels().programmeInfo;
+
+    if(this.newProgrammeMode){
+      this.readOnly = false;
+      this.programme.status = 'Active';
+
+      if (this.managingOrganisations.length === 1) {
+        let managingOrg = this.managingOrganisations[0];
+        this.onManagingOrganisation(managingOrg);
+        this.programme.managingOrganisationName = managingOrg.name;
+        this.programme.managingOrganisationId = managingOrg.id;
+      }
+    } else {
+      this.readOnly = true;
     }
+    if(!this.newProgrammeMode){
+      this.processProgramme(this.programme);
+    }
+
+
+    this.$animate.enabled(true);
+  };
+
+  getTemplatesToggleName(){
+    return this.showExpandAll? 'Expand all project types' : 'Collapse all project types';
   }
 
+  collapseTemplates(){
+    this.showExpandAll = !this.showExpandAll;
+    (this.programme.templatesByProgramme || {}).forEach(template => {
+       template.collapsed = this.showExpandAll;
+    })
+  }
 
+  onCollapseChange(){
+    let hasAnySectionOpen = (this.programme.templatesByProgramme || {}).some(template => !template.collapsed);
+    this.showExpandAll = !hasAnySectionOpen;
+  }
 
-  this.canEditProgram = () => {
-    this.editable = UserService.hasPermission('prog.manage') && this.readOnly;
+  onManagingOrganisation(selectedOrg) {
+    this.programme.managingOrganisation = selectedOrg;
+    this.filterReadyForUseAssesmentTemplates();
+  }
+
+  canEditProgram() {
+    this.editable = this.UserService.hasPermission('prog.manage');
     return this.editable;
   };
 
-  this.getProgrammeNumberOfProjects = () => {
-    ProgrammeService.getProgrammeNumberOfProjects($state.params.programmeId)
+  getProgrammeNumberOfProjects() {
+    this.ProgrammeService.getProgrammeNumberOfProjects(this.$state.params.programmeId)
       .then(resp => {
         let temp = {};
         let totalProjectCount = 0;
@@ -75,7 +138,6 @@ function ProgrammeCtrl($state, $log, UserService, ProgrammeService, FeatureToggl
         });
         this.totalProjectCount = totalProjectCount;
         this.projectsCount = temp;
-
       });
   };
 
@@ -84,65 +146,62 @@ function ProgrammeCtrl($state, $log, UserService, ProgrammeService, FeatureToggl
   /******************
   VIEW PROGRAMME CTRL
   ******************/
-  this.loadProgramme = () => {
-    ProgrammeService.getProgramme($state.params.programmeId)
-    .then(resp => {
-      this.programme = resp.data;
-      this.managingOrganisationModel = {
-        id: this.programme.managingOrganisationId,
-        name: this.programme.managingOrganisationName
-      }
-      if(this.canEditProgram()){
-        this.getProgrammeNumberOfProjects();
-      }
+
+  processProgramme(programme){
+    // this.programme.templatesByProgramme = _.map(programme.templatesByProgramme, (template)=>{
+    programme.templatesByProgramme = _.sortBy(programme.templatesByProgramme, (template)=>{
+      template.attrId = template.templateName.split(' ').join('-')+'-wbs-code';
+      // return template;
+      return template.templateName;
     });
+
+    this.managingOrganisationModel = {
+      id: programme.managingOrganisationId,
+      name: programme.managingOrganisationName
+    }
+    if(this.canEditProgram()){
+      this.getProgrammeNumberOfProjects();
+    }
+    return programme;
   };
 
-  // on view and edit only
-  if(!this.newProgrammeMode){
-    this.loadProgramme();
-  }
 
-  // FeatureToggleService.isFeatureEnabled('outputCSV')
-  //   .then(resp => {
-  //     this.csvDownloadEnabled = resp.data;
-  //   });
-
-  this.onBack = () => {
-    $state.go('programmes');
+  onBack() {
+    this.$state.go('programmes');
   };
 
-  this.updateEnabled = (enabled) => {
-    ProgrammeService.updateEnabled($state.params.programmeId, enabled)
-      .then(resp => {
-        this.loadProgramme();
-      });
-  };
-
-  /******************
-  CREATE PROGRAMME CTRL
-  ******************/
-
-  ProgrammeService.getAllProjectTemplates()
-    .then(resp => {
-      this.loading = false;
-      if (!resp) return;
-      this.templatesList = _.orderBy(resp.data, 'name');
-    })
-    .catch(resp => {
-      $log.error(resp);
-      this.loading = false;
-    });
 
   /**
    * Add template to selected list handler
    */
-  this.onTemplateAdded = (template) => {
-
-    $log.log(template);
+  onTemplateAdded(template) {
+    this.programme.templatesByProgramme = this.programme.templatesByProgramme || [];
+    this.$log.log(template);
     if (template) {
-      if (!_.find(this.programme.templates, {id: template.id})) {
-        this.programme.templates.push(template);
+      if (!_.find(this.programme.templatesByProgramme, {id: template.id})) {
+
+        this.programme.templatesByProgramme.unshift({
+          //TODO do we need this?
+          attrId: template.name.split(' ').join('-')+'-wbs-code',
+          id: {
+            templateId: template.id,
+            programmeId: this.programme.id
+          },
+          programmeName: this.programme.name,
+          templateName: template.name,
+          capitalWbsCode: this.newTemplateWbsCapitalCode,
+          revenueWbsCode: this.newTemplateWbsRevenueCode,
+          ceCode: this.newTemplateCeCode,
+          defaultWbsCodeType: this.newTemplateWbsDefault,
+          status: 'Active',
+          paymentsEnabled: true,
+          isNew: true
+        });
+        this.selectedTemplate = null;
+        this.newTemplateWbsCapitalCode = null;
+        this.newTemplateWbsRevenueCode = null;
+        this.newTemplateWbsDefault = null;
+        this.newTemplateCeCode = null;
       }
     }
   };
@@ -150,67 +209,117 @@ function ProgrammeCtrl($state, $log, UserService, ProgrammeService, FeatureToggl
   /**
    * Remove template from selected list handler
    */
-  this.onTemplateRemoved = (template) => {
-    $log.debug(template);
-    this.programme.templates = this.programme.templates.filter(item => {
-      return (item.id !== template.id);
+  onTemplateRemoved(template) {
+    this.$log.debug(template);
+    let modal = this.ConfirmationDialog.delete('Are you sure you want to delete this Project type (template)?');
+    modal.result.then((selectedTemplate) => {
+      this.programme.templatesByProgramme = this.programme.templatesByProgramme.filter(item => {
+        return (item.id !== template.id);
+      });
+
+      this.availableTemplates = this.getAvailableTemplates(this.templatesList, this.programme);
     });
+
   };
 
   /**
    * Submit new project
    */
-  this.submit = () => {
+  submit() {
     if(this.isSaving){return;}
     this.isSaving = true;
     if(this.editMode){
-      ProgrammeService.updateProgramme(this.programme, this.programme.id)
-      .then(resp => {
-        this.isSaving = false;
-        if (!resp) return;
-        $log.log(resp);
-        $state.go('programmes');
+      this.programme.templates = null;
+      this.programme.grantTypes = null;
+      return this.ProgrammeService.updateProgramme(this.programme, this.programme.id).then(()=>{
+        this.$state.reload();
       })
-      .catch(() => {
-        this.isSaving = false;
-        $log.error(error);
-        this.loading = false;
-      });
     } else {
-
-      var data = {
-        name: this.programme.name,
-        templates: this.programme.templates,
-        enabled: this.programme.enabled,
-        restricted: this.programme.restricted,
-        wbsCode: this.programme.wbsCode,
-        managingOrganisation: this.programme.managingOrganisation
-      }
-
-      ProgrammeService.createProgramme(data)
+      return this.ProgrammeService.createProgramme(this.programme)
       .then(resp => {
         this.isSaving = false;
         if (!resp) return;
-        $log.log(resp);
-        $state.go('programmes');
+        this.$log.log(resp);
+        this.$state.go('programme', {programmeId: resp.data.id});
       })
       .catch((error) => {
         this.isSaving = false;
-        $log.error(error);
+        this.$log.error(error);
         this.loading = false;
       });
     }
   };
 
-  this.edit = () => {
-    this.readOnly = false;
-    this.editMode = true;
-    this.canEditProgram();
+  isUsedInAssessment(templateId){
+    return this.templateIdToProgrammeTemplate[templateId].isUsedInAssessment;
   }
 
+  edit() {
+    this.$rootScope.showGlobalLoadingMask = true;
+    this.$animate.enabled(false);
+    this.AssessmentService.getAssessmentTemplateSummaries().then(rsp => {
+      this.assessmentTemplates = _.sortBy(rsp.data, 'name');
+      this.filterReadyForUseAssesmentTemplates();
+      this.readOnly = false;
+      this.editMode = true;
+      this.canEditProgram();
+      this.$rootScope.showGlobalLoadingMask = false;
+      this.$timeout(()=>{
+        this.$animate.enabled(true);
+      })
+    });
+  }
+
+  filterReadyForUseAssesmentTemplates(){
+    this.filteredAssessmentTemplates = _.filter(this.assessmentTemplates, {
+      managingOrganisationId: this.programme.managingOrganisation ? this.programme.managingOrganisation.id : this.programme.managingOrganisationId,
+      status: 'ReadyForUse'
+    });
+  }
+
+  stopEditing(){
+    this.submit();
+  }
+
+
+  addNewTemplate(){
+    let modal = this.ProgrammeTemplateModal.show(this.availableTemplates);
+    modal.result.then((selectedTemplate) => {
+      this.onTemplateAdded(selectedTemplate);
+      this.availableTemplates = this.getAvailableTemplates(this.templatesList, this.programme);
+      this.setStateModelForProgrammeTemplates(this.programme);
+    });
+  }
+
+  getAvailableTemplates(templatesList, programme){
+    return _.filter(templatesList, t => {
+      return !_.some(programme.templatesByProgramme, {id: {templateId: t.id}});
+    });
+  }
+
+
+  setStateModelForProgrammeTemplates(programme){
+    (programme.templatesByProgramme || []).forEach(t=>{
+      let stateModel = this.templateIdToTemplate[t.id.templateId].stateModel;
+      t.stateModelName = _.startCase(stateModel.name);
+    })
+  }
 
 
 }
 
+ProgrammeCtrl.$inject = ['$state', '$log', 'UserService', 'ProgrammeService', 'AssessmentService', 'ProgrammeTemplateModal', '$rootScope', 'ConfirmationDialog', '$animate', '$timeout'];
+
 angular.module('GLA')
-  .controller('ProgrammeCtrl', ProgrammeCtrl);
+  .component('programmePage', {
+    controller: ProgrammeCtrl,
+    bindings: {
+      newProgrammeMode: '<',
+      programme: '<',
+      assessmentTemplates: '<',
+      templatesList: '<',
+      glaRoles: '<',
+      allowChangeInUseAssessmentTemplate: '<',
+    },
+    templateUrl: 'scripts/pages/programme/programme.html'
+  });

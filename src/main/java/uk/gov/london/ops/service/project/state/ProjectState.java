@@ -8,56 +8,86 @@
 package uk.gov.london.ops.service.project.state;
 
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.london.ops.domain.project.Project;
+import uk.gov.london.ops.domain.project.state.ProjectStateEntity;
+import uk.gov.london.ops.domain.project.state.ProjectStatus;
+import uk.gov.london.ops.domain.project.state.ProjectSubStatus;
 
-public class ProjectState {
+import java.io.Serializable;
+import java.util.Objects;
 
-    private Project.Status status;
-    private Project.SubStatus subStatus;
+public class ProjectState implements Serializable {
+
+    private String status;
+    private String subStatus;
     private boolean commentsRequired;
+    private String actionName;
 
     public ProjectState() {}
 
-    public ProjectState(Project.Status status) {
+    public ProjectState(String status) {
         this.status = status;
     }
 
-    public ProjectState(Project.Status status, Project.SubStatus subStatus) {
+    public ProjectState(String status, String subStatus) {
         this.status = status;
         this.subStatus = subStatus;
+    }
+
+    public ProjectState(ProjectStatus status) {
+        this.status = status.name();
+    }
+
+    public ProjectState(ProjectStatus status, ProjectSubStatus subStatus) {
+        this.status = status != null ? status.name() : null;
+        this.subStatus = subStatus != null ? subStatus.name() : null;
     }
 
     public static ProjectState parse(String state) {
         if (state.contains("(")) {
-            String status = state.split(" ")[0];
-            String subStatus = StringUtils.substringBetween(state.split(" ")[1], "(", ")");
-            return new ProjectState(Project.Status.valueOf(status), Project.SubStatus.valueOf(subStatus));
+            String status = state.substring(0, state.indexOf("(") - 1);
+            String subStatus = StringUtils.substringBetween(state, "(", ")");
+            return new ProjectState(status, subStatus);
         }
         else {
-            return new ProjectState(Project.Status.valueOf(state));
+            return new ProjectState(state);
         }
     }
 
-    public static ProjectState parse(String statusString, String commentsRequired) {
+    public static ProjectState parse(String statusString, String commentsRequired, String actionName) {
         ProjectState projectState = parse(statusString);
         projectState.setCommentsRequired(Boolean.parseBoolean(commentsRequired));
+        projectState.setActionName(actionName);
         return projectState;
     }
 
-    public Project.Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Project.Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public Project.SubStatus getSubStatus() {
+    public ProjectStatus getStatusType() {
+        return ProjectStateEntity.getStatusType(status, subStatus);
+    }
+
+    public String getSubStatus() {
         return subStatus;
     }
 
-    public void setSubStatus(Project.SubStatus subStatus) {
+    public void setSubStatus(String subStatus) {
         this.subStatus = subStatus;
+    }
+
+    public ProjectSubStatus getSubStatusType() {
+        return ProjectStateEntity.getSubStatusType(status, subStatus);
+    }
+
+    public void setSubStatus(ProjectSubStatus subStatus) {
+        if (subStatus != null) {
+            setSubStatus(subStatus.name());
+        }
     }
 
     public boolean isCommentsRequired() {
@@ -68,11 +98,27 @@ public class ProjectState {
         this.commentsRequired = commentsRequired;
     }
 
-    public boolean equals(Project.Status status) {
+    public String getActionName() {
+        return actionName;
+    }
+
+    public void setActionName(String actionName) {
+        this.actionName = actionName;
+    }
+
+    public boolean equals(String status) {
         return this.equals(new ProjectState(status));
     }
 
-    public boolean equals(Project.Status status, Project.SubStatus subStatus) {
+    public boolean equals(ProjectStatus status) {
+        return this.equals(new ProjectState(status));
+    }
+
+    public boolean equals(String status, String subStatus) {
+        return this.equals(new ProjectState(status, subStatus));
+    }
+
+    public boolean equals(ProjectStatus status, ProjectSubStatus subStatus) {
         return this.equals(new ProjectState(status, subStatus));
     }
 
@@ -83,8 +129,8 @@ public class ProjectState {
 
         ProjectState that = (ProjectState) o;
 
-        if (status != that.status) return false;
-        return subStatus == that.subStatus;
+        if (!Objects.equals(status, that.status)) return false;
+        return Objects.equals(subStatus, that.subStatus);
     }
 
     @Override

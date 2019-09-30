@@ -9,8 +9,12 @@
 class ChangeReportTileTotal {
   constructor(ReportService) {
     this.ReportService = ReportService;
+  }
+
+  $onInit(){
     this.hasRightValues = !!this.data.right;
   }
+
   getValue(data, field) {
     return this.ReportService.getDisplayValue(field, 'currency', data);
   }

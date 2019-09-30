@@ -17,10 +17,15 @@ function FeatureToggleService($http, config) {
      * @returns {Object} promise
      */
     isFeatureEnabled: function (feature) {
-      return $http({
-        url: `${config.basePath}/features/${feature}`,
-        method: 'GET'
-      });
+      return $http.get(`${config.basePath}/features/${feature}`);
+    },
+
+    getFeatures(){
+      return $http.get(`${config.basePath}/features`);
+    },
+
+    updateFeature(feature, enabled){
+      return $http.post(`${config.basePath}/features/${feature}`, !!enabled);
     }
 
   }

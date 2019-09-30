@@ -19,9 +19,6 @@ class ProjectBudgtForecastCtrl {
 
     this.canCreateActuals = this.UserService.hasPermission(`proj.ledger.actual.create`);
 
-
-
-
   }
 
   $onChanges(changes){
@@ -34,7 +31,6 @@ class ProjectBudgtForecastCtrl {
         formatMonth: 'MMM',
         minMode: 'month',
         maxMode: 'month',
-        yearColumns: 3,
         yearColumns: 3,
         initDate: new Date(`${year}-04-01`),
         minDate: new Date(`${year}-04-01`),

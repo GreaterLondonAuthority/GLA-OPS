@@ -9,32 +9,38 @@
 const _ = require('lodash');
 const TYPE_INITIAL = 'Initial';
 const TYPE_ADDITIONAL = 'Additional';
+const DEFAULT_NUMBER_BUDGET_ENTRIES_SHOWN = 3;
 
 class OrganisationProgrammeCtrl {
   constructor($scope, $state, ToastrUtil, OrganisationService, UserService, ConfirmationDialog, CreateDelegatedModal, $q) {
-    this.$q = $q;
-    this.editable = UserService.hasPermission('org.edit.budget');
-    this.readOnly = true;
-
     this.$scope = $scope;
     this.$state = $state;
     this.ToastrUtil = ToastrUtil;
     this.OrganisationService = OrganisationService;
+    this.UserService = UserService;
     this.ConfirmationDialog = ConfirmationDialog;
-
-    this.organisationId = $state.params.organisationId;
-    this.programmeId = $state.params.programmeId;
-
     this.CreateDelegatedModal = CreateDelegatedModal;
+    this.$q = $q;
+  }
+
+  $onInit(){
+    // this.editable = this.UserService.hasPermission('org.edit.budget');
+    this.readOnly = true;
+
+    this.showAll = false;
+    this.showHowMany = DEFAULT_NUMBER_BUDGET_ENTRIES_SHOWN;
+
+    this.organisationId = this.$state.params.organisationId;
+    this.programmeId = this.$state.params.programmeId;
+
+    this.showExpandAll = true;
 
     this.refreshPage();
-
 
     //TODO cleanup unused properties
     this.requestsQueue = [];
     this.grantTypes = [];
     this.today = moment().format('YYYY-MM-DD');
-    // this.initGrantTypes(['Grant', 'RCGF', 'DPF']);
   }
 
   initGrantTypes(grantTypes) {
@@ -114,26 +120,26 @@ class OrganisationProgrammeCtrl {
     };
   }
 
+  refreshOrganisation(organisation) {
+    this.organisation = organisation;
+    this.editable = this.UserService.hasPermission('org.edit.budget', this.organisation.id) || this.UserService.hasPermission('org.edit.budget', this.organisation.managingOrganisationId);
+  }
+
   refreshPage() {
     if (this.$state.params.organisation) {
-      this.organisation = this.$state.params.organisation;
+      this.refreshOrganisation(this.$state.params.organisation);
     }
     else {
       this.OrganisationService.getDetails(this.organisationId)
         .then(resp => {
-          this.organisation = resp.data;
+          this.refreshOrganisation(resp.data);
         });
     }
     this.programme = this.$state.params.programme;
 
     this.programme = this.$scope.programme = this.$state.params.programme;
 
-    this.OrganisationService.getPaymentsAndRequests(this.organisationId, this.programmeId)
-      .then((resp) => {
-        this.grantSourceData = resp.data.nonStrategicRecord;
-        this.strategicRecord = resp.data.strategicRecord;
-        this.associatedProjectsRecord = resp.data.associatedProjectsRecord;
-      });
+
 
     return this.OrganisationService.getOrganisationProgramme(this.organisationId, this.programmeId)
       .then(resp => {
@@ -143,19 +149,81 @@ class OrganisationProgrammeCtrl {
         this.totals = resp.data.totals;
 
         this.delegatedApprovalEntries = _.filter(resp.data.budgetEntries, {type: 'Additional'});
+        this.collapseComments(this.showExpandAll);
         this.showIndicative = resp.data.hasIndicativeTemplate;
+
+
+        // this.hasStategicTemplate = !!_.find(resp.data.programme.templates, {strategicTemplate:true});
+
         this.data = resp.data;
+
+
+        this.OrganisationService.getPaymentsAndRequests(this.organisationId, this.programmeId)
+          .then((resp) => {
+            this.processPaymentsAndRequests(resp.data);
+          });
       });
 
   }
 
+  processPaymentsAndRequests(data) {
+    this.grantSourceData = data.nonStrategicRecord;
+    this.strategicRecord = data.strategicRecord;
+    this.associatedProjectsRecord = data.associatedProjectsRecord;
+    this.strategicPartnershipUnitSummary = data.strategicPartnershipUnitSummary;
+
+    if(this.data.strategicPartnership){
+
+      // Process this only for strategic programmes
+      let allTenureTypes = [];
+      _.forEach(this.data.programme.templates, t => {
+        allTenureTypes = _.concat(allTenureTypes, t.tenureTypes);
+      });
+      _.forEach(allTenureTypes, tenure => {
+        let list = this.strategicPartnershipUnitSummary.associatedRecords;
+        let record = _.find(list, {tenureTypeExtId: tenure.externalId});
+        if(!record){
+          this.strategicPartnershipUnitSummary.associatedRecords.push({
+            tenureTypeExtId: tenure.externalId,
+            tenureTypeName: tenure.name,
+            orgId: this.organisationId * 1,
+            programmeId: this.programmeId * 1,
+            tenureType: tenure.externalId,
+            unitsPlanned: null
+          })
+        }
+      });
+      this.strategicPartnershipUnitSummary.associatedRecords = _.sortBy(
+        this.strategicPartnershipUnitSummary.associatedRecords,
+        'tenureTypeName'
+      )
+    }
+  }
+
+  updateUnitsPlaned(record) {
+
+    let p;
+    if(_.isNumber(record.unitsPlanned)){
+      p = this.OrganisationService.updatePlannedUnits(this.organisationId, record.programmeId, record.tenureTypeExtId, record.unitsPlanned);
+    } else {
+      p = this.OrganisationService.deletePlannedUnits(this.organisationId, record.programmeId, record.tenureTypeExtId);
+    }
+
+    p.then((resp) => {
+      this.strategicPartnershipUnitSummary.unitsPlannedTotal = resp.data.strategicPartnershipUnitSummary.unitsPlannedTotal;
+      // this.processPaymentsAndRequests(resp.data);
+
+    });
+    this.requestsQueue.push(p);
+
+  }
 
   back() {
     if (!this.readOnly) {
       this.save();
     }
 
-    this.$state.go('organisation', {
+    this.$state.go('organisation.view', {
       orgId: this.organisationId
     });
   }
@@ -165,7 +233,6 @@ class OrganisationProgrammeCtrl {
   }
 
   updateBudgetEntry(grant) {
-    console.log('grant', grant);
     let p = null;
     if (grant.id) {
       p = this.OrganisationService.updateBudgetEntry(this.organisationId, this.programmeId, grant.id, grant);
@@ -198,16 +265,14 @@ class OrganisationProgrammeCtrl {
     this.readOnly = true;
   }
 
-  createDelegatedApprovalClicked() {
+  openAdjustBudgetsModal(entry) {
     let grantTypes = this.grantTypesDropdown;
     if (!this.data.strategicPartnership) {
       grantTypes = _.filter(this.grantTypesDropdown, {strategic: this.data.strategicPartnership});
     }
-    let modal = this.CreateDelegatedModal.show(null, grantTypes, this.totals);
+    let modal = this.CreateDelegatedModal.show(entry, grantTypes, this.totals);
     modal.result.then((data) => {
-      return this.OrganisationService.createBudgetEntry(this.organisationId, this.programmeId, data).then(() => {
-        return this.refreshPage();
-      });
+      this.updateBudgetEntry(data);
     });
   }
 
@@ -220,8 +285,43 @@ class OrganisationProgrammeCtrl {
         });
     });
   }
+
+  showMoreLessBudgetEntries() {
+    this.showAll = !this.showAll;
+    this.showHowMany = this.showAll ? this.delegatedApprovalEntries.length : DEFAULT_NUMBER_BUDGET_ENTRIES_SHOWN;
+  }
+
+  getGrantSourceTotalsSubheader() {
+    if (this.showApprovedOnlyCheckbox) {
+      return 'This table shows the approved grant source totals of all the projects in this programme.';
+    }
+    return 'The table shows the grant source totals of all the projects in this programme that are active, have pending changes or are under assessment.';
+  }
+
+  onCollapseChange(collapsed){
+    console.log('collapsed', collapsed);
+    console.log('onCollapseChange', JSON.stringify(this.delegatedApprovalEntries, null, 4));
+    this.showExpandAll = !(_.some(this.delegatedApprovalEntries, {collapsed: false}));
+  }
+
+  collapseComments(collapsed){
+    (this.delegatedApprovalEntries || []).forEach(e => e.collapsed = collapsed);
+  }
+
+  toggleAdditionalApprovals(){
+    this.showExpandAll = !this.showExpandAll;
+    this.collapseComments(this.showExpandAll);
+  }
+
 }
 
 OrganisationProgrammeCtrl.$inject = ['$scope', '$state', 'ToastrUtil', 'OrganisationService', 'UserService', 'ConfirmationDialog', 'CreateDelegatedModal', '$q'];
 
-angular.module('GLA').controller('OrganisationProgrammeCtrl', OrganisationProgrammeCtrl);
+angular.module('GLA')
+  .component('organisationProgrammePage', {
+    templateUrl: 'scripts/pages/organisation/programme/organisationProgramme.html',
+    bindings: {
+      isStrategicUnitsSummary: '<'
+    },
+    controller: OrganisationProgrammeCtrl
+  });

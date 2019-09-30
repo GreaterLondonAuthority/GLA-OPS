@@ -7,14 +7,23 @@
  */
 
 class GrantSourceChangeReport {
-  constructor($log, GrantSourceService) {
-    this.config = GrantSourceService.getSourceVisibilityConfig(this.data.context.template);
-    this.blockMetaData = GrantSourceService.getBlockMetaData(this.data.context.template);
-    this.config = GrantSourceService.getAssociatedVisibilityConfig(this.data, this.config);
+  constructor(GrantSourceService) {
+    this.GrantSourceService = GrantSourceService;
+  }
+
+  $onInit(){
+    this.config = this.GrantSourceService.getSourceVisibilityConfig(this.data.context.template);
+    this.blockMetaData = this.GrantSourceService.getBlockMetaData(this.data.context.template);
+    this.config = this.GrantSourceService.getAssociatedVisibilityConfig(this.data, this.config);
+    [this.data.left, this.data.right].forEach((block)=>{
+      if(block) {
+        block.totalAmountRequested = this.GrantSourceService.getTotal(block);
+      }
+    });
   }
 }
 
-GrantSourceChangeReport.$inject = ['$log', 'GrantSourceService'];
+GrantSourceChangeReport.$inject = ['GrantSourceService'];
 
 angular.module('GLA')
   .component('grantSourceChangeReport', {

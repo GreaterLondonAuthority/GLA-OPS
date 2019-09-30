@@ -1,0 +1,92 @@
+<div class="medium-page internal-risk">
+  <project-header on-back="$ctrl.back()" editable-block="$ctrl">{{$ctrl.title}}</project-header>
+
+  <div class="text-center">This block is only visible to GLA staff</div>
+
+  <section-header>Risk rating</section-header>
+
+  <div ng-if="$ctrl.readOnly">
+    <div ng-if="!$ctrl.block.rating">{{$ctrl.noRatingLabel}}</div>
+    <div ng-if="$ctrl.block.rating">
+      <span ng-style="{color: $ctrl.block.rating.color}" class="bolder">{{$ctrl.block.rating.name}}</span>
+      <span class="normal-text">{{$ctrl.block.rating.description}}</span></div>
+  </div>
+
+  <form ng-if="!$ctrl.readOnly">
+    <div ng-repeat="r in $ctrl.ratingList | orderBy: 'displayOrder' track by r.id" class="row">
+      <label class="mbottom10" ng-attr-for="{{'radio' + r.id}}">
+        <input ng-attr-id="{{'radio' + r.id}}" name="rating" type="radio" ng-model="$ctrl.block.rating" ng-value="r"/>
+        <span ng-style="{color: r.color}">{{r.name}}</span>
+        <span class="normal-text">{{r.description}}</span>
+      </label>
+    </div>
+    <label for="radio-default">
+      <input id="radio-default" name="rating" type="radio" ng-model="$ctrl.block.rating" ng-value="null"/>
+      <span class="normal-text">{{$ctrl.noRatingLabel}}</span>
+    </label>
+  </form>
+
+  <section-header ng-if="$ctrl.block.riskAdjustedFiguresFlag">Risk adjusted figures for {{$ctrl.financialYearLabel}}</section-header>
+
+  <div ng-if="$ctrl.block.riskAdjustedFiguresFlag">
+    <div class="row no-gutter">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label for="riskAdjustedFiguresStarts" class="normal-text">
+            <span ng-if="$ctrl.readOnly">Risk adjusted starts:</span>
+            <span ng-if="!$ctrl.readOnly">Enter risk adjusted starts:</span>
+          </label>
+
+          <span ng-if="$ctrl.readOnly"> {{($ctrl.currentRiskAdjustedFigures.starts | currency:'':0) || 0}} </span>
+          <input id="riskAdjustedFiguresStarts" class="riskAdjustedFigures form-control"
+                 ng-if="!$ctrl.readOnly" name="starts" type="text" number-mask="0"
+                 aria-label="riskAdjustedFiguresStarts"
+                 ng-model="$ctrl.currentRiskAdjustedFigures.starts"/>
+        </div>
+
+        <div class="form-group">
+          <label for="riskAdjustedFiguresCompletions" class="normal-text">
+            <span ng-if="$ctrl.readOnly">Risk adjusted completions:</span>
+            <span ng-if="!$ctrl.readOnly">Enter risk adjusted completions:</span>
+          </label>
+
+          <span ng-if="$ctrl.readOnly"> {{($ctrl.currentRiskAdjustedFigures.completions | currency:'':0) || 0}} </span>
+          <input id="riskAdjustedFiguresCompletions" class="riskAdjustedFigures form-control"
+                 ng-if="!$ctrl.readOnly"
+                 name="completions" type="text" number-mask="0"
+                 aria-label="riskAdjustedFiguresCompletions"
+                 ng-model="$ctrl.currentRiskAdjustedFigures.completions"/>
+        </div>
+
+        <div class="form-group">
+          <label for="riskAdjustedFiguresGrant" class="normal-text">
+            <span ng-if="$ctrl.readOnly">Risk adjusted grant spend:</span>
+            <span ng-if="!$ctrl.readOnly">Enter risk adjusted grant spend £:</span>
+          </label>
+
+          <span ng-if="$ctrl.readOnly && $ctrl.currentRiskAdjustedFigures.grantSpend">{{$ctrl.currentRiskAdjustedFigures.grantSpend | currency:'£':0}} </span>
+          <span ng-if="$ctrl.readOnly && !$ctrl.currentRiskAdjustedFigures.grantSpend">£0</span>
+          <input id="riskAdjustedFiguresGrant" class="riskAdjustedFigures form-control"
+                 ng-if="!$ctrl.readOnly" name="grant" type="text" number-mask="0"
+                 aria-label="riskAdjustedFiguresGrant"
+                 ng-model="$ctrl.currentRiskAdjustedFigures.grantSpend"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section-header>Comments</section-header>
+
+  <comments-form ng-if="!$ctrl.readOnly"
+                 class="mbottom30"
+                 on-save="$ctrl.saveComment($event.data)"></comments-form>
+
+
+  <comments-list comments="$ctrl.comments" is-open="true"></comments-list>
+
+
+  <div class="text-center mtop30 mbottom30" ng-if="!$ctrl.readOnly">
+    <button class="btn btn-primary" ng-click="$ctrl.stopEditing()">STOP EDITING</button>
+  </div>
+
+</div>

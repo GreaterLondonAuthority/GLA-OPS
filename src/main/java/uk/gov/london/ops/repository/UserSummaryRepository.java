@@ -9,14 +9,14 @@ package uk.gov.london.ops.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import uk.gov.london.ops.domain.user.QUserSummary;
 import uk.gov.london.ops.domain.user.User;
 import uk.gov.london.ops.domain.user.UserSummary;
 
 import java.util.List;
 
-public interface UserSummaryRepository extends ReadOnlyRepository<UserSummary, Integer>, QueryDslPredicateExecutor<UserSummary> {
+public interface UserSummaryRepository extends ReadOnlyRepository<UserSummary, Integer>, QuerydslPredicateExecutor<UserSummary> {
 
     default Page<UserSummary> findAll(User currentUser,
                                       String organisationNameOrId,

@@ -114,13 +114,13 @@ $tiles-border: 1px solid $table-border-color;
       padding: 10px;
     }
 
-    .left-column-label, .right-column-label {
+    .left-column-label, .right-column-label, .report-label {
       font-size: 16px;
       font-family: $font-family-default;
       font-weight: bold;
     }
 
-    .left-column-value, .right-column-value {
+    .left-column-value, .right-column-value, .report-value {
       color: $secondary-text;
     }
     .left-column-sublabel, .right-column-sublabel {
@@ -324,6 +324,13 @@ $tiles-border: 1px solid $table-border-color;
 
   .last-approved-date, .programme-name, .template-name{
     margin-top: 10px;
+  }
+
+  internal-blocks-change-report{
+    .section-title{
+      font-size: 16px;
+      font-weight: bold;
+    }
   }
 }
 

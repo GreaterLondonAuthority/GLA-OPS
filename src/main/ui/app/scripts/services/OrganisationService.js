@@ -16,7 +16,7 @@ function OrganisationService($http, config) {
      * Retrieve list of all organisations
      * @return {Object} promise
      */
-    retrieveAll(page, size, sort, userRegStatuses, searchText, entityTypes, orgStatuses) {
+    retrieveAll(page, size, sort, userRegStatuses, searchText, entityTypes, orgStatuses, teamStatuses) {
       const params = {
         page: page,
         size: size,
@@ -24,7 +24,8 @@ function OrganisationService($http, config) {
         userRegStatuses: userRegStatuses.join(','),
         searchText: searchText,
         entityTypes: entityTypes.join(','),
-        orgStatuses: orgStatuses.join(',')
+        orgStatuses: orgStatuses.join(','),
+        teams: _.join(_.map(teamStatuses, s=>{return s.organisationId+'|'+(s.teamId||'')}),',')
       };
 
       Object.keys(params).forEach(key => {
@@ -73,7 +74,7 @@ function OrganisationService($http, config) {
      * @return {Object} promise
      */
     lookupOrgNameByCode(orgCode) {
-      let code = (orgCode || '').toString().toUpperCase();
+      let code = (orgCode || '').toString();//.toUpperCase();
       return $http({
         url: `${config.basePath}/organisations/${code}/name`,
         method: 'GET',
@@ -97,7 +98,7 @@ function OrganisationService($http, config) {
         method: 'PUT',
         data: true,
         serialize: false
-      })
+      });
     },
 
     /**
@@ -155,6 +156,8 @@ function OrganisationService($http, config) {
       data.regulated = data.regulated === 'yes' ? true : false;
       data.managingOrganisation = {id: data.managingOrganisationId};
       data.parentOrganisation = data.parentOrganisationId ? {id: data.parentOrganisationId} : null;
+      data.ukprn = this.isLearningProvider(orgForm) ? orgForm.ukprn : null;
+
       return data;
     },
 
@@ -211,6 +214,11 @@ function OrganisationService($http, config) {
         method: 'GET'
       });
     },
+
+    getGlaRoles() {
+      return this.getAvailableUserRoles(8000);
+    },
+
     updateContractStatus(organisationId, contractId, contract) {
       if (contractId) {
         return $http({
@@ -238,10 +246,25 @@ function OrganisationService($http, config) {
       if (entry && entry.approvedBy === '') {
         entry.approvedBy = null;
       }
+
       return $http({
         url: `${config.basePath}/organisations/${organisationId}/programmes/${programmeId}`,
         method: 'PUT',
         data: entry
+      });
+    },
+
+    updatePlannedUnits(organisationId, programmeId, tenureExtId, unitsPlanned) {
+      return $http({
+        url: `${config.basePath}/organisations/${organisationId}/programmes/${programmeId}/tenure/${tenureExtId}/plannedUnits/`,
+        method: 'PUT',
+        data: unitsPlanned
+      });
+    },
+    deletePlannedUnits(organisationId, programmeId, tenureExtId) {
+      return $http({
+        url: `${config.basePath}/organisations/${organisationId}/programmes/${programmeId}/tenure/${tenureExtId}/plannedUnits/`,
+        method: 'DELETE'
       });
     },
 
@@ -276,7 +299,7 @@ function OrganisationService($http, config) {
     },
 
     organisationTypes() {
-      return $http.get(`${config.basePath}/organisations/types`, {cache: true}).then(resp => resp.data);
+      return $http.get(`${config.basePath}/organisations/types`).then(resp => resp.data);
     },
 
     getImsLabel(org) {
@@ -291,14 +314,29 @@ function OrganisationService($http, config) {
       }
     },
 
-    isOrganisationNameUnique(orgName) {
-      return $http.get(`${config.basePath}/checkOrganisationNameNotUsed?name=${orgName}`)
+    isOrganisationNameUnique(orgName, managingOrganisationId) {
+      return $http.get(`${config.basePath}/checkOrganisationNameNotUsed?name=${orgName}&managingOrganisationId=${managingOrganisationId}`)
         .then(resp => resp.status === 200)
         .catch(resp => false);
     },
 
-    managingOrganisations() {
-      return $http.get(`${config.basePath}/organisations?entityTypes=1`);
+    countOccuranceOfUkprn(ukprn) {
+      return $http({
+        url: config.basePath + '/organisations/countOccuranceOfUkprn',
+        method: 'GET',
+        params:{
+          ukprn: ukprn
+        },
+        serialize: false
+      });
+    },
+
+    managingOrganisations(allowedRegistrationOnly) {
+      return $http.get(`${config.basePath}/managingOrganisations`, {
+        params:{
+          allowedRegistrationOnly: allowedRegistrationOnly || false
+        }
+      });
     },
 
     userRegStatuses(selections) {
@@ -313,7 +351,49 @@ function OrganisationService($http, config) {
     },
 
     approveOrganisation(orgId){
-      return $http.put(`${config.basePath}/organisations/${orgId}/status`, 'Approved');
+      let requestBody = {
+        status: 'Approved'
+      };
+      return this.changeStatus(orgId, requestBody);
+    },
+
+    rejectOrganisation(orgId, reason, reasonText){
+      let requestBody = {
+        status: 'Rejected',
+        reason: reason,
+        details: reasonText,
+      };
+      return this.changeStatus(orgId, requestBody);
+    },
+
+    inactivateOrganisation(orgId, reason, reasonText, duplicateOrgId){
+      let requestBody = {
+        status: 'Inactive',
+        reason: reason,
+        details: reasonText,
+        duplicateOrgId: duplicateOrgId
+      };
+      return this.changeStatus(orgId, requestBody);
+    },
+
+    changeStatus(orgId, requestBody){
+      return $http.put(`${config.basePath}/organisations/${orgId}/status`, requestBody);
+    },
+
+    getManagingOrganisationsTeams() {
+      return $http.get(`${config.basePath}/managingOrganisationsAndTeams/`);
+    },
+
+    getOrganisationTeams(organisationId) {
+      return $http.get(`${config.basePath}/organisations/${organisationId}/managedTeams`)
+    },
+
+    getOrganisationUsers(organisationId){
+      return $http.get(`${config.basePath}/organisations/${organisationId}/users`)
+    },
+
+    isLearningProvider(org){
+      return (org || {}).entityType === 6
     }
   };
 }

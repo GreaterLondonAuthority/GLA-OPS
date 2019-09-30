@@ -19,7 +19,7 @@ $btn-hover: #43AA8B;
   font-family: $font-family-light;
   font-weight: 100;
   a {
-    color: $error;
+    //color: $error;
     font-family: $font-family-bolder;
   }
 }
@@ -87,6 +87,10 @@ a.form-cancel {
     border: 1px solid green;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(4, 195, 10, 0.6);
   }*/
+
+  .dateInput.form-control, date-input {
+    height: 30px;
+  }
 }
 
 .label{
@@ -178,6 +182,13 @@ form .group-field{
         border: 1px solid $error;
       }
     }
+  }
+
+  .ui-select-match-text {
+    overflow-x:hidden;
+    overflow-y:hidden;
+    text-overflow: ellipsis;
+    -ms-overflow-style: none;
   }
 }
 .gla-dropdown {
@@ -275,6 +286,13 @@ div.ui-select-bootstrap {
         color: #545656;
         background-color: transparent;
       }
+
+      &.disabled{
+        span.ui-select-choices-row-inner {
+          color: $form-field-inactive;
+          background-color: $form-field-disabled-bg;
+        }
+      }
     }
   }
 }
@@ -296,6 +314,3 @@ textarea {
   color: #31ae52;
   margin-top: -2px;
 }
-
-//--------------------
-//--------------------

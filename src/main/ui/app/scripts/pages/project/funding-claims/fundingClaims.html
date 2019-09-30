@@ -1,0 +1,149 @@
+<div class="project-funding-claims medium-page">
+  <div class="row text-center">
+    <project-header editable-block="$ctrl" on-back="$ctrl.back()" show-ukprn="true">{{$ctrl.fundingClaims.blockDisplayName}}</project-header>
+  </div>
+
+  <spinner ng-if="$ctrl.loading"></spinner>
+
+  <div class="row mtop20 text-center">
+
+    <div class="mtop10 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
+
+      <div class="form-group" ng-if="$ctrl.showTotalAllocation">
+        <label for="read-only-total-allocation">{{$ctrl.labels.totalAllocation}}</label>
+        <div id="read-only-total-allocation">{{$ctrl.learningGrant.totalAllocation | number}}</div>
+      </div>
+
+      <div class="form-group">
+        <label for="academic-year">{{$ctrl.labels.academicYear}}</label>
+        <div ng-if="!$ctrl.showYearDropDown">{{$ctrl.academicYearFrom | fYear}}</div>
+        <financial-year id="academic-year"
+                        ng-if="$ctrl.showYearDropDown"
+                        from="$ctrl.academicYearFrom"
+                        to="$ctrl.academicYearTo"
+                        current-financial-year-const="$ctrl.currentFinancialYear"
+                        on-select="$ctrl.onSelectYear($ctrl.fromDateSelected.financialYear)"
+                        selected-year="$ctrl.fromDateSelected"
+                        populated-years="$ctrl.learningGrant.populatedYears"></financial-year>
+      </div>
+
+      <div class="form-group">
+        <label for="read-only-delivery-allocation">{{$ctrl.labels.deliverAllocation}}</label>
+        <div id="read-only-delivery-allocation">{{$ctrl.currentAllocation.allocation | number}}</div>
+      </div>
+      <div class="form-group" ng-if="$ctrl.isAebProcured">
+        <label for="read-only-learner-support-allocation">{{$ctrl.labels.learnerSupportAllocation}}</label>
+        <div id="read-only-learner-support-allocation">{{$ctrl.currentAllocation.learnerSupportAllocation | number}}</div>
+      </div>
+
+    </div>
+  </div>
+
+  <section-header collapsed="$ctrl.blockSessionStorage.showFundingClaims">Funding Claims</section-header>
+
+  <div class="mtop20" ng-if="$ctrl.blockSessionStorage.showFundingClaims">
+
+    <div class="row">
+      <div class="mtop10 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
+        <div class="form-group">
+          <label for="periods">Funding Claim Period</label>
+          <ui-select id="periods"
+                     name="period"
+                     ng-model="$ctrl.selectedPeriod"
+                     on-select="$ctrl.onSelectFundingClaimPeriod($select.selected)"
+                     placeholder="Select funding claim period"
+                     search-enabled="false">
+            <ui-select-match placeholder="Select funding claim period">{{$select.selected.text}}</ui-select-match>
+            <ui-select-choices repeat="period in $ctrl.periods">
+              <span>{{period.text}}</span>
+            </ui-select-choices>
+          </ui-select>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="mtop20 mbottom10" ng-if="!$ctrl.readOnly && $ctrl.selectedPeriod">
+      <span> Please provide the Delivery to date and Forecast delivery details for your funding claim categories.</span>
+    </div>
+
+    <funding-claims-table block-id="$ctrl.fundingClaims.id"
+                          funding-claims-entries="$ctrl.fundingClaims.fundingClaimsEntries"
+                          on-entry-change="$ctrl.onFundingClaimsEntryChange($event)"
+                          project-id="$ctrl.project.id"
+                          read-only="$ctrl.readOnly"
+                          selected-period="$ctrl.selectedPeriod"
+                          selected-year="$ctrl.fromDateSelected.financialYear"
+                          totals="$ctrl.fundingClaims.totals">
+    </funding-claims-table>
+
+  </div>
+
+  <section-header collapsed="$ctrl.blockSessionStorage.showFundingVariations">Funding Variations</section-header>
+
+  <form class="mtop20" id="funding-variation-form" ng-if="$ctrl.blockSessionStorage.showFundingVariations">
+    <div class="form-group mtop20">
+      <label>Do you want to request a variation in the project allocation?</label>
+      <div class="radio-group" ng-if="!$ctrl.readOnly">
+        <label class="radio-inline">
+          <input aria-label="Do you want to request a variation in the project allocation? Yes"
+                 name="variationRequested"
+                 ng-change="$ctrl.onVariationRequestedChanged()"
+                 ng-model="$ctrl.fundingClaims.variationRequested"
+                 ng-value="true"
+                 type="radio"> Yes
+        </label>
+        <label class="radio-inline">
+          <input aria-label="Do you want to request a variation in the project allocation? No"
+                 name="variationRequested"
+                 ng-disabled="$ctrl.totalProjectCount"
+                 ng-change="$ctrl.onVariationRequestedChanged()"
+                 ng-model="$ctrl.fundingClaims.variationRequested"
+                 ng-value="false"
+                 type="radio"> No
+        </label>
+      </div>
+      <div ng-if="$ctrl.readOnly">{{$ctrl.fundingClaims.variationRequested | bool}}</div>
+    </div>
+
+    <div ng-if="$ctrl.fundingClaims.variationRequested">
+      <div class="form-group">
+        <label for="newAllocation">{{$ctrl.newAllocationText}}</label>
+        <div class="row no-gutter" ng-if="!$ctrl.readOnly">
+          <div class="col-xs-12 col-sm-4 col-md-3">
+            <input class="form-control"
+                   id="newAllocation"
+                   maxlength="13"
+                   name="newTotalAllocation"
+                   ng-model="$ctrl.variation.allocation"
+                   number-mask="0"
+                   placeholder="{{$ctrl.newAllocationText}}"
+                   required type="text" />
+          </div>
+        </div>
+        <div default-value ng-if="$ctrl.readOnly">{{$ctrl.variation.allocation | number}}</div>
+      </div>
+
+      <div class="mbottom20 note secondary-text">{{$ctrl.newAllocationInfoMessage}} </div>
+
+      <div class="form-group">
+        <label for="description">{{$ctrl.newAllocationRationaleText}}</label>
+        <textarea class="form-control"
+                  id="description"
+                  maxlength="250"
+                  name="description"
+                  ng-if="!$ctrl.readOnly"
+                  ng-model="$ctrl.variation.description"
+                  ng-trim="false"
+                  placeholder="{{$ctrl.newAllocationRationaleText}}"
+                  rows="4">
+                </textarea>
+        <remaining-characters max="250" ng-if="!$ctrl.readOnly"
+                              text="$ctrl.variation.description"></remaining-characters>
+        <div class="multiline-text" default-value ng-if="$ctrl.readOnly">{{$ctrl.variation.description}}</div>
+      </div>
+    </div>
+  </form>
+
+  <project-block-footer editable-block="$ctrl"></project-block-footer>
+</div>

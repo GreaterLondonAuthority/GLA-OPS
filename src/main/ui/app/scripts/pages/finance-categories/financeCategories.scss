@@ -1,0 +1,21 @@
+.finance-categories-page{
+
+  .show-all {
+    .checkbox {
+      float: left;
+      margin-top: 7px;
+    }
+    label {
+      margin: 12px 10px 10px 10px;
+      float: left;
+    }
+  }
+  #finance-categories-table {
+    .codes{
+      width: 180px;
+    }
+    .visbilityAndForecast {
+      width: 175px;
+    }
+  }
+}

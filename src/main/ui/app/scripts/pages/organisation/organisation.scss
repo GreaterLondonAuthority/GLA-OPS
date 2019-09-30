@@ -1,38 +1,20 @@
 .organisation {
-  .org-details-reg-stat-dropdown {
-    display: block;
-    padding-top: 25px;
-  }
 
   .number-of-contracts, .number-of-programmes {
-    padding: 10px 0;
+    padding: 10px 0 5px 0;
   }
   .bold {
     font-family: $font-family-bolder;
   }
-  .org-box {
-    background-color: white;
-    border: 1px solid #eaeaea;
-    min-height: 356px;
-    padding: 0.87rem;
-    // margin: 0.31rem;
-    box-shadow: 0 0 0.62rem 0 rgba(0, 0, 0, 0.05);
-  }
 
-  .org-users {
-    display: block;
-  }
   .org-contracts, .org-programmes {
     display: block;
   }
 
-  .no-padding {
-    padding: 0;
-  }
   .checkbox {
-    float: left;
     cursor: pointer;
   }
+
   .checkbox-label {
     margin-left: 40px;
     width: 100px;
@@ -41,11 +23,11 @@
     margin: 10px 0;
   }
 
-  .contract-name, .programme-name, .total-approved-budget {
-    padding: 10px 20px;
+  .contract-name, .programme-name, .total-approved-budget, .column {
+    padding: 10px 20px 15px 20px;
   }
 
-  .contracts-list, .programmes-list {
+  .contracts-list, .programmes-list, .list {
     padding: 20px;
     background-color: white;
     border: 1px solid #eaeaea;
@@ -55,79 +37,58 @@
     text-align: center;
   }
 
-  .org-contract, .org-programme {
+  .org-contract, .org-programme, .list-item {
     border-bottom: 1px solid #eaeaea;
     margin: 5px 0;
     .row {
-      padding: 5px;
-    }
-
-    .username {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      padding-right: 5/16 + 0rem;
+      padding: 5px 0;
     }
   }
 
-  .org-user {
-    background-color: white;
-    border: 1px solid #eaeaea;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
-    margin: 5px 0;
-    .row {
-      padding: 5px 5px 5px 0;
-    }
-
-    .username {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      padding-right: 5/16 + 0rem;
+  .list .row:last-child .list-item {
+    border-bottom: none;
+    margin-bottom: 0px;
+    .column {
+      padding-bottom: 0;
     }
   }
 
-  .org-user-pending,
-  .org-user-remove {
-    padding-top: 13px;
+  .approve-organisation, .reject-organisation {
+    margin: 5px;
   }
 
-  .org-user-approved {
-    // padding: 19px 32px;
-    padding-top: 1.2rem;
-    color: #31ae52;
-  }
+  .governance-section {
+    width: 100%;
 
-  .org-title {
-    padding-bottom: 10px;
-  }
-
-
-  .registrations__name {
-    padding-top: 0.2rem;
-  }
-
-  .registrations__role {
-    margin-top: 1rem;
-    &.disabled .ui-select-toggle span {
-      color: #cccccc;
+    @include when-sm {
+      .field-value{
+        padding-left: 20px;
+      }
     }
   }
 
-  .editButton {
-    padding: 0.37rem 1.25rem !important;
-    i {
-      margin-right: 0.5rem;
-    }
-  }
-  .section-title {
-    text-align: left;
-    font-size: 16px;
+  show-more-btn{
+    margin-top: 15px;
   }
 
-
-  .org-details {
-    width: 83.333%;
-    padding: 15px;
+  .change-status-comments{
+    font-family: $font-family-default;
+    font-weight: normal;
+    margin-top: 5px;
+    white-space: pre-line;
   }
 }
+
+.org-modal .modal-header{
+  .glyphicon-exclamation-sign {
+    font-size: 40px;
+    color: #c63c32;
+    margin-bottom: 25px;
+  }
+
+  h1{
+    margin: 0;
+  }
+}
+
+

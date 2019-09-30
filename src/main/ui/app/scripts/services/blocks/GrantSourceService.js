@@ -31,7 +31,7 @@ function GrantSourceService($http, config) {
     },
     getAssociatedVisibilityConfig(data, config){
       config = config || {};
-      config.showAssociated = (data.left && data.left.associatedProject) || (data.right && data.right.associatedProject);
+      config.showAssociated = (data.left && data.context.project.left.associatedProjectsEnabled) || (data.right && data.context.project.right.associatedProjectsEnabled);
       return config;
     },
 
@@ -46,6 +46,32 @@ function GrantSourceService($http, config) {
         url: `${config.basePath}/projects/${projectId}/grant/`,
         method: 'GET'
       });
+    },
+
+    getAssociatedProjectConfig(block){
+      let showMarker;
+      let enableMarker;
+
+      if(!block.associatedProject && !block.associatedProjectFlagUpdatable){
+        showMarker = false;
+        enableMarker = false;
+      } else if(block.associatedProject && !block.associatedProjectFlagUpdatable){
+        showMarker = true;
+        enableMarker = false;
+      } else {
+        showMarker = true;
+        enableMarker = true;
+      }
+
+      return {
+        showMarker,
+        enableMarker
+      };
+    },
+
+    getTotal(grantSourceBlock){
+      grantSourceBlock = grantSourceBlock || {};
+      return +(grantSourceBlock.grantValue || 0) + +(grantSourceBlock.recycledCapitalGrantFundValue || 0) + +(grantSourceBlock.disposalProceedsFundValue || 0)  + +(grantSourceBlock.strategicFunding || 0)
     }
   };
 }

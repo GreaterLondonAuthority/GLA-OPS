@@ -9,6 +9,8 @@
   <!-- build:css(.) styles/vendor.css -->
   <!-- bower:css -->
   <link rel="stylesheet" href="bower_components/angular-toastr/dist/angular-toastr.css" />
+  <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.css" />
+  <link rel="stylesheet" href="bower_components/jsoneditor/dist/jsoneditor.css" />
   <!-- endbower -->
   <!-- endbuild -->
   <!-- build:css(.tmp) styles/main.css -->
@@ -16,7 +18,7 @@
   <!-- endbuild -->
 </head>
 
-<body ng-app="GLA" ng-controller="app.appCtrl">
+<body>
 
 <div class="gla-wrapper">
   <gla-header></gla-header>
@@ -58,17 +60,29 @@
 <script src="bower_components/angular-vertilize/angular-vertilize.js"></script>
 <script src="bower_components/re-tree/re-tree.js"></script>
 <script src="bower_components/ng-device-detector/ng-device-detector.js"></script>
+<script src="bower_components/jquery-ui/jquery-ui.js"></script>
+<script src="bower_components/angular-clipboard/angular-clipboard.js"></script>
+<script src="bower_components/jsoneditor/dist/jsoneditor.js"></script>
+<script src="bower_components/ng-jsoneditor/ng-jsoneditor.js"></script>
+<script src="bower_components/ng-idle/angular-idle.js"></script>
+<script src="bower_components/angular-ui-sortable/sortable.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 
 <!--This block is replaced with custom configuration in grunt file. -->
 <!-- build:js scripts/scripts.js -->
-<!-- We have a created a patchd up version of ui-select that we need to load manualy do to an issue with contact in grunt -->
+<!-- We have a created a patched up version of ui-select that we need to load manually do to an issue with contact in grunt -->
 <script src="scripts/directives/angular-ui-select/select.js"></script>
 <script src="scripts/glaModule.js"></script>
 <script src="scripts/app.js"></script>
 <script src="scripts/templateCache.js"></script>
 <!-- endbuild -->
+
+<script>
+    angular.element(function() {
+        angular.bootstrap(document, ['GLA']);
+    });
+</script>
 
 </body>
 </html>

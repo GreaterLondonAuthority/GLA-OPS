@@ -49,7 +49,9 @@
             select ROWNUM() as id, * from (
             select CASE WHEN month &lt;  4 THEN  year -1
             ELSE year END as financial_year,  project_id, block_id, SUM(amount) as SPEND,
-            ledger_status, spend_type, year, month from project_ledger_entry
+            ledger_status, spend_type, year, month from project_ledger_entry ple
+            INNER JOIN finance_category fc ON ple.category_id = fc.id
+            WHERE fc.spend_status != 'Hidden'
             GROUP BY project_id, block_id,ledger_status, spend_type , financial_year, year, month
             order by  project_id, financial_year, ledger_status, spend_type asc)
         </createView>
@@ -62,7 +64,9 @@
         <createView viewName="V_ANNUAL_SPEND_BY_TYPE" replaceIfExists="true">
             select ROW_NUMBER() OVER() AS id, CASE WHEN month &lt;  4 THEN  year -1
             ELSE year END as financial_year,  project_id, block_id, SUM(amount) as SPEND,
-            ledger_status, spend_type, year , month from project_ledger_entry
+            ledger_status, spend_type, year , month from project_ledger_entry ple
+            INNER JOIN finance_category fc ON ple.category_id = fc.id
+            WHERE fc.spend_status != 'Hidden'
             GROUP BY  project_id, block_id,ledger_status, spend_type , financial_year, year, month
             order by project_id, financial_year, ledger_status, spend_type asc;
         </createView>
@@ -94,6 +98,28 @@
             from project_block where reporting_version = true
         </createView>
 
+
+        <createView viewName="v_project_block_latest" replaceIfExists="true">
+            SELECT  pb.id as block_id, pb.block_display_name,pb.project_block_type,pb.block_type,pb.display_order,pb.block_appears_on_status,pb.block_marked_complete, pb.HIDDEN, pb.is_new,
+            pb.project_id, pb.block_status, pb.version_number, ld.username as locked_by from project_block pb
+            left join lock_details ld on ld.id = pb.id
+            where latest_for_project is not null
+        </createView>
+
+        <createView viewName="v_project_overview" replaceIfExists="true">
+            SELECT p.org_id, p.managing_organisation_id,
+            p.status = 'Active' AND p.substatus = 'UnapprovedChanges' as unnapproved_changes,
+            p.status, p.substatus,p.recommendation, p.marked_for_corporate, p.programme_id, p.template_id, p.info_message,
+            block.*,
+            pdb.title
+            FROM project p
+            LEFT JOIN organisation org ON p.org_id = org.id
+            INNER JOIN v_project_block_latest block ON block.project_id = p.id and block.hidden=false
+            INNER JOIN v_project_block_latest det ON det.project_id = p.id and det.project_block_type = 'Details'
+            INNER JOIN project_details_block pdb ON pdb.id = det.block_id
+        </createView>
+
+
         <!--
          POTENTIAL ISSUES
         -->
@@ -119,7 +145,7 @@
         <createView viewName="v_project_permissions" replaceIfExists="true">
             SELECT p.id project_id, p.org_id organisation_id, pdb.title project_title, p.organisation_group_id, r.username, r.name role_name
             FROM project p
-            LEFT JOIN user_roles r ON ((r.organisation_id = 10000) OR (p.org_id = r.organisation_id))
+            LEFT JOIN user_roles r ON ((r.organisation_id = 10000) OR (p.org_id = r.organisation_id) OR (p.managing_organisation_id = r.organisation_id))
             INNER JOIN v_project_block_active active_details_block ON active_details_block.project_id = p.id AND active_details_block.project_block_type = 'Details'
             INNER JOIN project_details_block pdb ON active_details_block.id = pdb.id
             WHERE r.approved
@@ -131,7 +157,12 @@
         -->
         <createView viewName="v_project_summaries" replaceIfExists="true">
             SELECT prg.name prg_name, org.name org_name, tpl.name template_name, og.name og_name, og.type og_type, og.lead_organisation_id, pdb.title,  p.*,
-            p.status = 'Active' AND p.substatus = 'UnapprovedChanges' as unnapproved_changes
+            p.status = 'Active' AND p.substatus = 'UnapprovedChanges' as unnapproved_changes,
+            CASE
+            WHEN p.status = 'Assess' THEN concat_ws(':', p.status, p.recommendation)
+            ELSE concat_ws(':', p.status, p.substatus)
+            END state,
+            (SELECT string_agg( concat('|', es.username), '|') from entity_subscription es where es.entity_type = 'project' AND es.entity_id = p.id) AS subscriptions
             FROM project p
             LEFT JOIN programme prg ON p.programme_id = prg.id
             LEFT JOIN template tpl ON p.template_id = tpl.id
@@ -680,6 +711,23 @@
             ON a.organisation_id = b.organisation_id AND a.programme_id = b.programme_id
         </createView>
 
+        <!-- Duplication of above view in case above is used in Xianmei's reports -->
+        <createView viewName="v_organisation_programmes_with_budgets" replaceIfExists="true">
+            SELECT id, name, org_id, sum(total) AS total
+            FROM (
+            SELECT pg.id, pg.name, p.org_id AS org_id, 0 AS total
+            FROM programme pg
+            LEFT JOIN project p ON p.programme_id = pg.id
+            UNION ALL
+            SELECT programme_id AS id, p.name AS name, organisation_id AS org_id, sum(amount) AS total
+            FROM organisation_budget_entry
+            INNER JOIN programme p ON p.id = programme_id
+            GROUP BY programme_id, name, organisation_id
+            ) a
+            GROUP BY id, name, org_id
+        </createView>
+
+
         <createView viewName="v_requested_grant_values_by_org_and_prog" replaceIfExists="true">
             SELECT
             p.programme_id,
@@ -762,9 +810,10 @@
         </createView>
 
         <createView viewName="v_organisation_summaries" replaceIfExists="true">
-            SELECT o.id, o.name, o.entity_type, o.managing_organisation_id, mo.name managing_organisation_name, o.email, o.sap_vendor_id, o.status, o.user_reg_status
+            SELECT o.id, o.name, o.entity_type, o.managing_organisation_id, mo.name managing_organisation_name, o.sap_vendor_id, o.status, t.name team_name, t.id team_id, o.registration_allowed
             FROM organisation o
             LEFT OUTER JOIN organisation mo ON o.managing_organisation_id = mo.id
+            LEFT OUTER JOIN team t ON o.team_id = t.id
         </createView>
 
         <createView viewName="v_dashboard_metrics">
@@ -784,7 +833,7 @@
 
             SELECT username, 'organisations.pending' AS key, COUNT(DISTINCT organisation_id) AS value
             FROM user_roles
-            WHERE NOT approved
+            WHERE (NOT approved or approved IS NULL)
             GROUP BY username
 
             UNION ALL
@@ -798,7 +847,7 @@
 
             SELECT username, 'notifications.unread' AS key, COUNT(DISTINCT id) AS value
             FROM user_notification
-            WHERE time_read IS NULL
+            WHERE time_read IS NULL AND status='Active'
             GROUP BY username
 
             ORDER BY username, key
@@ -832,19 +881,35 @@
             left join user_org_finance_threshold t on r.username = t.username and r.organisation_id = t.organisation_id
         </createView>
 
+        <createView viewName="v_budget_summaries" replaceIfExists="true">
+            select
+            (
+                select count (ple1.*)
+                from project_ledger_entry ple1
+                where ple.year = ple1.year
+                and ple.block_id = ple1.block_id
+                and ple.spend_type = ple1.spend_type
+                and ple1.ledger_type != 'BUDGET'
+            ) as nb_activities,
+            ple.*
+            from project_ledger_entry ple
+            where ple.ledger_type = 'BUDGET'
+        </createView>
+
     </changeSet>
 
     <changeSet id="V_CURRENT_YEAR_MONTH_H2" author="team" dbms="h2"
                runOnChange="true" runAlways="true" failOnError="${failsOnError}">
         <createView viewName="v_current_year_month" >
-            SELECT FORMATDATETIME(CURRENT_DATE, 'yyyyMM') AS current_year_month
+            SELECT FORMATDATETIME(CURRENT_DATE, 'yyyyMM') AS current_year_month,
+            FORMATDATETIME(CURRENT_DATE, 'yyyy') AS current_year
         </createView>
     </changeSet>
     <changeSet id="V_CURRENT_YEAR_MONTH_PG" author="team" dbms="postgresql"
                runOnChange="true" runAlways="true" failOnError="${failsOnError}">
         <createView viewName="v_current_year_month" >
-            SELECT (date_part('year', CURRENT_DATE) * 100) + date_part('month', CURRENT_DATE) AS current_year_month
-
+            SELECT (date_part('year', CURRENT_DATE) * 100) + date_part('month', CURRENT_DATE) AS current_year_month,
+            date_part('year', CURRENT_DATE) AS current_year
         </createView>
     </changeSet>
     <changeSet id="V_OUTPUTS_SUMMARY_PG_CREATION" author="team" dbms="h2"
@@ -856,72 +921,127 @@
             ote.block_id,
             CASE WHEN ote.output_type = 'DIRECT'
             THEN 'DIRECT'
-            ELSE 'INDIRECT' END                                         AS CALC_OUTPUT_TYPE,
+            ELSE 'INDIRECT' END AS CALC_OUTPUT_TYPE,
             CASE WHEN ote.month &lt; 4
             THEN ote.year - 1
-            ELSE ote.year END                                           AS financial_year,
+            ELSE ote.year END AS financial_year,
+            occ.id as cat_id,
             occ.category,
             occ.subcategory,
             occ.value_type,
-            sum(ote.forecast)                                           AS forecast,
-            sum(ote.actual)                                             AS actual,
-            coalesce(sum(ff.forecast), 0) + coalesce(sum(pa.actual), 0) AS total
+            sum(baseline.baseline)  as baseline,
+            sum(ote.forecast) AS forecast,
+            sum(ote.actual) AS actual,
+            CASE WHEN ocg.period_type = 'Quarterly'
+            THEN coalesce(sum(ff2.forecast), 0) + coalesce(sum(pa2.actual), 0)
+            ELSE coalesce(sum(ff.forecast), 0) + coalesce(sum(pa.actual), 0) END AS total
+
             FROM output_table_entry ote
+            inner join project p on p.id = ote.project_id
+            inner join template_block tb on tb.template_id = p.template_id and tb.block_type = 'OUTPUTS'
             LEFT JOIN output_cat_config occ ON ote.configuration_id = occ.id
+
+
+            LEFT JOIN output_group_output_config ogoc ON occ.id = ogoc.output_config_id and ogoc.output_group_id=tb.output_config_group_id
+            LEFT JOIN output_config_group ocg ON ocg.id = ogoc.output_group_id
+
+            LEFT JOIN output_table_entry baseline
+            ON ote.block_id = baseline.block_id AND occ.id = baseline.configuration_id and baseline.baseline is not null
+
+
+
             LEFT JOIN output_table_entry ff
             ON ote.id = ff.id AND ff.forecast IS NOT NULL AND ff.year_month &gt;= (SELECT current_year_month
             FROM v_current_year_month)
             LEFT JOIN output_table_entry pa
             ON ote.id = pa.id AND pa.actual IS NOT NULL AND pa.year_month &lt; (SELECT current_year_month
             FROM v_current_year_month)
-            GROUP BY ote.project_id, ote.block_id, CALC_OUTPUT_TYPE, financial_year, occ.category, occ.subcategory, occ.value_type)
+
+            LEFT JOIN output_table_entry ff2
+            ON ote.id = ff2.id
+            AND ff2.forecast IS NOT NULL AND ((10*(ff2.year+(SELECT modifier from year_quarters where year = ff2.month))) + (SELECT quarter from year_quarters where year = ff2.month)) &gt;= (10* (SELECT current_year from v_current_year_month) + (SELECT quarter from year_quarters where year = FORMATDATETIME(CURRENT_DATE, 'MM')))
+            LEFT JOIN output_table_entry pa2
+            ON ote.id = pa2.id
+            AND pa2.actual IS NOT NULL AND (10*(pa2.year+(SELECT modifier from year_quarters where year = pa2.month))) + (SELECT quarter from year_quarters where year = pa2.month) &lt; (10* (SELECT current_year from v_current_year_month) + (SELECT quarter from year_quarters where year = FORMATDATETIME(CURRENT_DATE, 'MM')))
+            WHERE ote.year_month != 0
+            GROUP BY ote.project_id, ote.block_id, CALC_OUTPUT_TYPE, financial_year, occ.id, occ.category, occ.subcategory, occ.value_type, ocg.period_type)
         </createView>
     </changeSet>
     <changeSet id="V_OUTPUTS_SUMMARY_PG_CREATION" author="team" dbms="postgresql"
                    runOnChange="true" runAlways="true" failOnError="${failsOnError}">
         <createView viewName="v_outputs_summary" >
-            select ROW_NUMBER() OVER() AS id,
+
+            SELECT ROW_NUMBER() OVER() AS id,
             ote.project_id,
             ote.block_id,
             CASE WHEN ote.output_type = 'DIRECT'
             THEN 'DIRECT'
-            ELSE 'INDIRECT' END                                         AS CALC_OUTPUT_TYPE,
+            ELSE 'INDIRECT' END AS CALC_OUTPUT_TYPE,
             CASE WHEN ote.month &lt; 4
             THEN ote.year - 1
-            ELSE ote.year END                                           AS financial_year,
+            ELSE ote.year END AS financial_year,
+            occ.id as cat_id,
             occ.category,
             occ.subcategory,
             occ.value_type,
-            sum(ote.forecast)                                           AS forecast,
-            sum(ote.actual)                                             AS actual,
-            coalesce(sum(ff.forecast), 0) + coalesce(sum(pa.actual), 0) AS total
+            sum(baseline.baseline) as baseline,
+            sum(ote.forecast) AS forecast,
+            sum(ote.actual) AS actual,
+            CASE WHEN ocg.period_type = 'Quarterly'
+            THEN coalesce(sum(ff2.forecast), 0) + coalesce(sum(pa2.actual), 0)
+            ELSE coalesce(sum(ff.forecast), 0) + coalesce(sum(pa.actual), 0) END AS total
+
             FROM output_table_entry ote
+            inner join project p on p.id = ote.project_id
+            inner join template_block tb on tb.template_id = p.template_id and tb.block_type = 'OUTPUTS'
             LEFT JOIN output_cat_config occ ON ote.configuration_id = occ.id
+
+
+            LEFT JOIN output_group_output_config ogoc ON occ.id = ogoc.output_config_id and ogoc.output_group_id=tb.output_config_group_id
+            LEFT JOIN output_config_group ocg ON ocg.id = ogoc.output_group_id
+
+            LEFT JOIN output_table_entry baseline
+            ON ote.block_id = baseline.block_id AND occ.id = baseline.configuration_id and baseline.baseline is not null
+
+
             LEFT JOIN output_table_entry ff
             ON ote.id = ff.id AND ff.forecast IS NOT NULL AND ff.year_month &gt;= (SELECT current_year_month
             FROM v_current_year_month)
             LEFT JOIN output_table_entry pa
             ON ote.id = pa.id AND pa.actual IS NOT NULL AND pa.year_month &lt; (SELECT current_year_month
             FROM v_current_year_month)
-            GROUP BY ote.project_id, ote.block_id, CALC_OUTPUT_TYPE, financial_year, occ.category, occ.subcategory, occ.value_type
+
+            LEFT JOIN output_table_entry ff2
+            ON ote.id = ff2.id
+            AND ff2.forecast IS NOT NULL AND ((10*(ff2.year+(SELECT modifier from year_quarters where year = ff2.month))) + (SELECT quarter from year_quarters where year = ff2.month)) &gt;= (10* (SELECT current_year from v_current_year_month) + (SELECT quarter from year_quarters where year = date_part('month', CURRENT_DATE)))
+            LEFT JOIN output_table_entry pa2
+            ON ote.id = pa2.id
+            AND pa2.actual IS NOT NULL AND (10*(pa2.year+(SELECT modifier from year_quarters where year = pa2.month))) + (SELECT quarter from year_quarters where year = pa2.month) &lt; (10* (SELECT current_year from v_current_year_month) + (SELECT quarter from year_quarters where year = date_part('month', CURRENT_DATE)))
+
+            WHERE ote.year_month != 0
+            GROUP BY ote.project_id, ote.block_id, CALC_OUTPUT_TYPE, financial_year,occ.id,  occ.category, occ.subcategory, occ.value_type, ocg.period_type
+
         </createView>
     </changeSet>
+
 
 
     <changeSet id="PROJECT_LEDGER_ENTRY_VIEWS" author="team"
                runOnChange="true" runAlways="true" failOnError="${failsOnError}">
-        <createView viewName="v_relevant_project_ledger_entries">
-            SELECT *
-            FROM project_ledger_entry
-            WHERE ((ledger_status = 'ACTUAL' AND
-            year_month &lt; (SELECT current_year_month FROM v_current_year_month))
+        <createView viewName="v_relevant_receipt_entries" replaceIfExists="true">
+            SELECT ple.*
+            FROM project_ledger_entry ple
+            INNER JOIN finance_category fc ON ple.category_id = fc.id
+            WHERE fc.receipt_status != 'Hidden' AND ple.ledger_type = 'RECEIPT' AND (
+            ((ple.ledger_status = 'ACTUAL' AND
+            ple.year_month &lt; (SELECT current_year_month FROM v_current_year_month))
             OR (ledger_status = 'FORECAST' AND
-            year_month &gt;= (SELECT current_year_month FROM v_current_year_month)));
+            ple.year_month &gt;= (SELECT current_year_month FROM v_current_year_month))));
         </createView>
     </changeSet>
     <changeSet id="V_RECEIPT_TOTALS_H2" author="team" dbms="h2"
                runOnChange="true" runAlways="true" failOnError="${failsOnError}">
-        <createView viewName="v_receipt_totals" >
+        <createView viewName="v_receipt_totals" replaceIfExists="true">
             select ROWNUM() as id, *   from (
             select
             project_id,
@@ -930,14 +1050,13 @@
             CASE WHEN month &lt;  4 THEN  year -1
             ELSE year END as financial_year,
             sum(amount) as total
-            FROM v_relevant_project_ledger_entries
-            WHERE ledger_type = 'RECEIPT'
+            FROM v_relevant_receipt_entries
             GROUP BY project_id, block_id, financial_year, ledger_status)
         </createView>
     </changeSet>
     <changeSet id="V_RECEIPT_TOTALS_PG" author="team" dbms="postgresql"
                runOnChange="true" runAlways="true" failOnError="${failsOnError}">
-        <createView viewName="v_receipt_totals" >
+        <createView viewName="v_receipt_totals" replaceIfExists="true">
             SELECT
             ROW_NUMBER() OVER() AS id,
             project_id,
@@ -946,8 +1065,7 @@
             CASE WHEN month &lt;  4 THEN  year -1
             ELSE year END as financial_year,
             sum(amount) as total
-            FROM v_relevant_project_ledger_entries
-            WHERE ledger_type = 'RECEIPT'
+            FROM v_relevant_receipt_entries
             GROUP BY project_id, block_id,financial_year, ledger_status
         </createView>
     </changeSet>
@@ -987,5 +1105,371 @@
             AND gsb.associated_project = TRUE
             GROUP BY p.programme_id, p.org_id, p.strategic_project
         </createView>
+    </changeSet>
+    <changeSet id="START_ON_SITE_REQUESTED" author="team"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_strategic_units_approved">
+            SELECT
+            p.org_id,
+            p.programme_id,
+            tt.id                              AS tenure_type_ext_id,
+            tt.name                            AS tenure_type_name,
+            SUM(tau.total_units)               AS total_units_approved,
+            SUM(tau.total_units_at_sos)        AS total_sos_approved,
+            SUM(tau.total_units_at_completion) AS total_completion_approved,
+            SUM(
+            CASE WHEN (tau.total_units_at_sos IS NULL OR tau.total_units_at_sos = 0) AND tau.total_units_at_completion > 0
+            THEN tau.total_units
+            WHEN (tau.total_units_at_sos IS NOT NULL AND tau.total_units_at_sos > 0)
+            THEN tau.total_units
+            ELSE NULL END)                 AS starts_else_completions_approved
+            FROM project p
+            LEFT OUTER JOIN project_block app
+            ON p.id = app.project_id AND app.block_type = 'GRANT_SOURCE' AND app.block_status = 'LAST_APPROVED'
+            LEFT OUTER JOIN project_block app_cg
+            ON p.id = app_cg.project_id AND app_cg.block_type = 'CALCULATE' AND app_cg.block_status = 'LAST_APPROVED'
+            LEFT OUTER JOIN grant_source_block gsb ON app.id = gsb.id
+            LEFT OUTER JOIN tenure_and_units tau ON app_cg.id = tau.block_id
+            INNER JOIN template_tenure_type t ON tau.tenure_type_id = t.id
+            INNER JOIN tenure_type tt ON t.external_id = tt.id
+            WHERE gsb.associated_project = TRUE
+            and  concat(p.status, ':', p.substatus) not IN
+            ('Closed:Rejected', 'Closed:Abandoned')
+            GROUP BY p.org_id,
+            p.programme_id, tenure_type_ext_id, tenure_type_name
+        </createView>
+        <createView viewName="v_strategic_units_unapproved">
+            SELECT
+            p.org_id,
+            p.programme_id,
+            tt.id                              AS tenure_type_ext_id,
+            tt.name                            AS tenure_type_name,
+            sum(tau.total_units)               AS total_units_requested,
+            sum(tau.total_units_at_sos)        AS total_sos_requested,
+            sum(tau.total_units_at_completion) AS total_completion_requested,
+            SUM(
+            CASE WHEN (tau.total_units_at_sos IS NULL OR tau.total_units_at_sos = 0) AND tau.total_units_at_completion > 0
+            THEN tau.total_units
+            WHEN (tau.total_units_at_sos IS NOT NULL AND tau.total_units_at_sos > 0)
+            THEN tau.total_units
+            ELSE NULL END)                 AS starts_else_completions_requested
+            FROM project p
+            LEFT OUTER JOIN project_block unapp
+            ON p.id = unapp.project_id AND unapp.block_type = 'GRANT_SOURCE' AND unapp.block_status = 'UNAPPROVED'
+            AND concat(p.status, ':', p.substatus) IN ('Assess:Recommended', 'Assess:', 'Active:ApprovalRequested')
+            LEFT OUTER JOIN project_block app
+            ON p.id = app.project_id AND app.block_type = 'GRANT_SOURCE' AND app.block_status = 'LAST_APPROVED'
+            LEFT OUTER JOIN project_block unapp_cg
+            ON p.id = unapp_cg.project_id AND unapp_cg.block_type = 'CALCULATE' AND unapp_cg.block_status = 'UNAPPROVED'
+            AND concat(p.status, ':', p.substatus) IN ('Assess:Recommended', 'Assess:', 'Active:ApprovalRequested')
+            LEFT OUTER JOIN project_block app_cg
+            ON p.id = app_cg.project_id AND app_cg.block_type = 'CALCULATE' AND app_cg.block_status = 'LAST_APPROVED'
+            LEFT OUTER JOIN grant_source_block gsb ON coalesce(unapp.id, app.id) = gsb.id
+            LEFT OUTER JOIN tenure_and_units tau ON coalesce(unapp_cg.id, app_cg.id) = tau.block_id
+            INNER JOIN template_tenure_type t ON tau.tenure_type_id = t.id
+            INNER JOIN tenure_type tt ON t.external_id = tt.id
+            WHERE concat(p.status, ':', p.substatus) IN
+            ('Assess:Recommended', 'Assess:', 'Active:', 'Active:ApprovalRequested', 'Active:PaymentAuthorisationPending',
+            'Active:UnapprovedChanges', 'Closed:Completed')
+            AND gsb.associated_project = TRUE
+            GROUP BY p.org_id,
+            p.programme_id, tenure_type_ext_id, tenure_type_name
+        </createView>
+        <createView viewName="v_associated_sos_and_requested">
+            SELECT
+            CONCAT(sub.org_id, '-', sub.programme_id, '-', sub.tenure_type_ext_id) AS id,
+            sub.org_id,
+            sub.programme_id,
+            sub.tenure_type_ext_id,
+            sub.tenure_type_name,
+            app.total_units_approved,
+            app.starts_else_completions_approved,
+            unapp.total_units_requested,
+            unapp.starts_else_completions_requested
+            FROM (
+            SELECT
+            org_id,
+            programme_id,
+            tenure_type_ext_id,
+            tenure_type_name
+            FROM v_strategic_units_unapproved unapp
+            UNION SELECT
+            org_id,
+            programme_id,
+            tenure_type_ext_id,
+            tenure_type_name
+            FROM v_strategic_units_approved app)
+            AS sub
+            LEFT JOIN v_strategic_units_approved app ON app.org_id = sub.org_id AND app.programme_id = sub.programme_id AND
+            app.tenure_type_ext_id = sub.tenure_type_ext_id
+            LEFT JOIN v_strategic_units_unapproved unapp
+            ON unapp.org_id = sub.org_id AND unapp.programme_id = sub.programme_id AND
+            unapp.tenure_type_ext_id = sub.tenure_type_ext_id
+        </createView>
+	</changeSet>
+	<changeSet id="V_DASHBOARD_DATA_ENTITY_COUNTS_POSTGRES_CREATION"
+		author="team" dbms="postgresql" failOnError="false" runAlways="true"
+		runOnChange="true">
+		<createView viewName="v_dashboard_key_data_entity_counts"
+			replaceIfExists="true">
+           SELECT 'Organisations with users' AS key,
+           text(count(DISTINCT organisation_id)) AS value
+           FROM user_roles ur
+           WHERE organisation_id != 10000
+           UNION ALL
+           SELECT 'Organisations with projects' AS key,
+           text(count(DISTINCT org_id)) AS value
+           FROM project p
+           WHERE org_id != 10000
+           UNION ALL
+           SELECT 'Users (Approved, GLA)' AS key,
+           text(count(DISTINCT username)) AS value
+           FROM users u
+           WHERE  username IN (SELECT username 
+           FROM   user_roles ur 
+           WHERE  NAME IN ('ROLE_OPS_ADMIN','ROLE_GLA_ORG_ADMIN','ROLE_GLA_SPM','ROLE_GLA_PM','ROLE_GLA_FINANCE','ROLE_GLA_READ_ONLY') 
+           AND approved = true)
+           UNION ALL
+           SELECT 'Users (Approved, non-GLA)' AS key,
+           text(count(DISTINCT username)) AS value
+           FROM   users u 
+           WHERE  username IN (SELECT username 
+           FROM   user_roles ur 
+           WHERE  NAME IN ('ROLE_PROJECT_READER','ROLE_ORG_ADMIN','ROLE_PROJECT_EDITOR','ROLE_TECH_ADMIN') 
+           AND approved = true) 
+           UNION ALL
+           SELECT 'Last logon' AS key,
+           text(max(last_logged_on)) AS value
+           FROM users
+           UNION ALL
+           SELECT 'Projects - total' AS key, text(count(DISTINCT id)) AS value
+           FROM project p
+           UNION ALL
+           SELECT 'Projects ('||status||')' AS key,
+           text(count(*)) AS value
+           FROM project
+           GROUP BY status
+           UNION ALL
+           SELECT 'Last audit event' AS key,
+           text(max(activity_time)) AS value
+           FROM audit_activity
+           UNION ALL
+           SELECT '2017 land budget' AS key,
+           to_char(sum(amount),'999G999G999') AS value
+           FROM project_ledger_entry
+           WHERE ledger_status = 'BUDGET'
+           AND year = 2017
+           UNION ALL
+           SELECT 'Grant requested' AS key,
+           to_char(sum(gs.gs_grant_requested),'999G999G999G999') AS value
+           FROM v_grant_source gs
+           LEFT JOIN project p ON gs.project_id = p.id
+           WHERE p.status IN ('Submitted', 'Assess', 'Returned', 'Active')
+           UNION ALL
+           SELECT 'Programmes - total' AS key,
+           text(count(*)) AS value
+           FROM programme
+           UNION ALL
+           SELECT 'Templates - total' AS key,
+           text(count(*)) AS value
+           FROM template
+           UNION ALL
+           SELECT 'Organisation groups' AS key,
+           text(count(*)) AS value
+           FROM organisation_group
+           UNION ALL
+           SELECT 'Last block change' AS key,
+           text(max(last_modified)) AS value
+           FROM project_block pb
+           UNION ALL
+           SELECT 'Users (Unapproved)' AS key,
+           text(count(*)) AS value
+           FROM users u
+           WHERE  username IN (SELECT username 
+           FROM   user_roles ur 
+           WHERE approved is null)
+           ORDER BY key
+           </createView>
+    </changeSet>
+	<changeSet id="V_DASHBOARD_DATA_ENTITY_COUNTS_H2_CREATION"
+		author="team" dbms="h2" failOnError="false" runAlways="true"
+		runOnChange="true">
+		<createView viewName="v_dashboard_key_data_entity_counts"
+			replaceIfExists="true">
+             SELECT 'Organisations with users' AS key,
+           TO_CHAR(count(DISTINCT organisation_id)) AS value
+           FROM user_roles ur
+           WHERE organisation_id != 10000
+           UNION ALL
+           SELECT 'Organisations with projects' AS key,
+           TO_CHAR(count(DISTINCT org_id)) AS value
+           FROM project p
+           WHERE org_id != 10000
+           UNION ALL
+           SELECT 'Users (Approved, GLA)' AS key,
+           TO_CHAR(count(DISTINCT username)) AS value
+           FROM users u
+           WHERE  username IN (SELECT username 
+           FROM   user_roles ur 
+           WHERE  NAME IN ('ROLE_OPS_ADMIN','ROLE_GLA_ORG_ADMIN','ROLE_GLA_SPM','ROLE_GLA_PM','ROLE_GLA_FINANCE','ROLE_GLA_READ_ONLY') 
+           AND approved = true)
+           UNION ALL
+           SELECT 'Users (Approved, non-GLA)' AS key,
+           TO_CHAR(count(DISTINCT username)) AS value
+           FROM   users u 
+           WHERE  username IN (SELECT username 
+           FROM   user_roles ur 
+           WHERE  NAME IN ( 'ROLE_PROJECT_READER','ROLE_ORG_ADMIN','ROLE_PROJECT_EDITOR','ROLE_TECH_ADMIN') 
+           AND approved = true) 
+           UNION ALL
+           SELECT 'Last logon' AS key,
+           TO_CHAR(max(last_logged_on)) AS value
+           FROM users
+           UNION ALL
+           SELECT 'Projects - total' AS key, TO_CHAR(count(DISTINCT id)) AS value
+           FROM project p
+           UNION ALL
+           SELECT 'Projects ('||status||')' AS key,
+           TO_CHAR(count(*)) AS value
+           FROM project
+           GROUP BY status
+           UNION ALL
+           SELECT 'Last audit event' AS key,
+           TO_CHAR(max(activity_time)) AS value
+           FROM audit_activity
+           UNION ALL
+           SELECT '2017 land budget' AS key,
+           to_char(sum(amount),'999G999G999') AS value
+           FROM project_ledger_entry
+           WHERE ledger_status = 'BUDGET'
+           AND year = 2017
+           UNION ALL
+           SELECT 'Grant requested' AS key,
+           to_char(sum(gs.gs_grant_requested),'999G999G999G999') AS value
+           FROM v_grant_source gs
+           LEFT JOIN project p ON gs.project_id = p.id
+           WHERE p.status IN ('Submitted', 'Assess', 'Returned', 'Active')
+           UNION ALL
+           SELECT 'Programmes - total' AS key,
+           TO_CHAR(count(*)) AS value
+           FROM programme
+           UNION ALL
+           SELECT 'Templates - total' AS key,
+           TO_CHAR(count(*)) AS value
+           FROM template
+           UNION ALL
+           SELECT 'Organisation groups' AS key,
+           TO_CHAR(count(*)) AS value
+           FROM organisation_group
+           UNION ALL
+           SELECT 'Last block change' AS key,
+           TO_CHAR(max(last_modified)) AS value
+           FROM project_block pb
+           UNION ALL
+           SELECT 'Users (Unapproved)' AS key,
+           TO_CHAR(count(*)) AS value
+           FROM users u
+           WHERE  username IN (SELECT username 
+           FROM   user_roles ur 
+           WHERE approved is null)
+           ORDER BY key
+           </createView>
+
+	</changeSet>
+    <changeSet id="v_project_funding" author="cmelville" failOnError="false" runAlways="true" runOnChange="true">
+        <createView viewName="v_project_funding_summary" replaceIfExists="true">
+            select project_id,
+            block_id,
+            fin_year,
+            sum(CASE WHEN ledger_type = 'BUDGET' AND SPEND_TYPE = 'REVENUE' AND Category IS NULL
+            THEN Amount
+            WHEN ledger_type = 'PAYMENT' AND SPEND_TYPE = 'REVENUE' AND Category IS NULL AND activity_id is not null
+            THEN -Amount
+            ELSE 0 END) AS REV_GRANT,
+            sum(CASE WHEN ledger_type = 'BUDGET' AND SPEND_TYPE = 'REVENUE' AND Category = 'MatchFund'
+            THEN Amount
+            WHEN ledger_type = 'PAYMENT' AND SPEND_TYPE = 'REVENUE' AND Category = 'MatchFund' AND activity_id is not null
+            THEN -Amount
+            ELSE 0 END) AS REV_MATCH,
+            sum(CASE WHEN ledger_type = 'BUDGET' AND SPEND_TYPE = 'CAPITAL' AND Category IS NULL
+            THEN Amount
+            WHEN ledger_type = 'PAYMENT' AND SPEND_TYPE = 'CAPITAL' AND Category IS NULL AND activity_id is not null
+            THEN -Amount
+            ELSE 0 END) AS CAP_GRANT,
+            sum(CASE WHEN ledger_type = 'BUDGET' AND SPEND_TYPE = 'CAPITAL' AND Category = 'MatchFund'
+            THEN Amount
+            WHEN ledger_type = 'PAYMENT' AND SPEND_TYPE = 'CAPITAL' AND Category = 'MatchFund' AND activity_id is not null
+            THEN -Amount
+            ELSE 0 END) AS CAP_MATCH
+            FROM (
+            SELECT
+            project_id,
+            block_id,
+            CASE WHEN month IN (1, 2, 3)
+            THEN year - 1
+            WHEN month IS null THEN year
+            ELSE year END AS fin_year,
+            ledger_type,
+            spend_type,
+            category,
+            e.funding_activity_id as activity_id,
+            SUM(amount)   AS amount
+            FROM project_ledger_entry ple
+            left outer join funding_activity_project_ledger_entry e on ple.id = e.project_ledger_entry_id
+            GROUP BY project_id, block_id, fin_year, ledger_status, ledger_type, spend_type, category, e.funding_activity_id
+            ) as sub
+            GROUP BY project_id, block_id, fin_Year
+        </createView>
+
+    </changeSet>
+    <changeSet id="V_FUNDING_BUDGET_SUMMARY_H2_CREATION"
+               author="team" dbms="h2" failOnError="true" runAlways="true"
+               runOnChange="true">
+        <createView viewName="V_FUNDING_BUDGET_SUMMARY" replaceIfExists="true" >
+            SELECT ROWNUM() as id, *, budget - actual - forecast AS balance FROM (
+            SELECT ple.block_id,
+            ple.year,
+            ple.spend_type,
+            SUM(CASE WHEN ple.ledger_type = 'BUDGET' THEN ple.amount ELSE 0 END) AS budget,
+            SUM(CASE WHEN ple.claim_id IS NOT NULL AND ple.ledger_type = 'PAYMENT' THEN ple.amount ELSE 0 END) AS actual,
+            SUM(CASE WHEN ple.claim_id IS NULL AND ple.ledger_type = 'PAYMENT' THEN ple.amount ELSE 0 END)     AS forecast
+            FROM project_ledger_entry ple
+            INNER JOIN project_block pb ON ple.block_id = pb.id AND pb.block_type = 'Funding'
+            WHERE ple.category IS NULL
+            GROUP BY ple.block_id, ple.year, ple.spend_type
+            ) AS sub
+        </createView>
+    </changeSet>
+    <changeSet id="V_FUNDING_BUDGET_SUMMARY_POSTGRES_CREATION" author="team"
+               dbms="postgresql" failOnError="true" runOnChange="true" runAlways="true">
+        <createView viewName="V_FUNDING_BUDGET_SUMMARY" replaceIfExists="true" >
+            SELECT ROW_NUMBER() OVER() AS id, *, budget - actual - forecast AS balance FROM (
+            SELECT ple.block_id,
+            ple.year,
+            ple.spend_type,
+            SUM(CASE WHEN ple.ledger_type = 'BUDGET' THEN ple.amount ELSE 0 END) AS budget,
+            SUM(CASE WHEN ple.claim_id IS NOT NULL AND ple.ledger_type = 'PAYMENT' THEN ple.amount ELSE 0 END) AS actual,
+            SUM(CASE WHEN ple.claim_id IS NULL AND ple.ledger_type = 'PAYMENT' THEN ple.amount ELSE 0 END)     AS forecast
+            FROM project_ledger_entry ple
+            INNER JOIN project_block pb ON ple.block_id = pb.id AND pb.block_type = 'Funding'
+            WHERE ple.category IS NULL
+            GROUP BY ple.block_id, ple.year, ple.spend_type
+            ) AS sub
+        </createView>
+    </changeSet>
+    <!--<changeSet id="v_project_funding_summary_h2" author="team" dbms="h2"-->
+               <!--runOnChange="true" runAlways="true" failOnError="${failsOnError}">-->
+        <!--<createView viewName="v_project_funding_summary" replaceIfExists="true">-->
+            <!--select ROWNUM() as id, * from v_project_funding_summary_base-->
+        <!--</createView>-->
+    <!--</changeSet>-->
+
+    <changeSet id="v_project_funding_summary_pgs" author="team" dbms="postgresql"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <sql>
+            CREATE RULE delete_remove AS ON UPDATE TO v_project_funding_summary DO INSTEAD nothing;
+            CREATE RULE delete_remove AS ON UPDATE TO v_budget_summaries DO INSTEAD nothing;
+            CREATE RULE delete_remove AS ON UPDATE TO v_funding_budget_summary DO INSTEAD nothing;
+        </sql>
     </changeSet>
 </databaseChangeLog>

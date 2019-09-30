@@ -11,6 +11,7 @@
  */
 class NumberUtil {
   /**
+   * TODO why can't we just use angular number filter?
    * Formats a integer into a formatted number string with commas
    * @param {Number} value - integer
    * @returns {String} i.e. 100000 to `100,000`
@@ -51,6 +52,11 @@ class NumberUtil {
    */
   static formatWithPoundAndCR(value, precision) {
     return `£${value ? this.formatWithCommasAndCR(value, precision) : 0}`;
+  }
+
+
+  static roundHalfDown(num) {
+    return -Math.round(-num);
   }
 }
 

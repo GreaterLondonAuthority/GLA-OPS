@@ -7,7 +7,7 @@
   </div>
   <div class="modal-body">
     <div class="table-responsive">
-      <table class="table table-bordered table-striped" id="version-history">
+      <table class="table table-bordered table-striped version-history" id="version-history">
         <thead class="thead-inverse uppercase">
 
         <tr>
@@ -19,7 +19,13 @@
         </thead>
         <tbody>
         <tr ng-repeat="item in $ctrl.versionHistory">
-          <td>{{$ctrl.versionText(item, $first)}}</td>
+          <td>
+            <span class="version-text">{{$ctrl.versionText(item, $first)}}</span>
+            <span class="block-label"
+                  ng-class="{'preset-label' : label.preSetLabel.labelName}"
+                  ng-repeat="label in item.labels"> {{label.preSetLabel.labelName || label.text}}
+            </span>
+          </td>
           <td>{{item.versionUpdated | date: "dd/MM/yyyy"}}</td>
           <td>{{item.actionedBy}}</td>
           <td>

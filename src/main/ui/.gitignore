@@ -8,4 +8,4 @@
 /test/testConfig.local.json
 .env
 .vscode/
-
+package-lock.json

@@ -1,7 +1,9 @@
 .project-risks-block {
-
   width: 90%;
   margin: auto;
+}
+.project-risks-block, .project-risks-block-summary {
+
   table {
     td {
       background-color: $primary-white;
@@ -57,7 +59,7 @@
       padding: 0;
     }
   }
-  .section__subheader{
+  .section-subheader{
     margin: 10px 0;
   }
   td.break-word {

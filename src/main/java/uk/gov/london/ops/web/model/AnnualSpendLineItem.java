@@ -8,7 +8,7 @@
 package uk.gov.london.ops.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import uk.gov.london.ops.util.GlaOpsUtils;
+import uk.gov.london.common.GlaUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -90,19 +90,19 @@ public class AnnualSpendLineItem {
     }
 
     public void addCapitalActual(BigDecimal valueToAdd) {
-        capitalActual = GlaOpsUtils.addBigDecimals(capitalActual, valueToAdd);
+        capitalActual = GlaUtils.addBigDecimals(capitalActual, valueToAdd);
     }
 
      public void addCapitalForecast(BigDecimal valueToAdd) {
-        capitalForecast = GlaOpsUtils.addBigDecimals(capitalForecast, valueToAdd);
+        capitalForecast = GlaUtils.addBigDecimals(capitalForecast, valueToAdd);
     }
 
     public void addRevenueActual(BigDecimal valueToAdd) {
-        revenueActual = GlaOpsUtils.addBigDecimals(revenueActual, valueToAdd);
+        revenueActual = GlaUtils.addBigDecimals(revenueActual, valueToAdd);
     }
 
     public void addRevenueForecast(BigDecimal valueToAdd) {
-        revenueForecast = GlaOpsUtils.addBigDecimals(revenueForecast, valueToAdd);
+        revenueForecast = GlaUtils.addBigDecimals(revenueForecast, valueToAdd);
     }
 
     @JsonIgnore

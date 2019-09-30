@@ -13,6 +13,7 @@ package uk.gov.london.ops.domain.importdata;
 public enum ImportJobType {
 
     IMS_PROJECT_IMPORT,
+    IMS_ANSWER_CORRECTIONS_IMPORT,
     IMS_UNIT_DETAILS_IMPORT,
     IMS_CLAIMED_UNITS_IMPORT,
     ORGANISATION_GROUP_IMPORT,

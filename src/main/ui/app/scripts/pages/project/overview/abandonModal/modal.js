@@ -11,7 +11,7 @@ import modals from './modals';
 // TODO rename to transition modal?
 function AbandonModal($uibModal, TransitionService, ProjectService) {
   return {
-    show: function (project, transition, errorMsg) {
+    show: function (project, transition, errorMsg, isRejecting) {
       return $uibModal.open({
         bindToController: true,
         controllerAs: '$ctrl',
@@ -32,12 +32,14 @@ function AbandonModal($uibModal, TransitionService, ProjectService) {
            */
           this.updateView = (hintMessage) => {
             let transition = this.transition || {};
+
+            this.showRejectBtn = !hintMessage && transition.subStatus === 'Rejected';
             this.showAbandonBtn = !hintMessage && transition.subStatus === 'Abandoned';
             this.showRequestAbandonBtn = !hintMessage && transition.subStatus === 'AbandonPending';
 
             this.dataBlock.requestAbandon = this.showRequestAbandonBtn;
 
-            this.reinstateProject = this.project.status === 'Closed';
+            this.reinstateProject = this.project.statusType === 'Closed';
             this.completeProject = transition && transition.subStatus === 'Completed';
             let modalsConfig = modals.config();
             if(this.completeProject){
@@ -51,13 +53,23 @@ function AbandonModal($uibModal, TransitionService, ProjectService) {
               if (this.project.hasReclaimedPayments) {
                 this.modal.warning = 'This project contains authorised or pending reclaim(s). Changes made to this project once reinstated may affect calculations leading to errors. It is not recommended you reinstate this project.'
               }
+              if (hintMessage) {
+                this.modal.actionBtnName = null;
+                this.modal.hintMessage = hintMessage;
+              }
             } else if (this.showAbandonBtn) {
               this.modal = modalsConfig.abandon;
+            } else if (this.showRejectBtn) {
+              this.modal = modalsConfig.reject;
             } else if (this.showRequestAbandonBtn) {
               this.modal = modalsConfig.requestAbandon;
 
             } else {
-              this.modal = modalsConfig.warning;
+              if(isRejecting){
+                this.modal = modalsConfig.warningReject;
+              } else {
+                this.modal = modalsConfig.warning;
+              }
               if (hintMessage) {
                 this.modal.hintMessage = hintMessage;
               }
@@ -65,6 +77,7 @@ function AbandonModal($uibModal, TransitionService, ProjectService) {
           };
 
           this.action = () => {
+            //aksjdl akss
             let p;
             if (this.completeProject){
               p = ProjectService.completeProject(project.id, this.dataBlock.reason);
@@ -72,11 +85,14 @@ function AbandonModal($uibModal, TransitionService, ProjectService) {
               p = ProjectService.reinstateProject(project.id, this.dataBlock.reason);
             } else if (this.showRequestAbandonBtn) {
               p = ProjectService.requestAbandon(project.id, this.dataBlock.reason);
+            } else if(this.showRejectBtn){
+              p = ProjectService.reject(project.id, this.dataBlock.reason);
             } else {
               p = ProjectService.abandon(project.id, this.dataBlock.reason);
             }
             return p.then(() => this.$close(this.dataBlock))
               .catch(err => {
+                console.error('error', err);
                 this.updateView(err.data.description);
                 console.log(err);
               })
@@ -103,7 +119,7 @@ function AbandonModal($uibModal, TransitionService, ProjectService) {
                   console.log('err:', err);
                   return err.data.description
                 });
-            } else if (project.status === 'Submitted') {
+            } else if (project.statusType === 'Submitted') {
               return 'Submitted projects have to be withdrawn before you can amend or abandon them.'
             }
           }

@@ -8,7 +8,6 @@
 
 
 angular.module('GLA', [
-  'ui.bootstrap',
   'ngAnimate',
   'ngCookies',
   'ngMessages',
@@ -20,11 +19,15 @@ angular.module('GLA', [
   'ui.bootstrap',
   'validation.match',
   'ngStorage',
-  // Note: this is now loaded in index.html as we hav applid a patch to UI-SELECT
+  // Note: this is now loaded in index.html as we hav applied a patch to UI-SELECT
   'ui.select',
   'angularMoment',
   'toastr',
   'permission',
   'angular.vertilize',
-  'ng.deviceDetector'
+  'ng.deviceDetector',
+  'angular-clipboard',
+  'ng.jsoneditor',
+  'ngIdle',
+  'ui.sortable'
 ]);

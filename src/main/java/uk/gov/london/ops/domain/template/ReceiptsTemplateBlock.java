@@ -16,7 +16,9 @@ import javax.persistence.Entity;
 @DiscriminatorValue("RECEIPTS")
 public class ReceiptsTemplateBlock extends TemplateBlock {
 
-    public ReceiptsTemplateBlock() {}
+    public ReceiptsTemplateBlock() {
+        super(ProjectBlockType.Receipts);
+    }
 
     public ReceiptsTemplateBlock(Integer displayOrder) {
         super(displayOrder, ProjectBlockType.Receipts);

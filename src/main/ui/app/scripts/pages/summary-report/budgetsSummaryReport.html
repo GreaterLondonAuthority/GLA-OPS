@@ -1,0 +1,33 @@
+<div class="includes-tables">
+  <div class="approved-lifetime-budget">
+    <div class="report-label mtop10">
+      Approved lifetime budget {{$ctrl.block.fromDate}} <span ng-if="$ctrl.block.toDate">to {{$ctrl.block.toDate}}</span>
+    </div>
+
+    <div class="report-label">Capital</div>
+    <div class="report-value">{{($ctrl.block.capital | number) || 'Not provided'}}</div>
+
+    <div class="report-label">Revenue</div>
+    <div class="report-value">{{($ctrl.block.revenue | number) || 'Not provided'}}</div>
+  </div>
+
+  <div class="current-year-budget">
+    <div class="report-label mtop20">
+      Current financial year annual budget {{$ctrl.financialYear | fYear}}
+    </div>
+
+    <div class="report-label">Capital</div>
+    <div class="report-value">{{($ctrl.annualSpend.annualBudgetCapital | number) || 'Not provided'}}</div>
+
+    <div class="report-label">Revenue</div>
+    <div class="report-value">{{($ctrl.annualSpend.annualBudgetRevenue | number) || 'Not provided'}}</div>
+  </div>
+
+  <div class="tiles row mtop20" vertilize-container ng-if="$ctrl.tiles.length">
+    <div class="grant inverse-margin">
+      <div class="col-xs-12 col-sm-3 grant-column" ng-repeat="tile in $ctrl.tiles track by tile.name">
+        <tile items="tile.items"><div vertilize>{{ tile.name }}</div></tile>
+      </div>
+    </div>
+  </div>
+</div>

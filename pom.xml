@@ -4,26 +4,42 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>uk.gov.london</groupId>
-	<artifactId>gla-ops</artifactId>
+	<artifactId>gla-ops-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
-
-	<name>gla</name>
-
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.5.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<kotlin.version>1.3.11</kotlin.version>
+		<kotlin.version>1.3.61</kotlin.version>
 		<kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+		<jacoco.coverage.ratio>0.51</jacoco.coverage.ratio>
+		<jacoco.missed.class.count>215</jacoco.missed.class.count>
+		<spotbugs.version>3.1.8</spotbugs.version>
+		<spotbugs-plugin-version>3.1.1</spotbugs-plugin-version>
 	</properties>
+
+	<modules>
+		<module>gla-ops-framework</module>
+		<module>audit-service</module>
+        <module>audit-service-client</module>
+		<module>file-service</module>
+		<module>file-service-client</module>
+		<module>notification-service</module>
+		<module>notification-service-client</module>
+		<module>user-service</module>
+        <module>user-service-client</module>
+		<module>gla-ops-application</module>
+		<module>gla-ops-test</module>
+	</modules>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.2.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
 
 	<repositories>
 		<repository>
@@ -35,14 +51,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<groupId>uk.gov.london</groupId>
+			<artifactId>gla-common</artifactId>
+			<version>0.0.17-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<!--<scope>provided</scope>-->
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -61,39 +82,14 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-core</artifactId>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>4.2.1</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-file</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-xml</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-ftp</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-jdbc</artifactId>
-		</dependency>
-
 		<dependency>
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
-			<version>4.1.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>4.2.1</version>
 		</dependency>
 
 		<dependency>
@@ -102,166 +98,6 @@
 			<version>1.4.192</version>
 			<scope>compile</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.4.1209.jre7</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-			<version>3.5.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.4.0</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.4.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<version>1.3</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-validator</groupId>
-			<artifactId>commons-validator</artifactId>
-			<version>1.6</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.jknack</groupId>
-			<artifactId>handlebars</artifactId>
-			<version>4.0.6</version>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>mail</artifactId>
-			<version>1.4.7</version>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>javax.mail-api</artifactId>
-			<version>1.5.6</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<version>4.1.1.RELEASE</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>1.5.0</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>2.45.0</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>info.cukes</groupId>
-			<artifactId>cucumber-spring</artifactId>
-			<version>1.2.4</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>info.cukes</groupId>
-			<artifactId>cucumber-junit</artifactId>
-			<version>1.2.4</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>info.cukes</groupId>
-			<artifactId>cucumber-groovy</artifactId>
-			<version>1.2.4</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.4.7</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.kirviq</groupId>
-			<artifactId>dumbster</artifactId>
-			<version>1.7.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.9.10</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.integration</groupId>
-			<artifactId>spring-integration-sftp</artifactId>
-			<version>4.2.5.RELEASE</version>
-		</dependency>
-
-		<!-- removing as "Starting with Spring Integration 5.0, the 'spring-integration-java-dsl' dependency is no longer needed; the Java DSL has been merged into the core project. If it is present on the classpath, it will cause class loading conflicts." -->
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.integration</groupId>-->
-<!--			<artifactId>spring-integration-java-dsl</artifactId>-->
-<!--			<version>1.1.2.RELEASE</version>-->
-<!--		</dependency>-->
-		<dependency>
-			<groupId>com.nulab-inc</groupId>
-			<artifactId>zxcvbn</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.dataformat</groupId>
-			<artifactId>jackson-dataformat-xml</artifactId>
-			<version>2.8.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>uk.gov.london</groupId>
-			<artifactId>gla-common</artifactId>
-			<version>0.0.5-SNAPSHOT</version>
-		</dependency>
-
-		<!--<dependency>-->
-			<!--<groupId>com.fasterxml.jackson.module</groupId>-->
-			<!--<artifactId>jackson-module-kotlin</artifactId>-->
-		<!--</dependency>-->
 
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
@@ -276,119 +112,78 @@
 		</dependency>
 
 		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+
+		<!-- TEST DEPENDENCIES -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>4.1.1.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-test-junit</artifactId>
 			<version>${kotlin.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
 	</dependencies>
 
 	<build>
-		<finalName>${project.artifactId}</finalName>
-
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>build-info</goal>
-                        </goals>
-                    </execution>
-                </executions>
-			</plugin>
-
-			<!--<plugin>-->
-				<!--<groupId>pl.project13.maven</groupId>-->
-				<!--<artifactId>git-commit-id-plugin</artifactId>-->
-			<!--</plugin>-->
-
-			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.0</version>
-
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+				<!--				<configuration>-->
+				<!--					<parallel>all</parallel>-->
+				<!--					<useUnlimitedThreads>true</useUnlimitedThreads>-->
+				<!--				</configuration>-->
 				<configuration>
-					<workingDirectory>src/main/ui</workingDirectory>
-					<nodeVersion>v10.14.2</nodeVersion>
-					<npmVersion>6.9.0</npmVersion>
+					<excludes>
+						<exclude>**/*IntegrationTest</exclude>
+					</excludes>
 				</configuration>
-
-				<executions>
-					<execution>
-						<id>install node and npm</id>
-						<goals>
-							<goal>install-node-and-npm</goal>
-						</goals>
-						<phase>prepare-package</phase>
-					</execution>
-
-					<execution>
-						<id>npm install</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-
-					<execution>
-						<id>bower install</id>
-						<goals>
-							<goal>bower</goal>
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-
-					<execution>
-						<id>grunt build</id>
-						<goals>
-							<goal>grunt</goal>
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-							<arguments>default</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>br.com.ingenieux</groupId>
-				<artifactId>beanstalk-maven-plugin</artifactId>
-				<version>1.5.0</version>
-				<configuration>
-					<applicationName>gla-${eb.env}-landmgmt-app</applicationName>
-					<s3Bucket>${s3.bucket}</s3Bucket>
-					<s3Key>${project.build.finalName}-${maven.build.timestamp}.war</s3Key>
-					<versionLabel>gla-ops-${build.release}.${build.number}</versionLabel>
-					<environmentName>gla${eb.env}app</environmentName>
-					<environmentRef>gla${eb.env}app</environmentRef>
-					<regionName>${eb.region}</regionName>
-					<artifactFile>gla-ops.war</artifactFile>
-					<serverId>londonglaops.${eb.env}.eb.aws.amazon.com</serverId>
-					<silentUpload>false</silentUpload>
-					<verbose>true</verbose>
-					<multipartUpload>false</multipartUpload>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.gmaven</groupId>
-				<artifactId>groovy-maven-plugin</artifactId>
-				<version>2.0</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.7.201606060606</version>
+				<version>0.8.5</version>
 				<configuration>
 					<destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
 					<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
@@ -400,7 +195,17 @@
 						<exclude>**/SwaggerConfig.*</exclude>
 						<exclude>**/ApplicationContextListener.*</exclude>
 						<exclude>**/di/*</exclude>
-						<exclude>**/di/builders/*</exclude>
+						<exclude>**/ProjectBuilder.*</exclude>
+						<exclude>**/TemplateBuilder.*</exclude>
+						<exclude>**/LogglyCustomJsonLayout.*</exclude>
+						<exclude>**/PrimaryDataSourceConfiguration.*</exclude>
+						<exclude>**/ReportingDataSourceConfiguration.*</exclude>
+						<exclude>**/Q*Summary.*</exclude>
+						<exclude>**/AuditableActivity.*</exclude>
+						<exclude>**/QBaseOrganisation.*</exclude>
+						<exclude>**/QOrganisation.*</exclude>
+						<exclude>**/QProjectLedgerEntry.*</exclude>
+						<exclude>**/QTeam.*</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -424,12 +229,12 @@
 										<limit implementation="org.jacoco.report.check.Limit">
 											<counter>INSTRUCTION</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.85</minimum>
+											<minimum>${jacoco.coverage.ratio}</minimum>
 										</limit>
 										<limit implementation="org.jacoco.report.check.Limit">
 											<counter>CLASS</counter>
 											<value>MISSEDCOUNT</value>
-											<maximum>2</maximum>
+											<maximum>${jacoco.missed.class.count}</maximum>
 										</limit>
 									</limits>
 								</rule>
@@ -445,70 +250,53 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			<plugin>
-			    <groupId>com.mycila</groupId>
-			    <artifactId>license-maven-plugin</artifactId>
-			    <version>2.9</version>
-			    <configuration>
-			        <header>LICENCE.txt</header>
-			        <includes>
-			          <include>src/**/java/**/*.java</include>
-			        </includes>
-					<excludes>
-						<exclude>src/main/ui/**/*</exclude>
-					</excludes>
-			    </configuration>
-
-			    <executions>
-			        <execution>
-			            <goals>
-			                <goal>check</goal>
-			            </goals>
-			           	<phase>validate</phase>
-			        </execution>
-			    </executions>
-			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
-				<configuration>
-					<outputDirectory>target/sources</outputDirectory>
-					<finalName>gla-ops</finalName>
-					<attach>false</attach>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xml-maven-plugin</artifactId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.1.1</version>
 				<executions>
 					<execution>
-					<phase>prepare-package</phase>
+						<id>validate</id>
+						<phase>validate</phase>
+						<configuration>
+							<configLocation>config/checkstyle.xml</configLocation>
+							<violationSeverity>warning</violationSeverity>
+							<maxAllowedViolations>2500</maxAllowedViolations>
+							<encoding>UTF-8</encoding>
+							<consoleOutput>true</consoleOutput>
+							<failsOnError>false</failsOnError>
+							<failOnViolation>true</failOnViolation>
+						</configuration>
 						<goals>
-							<goal>transform</goal>
+							<goal>check</goal>
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.9</version>
 				<configuration>
-					<transformationSets>
-						<transformationSet>
-							<dir>src/main/resources/db/changelog</dir>
-							<includes>
-								<include>db.changelog-r${build.release}.xml</include>
-							</includes>
-							<stylesheet>src/main/resources/liquibase-stylesheet.xsl</stylesheet>
-							<fileMappers>
-								<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-									<pattern>.xml</pattern>
-									<replacement>.html</replacement>
-								</fileMapper>
-							</fileMappers>
-						</transformationSet>
-					</transformationSets>
+					<header>LICENCE.txt</header>
+					<includes>
+						<include>src/**/java/**/*.java</include>
+					</includes>
+					<excludes>
+						<exclude>src/main/ui/**/*</exclude>
+					</excludes>
 				</configuration>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<phase>validate</phase>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -567,6 +355,57 @@
 				</dependencies>
 			</plugin>
 
+			<plugin>
+				<groupId>com.mysema.maven</groupId>
+				<artifactId>apt-maven-plugin</artifactId>
+				<version>1.1.3</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+							<showWarnings>true</showWarnings>
+							<processor>com.querydsl.apt.QuerydslAnnotationProcessor</processor>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!--Security checks-->
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>${spotbugs-plugin-version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs</artifactId>
+						<version>4.0.4</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<failOnError>false</failOnError>
+					<plugins>
+						<plugin>
+							<groupId>com.h3xstream.findsecbugs</groupId>
+							<artifactId>findsecbugs-plugin</artifactId>
+							<version>1.10.1</version>
+						</plugin>
+					</plugins>
+				</configuration>
+				<executions>
+					<execution>
+						<id>findbugs</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>spotbugs</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -575,7 +414,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.1.1</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -584,14 +423,12 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
-
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.5</version>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>${spotbugs-plugin-version}</version>
 			</plugin>
 		</plugins>
-
 	</reporting>
 
 </project>

@@ -1,0 +1,114 @@
+<form class="form-gla questions" name="qForm" name="questions">
+  <div class="mbottom30"></div>
+
+  <div class="row no-gutter mtop10 animationIf question"
+       ng-class="{'conditional-question': question.subQuestion, 'section-question': question.section}"
+       ng-if="$ctrl.questions.length && $ctrl.isVisible(question)"
+       ng-repeat="question in $ctrl.questions track by question.id">
+    <div class="section-header-questions" ng-if="question.isFirstInSection">
+      <hr ng-if="!$first">
+      {{question.section.text}}
+    </div>
+    <div class="col-xs-12 col-sm-8 center-col" ng-switch="question.answerType">
+      <gla-icon-new ng-if="question.newQuestion"></gla-icon-new>
+
+      <div class="form-group" ng-switch-when="YesNo">
+        <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span ng-if="question.isOptional">(optional)</span></label>
+        <gla-info-tooltip id="{{'info-question-' + question.id}}" ng-if="question.helpText" help-text="{{question.helpText}}"></gla-info-tooltip>
+
+        <gla-yes-no-input id="{{question.id}}"
+                          [disabled]="$ctrl.readOnly"
+                          [name]="question.id"
+                          [read-only]="$ctrl.readOnly"
+                          [(model)]="question.answer">
+        </gla-yes-no-input>
+      </div>
+
+      <div class="form-group" ng-switch-when="Number">
+        <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span ng-if="question.isOptional">(optional)</span></label>
+        <gla-info-tooltip id="{{'info-question-' + question.id}}" ng-if="question.helpText" help-text="{{question.helpText}}"></gla-info-tooltip>
+        <input class="form-control"
+               maxlength="18"
+               name="{{question.id}}"
+               negative-number
+               ng-attr-id="{{question.id}}"
+               gla-read-only="$ctrl.readOnly"
+               ng-model="question.numericAnswer"
+               number-mask="0" type="text" />
+      </div>
+
+      <div class="Text-question form-group" ng-switch-when="Text">
+        <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span ng-if="question.isOptional">(optional)</span></label>
+        <gla-info-tooltip id="{{'info-question-' + question.id}}" ng-if="question.helpText" help-text="{{question.helpText}}"></gla-info-tooltip>
+        <input class="form-control"
+               id="{{question.id}}"
+               maxlength="80"
+               name="{{question.id}}"
+               gla-read-only="$ctrl.readOnly"
+               ng-model="question.answer"
+               type="text" />
+      </div>
+
+      <div class="form-group" ng-switch-when="Date">
+        <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span ng-if="question.isOptional">(optional)</span></label>
+        <gla-info-tooltip id="{{'info-question-' + question.id}}" ng-if="question.helpText" help-text="{{question.helpText}}"></gla-info-tooltip>
+        <div>
+          <date-input id="{{question.id}}"
+                      name="{{question.id}}"
+                      gla-read-only="$ctrl.readOnly"
+                      ng-model="question.answer">
+          </date-input>
+        </div>
+      </div>
+
+      <div class="FreeText-question form-group" ng-switch-when="FreeText">
+        <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span ng-if="question.isOptional">(optional)</span></label>
+        <gla-info-tooltip id="{{'info-question-' + question.id}}" ng-if="question.helpText" help-text="{{question.helpText}}"></gla-info-tooltip>
+        <textarea class="form-control"
+                  cols="50"
+                  gla-read-only="$ctrl.readOnly"
+                  id="{{question.id}}"
+                  name="{{question.id}}"
+                  ng-attr-maxlength="{{question.maxLength}}"
+                  ng-model="question.answer"
+                  ng-trim="false" rows="4">
+            </textarea>
+        <gla-remaining-characters [max]="question.maxLength" ng-if="!$ctrl.readOnly" [text]="question.answer"></gla-remaining-characters>
+      </div>
+
+      <div class="form-group" ng-switch-when="Dropdown">
+        <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span ng-if="question.isOptional">(optional)</span></label>
+        <gla-info-tooltip  id="{{'info-question-' + question.id}}" ng-if="question.helpText" help-text="{{question.helpText}}"></gla-info-tooltip>
+        <select class="form-control"
+                gla-read-only="$ctrl.readOnly"
+                id="{{question.id}}"
+                name="{{question.id}}"
+                ng-if="!question.maxAnswers || question.maxAnswers == 1"
+                ng-model="question.answer"
+                ng-options="item as item for item in question.answerOptions">
+          <option value="">Not provided</option>
+        </select>
+
+        <div ng-if="!$ctrl.readOnly && question.maxAnswers > 1">
+          <div class="mtop10 mbottom10">Maximum {{question.maxAnswers || 1}} {{question.maxAnswers > 1? 'answers' : 'answer'}} can be selected</div>
+          <gla-multi-select [filter-dropdown-items]="question.answerOptions"
+                            [max-selections]="question.maxAnswers"
+                            (on-change)="$ctrl.onMultiSelectChange($event, question)"></gla-multi-select>
+        </div>
+
+        <div ng-if="$ctrl.readOnly && question.maxAnswers > 1">{{$ctrl.formatDropdownAnswer(question) || 'Not provided'}}</div>
+      </div>
+
+      <div class="form-group" ng-switch-when="FileUpload">
+        <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span ng-if="question.isOptional">(optional)</span></label>
+        <gla-info-tooltip id="{{'info-question-' + question.id}}" ng-if="question.helpText" help-text="{{question.helpText}}"></gla-info-tooltip>
+        <question-file-upload class="question-file-upload"
+                              project="$ctrl.project"
+                              block="$ctrl.block"
+                              question="question"
+                              read-only="$ctrl.readOnly"></question-file-upload>
+      </div>
+
+    </div>
+  </div>
+</form>

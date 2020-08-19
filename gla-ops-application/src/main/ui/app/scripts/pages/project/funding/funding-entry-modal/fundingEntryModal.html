@@ -1,0 +1,108 @@
+<div class="milestone-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Add spend</h1>
+    <!--<h3 class="subheader">Something has gone wrong</h3>-->
+  </div>
+  <div class="modal-body">
+    <form class="form-gla" name="modalForm" role="form">
+      <div class="form-group">
+        <month-selector
+          ng-if="$ctrl.periodType === 'Monthly'"
+          read-only="$ctrl.readOnly"
+          selected-month="$ctrl.data.selectedMonth"
+          year="$ctrl.year">
+        </month-selector>
+
+        <quarter-selector
+          ng-if="$ctrl.periodType === 'Quarterly'"
+          read-only="$ctrl.readOnly"
+          selected-month="$ctrl.data.selectedQuarter"
+          year="$ctrl.year">
+        </quarter-selector>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.spendTypeOptions.length > 1">
+        <label for="spendType">Type</label><br/>
+        <select class="form-control"
+                id="spendType"
+                ng-change="$ctrl.data.value = ''; $ctrl.data.matchFundValue = ''"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.data.spendType"
+                ng-options="item as item.label for item in $ctrl.spendTypeOptions"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+
+      <!--  If the flag showMilestones is on, display dropdown with milestones -->
+      <div class="form-group" ng-if="($ctrl.milestones.length > 0) && $ctrl.showMilestones">
+        <label for="milestoneEntry">Milestone title</label><br/>
+        <select class="form-control"
+                id="milestoneEntry"
+                ng-model="$ctrl.data.milestoneSelected"
+                ng-options="milestone as milestone.summary for milestone in $ctrl.milestones track by milestone.id"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+
+      <!--  If the flag for showCategories is on, display dropdown with categories  -->
+      <div class="form-group" ng-if="($ctrl.categories.length > 0) && $ctrl.showCategories">
+        <label for="spendCategoryEntry">Spend Category</label><br/>
+        <select class="form-control"
+                id="spendCategoryEntry"
+                ng-model="$ctrl.data.spendCategorySelected"
+                ng-options="spendCategory as spendCategory.category for spendCategory in $ctrl.categories"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+
+      <div class="form-group" ng-if="($ctrl.data.spendType === undefined && ($ctrl.showCapitalGla || $ctrl.showRevenueGla)) || ($ctrl.data.spendType.type == 'CAPITAL' && $ctrl.showCapitalGla) || ($ctrl.data.spendType.type == 'REVENUE' && $ctrl.showRevenueGla)">
+        <label for="valueInput">{{$ctrl.wizardClaimLabel}}</label><br/>
+        <input class="form-control"
+               id="valueInput"
+               maxlength="13"
+               ng-disabled="($ctrl.data.spendType === undefined)"
+               ng-model="$ctrl.data.value"
+               number-mask="$ctrl.monetaryValueScale"
+               placeholder=""
+               type="text">
+      </div>
+      <div class="form-group" ng-if="($ctrl.data.spendType === undefined && ($ctrl.showCapitalOther || $ctrl.showRevenueOther)) || ($ctrl.data.spendType.type == 'CAPITAL' && $ctrl.showCapitalOther) || ($ctrl.data.spendType.type == 'REVENUE' && $ctrl.showRevenueOther)">
+        <label for="matchFundingInput">{{$ctrl.wizardOtherLabel}}</label><br/>
+        <input class="form-control match-funding-input"
+               id="matchFundingInput"
+               maxlength="13"
+               ng-disabled="($ctrl.data.spendType === undefined)"
+               ng-model="$ctrl.data.matchFundValue"
+               number-mask="$ctrl.monetaryValueScale"
+               placeholder=""
+               type="text">
+      </div>
+
+      <div class="form-group outputsValue" ng-if="$ctrl.allowActivityUpdate">
+        <label for="activityDescription">Activity description</label><br/>
+        <input class="form-control"
+               id="activityDescription"
+               maxlength="30"
+               ng-model="$ctrl.data.activityDescription"
+               placeholder="{{$ctrl.selectedUnits.placeholder}}"
+               type="text">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary mtop15"
+            ng-click="$ctrl.addQuarterlyEntry()"
+            ng-disabled="!$ctrl.canAddOutput()">ADD</button>
+    <div class="row">
+      <div class="col-xs-12 text-center mtop15 mbottom15">
+        <a class="form-cancel" href="JavaScript:void(0)" ng-mousedown="$dismiss()" on-enter="$dismiss()">Cancel</a>
+      </div>
+    </div>
+  </div>
+</div>

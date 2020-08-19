@@ -1,0 +1,51 @@
+<div class="request-organisation-access-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Add a new role</h1>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="organisation">Organisation</label>
+      <select class="form-control"
+              id="organisation"
+              name="organisation"
+              ng-if="$ctrl.userProfile.assignableOrganisations.length > 1"
+              ng-model="$ctrl.selection.selectedOrganisation"
+              ng-options="organisation as organisation.name for organisation in $ctrl.userProfile.assignableOrganisations"
+              required
+              style-placeholder="">
+        <option disabled value="">Select a organisation</option>
+      </select>
+      <div ng-if="$ctrl.userProfile.assignableOrganisations.length === 1">
+        {{ $ctrl.userProfile.assignableOrganisations[0].name }}
+      </div>
+    </div>
+    <div class="form-group" ng-if="$ctrl.selection.selectedOrganisation">
+      <label for="role">Role</label>
+      <select class="form-control"
+              id="role"
+              name="role"
+              ng-if="$ctrl.selection.selectedOrganisation.availableRoles.length > 0"
+              ng-model="$ctrl.selection.selectedRole"
+              ng-options="role as role.description for role in $ctrl.selection.selectedOrganisation.availableRoles"
+              required style-placeholder="">
+        <option disabled value="">Select a Role</option>
+      </select>
+      <div ng-if="$ctrl.selection.selectedOrganisation.availableRoles.length === 0">
+        User already has all available roles in this organisation.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button"  ng-click="$dismiss()"
+            ng-disabled="modalForm.$pristine || modalForm.$invalid">CANCEL</button>
+
+    <button class="btn btn-default btn-primary btn-center" type="button" ng-if="$ctrl.selection.selectedRole" ng-click="$close($ctrl.selection)"
+            ng-disabled="modalForm.$pristine || modalForm.$invalid">ADD ROLE</button>
+  </div>
+
+</div>

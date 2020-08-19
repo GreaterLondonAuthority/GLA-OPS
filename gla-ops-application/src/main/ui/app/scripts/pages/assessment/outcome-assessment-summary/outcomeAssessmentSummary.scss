@@ -1,0 +1,56 @@
+outcome-assessment-summary {
+  display: block;
+
+  .table-responsive{
+    overflow-x: auto;
+
+    table.table > thead > tr > th {
+      border: 1px solid $table-border;
+    }
+
+    table.table td {
+      border: 1px solid $table-border;
+    }
+
+    .assessment-section{
+      background-color: $table-sub-header;
+      .in-progress{
+        background-color: darken($table-sub-header, 3%);
+      }
+    }
+
+    td, th{
+      &.in-progress{
+        background-color: darken($gla-white, 5%);
+      }
+
+      &.individual-assessments{
+        cursor: pointer;
+      }
+    }
+
+    th {
+      &.individual-assessments {
+        overflow: hidden;
+        white-space: nowrap;
+        > div {
+          transform: translate(3px, 31px) rotate(270deg);
+          width: 30px;
+          //overflow: hidden;
+
+          > span {
+            //border-bottom: 1px solid #ccc;
+            padding: 5px 8px;
+            width: 91px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+          }
+        }
+      }
+
+      height: 94px;
+    }
+  }
+}
+

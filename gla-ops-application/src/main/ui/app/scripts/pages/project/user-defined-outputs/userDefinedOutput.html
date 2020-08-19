@@ -1,0 +1,110 @@
+<div class="user-defined-output">
+  <form class="user-defined-output-form" name="$ctrl.form">
+
+      <div class="form-group">
+        <label for="outputName">{{$ctrl.labels.outputName}}</label>
+        <textarea class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="outputName"
+                  name="outputName"
+                  change-on-blur="$ctrl.onFormChange($ctrl.definedOutput)"
+                  maxlength="$ctrl.blockTemplate.outputNameCharacterLimit"
+                  ng-trim="false"
+                  placeholder="{{$ctrl.labels.outputName}}"
+                  ng-model="$ctrl.definedOutput.outputName"
+                  required
+                  rows="3">
+            </textarea>
+        <div class="row no-gutter">
+          <div class="col-xs-8">
+            <div class="error-wrapper" ng-if="$ctrl.form.outputName.$touched && $ctrl.form.outputName.$error.required" role="alert">
+              <span class="error">Required</span>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <gla-remaining-characters [max]="$ctrl.blockTemplate.outputNameCharacterLimit" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.outputName"></gla-remaining-characters>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="deliveryAmount">{{$ctrl.labels.deliveryAmount}}</label>
+        <textarea class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="deliveryAmount"
+                  name="deliveryAmount"
+                  change-on-blur="$ctrl.onFormChange($ctrl.definedOutput)"
+                  maxlength="$ctrl.blockTemplate.amountToDeliverCharacterLimit"
+                  ng-trim="false"
+                  placeholder="{{$ctrl.labels.deliveryAmount}}"
+                  ng-model="$ctrl.definedOutput.deliveryAmount"
+                  required
+                  rows="5">
+          </textarea>
+        <div class="row no-gutter">
+          <div class="col-xs-8">
+            <div class="error-wrapper" ng-if="$ctrl.form.deliveryAmount.$touched && $ctrl.form.deliveryAmount.$error.required" role="alert">
+              <span class="error">Required</span>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <gla-remaining-characters [max]="$ctrl.blockTemplate.amountToDeliverCharacterLimit" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.deliveryAmount"></gla-remaining-characters>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="baseline">{{$ctrl.labels.baseline}}
+          <span ng-if="$ctrl.blockTemplate.baselineRequirement ==='optional'"> (Optional)</span>
+        </label>
+        <textarea class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="baseline"
+                  name="baseline"
+                  change-on-blur="$ctrl.onFormChange($ctrl.definedOutput)"
+                  maxlength="$ctrl.blockTemplate.baselineCharacterLimit"
+                  ng-trim="false"
+                  placeholder="{{$ctrl.labels.baseline}}"
+                  ng-model="$ctrl.definedOutput.baseline"
+                  rows="6">
+        </textarea>
+        <div class="row no-gutter">
+          <div class="col-xs-8">
+            <div class="error-wrapper" ng-if="$ctrl.form.baseline.$touched && $ctrl.form.baseline.$error.required && $ctrl.blockTemplate.baselineRequirement === 'mandatory'" role="alert">
+              <span class="error">Required</span>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <gla-remaining-characters [max]="$ctrl.blockTemplate.baselineCharacterLimit" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.baseline"></gla-remaining-characters>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="monitorOfOutput">{{$ctrl.labels.monitorOfOutput}}</label>
+        <textarea class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="monitorOfOutput"
+                  name="monitorOfOutput"
+                  change-on-blur="$ctrl.onFormChange($ctrl.definedOutput)"
+                  maxlength="$ctrl.blockTemplate.monitorQuestionCharacterLimit"
+                  ng-trim="false"
+                  placeholder="{{$ctrl.labels.monitorOfOutput}}"
+                  ng-model="$ctrl.definedOutput.monitorOfOutput"
+                  required
+                  rows="7">
+          </textarea>
+        <div class="row no-gutter">
+          <div class="col-xs-8">
+            <div class="error-wrapper" ng-if="$ctrl.form.monitorOfOutput.$touched && $ctrl.form.monitorOfOutput.$error.required" role="alert">
+              <span class="error">Required</span>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <gla-remaining-characters [max]="$ctrl.blockTemplate.monitorQuestionCharacterLimit" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.monitorOfOutput"></gla-remaining-characters>
+          </div>
+        </div>
+      </div>
+
+  </form>
+</div>

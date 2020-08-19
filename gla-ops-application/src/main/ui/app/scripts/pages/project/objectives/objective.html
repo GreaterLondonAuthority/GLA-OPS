@@ -1,0 +1,45 @@
+<div class="objective">
+  <form class="objective-form" name="$ctrl.form">
+      <div class="form-group">
+        <label for="title">{{$ctrl.labels.title}}</label>
+        <input class="form-control"
+               id="title"
+               change-on-blur="$ctrl.onFormChange($ctrl.objective)"
+               name="title"
+               maxlength="60"
+               gla-read-only="$ctrl.readOnly"
+               ng-model="$ctrl.objective.title"
+               placeholder="{{$ctrl.labels.title}}"
+               required/>
+        <div class="error-wrapper" ng-if="$ctrl.form.title.$touched && $ctrl.form.title.$error.required" role="alert">
+          <span class="error">Required</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="summary">{{$ctrl.labels.description}}</label>
+        <textarea class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="summary"
+                  name="summary"
+                  change-on-blur="$ctrl.onFormChange($ctrl.objective)"
+                  maxlength="1200"
+                  ng-trim="false"
+                  placeholder="{{$ctrl.labels.description}}"
+                  ng-model="$ctrl.objective.summary"
+                  required
+                  rows="5">
+        </textarea>
+        <div class="row no-gutter">
+          <div class="col-xs-8">
+            <div class="error-wrapper" ng-if="$ctrl.form.summary.$touched && $ctrl.form.summary.$error.required" role="alert">
+              <span class="error">Required</span>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <gla-remaining-characters [max]="1200" ng-if="!$ctrl.readOnly" [text]="$ctrl.objective.summary"></gla-remaining-characters>
+          </div>
+        </div>
+      </div>
+  </form>
+</div>

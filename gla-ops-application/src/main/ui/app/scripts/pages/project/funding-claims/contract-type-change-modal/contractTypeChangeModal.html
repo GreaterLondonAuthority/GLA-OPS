@@ -1,0 +1,22 @@
+<div class="contract-type-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" title="Close" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.title}}</h1>
+  </div>
+
+  <div class="modal-body text-center">
+    Your funding claim  data for this lot will be lost.
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button class="btn btn-primary" ng-click="$close('cancel')">NO, CANCEL</button>
+        <button class="btn btn-secondary mleft10" ng-click="$close()">YES, CONTINUE</button>
+      </div>
+    </div>
+  </div>
+</div>

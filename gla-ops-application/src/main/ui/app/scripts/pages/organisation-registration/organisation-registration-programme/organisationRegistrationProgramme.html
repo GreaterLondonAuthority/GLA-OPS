@@ -1,0 +1,13 @@
+<div class="organisation-registration-programme-page page">
+  <gla-page-header [editable-block]="$ctrl" (on-back)="$ctrl.back()">Create a new organisation profile</gla-page-header>
+
+  <navigation-circles class="mtop10" items="$ctrl.registration.navigationCircles"></navigation-circles>
+
+  <div class="mtop30 text-center">Select the funding programme in the department you want to apply for.</div>
+  <div class="managing-organisations">
+      <programmes-carousel ng-repeat="org in $ctrl.managingOrganisationsWithProgrammes track by org.id"
+                           programmes-group="org"
+                           on-register="$ctrl.onProgrammeSelect(event, org)"
+                           class="mtop30 managing-org-programmes"></programmes-carousel>
+  </div>
+</div>

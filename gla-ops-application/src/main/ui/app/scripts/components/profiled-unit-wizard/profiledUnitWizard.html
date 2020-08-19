@@ -1,0 +1,160 @@
+<div class="profiled-unit-wizard">
+  <div class="input-container wizzard" ng-class="{'multi-line-labels': $ctrl.UnitsService.LEGACY_SALES_MARKET_TYPE_ID}">
+    <div>
+      <div class="form-group">
+        <label for="{{'tenureType'+$ctrl.wizardType}}">Tenure</label><br/>
+        <select class="form-control"
+                name="tenureType"
+                ng-attr-id="{{'tenureType'+$ctrl.wizardType}}"
+                ng-change="$ctrl.onTenureSelect()"
+                ng-model="$ctrl.unit.tenure"
+                ng-options="tenure as tenure.name for tenure in $ctrl.tenureDetails track by tenure.id"
+                style-placeholder>
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+    </div>
+    <div ng-if="$ctrl.showMarketTypes">
+      <div class="form-group">
+        <label for="{{'marketType'+$ctrl.wizardType}}">Market Type</label><br/>
+        <select class="form-control"
+                ng-attr-id="{{'marketType'+$ctrl.wizardType}}"
+                ng-change="$ctrl.onMarketTypeSelect()"
+                ng-disabled="!$ctrl.unit.tenure"
+                ng-model="$ctrl.unit.marketType"
+                ng-options="item as item.name for item in $ctrl.unit.tenure.marketTypes track by item.id"
+                placeholder="Select"
+                style-placeholder>
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <div class="form-group" style="min-width: 80px">
+        <label for="{{'beds'+$ctrl.wizardType}}">Bed(s)</label><br/>
+        <select class="form-control"
+                ng-attr-id="{{'beds'+$ctrl.wizardType}}"
+                ng-model="$ctrl.unit.nbBeds"
+                ng-options="item as item.displayValue for item in $ctrl.config.beds track by item.id"
+                style-placeholder>
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+    </div>
+    <div>
+
+      <div class="form-group">
+        <label for="{{'unitDetails'+$ctrl.wizardType}}">Unit Type</label><br/>
+        <select class="form-control"
+                ng-attr-id="{{'unitDetails'+$ctrl.wizardType}}"
+                ng-model="$ctrl.unit.unitType"
+                ng-options="item as item.displayValue for item in $ctrl.config.unitDetails track by item.id"
+                style-placeholder>
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="numberOfUnitsGroup">
+      <div class="form-group">
+        <label for="{{'numberOfUnits'+$ctrl.wizardType}}">Number of Units</label><br/>
+        <input ng-attr-id="{{'numberOfUnits'+$ctrl.wizardType}}"
+          ng-model="$ctrl.unit.nbUnits"
+          maxlength="11"
+          number-mask="0"
+          class="form-control"
+          placeholder="Enter units"/>
+      </div>
+    </div>
+    <div ng-if="$ctrl.unit.type === 'Rent'">
+      <div class="form-group">
+        <label for="avgNetWeeklyRent">Avg. Net Weekly Rent £</label><br/>
+        <input id="avgNetWeeklyRent"
+          ng-model="$ctrl.unit.netWeeklyRent"
+          maxlength="14"
+          number-mask="2"
+          class="form-control"
+          placeholder="Enter rent £"/>
+      </div>
+    </div>
+
+    <div ng-if="$ctrl.unit.type === 'Rent'">
+      <div class="form-group">
+        <label for="avgWeeklyServiceCharge">Avg. Weekly Service Charge £</label><br/>
+        <input id="avgWeeklyServiceCharge"
+          ng-model="$ctrl.unit.weeklyServiceCharge"
+          maxlength="14"
+          number-mask="2"
+          class="form-control"
+          placeholder="Enter £"/>
+      </div>
+    </div>
+    <div ng-if="$ctrl.unit.type === 'Rent' && $ctrl.unit.marketType.id === $ctrl.UnitsService.LEGACY_RENT_MARKET_TYPE_ID">
+      <div class="form-group">
+        <label for="avgWeeklyMarketRent">Avg. Weekly Market Rent £</label><br/>
+        <input id="avgWeeklyMarketRent"
+          ng-model="$ctrl.unit.weeklyMarketRent"
+          maxlength="14"
+          number-mask="2"
+          class="form-control"
+          placeholder="Enter rent £"/>
+      </div>
+    </div>
+
+    <div ng-if="$ctrl.unit.type === 'Sales'">
+      <div class="form-group">
+        <label for="marketValue">Avg. Market Value £</label><br/>
+        <input id="marketValue" ng-model="$ctrl.unit.marketValue" maxlength="14" number-mask="0" class="form-control" placeholder="Enter £"/>
+      </div>
+    </div>
+
+    <div ng-if="$ctrl.unit.type === 'Sales' && $ctrl.unit.marketType.id !== $ctrl.UnitsService.DISCOUNTED_RATE_MARKET_TYPE_ID" class="first-tranche-sales">
+      <div class="form-group">
+        <label for="firstTrancheSales">Avg. First Tranche Sales %</label><br/>
+        <input
+          id="firstTrancheSales"
+          ng-model="$ctrl.unit.firstTrancheSales"
+          maxlength="3"
+          number-mask="0"
+          class="form-control"
+          placeholder="Enter %"/>
+      </div>
+    </div>
+
+    <div ng-if="$ctrl.unit.type === 'Sales' && $ctrl.unit.marketType.id === $ctrl.UnitsService.DISCOUNTED_RATE_MARKET_TYPE_ID" class="discount-off-market-value">
+      <div class="form-group">
+        <label for="discountOffMarketValue">% Discount off Market Value</label><br/>
+        <input id="discountOffMarketValue"
+               ng-model="$ctrl.unit.discountOffMarketValue"
+               maxlength="3"
+               maxlength="11"
+               number-mask="0"
+               class="form-control"
+               placeholder="Enter %"/>
+      </div>
+    </div>
+
+    <div ng-if="$ctrl.unit.type === 'Sales' && $ctrl.unit.marketType.id === $ctrl.UnitsService.LEGACY_SALES_MARKET_TYPE_ID" class="legacy-sales">
+      <div class="form-group">
+        <label for="avgNetWeeklyRentForSales">Avg. Net Weekly Rent £</label><br/>
+        <input id="avgNetWeeklyRentForSales"
+               ng-model="$ctrl.unit.netWeeklyRent"
+               maxlength="14"
+               number-mask="2"
+               class="form-control"
+               placeholder="Enter rent £"/>
+      </div>
+    </div>
+
+    <div ng-if="$ctrl.unit.type === 'Sales'" class="weekly-service-charge">
+      <div class="form-group">
+        <label for="weeklyServiceCharge">Avg. Weekly Service Charge £</label><br/>
+        <input id="weeklyServiceCharge" ng-model="$ctrl.unit.weeklyServiceCharge" maxlength="14" number-mask="2" class="form-control" placeholder="Enter £"/>
+      </div>
+    </div>
+
+  </div>
+  <div class="text-right">
+    <button class="btn btn-primary" ng-disabled="!$ctrl.isValidForm()" ng-click="$ctrl.add()">ADD</button>
+  </div>
+</div>

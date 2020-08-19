@@ -1,0 +1,59 @@
+section-header2 {
+  display: block;
+  text-align: left;
+  margin-top: 30/16 + 0rem;
+  margin-bottom: 8/16 + 0rem;
+
+  .section-title{
+    margin-right: 10px;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 28px;
+  }
+
+  .section-header {
+    .glyphicon {
+      color: $peppermint;
+      margin-right: 5px;
+      top: 0;
+    }
+  }
+
+  .section-subheader {
+    margin-top: 0;
+  }
+
+  hr {
+    flex: 1;
+  }
+
+
+  //TODO is this still needed when we have collapsible inside component directly
+  &.section-toggle {
+    user-select: none;
+    .glyphicon {
+      top: 3px;
+    }
+    cursor: pointer;
+  }
+}
+
+.section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 20/16 + 0rem;
+  font-family: $font-family-light;
+}
+
+.section-subheader {
+  font-family: $font-family-default;
+  color: $secondary-text;
+  font-size: 14/16 + 0rem;
+  margin-top: -8px;
+}
+
+

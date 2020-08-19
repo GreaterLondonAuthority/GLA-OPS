@@ -1,0 +1,65 @@
+{
+  "name": "External File Storage Template",
+  "author": "Carmina Matias",
+  "status": "Draft",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "External File Storage Upload",
+      "block": "Questions",
+      "displayOrder": 2,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 144,
+            "text": "Please upload supporting evidence",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 500,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    }
+  ],
+  "internalBlocks": [],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "optional"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": false,
+  "grantTypes": [],
+  "shouldMilestonesBlockShowStatus": false
+}

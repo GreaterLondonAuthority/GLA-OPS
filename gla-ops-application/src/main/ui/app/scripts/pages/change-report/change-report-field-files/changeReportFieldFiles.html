@@ -1,0 +1,41 @@
+<div class="row no-gutter report-field-row">
+  <div ng-class="'col-sm-'+$ctrl.displayMode.colspan" class="col-xs-12" ng-if="$ctrl.data.left">
+    <div ng-if="$ctrl.data.left" class="report-field-left">
+      <div class="left-column-label"><gla-markdown [text]="$ctrl.label"></gla-markdown></div>
+      <div class="left-column-sublabel" ng-if="$ctrl.sublabel">{{$ctrl.sublabel}}</div>
+
+      <div
+        class="left-column-value"
+        ng-repeat="file in $ctrl.getValue($ctrl.data.left,$ctrl.field) | orderBy: 'createdOn'">
+        <a ng-href="/api/v1/file/{{file.fileId || file.id}}" target="_blank">
+          <span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{file.fileName}}
+        </a>
+      </div>
+      <div class="left-column-value"  ng-if="$ctrl.getValue($ctrl.data.left,$ctrl.field).length === 0">-</div>
+    </div>
+    <div class="col-sm-6 col-xs-12" ng-if="!$ctrl.data.left">&nbsp</div>
+  </div>
+  <div class="col-sm-6 col-xs-12" ng-if="!$ctrl.data.left"></div>
+
+  <div class="col-sm-6 col-xs-12 report-field-row-right" ng-if="$ctrl.data.right" ng-class="{'has-changes': $ctrl.hasChanges}">
+    <div ng-if="$ctrl.data.right" class="report-field-right">
+      <div class="right-column-label"><gla-markdown [text]="$ctrl.label"></gla-markdown><span class="glyphicon glyphicon-exclamation-sign" ng-if="$ctrl.hasChanges" aria-hidden="true"></span></div>
+      <div class="right-column-sublabel" ng-if="$ctrl.sublabel">{{$ctrl.sublabel}}</div>
+
+      <div ng-class="{'changed-value': $ctrl.hasFieldChanges($ctrl.field, file)}">
+
+        <div
+          class="right-column-value"
+          ng-repeat="file in $ctrl.getValue($ctrl.data.right,$ctrl.field) | orderBy: 'createdOn'">
+          <a ng-href="/api/v1/file/{{file.fileId || file.id}}" target="_blank">
+            <span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{file.fileName}}
+          </a>
+        </div>
+        <div
+          class="right-column-value"
+          ng-if="$ctrl.getValue($ctrl.data.right,$ctrl.field).length === 0">-</div>
+      </div>
+    </div>
+    <div ng-if="!$ctrl.data.right">&nbsp</div>
+  </div>
+</div>

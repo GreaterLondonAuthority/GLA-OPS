@@ -1,0 +1,76 @@
+programmes-carousel {
+  display: block;
+  position: relative;
+  padding: 15px 15px 44px 15px;
+  background-color: $white;
+
+  box-shadow: 0 0 0.6rem 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid $base-border-color;
+
+  .organisation-info {
+    padding: 0 15px 0 0;
+    text-align: center;
+    width: 33.3%;
+    border-right: 1px solid $moonstone;
+    font-family: $font-family-bolder;
+
+    .org-name{
+      //margin-top: 5px;
+    }
+  }
+
+  .programme{
+    width: 70%;
+    padding-left: 15px;
+    //position: relative;
+
+    .website-link{
+      margin-top: 8px;
+      //position: absolute;
+      //bottom: 0;
+      //left: 0;
+    }
+  }
+
+  .programme-title {
+    font-family: $font-family-bolder;
+    margin-bottom: 15px;
+  }
+
+  .programme-description {
+    //height: 90px;
+    //overflow: hidden;
+  }
+
+  .org-icon {
+    width: 100px;
+  }
+
+  .page-navigation{
+    margin-top: 7px;
+  }
+
+  .actions{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 5px 15px;
+    width: 100%;
+    border-top: 4px solid $grey;
+
+    button{
+      //padding: 4px 40px;
+    }
+
+    a{
+      user-select: none;
+    }
+  }
+
+  .main-content{
+    display: flex;
+    height: 100%;
+    padding-bottom: 15px;
+  }
+}
+

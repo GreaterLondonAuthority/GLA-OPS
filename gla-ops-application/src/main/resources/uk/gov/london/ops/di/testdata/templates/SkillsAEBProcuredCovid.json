@@ -1,0 +1,122 @@
+{
+  "name": "AEB Procured Covid-19 Response Fund",
+  "author": "Data Initialiser",
+  "status": "Draft",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "GrantSourceTemplateBlock",
+      "blockDisplayName": "Response Funding",
+      "block": "GrantSource",
+      "displayOrder": 2,
+      "paymentSourcesString": "Grant",
+      "nilGrantHidden": false,
+      "description": "Enter the maximum grant award available for your AEB Procured project as specified by the GLA",
+      "grantTypes": [
+        "Grant"
+      ],
+      "paymentSources": [
+        "Grant"
+      ]
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Response Fund Payments",
+      "block": "Milestones",
+      "displayOrder": 3,
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "name": "default",
+          "milestones": [
+            {
+              "summary": "AEB Procured Response Fund Payment 2019-20",
+              "requirement": "mandatory",
+              "displayOrder": 1,
+              "monetary": true,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "AEB Procured Response Fund Payment 2020-21",
+              "requirement": "mandatory",
+              "displayOrder": 2,
+              "monetary": true,
+              "keyEvent": false,
+              "naSelectable": false
+            }
+          ]
+        }
+      ],
+      "descriptionEnabled": false,
+      "evidenceApplicability": "NOT_APPLICABLE",
+      "defaultProcessingRoute": {
+        "name": "default",
+        "milestones": [
+          {
+            "summary": "AEB Response Fund Payment 2019-20",
+            "requirement": "mandatory",
+            "displayOrder": 1,
+            "monetary": true,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "AEB Response Fund Payment 2020-21",
+            "requirement": "mandatory",
+            "displayOrder": 2,
+            "monetary": true,
+            "keyEvent": false,
+            "naSelectable": false
+          }
+        ]
+      },
+      "paymentSources": [],
+      "grantTypes": []
+    }
+  ],
+  "internalBlocks": [],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "MonetaryValue",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "postcodeRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "optional",
+    "imageRequirement": "hidden",
+    "contactRequirement": "optional",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "hidden",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": true,
+  "grantTypes": [
+    "Grant"
+  ],
+  "shouldMilestonesBlockShowStatus": false
+}

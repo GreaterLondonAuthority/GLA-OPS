@@ -1,0 +1,83 @@
+<div class="delivery-partners-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.deliveryPartner.id? 'Update' : 'Add'}} {{$ctrl.templateConfig.entityName}}</h1>
+  </div>
+  <div class="modal-body">
+    <form class="form-gla" role="form" name="modalForm">
+      <div class="row" ng-if="$ctrl.templateConfig.showUkprnColumn">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="delivery-partner-ukprn">Enter {{$ctrl.templateConfig.ukprnColumnText}} (optional)</label>
+            <input id="delivery-partner-ukprn" type="text" numbers-only name="identifier" class="form-control" placeholder="UKPRN"
+                   ng-model="$ctrl.deliveryPartner.identifier" maxlength="8"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.templateConfig.showOrganisationType">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="delivery-partner-org-type">Select {{$ctrl.templateConfig.organisationTypeColumnName}}</label>
+            <select aria-label="{{$ctrl.templateConfig.organisationTypeColumnName}}" class="delivery-partner-org-type form-control"
+                    id="delivery-partner-org-type"
+                    ng-model="$ctrl.deliveryPartner.organisationType"
+                    ng-options="item for item in $ctrl.templateConfig.availableDeliveryPartnerTypes"
+                    style-placeholder="">
+              <option disabled value="">Select {{$ctrl.templateConfig.organisationTypeColumnName}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="delivery-partner-org-name">Enter {{$ctrl.templateConfig.organisationNameColumnText}}</label>
+            <input id="delivery-partner-org-name" type="text" name="organisationName" class="form-control" placeholder="Organisation name"
+                   ng-model="$ctrl.deliveryPartner.organisationName" maxlength="50"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.templateConfig.showRoleColumn">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="delivery-partner-role">Enter {{$ctrl.templateConfig.roleColumnText}}</label>
+            <textarea id="delivery-partner-role"
+                      ng-trim="false"
+                      class="form-control"
+                      rows="7"
+                      placeholder="Role"
+                      name="role"
+                      ng-model="$ctrl.deliveryPartner.role"
+                      maxlength="300">
+            </textarea>
+            <gla-remaining-characters [text]="$ctrl.deliveryPartner.role" [max]="300"></gla-remaining-characters>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.templateConfig.showContractValueColumn && !$ctrl.templateConfig.showDeliverables">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="delivery-partner-contract-value">Enter {{$ctrl.templateConfig.contractValueColumnText}}</label>
+            <input id="delivery-partner-contract-value" type="text" name="role" class="form-control" placeholder="Contract value"
+                   number-mask="2" max="999999999" maxlength="14" ng-model="$ctrl.deliveryPartner.contractValue" />
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button"
+            ng-click="$close($ctrl.deliveryPartner)"
+            ng-disabled="!$ctrl.deliveryPartner.organisationName">
+      {{$ctrl.deliveryPartner.id? 'SAVE':'ADD'}}
+    </button>
+    <button class="btn btn-default btn-secondary btn-center" type="button" ng-click="$dismiss('cancel')">CANCEL</button>
+  </div>
+</div>

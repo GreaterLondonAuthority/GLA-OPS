@@ -1,0 +1,142 @@
+<div class="approved-users-list">
+  <well class="row mbottom20 mtop20 search-container">
+
+    <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column" ng-if="$ctrl.isGLASearch">
+      <div class="status-box">
+        <div class="text-align-left">Org type</div>
+        <checkbox-filter filter-dropdown-items="$ctrl.organisationTypeOptions" id="org-type-filter" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
+      <div class="status-box">
+        <div class="text-align-left">Role</div>
+        <checkbox-filter filter-dropdown-items="$ctrl.userRoleOptions" id="roles-filter" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
+      <div class="status-box">
+        <div class="text-align-left">User Status</div>
+        <checkbox-filter filter-dropdown-items="$ctrl.userStatusOptions" id="user-status-filter" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+      </div>
+    </div>
+
+    <div  class="col-xs-12 col-sm-6 col-md-2 project-status search-column" ng-if="$ctrl.isGLASearch">
+      <div class="status-box">
+        <div class="text-align-left">Spend authority</div>
+        <checkbox-filter filter-dropdown-items="$ctrl.spendAuthorityOptions" id="spend-authority-filter" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-1 no-padding reset-column">
+      <div class="clear-filter-and-search-box pull-left">
+        <button
+          class="action-buttons action-buttons-reset"
+          ng-click="$ctrl.clearFiltersAndSearch()"
+          ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState"><span class="glyphicon glyphicon-remove"></span>Reset all</button>
+      </div>
+    </div>
+  </well>
+
+  <div class="text-center" ng-if="!$ctrl.dataLoaded">Loading...</div>
+
+  <div ng-if="$ctrl.dataLoaded">
+    <div>
+      <div ng-if="$ctrl.showActions()" class="actions-panel pull-left" id="add-to-team-button">
+        <button class="btn btn-default btn-primary btn-center"
+                ng-click="$ctrl.addToTeam()"><span class="glyphicon glyphicon-plus"></span>Add to Team
+        </button>
+      </div>
+    </div>
+    <pagination class="top-pagination mtop10"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                ng-if="$ctrl.users.length"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.updateFilters()"
+                total-items="$ctrl.totalItems"></pagination>
+
+    <div class="row mtop20 no-results text-center" ng-if="!$ctrl.users.length">
+      0 results match your search. Check your search query and try again.
+    </div>
+
+    <div class="row mtop10" ng-if="$ctrl.users.length">
+
+
+
+      <div class="table-responsive">
+        <table class="table table-default table-hover table-bordered table-striped table-selectable-row users2" id="users">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th>
+              <div class="checkbox focused" ng-class="{checked: $ctrl.allSelected}" ng-if="$ctrl.canAddTeams && $ctrl.teams.length > 0">
+                <input type="checkbox"
+                       aria-label="Select all users"
+                       name="selectInput"
+                       ng-model="$ctrl.allSelected"
+                       ng-change="$ctrl.onAllCheckboxChange($event)"
+                       ng-disabled="$ctrl.readOnly">
+              </div>
+            </th>
+            <th>NAME</th>
+            <th>EMAIL</th>
+            <th>STATUS</th>
+            <th>ORGANISATIONS</th>
+            <th>ORG TYPE</th>
+            <th ng-if="$ctrl.isGLASearch">SPEND THRESHOLD</th>
+            <th>ROLES</th>
+          </tr>
+          </thead>
+          <tbody allow-enter class="user-row"
+                 ng-click="$ctrl.goToUserProfile(user.userOrgs[0].user.roles[0])"
+                 ng-repeat="user in $ctrl.users"
+                 tabindex="0">
+
+            <tr ng-repeat="userOrg in user.userOrgs">
+              <td ng-class="{'no-border': !userOrg.userRow}">
+                 <span class="checkbox focused no-margin"
+                       ng-if="userOrg.userRow && user.hasRoleInManagingOrg && $ctrl.canAddTeams && $ctrl.teams.length > 0"
+                       id="select-user-checkbox"
+                       ng-class="{'no-border': !userOrg.userRow, checked: user.isSelected}">
+                    <input type="checkbox"
+                           aria-label="Select user"
+                           name="selectInput"
+                           ng-model="user.isSelected"
+                           ng-change="$ctrl.onUserCheckboxClick($event)"
+                           ng-click="$event.stopPropagation()"
+                           ng-disabled="$ctrl.readOnly">
+                  </span>
+              </td>
+              <td ng-class="{'no-border': !userOrg.userRow}"><span ng-if="userOrg.userRow">{{ userOrg.user.firstName }} {{userOrg.user.lastName}}</span></td>
+              <td ng-class="{'no-border': !userOrg.userRow}"><span ng-if="userOrg.userRow">{{ userOrg.user.username }}</span></td>
+              <td ng-class="{'no-border': !userOrg.userRow}"><span ng-if="userOrg.userRow">{{ userOrg.user.enabled ? 'Active' : 'Inactive' }}</span></td>
+              <td>{{ userOrg.name }}</td>
+              <td>{{ userOrg.entityType }}</td>
+              <td ng-if="$ctrl.isGLASearch">
+                <!-- roles[0] because thresholds are per organisation not role? -->
+                {{ userOrg.roles[0].pending ? (userOrg.roles[0].pendingThreshold | currency:'£':0) : (userOrg.roles[0].approvedThreshold != null ? (userOrg.roles[0].approvedThreshold | currency:'£':0) : ($ctrl.canHaveThreshold(userOrg.roles)?'Not set':'N/A')) }}{{userOrg.roles[0].pending ? ' Pending':''}}
+              </td>
+              <td  class="delete-btn-container">
+                <div ng-repeat="role in userOrg.roles">{{role.roleDescription}}
+                <delete-button ng-click="$ctrl.deleteFromTeam($event, role, userOrg.user)" ng-if="$ctrl.canAddTeams && userOrg.entityType === 'Team'">
+                </delete-button>
+                </div>
+              </td>
+
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <pagination class="bottom-pagination mtop10"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                ng-if="$ctrl.users.length"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.updateFilters()"
+                total-items="$ctrl.totalItems"></pagination>
+  </div>
+</div>

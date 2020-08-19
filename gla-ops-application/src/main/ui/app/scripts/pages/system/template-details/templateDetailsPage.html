@@ -1,0 +1,82 @@
+<div class="template-details-page">
+  <gla-page-header [editable-block]="$ctrl" (on-back)="$ctrl.back()" [stop-editing]="true">
+    {{$ctrl.getTitle()}}
+  </gla-page-header>
+
+  <uib-tabset active="$ctrl.activeTabIndex" class="mtop20">
+
+    <uib-tab class="details-tab" heading="DETAILS" index="$ctrl.tabs.details" select="$ctrl.onDetailsTabSelected()">
+      <div class="mtop20">
+
+        <template-details template="$ctrl.templateObj"
+                          read-only="$ctrl.readOnly"></template-details>
+      </div>
+    </uib-tab>
+
+    <uib-tab class="blocks-tab" heading="BLOCKS" index="$ctrl.tabs.blocks" select="$ctrl.onBlocksTabSelected()">
+      <div class="text-right">
+        <button class="btn btn-secondary mtop10" ng-click="$ctrl.onAddBlock()"
+                ng-if="!$ctrl.readOnly && !$ctrl.selectedBlock">
+          ADD BLOCK <b>+</b>
+        </button>
+
+        <button class="btn btn-secondary mtop10" ng-click="$ctrl.onPasteBlock()"
+                ng-if="!$ctrl.readOnly && !$ctrl.selectedBlock && $ctrl.getCopiedBlock()">
+          PASTE NEW BLOCK <b>+</b>
+        </button>
+      </div>
+      <template-block block="$ctrl.selectedBlock"
+                      template="$ctrl.templateObj"
+                      ng-if="$ctrl.selectedBlock"
+                      read-only="$ctrl.readOnly"
+                      block-types="$ctrl.blockTypes"
+                      class="mtop20"
+                      is-new="$ctrl.isBlockNew"
+                      on-save="$ctrl.onBlockSave($event)"></template-block>
+
+      <template-blocks blocks="$ctrl.templateObj.blocksEnabled"
+                       ng-class="{mtop20: $ctrl.readOnly, mtop10: !$ctrl.readOnly}"
+                       ng-if="!$ctrl.selectedBlock"
+                       on-select-block="$ctrl.selectBlock(event)"
+                       on-remove-block="$ctrl.removeBlock(event)"
+                       read-only="$ctrl.readOnly"></template-blocks>
+    </uib-tab>
+
+
+    <uib-tab class="json-tab" heading="JSON" index="$ctrl.tabs.json" select="$ctrl.onJsonTabSelected()">
+      <div class="text-left mtop20" ng-if="$ctrl.isNew"><b>Add JSON code to create a new template.</b></div>
+      <div ng-class="{'has-error':$ctrl.errorMsg}">
+        <div class="viewer text-left" ng-class="{mtop10: $ctrl.isNew, mtop20: !$ctrl.isNew}">
+          <!-- Needs ng-if to rerender and reevaluate from changes in other tabs. Otherwise changes only after focus -->
+          <gla-json-viewer ang-if="$ctrl.readOnly || $ctrl.activeTabIndex == $ctrl.tabs.json"
+                           [json]="$ctrl.templateObj"
+                           [read-only]="$ctrl.readOnly"
+                           (change)="$ctrl.onJsonChange($event)"></gla-json-viewer>
+        </div>
+      </div>
+    </uib-tab>
+
+
+  </uib-tabset>
+
+  <div class="viewer-errors error mtop10" ng-if="$ctrl.templateText && !$ctrl.templateObj">
+    JSON is not valid
+  </div>
+
+  <div class="viewer-errors error mtop10" ng-if="$ctrl.errorMsg">
+    {{$ctrl.errorMsg}}
+  </div>
+  <div class="text-center">
+    <button class="btn btn-primary btn-center approve-btn mtop40" ng-click="$ctrl.onAdd()"
+            ng-disabled="!$ctrl.isSaveTemplateBtnEnabled()" ng-if="$ctrl.isNew" type="button">SAVE TEMPLATE
+    </button>
+    <button class="btn btn-primary btn-center approve-btn mtop40" clipboard ng-if="$ctrl.activeTabIndex === $ctrl.tabs.json || $ctrl.activeTabIndex === $ctrl.tabs.text"
+            on-copied="$ctrl.success()" on-error="$ctrl.fail(err)" supported="$ctrl.supported" text="$ctrl.copyAll()"
+            type="button">COPY ALL
+    </button>
+    <button class="btn btn-primary btn-center approve-btn mtop40" ng-click="$ctrl.pasteData()"
+            ng-if="$ctrl.activeTabIndex === $ctrl.tabs.json || $ctrl.activeTabIndex === $ctrl.tabs.text && !$ctrl.readOnly" supported="$ctrl.supported" type="button">PASTE ALL
+    </button>
+  </div>
+
+</div>

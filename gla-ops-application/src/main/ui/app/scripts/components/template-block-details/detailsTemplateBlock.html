@@ -1,0 +1,31 @@
+<div class="details-template-block">
+  <div class="form-group" ng-repeat="field in $ctrl.configurableFields track by field.id">
+
+    <div ng-if="$ctrl.canDisplayMaxBorough(field.id)">
+      <label ng-attr-for="max-boroughs">Maximum number of Boroughs</label>
+      <input
+        class="form-control"
+        id="max-boroughs"
+        maxlength="3"
+        number-mask="0"
+        name="max-boroughs"
+        ng-model="$ctrl.block.maxBoroughs"
+        ng-disabled="$ctrl.readOnly"
+        placeholder="Maximum number of Boroughs"
+        />
+
+    </div>
+    <div ng-if="field.displayAsSelect">
+      <label ng-attr-for="{{field.id}}">{{field.label}}</label>
+      <select class="form-control"
+              ng-attr-id="{{field.id}}"
+              ng-attr-name="{{field.id}}"
+              ng-disabled="$ctrl.readOnly"
+              ng-model="$ctrl.template.detailsConfig[field.id]"
+              ng-options="requirement.id as requirement.label for requirement in $ctrl.requirementOptions"
+              style-placeholder="">
+        <option disabled value="">Requirement</option>
+      </select>
+    </div>
+  </div>
+</div>

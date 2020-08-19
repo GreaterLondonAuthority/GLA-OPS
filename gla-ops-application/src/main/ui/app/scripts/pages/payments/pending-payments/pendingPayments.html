@@ -1,0 +1,61 @@
+<div class="payments pending-payments">
+  <gla-page-header [hide-back-btn]="true">Pending Payments</gla-page-header>
+  <div class="col-xs-12 mtop15">
+    <div ng-if="!$ctrl.paymentGroups.length" class="no-payments-message">
+      There are currently no payments awaiting authorisation
+    </div>
+    <div class="table-responsive" ng-if="$ctrl.paymentGroups.length">
+      <table id="pending-payments-table" class="table table-bordered">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th ng-click="$ctrl.sortBy('projectId')">Project ID</th>
+          <th ng-click="$ctrl.sortBy('projectName')">Project Name</th>
+          <th ng-click="$ctrl.sortBy('vendorName')">Payee</th>
+          <th ng-click="$ctrl.sortBy('programmeName')">Programme</th>
+          <th ng-click="$ctrl.sortBy('category')">Payment Type</th>
+          <th ng-click="$ctrl.sortBy('subCategory')">Sub-type</th>
+          <th ng-click="$ctrl.sortBy('source')">Source</th>
+          <th ng-click="$ctrl.sortBy('totalIncludingInterest')">Payment £</th>
+        </tr>
+        </thead>
+        <tbody class="payment-group" ng-attr-id="{{group.id}}" ng-repeat="group in $ctrl.paymentGroups">
+          <tr class="clickable-row" ng-repeat="item in group.payments track by item.id"
+            allow-enter tabindex="0"
+            ui-sref="payment-summary({paymentGroup:group.id,paymentId:item.id})" ng-attr-id="P{{item.id}}">
+            <td>P{{item.projectId}}</td>
+            <td>{{item.projectName}}</td>
+            <td>{{item.vendorName}}</td>
+            <td>{{item.programmeName}}</td>
+            <td>{{item.category}}</td>
+            <td>{{item.subCategory}}</td>
+            <!--UI property-->
+            <td>{{item.source}}</td>
+            <td>{{item.totalIncludingInterest | number: 2}}</td>
+          </tr>
+
+
+          <tr ng-show="$ctrl.canViewSapVendorId && ((group.hasReclaim && $ctrl.canSetInterest)|| $ctrl.canAuthoriseGroup(group) || $ctrl.showSapIdError(group))">
+            <td colspan="8" class="payment-row">
+              <div ng-if="$ctrl.showSapIdError(group) " class="error">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span>SAP vendor ID has not been provided. A vendor ID must be added to the <a class="org-details" ui-sref="organisation.view({orgId: group.payments[0].organisationId})">manage organisation</a> section to allow payment authorisation.</span>
+              </div>
+
+              <div ng-if="!$ctrl.showSapIdError(group) ">
+                <button ng-if=" (((group.hasReclaim && group.interestAssessed) || !group.hasReclaim) && $ctrl.canAuthoriseGroup(group)) && $ctrl.isAllowToAuthorisePayments(group) && !group.thresholdExceeded" class="btn btn-md btn-primary btn-authorise" ng-click="$ctrl.authorisePayments(group)">AUTHORISE<i class="glyphicon glyphicon-ok"></i></button>
+                <button ng-if="group.hasReclaim && $ctrl.canSetInterest" class="btn btn-md btn-primary btn-interest" ng-click="$ctrl.openInterestModal(group)">{{group.interestAssessed ? 'EDIT INTEREST' : 'SET INTEREST'}}<i class="glyphicon glyphicon-credit-card"></i></button>
+                <button ng-if="$ctrl.canAuthoriseGroup(group)" class="btn btn-md btn-secondary btn-decline" ng-click="$ctrl.declinePayments(group)">DECLINE<i class="glyphicon glyphicon-remove"></i></button>
+                <span ng-if="group.thresholdExceeded" class="error">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  <span>You can't authorise this payment as your <a class="user-account" ui-sref="user-account({userId:$ctrl.username})">authorised spend limit</a> is below this amount.</span>
+                </span>
+              </div>
+
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

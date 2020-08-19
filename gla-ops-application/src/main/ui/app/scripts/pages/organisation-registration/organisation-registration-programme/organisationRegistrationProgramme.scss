@@ -1,0 +1,49 @@
+.organisation-registration-programme-page {
+  display: block;
+
+  .managing-organisations {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    programmes-carousel {
+      width: 48.5%;
+    }
+  }
+
+  @include when-xs {
+    .managing-organisations {
+      programmes-carousel {
+        width: 100%;
+
+        .organisation-info{
+          border: none;
+          margin-bottom: 20px;
+          align-items: center;
+          display: flex;
+          width: 100%;
+          align-content: center;
+          text-align: left;
+        }
+
+        .programme{
+          width: 100%;
+          padding-left: 0;
+        }
+
+        .org-icon{
+          width: 70px;
+        }
+
+        .main-content{
+          flex-direction: column;
+        }
+
+        .programme-funding{
+          text-align: left;
+          margin-top: 15px;
+        }
+      }
+    }
+  }
+}

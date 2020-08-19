@@ -1,0 +1,678 @@
+{
+
+  "name": "Negotiated Route Clone 3",
+  "author": "nahida miah",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "block": "Details",
+      "displayOrder": 0
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "block": "Milestones",
+      "blockDisplayName": "Milestones",
+      "displayOrder": 1,
+      "autoCalculateMilestoneState": true,
+      "processingRoutes": [
+        {
+          "externalId": 101,
+          "name": "Acquisition of Home & Works",
+          "milestones": [
+            {
+              "externalId":3001,
+              "summary": "Contractor appointment",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": false
+            },
+            {
+              "externalId":3005,
+              "keyEvent":true,
+              "summary": "Land acquired",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 0,
+              "monetary": true
+            },
+            {
+              "externalId":3006,
+              "summary": "Detailed planning permission achieved",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 2,
+              "monetary": false
+            },
+            {
+              "externalId":3003,
+              "keyEvent":true,
+              "summary": "Start on Site",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 3,
+              "monetary": true
+            },
+            {
+              "externalId":3004,
+              "keyEvent":true,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 4,
+              "monetary": true
+            }
+          ]
+        },
+        {
+          "externalId": 105,
+          "name": "Off the Shelf",
+          "milestones": [
+            {
+              "externalId":3001,
+              "summary": "Contractor appointment",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": false
+            },
+            {
+              "externalId":3005,
+              "keyEvent":true,
+              "summary": "Land acquired",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 0,
+              "monetary": true
+            },
+            {
+              "externalId":3006,
+              "summary": "Detailed planning permission achieved",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 2,
+              "monetary": false
+            },
+            {
+              "externalId":3004,
+              "keyEvent":true,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 100,
+              "displayOrder": 3,
+              "monetary": true
+            }
+          ]
+        },
+        {
+          "externalId": 102,
+          "name": "Development Only",
+          "milestones": [
+            {
+              "externalId":3001,
+              "summary": "Contractor appointment",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 0,
+              "monetary": false
+            },
+            {
+              "externalId":3006,
+              "summary": "Detailed planning permission achieved",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": false
+            },
+            {
+              "externalId":3003,
+              "keyEvent":true,
+              "summary": "Start on Site",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 2,
+              "monetary": true
+            },
+            {
+              "externalId":3004,
+              "keyEvent":true,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 3,
+              "monetary": true
+            }
+          ]
+        },
+        {
+          "externalId": 103,
+          "name": "Land & Development",
+          "milestones": [
+            {
+              "externalId":3001,
+              "summary": "Contractor appointment",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": false
+            },
+            {
+              "externalId":3005,
+              "keyEvent":true,
+              "summary": "Land acquired",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 0,
+              "monetary": true
+            },
+            {
+              "externalId":3006,
+              "summary": "Detailed planning permission achieved",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 2,
+              "monetary": false
+            },
+            {
+              "externalId":3003,
+              "keyEvent":true,
+              "summary": "Start on Site",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 3,
+              "monetary": true
+            },
+            {
+              "externalId":3004,
+              "keyEvent":true,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 4,
+              "monetary": true
+            }
+          ]
+        },
+        {
+          "externalId": 104,
+          "name": "Lease & Repair",
+          "milestones": [
+            {
+              "externalId":3001,
+              "summary": "Contractor appointment",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": false
+            },
+            {
+              "externalId":3005,
+              "keyEvent":true,
+              "summary": "Land acquired",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 0,
+              "monetary": true
+            },
+            {
+              "externalId":3006,
+              "summary": "Detailed planning permission achieved",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 2,
+              "monetary": false
+            },
+            {
+              "externalId":3003,
+              "keyEvent":true,
+              "summary": "Start on Site",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 3,
+              "monetary": true
+            },
+            {
+              "externalId":3004,
+              "keyEvent":true,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 4,
+              "monetary": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TemplateBlock",
+      "block": "NegotiatedGrant",
+      "displayOrder": 2
+    },
+    {
+      "block": "GrantSource",
+      "displayOrder": 3,
+      "type": "GrantSourceTemplateBlock"
+    },
+    {
+      "block": "DesignStandards",
+      "displayOrder": 4,
+      "type": "TemplateBlock"
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "block": "Questions",
+      "blockDisplayName": "Questions",
+      "displayOrder": 5,
+      "questions":
+      [
+        {
+          "question": {
+            "id": 530,
+            "text": "Number of larger affordable homes",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 0
+        },
+        {
+          "question": {
+            "id": 501,
+            "text": "If you have selected 'Other Affordable', please confirm what tenure type",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 0,
+                "option": "Rent to save"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Equity loan"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Shared equity"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Discounted market sale"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Other innovative home ownership"
+              },
+              {
+                "displayOrder": 5,
+                "option": "London Affordable Rent - above benchmark"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Other"
+              }
+            ]
+          },
+          "requirement": "optional",
+          "displayOrder": 1
+        },
+        {
+          "question": {
+            "id": 502,
+            "text": "Select Planning Status",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 0,
+                "option": "Not required"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Not yet submitted"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Submitted"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Outline granted"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Detailed with pre commencement conditions"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Detailed with no conditions preventing SoS"
+              }
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 3
+        },
+        {
+          "question": {
+            "id": 503,
+            "text": "Select land status",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 0,
+                "option": "Land identified"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Purchase negotiations underway"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Acquired with conditions"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Owned - unconditional freehold"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Owned - unconditional long leasehold"
+              }
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 4
+        },
+        {
+          "question": {
+            "id": 504,
+            "text": "Has this project had funding approval under any other programme?",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 0,
+                "option": "Yes, all units"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes, some units"
+              },
+              {
+                "displayOrder": 2,
+                "option": "No , none of the units"
+              }
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 6
+        },
+        {
+          "question": {
+            "id": 505,
+            "text": "If you have had approval from the GLA to use RCGF for land acquisition, please confirm the amount",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "optional",
+          "displayOrder": 7
+        },
+        {
+          "question": {
+            "id": 506,
+            "text": "Is this project part of an estate regeneration?",
+            "answerType": "YesNo",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 8
+        },
+        {
+          "question": {
+            "id": 507,
+            "text": "Is this an offsite provision project?",
+            "answerType": "YesNo",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 9
+        },
+        {
+          "question": {
+            "id": 529,
+            "text": "Select tender status",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 0,
+                "option": "Contracting process not yet begun"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Tender out to competition"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Partner identified, not yet in contract"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Unconditional works contract"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Works being provided by in-house team"
+              }
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 5
+        },
+        {
+          "question": {
+            "id":509,
+            "text": "London Affordable Rent charged as a % of Market Rent",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "optional",
+          "displayOrder": 2
+        }
+      ]
+
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "block": "Questions",
+      "blockDisplayName": "Additional Questions",
+      "displayOrder": 6,
+      "questions":
+      [
+        {
+          "question": {
+            "id": 524,
+            "text": "Number of supported or specialised units which are self contained",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 0
+        },
+        {
+          "question": {
+            "id": 511,
+            "text": "Number of supported or specialised units with shared facilities",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 1
+        },
+        {
+          "question": {
+            "id": 512,
+            "text": "Number of units that will meet the wheelchair user dwellings standards as defined by Building Regulations",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 2
+        },
+        {
+          "question": {
+            "id": 513,
+            "text": "Client group",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 0,
+                "option": "Single homeless"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Homeless couples"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Homeless families"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Adults with physical or sensory disability"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Adults with learning difficulties"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Adults with mental health problems"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Over 55s (active elderly)"
+              },{
+                "displayOrder": 7,
+                "option": "Sheltered retirement community/village"
+              },{
+                "displayOrder": 8,
+                "option": "Extra care"
+              },{
+                "displayOrder": 9,
+                "option": "Domestic violence refuges"
+              },{
+                "displayOrder": 10,
+                "option": "Gypsy and Traveller Pitch"
+              },{
+                "displayOrder": 11,
+                "option": "General needs"
+              }
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 3
+        },
+        {
+          "question": {
+            "id": 514,
+            "text": "Number of units intended as move-on accommodation",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 4
+        },
+        {
+          "question": {
+            "id": 525,
+            "text": "Other public subsidy (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 5
+        },
+        {
+          "question": {
+            "id": 526,
+            "text": "Income from rents (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 6
+        },
+        {
+          "question": {
+            "id": 527,
+            "text": "Income from first sales (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 7
+        },
+        {
+          "question": {
+            "id": 528,
+            "text": "Provider contributions (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 8
+        }
+
+      ]
+    },
+    {
+      "type": "TemplateBlock",
+      "block": "UnitDetails",
+      "displayOrder": 7,
+      "blockAppearsOnStatus": "Active"
+    }
+  ],
+
+  "stateModel": "ChangeControlled",
+  "allowMonetaryMilestones": true,
+  "warningMessage": "This project type is restricted and should only be used following agreement with a GLA Area Manager",
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "mandatory",
+    "postcodeRequirement": "optional",
+    "coordsRequirement": "mandatory",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": null,
+    "imageRequirement": "optional",
+    "contactRequirement": "optional",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden"
+  },
+  "tenureTypes": [
+    {
+
+      "name": "London Shared Ownership",
+      "externalId": 4002,
+      "displayOrder": 2
+    },
+    {
+
+      "name": "Other Affordable",
+      "externalId": 4003,
+      "displayOrder": 3
+    },
+    {
+
+      "name": "London Living Rent",
+      "externalId": 4001,
+      "displayOrder": 1
+    },
+    {
+
+      "name": "London Affordable Rent",
+      "externalId": 4000,
+      "displayOrder": 0
+    }
+  ],
+  "indicativeTenureConfiguration": null
+}

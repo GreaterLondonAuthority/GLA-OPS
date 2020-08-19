@@ -1,0 +1,35 @@
+.roles-toggle {
+  font-family: $font-family-bolder;
+  margin: 10px 0;
+}
+
+.available-roles {
+  &.edit-mode {
+    border: 1px solid $form-field-inactive;
+    padding: 5px 12px;
+
+    input {
+      font-size: 16px;
+    }
+
+    label {
+      display: block;
+    }
+  }
+
+  .roles-toggle{
+    a:first-child {
+      display: inline-block;
+      margin-right: 15px;
+    }
+  }
+
+  .role {
+    margin-bottom: 8px;
+  }
+
+}
+
+.notification-scheduled-time {
+  height: 30px;
+}

@@ -1,0 +1,158 @@
+.btn-common {
+  outline: none;
+  box-shadow: 1px 1px 5px 0 rgba(0, 0, 0, 0.2);
+  font-family: $font-family-bolder;
+  padding: 6px 40px;
+  &[disabled] {
+    box-shadow: none;
+    opacity: 1;
+  }
+  .glyphicon {
+    margin-left: 10px;
+  }
+
+  &.min-padding {
+    padding: 6px 16px;
+  }
+}
+.btn.btn-common,
+.btn.btn-default {
+  &:focus,
+  &:active:focus {
+    @include tab-focus;
+    &:not(:focus-visible){
+      outline: none;
+    }
+  }
+}
+
+.btn.btn-md {
+  &,
+  &.btn-md:active {
+    padding: 6px 12px;
+  }
+}
+
+.btn.btn-sm {
+  &,
+  &.btn-sm:active,
+  &.btn-md:active {
+    padding: 3px 12px 2px 12px;
+  }
+}
+
+.btn-primary {
+  @extend .btn-common;
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: $btn-primary-hover;
+    @extend .btn-common;
+  }
+  &:active:focus {
+    background-color: darken($btn-primary-hover, 3%);
+    @extend .btn-common;
+  }
+  &[disabled] {
+    &:focus, &:active, & {
+      background-color: $btn-disabled-bg !important;
+      color: rgba(255, 255, 255, 0.3);
+    }
+  }
+  &.btn-negative{
+    background-color: $red;
+  }
+}
+
+.btn-secondary {
+  @include button-variant($btn-secondary-color, $btn-secondary-bg, $btn-secondary-border);
+
+  &.btn-negative{
+    &,&:active:focus{
+      color: $red;
+    }
+  }
+}
+
+.btn-secondary {
+  @extend .btn-common;
+  &:hover,
+  &:active,
+  &:focus {
+    background-color: $btn-secondary-hover;
+    border-color: $btn-secondary-border-active;
+    @extend .btn-common;
+  }
+  &:active:focus {
+    background-color: darken($btn-secondary-hover, 3%);
+    border-color: darken($btn-secondary-border-active, 3%);
+    @extend .btn-common;
+  }
+  &[disabled] {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+      background-color: $btn-secondary-bg;
+      color: rgba(119, 119, 119, 0.3);
+    }
+  }
+}
+
+.btn-text {
+  @extend .btn-common;
+  color: $moonstone !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  &:hover {
+    text-decoration: underline;
+  }
+  &[disabled] {
+    &,
+    &:hover,
+    &:active,
+    &:focus {
+      color: rgba(119, 119, 119, 0.3) !important;
+      text-decoration: none;
+    }
+  }
+}
+
+.back-button, .btn-project-menu {
+  background-color: white;
+  color: #5ca9c4;
+  font-size: 0.75rem;
+  font-weight: bold;
+  //width: 4.68rem;
+  padding: 0.45rem 0.2rem 0.35rem 0;
+
+  i {
+    padding-top: 0.2rem;
+    font-size: 0.7rem;
+  }
+}
+
+.btn-edit {
+  @extend .btn-primary;
+}
+.checkbox {
+  width: 18px;
+  height: 18px;
+  input[type="checkbox"]{
+    margin-left: 0;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+div.btn-sticky{
+  display: inline-block;
+}
+
+div, button{
+  &.floating-btn{
+    position: fixed;
+    z-index: 1001;
+  }
+}

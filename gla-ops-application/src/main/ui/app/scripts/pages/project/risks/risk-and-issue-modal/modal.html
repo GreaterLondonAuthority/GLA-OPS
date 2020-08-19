@@ -1,0 +1,153 @@
+<div class="risk-issue-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.type}} Profile</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="riskForm"
+      role="form"
+      name="riskForm"
+      class="form-group">
+
+      <label for="title">Title</label>
+      <input id="title"
+             type="text"
+             name="title"
+             ng-disabled="$ctrl.readOnly"
+             class="form-control title"
+             placeholder="title"
+             ng-model="$ctrl.dataBlock.title"
+             required
+             maxlength="50"  />
+      <div ng-if="$ctrl.type ==='Risk'">
+        <label for="category">Category</label>
+        <select aria-label="Category" class="group-field status__dropdown form-control"
+                id="category"
+                name="category"
+                ng-class="{disabled: $ctrl.readOnly}"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.dataBlock.riskCategory"
+                ng-options="category as category.displayValue for category in $ctrl.riskCategories track by category.id"
+                required
+                style-placeholder="">
+          <option disabled value="">Select a category</option>
+        </select>
+      </div>
+
+       <label for="description">Description</label>
+       <textarea id="description"
+                 ng-trim="false"
+                 rows="5"
+                 placeholder="Provide a description of the risk raised, max 400 characters."
+                 name="description"
+                 ng-disabled="$ctrl.readOnly"
+                 class="form-control"
+                 ng-model="$ctrl.dataBlock.description"
+                 required
+                 maxlength="400">
+       </textarea>
+      <gla-remaining-characters [text]="$ctrl.dataBlock.description" [max]="400"></gla-remaining-characters>
+
+      <div ng-if="$ctrl.type ==='Risk'">
+        <label for="initialProbability">Initial Probability Rating</label>
+        <select aria-label="Initial Probability"
+                class="group-field status__dropdown form-control"
+                id="initialProbability"
+                name="initialProbability"
+                ng-class="{disabled: $ctrl.readOnly}"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.dataBlock.initialProbabilityRating"
+                ng-options="probability.value as probability.displayValue for probability in $ctrl.probabilities"
+                required
+                style-placeholder="">
+          <option disabled value="">Select a Initial Probability</option>
+        </select>
+      </div>
+
+      <div ng-if="$ctrl.type ==='Risk'">
+        <label for="initialImpact">Initial Impact Rating</label>
+        <select aria-label="Initial Impact"
+                class="group-field status__dropdown form-control"
+                id="initialImpact"
+                name="initialImpact"
+                ng-class="{disabled: $ctrl.readOnly}"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.dataBlock.initialImpactRating"
+                ng-options="impact.value as impact.displayValue for impact in $ctrl.impacts"
+                required
+                style-placeholder="">
+          <option disabled value="">Select a Initial Impact</option>
+        </select>
+      </div>
+
+      <div ng-if="$ctrl.type ==='Risk'">
+        <label for="residualProbability">Residual Probability Rating After Mitigation</label>
+        <select aria-label="Initial Probability"
+                class="group-field status__dropdown form-control"
+                id="residualProbability"
+                name="residualProbability"
+                ng-class="{disabled: $ctrl.readOnly}"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.dataBlock.residualProbabilityRating"
+                ng-options="probability.value as probability.displayValue for probability in $ctrl.probabilitiesAfterMitigation"
+                style-placeholder="">
+          <option disabled value="">Select a Residual Probability</option>
+        </select>
+      </div>
+
+      <div ng-if="$ctrl.type ==='Risk'">
+        <label for="residualImpact">Residual Impact Rating</label>
+        <select aria-label="Residual Impact"
+                class="group-field status__dropdown form-control"
+                id="residualImpact"
+                name="residualImpact"
+                ng-class="{disabled: $ctrl.readOnly}"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.dataBlock.residualImpactRating"
+                ng-options="impact.value as impact.displayValue for impact in $ctrl.impactsAfterMitigation"
+                style-placeholder="">
+          <option disabled value="">Select a Residual Impact</option>
+        </select>
+      </div>
+
+      <div ng-if="$ctrl.type ==='Issue'">
+        <label for="issueImpactLevel">Impact level</label>
+        <select aria-label="Impact Level" class="group-field status__dropdown form-control"
+                id="issueImpactLevel"
+                name="initialImpact"
+                ng-class="{disabled: $ctrl.readOnly}"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.dataBlock.initialImpactRating"
+                ng-options="impact.value as impact.displayValue for impact in $ctrl.issueImpactLevels"
+                required
+                style-placeholder="">
+          <option disabled value="">Select an Impact Level</option>
+        </select>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row" ng-if="true">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="claim-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$close($ctrl.dataBlock)"
+          ng-disabled="riskForm.$invalid">{{$ctrl.btnName}}</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15 no-border">
+        <a class="form-cancel" href="JavaScript:void(0)" ng-mousedown="$dismiss()" on-enter="$dismiss()">Close</a>
+      </div>
+    </div>
+  </div>
+</div>

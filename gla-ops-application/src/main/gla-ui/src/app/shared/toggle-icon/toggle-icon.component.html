@@ -1,0 +1,8 @@
+<a (click)="onSectionClick();$event.stopPropagation();"
+   [attr.aria-expanded]="!collapsed"
+   [attr.aria-label]="collapsed? 'Expand' : 'Collapse'"
+   class="toggle-icon"
+   href="JavaScript:void(0);"
+   role="button">
+  <div [class]="collapsed? collapsedIcon : expandedIcon" class="glyphicon"></div>
+</a>

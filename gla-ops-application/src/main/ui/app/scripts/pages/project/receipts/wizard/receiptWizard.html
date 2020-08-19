@@ -1,0 +1,88 @@
+<div class="receipt-wizard">
+  <div class="row no-gutter wizzard">
+      <div class="col-xs-12 no-gutter">
+        <div class="form-group col-md-4 col-xs-12 mtop15">
+          <label for="receiptCategory">Receipt Category</label><br/>
+          <select class="form-control"
+                  id="receiptCategory"
+                  ng-disabled="$ctrl.readOnly"
+                  ng-model="$ctrl.receiptCategory"
+                  ng-options="item.id as item.text for item in $ctrl.categories | orderBy: 'text'"
+                  style-placeholder="">
+            <option disabled value="">Select</option>
+          </select>
+        </div>
+        <div class="form-group col-md-2 col-xs-12 mtop15">
+          <label for="receiptType">Type</label><br/>
+          <select class="form-control"
+                  id="receiptType"
+                  ng-disabled="$ctrl.readOnly"
+                  ng-model="$ctrl.receiptType"
+                  ng-options="item as item.text for item in $ctrl.receiptTypes"
+                  style-placeholder>
+            <option disabled value="">Select credit or debit</option>
+          </select>
+        </div>
+
+        <div class="form-group receiptValue {{$ctrl.canCreateActuals ? 'col-md-2' : 'col-md-4'}} col-xs-12 mtop15">
+            <label for="forecastValue">Forecast £</label><br/>
+            <input class="form-control"
+                   id="forecastValue"
+                   type="text"
+                   placeholder="£0"
+                   ng-model="$ctrl.forecastValue"
+                   number-mask="0"
+                   maxlength="13"
+                   ng-disabled="$ctrl.readOnly"
+                   ng-keypress="$ctrl.onForecastKeyPress()">
+        </div>
+
+        <div class="form-group receiptValue col-md-2 col-xs-12 mtop15" ng-if="$ctrl.canCreateActuals">
+          <label for="actualValue">Actual £</label><br/>
+          <input class="form-control"
+                 id="actualValue"
+                 type="text"
+                 placeholder="£0"
+                 ng-model="$ctrl.actualValue"
+                 number-mask="2"
+                 maxlength="13"
+                 ng-disabled="$ctrl.readOnly"
+                 ng-keypress="$ctrl.onActualKeyPress()"
+                 negative-number2>
+        </div>
+
+        <div class="form-group budget-date date-picker right-aligned col-md-2 col-xs-12 mtop15">
+          <label for="date">Date</label><br/>
+          <div class="input-group">
+            <input ng-change="$ctrl.onDateChange($ctrl.date)" ng-class="{white: !$ctrl.readOnly}"
+                   ng-click="showDatePopup = !showDatePopup"
+                   id="date"
+                   placeholder="Select date"
+                   class="form-control"
+                   uib-datepicker-popup="{{$ctrl.dateOptions.format}}"
+                   ng-model="$ctrl.date"
+                   is-open="showDatePopup"
+                   datepicker-options="$ctrl.dateOptions"
+                   show-button-bar="false"
+                   readonly
+                   tabindex="-1"
+                   ng-disabled="$ctrl.readOnly"
+                   close-text="Close"/>
+            <span tabindex="0" allow-enter aria-label="Calendar" role="button" class="input-group-addon" ng-click="showDatePopup = !showDatePopup" ng-class="{disabled: $ctrl.readOnly}">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
+
+        </div>
+      </div>
+      <div class="col-xs-12 mtop15">
+        <button class="btn btn-primary pull-right"
+                ng-click="$ctrl.addReceiptOutput()"
+                ng-disabled="!$ctrl.date || !$ctrl.receiptCategory || !$ctrl.receiptType || !($ctrl.forecastValue || $ctrl.actualValue)">ADD RECEIPT
+        </button>
+    </div>
+    <div class="col-xs-12 mtop15">
+      <span>The value of receipts will not be reflected in the total project budget. Receipts are credited back to the GLA, not directly to the project.</span>
+    </div>
+  </div>
+</div>

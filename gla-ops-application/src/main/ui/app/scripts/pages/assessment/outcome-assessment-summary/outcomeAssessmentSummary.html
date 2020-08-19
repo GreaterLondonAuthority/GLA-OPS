@@ -1,0 +1,67 @@
+<div class="table-responsive">
+  <table class="table table-bordered" id="outcome-summary">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>SECTIONS/CRITERIA/OTHERS</th>
+      <th>WEIGHT</th>
+      <th>MAX. SCORE</th>
+      <th class="individual-assessments" ng-attr-title="{{oa.creatorName | uppercase}}"
+          ng-repeat="oa in $ctrl.assessment.outcomeSummary.outcomeAssessments"
+          ui-sref="assessment({id: oa.id, backNavigation: $ctrl.currentState})"><div><span>{{ oa.creatorName }}</span></div></th>
+      <th>AVG. SCORE</th>
+      <th>WEIGHTED SCORE %</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr class="assessment-section" ng-init="sectionIndex = $index" ng-repeat-start="section in $ctrl.assessment.outcomeSummary.sections">
+      <td class="bolder">{{section.title}}</td>
+      <td>{{section.weight}}<span ng-if="section.weight != null">%</span></td>
+      <td>{{section.maxScore}}</td>
+      <td class="individual-assessments"
+          ng-class="{'in-progress' : !$ctrl.isComplete(oa)}"
+          ng-repeat="oa in $ctrl.assessment.outcomeSummary.outcomeAssessments"
+          ui-sref="assessment({id: oa.id, backNavigation: $ctrl.currentState})"></td>
+      <td>{{section.averageScore}}</td>
+      <td>{{section.weightedScore}}<span ng-if="section.weightedScore != null">%</span></td>
+    </tr>
+
+    <tr ng-init="criteriaIndex = $index" ng-repeat="criteria in section.criteriaList" ng-repeat-end>
+      <td>{{criteria.title}}</td>
+      <td>{{criteria.weight}}<span ng-if="criteria.weight != null">%</span></td>
+      <td>{{criteria.maxScore}}</td>
+      <td class="individual-assessments"
+          ng-class="{'in-progress' : !$ctrl.isComplete(oa)}"
+          ng-repeat="oa in $ctrl.assessment.outcomeSummary.outcomeAssessments"
+          ui-sref="assessment({id: oa.id, backNavigation: $ctrl.currentState})">{{criteria.assessmentCriteriaList[$index].score}}</td>
+      <td>{{criteria.averageScore}}</td>
+      <td>{{criteria.weightedScore}}<span ng-if="criteria.weightedScore != null">%</span></td>
+    </tr>
+    <tr class="assessment-section">
+      <td class="bolder">Totals</td>
+      <td>{{$ctrl.assessment.outcomeSummary.totalSectionsWeight}}<span ng-if="$ctrl.assessment.outcomeSummary.totalSectionsWeight != null">%</span></td>
+      <td>{{$ctrl.assessment.outcomeSummary.totalSectionsMaxScore}}</td>
+      <td class="individual-assessments"
+          ng-class="{'in-progress' : !$ctrl.isComplete(oa)}"
+          ng-repeat="oa in $ctrl.assessment.outcomeSummary.outcomeAssessments"
+          ui-sref="assessment({id: oa.id, backNavigation: $ctrl.currentState})">
+        {{$ctrl.assessment.outcomeSummary.totalOutcomeAssessmentsScore[oa.id]}}
+      </td>
+      <td>{{$ctrl.assessment.outcomeSummary.totalSectionsAverageScore}}</td>
+      <td>{{$ctrl.assessment.outcomeSummary.totalSectionsWeightedScore}}<span ng-if="$ctrl.assessment.outcomeSummary.totalSectionsWeightedScore != null">%</span></td>
+    </tr>
+
+    <tr>
+      <td>Completed?</td>
+      <td></td>
+      <td></td>
+      <td class="individual-assessments"
+          ng-class="{'in-progress' : !$ctrl.isComplete(oa)}"
+          ng-repeat="oa in $ctrl.assessment.outcomeSummary.outcomeAssessments"
+          ui-sref="assessment({id: oa.id, backNavigation: $ctrl.currentState})">{{$ctrl.isComplete(oa) ? 'Y' : 'N'}}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    </tbody>
+  </table>
+</div>

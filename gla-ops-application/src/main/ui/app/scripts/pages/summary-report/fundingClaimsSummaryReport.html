@@ -1,0 +1,58 @@
+<div class="includes-tables">
+
+  <div class="table-responsive" ng-if="$ctrl.isAebGrant && $ctrl.periodTotals.length">
+    <table class="table funding-claims-table table-hover table-bordered">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>ACADEMIC YEAR</th>
+        <th>FUNDING CLAIM PERIOD</th>
+        <th>TOTAL DELIVERY TO DATE £</th>
+        <th>TOTAL FORECAST DELIVERY £</th>
+        <th>TOTAL DELIVERY £</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="pt in $ctrl.periodTotals track by $index">
+          <td>{{pt.year}}</td>
+          <td>{{$ctrl.periodsMap[pt.period]}}</td>
+          <td>{{pt.totals.actualTotal | number}}</td>
+          <td>
+            <span ng-if="pt.period != 14">{{pt.totals.forecastTotal | number}}</span>
+            <span ng-if="pt.period == 14">N/A</span>
+          </td>
+          <td>{{pt.totals.deliveryTotal | number}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="table-responsive" ng-if="$ctrl.isAebProcured && $ctrl.periodTotals.length">
+    <table class="table funding-claims-table table-hover table-bordered">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>ACADEMIC YEAR</th>
+        <th>FUNDING CLAIM PERIOD</th>
+        <th ng-repeat-start="ct in $ctrl.contractTypes track by $index">
+          TOTAL {{ct.name}} £
+        </th>
+        <th ng-repeat-end>TOTAL OF WHICH, FLEXIBLE ALLOCATION</th>
+        <th ng-if="$ctrl.contractTypes.length > 1">TOTAL DELIVERY £</th>
+        <th ng-if="$ctrl.contractTypes.length > 1">OF WHICH, FLEXIBLE ALLOCATION</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="pt in $ctrl.periodTotals track by $index">
+          <td>{{pt.year}}</td>
+          <td>{{$ctrl.periodsMap[pt.period]}}</td>
+          <td ng-repeat-start="ctt in pt.totals.contractTypeTotals track by $index">{{ctt.funding | number}}</td>
+          <td ng-repeat-end>{{ctt.flexibleFunding}} ({{ctt.percentage | number}}%)</td>
+          <td ng-if="$ctrl.contractTypes.length > 1">{{pt.totals.contractValueTotal | number}}</td>
+          <td ng-if="$ctrl.contractTypes.length > 1">{{pt.totals.flexibleTotal | number}} ({{pt.totals.percentage}}%)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

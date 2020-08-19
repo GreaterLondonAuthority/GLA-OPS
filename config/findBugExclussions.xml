@@ -1,0 +1,6 @@
+<FindBugsFilter>
+    <!--<Match>-->
+        <!--<Class name="package.ClassName" />-->
+        <!--<Bug pattern="DM_GC" />-->
+    <!--</Match>-->
+</FindBugsFilter>

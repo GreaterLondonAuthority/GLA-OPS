@@ -1,0 +1,97 @@
+{
+  "name": "Skills Emergency Fund",
+  "author": "TBC",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Advance Payment",
+      "block": "Milestones",
+      "displayOrder": 3,
+      "autoCalculateMilestoneState": true,
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "externalId": null,
+          "name": "default",
+          "milestones": [
+            {
+              "summary": "April",
+              "requirement": "mandatory",
+              "displayOrder": 1,
+              "monetary": true
+            },
+            {
+              "summary": "May",
+              "requirement": "mandatory",
+              "displayOrder": 2,
+              "monetary": true
+            },
+            {
+              "summary": "June",
+              "requirement": "mandatory",
+              "displayOrder": 3,
+              "monetary": true
+            },
+            {
+              "summary": "July",
+              "requirement": "mandatory",
+              "displayOrder": 4,
+              "monetary": true
+            }
+          ]
+        }
+      ],
+      "descriptionEnabled": false,
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "GrantSourceTemplateBlock",
+      "blockDisplayName": "Grant Source",
+      "block": "GrantSource",
+      "displayOrder": 2,
+      "paymentSourcesString": "Grant",
+      "nilGrantHidden": false,
+      "grantTypes": [
+        "Grant"
+      ],
+      "paymentSources": [
+        "Grant"
+      ]
+    }
+  ],
+  "internalBlocks": [],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "MonetaryValue",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "optional"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": true,
+  "grantTypes": [
+    "Grant"
+  ],
+  "shouldMilestonesBlockShowStatus": false
+}

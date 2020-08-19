@@ -1,0 +1,38 @@
+financial-year-monthly-outputs-table {
+  display: block;
+
+  table {
+    th, td {
+      vertical-align: middle !important;
+      text-align: left;
+    }
+
+    td {
+      font-family: $font-family-default;
+    }
+  }
+
+  .category, .assumption-row {
+    td {
+      padding: 0.8rem !important;
+    }
+  }
+
+  .category {
+    font-family: $font-family-bolder;
+  }
+
+  .assumption-row {
+    th, td {
+      border-top: none !important;
+    }
+  }
+
+  .assumption-cell {
+    padding: 0 !important;
+  }
+
+  input:focus {
+    padding: 5px 11px !important;
+  }
+}

@@ -1,0 +1,71 @@
+<div class="table-responsive yearly-budget-funding-summary-table">
+  <table class="table table-hover table-bordered table-default " id="summary-funding-table">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th class=" text-center">PROFILE BY YEAR</th>
+      <th class="number" ng-if="$ctrl.showCapitalGla">{{$ctrl.capClaimedLabel}}</th>
+      <th class="number" ng-if="$ctrl.showCapitalOther">{{$ctrl.capOtherLabel}}</th>
+      <th class="number" ng-if="$ctrl.showRevenueGla">{{$ctrl.revClaimedLabel}}</th>
+      <th class="number" ng-if="$ctrl.showRevenueOther">{{$ctrl.revOtherLabel}}</th>
+      <th class="number">TOTAL</th>
+    </tr>
+    </thead>
+    <tbody class="expandableRow">
+    <tr ng-if="$ctrl.yearlyData.length === 0">
+      <td colspan="5"><b>No budget added to any year, select a year to add expected annual budget</b></td>
+    </tr>
+    <tr class="year-row primaryRow expandable " ng-repeat-start="year in $ctrl.yearlyData"
+        allow-enter
+        aria-expanded="{{!!$ctrl.blockSessionStorage.fundingSummaryExpandState[year.year]}}"
+        aria-label="{{!$ctrl.blockSessionStorage.fundingSummaryExpandState[year.year]? 'Expand' : 'Collapse'}}"
+        role="button"
+        tabindex="0"
+        ng-click="$ctrl.blockSessionStorage.fundingSummaryExpandState[year.year] = !$ctrl.blockSessionStorage.fundingSummaryExpandState[year.year]">
+      <td class="highlight-cell expandable no-print year-column-cell">
+            <span>
+              <i class="glyphicon glyphicon-triangle-bottom"
+                 ng-if="!$ctrl.blockSessionStorage.fundingSummaryExpandState[year.year]"></i>
+              <i class="glyphicon glyphicon-triangle-top"
+                 ng-if="$ctrl.blockSessionStorage.fundingSummaryExpandState[year.year]"></i>
+            </span>
+        {{year.yearLabel}} TOTAL PROFILED
+      </td>
+      <td class="highlight-cell number" ng-if="$ctrl.showCapitalGla">{{year.totalCapitalValue | number}}</td>
+      <td class="highlight-cell number" ng-if="$ctrl.showCapitalOther">{{year.totalCapitalMatchFund | number}}</td>
+      <td class="highlight-cell number" ng-if="$ctrl.showRevenueGla">{{year.totalRevenueValue | number}}</td>
+      <td class="highlight-cell number" ng-if="$ctrl.showRevenueOther">{{year.totalRevenueMatchFund | number}}</td>
+      <td class="highlight-cell number">{{year.total | number}}</td>
+    </tr>
+    <tr ng-repeat-start="milestone in year.milestones"
+        ng-if="$ctrl.blockSessionStorage.fundingSummaryExpandState[year.year]">
+      <td class="highlight-cell left-indent ">{{milestone.name}}</td>
+      <td class="highlight-cell number" ng-if="$ctrl.showCapitalGla">{{milestone.totalCapitalValue | number}}</td>
+      <td class="highlight-cell number" ng-if="$ctrl.showCapitalOther">{{milestone.totalCapitalMatchFund | number}}</td>
+      <td class="highlight-cell number" ng-if="$ctrl.showRevenueGla">{{milestone.totalRevenueValue | number}}</td>
+      <td class="highlight-cell number" ng-if="$ctrl.showRevenueOther">{{milestone.totalRevenueMatchFund | number}}</td>
+      <td class="highlight-cell number">{{milestone.total | number}}</td>
+    </tr>
+    <tr ng-repeat-start="activity in milestone.activities" class="activity-row"
+        ng-if="$ctrl.blockSessionStorage.fundingSummaryExpandState[year.year]">
+      <td class="dbl-left-indent">{{activity.name}}</td>
+      <td class="number" ng-if="$ctrl.showCapitalGla">{{activity.capitalValue | number}}</td>
+      <td class="number" ng-if="$ctrl.showCapitalOther">{{activity.capitalMatchFundValue | number}}</td>
+      <td class="number" ng-if="$ctrl.showRevenueGla">{{activity.revenueValue | number}}</td>
+      <td class="number" ng-if="$ctrl.showRevenueOther">{{activity.revenueMatchFundValue | number}}</td>
+      <td class="number">{{activity.total | number}}</td>
+    </tr>
+    <tr ng-repeat-end ng-hide="true"></tr>
+    <tr ng-repeat-end ng-hide="true"></tr>
+    <tr ng-repeat-end ng-hide="true"></tr>
+    <tr class="footer-row">
+      <td >TOTALS</td>
+      <td class="number" ng-if="$ctrl.showCapitalGla">{{$ctrl.totals.totalCapitalValue | number}}</td>
+      <td class="number" ng-if="$ctrl.showCapitalOther">{{$ctrl.totals.totalCapitalMatchFund | number}}</td>
+      <td class="number" ng-if="$ctrl.showRevenueGla">{{$ctrl.totals.totalRevenueValue | number}}</td>
+      <td class="number" ng-if="$ctrl.showRevenueOther">{{$ctrl.totals.totalRevenueMatchFund | number}}</td>
+      <td class="number">{{$ctrl.totals.total | number}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+

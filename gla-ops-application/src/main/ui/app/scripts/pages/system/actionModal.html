@@ -1,0 +1,30 @@
+<div class="file-delete-error-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="glyphicon glyphicon-exclamation-sign"></span>
+    <h1>Update action</h1>
+  </div>
+
+  <div class="modal-body text-center">
+    <div class="row">
+      <div class="col-xs-12">
+        Are you sure you want to approve this update? Note: approving will run the update.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-6">
+        <button class="btn confirm-button btn-default btn-primary pull-left" type="button" ng-click="$close('approve')">APPROVE & RUN</button>
+      </div>
+      <div class="col-xs-6 cancel">
+        <button class="btn btn-default btn-primary pull-left" type="button" ng-click="$close('reject')">REJECT</button>
+      </div>
+    </div>
+  </div>
+
+</div>

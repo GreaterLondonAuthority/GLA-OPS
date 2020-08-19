@@ -1,0 +1,92 @@
+<div class="org-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <h1>Set organisation to inactive</h1>
+  </div>
+  <div class="modal-body text-left">
+
+    <p>Users will no longer be able to register to this organisation.</p>
+    <p>Projects cannot be created in an inactive organisation.</p>
+    <div class="form-group">
+      <label for="inactive-reason" class="mtop10">
+        Select a reason for the organisation to become inactive
+      </label>
+      <select class="search-dropdown form-control"
+              id="inactive-reason"
+              name="inactive-reason"
+              ng-change="$ctrl.onReasonChange()"
+              ng-model="$ctrl.reason"
+              ng-options="reason as reason.label for reason in $ctrl.inactivateReasons"
+              required
+              style-placeholder="">
+        <option disabled value="">Select</option>
+      </select>
+    </div>
+
+    <div ng-if="$ctrl.reason.requiresComment" class="form-group">
+      <label for="other-reason">Add a comment to explain why the organisation is being set to inactive</label>
+      <textarea id="other-reason"
+                ng-trim="false"
+                rows="5"
+                placeholder="Provide a reason."
+                name="otherReason"
+                class="form-control"
+                ng-model="$ctrl.otherReason"
+                required
+                maxlength="250"></textarea>
+      <gla-remaining-characters [text]="$ctrl.otherReason" [max]="250"></gla-remaining-characters>
+    </div>
+
+    <div class="form-group has-feedback" ng-if="$ctrl.reason.requiresOrg">
+      <label for="duplicateOrgCode">Please enter organisation ID of which this one is a duplicate</label>
+      <div class="row">
+        <div class="col-sm-6 org-code-input no-padding">
+          <input id="duplicateOrgCode"
+                 type="text"
+                 name="duplicateOrgCode"
+                 aria-label="Duplicate Organisation Id"
+                 class="form-control"
+                 ng-minlength="3"
+                 ng-model="$ctrl.duplicateOrgId"
+                 placeholder="Duplicate organisation id"
+                 org-lookup="$ctrl.duplicateOrgName"
+                 autocomplete="off"/>
+          <span ng-if="$ctrl.duplicateOrgName" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+        </div>
+
+        <div class="col-sm-6">
+          <div ng-if="$ctrl.duplicateOrgName" class="organisation-name mtop10">
+            {{$ctrl.duplicateOrgName}}
+          </div>
+        </div>
+      </div>
+      <div class="error-wrapper row" role="alert">
+        <span class="error" ng-if="$ctrl.duplicateOrgId.length > 2 && !$ctrl.duplicateOrgName">Organisation number not recognised</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$ctrl.$close({reason: $ctrl.reason, reasonText: $ctrl.otherReason, duplicateOrgId: $ctrl.duplicateOrgId})"
+          ng-disabled="!$ctrl.reason ||
+                       ($ctrl.reason.requiresComment && !$ctrl.otherReason) ||
+                       ($ctrl.reason.requiresOrg && !$ctrl.duplicateOrgName)">CONFIRM</button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

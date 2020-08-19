@@ -1,0 +1,23 @@
+outputs-baselines-table {
+  display: block;
+  table{
+    th, td{
+      vertical-align: middle !important;
+      text-align: left;
+    }
+
+    td{
+      font-family: $font-family-bolder;
+    }
+  }
+
+  .baseline-cell{
+    input {
+      max-width: 150px;
+      margin: 0 !important;
+      &:focus{
+        padding: 5px 11px !important;
+      }
+    }
+  }
+}

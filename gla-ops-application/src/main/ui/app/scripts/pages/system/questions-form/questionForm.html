@@ -1,0 +1,164 @@
+<div class="question-form page">
+
+  <gla-page-header (on-back)="$ctrl.goBack()">Question details</gla-page-header>
+
+  <header-status ng-if="$ctrl.question.id">
+    <hs-left class="row text-nowrap" ng-if="$ctrl.question.createdOn && $ctrl.question.creatorName">Created on {{($ctrl.question.createdOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.question.creatorName}}</hs-left>
+    <hs-left class="row text-nowrap" ng-if="$ctrl.question.modifiedOn && $ctrl.question.modifierName">Last updated on {{($ctrl.question.modifiedOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.question.modifierName}}</hs-left>
+  </header-status>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-8 col-md-6 center-col">
+      <form class="mtop40">
+        <div class="form-group">
+          <label for="id">Question ID</label>
+          <input id="id"
+                 type="text"
+                 class="form-control"
+                 placeholder="Question ID"
+                 ng-model="$ctrl.question.id"
+                 maxlength="9"
+                 ng-disabled="$ctrl.$stateParams.questionId" />
+        </div>
+
+        <div class="form-group">
+          <label for="text">Question text</label>
+          <textarea id="text"
+                    ng-trim="false"
+                    rows="5"
+                    placeholder="Enter question text"
+                    class="form-control"
+                    ng-model="$ctrl.question.text"
+                    maxlength="255"></textarea>
+          <gla-remaining-characters [text]="$ctrl.question.text" [max]="255"></gla-remaining-characters>
+        </div>
+
+        <div class="form-group">
+          <label for="answer-type">Answer Type</label>
+          <select class="form-control"
+                  id="answer-type"
+                  ng-change="$ctrl.onAnserTypeSelect($ctrl.question.answerType)"
+                  ng-disabled="false"
+                  ng-model="$ctrl.question.answerType"
+                  ng-options="at for at in $ctrl.answerTypes"
+                  required
+                  style-placeholder="">
+            <option disabled value="">Select answer type</option>
+          </select>
+        </div>
+
+
+        <div class="form-group" ng-if="$ctrl.question.answerType === 'FreeText'">
+          <label for="maxlength">Maximum character length</label>
+          <input id="maxlength"
+                 type="text"
+                 number-mask="0"
+                 class="form-control"
+                 placeholder="Maximum character length"
+                 ng-model="$ctrl.question.maxLength"
+                 maxlength="6"/>
+        </div>
+
+        <div ng-if="$ctrl.question.answerType === 'FileUpload'">
+          <div class="form-group">
+            <label>Limit type</label>
+            <br>
+            <label class="form-check-inline consortium-radio" for="combinedFileSize">
+              <input class="form-check-input"
+                     type="radio"
+                     ng-model="$ctrl.fileUploadLimitType"
+                     name="type"
+                     id="combinedFileSize"
+                     ng-value="'CombinedFileSize'"
+                     ng-change="$ctrl.fileLimitTypeChanged()"
+                     required> Combined file size
+            </label>
+            <label class="form-check-inline" for="numberOfFiles">
+              <input class="form-check-input"
+                     type="radio"
+                     ng-model="$ctrl.fileUploadLimitType"
+                     name="type"
+                     id="numberOfFiles"
+                     ng-value="'NumberOfFiles'"
+                     ng-change="$ctrl.fileLimitTypeChanged()"
+                     required> Number of files
+            </label>
+            <div class="error-wrapper" role="alert"
+                 ng-if="cForm.type.$error && cForm.type.$touched">
+              <span class="error" ng-if="cForm.type.$error.required">Select agreement type</span>
+            </div>
+          </div>
+
+          <div class="form-group" ng-if="$ctrl.fileUploadLimitType === 'CombinedFileSize'">
+            <label for="max-combined-file-size">Maximum combined file size in MB</label>
+            <input id="max-combined-file-size"
+                   type="text"
+                   number-mask="0"
+                   class="form-control"
+                   placeholder="Maximum combined file size in MB"
+                   ng-model="$ctrl.question.maxCombinedUploadSizeInMb"
+                   maxlength="3"/>
+          </div>
+
+          <div class="form-group" ng-if="$ctrl.fileUploadLimitType === 'NumberOfFiles'">
+            <label for="max-number-of-files">Maximum number of files to upload</label>
+            <input id="max-number-of-files"
+                   type="text"
+                   number-mask="0"
+                   class="form-control"
+                   placeholder="Maximum number of files to upload"
+                   ng-model="$ctrl.question.quantity"
+                   maxlength="3"/>
+          </div>
+
+          <div class="form-group" ng-if="$ctrl.fileUploadLimitType === 'NumberOfFiles'">
+            <label for="max-file-size">Maximum file size in MB</label>
+            <input id="max-file-size"
+                   type="text"
+                   number-mask="0"
+                   class="form-control"
+                   placeholder="Maximum file size in MB"
+                   ng-model="$ctrl.question.maxUploadSizeInMb"
+                   maxlength="3"/>
+          </div>
+        </div>
+
+        <div class="form-group" ng-if="$ctrl.question.answerType === 'Dropdown'">
+          <label for="max-answers-amount">Maximum number of options that can be selected</label>
+          <input class="form-control"
+                 id="max-answers-amount"
+                 maxlength="3"
+                 ng-model="$ctrl.question.maxAnswers"
+                 number-mask="0"
+                 placeholder="Maximum number of options that can be selected"
+                 type="text"/>
+        </div>
+
+        <div class="form-group" ng-if="$ctrl.question.answerType === 'Dropdown'" id="dropdown-options">
+          <div class="dropdown-options-top">
+            <span class="label">Options</span>
+            <button class="btn btn-secondary pull-right" ng-click="$ctrl.addNewDropdownOption()">ADD</button>
+          </div>
+          <div class="dropdown-option delete-btn-container" ng-repeat="option in $ctrl.question.answerOptions track by $index" ng-class="'dropdown-option-' + ($index + 1)">
+            <input type="text"
+                   aria-label="{{'dropdown option ' + ($index + 1)}}"
+                   class="form-control"
+                   placeholder="Dropdown option"
+                   maxlength="45"
+                   ng-model="$ctrl.question.answerOptions[$index].option"/>
+            <delete-button ng-click="$ctrl.deleteDropdownOption($index)"></delete-button>
+          </div>
+          <div class="error-wrapper" ng-if="$ctrl.hasAnswersRestrictedText" role="alert">
+            <span class="error">Some answers contain illegal characters</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="text-center mtop40 mbottom40">
+    <button class="btn btn-primary"
+            ng-disabled="!$ctrl.isQuestionValid($ctrl.question)"
+            ng-click="$ctrl.save()">SAVE</button>
+  </div>
+</div>

@@ -1,0 +1,70 @@
+<div class="label-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Create Label</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="labelForm"
+      role="form"
+      name="labelForm">
+
+      <div class="form-group label-input">
+        <label for="labelName">Enter Label Name</label>
+        <input id="labelName"
+               type="text"
+               name="labelName"
+               ng-disabled="$ctrl.readOnly"
+               class="form-control labelName"
+               ng-model="$ctrl.label.labelName"
+               placeholder="Label name"
+               ng-change="$ctrl.validate()"
+               required
+               maxlength="50"  />
+        <div class="error-wrapper" ng-if="$ctrl.isExistingLabel">
+          <span class="error">Label already exists</span>
+        </div>
+      </div>
+
+      <div class="form-group owner-select">
+        <label for="owner">Owner</label>
+        <select aria-label="Owner"
+                class="form-control"
+                id="owner"
+                name="owner"
+                ng-change="$ctrl.validate()"
+                ng-class="{disabled: $ctrl.readOnly}"
+                ng-disabled="$ctrl.label.id? true : false"
+                ng-model="$ctrl.label.managingOrganisation"
+                ng-options="managingOrganisation as managingOrganisation.name for managingOrganisation in $ctrl.managingOrganisations | orderBy: 'name' track by managingOrganisation.id"
+                required
+                style-placeholder="">
+          <option disabled value="">Select owner</option>
+        </select>
+      </div>
+
+      <div class="form-group active-update">
+        <input  id="active" type="checkbox"
+                class="onoffswitch-checkbox"
+                ng-model="$ctrl.label.status"
+                id="active-checkbox"
+                ng-true-value="'Active'"
+                ng-false-value="'Inactive'"/>
+        <label for="active">Active</label>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button"
+            ng-click="$close($ctrl.label)"
+            ng-disabled="!$ctrl.label.labelName || !$ctrl.label.managingOrganisation || $ctrl.isExistingLabel">
+       {{$ctrl.label.id? 'SAVE':'CREATE'}}
+    </button>
+    <button class="btn btn-default btn-secondary btn-center" type="button" ng-click="$dismiss('cancel')">CANCEL</button>
+  </div>
+</div>

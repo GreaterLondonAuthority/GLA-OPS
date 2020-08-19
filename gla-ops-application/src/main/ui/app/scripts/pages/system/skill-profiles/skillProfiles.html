@@ -1,0 +1,14 @@
+<div class="skill-profile-page">
+
+  <gla-page-header (on-back)="$ctrl.back()" [editable-block]="$ctrl" [stop-editing]="true">Skills Profiles</gla-page-header>
+
+  <skill-profiles-table ng-repeat="pt in $ctrl.paymentTypes track by pt.id"
+                        data="$ctrl.data[pt.id]"
+                        totals="$ctrl.totals[pt.id]"
+                        title="pt.title"
+                        read-only="$ctrl.readOnly"
+                        payment-type="pt.id"
+                        on-create="$ctrl.createNewRow(pt.id)"
+                        on-update="$ctrl.updateValue($event)"
+                        on-delete="$ctrl.deleteValue($event)"></skill-profiles-table>
+</div>

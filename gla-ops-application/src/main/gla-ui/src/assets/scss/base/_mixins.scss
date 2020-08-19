@@ -1,0 +1,81 @@
+@import 'variables';
+
+@mixin animation($animate...) {
+  $max: length($animate);
+  $animations: '';
+  @for $i from 1 through $max {
+    $animations: #{$animations + nth($animate, $i)};
+    @if $i < $max {
+      $animations: #{$animations + ", "};
+    }
+  }
+  -webkit-animation: $animations;
+  -moz-animation : $animations;
+  -o-animation : $animations;
+  animation : $animations;
+}
+
+@mixin keyframes($animationName) {
+  @-webkit-keyframes #{$animationName} {
+    @content;
+  }
+  @-moz-keyframes #{$animationName} {
+    @content;
+  }
+  @-o-keyframes #{$animationName} {
+    @content;
+  }
+  @keyframes #{$animationName} {
+    @content;
+  }
+}
+
+
+@mixin placeholder {
+  ::-webkit-input-placeholder {
+    @content
+  }
+  :-moz-placeholder {
+    @content
+  }
+  ::-moz-placeholder {
+    @content
+  }
+  :-ms-input-placeholder {
+    @content
+  }
+}
+
+@mixin when-xs() {
+  @media (max-width: $screen-xs-max) {
+    @content;
+  }
+}
+
+@mixin when-ms() {
+  @media (min-width: $screen-xs-min) {
+    @content;
+  }
+}
+
+@mixin when-sm() {
+  @media screen and (min-width: $screen-sm-min) {
+    @content;
+  }
+
+  @media print and (min-width: 500px) {
+    @content;
+  }
+}
+
+@mixin when-md() {
+  @media (min-width: $screen-md-min) {
+    @content;
+  }
+}
+
+@mixin when-lg() {
+  @media (min-width: $screen-lg-min) {
+    @content;
+  }
+}

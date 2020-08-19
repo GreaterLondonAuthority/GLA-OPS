@@ -1,0 +1,156 @@
+<div class="template-block-milestones">
+  <div class="form-group">
+    <input [(ngModel)]="block.showMilestoneStatus"
+           id="show-status"
+           aria-label="Show status"
+           name="show-status"
+           [disabled]="readOnly"
+           type="checkbox">
+    <label for="show-status">Show status column on project milestones</label>
+  </div>
+
+  <div *ngIf="block.showMilestoneStatus" class="form-group sub-item">
+    <input [(ngModel)]="block.autoCalculateMilestoneState"
+           id="auto-set-status"
+           aria-label="Auto set status"
+           name="auto-set-status"
+           [disabled]="readOnly"
+           type="checkbox">
+    <label class ="item-label" for="auto-set-status">Always set status of a date in the future as 'Forecast' and a date in the past as 'Actual'</label>
+  </div>
+
+ <div class="form-group">
+    <input [(ngModel)]="block.descriptionEnabled"
+           type="checkbox"
+           id="description-enabled"
+           aria-label="Description Enabled"
+           name="description-enabled"
+           [class]="{checked: block.descriptionEnabled}"
+           [disabled]="readOnly">
+    <label for="description-enabled">Show description column on project milestones</label>
+  </div>
+
+  <div class="form-group">
+    <label for="evidence-applicability">Apply evidence to project milestones</label>
+
+    <select [(ngModel)]="block.evidenceApplicability"
+            [class]="{placeholder: !block.evidenceApplicability}"
+            [disabled]="readOnly"
+            class="form-control"
+            id="evidence-applicability">
+      <option disabled value="undefined">Evidence Applicability</option>
+      <option *ngFor="let applicability of applicabilityOptions" [ngValue]="applicability.id">{{applicability.label}}</option>
+    </select>
+  </div>
+
+  <div class="form-group" >
+    <label for="max-attachments">If any evidence, enter maximum number of attachments</label>
+    <input class="form-control"
+           id="max-attachments"
+           [(ngModel)]="block.maxEvidenceAttachments"
+           mask="separator.0"
+           [disabled]="readOnly"
+           maxlength="2"
+           numberType
+           placeholder="Max Attachments" />
+  </div>
+
+  <div class="form-group">
+    <label for="milestoneType">Block monetary type</label>
+
+    <select (ngModelChange)="onMilestoneTypeChange($event)"
+            [(ngModel)]="template.milestoneType"
+            [class]="{placeholder: !template.milestoneType}"
+            [disabled]="readOnly"
+            class="form-control"
+            id="milestoneType"
+            name="milestoneType">
+      <option disabled value="undefined">Block monetary type</option>
+      <option *ngFor="let mt of milestoneTypeOptions" [ngValue]="mt.id">{{mt.label}}</option>
+    </select>
+  </div>
+
+  <div *ngIf="template.milestoneType">
+    <div class="text-right mbottom5">
+      <button (click)="showProcessingRouteModal()" *ngIf="!readOnly" class="btn btn-secondary">ADD PROCESSING ROUTE</button>
+    </div>
+
+    <div class="table-responsive" id="milestones">
+      <div *ngIf="!block?.processingRoutes?.length" class="empty-table">Not provided</div>
+
+      <table *ngIf="block?.processingRoutes?.length" class="table table-default table-hover table-bordered blocks milestones-table processing-routes">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th>DISPLAY ORDER</th>
+            <th>EXTERNAL ID</th>
+            <th>SUMMARY</th>
+            <th>REQUIRED?</th>
+            <th>MONETARY?</th>
+            <th>KEY EVENT?</th>
+            <th>SPLIT %</th>
+            <th *ngIf="!readOnly"></th>
+            <th *ngIf="!readOnly"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngIf="!block?.processingRoutes?.length" class="bolder">
+            <td colspan="7">Not provided</td>
+          </tr>
+
+          <ng-container *ngFor="let processingRoute of block.processingRoutes">
+            <tr  [class]="{'cursor-pointer': !readOnly}">
+              <td (click)="!readOnly && showProcessingRouteModal(processingRoute)" colspan="7">
+                <toggle-icon *ngIf="processingRoute.milestones.length" [(collapsed)]="processingRoute.collapsed"></toggle-icon>
+                <span>{{processingRoute.name}}</span>
+                <a (click)="showMilestoneModal(processingRoute, {});$event.stopPropagation()"
+                   *ngIf="!readOnly"
+                   class="text-nowrap add-milestone"
+                   href="JavaScript: void(0);">Add preset milestone</a>
+              </td>
+              <td colspan="2" *ngIf="!readOnly" class="delete-btn-container up-down-button text-nowrap">
+                <gla-show-up-down-arrow-buttons
+                  [currentItem]=processingRoute
+                  [sortedCollectionItems]=block.processingRoutes
+                  [titleUp]="'Move processing route Up'"
+                  [titleDown]="'Move processing route Down'"
+                  (onDisplayOrderChange)= "updateProcessingRoute($event)">
+                </gla-show-up-down-arrow-buttons>
+                <delete-button (click)="deleteProcessingRoute(processingRoute)" *ngIf="!readOnly"></delete-button>
+              </td>
+            </tr>
+            <ng-container *ngIf="!processingRoute?.collapsed">
+              <tr (click)="!readOnly && showMilestoneModal(processingRoute, milestone)"
+                  *ngFor="let milestone of processingRoute.milestones"
+                  [class]="{'cursor-pointer': !readOnly}" class="milestone-row">
+                <td>{{milestone.displayOrder}}</td>
+                <td>{{milestone.externalId}}</td>
+                <td>{{milestone.summary}}</td>
+                <td>{{milestone.requirement}}</td>
+                <td>{{milestone.monetary}}</td>
+                <td>{{milestone.keyEvent}}</td>
+                <td>
+                  <span>{{milestone.monetarySplit}}</span>
+                </td>
+
+                <td class="up-down-button text-nowrap"  *ngIf="!readOnly" (click)="$event.stopPropagation()">
+                  <gla-show-up-down-arrow-buttons
+                    [currentItem]=milestone
+                    [sortedCollectionItems]=processingRoute.milestones
+                    [titleUp]="'Move processing route Up'"
+                    [titleDown]="'Move processing route Down'"
+                    (onDisplayOrderChange)= "updateMilestones($event, processingRoute)">
+                  </gla-show-up-down-arrow-buttons>
+                </td>
+                <td class="delete-btn-container"  *ngIf="!readOnly">
+                  <delete-button (click)="deleteMilestone(processingRoute, milestone);$event.stopPropagation()" *ngIf="!readOnly"></delete-button>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+

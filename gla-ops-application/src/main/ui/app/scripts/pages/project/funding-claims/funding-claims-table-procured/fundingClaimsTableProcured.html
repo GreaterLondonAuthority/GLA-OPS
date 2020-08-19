@@ -1,0 +1,83 @@
+<div class="table-responsive" ng-if="$ctrl.fundingClaimsEntries && $ctrl.selectedPeriod">
+
+  <table class="table funding-claims-table table-hover table-bordered">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>FUNDING CLAIM CATEGORY</th>
+      <th ng-repeat-start="item in $ctrl.contractTypes">
+        {{item.name}} £
+      </th>
+      <th ng-repeat-end>OF WHICH, FLEXIBLE ALLOCATION</th>
+      <th ng-if="$ctrl.hasMoreThanOneContractType()">TOTAL DELIVERY £</th>
+      <th ng-if="$ctrl.hasMoreThanOneContractType()">OF WHICH, FLEXIBLE ALLOCATION</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-class="{'cursor-pointer': !$ctrl.readOnly}"
+        ng-repeat="entry in $ctrl.fundingClaimsEntries track by entry.id">
+      <td> {{entry.categoryName}}</td>
+
+      <td ng-repeat-start="cv in entry.contractTypeFundingEntries track by cv.contractType">
+        <span ng-if="$ctrl.readOnly">
+          {{cv.contractValue | currency:'':2}}
+        </span>
+        <input ng-if="!$ctrl.readOnly "
+               type="text"
+               name="value"
+               ng-model="cv.contractValue"
+               change-on-blur="$ctrl.onEntryChange({$event:entry})"
+               maxlength="13"
+               number-mask="2"
+               aria-label="Contract value">
+      </td>
+      <td ng-repeat-end>
+        <span ng-if="$ctrl.readOnly">
+          {{cv.flexibleAllocation | currency:'':2}}
+        </span>
+        <input ng-if="!$ctrl.readOnly "
+               type="text"
+               name="value"
+               ng-model="cv.flexibleAllocation"
+               change-on-blur="$ctrl.onEntryChange({$event:entry})"
+               maxlength="13"
+               number-mask="2"
+               aria-label="Flexible allocation">
+
+      </td>
+      <td class="bolder" ng-if="$ctrl.hasMoreThanOneContractType()">
+        {{entry.contractTypeTotal | currency:'':2}}
+      </td>
+      <td class="bolder" ng-if="$ctrl.hasMoreThanOneContractType()">
+        {{entry.flexibleAllocationTotal | currency:'':2}}
+      </td>
+    </tr>
+    </tbody>
+
+    <tfoot class="separated bolder">
+
+    <tr>
+      <td>TOTAL</td>
+
+      <td ng-repeat-start="item in $ctrl.contractTypes" >
+
+        {{ $ctrl.getTotalEntryByContractType($ctrl.totals[$ctrl.selectedYear][$ctrl.selectedPeriod.period], item.name).funding || 0 | currency:'':2 }}
+
+      </td>
+      <td class="read-only" ng-class="{'threshold-exceeded': $ctrl.getTotalEntryByContractType($ctrl.totals[$ctrl.selectedYear][$ctrl.selectedPeriod.period], item.name).percentage > $ctrl.flexibleAllocationThreshold}" ng-repeat-end>
+        {{ $ctrl.getTotalEntryByContractType($ctrl.totals[$ctrl.selectedYear][$ctrl.selectedPeriod.period], item.name).flexibleFunding || 0 | currency:'':2 }}
+        ({{ $ctrl.getTotalEntryByContractType($ctrl.totals[$ctrl.selectedYear][$ctrl.selectedPeriod.period], item.name).percentage || 0 }}%)
+        <span class="glyphicon glyphicon-exclamation-sign"></span>
+      </td>
+      <td class="read-only" ng-if="$ctrl.hasMoreThanOneContractType()" >{{$ctrl.totals[$ctrl.selectedYear][$ctrl.selectedPeriod.period].contractValueTotal || 0 | currency:'':2}}</td>
+      <td class="read-only" ng-class="{'threshold-exceeded': $ctrl.totals[$ctrl.selectedYear][$ctrl.selectedPeriod.period].percentage > $ctrl.flexibleAllocationThreshold}" ng-if="$ctrl.hasMoreThanOneContractType()">
+        {{$ctrl.totals[$ctrl.selectedYear][$ctrl.selectedPeriod.period].flexibleTotal || 0 | currency:'':2}}
+        ({{ $ctrl.totals[$ctrl.selectedYear][$ctrl.selectedPeriod.period].percentage || 0 }}%)
+        <span class="glyphicon glyphicon-exclamation-sign"></span>
+      </td>
+
+    </tr>
+    </tfoot>
+
+  </table>
+</div>
+

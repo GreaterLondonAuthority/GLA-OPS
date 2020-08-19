@@ -1,0 +1,13 @@
+<div class="includes-tables">
+  <div ng-repeat="group in $ctrl.comparableFundingClaimGroups">
+
+    <change-report-static-text class="next-to-tables" data="$ctrl.data" text="'Academic year: ' + group.groupName"></change-report-static-text>
+
+    <change-report-table changes="$ctrl.data.changes"
+                         fields="$ctrl.fields"
+                         rows="group.group"
+                         show-no-element-message="!!$ctrl.data.right"
+                         show-table-separators="$ctrl.data.right">
+    </change-report-table>
+  </div>
+</div>

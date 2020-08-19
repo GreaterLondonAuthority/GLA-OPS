@@ -1,0 +1,36 @@
+<div class="design-standards">
+  <div class="text-center">
+    <gla-project-header (on-back)="$ctrl.back()" [editable-block]="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
+  </div>
+
+  <gla-spinner ng-if="$ctrl.loading && !$ctrl.data"></gla-spinner>
+  <div ng-if="!$ctrl.loading || $ctrl.data">
+    <div class="row grant-block-title">
+      Confirm that this project is intended to meet the <a href="https://www.london.gov.uk/what-we-do/regeneration/regeneration-publications/london-housing-design-guide" target="_blank">design standards</a> for this programme
+    </div>
+
+    <div id="radios" class="design-compliant">
+      <gla-yes-no-input id="trueRadio"
+                        [disabled]="$ctrl.readOnly"
+                        mode="bool"
+                        [read-only]="$ctrl.readOnly"
+                        [(model)]="$ctrl.data.meetingLondonHousingDesignGuide">
+      </gla-yes-no-input>
+
+      <div ng-if="$ctrl.data.meetingLondonHousingDesignGuide === false" class="reason-label">Provide a brief explanation for why the London Housing Design Guide standards are not being met.</div>
+    </div>
+
+    <div ng-if="$ctrl.data.meetingLondonHousingDesignGuide === false">
+
+      <textarea id="reason"
+                aria-label="Reason" rows="5" name="reason"
+                ng-disabled="$ctrl.readOnly"
+                class="form-control" ng-model="$ctrl.data.reasonForNotMeetingDesignGuide"
+                gla-read-only="$ctrl.readOnly"
+                maxlength="1000"></textarea>
+      <gla-remaining-characters ng-if="!$ctrl.readOnly" [text]="$ctrl.data.reasonForNotMeetingDesignGuide" [max]="1000"></gla-remaining-characters>
+    </div>
+
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
+  </div>
+</div>

@@ -1,0 +1,184 @@
+<div class="templates-page">
+
+  <gla-page-header header="Templates" [hide-back-btn]="true">
+    <ph-right>
+      <button class="btn btn-primary btn-md" ng-click="$ctrl.createNewTemplate()">
+        CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </ph-right>
+  </gla-page-header>
+
+  <well class="row programmes-list-actions mbottom10 search-container">
+    <div class="col-md-5 search-column">
+      <div class="text-align-left">Search</div>
+      <search-field options="$ctrl.searchOptions"
+                    selected-option="$ctrl.selectedSearchOption"
+                    search-text="$ctrl.searchText"
+                    on-select="$ctrl.select($ctrl.selectedSearchOption)"
+                    on-search="$ctrl.search(true)"
+                    on-clear="$ctrl.clearSearchText()"
+                    reset="$ctrl.resetSearch"></search-field>
+    </div>
+
+    <div class="col-xs-12 col-sm-5 col-md-2 project-status search-column">
+      <div class="pull-left" ng-if="!$ctrl.isSearchByProgramme()">
+        <div class="text-align-left">Template status</div>
+        <checkbox-filter
+          id="template-status-filter"
+          filter-dropdown-items="$ctrl.templateStatusFilters"
+          on-change="$ctrl.search(true)"></checkbox-filter>
+      </div>
+    </div>
+  </well>
+
+  <div ng-if="$ctrl.templates.length">
+
+    <pagination class="mbottom10 pagination-top"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                total-items="$ctrl.totalItems"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.search(false)"></pagination>
+
+    <div class="row mtop10">
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered table-striped table-selectable-row" id="templates-table">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>AUTHOR</th>
+            <th>STATE MODEL</th>
+            <th>STATUS</th>
+            <th>PROGRAMMES</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr allow-enter ng-click="$ctrl.templateSelected(template)" ng-repeat="template in $ctrl.templates" tabindex="0">
+            <td>{{ template.id }}</td>
+            <td>
+              <div style="width:300px;">{{ template.name }}</div>
+            </td>
+            <td>{{ template.author }}</td>
+            <td>
+              <div style="width:50px;">
+                {{ $ctrl.stateModelText(template.stateModel) }}
+              </div>
+            </td>
+            <td>
+              <div style="width:50px;">
+                {{ $ctrl.templateStatusText(template.templateStatus) }}
+              </div>
+            </td>
+            <td>
+              <div style="width:350px;">
+                <ul ng-if="template.programmes && template.programmes.length">
+                  <li ng-repeat="programme in template.programmes">{{ programme.name }}</li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <pagination class="mtop10 pagination-top"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                total-items="$ctrl.totalItems"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.search(false)"></pagination>
+
+  </div>
+
+  <div class="text-center" ng-if="!$ctrl.templates.length && !$root.showGlobalLoadingMask" id="no-results">
+    <hr>
+    0 templates match your filter criteria. Check your search criteria and try again.
+  </div>
+</div>
+
+
+<!--
+allowMonetaryMilestones
+:
+true
+associatedProjectsEnabled
+:
+false
+author
+:
+"TestDataInitialiser@gla.org"
+autoApproval
+:
+false
+blocksEnabled
+:
+[{type: "TemplateBlock", id: 10000, blockDisplayName: "Project Details", block: "Details",…},…]
+changeControlled
+:
+false
+cloneModified
+:
+false
+cloneOfTemplateId
+:
+null
+contract
+:
+{id: 101, name: "Test Housing Template"}
+createdBy
+:
+"TestDataInitialiser@gla.org"
+createdOn
+:
+"2018-06-22T10:16:59.532+01:00"
+detailsConfig
+:
+{addressRequirement: "mandatory", boroughRequirement: "mandatory", postcodeRequirement: "optional",…}
+grantTypes
+:
+["Grant", "RCGF", "DPF"]
+id
+:
+100
+indicativeTenureConfiguration
+:
+null
+infoMessage
+:
+null
+internalBlocks
+:
+[]
+milestoneDescriptionHintText
+:
+null
+milestoneType
+:
+"MonetarySplit"
+monetarySplitTitle
+:
+null
+name
+:
+"Test Housing Template"
+programmes
+:
+[{id: 1005, name: "Test (Closed) housing programme", templatesByProgramme: [], restricted: false,…},…]
+shouldMilestonesBlockShowStatus
+:
+false
+startOnSiteRestrictionText
+:
+"Project has reached start on site. The total units on this project can be reduced but cannot be increased."
+strategicTemplate
+:
+false
+tenureTypes
+:
+[{id: 10002, tariffRate: 25000, displayOrder: 0, name: "London Affordable Rent", externalId: 4000},…]
+warningMessage
+:
+null
+-->

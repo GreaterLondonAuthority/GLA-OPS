@@ -1,0 +1,91 @@
+<div class="finance-categories-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Update spend & receipt category</h1>
+  </div>
+
+  <div class="modal-body">
+    <form
+      id="financeCategoryForm"
+      role="form"
+      name="financeCategoryForm">
+      <div class="form-group">
+        <label for="title">Define spend category</label>
+        <input id="title"
+               type="text"
+               name="text"
+               ng-disabled="$ctrl.readOnly"
+               class="form-control"
+               placeholder=""
+               ng-model="$ctrl.category.text"
+               required
+               maxlength="50"/>
+      </div>
+      <div class="form-group">
+        <label for="ceCodesString" class="mtop10">
+          Enter CE code(s) to match against.<br/>For more than one, separate codes using a comma
+        </label>
+        <textarea
+               id="ceCodesString"
+               rows="5"
+               type="text"
+               name="ceCodesString"
+               ng-disabled="$ctrl.readOnly"
+               class="form-control"
+               placeholder=""
+               ng-model="$ctrl.ceCodesString"
+               required></textarea>
+
+        <div class="error-wrapper" role="alert"  ng-if="$ctrl.errorMessage">
+          <span class="error" ng-if="$ctrl.errorMessage">{{$ctrl.errorMessage}}</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="spend-status" class="mtop10">
+          Spend - Select forecast & report status for spend
+        </label>
+        <select class="search-dropdown form-control"
+                id="spend-status"
+                name="spend-status"
+                ng-model="$ctrl.category.spendStatus"
+                ng-options="status.value as status.label for status in $ctrl.statuses"
+                required
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+
+      </div>
+      <div class="form-group">
+        <label for="receipt-status" class="mtop10">
+          Receipt - Select forecast & report status for receipts
+        </label>
+        <select class="search-dropdown form-control"
+                id="receipt-status"
+                name="receipt-status"
+                ng-model="$ctrl.category.receiptStatus"
+                ng-options="status.value as status.label for status in $ctrl.statuses"
+                required
+                style-placeholder>
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-6">
+        <button
+          class="btn confirm-button btn-default btn-primary"
+          ng-click="$ctrl.onUpdate()"
+          ng-disabled="!financeCategoryForm.$valid"
+          type="button">{{$ctrl.category.id? 'UPDATE':'CREATE'}}</button>
+      </div>
+      <div class="col-xs-6">
+        <button class="btn btn-default btn-secondary" ng-click="$dismiss()" type="button">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>

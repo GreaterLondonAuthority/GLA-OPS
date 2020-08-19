@@ -1,0 +1,14 @@
+@import 'variables';
+
+:host {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.glyphicon {
+  color: $accent-color;
+  top: 2px;
+  display: inline-block;
+}
+
+

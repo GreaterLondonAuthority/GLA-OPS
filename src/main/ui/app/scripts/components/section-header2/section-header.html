@@ -1,8 +1,0 @@
-<div class="section-header"
-     ng-class="{'with-subheader': $ctrl.subheader, 'cursor-pointer': $ctrl.isCollapsible}"
-     ng-click="$ctrl.onSectionClick()">
-  <div ng-if="$ctrl.isCollapsible" class="glyphicon" ng-class="{'glyphicon-chevron-down': $ctrl.collapsed, 'glyphicon-chevron-up': !$ctrl.collapsed}"></div>
-  <div ng-transclude class="section-title"></div>
-  <hr ng-if="$ctrl.showBar">
-</div>
-<div ng-if="$ctrl.subheader" class="section-subheader">{{$ctrl.subheader}}</div>

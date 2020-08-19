@@ -1,0 +1,39 @@
+<div class="table-responsive mtop15 outputs-costs" ng-class="{'readonly-mode': $ctrl.readOnly}">
+  <div ng-if="!$ctrl.block.categoriesCosts.length" class="empty-table">Not provided</div>
+  <table ng-if="$ctrl.block.categoriesCosts.length" class="table table-hover table-bordered table-striped table-with-inputs">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>CATEGORY</th>
+      <th>SUBCATEGORY</th>
+      <th>UNIT COST £</th>
+      <th ng-if="$ctrl.showRecoveryColumn">RECOVERY OUTPUT</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="entry in $ctrl.block.categoriesCosts | orderBy: 'outputCategoryConfigurationId'" ng-if="!entry.hidden">
+      <td>{{entry.category}}</td>
+      <td>{{entry.subcategory}}</td>
+      <td>
+        <span ng-if="$ctrl.readOnly">{{entry.unitCost}}</span>
+        <input
+          id="unit-cost-price"
+          ng-if="!$ctrl.readOnly"
+          type="text"
+          maxlength="13"
+          ng-model="entry.unitCost"
+          ng-disabled="!$ctrl.canEditAdvancePayment"
+          number-mask="2">
+      </td>
+
+      <td ng-if="$ctrl.showRecoveryColumn">
+        <div class="radio">
+          <label><input name="recoveryOutputOption" ng-disabled="$ctrl.readOnly || !$ctrl.canEditAdvancePayment"
+                        ng-model="entry.recoveryOutput"
+                        type="checkbox"></label>
+        </div>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+</div>

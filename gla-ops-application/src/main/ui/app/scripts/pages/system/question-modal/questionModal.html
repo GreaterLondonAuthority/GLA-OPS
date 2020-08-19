@@ -1,0 +1,167 @@
+<div class="question-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.btnName}} Question</h1>
+  </div>
+
+  <div class="modal-body text-left">
+      <form name="modalForm">
+        <div class="form-group" ng-if="$ctrl.sectionsCount >= 1">
+          <label for="sectionId">Question Section</label>
+          <select class="form-control"
+                  id="sectionId"
+                  ng-change="$ctrl.onSectionSelect($ctrl.selectedSection)"
+                  ng-model="$ctrl.selectedSection"
+                  ng-options="section as section.text for section in $ctrl.sections | orderBy:'displayOrder' track by section.externalId"
+                  required
+                  style-placeholder>
+            <option disabled value="">Select section</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="id">Question ID</label>
+          <input id="id"
+                 type="text"
+                 class="form-control"
+                 numbers-only
+                 ng-disabled="!$ctrl.isIdEditable"
+                 placeholder="Question ID"
+                 ng-model="$ctrl.question.question.id"
+                 ng-model-options="{ debounce: 400 }"
+                 ng-change="$ctrl.onQuestionIdChange($ctrl.question.question.id)"
+                 maxlength="9"/>
+          <div class="error-wrapper" role="alert">
+            <span ng-if="$ctrl.question.question.id && !$ctrl.questionExists && !$ctrl.loading" class="error" id="invalid-question">Question not found</span>
+            <span ng-if="$ctrl.questionExists && $ctrl.isExistingQuestion" class="error" id="duplicate-question">Question already exists in the block</span>
+          </div>
+        </div>
+
+        <div class="form-group" ng-if="$ctrl.questionExists">
+          <span id="questionText" style="color: cornflowerblue">{{$ctrl.question.question.text}}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="requirement">Question Requirement</label>
+          <select class="form-control"
+                  id="requirement"
+                  ng-disabled="false"
+                  ng-model="$ctrl.question.requirement"
+                  ng-options="requirement for requirement in $ctrl.requirements"
+                  required
+                  style-placeholder>
+            <option disabled value="">Select requirement</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="helpText">Question Help Text (Optional)</label>
+          <textarea id="helpText"
+                    name="helpText"
+                    type="text"
+                    class="form-control"
+                    placeholder="Informational question text"
+                    ng-model="$ctrl.question.helpText"
+                    ng-model-options='{ debounce: 300 }'
+                    ng-attr-maxlength="600"
+                    cols="50"
+                    ng-trim="false"
+                    rows="4">
+            </textarea>
+          <div class="error-wrapper" ng-if="modalForm.question.displayOrder.$touched || $ctrl.isDuplicateDisplayOrder || $ctrl.isDuplicateDisplayOrderInSection" role="alert">
+            <span class="error" id="duplicate-display-order">Duplicate display order</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="displayOrder">Display Order</label>
+          <input id="displayOrder"
+                 type="text"
+                 class="form-control"
+                 number-mask="2"
+                 placeholder="Display Order"
+                 ng-model="$ctrl.question.displayOrder"
+                 ng-keyup="$ctrl.validateDisplayOrder($ctrl.question.displayOrder)"
+                 maxlength="9"/>
+          <div class="error-wrapper" ng-if="modalForm.question.displayOrder.$touched || $ctrl.isDuplicateDisplayOrder || $ctrl.isDuplicateDisplayOrderInSection" role="alert">
+            <span class="error" id="duplicate-display-order">Duplicate display order</span>
+          </div>
+        </div>
+
+        <div class="form-group" ng-if="$ctrl.questionExists && $ctrl.questionsCount > 0">
+        <div class="form-group" >
+          <label for="parent-id">Depends on question ID (Optional)</label>
+          <div class="form-group">
+            <input id="parent-id"
+                   type="text"
+                   class="form-control"
+                   placeholder="Question ID"
+                   ng-model="$ctrl.question.parentId"
+                   ng-model-options="{ debounce: 400 }"
+                   ng-change="$ctrl.onParentQuestionIdChange($ctrl.question)"
+                   maxlength="9"/>
+
+            <div class="error-wrapper"  role="alert">
+              <span ng-if="$ctrl.question.parentId && !$ctrl.parentQuestionExists && !$ctrl.loading" class="error" id="parent-invalid-question">Question not found</span>
+              <span ng-if="$ctrl.parentQuestionExists && !$ctrl.isParentQuestionDifferent " class="error" id="parent-id-same-as-child">Depends on question ID  can't be same as question ID</span>
+              <span ng-if="$ctrl.parentQuestionExists && !$ctrl.isExistingParentQuestion" class="error" id="parent-question-not-in-block">Question does not exists in the block</span>
+              <span ng-if="$ctrl.parentQuestionExists && !($ctrl.parentDropdownAnswerExists || $ctrl.parentYesNoAnswerExists)"  class="error" id="parent-wrong-answer-type">Wrong answer type: questions can only depend on Yes/No and Dropdown answer types</span>
+              <span ng-if=" $ctrl.parentQuestionExists && !$ctrl.isParentQuestionLevelValid"  class="error" id="parent-question-valid-level">Maximum parent levels exceeded</span>
+            </div>
+          </div>
+
+          <div class="form-group" ng-if="$ctrl.parentQuestionExists">
+            <span id="parent-question-text" style="color: cornflowerblue">{{$ctrl.parentQuestion.text}}</span>
+          </div>
+
+        </div>
+
+          <div ng-if="$ctrl.question.parentId && $ctrl.parentQuestionValid && $ctrl.parentDropdownAnswerExists && $ctrl.parentQuestion.maxAnswers">
+            <label for="multianswerToMatch">Depends on answer</label>
+            <div class="mtop10 mbottom10">
+              <gla-multi-select id="multianswerToMatch"
+                                [filter-dropdown-items]="$ctrl.parentQuestion.answerOptions"
+                                (on-change)="$ctrl.onMultiSelectChange($event, $ctrl.parentQuestion)"></gla-multi-select>
+
+            </div>
+          </div>
+
+          <div class="form-group"  ng-if ="$ctrl.question.parentId && $ctrl.parentQuestionValid && $ctrl.parentYesNoAnswerExists">
+            <label for="yes-no-input">Parent option(s)</label>
+            <div>
+              <gla-yes-no-input id="yes-no-input"
+                                name="yes-no-input"
+                                [(model)]="$ctrl.question.parentAnswerToMatch">
+              </gla-yes-no-input>
+            </div>
+          </div>
+
+      </div>
+  </form>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$ctrl.addQuestion()"
+          ng-disabled="!$ctrl.addButtonEnabled()">
+          {{$ctrl.btnName.toUpperCase()}}
+        </button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>

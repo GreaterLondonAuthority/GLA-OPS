@@ -1,0 +1,53 @@
+<div class="assessmentTemplateNew">
+
+  <gla-page-header class="mbottom10" header="Assessment Template" (on-back)="$ctrl.goBack()" back-btn-name="ASSESSMENT LIST" [editable-block]="$ctrl">
+  </gla-page-header>
+
+  <form class="form-gla mtop40" role="form" name="newAssessmentTemplateForm">
+
+    <div class="row">
+
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+
+        <div class="form-group">
+          <label for="assessment-template-name">Name</label>
+          <input id="assessment-template-name" name="assessment-template-name" type="text" class="form-control" required autofocus
+                 placeholder="Assessment template name" ng-model="$ctrl.assessmentTemplate.name" maxlength="255"/>
+          <div id="name-error" class="error-wrapper" role="alert" ng-show="newAssessmentTemplateForm.$submitted || newAssessmentTemplateForm.name.$touched">
+            <span class="error" ng-show="newAssessmentTemplateForm.name.$error.required">Enter a name</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="managing-organisation">Managing organisation</label>
+          <select class="form-control"
+                  id="managing-organisation"
+                  ng-change="$ctrl.onManagingOrganisation($ctrl.managingOrganisationModel)"
+                  ng-if="$ctrl.managingOrganisations.length > 1"
+                  ng-model="$ctrl.managingOrganisationModel"
+                  ng-options="managingOrganisation as managingOrganisation.name for managingOrganisation in $ctrl.managingOrganisations track by managingOrganisation.id"
+                  required
+                  style-placeholder="">
+            <option disabled value="">Select</option>
+          </select>
+          <div ng-if="$ctrl.editMode || $ctrl.managingOrganisations.length === 1">
+            {{$ctrl.assessmentTemplate.managingOrganisationName || '-'}}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 text-center mtop30">
+        <button ng-disabled="newAssessmentTemplateForm.$error.required"
+                class="btn btn-primary" ng-enabled="$ctrl.submitenabled" ng-click="$ctrl.create()">CREATE</button>
+      </div>
+      <div class="col-xs-12 text-center mtop15">
+        <a href ui-sref="assessment-templates" class="form-cancel">Cancel</a>
+      </div>
+    </div>
+
+  </form>
+
+</div>

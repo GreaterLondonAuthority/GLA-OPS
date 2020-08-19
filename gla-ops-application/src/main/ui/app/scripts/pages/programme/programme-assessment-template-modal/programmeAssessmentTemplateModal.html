@@ -1,0 +1,97 @@
+<div class="modal-with-icon assessment-template-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <h1>{{$ctrl.readOnly? 'Template and roles' : 'Add template and roles'}}</h1>
+  </div>
+  <div class="modal-body text-left">
+    <div ng-if="!$ctrl.readOnly" ng-include="'at-edit-mode.html'"></div>
+    <div ng-if="$ctrl.readOnly" ng-include="'at-read-only-mode.html'"></div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          class="btn btn-primary btn-center"
+          type="button"
+          ng-if="!$ctrl.readOnly || !$ctrl.pageReadOnly"
+          ng-click="$ctrl.onSave()"
+          ng-disabled="!$ctrl.isFormValid()"
+          ng-disabled="">SAVE</button>
+
+        <button
+          class="btn btn-primary btn-center"
+          type="button"
+          ng-click="$dismiss()">{{$ctrl.readOnly? 'CLOSE' : 'CANCEL'}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/ng-template" id="at-edit-mode.html">
+  <div class="form-group">
+    <label for="programme-assessment-template">Select a template</label>
+    <select id="programme-assessment-template"
+            class="form-control"
+            ng-disabled="$ctrl.at.id"
+            ng-model="$ctrl.at.assessmentTemplate"
+            ng-options="at as at.name for at in $ctrl.availableTemplates track by at.id"
+            style-placeholder="">
+      <option disabled value="">Select a template</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <div class="label">Select which role can use the above template</div>
+    <div class="gla-roles edit-mode">
+      <div class="roles-toggle">
+        <a href="JavaScript:void(0)" ng-click="$ctrl.toggleRoles(true)">Select All</a>
+        <a href="JavaScript:void(0)" ng-click="$ctrl.toggleRoles(false)">Deselect All</a>
+      </div>
+
+      <label ng-repeat="role in $ctrl.glaRoles" ng-attr-for="{{role.name}}">
+        <input ang-true-value="role.name" ng-model="role.selected" type="checkbox" ng-attr-id="{{role.name}}"> {{role.description}}
+      </label>
+    </div>
+  </div>
+
+</script>
+
+<script type="text/ng-template" id="at-read-only-mode.html">
+  <div class="form-group">
+    <div class="label">Template</div>
+    <div>{{$ctrl.at.assessmentTemplate.name}}</div>
+  </div>
+
+  <div class="form-group">
+    <div class="label">Roles which can use the above template</div>
+    <div class="gla-roles">
+      <div class="role" ng-repeat="role in $ctrl.glaRoles | filter: {selected: true}">
+        {{role.description}}
+      </div>
+    </div>
+  </div>
+
+  <div ng-if="!$ctrl.pageReadOnly">
+    <div class="form-group">
+      <label for="programme-assessment-template-allow-usage">
+        <input
+          id="programme-assessment-template-allow-usage"
+          type="checkbox"
+          name="enabled"
+          ng-model="$ctrl.at.noNewAssessments"/>
+          <span>No new assessments</span>
+      </label>
+
+    </div>
+  </div>
+  <div ng-if="$ctrl.pageReadOnly && $ctrl.at.noNewAssessments">
+    <span>No new assessments</span>
+  </div>
+
+  </div>
+</script>

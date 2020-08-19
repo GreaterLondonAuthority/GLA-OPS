@@ -1,0 +1,31 @@
+.request-organisation-access-modal {
+  h3 {
+    margin-bottom: 0;
+  }
+
+  .fixed-header {
+    overflow-y: auto;
+    max-height: 270px;
+
+    table {
+      border-top: none;
+      thead th {
+        position: sticky;
+        top: 0px;
+        margin-top: 1px;
+        z-index: 1001;
+      }
+    }
+  }
+
+  table {
+    thead {
+      th {
+        &.name {
+          width: 195px;
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,438 @@
+{
+  "name": "Legacy MHC 15-18",
+  "author": "Katherine Talbot",
+  "blocksEnabled": [{
+    "type": "ProjectDetailsTemplateBlock",
+    "block": "Details",
+    "displayOrder": 0
+  },
+    {
+      "type": "MilestonesTemplateBlock",
+      "block": "Milestones",
+      "blockDisplayName": "Milestones",
+      "displayOrder": 1,
+      "autoCalculateMilestoneState": true,
+      "processingRoutes": [{
+        "externalId": null,
+        "name": "Acquisition of Home & Works",
+        "milestones": [{
+          "externalId": 3006,
+          "summary": "Detailed planning permission achieved",
+          "requirement": "mandatory",
+          "monetarySplit": 0,
+          "displayOrder": 0,
+          "monetary": false
+        },
+          {
+            "externalId": 3003,
+            "summary": "Start on Site",
+            "requirement": "mandatory",
+            "monetarySplit": 50,
+            "displayOrder": 1,
+            "monetary": true,
+            "keyEvent": true
+          },
+          {
+            "externalId": 3004,
+            "summary": "Completion",
+            "requirement": "mandatory",
+            "monetarySplit": 50,
+            "displayOrder": 3,
+            "monetary": true,
+            "keyEvent": true
+          }
+        ]
+      },
+        {
+          "externalId": null,
+          "name": "Works Only",
+          "milestones": [{
+            "externalId": 3006,
+            "summary": "Detailed planning permission achieved",
+            "requirement": "mandatory",
+            "monetarySplit": 0,
+            "displayOrder": 0,
+            "monetary": false
+          },
+            {
+              "externalId": 3003,
+              "summary": "Start on Site",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 1,
+              "monetary": true,
+              "keyEvent": true
+            },
+            {
+              "externalId": 3004,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 3,
+              "monetary": true,
+              "keyEvent": true
+            }
+          ]
+        },
+        {
+          "externalId": null,
+          "name": "Off the Shelf",
+          "milestones": [
+
+            {
+              "externalId":3004,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 100,
+              "displayOrder": 0,
+              "monetary": true,
+              "keyEvent": true
+            }
+          ]
+        },
+        {
+          "externalId": null,
+          "name": "Purchase & Repair",
+          "milestones": [
+
+            {
+              "externalId": 3003,
+              "summary": "Start on Site",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 0,
+              "monetary": true,
+              "keyEvent": true
+            },
+            {
+              "externalId": 3004,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 1,
+              "monetary": true,
+              "keyEvent": true
+            }
+          ]
+        },
+
+
+        {
+          "externalId": null,
+          "name": "Package Deal (inc Land)",
+          "milestones": [{
+            "externalId": 3006,
+            "summary": "Detailed planning permission achieved",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 0,
+            "monetary": false
+          },
+
+            {
+              "externalId": 3003,
+              "summary": "Start on Site",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 1,
+              "monetary": true,
+              "keyEvent": true
+            },
+            {
+              "externalId": 3004,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 2,
+              "monetary": true,
+              "keyEvent": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TemplateBlock",
+      "block": "NegotiatedGrant",
+      "displayOrder": 2
+    },
+    {
+      "type": "GrantSourceTemplateBlock",
+      "block": "GrantSource",
+      "displayOrder": 3,
+      "grantTypes": [
+        "Grant",
+        "DPF",
+        "RCGF"
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "block": "Questions",
+      "blockDisplayName": "Questions",
+      "displayOrder": 4,
+      "questions": [{
+        "question": {
+          "id": 525,
+          "text": "Other public subsidy (£)",
+          "answerType": "Number",
+          "answerOptions": [
+
+          ]
+        },
+        "requirement": "mandatory",
+        "displayOrder": 0
+      },
+
+        {
+          "question": {
+            "id": 9906,
+            "text": "Other contributions (£)",
+            "answerType": "Number",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 1
+        },
+        {
+          "question": {
+            "id": 9907,
+            "text": "Initial sales (£)",
+            "answerType": "Number",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 2
+        },
+        {
+          "question": {
+            "id": 9908,
+            "text": "Estimated rental income Pa- Affordable rent (£)",
+            "answerType": "Number",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "optional",
+          "displayOrder": 3
+        },
+        {
+          "question": {
+            "id": 9909,
+            "text": "Estimated rental income Pa- Affordable Home Ownership (£)",
+            "answerType": "Number",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "optional",
+          "displayOrder": 4
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "block": "Questions",
+      "blockDisplayName": "Additional Questions",
+      "displayOrder": 5,
+      "questions": [{
+        "question": {
+          "id": 9901,
+          "text": "Offer Line ID",
+          "answerType": "Text",
+          "answerOptions": [
+
+          ]
+        },
+        "requirement": "optional",
+        "displayOrder": 0
+      },
+        {
+          "question": {
+            "id": 9902,
+            "text": "Offer Line Sub Product ID",
+            "answerType": "Text",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "optional",
+          "displayOrder": 1
+        },
+        {
+          "question": {
+            "id": 9903,
+            "text": "Offer Line Sub Product Scheme ID",
+            "answerType": "Text",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "optional",
+          "displayOrder": 2
+        },
+        {
+          "question": {
+            "id": 568,
+            "text": "Number of units which are self contained",
+            "answerType": "Number",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 3
+        },
+        {
+          "question": {
+            "id": 571,
+            "text": "Number of units with shared facilities",
+            "answerType": "Number",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 4
+        },
+        {
+          "question": {
+            "id": 530,
+            "text": "Number of larger affordable homes",
+            "answerType": "Number",
+            "answerOptions": [
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 5
+        },
+        {
+          "question": {
+            "id": 513,
+            "text": "Client group",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Adults with learning difficulties"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Adults with physical or sensory disability"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Extra care"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Older people with support"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Sheltered retirement community/village"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Domestic violence refuges"
+              },
+              {
+                "displayOrder": 11,
+                "option": "General needs"
+              },
+              {
+                "displayOrder": 0,
+                "option": "Single homeless"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Homeless families"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Adults with mental health problems"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Gypsy and Traveller Pitch"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Homeless couples"
+              }
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 6
+        },
+
+        {
+          "question": {
+            "id": 9911,
+            "text": "Scheme Status description at point of migration",
+            "answerType": "FreeText",
+            "answerOptions": [
+
+            ]
+          },
+          "requirement": "mandatory",
+          "displayOrder": 7
+        },
+        {
+          "question": {
+            "id": 9915,
+            "text": "Average Market value £ if Affordable rent",
+            "answerType": "Number",
+            "answerOptions": [
+            ]
+          },
+          "requirement": "optional",
+          "displayOrder": 8
+        }
+      ]
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Unit Details",
+      "block": "UnitDetails",
+      "displayOrder": 6
+    }
+  ],
+
+
+  "stateModel": "ChangeControlled",
+  "allowMonetaryMilestones": true,
+  "startOnSiteRestrictionText": null,
+  "warningMessage": "This project type is restricted and should only be used following agreement with a GLA Area Manager",
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "mandatory",
+    "postcodeRequirement": "optional",
+    "coordsRequirement": "mandatory",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": null,
+    "imageRequirement": "optional",
+    "contactRequirement": "optional",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "optional"
+  },
+  "tenureTypes": [{
+    "name": "Affordable Rent",
+    "externalId": 4004,
+    "displayOrder": 1
+  },
+    {
+      "name": "Legacy Shared Ownership",
+      "externalId": 4006,
+      "displayOrder": 0
+    }
+  ],
+  "indicativeTenureConfiguration": null
+}

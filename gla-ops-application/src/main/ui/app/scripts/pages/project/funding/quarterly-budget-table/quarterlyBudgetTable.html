@@ -1,0 +1,248 @@
+<div class="table-responsive quarterly-budget-container " >
+    <table class="table table-default table-with-inputs quarterly-budget-table" ng-class="{'edit-mode': !$ctrl.readOnly}" id="quarterly-budget-table">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th class="" style="width: 50px" class="no-print"></th>
+      <th class=" text-center">PROFILES AND ACTIVITY</th>
+      <th class="number" ng-if="$ctrl.showCapitalGla">{{$ctrl.capClaimedLabel}}</th>
+      <th class="number" ng-if="$ctrl.showCapitalOther">{{$ctrl.capOtherLabel}}</th>
+      <th class="number" ng-if="$ctrl.showRevenueGla">{{$ctrl.revClaimedLabel}}</th>
+      <th class="number" ng-if="$ctrl.showRevenueOther">{{$ctrl.revOtherLabel}}</th>
+      <th >{{$ctrl.allowEvidenceUpload ? 'EVIDENCE' : ''}}</th>
+      <th ng-if="$ctrl.canClaimActivity">STATUS </th>
+      <th ng-if="$ctrl.canClaimActivity && !$ctrl.readOnly">PAYMENT ACTIONS</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody ng-if="$ctrl.hasMilestones || $ctrl.hasCategories"
+           ng-repeat="section in $ctrl.yearBreakdown.mappedSections"
+           class="expandableRow">
+      <tr class="top-border quarter-row primaryRow expandable "
+          ng-click="section.hasMilestones && ($ctrl.blockSessionStorage.sectionExpandState[section.toggleId] = !$ctrl.blockSessionStorage.sectionExpandState[section.toggleId]); $event.stopPropagation();"
+          ng-class="{expandable:section.hasMilestones}">
+        <td  ng-if="!section.hasMilestones" class=" year-column-cell "></td>
+        <td allow-enter
+            aria-expanded="{{!!$ctrl.blockSessionStorage.sectionExpandState[section.toggleId]}}"
+            aria-label="{{!$ctrl.blockSessionStorage.sectionExpandState[section.toggleId]? 'Expand' : 'Collapse'}}"
+            class="expandable no-print year-column-cell"
+            ng-if="section.hasMilestones"
+            role="button"
+            tabindex="0">
+          <span>
+            <i class="glyphicon glyphicon-triangle-bottom" ng-if="!$ctrl.blockSessionStorage.sectionExpandState[section.toggleId]"></i>
+            <i class="glyphicon glyphicon-triangle-top" ng-if="$ctrl.blockSessionStorage.sectionExpandState[section.toggleId]"></i>
+          </span>
+        </td>
+        <td colspan="{{$ctrl.canClaimActivity? $ctrl.readOnly? 8: 9 : 7}}" class="text-left year-column-cell text-left">
+          <span>{{section.label}}</span>
+          <div ng-if="$ctrl.canClaimActivity">
+            <div ng-if="$ctrl.canClaimActivity && section.sectionClaimsSummary.nbActivitiesClaimed == 0 && section.claim.claimType !== 'QUARTER'">
+              No activities are currently Claimed
+              <span class="pull-right claim-link" ng-if="$ctrl.paymentsEnabled">
+                <button id="claim-all-button"
+                        class="btn btn-primary btn-md"
+                        ng-if="$ctrl.paymentsEnabled && $ctrl.canClaimActivity && $ctrl.canClaimActivities(section) && section.activities.length >= 2 && !$ctrl.moreThanOneUnclaimed(section) && !$ctrl.readOnly"
+                        ng-click="$ctrl.showClaimAllActivitiesModal(section);$event.stopPropagation();"
+                        ng-disabled="$ctrl.readOnly">
+                CLAIM ALL
+                </button>
+              </span>
+            </div>
+            <div ng-if="$ctrl.canClaimActivity && section.sectionClaimsSummary.nbActivitiesClaimed > 0">
+              {{$ctrl.buildSectionClaimSummary(section)}}
+              <span class="pull-right claim-link" ng-if="$ctrl.paymentsEnabled">
+                <button id="cancel-claim-all-button"
+                        class="btn btn-secondary btn-md"
+                        ng-if="$ctrl.canClaimActivity && !$ctrl.canClaimActivities(section) && section.activities.length >= 2 && $ctrl.moreThanOneClaimed(section) && !$ctrl.readOnly"
+                        ng-click="$ctrl.cancelAllActivitiesClaims(section);$event.stopPropagation();"
+                        ng-disabled="$ctrl.readOnly">
+                  CANCEL ALL
+                </button>
+              </span>
+            </div>
+          </div>
+          <span class="pull-right claim-link" ng-if="$ctrl.paymentsEnabled">
+            <a href="JavaScript:void(0)" ng-click="$ctrl.showClaimModal(section);$event.stopPropagation();" ng-if="$ctrl.paymentsEnabled && (section.status === 'Claimable' || section.claim) && (section.claim.claimType === 'QUARTER' || !$ctrl.canClaimActivity) && !$ctrl.readOnly">{{section.claim? section.status : 'Claim'}} Q{{section.quarter}}</a>
+            <span class="bolder error" ng-if="section.notClaimableReason && !$ctrl.readOnly">{{section.notClaimableReason}}</span>
+            <a href="JavaScript:void(0)" ng-click="$ctrl.showClaimModal(section);$event.stopPropagation();"  ng-if="(section.status === 'Claimed' || section.status === 'Paid') && !$ctrl.canClaimActivity && $ctrl.readOnly">{{section.status}} Q{{section.quarter}}</a>
+          </span>
+        </td>
+      </tr>
+
+      <tr ng-if="!section.hasMilestones" >
+        <td  class="no-border"></td>
+        <td class="no-border left-indent" colspan="{{$ctrl.canClaimActivity? $ctrl.readOnly? 8: 9 : 7}}">Not provided</td>
+      </tr>
+      <tr ng-if="$ctrl.blockSessionStorage.sectionExpandState[section.toggleId]" ng-repeat-start="milestone in section.milestones" class="milestone-row">
+        <td ng-class="{'no-border': !$ctrl.readOnly}"></td>
+        <td ng-class="{'no-border': !$ctrl.readOnly}" class="left-indent text-left"><b>{{milestone.name}}</b></td>
+        <td class="number no-border" ng-if="$ctrl.showCapitalGla"><!--{{milestone.totalCapitalValue | number}}--></td>
+        <td class="number no-border" ng-if="$ctrl.showCapitalOther"><!--{{milestone.totalCapitalMatchFund | number}}--></td>
+        <td class="number no-border" ng-if="$ctrl.showRevenueGla"><!--{{milestone.totalRevenueValue | number}}--></td>
+        <td class="number no-border" ng-if="$ctrl.showRevenueOther"><!--{{milestone.totalRevenueMatchFund | number}}--></td>
+        <td class="no-border"> </td>
+        <td class="no-border" ng-if ="$ctrl.canClaimActivity"></td>
+        <td class="no-border" ng-if ="$ctrl.canClaimActivity && !$ctrl.isReadOnly(section)"> </td>
+        <td class="no-border"></td>
+        <td class="no-border" ng-if="$ctrl.canClaimActivity && section.claim.claimType === 'QUARTER' && !$ctrl.readOnly"></td>
+      </tr>
+      <tr ng-if="$ctrl.blockSessionStorage.sectionExpandState[section.toggleId]" class="cell-with-input"
+          ng-repeat-end ng-repeat="activity in milestone.activities">
+        <td ng-class="{'no-border': !$ctrl.readOnly}"></td>
+
+        <td  ng-if="$ctrl.readOnly || !$ctrl.allowActivityUpdate || section.claim || activity.claim" class=" border dbl-left-indent text-left" >
+          <div >{{activity.name}}</div>
+        </td>
+        <td ng-if="!$ctrl.readOnly && $ctrl.allowActivityUpdate && !section.claim && !activity.claim" class="cell-with-input dbl-left-indent text-left" >
+          <input
+            id="activity-name"
+            type="text"
+            class="dbl-left-indent"
+            ng-model="activity.name"
+            ng-class="{'cell-with-input': !$ctrl.readOnly , 'invalid-input': activity.emptyNameWarning}"
+            ng-change="$ctrl.onActivityNameChange(activity)"
+            ng-blur="$ctrl.onActivityNameBlur(activity)"
+            ng-focus="$ctrl.onActivityNameFocus(activity)"
+            change-on-blur2="$ctrl.onBlurActivityInput(activity)"/>
+            <span ng-if="activity.emptyNameWarning" class="error">
+                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                 Activity name cannot be empty
+             </span>
+        </td>
+
+        <td ng-if="$ctrl.showCapitalGla && $ctrl.isReadOnly(section, activity)" class="number border">
+          <div >{{activity.capitalValue | number}}</div>
+        </td>
+        <td   ng-if="$ctrl.showCapitalGla && !$ctrl.isReadOnly(section, activity)" class="number cell-with-input">
+          <input
+           type="text"
+           id="capitalValue"
+           ng-model="activity.capitalValue"
+           change-on-blur="$ctrl.onBlurActivityInput(activity)"
+           number-mask="$ctrl.monetaryValueScale"
+           ng-class="{'invalid-input': activity.emptyBudgetsWarning}"
+           maxlength="13"/>
+          <span ng-if="activity.emptyBudgetsWarning" class="error">
+             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+             Fill in at least 1 budget
+           </span>
+        </td>
+
+        <td ng-if="$ctrl.showCapitalOther && $ctrl.isReadOnly(section, activity)" class="number border">
+          <div >{{activity.capitalMatchFundValue | number}}</div>
+        </td>
+        <td ng-if="$ctrl.showCapitalOther && !$ctrl.isReadOnly(section, activity)" class="number cell-with-input">
+          <input
+            type="text"
+            id="capitalMatchFundValue"
+            ng-model="activity.capitalMatchFundValue"
+            change-on-blur="$ctrl.onBlurActivityInput(activity)"
+            number-mask="$ctrl.monetaryValueScale"
+            ng-class="{'invalid-input': activity.emptyBudgetsWarning}"
+            maxlength="13"/>
+        </td>
+
+        <td ng-if="$ctrl.showRevenueGla && $ctrl.isReadOnly(section, activity)" class="number border">
+          <div >{{activity.revenueValue | number}}</div>
+        </td>
+        <td ng-if="$ctrl.showRevenueGla && !$ctrl.isReadOnly(section, activity)" class="number cell-with-input">
+          <input
+            type="text"
+            id="revenueValue"
+            ng-model="activity.revenueValue"
+            change-on-blur="$ctrl.onBlurActivityInput(activity)"
+            number-mask="$ctrl.monetaryValueScale"
+            ng-class="{'invalid-input': activity.emptyBudgetsWarning}"
+            maxlength="13"/>
+        </td>
+
+        <td ng-if="$ctrl.showRevenueOther && $ctrl.isReadOnly(section, activity)" class="number border">
+          <div >{{activity.revenueMatchFundValue | number}}</div>
+        </td>
+        <td ng-if="$ctrl.showRevenueOther && !$ctrl.isReadOnly(section, activity)" class="number cell-with-input">
+          <div ng-if="$ctrl.isReadOnly(section, activity)">{{activity.revenueMatchFundValue | number}}</div>
+          <input
+            type="text"
+            id="revenueMatchFundValue"
+            ng-model="activity.revenueMatchFundValue"
+            change-on-blur="$ctrl.onBlurActivityInput(activity)"
+            number-mask="$ctrl.monetaryValueScale"
+            ng-class="{'invalid-input': activity.emptyBudgetsWarning}"
+            maxlength="13"/>
+        </td>
+        <td ng-class="{'no-border': !$ctrl.readOnly}">
+          <div style="min-width: 80px" ng-if="$ctrl.allowEvidenceUpload">
+            <a href="JavaScript:void(0)" ng-click="$ctrl.onShowEvidenceModal({activity: activity})"  ng-if="$ctrl.evidenceLinkText(activity)">{{$ctrl.evidenceLinkText(activity)}}</a>
+            <span ng-if="!$ctrl.evidenceLinkText(activity)">None added</span>
+          </div>
+        </td>
+        <td class="claim-status" ng-class="{'no-border': !$ctrl.readOnly}" ng-if ="$ctrl.canClaimActivity">
+          <div ng-if="section.claim.claimType !== 'QUARTER'">
+            <div ng-if="!activity.claim && (activity.revenueValue >0 || activity.capitalValue >0)">Unclaimed</div>
+            <span ng-if="activity.claim && (activity.revenueValue >0 || activity.capitalValue >0)">{{activity.status}}</span>
+          </div>
+        </td>
+        <td class="payment-actions" ng-class="{'no-border': !$ctrl.readOnly}" ng-if ="$ctrl.canClaimActivity && !$ctrl.readOnly">
+          <button id="claim-button"
+                  class="btn btn-primary btn-md"
+                  ng-if="activity.status === 'Claimable' && section.claim.claimType != 'QUARTER'"
+                  ng-click="$ctrl.showClaimModal(section, activity);$event.stopPropagation();"
+                  ng-disabled="$ctrl.readOnly">
+            CLAIM
+          </button>
+
+          <button id="cancel-claim-button"
+                  class="btn btn-secondary btn-md"
+                  ng-if="activity.status === 'Claimed'"
+          ng-click="$ctrl.showCancelClaimModal(section, activity);$event.stopPropagation();"
+          ng-disabled="$ctrl.readOnly">
+          CANCEL
+          </button>
+
+        </td>
+
+        <td ng-class="{'no-border': !$ctrl.readOnly}" class="delete-btn-container">
+          <delete-button ng-if ="!$ctrl.isReadOnly(section, activity)"
+                         ng-click="$ctrl.onDeleteActivity({section: section, milestone: milestone, activity:activity}); $event.stopPropagation();">
+          </delete-button>
+        </td>
+
+      </tr>
+
+      <tr class="quarter-row primaryRow expandable "
+          ng-if="section.hasMilestones"
+          ng-click="section.hasMilestones && ($ctrl.blockSessionStorage.sectionExpandState[section.toggleId] = !$ctrl.blockSessionStorage.sectionExpandState[section.toggleId]); $event.stopPropagation();"
+          ng-class="{expandable:section.hasMilestones}">
+        <td class="year-column-cell"></td>
+        <td class="year-column-cell">{{section.totalLabel}}</td>
+        <td class="number year-column-cell" ng-if="$ctrl.showCapitalGla" class="year-column-cell">{{section.totalCapitalValue | number}}</td>
+        <td class="number year-column-cell" ng-if="$ctrl.showCapitalOther" class="year-column-cell">{{section.totalCapitalMatchFund | number}}</td>
+        <td class="number year-column-cell" ng-if="$ctrl.showRevenueGla" class="year-column-cell">{{section.totalRevenueValue | number}}</td>
+        <td class="number year-column-cell" ng-if="$ctrl.showRevenueOther" class="year-column-cell">{{section.totalRevenueMatchFund | number}}</td>
+        <td class="year-column-cell"></td>
+        <td ng-if ="$ctrl.canClaimActivity" class="year-column-cell"></td>
+        <td ng-if ="$ctrl.canClaimActivity && (!$ctrl.readOnly)" class="year-column-cell"></td>
+        <td class="year-column-cell"></td>
+      </tr>
+    </tbody>
+    <tbody ng-if="$ctrl.hasMilestones || $ctrl.hasCategories">
+      <tr class="footer-row">
+        <td ></td>
+         <td >{{$ctrl.yearBreakdown.year | fYear}} TOTALS</td>
+        <td class="number" ng-if="$ctrl.showCapitalGla">{{$ctrl.yearBreakdown.totalCapitalValue | number}}</td>
+        <td class="number" ng-if="$ctrl.showCapitalOther">{{$ctrl.yearBreakdown.totalCapitalMatchFund | number}}</td>
+        <td class="number" ng-if="$ctrl.showRevenueGla">{{$ctrl.yearBreakdown.totalRevenueValue | number}}</td>
+        <td class="number" ng-if="$ctrl.showRevenueOther">{{$ctrl.yearBreakdown.totalRevenueMatchFund | number}}</td>
+        <td></td>
+        <td ng-if ="$ctrl.canClaimActivity"></td>
+        <td ng-if ="$ctrl.canClaimActivity && (!$ctrl.readOnly)"></td>
+        <td></td>
+      </tr>
+    </tbody>
+    <tbody ng-if="!$ctrl.hasMilestones && !$ctrl.hasCategories">
+    <tr><td colspan="{{$ctrl.canClaimActivity? $ctrl.readOnly? 9: 10 : 8}}"><b>Add milestones in the <a href="JavaScript:void(0)" ng-if="$ctrl.milestoneBlock"  ui-sref="project-block.milestones({projectId: $ctrl.milestoneBlock.projectId, blockPosition: $ctrl.milestoneBlock.displayOrder, blockId: $ctrl.milestoneBlock.id})">milestone page</a> before you can profile expenditure</b></td></tr>
+    </tbody>
+  </table>
+</div>
+
+

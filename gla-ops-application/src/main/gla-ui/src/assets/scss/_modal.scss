@@ -1,0 +1,16 @@
+ngb-modal-backdrop.modal-backdrop{
+  &.fade{
+    opacity: 0.5;
+  }
+}
+
+ngb-modal-window{
+  &.fade {
+    opacity: 1;
+    &.modal {
+      .modal-dialog {
+        transform: translate(0);
+      }
+    }
+  }
+}

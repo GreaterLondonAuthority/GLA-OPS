@@ -1,0 +1,15 @@
+<div class="tile">
+  <h3 class="grant-title" ng-if="$ctrl.hlevel===3 || !$ctrl.hlevel" ng-transclude></h3>
+  <h4 class="grant-title" ng-if="$ctrl.hlevel===4" ng-transclude></h4>
+  <dl class="tile-items">
+    <dt class="grant-name property-name" ng-repeat-start="item in $ctrl.items">
+      <span ng-if="item.icon" class="glyphicon grant-prefix" aria-hidden="true" ng-class="item.icon"></span>
+      <span class="glyphicon glyphicon-exclamation-sign" ng-if="item.displayWarn"></span>
+      {{item.itemName}}
+    </dt>
+    <dd class="grant-value property-value" ng-repeat-end>
+      <span ng-if="item.type"><span ng-if="item.type === 'CURRENCY'">&pound;</span>{{item.itemValue | number}}</span>
+      <span ng-if="!item.type">{{isNull(item.itemValue) ? '-' : item.itemValue}}</span>
+    </dd>
+  </dl>
+</div>

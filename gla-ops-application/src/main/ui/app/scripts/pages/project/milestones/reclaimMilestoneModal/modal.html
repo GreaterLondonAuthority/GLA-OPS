@@ -1,0 +1,118 @@
+<div class="reclaim-milestone-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>APPROVED MILESTONE</h1>
+    <div class="mbottom10">{{$ctrl.milestone.summary}}</div>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="claimMilestoneForm"
+      role="form"
+      name="claimMilestoneForm">
+
+      <div class="row mbottom20" ng-if="$ctrl.showReclaimGrant">
+        <div>You must request to repay a total of £{{$ctrl.projectBlock.availableToReclaimByType.Grant| number:0}} grant on this project.</div>
+        <div class="mtop5">Up to £{{$ctrl.grantUpTo| number:0}} grant may be repaid against this milestone.</div>
+        <label for="grant-input">Enter value of grant to repay</label>
+        <div class="mbottom5 row">
+          <div class="col-xs-6">
+            <input type="text"
+                   id="grant-input"
+                   class="form-control grant-input"
+                   aria-label="grant-input"
+                   maxlength="13"
+                   name="reclaimedGrant"
+                   ng-model="$ctrl.reclaimedGrant"
+                   number-mask="0"
+                   max="$ctrl.maxGrant">
+          </div>
+        </div>
+        <div role="alert" ng-show="claimMilestoneForm.reclaimedGrant.$error.max">
+          <span class="error" ng-if="claimMilestoneForm.reclaimedGrant.$error.max">Reclaim amount cannot exceed remaining grant</span>
+        </div>
+      </div>
+
+
+
+      <div class="row mbottom20" ng-if="$ctrl.showReclaimRcgf">
+        <div>You must request to repay a total of £{{$ctrl.projectBlock.availableToReclaimByType.RCGF | number:0}} RCGF on this project.</div>
+        <div class="mtop5">Up to £{{$ctrl.rcgfUpTo | number:0}} RCGF may be repaid against this milestone.</div>
+        <label for="rcgf-input">Enter value of RCGF</label>
+        <div class="mbottom5 row">
+          <div class="col-xs-6">
+            <input type="text"
+                   id="rcgf-input"
+                   class="form-control rcgf-input"
+                   aria-label="rcgf-input"
+                   maxlength="13"
+                   name="reclaimedRcgf"
+                   ng-model="$ctrl.reclaimedRcgf"
+                   number-mask="0"
+                   max="$ctrl.maxRcgf">
+          </div>
+        </div>
+        <div role="alert" ng-show="claimMilestoneForm.reclaimedRcgf.$error.max">
+          <span class="error" ng-if="claimMilestoneForm.reclaimedRcgf.$error.max">Reclaim amount cannot exceed remaining RCGF</span>
+        </div>
+      </div>
+
+
+      <div class="row mbottom10" ng-if="$ctrl.showReclaimDpf">
+        <div>You must request to repay a total of £{{$ctrl.projectBlock.availableToReclaimByType.DPF| number:0}} DPF on this project.</div>
+        <div class="mtop5">Up to £{{$ctrl.dpfUpTo| number:0}} DPF may be repaid against this milestone.</div>
+        <label for="dpf-input">Enter value of DPF</label>
+        <div class="mbottom5 row">
+
+          <div class="col-xs-6">
+            <input type="text"
+                   id="dpf-input"
+                   class="form-control dpf-input"
+                   aria-label="dpf-input"
+                   maxlength="13"
+                   name="reclaimedDpf"
+                   ng-model="$ctrl.reclaimedDpf"
+                   number-mask="0"
+                   max="$ctrl.maxDpf">
+          </div>
+        </div>
+        <div role="alert" ng-show="claimMilestoneForm.reclaimedDpf.$error.max">
+          <span class="error" ng-if="claimMilestoneForm.reclaimedDpf.$error.max">Reclaim amount cannot exceed remaining DPF</span>
+        </div>
+      </div>
+
+      <label for="reason">Explain why you are requesting a repayment/reclaim</label>
+      <textarea id="reason"
+                rows="5"
+                ng-attr-placeholder="{{$ctrl.modal.placeholder}}"
+                name="action"
+                ng-disabled="$ctrl.readOnly"
+                class="form-control mtop5"
+                ng-model="$ctrl.reclaimReason"
+                maxlength="200">
+      </textarea>
+
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="claim-btn"
+          class="btn btn-default btn-primary btn-center claim-btn"
+          type="button"
+          ng-click="$ctrl.claim()"
+          ng-disabled="!claimMilestoneForm.$valid">CREATE</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15 no-border">
+        <a class="form-cancel dismiss-btn" href="JavaScript:void(0)" ng-mousedown="$dismiss()" on-enter="$dismiss()">Close</a>
+      </div>
+    </div>
+  </div>
+</div>

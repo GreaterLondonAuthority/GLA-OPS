@@ -1,0 +1,144 @@
+<div class="other-fundings-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.otherFunding.id? 'Edit' : 'Add'}} {{$ctrl.templateConfig.entityName}}</h1>
+  </div>
+  <div class="modal-body">
+    <form class="form-gla" role="form" name="modalForm">
+
+      <div class="row" ng-if="$ctrl.templateConfig.fundingSources.length != 0">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="other-funding-source">Funding source</label>
+            <select aria-label="Funding source"
+                    class="other-funding-source form-control"
+                    id="other-funding-source"
+                    ng-model="$ctrl.otherFunding.fundingSource"
+                    ng-options="item for item in $ctrl.fundingSourcesNames"
+                    style-placeholder="">
+              <option disabled value="">Select funding source</option>
+            </select>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.isFunderNameOn($ctrl.otherFunding.fundingSource)">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="other-funding-funder">{{$ctrl.templateConfig.funderNameText}}</label>
+            <input id="other-funding-funder" type="text" name="funderName" class="form-control" placeholder="Funder name"
+                   ng-model="$ctrl.otherFunding.funderName" maxlength="50"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.isDescriptionOn($ctrl.otherFunding.fundingSource)">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="other-funding-description">{{$ctrl.templateConfig.descriptionText}}</label>
+            <textarea class="form-control"
+                      gla-read-only="$ctrl.readOnly"
+                      id="other-funding-description"
+                      maxlength="200"
+                      name="description"
+                      ng-model="$ctrl.otherFunding.description"
+                      ng-trim="false"
+                      placeholder="Description"
+                      required
+                      rows="5">
+        </textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.templateConfig.showAmount">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="other-funding-amount">{{$ctrl.templateConfig.amountText}}</label>
+            <input id="other-funding-amount" type="text" name="amount" class="form-control" placeholder="Amount"
+                   number-mask="2" max="999999999" maxlength="14" ng-model="$ctrl.otherFunding.amount" />
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.templateConfig.showSecuredQuestion">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="other-funding-secured">{{$ctrl.templateConfig.securedQuestion}}</label>
+            <gla-yes-no-input id="other-funding-secured"
+                              [disabled]="$ctrl.readOnly"
+                              mode="bool"
+                              name="{{question.id}}"
+                              ng-if="!$ctrl.readOnly"
+                              (model-change)="$ctrl.save(false)"
+                              [(model)]="$ctrl.otherFunding.fundingSecured">
+            </gla-yes-no-input>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.otherFunding.fundingSecured == true">
+        <div class="date-picker right-aligned col-xs-8 col-xs-offset-2 form-group">
+          <label for="other-funding-secured-date">Date match funding was secured</label><br/>
+          <div class="input-group">
+            <input ng-change="$ctrl.onDateChange($ctrl.date)" ng-class="{white: !$ctrl.readOnly}"
+                   id="other-funding-secured-date"
+                   ng-click="showDatePopup = !showDatePopup"
+                   placeholder="Select date"
+                   class="form-control"
+                   uib-datepicker-popup="{{$ctrl.dateOptions.format}}"
+                   ng-model="$ctrl.otherFunding.dateSecured"
+                   is-open="showDatePopup"
+                   datepicker-options="$ctrl.dateOptions"
+                   show-button-bar="false"
+                   readonly
+                   tabindex="-1"
+                   ng-disabled="$ctrl.readOnly"
+                   close-text="Close"/>
+            <span class="input-group-addon" ng-click="showDatePopup = !showDatePopup"
+                  ng-class="{disabled: $ctrl.readOnly}" allow-enter tabindex="0" role="button" aria-label="Calendar">
+                  <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.otherFunding.fundingSecured == false">
+        <div class="date-picker right-aligned col-xs-8 col-xs-offset-2 form-group">
+          <label for="other-funding-estimate-secured-date">When do you expect to secure this funding?</label><br/>
+          <div class="input-group">
+            <input ng-change="$ctrl.onDateChange($ctrl.date)" ng-class="{white: !$ctrl.readOnly}"
+                   id="other-funding-estimate-secured-date"
+                   ng-click="showDatePopup = !showDatePopup"
+                   placeholder="Select date"
+                   class="form-control"
+                   uib-datepicker-popup="{{$ctrl.dateOptions.format}}"
+                   ng-model="$ctrl.otherFunding.estimateDateSecured"
+                   is-open="showDatePopup"
+                   datepicker-options="$ctrl.dateOptions"
+                   show-button-bar="false"
+                   readonly
+                   tabindex="-1"
+                   ng-disabled="$ctrl.readOnly"
+                   close-text="Close"/>
+            <span class="input-group-addon" ng-click="showDatePopup = !showDatePopup"
+                  ng-class="{disabled: $ctrl.readOnly}" allow-enter tabindex="0" role="button" aria-label="Calendar">
+                  <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button"
+            ng-click="$close($ctrl.otherFunding)"
+            ng-disabled="!$ctrl.isFundingValid($ctrl.otherFunding)">
+      {{$ctrl.otherFunding.id? 'SAVE':'ADD'}}
+    </button>
+    <button class="btn btn-default btn-secondary btn-center" type="button" ng-click="$dismiss('cancel')">CANCEL</button>
+  </div>
+</div>

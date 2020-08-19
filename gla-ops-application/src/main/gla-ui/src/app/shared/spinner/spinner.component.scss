@@ -1,0 +1,31 @@
+@import 'mixins';
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+}
+
+.spinner__inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner__loading-text {
+  color: #141414;
+  font-size: 14px;
+  margin-top: 2px;
+  padding: 5px;
+}
+
+.glyphicon-refresh-animate {
+  font-size: 18px;
+  transform-origin: 48% 50%;
+  @include animation('spin .7s infinite linear');
+}
+
+
+
+

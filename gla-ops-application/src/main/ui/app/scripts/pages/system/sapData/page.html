@@ -1,0 +1,64 @@
+<div class="sap-data">
+
+  <gla-page-header (on-back)="$ctrl.onBack()">SAP data errors</gla-page-header>
+
+  <div class="mtop40">
+    An error displays if OPS can't match SAP files to a project. Deleting an error will stop the system trying to match the files.
+  </div>
+
+  <div class="mtop10 mbottom10 checkbox-container form-group" ng-if="$ctrl.sapData.length > 0">
+    <label for="show-all-entries">
+      <input type="checkbox"
+             id="show-all-entries"
+             ng-change="$ctrl.showAllEntriesFn()"
+             ng-model="$ctrl.showAllEntries"> <span>Show all content</span>
+    </label>
+  </div>
+  <div class="table-responsive sap-data-entries">
+    <div ng-if="!$ctrl.sapData.length" class="empty-table">No errors received from SAP</div>
+    <table ng-if="$ctrl.sapData.length" class="table table-hover table-bordered">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th></th>
+        <th>FILENAME</th>
+        <th>TYPE</th>
+        <th>ERROR DESCRIPTION</th>
+        <th>CREATED ON</th>
+        <th>AMOUNT £</th>
+        <th>DESCRIPTION</th>
+        <th></th>
+      </tr>
+      </thead>
+
+      <tbody>
+        <tr><td colspan="7" ng-if="$ctrl.sapData.length == 0" class="bolder">No errors received from SAP</tr>
+        <tr ng-repeat-start="entry in $ctrl.sapData"
+            allow-enter
+            aria-expanded="{{!!entry.expanded}}"
+            aria-label="{{!entry.expanded? 'Expand' : 'Collapse'}}"
+            ng-click="entry.expanded = !entry.expanded; $ctrl.showAllEntries = false;"
+            role="button"
+            tabindex="0">
+          <td>
+            <span>
+              <i class="glyphicon glyphicon-triangle-bottom" ng-if="!entry.expanded"></i>
+              <i class="glyphicon glyphicon-triangle-top" ng-if="entry.expanded"></i>
+            </span>
+          </td>
+          <td>{{entry.fileName}}</td>
+          <td>{{entry.interfaceType}}</td>
+          <td>{{entry.errorDescription}}</td>
+          <td>{{entry.createdOn | date: 'dd/MM/yyyy HH:mm'}}</td>
+          <td>{{entry.model.paidAmount || entry.model.receiptAmount | currency:'£':0}}</td>
+          <td>{{entry.model.accountDescription}}</td>
+          <td class="delete-btn-container">
+            <delete-button ng-click="$event.stopPropagation(); $ctrl.delete(entry)"></delete-button>
+          </td>
+        </tr>
+        <tr ng-repeat-end ng-if="entry.expanded" class="expanded-content">
+          <td colspan="8"><div class="xml-content">{{entry.content}}</div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

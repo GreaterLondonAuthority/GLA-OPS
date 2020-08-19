@@ -1,0 +1,73 @@
+<div class="system-messages-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.modal.title}}</h1>
+  </div>
+  <div class="modal-body text-left">
+    <form
+      id="editMessageForm"
+      role="form"
+      name="editMessageForm"
+      class="form-group"
+      ng-if="$ctrl.modal.actionBtnName">
+        <label for="systemMessage">{{$ctrl.modal.label}}</label>
+        <div ng-if="$ctrl.modal.warning" class="error mbottom5">{{$ctrl.modal.warning}}</div>
+
+        <div class="row">
+        <textarea id="systemMessage"
+           ng-trim="false"
+           rows="5"
+           ng-attr-placeholder="{{$ctrl.modal.placeholder}}"
+           name="action"
+           ng-disabled="$ctrl.readOnly"
+           class="form-control"
+           ng-model="$ctrl.dataBlock.text"
+           required
+           maxlength="200">
+        </textarea>
+        </div>
+
+        <div class="row">
+          <div class="pull-right no-padding">
+            <gla-remaining-characters [text]="$ctrl.dataBlock.text" [max]="200"></gla-remaining-characters>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="checkbox" ng-class="{checked: $ctrl.dataBlock.enabled, unchecked: !$ctrl.dataBlock.enabled}">
+            <label class="">
+              <input type="checkbox"
+                   aria-label="'Message Displayed'"
+                   name="messageDisplayed"
+                   ng-model="$ctrl.dataBlock.enabled"
+                   ng-click="$event.stopPropagation();"
+                   ng-change="$ctrl.onCheckboxesChange(item)">
+              Message displayed
+            </label>
+          </div>
+        </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="abandon-btn"
+          ng-if="$ctrl.modal.actionBtnName"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$ctrl.action()"
+          ng-disabled="$ctrl.dataBlock.enabled && !$ctrl.dataBlock.text">{{$ctrl.modal.actionBtnName}}</button>
+
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          ng-click="$dismiss()">{{$ctrl.modal.actionBtnName ? 'CANCEL' : 'CLOSE'}}</button>
+      </div>
+    </div>
+  </div>
+</div>

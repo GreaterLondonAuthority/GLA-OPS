@@ -1,0 +1,9 @@
+<div class="objectives-page medium-page">
+  <gla-project-header [editable-block]="$ctrl" (on-back)="$ctrl.returnToOverview()">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
+
+  <entities-list block="$ctrl.projectBlock" entities="$ctrl.entities" read-only="$ctrl.readOnly">
+    <entities-list-item entity="objective" ng-repeat="objective in $ctrl.entities">
+      <objective block-template="$ctrl.templateConfig" objective="objective" read-only="$ctrl.readOnly"></objective>
+    </entities-list-item>
+  </entities-list>
+</div>

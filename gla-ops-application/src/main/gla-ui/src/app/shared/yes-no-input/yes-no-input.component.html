@@ -1,0 +1,25 @@
+<div class="yesNoInput" *ngIf="!readOnly">
+  <input (ngModelChange)="onValueChange($event)"
+         [(ngModel)]="model"
+         [disabled]="disabled"
+         [name]="name"
+         [value]="yesValue"
+         attr.name="{{name}}"
+         id="{{name}}-yes"
+         tabindex="0"
+         type="radio">
+  <label class="yesNoInput__label" for="{{name}}-yes">Yes</label>
+  &nbsp;
+  &nbsp;
+  <input (ngModelChange)="onValueChange($event)"
+         [(ngModel)]="model"
+         [disabled]="disabled"
+         [name]="name"
+         [value]="noValue"
+         attr.name="{{name}}"
+         id="{{name}}-no"
+         tabindex="0"
+         type="radio">
+  <label class="yesNoInput__label" for="{{name}}-no">No</label>
+</div>
+<div *ngIf="readOnly" class="readonly-form-el read-only-text multiline-text">{{getReadOnlyText()}}</div>

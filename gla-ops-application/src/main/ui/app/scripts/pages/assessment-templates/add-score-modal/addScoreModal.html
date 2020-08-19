@@ -1,0 +1,58 @@
+<div class="add-score-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>ADD SCORE</h1>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="score">Number</label>
+      <input id="score"
+             number-mask="1"
+             name="score"
+             class="form-control"
+             placeholder=""
+             ng-model="$ctrl.score.score"
+             required/>
+    </div>
+
+    <div class="form-group">
+      <label for="score-name">Short Title</label>
+      <input id="score-name"
+             type="text"
+             name="score-name"
+             class="form-control"
+             placeholder=""
+             ng-model="$ctrl.score.name"
+             required
+             maxlength="40"/>
+    </div>
+
+    <div class="form-group">
+      <label for="score-description">Definition</label>
+      <textarea id="score-description"
+                ng-trim="false"
+                rows="5"
+                placeholder=""
+                name="score-description"
+                class="form-control"
+                ng-model="$ctrl.score.description"
+                required
+                maxlength="200">
+       </textarea>
+      <gla-remaining-characters [text]="$ctrl.score.description" [max]="200"></gla-remaining-characters>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button class="btn btn-primary" ng-click="$ctrl.addScore()" ng-disabled="$ctrl.score.score == null || !$ctrl.score.name || !$ctrl.score.description">ADD</button>
+        <button class="btn btn-secondary" ng-click="$close()">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>

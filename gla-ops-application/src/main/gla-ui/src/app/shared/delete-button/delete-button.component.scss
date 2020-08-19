@@ -1,0 +1,63 @@
+@import 'variables';
+
+:host {
+  display: inline-block;
+  $deleteButtonSize: 28px;
+  $deleteButtonSmallSize: 20px;
+  cursor: pointer;
+
+  &:hover, &:focus, &:active{
+    color: $red;
+    .delete-button {
+      color: $red;
+      box-shadow: none;
+      &:active{
+        background-color: darken($white, 5%);
+        outline: none;
+      }
+    }
+  }
+
+  .delete-button {
+    border-radius: 50%;
+    line-height: 1em;
+    font-family: monospace;
+    font-weight: bold;
+    padding: 0px;
+    width: $deleteButtonSize;
+    height: $deleteButtonSize;
+    font-size: 12px;
+    background-clip: padding-box;
+    color: $secondary-grey;
+    right: -$deleteButtonSize/2;
+    top: 50%;
+    bottom: 50%;
+    margin: auto;
+    background-color: $white;
+    border: 1px solid $table-border;
+    &:hover, &:focus, &:active{
+      color: $red;
+      box-shadow: none;
+      &:active{
+        background-color: darken($white, 5%);
+      }
+    }
+  }
+
+  &.small {
+    font-size: 8px;
+
+    .delete-text {
+      font-size: 14px;
+      vertical-align: middle;
+      padding-left: 3px;
+    }
+
+    .delete-button {
+      width: $deleteButtonSmallSize;
+      height: $deleteButtonSmallSize;
+      font-size: 8px;
+      right: -$deleteButtonSmallSize/2;
+    }
+  }
+}

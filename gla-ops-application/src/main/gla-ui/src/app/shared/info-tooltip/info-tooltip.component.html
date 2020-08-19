@@ -1,0 +1,14 @@
+<ng-template #tipContent><gla-markdown [text]="helpText"></gla-markdown></ng-template>
+<span id="helpText"
+      tabindex="0"
+      role="button"
+      aria-label="Show more information"
+      class="glyphicon glyphicon-info-sign cursor-pointer"
+      placement="right"
+      triggers="manual"
+      #t="ngbTooltip"
+      (mouseenter)="t.open()"
+      (mouseleave)="closeDelay(t)"
+      (keyup.enter)="t.open()"
+      (blur)="t.close()"
+      [ngbTooltip]="tipContent"></span>

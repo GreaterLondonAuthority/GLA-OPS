@@ -1,0 +1,743 @@
+{
+  "name":"Housing Zone Revenue Fund",
+  "author":"Nahida Miah",
+  "blocksEnabled":[
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Funding Details 2018/19",
+      "block":"Questions",
+      "displayOrder":4,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":3,
+          "question":{
+            "id":623,
+            "externalKey":null,
+            "text":"Funding requirement 2",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":0,
+          "question":{
+            "id":632,
+            "externalKey":null,
+            "text":"This bid includes a funding request for 18/19",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":9,
+          "question":{
+            "id":629,
+            "externalKey":null,
+            "text":"Funding requirement 5",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":621,
+            "externalKey":null,
+            "text":"List funding requirement 1 (e.g. staffing costs)",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":4,
+          "question":{
+            "id":624,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 2 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":5,
+          "question":{
+            "id":625,
+            "externalKey":null,
+            "text":"Funding requirement 3",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":6,
+          "question":{
+            "id":626,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 3 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":622,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 1 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":10,
+          "question":{
+            "id":630,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 5 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":7,
+          "question":{
+            "id":627,
+            "externalKey":null,
+            "text":"Funding requirement 4",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":8,
+          "question":{
+            "id":628,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 4 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Funding Details 2017/18",
+      "block":"Questions",
+      "displayOrder":3,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":9,
+          "question":{
+            "id":619,
+            "externalKey":null,
+            "text":"Funding requirement 5",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":613,
+            "externalKey":null,
+            "text":"Funding requirement 2",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":0,
+          "question":{
+            "id":631,
+            "externalKey":null,
+            "text":"This bid includes a funding request for 17/18",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":4,
+          "question":{
+            "id":614,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 2 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":611,
+            "externalKey":null,
+            "text":"List funding requirement 1 (e.g. staffing costs)",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":8,
+          "question":{
+            "id":618,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 4 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":5,
+          "question":{
+            "id":615,
+            "externalKey":null,
+            "text":"Funding requirement 3",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":7,
+          "question":{
+            "id":617,
+            "externalKey":null,
+            "text":"Funding requirement 4",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":6,
+          "question":{
+            "id":616,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 3 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":612,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 1 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":10,
+          "question":{
+            "id":620,
+            "externalKey":null,
+            "text":"Amount of GLA funding required for funding requirement 5 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Bidding Details",
+      "block":"Questions",
+      "displayOrder":2,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":8,
+          "question":{
+            "id":608,
+            "externalKey":null,
+            "text":"What is the impact of the funding? e.g. acceleration, frees up other revenue to do more...",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":6,
+          "question":{
+            "id":606,
+            "externalKey":null,
+            "text":"Specify how you will spend the revenue funding (by year)? [e.g. staffing, consultancy, planning work]",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":5,
+          "question":{
+            "id":605,
+            "externalKey":null,
+            "text":"Amount of revenue funding contribution from the LA in 18/19 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":602,
+            "externalKey":null,
+            "text":"Amount of revenue funding being requested 2017/18 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":7,
+          "question":{
+            "id":607,
+            "externalKey":null,
+            "text":"Confirm that this funding request will not displace something that is already funded",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":601,
+            "externalKey":null,
+            "text":"Name of Housing Zone",
+            "answerType":"Dropdown",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+              {
+                "displayOrder":4,
+                "option":"Meridian Water - LB Enfield"
+              },
+              {
+                "displayOrder":24,
+                "option":"Lambeth Housing Zone-LB Lambeth"
+              },
+              {
+                "displayOrder":31,
+                "option":"Clapham Jct to Battersea R'side-LB Wandsworth"
+              },
+              {
+                "displayOrder":5,
+                "option":"North Tottenham-LB Haringey"
+              },
+              {
+                "displayOrder":15,
+                "option":"Heart of Harrow-LB Harrow"
+              },
+              {
+                "displayOrder":22,
+                "option":"Abbey Wood, Plumstead & T'mead-LB Greenwich"
+              },
+              {
+                "displayOrder":12,
+                "option":"Alperton-LB Brent"
+              },
+              {
+                "displayOrder":17,
+                "option":"Feltham Town Centre-LB Hounslow"
+              },
+              {
+                "displayOrder":14,
+                "option":"Southall-LB Ealing"
+              },
+              {
+                "displayOrder":26,
+                "option":"New Bermondsey-LB Lewisham"
+              },
+              {
+                "displayOrder":27,
+                "option":"Morden Town Centre-LB Merton"
+              },
+              {
+                "displayOrder":1,
+                "option":"Barking R'side Gateways-LB Barking & Dagenham"
+              },
+              {
+                "displayOrder":28,
+                "option":"Canada Water-LB Southwark"
+              },
+              {
+                "displayOrder":6,
+                "option":"Tottenham Hale-LB Haringey"
+              },
+              {
+                "displayOrder":10,
+                "option":"Poplar Riverside-LB Tower Hamlets"
+              },
+              {
+                "displayOrder":29,
+                "option":"Old Kent Rd & Peckham-LB Southwark"
+              },
+              {
+                "displayOrder":23,
+                "option":"Cambridge Road-LB Kingston"
+              },
+              {
+                "displayOrder":16,
+                "option":"Hayes Town Centre-LB Hillingdon"
+              },
+              {
+                "displayOrder":20,
+                "option":"Abbey Wood & South Thamesmead-LB Bexley"
+              },
+              {
+                "displayOrder":9,
+                "option":"Ilford Town Centre-LB Redbridge"
+              },
+              {
+                "displayOrder":21,
+                "option":"Bromley Town Centre-LB Bromley"
+              },
+              {
+                "displayOrder":19,
+                "option":"Edgware Road-LB Westminster"
+              },
+              {
+                "displayOrder":18,
+                "option":"Hounslow Town Centre-LB Hounslow"
+              },
+              {
+                "displayOrder":13,
+                "option":"Wembley-LB Brent"
+              },
+              {
+                "displayOrder":2,
+                "option":"Barking Town Centre-LB Barking & Dagenham"
+              },
+              {
+                "displayOrder":8,
+                "option":"Romford Town Centre-LB Havering"
+              },
+              {
+                "displayOrder":7,
+                "option":"Rainham & Beam Park-LB Havering"
+              },
+              {
+                "displayOrder":25,
+                "option":"Catford Town Centre-LB Lewisham"
+              },
+              {
+                "displayOrder":30,
+                "option":"Sutton Town Centre & Hackbridge-LB Sutton"
+              },
+              {
+                "displayOrder":11,
+                "option":"Blackhorse Lane-LB Waltham Forest"
+              },
+              {
+                "displayOrder":3,
+                "option":"Edmonton Futures-LB Enfield"
+              }
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":9,
+          "question":{
+            "id":609,
+            "externalKey":null,
+            "text":"Who is carrying out the work?",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":10,
+          "question":{
+            "id":610,
+            "externalKey":null,
+            "text":"Have you considered and discussed accessing the GLA's 'Public Practice' agency?",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":4,
+          "question":{
+            "id":604,
+            "externalKey":null,
+            "text":"Amount of revenue funding contribution from the LA in 17/18 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":603,
+            "externalKey":null,
+            "text":"Amount of revenue funding being requested 2018/19 (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"ProjectDetailsTemplateBlock",
+      "blockDisplayName":null,
+      "block":"Details",
+      "displayOrder":1,
+      "blockAppearsOnStatus":null
+    }
+  ],
+  "stateModel": "ChangeControlled",
+  "cloneOfTemplateId":null,
+  "cloneModified":null,
+  "strategicTemplate":false,
+  "associatedProjectsEnabled":false,
+  "milestoneType":"MonetarySplit",
+  "milestoneDescriptionHintText":null,
+  "monetarySplitTitle":null,
+  "warningMessage":null,
+  "detailsConfig":{
+    "addressRequirement":"hidden",
+    "boroughRequirement":"hidden",
+    "postcodeRequirement":"hidden",
+    "coordsRequirement":"hidden",
+    "maincontactRequirement":"mandatory",
+    "maincontactemailRequirement":null,
+    "imageRequirement":"optional",
+    "contactRequirement":"optional",
+    "siteOwnerRequirement":"hidden",
+    "interestRequirement":"hidden",
+    "projectManagerRequirement":"hidden",
+    "siteStatusRequirement":"hidden",
+    "legacyProjectCodeRequirement":"hidden",
+    "descriptionRequirement":"optional",
+    "planningPermissionReferenceRequirement":"optional"
+  },
+  "tenureTypes":[
+
+  ],
+  "indicativeTenureConfiguration":null,
+  "contract":null,
+  "startOnSiteRestrictionText":null,
+  "grantTypes":[
+
+  ],
+  "allowMonetaryMilestones":true
+}

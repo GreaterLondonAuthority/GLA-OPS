@@ -1,0 +1,38 @@
+<gla-page-header (on-back)="$ctrl.back()" header="SQL Manager">
+  <ph-right>
+    <button class="btn btn-primary btn-md" ng-click="$ctrl.createUpdateRequest()">
+      CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+    </button>
+  </ph-right>
+</gla-page-header>
+<!--<div ng-if="$ctrl.sqlUpdates.length==0">No data</div>-->
+<div class="row" ng-if="$ctrl.sqlUpdates.length > 0">
+  <div class="col-xs-12 sql-update-table table-responsive no-padding">
+    <table id="sql-updates-table" class="table table-hover table-bordered table-striped table-selectable-row">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>Update ID</th>
+        <th>SQL</th>
+        <th>Summary</th>
+        <th>Tracking ID</th>
+        <th>Status</th>
+      </tr>
+      </thead>
+      <tbody>
+
+
+      <tr allow-enter
+          class="update-row" ng-click="$ctrl.sqlUpdateDetails(update.id)"
+          ng-repeat="update in $ctrl.sqlUpdates" tabindex="0">
+        <td class="project-id">
+          <span class="update-id">{{ update.id }}</span>
+        </td>
+        <td class="update-sql"><div class="title-cell">{{ update.sql }}</div></td>
+        <td class="update-summary"><div class="title-cell">{{ update.summary }}</div></td>
+        <td class="update-tracking-id"><div class="title-cell">{{ update.trackingId }}</div></td>
+        <td class="update-sql-status">{{ update.status }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

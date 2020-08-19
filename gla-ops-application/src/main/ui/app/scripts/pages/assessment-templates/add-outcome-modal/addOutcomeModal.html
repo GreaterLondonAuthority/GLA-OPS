@@ -1,0 +1,54 @@
+<div class="add-outcome-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>ADD OUTCOME</h1>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="outcome-name">Short title</label>
+      <input id="outcome-name"
+             type="text"
+             name="outcome-name"
+             class="form-control"
+             placeholder=""
+             ng-model="$ctrl.outcome.name"
+             required
+             maxlength="40"/>
+    </div>
+
+    <div class="form-group">
+      <label for="outcome-allow-to-proceed">Allow to proceed</label><br/>
+      <select class="form-control"
+              id="outcome-allow-to-proceed"
+              ng-model="$ctrl.outcome.allowToProceed"
+              ng-options="item.value as item.label for item in $ctrl.allowToProceedTypes"
+              style-placeholder="">
+        <option disabled value="">Select</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="display-order">Display order</label>
+      <input id="display-order"
+             number-mask="1"
+             name="display-order"
+             class="form-control"
+             placeholder=""
+             ng-model="$ctrl.outcome.displayOrder"
+             required/>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button class="btn btn-primary" ng-click="$ctrl.addOutcome()" ng-disabled="!$ctrl.outcome.name || $ctrl.outcome.displayOrder == null">ADD</button>
+        <button class="btn btn-secondary" ng-click="$close()">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>

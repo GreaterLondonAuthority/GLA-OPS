@@ -1,0 +1,17 @@
+<div class="includes-tables">
+
+  <change-report-field
+    class="text-area-field next-to-tables"
+    label="$ctrl.delieryPartnerQuestionText"
+    data="$ctrl.data"
+    formats="'yesno'"
+    fields="'hasDeliveryPartners'">
+  </change-report-field>
+
+  <change-report-table
+    show-no-element-message="!!$ctrl.data.right && $ctrl.data.right.hasDeliveryPartners"
+    rows="$ctrl.deliveryPartnersToCompare"
+    fields="$ctrl.fields"
+    changes="$ctrl.data.changes">
+  </change-report-table>
+</div>

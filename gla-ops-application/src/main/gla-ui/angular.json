@@ -1,0 +1,178 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "gla": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "gla",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/gla",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "src/favicon.ico",
+              "src/robots.txt",
+              "src/assets"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/assets/scss/base"
+              ]
+            },
+            "styles": [
+              "./node_modules/angular-toastr/dist/angular-toastr.css",
+              "./node_modules/jquery-ui-dist/jquery-ui.css",
+              "./node_modules/jsoneditor/dist/jsoneditor.css",
+              "../ui/app/styles/main.scss",
+              "src/styles.scss"
+            ],
+            "scripts": [
+              "./node_modules/jquery/dist/jquery.js",
+              "./node_modules/angular/angular.js",
+              "./node_modules/bootstrap-sass/assets/javascripts/bootstrap.js",
+              "./node_modules/angular-animate/angular-animate.js",
+              "./node_modules/angular-cookies/angular-cookies.js",
+              "./node_modules/angular-messages/angular-messages.js",
+              "./node_modules/angular-resource/angular-resource.js",
+              "./node_modules/angular-route/angular-route.js",
+              "./node_modules/angular-sanitize/angular-sanitize.js",
+              "./node_modules/angular-touch/angular-touch.js",
+              "./node_modules/angular-aria/angular-aria.js",
+              "./node_modules/angular-i18n/angular-locale_en-gb.js",
+              "./node_modules/@uirouter/angularjs/release/angular-ui-router.js",
+              "./node_modules/lodash/lodash.js",
+              "./node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js",
+              "./node_modules/angular-validation-match/dist/angular-validation-match.min.js",
+              "./node_modules/ngstorage/ngStorage.js",
+              "./node_modules/moment/moment.js",
+              "./node_modules/angular-moment/angular-moment.js",
+              "./node_modules/angular-toastr/dist/angular-toastr.tpls.js",
+              "./node_modules/angular-permission/dist/angular-permission.js",
+              "./node_modules/angular-permission/dist/angular-permission-ui.js",
+              "./node_modules/angular-permission/dist/angular-permission-ng.js",
+              "./node_modules/angular-vertilize/angular-vertilize.js",
+              "./node_modules/re-tree/re-tree.js",
+              "./node_modules/ng-device-detector/ng-device-detector.js",
+              "./node_modules/jquery-ui-dist/jquery-ui.js",
+              "./node_modules/angular-clipboard/angular-clipboard.js",
+              "./node_modules/ng-idle/angular-idle.js",
+              "./node_modules/angular-ui-sortable/dist/sortable.js",
+              "./node_modules/angular-cache/dist/angular-cache.js",
+              "./node_modules/chart.js/dist/Chart.js",
+              "./node_modules/angular-chart.js/dist/angular-chart.js"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "6mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "gla:build",
+            "proxyConfig": "src/proxy.conf.js",
+            "port": 9000
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "gla:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "gla:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "karmaConfig": "karma.conf.js",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "tsconfig.app.json",
+              "tsconfig.spec.json",
+              "e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "gla:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "gla:serve:production"
+            }
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "gla",
+  "cli": {
+    "analytics": false
+  }
+}

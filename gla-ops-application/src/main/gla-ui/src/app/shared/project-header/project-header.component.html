@@ -1,0 +1,89 @@
+<gla-page-header
+  [backBtnName]="backBtnName || 'PROJECT OVERVIEW'"
+  (onBack)="onBack.emit()"
+  [editableBlock]="editableBlock"
+  [stopEditing]="stopEditing !== false"
+  [header]="project?.title">
+  <ng-content *ngIf="!project"></ng-content>
+  <ph-right>
+    <div class="btn-group project-menu-dropdown" ngbDropdown placement="bottom-right" *ngIf="project && (loading || linkMenuItems.length || actionMenuItems.length)">
+      <button id="project-menu" type="button" class="btn-project-menu btn btn-md btn-default" ngbDropdownToggle title="Project Menu">
+        PROJECT MENU <i class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu" aria-labelledby="project-menu">
+
+        <li class="loading" *ngIf="loading" role="menuitem">
+          <gla-spinner></gla-spinner>
+        </li>
+
+        <li role="menuitem" *ngFor="let item of linkMenuItems">
+          <a href="JavaScript:void(0)" *ngIf="!item.hr" title="{{item.displayText}}" (click)="goTo(item.stateName, item.stateParams)">
+            {{item.displayText}}
+          </a>
+          <hr *ngIf="item.hr"/>
+        </li>
+
+        <!--<li><hr></li>-->
+
+        <li *ngIf="!loading" role="menuitem">
+          <a href="JavaScript:void(0)" (click)="onActionClicked.emit({action:'watch'})" *ngIf="!project.currentUserWatching" title="Watch">
+            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+            Watch
+          </a>
+          <a *ngIf="project.currentUserWatching" title="Stop watching" (click)="onActionClicked.emit({action:'unwatch'})">
+            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+            Stop watching
+          </a>
+        </li>
+
+<!--        <li *ngIf="reportMenuItems.length && actionMenuItems.length"><hr></li>-->
+        <li role="menuitem" *ngFor="let item of actionMenuItems">
+          <a href="JavaScript:void(0)" (click)="onActionClicked.emit(item)" title="{{item.displayText}}">
+            <span class="glyphicon" [class]="item.icon" aria-hidden="true"></span>
+            {{item.displayText}}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <button class="btn btn-primary btn-md" (click)="onCreate.emit()" *ngIf="createBtnName">
+      {{createBtnName}}
+    </button>
+  </ph-right>
+</gla-page-header>
+
+<!-- Project header status -->
+<div class="row subtitle-row" *ngIf="editableBlock?.project.id">
+  <div class="col-xs-12  col-sm-4 no-padding text-xs-center text-sm-left  block-version"
+       [class]="{'col-sm-4': editableBlock.infoMessage, 'col-sm-8': !editableBlock.infoMessage }"
+       *ngIf="editableBlock.version || editableBlock.revertable">
+    <span>{{editableBlock.version}} </span>
+    <span class="text-nowrap">
+      <a href="JavaScript:void(0)" *ngIf="editableBlock.blockHistory.length > 1" (click)="editableBlock.viewHistory()" class="view-history">View History</a>
+      <!-- Show IF editable, if can be deleted and is not locked -->
+      <span *ngIf="!editableBlock.lockDetails && editableBlock.editable && editableBlock.readOnly">
+        <span *ngIf="editableBlock.blockHistory.length > 1 && editableBlock.deletable"> |
+          <a href="JavaScript:void(0)" (click)="editableBlock.deleteBlock()" class="delete-block">{{undoLinkText}}<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></a>
+        </span>
+        <span *ngIf="editableBlock.blockHistory.length < 2 && editableBlock.revertable">
+          <a href="JavaScript:void(0)" (click)="editableBlock.revertBlock()" class="revert-block">{{undoLinkText}}<span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></a>
+        </span>
+      </span>
+    </span>
+  </div>
+
+  <div class="col-xs-12 no-padding project-message green"
+       [class]="{'col-sm-4' : editableBlock.version || editableBlock.revertable, 'col-sm-6 col-sm-offset-3' : !editableBlock.version && !editableBlock.revertable}"
+       *ngIf="editableBlock.infoMessage">
+    <div>{{editableBlock.infoMessage}}</div>
+  </div>
+
+  <div class="col-xs-12 no-padding text-sm-right  project-id ukprn"
+       [class]="{'text-xs-center': editableBlock.infoMessage || editableBlock.version || editableBlock.revertable,
+         'col-sm-4': editableBlock.version || editableBlock.revertable,
+         'col-sm-3': !editableBlock.version && !editableBlock.revertable,
+         'col-sm-offset-9' : !editableBlock.infoMessage && !editableBlock.version && !editableBlock.revertable}">
+    Project <span>ID: <strong>P{{editableBlock.project.id}}</strong></span>
+    <div *ngIf="showUkprn"> UKPRN: <strong>{{ editableBlock.project.organisation.ukprn || 'Not provided' }}</strong></div>
+  </div>
+</div>

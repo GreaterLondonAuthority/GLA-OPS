@@ -1,0 +1,649 @@
+{
+  "name": "No Sales Template",
+  "author": "TBC",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Spend",
+      "block": "ProjectBudgets",
+      "displayOrder": 2
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Calculate Grant",
+      "block": "CalculateGrant",
+      "displayOrder": 3
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Negotiated Grant",
+      "block": "NegotiatedGrant",
+      "displayOrder": 4
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Developer-led Grant",
+      "block": "DeveloperLedGrant",
+      "displayOrder": 5
+    },
+    {
+      "type": "IndicativeGrantTemplateBlock",
+      "block": "IndicativeGrant",
+      "displayOrder": 6,
+      "tenureYears": [
+
+        {
+          "year": 2018,
+          "externalId": 4001,
+          "tariffRate": 10000
+        },
+        {
+          "year": 2019,
+          "externalId": 4001,
+          "tariffRate": 10000
+        },
+
+
+        {
+          "year": 2017,
+          "externalId": 4001,
+          "tariffRate": 10000
+        }
+      ],
+      "allowZeroUnits": false
+    },
+    {
+      "type": "GrantSourceTemplateBlock",
+      "blockDisplayName": "Grant Source",
+      "block": "GrantSource",
+      "displayOrder": 7,
+      "nilGrantHidden": false,
+      "description": "Select and enter the amount from each grant source custom description",
+      "grantTypes": [
+        "Grant",
+        "DPF",
+        "RCGF"
+      ]
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Design Standards",
+      "block": "DesignStandards",
+      "displayOrder": 8
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Risks and Issues",
+      "block": "Risks",
+      "displayOrder": 9
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Additional Questions",
+      "block": "Questions",
+      "displayOrder": 10,
+      "questions": [
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 128,
+            "text": "When would ground works start?",
+            "answerType": "Date",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 144,
+            "text": "Please upload supporting evidence",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 129,
+            "text": "Email address of developer primary contact?",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 0,
+          "question": {
+            "id": 121,
+            "text": "Is this a Section 106 project?",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 125,
+            "text": "How much of the total cost (£) is acquisition?",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 145,
+            "text": "Please upload different supporting evidence",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 127,
+            "text": "Describe the neighbourhood of the site?",
+            "answerType": "FreeText",
+            "maxLength": 2000,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional"
+        }
+      ],
+      "sections": []
+    },
+    {
+      "type": "OutputsTemplateBlock",
+      "blockDisplayName": "Outputs",
+      "block": "Outputs",
+      "displayOrder": 11,
+      "showValueColumn": true,
+      "showOutputTypeColumn": true,
+      "outputConfigurationGroup": {
+        "id": 1000,
+        "periodType": "Monthly",
+        "outputTypeName": "Output Type",
+        "categoryName": "Category",
+        "subcategoryName": "Sub Category",
+        "outputTypes": [
+          {
+            "key": "DIRECT",
+            "description": "Direct Output"
+          },
+          {
+            "key": "IND_COUNTED_IN_ANOTHER",
+            "description": "Indirect: Counted in Another Housing Programme"
+          },
+          {
+            "key": "IND_MINORITY_STAKE",
+            "description": "Indirect: Minority Stake in Joint Venture"
+          },
+          {
+            "key": "IND_UNBLOCKS",
+            "description": "Indirect: Unlocks Other Parts of a Site"
+          },
+          {
+            "key": "IND_UNLOCKING",
+            "description": "Indirect: Unlocking Without Land Interest"
+          },
+          {
+            "key": "IND_OTHER",
+            "description": "Indirect: Other"
+          }
+        ],
+        "categories": [
+          {
+            "id": 1,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Social Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 2,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "London Affordable Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 3,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Intermediate Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 4,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "London Living Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 5,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Shared Ownership",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 6,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Shared Equity",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 7,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Affordable Housing Legacy",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 8,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Social Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 9,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "London Affordable Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 10,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Intermediate Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 11,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "London Living Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 12,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Shared Ownership",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 13,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Shared Equity",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 14,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Legacy",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 15,
+            "category": "Housing Starts on Site (Open Market)",
+            "subcategory": "Legacy",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 16,
+            "category": "Housing Starts on Site (Open Market)",
+            "subcategory": "Private Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 17,
+            "category": "Housing Starts on Site (Open Market)",
+            "subcategory": "Private Sales",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 18,
+            "category": "Housing Completions (Open Market)",
+            "subcategory": "Legacy",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 19,
+            "category": "Housing Completions (Open Market)",
+            "subcategory": "Private Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 20,
+            "category": "Housing Completions (Open Market)",
+            "subcategory": "Private Sales",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 21,
+            "category": "Land Brought into Beneficial Use (Ha)",
+            "subcategory": "Previously Developed/Brownfield",
+            "valueType": "HECTARES",
+            "hidden": false
+          },
+          {
+            "id": 22,
+            "category": "Land Brought into Beneficial Use (Ha)",
+            "subcategory": "Greenfield",
+            "valueType": "HECTARES",
+            "hidden": false
+          },
+          {
+            "id": 23,
+            "category": "Land Brought into Beneficial Use (Ha)",
+            "subcategory": "Public Land",
+            "valueType": "HECTARES",
+            "hidden": false
+          },
+          {
+            "id": 24,
+            "category": "Apprenticeship Positions",
+            "subcategory": "N/A",
+            "valueType": "POSITIONS",
+            "hidden": false
+          },
+          {
+            "id": 25,
+            "category": "Jobs Created (Potential)",
+            "subcategory": "N/A",
+            "valueType": "POSITIONS",
+            "hidden": false
+          },
+          {
+            "id": 26,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "A1",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 27,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "A2",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 28,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "A3",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 29,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "B1",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 30,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "B2",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 31,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "B8",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 32,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "C1",
+            "valueType": "BEDROOMS",
+            "hidden": false
+          },
+          {
+            "id": 33,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "D1",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 34,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "D2",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 35,
+            "category": "Development Value (£)",
+            "subcategory": "N/A",
+            "valueType": "MONETARY_VALUE",
+            "hidden": false
+          }
+        ],
+        "categoryIDs": [],
+        "outputTypeKeys": []
+      }
+    },
+    {
+      "type": "ReceiptsTemplateBlock",
+      "blockDisplayName": "Receipts",
+      "block": "Receipts",
+      "displayOrder": 12
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Unit Details",
+      "block": "UnitDetails",
+      "displayOrder": 13
+    },
+    {
+      "type": "FundingTemplateBlock",
+      "blockDisplayName": "Budget",
+      "block": "Funding",
+      "displayOrder": 14
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "displayOrder": 15,
+      "autoCalculateMilestoneState": true,
+      "processingRoutes": [
+        {
+          "externalId": 41146,
+          "name": "default",
+          "milestones": [
+            {
+              "externalId": 3004,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 3,
+              "monetary": true,
+              "keyEvent": true,
+              "naSelectable": false
+            },
+            {
+              "externalId": 3003,
+              "summary": "Start on site",
+              "requirement": "mandatory",
+              "monetarySplit": 50,
+              "displayOrder": 2,
+              "monetary": true,
+              "keyEvent": true,
+              "naSelectable": false
+            },
+            {
+              "externalId": 3001,
+              "summary": "Planning granted",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": true,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "externalId": 3000,
+              "summary": "Land acquired",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 0,
+              "monetary": true,
+              "keyEvent": false,
+              "naSelectable": false
+            }
+          ]
+        }
+      ],
+      "descriptionEnabled": false,
+      "allMilestones": [
+        {
+          "externalId": 3004,
+          "summary": "Completion",
+          "requirement": "mandatory",
+          "monetarySplit": 50,
+          "displayOrder": 3,
+          "monetary": true,
+          "keyEvent": true,
+          "naSelectable": false
+        },
+        {
+          "externalId": 3003,
+          "summary": "Start on site",
+          "requirement": "mandatory",
+          "monetarySplit": 50,
+          "displayOrder": 2,
+          "monetary": true,
+          "keyEvent": true,
+          "naSelectable": false
+        },
+        {
+          "externalId": 3001,
+          "summary": "Planning granted",
+          "requirement": "mandatory",
+          "monetarySplit": 0,
+          "displayOrder": 1,
+          "monetary": true,
+          "keyEvent": false,
+          "naSelectable": false
+        },
+        {
+          "externalId": 3000,
+          "summary": "Land acquired",
+          "requirement": "mandatory",
+          "monetarySplit": 0,
+          "displayOrder": 0,
+          "monetary": true,
+          "keyEvent": false,
+          "naSelectable": false
+        }
+      ]
+
+    }
+  ],
+  "internalBlocks": [],
+
+
+  "stateModel": "ChangeControlled",
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "MonetarySplit",
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "mandatory",
+    "postcodeRequirement": "optional",
+    "coordsRequirement": "mandatory",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": "mandatory",
+    "imageRequirement": "optional",
+    "contactRequirement": "optional",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "optional"
+  },
+  "tenureTypes": [
+    {
+      "tariffRate": 10000,
+      "displayOrder": 0,
+      "templateTenureTypeMarketTypes": [{
+        "marketType" : {
+          "id" : 1
+        },
+        "marketTypeDisplayName" : "Test Market Type RENT"
+      }],
+      "externalId": 4001,
+
+      "name": "London Living Rent"
+    }
+
+  ],
+  "indicativeTenureConfiguration": {
+    "indicativeTenureStartYear": 2017,
+    "indicativeTenureNumberOfYears": 3
+  },
+
+  "allowMonetaryMilestones": true,
+  "grantTypes": [
+    "Grant",
+    "RCGF",
+    "DPF"
+  ]
+}

@@ -1,0 +1,59 @@
+<div class="consortiums">
+  <div class="text-center">
+    <gla-page-header class="mbottom10" header="Consortiums & Partnerships" [hide-back-btn]="true">
+      <ph-right>
+        <span permission permission-only="'cons.create'">
+          <button ui-sref="consortiums-new" class="btn btn-primary btn-md">
+            CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+          </button>
+        </span>
+      </ph-right>
+    </gla-page-header>
+
+    <!--for e2e-->
+    <input type="hidden" id="created-consortium" ng-value="$ctrl.createdConsortiumId">
+
+    <div class="row">
+      <gla-spinner ng-if="$ctrl.isLoading"></gla-spinner>
+
+      <div class="col-xs-12" ng-show="!$ctrl.isLoading && $ctrl.groups.length === 0">
+        There are no Consortiums & Partnerships.
+      </div>
+
+      <div class="table-responsive text-left" ng-show="!$ctrl.isLoading && $ctrl.groups.length > 0">
+
+        <table class="table table-hover table-bordered table-striped table-selectable-row">
+          <thead class="thead-inverse uppercase">
+            <tr>
+              <th ng-click="$ctrl.sortBy('name')">
+                NAME
+                <span class="sortorder" ng-show="$ctrl.sortedBy === 'name'" ng-class="{reverse: $ctrl.sortReversed}"></span>
+              </th>
+              <th ng-click="$ctrl.sortBy('type')">
+                TYPE
+                <span class="sortorder" ng-show="$ctrl.sortedBy === 'type'" ng-class="{reverse: $ctrl.sortReversed}"></span>
+              </th>
+              <th ng-click="$ctrl.sortBy('programme')">
+                PROGRAMME
+                <span class="sortorder" ng-show="$ctrl.sortedBy === 'programme'" ng-class="{reverse: $ctrl.sortReversed}"></span>
+              </th>
+              <th ng-click="$ctrl.sortBy('lead')">
+                LEAD ORGANISATION
+                <span class="sortorder" ng-show="$ctrl.sortedBy === 'lead'" ng-class="{reverse: $ctrl.sortReversed}"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr allow-enter ng-repeat="item in $ctrl.groups" tabindex="0" ui-sref="consortiums-edit({orgGroupId: item.id})">
+              <td>{{item.name}}</td>
+              <td>{{item.type}}</td>
+              <td>{{item.programme.name}}</td>
+              <td>{{item.leadOrganisation.name}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>

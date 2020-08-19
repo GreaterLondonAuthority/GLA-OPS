@@ -1,0 +1,33 @@
+<div class="organisation-registration-user-page organisation-form page">
+  <gla-page-header back-btn-name="ORGANISATION DETAILS" [editable-block]="$ctrl" (on-back)="$ctrl.back()">Register your details</gla-page-header>
+
+  <navigation-circles class="mtop10" items="$ctrl.registration.navigationCircles"></navigation-circles>
+
+  <div class="no-gutter">
+    <div class="col-xs-12 col-sm-6 col-md-offset-3 mtop40">
+      <div class="form-top-error mtop10 mbottom20"  ng-if="$ctrl.errors">
+        <p class="error">Sorry, we were unable to complete your changes. Please check your details and try again</p>
+      </div>
+
+
+      <div class="section-description">
+        <p>The Organisation Admin approves all subsequent users.</p>
+        <p>You will be emailed further information when this registration is approved.</p>
+      </div>
+      <div>
+        <user-registration-form
+          class="user-form"
+          errors="$ctrl.errors"
+          on-form-validity-change="$ctrl.onUserFormValidityChange($event)"
+          reg-data="$ctrl.registration.user">
+        </user-registration-form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row text-center">
+    <div class="col-xs-12">
+      <button class="btn btn-primary mtop40" ng-click="$ctrl.next()" ng-disabled="!$ctrl.isUserFormValid">REGISTER</button>
+    </div>
+  </div>
+</div>

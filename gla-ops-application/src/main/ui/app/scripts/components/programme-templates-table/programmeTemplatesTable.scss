@@ -1,0 +1,51 @@
+programme-templates-table{
+  display: block;
+  delete-button{
+    display: block;
+  }
+
+  table td{
+    border: 1px solid $table-border-color;
+    background-color: $gla-white;
+    input {
+      height: 30px;
+      padding: 6px 12px;
+      border: 1px solid $form-field-inactive;
+      border-radius: 2px;
+      width: 120px;
+      &:focus {
+        border: 1px solid $form-field-focus-border;
+      }
+    }
+    input[type="radio"]{
+      height: 14px;
+      width: 20px;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+  .ui-select-choices{
+    left: auto;
+    right: 0;
+
+    width: auto !important;
+    max-width: 300px;
+    .ui-select-choices-row-inner{
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  #programme-tempaltes-table {
+    .pright20{
+      padding-right: 20px;
+    }
+    delete-button .delete-button{
+      right: -24px;
+    }
+  }
+  td.delete-btn-container.delete-btn-container{
+    padding-right: 20px;
+  }
+}

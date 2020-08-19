@@ -1,0 +1,35 @@
+<div class="includes-tables">
+
+  <div>
+    <div class="report-label mtop10">{{$ctrl.labels.academicYear}}</div>
+    <div class="report-value">{{$ctrl.block.academicYear}}</div>
+  </div>
+
+  <div>
+    <div class="report-label mtop10">{{$ctrl.labels.deliverAllocation}}</div>
+    <div class="report-value" default-value="'Not provided'">{{$ctrl.currentAllocation.allocation | number}}</div>
+  </div>
+  <div ng-if="$ctrl.isAebGrant">
+    <div class="report-label mtop10">{{$ctrl.labels.communityAllocation}}</div>
+    <div class="report-value" default-value="'Not provided'">{{$ctrl.currentAllocation.communityAllocation | number}}</div>
+  </div>
+  <learning-grant-table columns="$ctrl.labels.tableColumns"
+                        class="mbottom20"
+                        data="$ctrl.deliveryEntries"
+                        id="delivery-allocations"
+                        is-aeb-procured="$ctrl.isAebProcured"
+                        is-support-allocation="false"></learning-grant-table>
+
+  <div ng-if="$ctrl.isAebProcured">
+    <div class="report-label mtop10">{{$ctrl.labels.learnerSupportAllocation}}</div>
+    <div class="report-value" default-value="'Not provided'">{{$ctrl.currentAllocation.learnerSupportAllocation | number}}</div>
+  </div>
+
+  <learning-grant-table columns="$ctrl.labels.tableColumns"
+                        data="$ctrl.supportEntries"
+                        id="learner-support-allocations"
+                        is-aeb-procured="$ctrl.isAebProcured"
+                        is-support-allocation="true"
+                        ng-if="$ctrl.supportEntries.length && $ctrl.isAebProcured"></learning-grant-table>
+
+</div>

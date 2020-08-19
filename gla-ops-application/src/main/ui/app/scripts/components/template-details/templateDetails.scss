@@ -1,0 +1,20 @@
+template-details {
+  display: block;
+
+  gla-page-header{
+    h2{
+      font-size: 1.25rem;
+    }
+    hr{
+      //display: none;
+    }
+  }
+
+  .error-msg{
+    margin-top: 10px;
+    display: inline-block;
+    color: #00ff88;
+  }
+
+}
+

@@ -1,0 +1,1153 @@
+{
+  "name":"London Borough of Culture",
+  "author":"Nahida Miah",
+  "blocksEnabled":[
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Additional Documentation",
+      "block":"Questions",
+      "displayOrder":12,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":2,
+          "question":{
+            "id":848,
+            "externalKey":null,
+            "text":"Upload a declaration from your Borough Leader, Chief Executive and Chief Finance Officer. If you wish, you can also include supporting letters for up to 3 partners. Please upload as 1 attachment only.",
+            "answerType":"FileUpload",
+            "quantity":1,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":847,
+            "externalKey":null,
+            "text":"I confirm that I have obtained all the relevant internal approvals required for this project.",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":849,
+            "externalKey":null,
+            "text":"If you would like to provide additional media to give us a flavour of your bid, please include direct links to this content online (in a word document). Please note we will not be scoring or assessing these",
+            "answerType":"FileUpload",
+            "quantity":1,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Confidentiality",
+      "block":"Questions",
+      "displayOrder":11,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":5,
+          "question":{
+            "id":846,
+            "externalKey":null,
+            "text":"Can we pass your contact details to organisers of marketing activities, conferences and training events?",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":842,
+            "externalKey":null,
+            "text":"Should we should treat your proposal as confidential information?",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":844,
+            "externalKey":null,
+            "text":"If there is any other information you have provided that you consider to be confidential information, provide your reasons for this below or in a separate letter. If you are sending us a separate letter, please write ‘letter submitted’ below",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":3300,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":843,
+            "externalKey":null,
+            "text":"Should we should treat your financial information, such as your budget and any business plan, as confidential information?",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":4,
+          "question":{
+            "id":845,
+            "externalKey":null,
+            "text":"Can we can keep you informed of our work?",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Exemplary Project Awards",
+      "block":"Questions",
+      "displayOrder":10,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":5,
+          "question":{
+            "id":837,
+            "externalKey":null,
+            "text":"How will you monitor the success of the project?",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":660,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":835,
+            "externalKey":null,
+            "text":"What is the step-change you want to make or impact you want to have through this project?",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":1400,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":9,
+          "question":{
+            "id":841,
+            "externalKey":null,
+            "text":"Please confirm that you have completed the dedicated section in the budget template for your exemplary project (in the Deliverability block).",
+            "answerType":"YesNo",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":834,
+            "externalKey":null,
+            "text":"Describe the area (geographic location) of the borough where your project will take place and why here, the local people that will be involved and how you have identified them and the need for this project.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":1630,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":8,
+          "question":{
+            "id":840,
+            "externalKey":null,
+            "text":"Outline how you plan to secure a minimum of 30% match funding.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":660,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":7,
+          "question":{
+            "id":839,
+            "externalKey":null,
+            "text":"Describe how the project delivers value for money.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":660,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":836,
+            "externalKey":null,
+            "text":"Describe the project activity/activities, the creative content and partnerships and how this will be amazing, ambitious, authentic and all-embracing.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2800,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":4,
+          "question":{
+            "id":850,
+            "externalKey":null,
+            "text":"Identify appropriate outcomes & outputs and quantify the level of impact you plan for this project to have.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":1000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":6,
+          "question":{
+            "id":838,
+            "externalKey":null,
+            "text":"Describe how the project will be well managed (including partnerships, long term vision/approach and shared learning).",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":1400,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Deliverability",
+      "block":"Questions",
+      "displayOrder":9,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":5,
+          "question":{
+            "id":830,
+            "externalKey":null,
+            "text":"Upload match funding evidence.",
+            "answerType":"FileUpload",
+            "quantity":1,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":827,
+            "externalKey":null,
+            "text":"Please continue your answer below if required",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2600,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":6,
+          "question":{
+            "id":831,
+            "externalKey":null,
+            "text":"Complete and upload the [budget template.](https://www.london.gov.uk/sites/default/files/lboc_budget_template.xlsx)",
+            "answerType":"FileUpload",
+            "quantity":1,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":7,
+          "question":{
+            "id":832,
+            "externalKey":null,
+            "text":"Provide a description of the key risks associated with your proposed programme of activity by completing and uploading the [risks template.](https://www.london.gov.uk/sites/default/files/risk_template.docx)",
+            "answerType":"FileUpload",
+            "quantity":1,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":4,
+          "question":{
+            "id":829,
+            "externalKey":null,
+            "text":"Please outline how you plan to secure a minimum of 30% match funding. You should include sources and amounts of cash income and in kind support. Please indicate whether these are confirmed or to be expected.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":1400,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":826,
+            "externalKey":null,
+            "text":"Describe how the project will be well managed. Please address the following areas: good project management; exemplary partnership working; the long-term approach and shared learning.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":4000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":828,
+            "externalKey":null,
+            "text":"Describe how your project delivers value for money.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":1630,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":8,
+          "question":{
+            "id":833,
+            "externalKey":null,
+            "text":"Please describe how your proposal reflects your duties under the Equality Act 2010. How does it address integration and the needs of specific groups who might find it harder to engage and participate?",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":3330,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Monitoring & evaluation",
+      "block":"Questions",
+      "displayOrder":8,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":1,
+          "question":{
+            "id":825,
+            "externalKey":null,
+            "text":"Please tell us how you will monitor and verify the information you collect so you can measure the outputs and outcomes.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":1400,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Outcomes & outputs",
+      "block":"Questions",
+      "displayOrder":7,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":1,
+          "question":{
+            "id":824,
+            "externalKey":null,
+            "text":"Complete and upload the [outcomes and outputs table.](https://www.london.gov.uk/sites/default/files/lboc_outcomes_and_outputs_table.docx)",
+            "answerType":"FileUpload",
+            "quantity":1,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Celebrating creativity",
+      "block":"Questions",
+      "displayOrder":6,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":5,
+          "question":{
+            "id":823,
+            "externalKey":null,
+            "text":"Briefly tell us your plans to widen access to and participation in the arts and how you might address inequalities of opportunity in your borough; including systemic barriers you have identified.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":4,
+          "question":{
+            "id":822,
+            "externalKey":null,
+            "text":"Briefly tell us, what are the heritage themes you might focus upon and what difference will this make for local people?",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":819,
+            "externalKey":null,
+            "text":"Describe your proposed programme of activities. What will your Borough of Culture look like? In your response consider how your programme will be amazing, ambitious, authentic and all-embracing.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":4000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":821,
+            "externalKey":null,
+            "text":"Please continue your answer below if required",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":820,
+            "externalKey":null,
+            "text":"Please continue your answer below if required",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":4000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Making an impact",
+      "block":"Questions",
+      "displayOrder":5,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":4,
+          "question":{
+            "id":818,
+            "externalKey":null,
+            "text":"Please continue your answer below if required",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2600,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":815,
+            "externalKey":null,
+            "text":"Describe your borough, its people and places. We want a snap-shot of your borough profile and where you see its future, demonstrating a clear evidence base and a statement outlining why you need this award.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":4000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":816,
+            "externalKey":null,
+            "text":"Please continue your answer below if required",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":2600,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":817,
+            "externalKey":null,
+            "text":"Explain how becoming the London Borough of Culture in 2019 or 2020 will help you achieve your ambitions and create long term change.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":4000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Project Overview",
+      "block":"Questions",
+      "displayOrder":4,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":4,
+          "question":{
+            "id":813,
+            "externalKey":null,
+            "text":"How much will your programme cost in total? (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":812,
+            "externalKey":null,
+            "text":"How much funding are you applying for from the GLA in this application? (£)",
+            "answerType":"Number",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":810,
+            "externalKey":null,
+            "text":"Which year are you applying to become the London Borough of Culture?",
+            "answerType":"Dropdown",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+              {
+                "displayOrder":3,
+                "option":"Either 2019 or 2020"
+              },
+              {
+                "displayOrder":2,
+                "option":"2020"
+              },
+              {
+                "displayOrder":1,
+                "option":"2019"
+              }
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":5,
+          "question":{
+            "id":814,
+            "externalKey":null,
+            "text":"Provide a summary of the proposed programme.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":1000,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":811,
+            "externalKey":null,
+            "text":"If you have a preference for a particular year, please tell us why",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":660,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"Contact with us",
+      "block":"Questions",
+      "displayOrder":3,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":1,
+          "question":{
+            "id":808,
+            "externalKey":null,
+            "text":"If you have discussed your activity with a member of GLA staff, please tell us their name (or names), if you know, and which team they work in",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":300,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":809,
+            "externalKey":null,
+            "text":"If you are related to any elected GLA members or GLA staff, please tell us about your relationship with them, their name (or names) and which team they work in",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":300,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"optional",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"QuestionsTemplateBlock",
+      "blockDisplayName":"General Information",
+      "block":"Questions",
+      "displayOrder":2,
+      "blockAppearsOnStatus":null,
+      "questions":[
+        {
+          "displayOrder":7,
+          "question":{
+            "id":806,
+            "externalKey":null,
+            "text":"Telephone number.",
+            "answerType":"Text",
+            "quantity":null,
+            "maxLength":50,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":4,
+          "question":{
+            "id":803,
+            "externalKey":null,
+            "text":"Position held.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":100,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":1,
+          "question":{
+            "id":800,
+            "externalKey":null,
+            "text":"Name of Borough.",
+            "answerType":"Dropdown",
+            "quantity":null,
+            "maxLength":null,
+            "answerOptions":[
+              {
+                "displayOrder":19,
+                "option":"Kensington and Chelsea"
+              },
+              {
+                "displayOrder":13,
+                "option":"Haringey"
+              },
+              {
+                "displayOrder":9,
+                "option":"Enfield"
+              },
+              {
+                "displayOrder":1,
+                "option":"Barking & Dagenham"
+              },
+              {
+                "displayOrder":11,
+                "option":"Hackney"
+              },
+              {
+                "displayOrder":10,
+                "option":"Greenwich"
+              },
+              {
+                "displayOrder":23,
+                "option":"Merton"
+              },
+              {
+                "displayOrder":12,
+                "option":"Hammersmith & Fulham"
+              },
+              {
+                "displayOrder":18,
+                "option":"Islington"
+              },
+              {
+                "displayOrder":15,
+                "option":"Havering"
+              },
+              {
+                "displayOrder":32,
+                "option":"Westminster"
+              },
+              {
+                "displayOrder":30,
+                "option":"Waltham Forest"
+              },
+              {
+                "displayOrder":29,
+                "option":"Tower Hamlets"
+              },
+              {
+                "displayOrder":28,
+                "option":"Sutton"
+              },
+              {
+                "displayOrder":22,
+                "option":"Lewisham"
+              },
+              {
+                "displayOrder":31,
+                "option":"Wandsworth"
+              },
+              {
+                "displayOrder":5,
+                "option":"Bromley"
+              },
+              {
+                "displayOrder":26,
+                "option":"Richmond-upon-Thames"
+              },
+              {
+                "displayOrder":24,
+                "option":"Newham"
+              },
+              {
+                "displayOrder":6,
+                "option":"Camden"
+              },
+              {
+                "displayOrder":21,
+                "option":"Lambeth"
+              },
+              {
+                "displayOrder":27,
+                "option":"Southwark"
+              },
+              {
+                "displayOrder":20,
+                "option":"Kingston-upon-Thames"
+              },
+              {
+                "displayOrder":14,
+                "option":"Harrow"
+              },
+              {
+                "displayOrder":2,
+                "option":"Barnet"
+              },
+              {
+                "displayOrder":16,
+                "option":"Hillingdon"
+              },
+              {
+                "displayOrder":17,
+                "option":"Hounslow"
+              },
+              {
+                "displayOrder":7,
+                "option":"Croydon"
+              },
+              {
+                "displayOrder":4,
+                "option":"Brent"
+              },
+              {
+                "displayOrder":8,
+                "option":"Ealing"
+              },
+              {
+                "displayOrder":25,
+                "option":"Redbridge"
+              },
+              {
+                "displayOrder":3,
+                "option":"Bexley"
+              }
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":2,
+          "question":{
+            "id":801,
+            "externalKey":null,
+            "text":"Borough address.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":300,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":6,
+          "question":{
+            "id":805,
+            "externalKey":null,
+            "text":"Department/Business Unit.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":100,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":3,
+          "question":{
+            "id":802,
+            "externalKey":null,
+            "text":"Name of contact person.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":100,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":5,
+          "question":{
+            "id":804,
+            "externalKey":null,
+            "text":"Directorate.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":100,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        },
+        {
+          "displayOrder":8,
+          "question":{
+            "id":807,
+            "externalKey":null,
+            "text":"E-mail address.",
+            "answerType":"FreeText",
+            "quantity":null,
+            "maxLength":100,
+            "answerOptions":[
+
+            ]
+          },
+          "requirement":"mandatory",
+          "parentId":null,
+          "parentAnswerToMatch":null
+        }
+      ]
+    },
+    {
+      "type":"ProjectDetailsTemplateBlock",
+      "blockDisplayName":"Project Details",
+      "block":"Details",
+      "displayOrder":1,
+      "blockAppearsOnStatus":null
+    }
+  ],
+  "stateModel": "ChangeControlled",
+  "cloneOfTemplateId":null,
+  "cloneModified":false,
+  "strategicTemplate":false,
+  "associatedProjectsEnabled":false,
+  "milestoneType":"NonMonetary",
+  "milestoneDescriptionHintText":null,
+  "monetarySplitTitle":null,
+  "warningMessage":"Please ensure you read the London Borough of Culture guidance notes before completing your application.",
+  "detailsConfig":{
+    "addressRequirement":"hidden",
+    "boroughRequirement":"hidden",
+    "postcodeRequirement":"hidden",
+    "coordsRequirement":"hidden",
+    "maincontactRequirement":"hidden",
+    "maincontactemailRequirement":"hidden",
+    "imageRequirement":"hidden",
+    "contactRequirement":"hidden",
+    "siteOwnerRequirement":"hidden",
+    "interestRequirement":"hidden",
+    "projectManagerRequirement":"hidden",
+    "siteStatusRequirement":"hidden",
+    "legacyProjectCodeRequirement":"hidden",
+    "descriptionRequirement":"hidden",
+    "planningPermissionReferenceRequirement":"hidden"
+  },
+  "tenureTypes":[
+
+  ],
+  "indicativeTenureConfiguration":null,
+  "contract":null,
+  "startOnSiteRestrictionText":null,
+  "allowMonetaryMilestones":false,
+  "grantTypes":[
+
+  ]
+}

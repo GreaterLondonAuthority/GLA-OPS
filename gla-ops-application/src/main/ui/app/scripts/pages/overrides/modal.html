@@ -1,0 +1,132 @@
+<div class="override-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.override.id? 'Edit Override':'Add New Override'}}</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="overrideForm"
+      role="form"
+      name="overrideForm">
+
+      <div class="form-group label-input">
+        <label for="projectId">Enter project id</label>
+        <input id="projectId"
+               ng-blur="$ctrl.onProjectIdChange($ctrl.override.projectId)"
+               name="projectId"
+               ng-disabled="$ctrl.override.id"
+               class="form-control projectId"
+               ng-model="$ctrl.override.projectId"
+               placeholder="Project Id"
+               numbers-only
+               required
+               maxlength="10"  />
+        <div class="error-wrapper" ng-if="$ctrl.override.projectId && overrideForm.projectId.$touched && !$ctrl.projectExists && !$ctrl.loading" role="alert">
+          <span class="error">Project not found</span>
+        </div>
+      </div>
+
+      <div class="form-group label-input">
+        <label for="overrideReason">Select Override Reason</label>
+        <select class="form-control"
+                id="overrideReason"
+                name="overrideReason"
+                ng-model="$ctrl.override.overrideReason"
+                ng-options="reason for reason in $ctrl.metadata.reasons"
+                required
+                style-placeholder="">
+          <option disabled value="">Override Reason</option>
+        </select>
+      </div>
+
+      <div class="form-group label-input">
+        <label for="overrideType">Select Override Type</label>
+        <select class="form-control"
+                id="overrideType"
+                name="overrideType"
+                ng-disabled="$ctrl.override.id"
+                ng-model="$ctrl.override.overrideType"
+                ng-options="type for type in $ctrl.metadata.types"
+                required
+                style-placeholder="">
+          <option disabled value="">Override Type</option>
+        </select>
+      </div>
+
+      <div class="form-group label-input">
+        <label for="tenure">Select Tenure</label>
+        <select class="form-control"
+                id="tenure"
+                name="tenure"
+                ng-model="$ctrl.override.tenure"
+                ng-options="tenure for tenure in $ctrl.metadata.tenures"
+                style-placeholder="">
+          <option disabled value="">Tenure</option>
+        </select>
+      </div>
+
+      <div class="form-group label-input">
+        <label for="reportedValue">Enter Reported Value</label>
+        <input id="reportedValue"
+               type="text"
+               number-mask="0"
+               name="reportedValue"
+               class="form-control reportedValue"
+               ng-model="$ctrl.override.reportedValue"
+               placeholder="Reported Value"
+               ng-change="$ctrl.validate()"
+               maxlength="11"  />
+      </div>
+
+      <div class="form-group date-picker">
+        <label for="reportedDate">Enter Reported Date</label>
+        <div class="input-group" style="width: 160px">
+          <input class="form-control white"
+                 close-text="Close"
+                 datepicker-options="$ctrl.dateOptions"
+                 id="reportedDate"
+                 is-open="showDatePopup"
+                 ng-click="showDatePopup = !showDatePopup"
+                 ng-model="$ctrl.override.reportedDate"
+                 placeholder="Reported Date"
+                 readonly
+                 tabindex="-1"
+                 show-button-bar="false"
+                 uib-datepicker-popup="{{$ctrl.dateOptions.format}}"/>
+              <span tabindex="0" allow-enter role="button" aria-label="Calendar" class="input-group-addon" ng-click="showDatePopup = !showDatePopup">
+                  <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+        </div>
+      </div>
+
+      <div class="form-group label-input">
+        <label for="comments">Enter comments</label>
+        <textarea class="form-control reportedValue"
+                  id="comments"
+                  maxlength="200"
+                  name="comments"
+                  ng-change="$ctrl.validate()"
+                  ng-model="$ctrl.override.comments"
+                  ng-trim="false"
+                  placeholder="Comments"
+                  required
+                  rows="5"></textarea>
+        <gla-remaining-characters [max]="200" [text]="$ctrl.override.comments"></gla-remaining-characters>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button"
+            ng-click="$close($ctrl.override)"
+            ng-disabled="(!$ctrl.projectExists && !$ctrl.override.id) || !$ctrl.override.projectId || !$ctrl.override.overrideReason || !$ctrl.override.overrideType || !$ctrl.override.comments">
+       SAVE
+    </button>
+    <button class="btn btn-default btn-secondary btn-center" type="button" ng-click="$dismiss('cancel')">CANCEL</button>
+  </div>
+</div>

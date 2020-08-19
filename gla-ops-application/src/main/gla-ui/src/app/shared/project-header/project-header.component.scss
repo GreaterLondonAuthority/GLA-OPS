@@ -1,0 +1,67 @@
+@import 'variables';
+
+:host {
+  display: block;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+
+  hr{
+    margin: 5px 0;
+  }
+
+  .project-message{
+    font-size: 12/16 + 0rem;
+    margin-top: 10px;
+  }
+
+  .project-id, .block-version{
+    margin-top: 10px;
+  }
+
+  .dropdown-menu{
+    min-width: 215px;
+    border-radius: 0;
+    background-clip: border-box;
+    padding-left: 5px;
+    padding-right: 5px;
+    hr{
+      border-top: 1px solid #aebecb;
+    }
+    > li > a {
+      padding-left: 5px;
+      font-size: 12px;
+      font-family: $font-family-bolder;
+      .glyphicon {
+        margin-right: 5px;
+        top: 2px;
+        &.glyphicon-transfer{
+          top: 3px;
+        }
+      }
+    }
+
+    li.loading {
+      color: $heather;
+
+      gla-spinner {
+        .spinner__loading-text {
+          color: $heather;
+        }
+        min-height: 40px;
+      }
+    }
+  }
+
+  .revert-block, .delete-block {
+    font-family: $font-family-bold;
+    .glyphicon{
+      margin-left: 3px;
+      top: 2px;
+      transform: scaleX(-1);
+      -moz-transform: scaleX(-1);
+      -webkit-transform: scaleX(-1);
+      -ms-transform: scaleX(-1);
+    }
+  }
+}

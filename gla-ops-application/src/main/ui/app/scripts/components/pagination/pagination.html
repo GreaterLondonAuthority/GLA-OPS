@@ -1,0 +1,18 @@
+<div class="clearfix">
+  <div class="pull-left pagination-number-of-items-per-page" ng-if="$ctrl.showItemsPerPageDropdown">
+    <label for="items-per-page">Items per page:</label>
+    <select id="items-per-page" ng-model="$ctrl.itemsPerPage" ng-change="$ctrl.changePageSize()">
+      <option ng-repeat="item in $ctrl.itemsPerPageDropdown" ng-value="item">{{item}}</option>
+    </select>
+  </div>
+  <div class="pull-right" ng-if="$ctrl.showPages()">
+    <ul uib-pagination max-size="3" items-per-page="$ctrl.itemsPerPage" total-items="$ctrl.totalItems"
+        ng-model="$ctrl.currentPage"
+        class="pagination-sm pull-right" boundary-link-numbers="true" force-ellipses="true"
+        ng-change="$ctrl.changePage()">
+    </ul>
+  </div>
+  <div class="pull-right pagination-summary">
+    Showing <span class="start-end-index">{{$ctrl.calculateIndex() && $ctrl.indexStart}} - {{$ctrl.indexEnd}}</span> of {{$ctrl.totalItems}}
+  </div>
+</div>

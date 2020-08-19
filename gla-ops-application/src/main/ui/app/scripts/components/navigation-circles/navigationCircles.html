@@ -1,0 +1,13 @@
+<div class="navigation-circles">
+  <div ang-style="{'width': $ctrl.itemWidth}"
+       class="item"
+       ng-class="{active: item.active, completed: item.completed}"
+       ng-repeat="item in $ctrl.items">
+    <div class="bar-wrapper"><div class="bar"></div></div>
+    <span class="circle">
+      <span class="glyphicon glyphicon-ok" ng-if="item.completed"></span>
+    </span>
+    <div class="title">{{$index + 1}}. {{item.title}}</div>
+  </div>
+</div>
+

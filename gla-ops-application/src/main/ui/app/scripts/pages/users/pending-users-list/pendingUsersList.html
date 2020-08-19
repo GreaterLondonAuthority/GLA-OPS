@@ -1,0 +1,68 @@
+<div class="pending-users-list">
+
+  <div class="text-center mtop20" ng-if="!$ctrl.dataLoaded">Loading...</div>
+
+  <div ng-if="$ctrl.dataLoaded">
+    <pagination class="top-pagination mtop10"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                ng-if="$ctrl.users.length"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.updateFilters()"
+                total-items="$ctrl.totalItems"></pagination>
+    <div class="row mtop20 no-results text-center" ng-if="!$ctrl.users.length">
+      0 results match your search. Check your search query and try again.
+    </div>
+
+    <div class="row mtop10" ng-if="$ctrl.users.length">
+      <div class="table-responsive">
+        <table class="table table-default table-hover table-bordered table-striped table-selectable-row" id="users">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th>NAME</th>
+            <th>EMAIL</th>
+            <th>REQUESTED ON</th>
+            <th>ORGANISATION</th>
+            <th>ORG TYPE</th>
+            <th>ROLE</th>
+            <th>ACTIONS</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="user-role-row" ng-repeat="user in $ctrl.users" on-enter="$ctrl.goToUserProfile(user)" tabindex="0">
+            <td ng-click="$ctrl.goToUserProfile(user)">{{ user.firstName }} {{user.lastName}}</td>
+            <td ng-click="$ctrl.goToUserProfile(user)">{{ user.username }}</td>
+            <td ng-click="$ctrl.goToUserProfile(user)">{{ user.createdOn | date: 'dd/MM/yyyy'}}</td>
+            <td ng-click="$ctrl.goToUserProfile(user)">{{ user.orgName }}</td>
+            <td ng-click="$ctrl.goToUserProfile(user)">{{ user.entityType }}</td>
+            <td>
+              <select aria-label="Role"
+                      class="form-control"
+                      ng-if="user.isEditable"
+                      ng-model="user.newRole"
+                      ng-options="role.name as role.description for role in user.assignableRoles"
+                      style="width: 200px"
+                      style-placeholder>
+                <option disabled value="">Select role</option>
+              </select>
+
+            </td>
+            <td class="text-nowrap">
+              <button class="btn btn-sm btn-primary approve-btn" ng-click="$event.stopPropagation();$ctrl.approveUser(user);" ng-disabled="!user.newRole" ng-if="user.isEditable">APPROVE</button>
+              <button class="btn btn-sm btn-secondary btn-negative" ng-click="$event.stopPropagation();$ctrl.rejectUser(user);" ng-if="user.isEditable">REJECT</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <pagination class="bottom-pagination mtop10"
+                current-page="$ctrl.currentPage"
+                items-per-page="$ctrl.itemsPerPage"
+                ng-if="$ctrl.users.length"
+                number-of-elements="$ctrl.itemsPerPage"
+                on-change="$ctrl.updateFilters()"
+                total-items="$ctrl.totalItems"></pagination>
+  </div>
+</div>

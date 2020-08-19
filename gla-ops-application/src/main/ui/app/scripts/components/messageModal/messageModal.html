@@ -1,0 +1,14 @@
+<div class="messageModal">
+  <div class="modal-body text-center">
+    <div class="text-center mtop15"
+         ng-bind-html="$ctrl.config.message">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center"
+            type="button"
+            ng-click="$close()">
+      {{::$ctrl.config.cta}}
+    </button>
+  </div>
+</div>

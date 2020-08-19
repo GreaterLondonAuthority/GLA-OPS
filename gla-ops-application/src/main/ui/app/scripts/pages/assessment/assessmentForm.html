@@ -1,0 +1,203 @@
+<div class="assessment edit-mode">
+
+  <gla-page-header back-btn-name="ASSESSMENT OVERVIEW" [editable-block]="$ctrl" [header]="$ctrl.assessmentTemplate.name"
+               (on-back)="$ctrl.onBack()" [stop-editing]="true">
+  </gla-page-header>
+  <header-status>
+    <hs-left class="row text-nowrap"
+             ng-if="$ctrl.assessment.createdOn && $ctrl.assessment.creatorName && !($ctrl.assessment.modifiedOn && $ctrl.assessment.modifierName)">
+      Created on {{($ctrl.assessment.createdOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.assessment.creatorName}} for {{$ctrl.assessment.usersPrimaryOrganisationName}}
+    </hs-left>
+    <hs-left class="row text-nowrap" ng-if="$ctrl.assessment.modifiedOn && $ctrl.assessment.modifierName">
+      <div>Last updated on {{($ctrl.assessment.modifiedOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.assessment.modifierName}} for {{$ctrl.assessment.usersPrimaryOrganisationName}}
+      </div>
+    </hs-left>
+    <hs-right>
+      <div><a id="project-title" ui-sref="project-overview({projectId: $ctrl.assessment.projectId, backNavigation: $ctrl.currentState})">{{$ctrl.project.title}}</a></div>
+      <div><span class="strong">Project ID:</span> <a id="project-id" ui-sref="project-overview({projectId: $ctrl.assessment.projectId, backNavigation: $ctrl.currentState})">P{{$ctrl.assessment.projectId}}</a></div>
+      <div><span class="strong">Assessment ID:</span> <span id="assessment-id">{{$ctrl.assessment.id}}</span></div>
+    </hs-right>
+  </header-status>
+
+
+  <form class="form-gla" name="sections">
+
+    <div class="row no-gutter">
+      <div class="status-section-title">Assessment Status</div>
+      <div class="bolder">{{$ctrl.assessmentStatus}}</div>
+      <hr class="section-bar">
+    </div>
+
+    <div class="mbottom30"></div>
+
+    <div class="section-block outcome-assessment-summary mbottom30" ng-if="$ctrl.assessment.outcomeSummary">
+      <section-header>Summary</section-header>
+      <hr class="section-bar">
+      <outcome-assessment-summary assessment="$ctrl.assessment"></outcome-assessment-summary>
+    </div>
+
+    <div ng-if="$ctrl.hasOutcomes" class="row no-gutter mtop10 mbottom30">
+
+      <div class="col-xs-12">
+        <label for="assessment-outcome">Assessment outcome</label>
+        <select class="form-control"
+                id="assessment-outcome"
+                ng-change="$ctrl.save()"
+                ng-model="$ctrl.assessment.outcome"
+                ng-options="item.name for item in $ctrl.assessmentTemplate.outcomes | orderBy: 'displayOrder' track by item.id">
+          <option value="">Not provided</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row no-gutter mtop10 animationIf section-block"
+         ng-repeat="section in $ctrl.assessment.sections | orderBy:'displayOrder' track by section.id">
+
+      <div class="col-xs-12 section-border">
+
+        <div class="assessment-section-header">
+          <span class="section-title">Section {{$index+1}}: {{section.title}}</span>
+          <span class="section-title pull-right" ng-if="$ctrl.assessmentTemplate.includeWeight">{{section.weight}}% of total</span>
+        </div>
+
+
+        <div class="section form-group">
+
+          <div class="section-comments mtop10" ng-if="section.commentsRequirement !== 'hidden'">
+            <label class="sub-heading" for="section-comments-{{section.id}}">General comments<span ng-if="section.commentsRequirement === 'optional'"> (optional)</span>
+            </label>
+
+            <textarea class="form-control" cols="50" id="section-comments-{{section.id}}"
+                      name="section-comments-{{section.id}}"
+                      ng-attr-maxlength="400"
+                      ng-change="$ctrl.save()" ng-disabled="$ctrl.assessmentCompleted" ng-if="!$ctrl.readOnly" ng-model="section.comments" ng-model-options='{ debounce: 300 }'
+                      ng-trim="false"
+                      placeholder="{{section.commentsRequirement === 'optional' ? 'optional' : ''}}"
+                      rows="4">
+            </textarea>
+            <gla-remaining-characters [max]="400" ng-if="!$ctrl.readOnly" [text]="section.comments"></gla-remaining-characters>
+            <p class="word-wrap" ng-if="$ctrl.readOnly">{{section.comments}}</p>
+          </div>
+
+          <div class="criteria form-group"
+               ng-repeat="criteria in section.criteriaList | orderBy:'displayOrder' track by criteria.id">
+
+            <span class="sub-heading" ng-if="$first">Criteria</span>
+
+            <div>
+              <span class="block">
+                <span class="circle">
+                  <p>{{$index+1}}</p>
+                </span>
+              </span>
+              {{criteria.title}}
+            </div>
+
+            <div class="criteria-score mtop10" ng-if="criteria.answerType === 'Score'">
+
+              <label ng-attr-for="criteria-score-{{criteria.id}}">Score: {{criteria.score}}</label>
+              <label ng-if="$ctrl.readOnly">{{criteria.score}}<span ng-if="criteria.score != null">/{{$ctrl.maxScore.score}}</span></label>
+              <label class="pull-right right-side-hint-text">{{criteria.weight}}% of section</label>
+              <select class="search-dropdown form-control"
+                      ng-attr-id="criteria-score-{{criteria.id}}"
+                      ng-attr-name="criteria-score-{{criteria.id}}"
+                      ng-disabled="$ctrl.assessmentCompleted"
+                      ng-if="!$ctrl.readOnly"
+                      ng-model="criteria.score"
+                      ng-options="score.score as (score.score + ' ' +  score.name) for score in $ctrl.assessmentTemplate.scores | orderBy: 'score'"
+                      on-select="$ctrl.save()"
+                      required
+                      style-placeholder>
+                <option disabled value="">Select score</option>
+              </select>
+            </div>
+
+            <div class="criteria-score mtop10" ng-if="criteria.answerType === 'PassFail'">
+              <label ng-attr-for="criteria-failed-{{criteria.id}}">Pass / Fail:</label>
+              <span ng-if="$ctrl.readOnly">{{$ctrl.getFailedCriteriaText(criteria.failed)}}</span>
+              <select class="search-dropdown form-control"
+                         ng-attr-id="criteria-failed-{{criteria.id}}"
+                         ng-attr-name="criteria-failed-{{criteria.id}}"
+                         ng-disabled="$ctrl.assessmentCompleted"
+                         ng-if="!$ctrl.readOnly"
+                         ng-model="criteria.failed"
+                         ng-change="$ctrl.save()"
+                         required
+                         ng-options="item.value as item.label for item in $ctrl.failedCriteriaDropdown">
+                <option value="">Not provided</option>
+              </select>
+            </div>
+
+            <div class="criteria-score mtop10" ng-if="criteria.answerType === 'Number'">
+              <label ng-attr-for="criteria-number-{{criteria.id}}">Number:</label>
+                <input ng-attr-id="criteria-number-{{criteria.id}}"
+                     ng-attr-name="criteria-number-{{criteria.id}}"
+                     type="text"
+                     class="form-control"
+                     ng-disabled="$ctrl.assessmentCompleted"
+                     ng-if="!$ctrl.readOnly"
+                     required
+                     number-mask="2"
+                     maxlength="16"
+                     max="999999999"
+                     ng-model="criteria.number"
+                     ng-change="$ctrl.save()">
+            </div>
+
+            <div class="criteria-score mtop10" ng-if="criteria.answerType === 'Dropdown'">
+              <span ng-if="$ctrl.readOnly">{{$ctrl.criteria.dropdown}}</span>
+
+              <label ng-attr-for="criteria-dropdown-{{criteria.id}}">Dropdown:</label>
+              <select class="search-dropdown form-control"
+                         ng-attr-id="criteria-dropdown-{{criteria.id}}"
+                         ng-attr-name="criteria-dropdown-{{criteria.id}}"
+                         ng-disabled="$ctrl.assessmentCompleted"
+                         ng-if="!$ctrl.readOnly"
+                         ng-model="criteria.dropdown"
+                         ng-options="option.title as (option.displayOrder + ' ' + option.title) for option in criteria.criteriaAnswerOptions | orderBy:'displayOrder'"
+                         required
+                         ng-change="$ctrl.save()">
+                <option value="">Not provided</option>
+              </select>
+            </div>
+
+            <div class="criteria-comments mtop10" ng-if="criteria.commentsRequirement !== 'hidden'">
+              <label ng-attr-for="criteria-comments-{{criteria.id}}">Comments<span
+                ng-if="criteria.commentsRequirement === 'optional'"> (optional)</span></label>
+              <textarea class="form-control" cols="50" ng-attr-id="criteria-comments-{{criteria.id}}"
+                        ng-attr-maxlength="400"
+                        ng-attr-name="criteria-comments-{{criteria.id}}"
+                        ng-attr-placeholder="{{criteria.commentsRequirement === 'optional' ? 'optional' : ''}}"
+                        ng-change="$ctrl.save()" ng-disabled="$ctrl.assessmentCompleted" ng-if="!$ctrl.readOnly" ng-model="criteria.comments" ng-model-options='{ debounce: 300 }'
+                        ng-trim="false"
+                        rows="4">
+              </textarea>
+              <gla-remaining-characters [max]="400" ng-if="!$ctrl.readOnly" [text]="criteria.comments"></gla-remaining-characters>
+              <p class="word-wrap" ng-if="$ctrl.readOnly">{{criteria.comments}}</p>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+    <div class="mtop10 mbottom10" ng-if="!$ctrl.assessment.complete">
+      All required sections must be complete before you can mark the assessment as completed.
+    </div>
+    <div class="form-group yes-no  mtop10" ng-if="$ctrl.assessment.complete && sections.$valid">
+      <label  for="complete">Assessment is complete?</label>
+      <gla-yes-no-input id="complete"
+                        class="mleft10"
+                        [disabled]="$ctrl.readOnly"
+                        (model-change)="$ctrl.save()"
+                        mode="bool"
+                        [(model)]="$ctrl.assessmentCompleted">
+      </gla-yes-no-input>
+    </div>
+  </form>
+
+  <div class="mtop30 mbottom30 text-center" ng-if="$ctrl.isAbandonButtonVisible()">
+    <button class="btn btn-md btn-secondary btn-negative abandon-btn" ng-click="$ctrl.abandonAssessment($ctrl.assessment)" ng-if="!$ctrl.readOnly">ABANDON<i class="glyphicon glyphicon-remove"></i></button>
+  </div>
+
+</div>

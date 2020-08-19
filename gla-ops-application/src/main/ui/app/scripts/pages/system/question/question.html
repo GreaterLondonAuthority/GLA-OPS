@@ -1,0 +1,109 @@
+<div class="question-page page">
+
+  <gla-page-header (on-back)="$ctrl.goBack()" [editable-block]="$ctrl">Question details</gla-page-header>
+
+  <header-status>
+    <hs-left class="row text-nowrap" ng-if="$ctrl.question.createdOn && $ctrl.question.creatorName">Created on {{($ctrl.question.createdOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.question.creatorName}}</hs-left>
+    <hs-left class="row text-nowrap" ng-if="$ctrl.question.modifiedOn && $ctrl.question.modifierName">Last updated on {{($ctrl.question.modifiedOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.question.modifierName}}</hs-left>
+  </header-status>
+
+  <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-3 mtop40">
+
+    <div class="row">
+      <div class="gla-label">
+        Question ID
+      </div>
+      <div>
+        {{$ctrl.question.id}}
+      </div>
+    </div>
+
+    <div class="row mtop15">
+      <div class="gla-label">
+        Question Text
+      </div>
+      <div>
+        {{$ctrl.question.text}}
+      </div>
+    </div>
+
+    <div class="row mtop15">
+      <div class="gla-label">
+        Answer Type
+      </div>
+      <div>
+        {{$ctrl.question.answerType}}
+      </div>
+    </div>
+
+    <div class="row mtop15" ng-if="$ctrl.question.answerType === 'Dropdown'">
+      <div>
+        <div class="gla-label">
+          Maximum number of options that can be selected
+        </div>
+        <div>
+          {{$ctrl.question.maxAnswers}}
+        </div>
+      </div>
+
+      <div class="gla-label mtop15">
+        Options
+      </div>
+      <div>
+        <ul>
+          <li ng-repeat="option in $ctrl.question.answerOptions">{{option.option}}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row mtop15">
+      <div class="gla-label">
+        Template
+      </div>
+      <div>
+        <ul>
+          <li ng-repeat="template in $ctrl.question.templates">{{template.name}}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div ng-if="$ctrl.question.answerType === 'FileUpload'">
+      <div class="row mtop15" ng-if="!$ctrl.question.maxCombinedUploadSizeInMb">
+        <div class="gla-label">
+          Max file attachment
+        </div>
+        <div>
+          {{$ctrl.question.quantity}}
+        </div>
+      </div>
+
+      <div class="row mtop15" ng-if="!$ctrl.question.maxCombinedUploadSizeInMb">
+        <div class="gla-label">
+          Max file size in MB
+        </div>
+        <div>
+          {{$ctrl.question.maxUploadSizeInMb}}
+        </div>
+      </div>
+
+      <div class="row mtop15" ng-if="$ctrl.question.maxCombinedUploadSizeInMb">
+        <div class="gla-label">
+          Max combined file size in MB
+        </div>
+        <div>
+          {{$ctrl.question.maxCombinedUploadSizeInMb}}
+        </div>
+      </div>
+    </div>
+
+    <div class="row mtop15" ng-if="$ctrl.question.answerType === 'FreeText'">
+      <div class="gla-label">
+        Max character length
+      </div>
+      <div>
+        {{$ctrl.question.maxLength}}
+      </div>
+    </div>
+  </div>
+
+</div>

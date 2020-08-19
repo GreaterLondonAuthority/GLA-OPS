@@ -1,0 +1,137 @@
+<div>
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{originalMilestone?.summary? 'UPDATE': 'ADD'}} PRESET MILESTONE</h1>
+  </div>
+
+  <div class="modal-body">
+    <form #modalForm="ngForm" name="modalForm">
+      <div class="form-group">
+        <label for="summary">Milestone name</label>
+        <input #summary="ngModel"
+               [(ngModel)]="milestone.summary"
+               class="form-control"
+               id="summary"
+               name="summary"
+               placeholder="Milestone name"
+               required
+               type="text"/>
+        <div *ngIf="(summary.dirty || summary.touched) && (summary.invalid || !isNameUnique(milestone))" class="error-wrapper">
+          <div *ngIf="summary?.errors?.required" class="error">Required</div>
+          <div *ngIf="!isNameUnique(milestone)" class="error">Duplicate milestone</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="display-order">Display order</label>
+        <input #displayOrder="ngModel"
+               [(ngModel)]="milestone.displayOrder"
+               class="form-control display-order-input"
+               id="display-order"
+               mask="separator.0"
+               maxlength="2"
+               name="displayOrder"
+               numberType
+               placeholder="Display Order"
+               required/>
+        <div *ngIf="(displayOrder.dirty || displayOrder.touched) && (displayOrder.invalid || !isDisplayOrderUnique(milestone))" class="error-wrapper">
+          <div *ngIf="displayOrder?.errors?.required" class="error">Required</div>
+          <div *ngIf="!isDisplayOrderUnique(milestone)" class="error">Duplicate display order</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="externalId">External id (optional)</label>
+        <input [(ngModel)]="milestone.externalId"
+               #externalId="ngModel"
+               class="form-control"
+               id="externalId"
+               mask="separator.0"
+               maxlength="6"
+               name="externalId"
+               numberType
+               placeholder="External id"
+               thousandSeparator=""/>
+      </div>
+
+      <div class="form-group">
+        <label for="requirement">Requirement type</label>
+
+        <select [(ngModel)]="milestone.requirement"
+                [class]="{placeholder: !milestone.requirement}"
+                #requirement="ngModel"
+                class="form-control"
+                id="requirement"
+                name="requirement"
+                required>
+          <option disabled value="undefined">Select</option>
+          <option *ngFor="let requirement of requirementOptions" [ngValue]="requirement.id">{{requirement.label}}</option>
+        </select>
+        <div *ngIf="(requirement.dirty || requirement.touched) && (requirement.invalid)" class="error-wrapper">
+          <div *ngIf="requirement?.errors?.required" class="error">Required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="key-event">Is this a key event milestone?</label>
+        <gla-yes-no-input [(model)]="milestone.keyEvent"
+                          class="block"
+                          id="key-event"
+                          mode="bool"
+                          name="key-event"></gla-yes-no-input>
+      </div>
+
+      <div *ngIf="isBlockMonetary" class="form-group">
+        <label for="monetary">Milestone monetary type</label>
+        <gla-yes-no-input [(model)]="milestone.monetary"
+                          (modelChange)="onMonetaryChange($event)"
+                          class="block"
+                          id="monetary"
+                          mode="bool"
+                          name="monetary"></gla-yes-no-input>
+      </div>
+
+      <div *ngIf="isBlockMonetarySplit && milestone.monetary" class="form-group">
+        <label for="monetarySplit">Monetary split %</label>
+        <input [(ngModel)]="milestone.monetarySplit"
+               #monetarySplit="ngModel"
+               class="form-control"
+               id="monetarySplit"
+               mask="separator.0"
+               maxlength="2"
+               name="monetarySplit"
+               numberType
+               placeholder="Monetary split %"
+               required/>
+        <div *ngIf="(monetarySplit.dirty || monetarySplit.touched) && (monetarySplit.invalid)" class="error-wrapper">
+          <div *ngIf="monetarySplit?.errors?.required" class="error">Required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="na-selectable">Is NA selectable?</label>
+        <gla-yes-no-input [(model)]="milestone.naSelectable"
+                          class="block"
+                          id="na-selectable"
+                          mode="bool"
+                          name="na-selectable"></gla-yes-no-input>
+      </div>
+    </form>
+  </div>
+
+
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button (click)="activeModal.close(milestone)"
+                [disabled]="!isFormValid(modalForm, milestone)"
+                class="btn btn-primary">{{originalMilestone?.summary? 'UPDATE': 'ADD'}}
+        </button>
+        <button (click)="activeModal.dismiss()" class="btn btn-secondary">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

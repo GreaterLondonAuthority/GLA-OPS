@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <!-- drop all views first -->
+    <include file="db/changelog/db.changelog-dropViews.xml" />
+
+
+    <include file="db/changelog/db.changelog-1.0.xml" />
+    <include file="db/changelog/db.changelog-r0.2.xml" />
+    <include file="db/changelog/db.changelog-r0.3.xml" />
+    <include file="db/changelog/db.changelog-r0.4.xml" />
+    <include file="db/changelog/db.changelog-r0.5.xml" />
+    <include file="db/changelog/db.changelog-r0.6.xml" />
+    <include file="db/changelog/db.changelog-r0.7.xml" />
+    <include file="db/changelog/db.changelog-r0.8.xml" />
+    <include file="db/changelog/db.changelog-r0.9.xml" />
+    <include file="db/changelog/db.changelog-r0.10.xml" />
+    <include file="db/changelog/db.changelog-r1.0.xml" />
+    <include file="db/changelog/db.changelog-r1.1.xml" />
+    <include file="db/changelog/db.changelog-r1.2.xml" />
+    <include file="db/changelog/db.changelog-r1.3.xml" />
+    <include file="db/changelog/db.changelog-r1.4.xml" />
+    <include file="db/changelog/db.changelog-r1.5.xml" />
+    <include file="db/changelog/db.changelog-r1.6.xml" />
+    <include file="db/changelog/db.changelog-r1.7.xml" />
+    <include file="db/changelog/db.changelog-r1.8.xml" />
+    <include file="db/changelog/db.changelog-r1.9.xml" />
+    <include file="db/changelog/db.changelog-r1.10.xml" />
+    <include file="db/changelog/db.changelog-r1.11.xml" />
+    <include file="db/changelog/db.changelog-r1.12.xml" />
+    <include file="db/changelog/db.changelog-r1.13.xml" />
+    <include file="db/changelog/db.changelog-r1.14.xml" />
+    <include file="db/changelog/db.changelog-r1.15.xml" />
+    <include file="db/changelog/db.changelog-r1.16.xml" />
+    <include file="db/changelog/db.changelog-r1.17.xml" />
+    <include file="db/changelog/db.changelog-r1.18.xml" />
+    <include file="db/changelog/db.changelog-r1.19.xml" />
+    <include file="db/changelog/db.changelog-r1.20.xml" />
+    <include file="db/changelog/db.changelog-r5.1.xml" />
+    <include file="db/changelog/db.changelog-r5.2.xml" />
+    <include file="db/changelog/db.changelog-r5.3.xml" />
+    <include file="db/changelog/db.changelog-r6.1.xml" />
+    <include file="db/changelog/db.changelog-r6.2.xml" />
+    <include file="db/changelog/db.changelog-r6.3.xml" />
+    <include file="db/changelog/db.changelog-r6.4.xml" />
+    <include file="db/changelog/db.changelog-r6.5.xml" />
+    <include file="db/changelog/db.changelog-r6.6.xml" />
+    <include file="db/changelog/db.changelog-r6.7.xml" />
+    <include file="db/changelog/db.changelog-r6.8.xml" />
+    <include file="db/changelog/db.changelog-r6.9.xml" />
+    <include file="db/changelog/db.changelog-r7.1.xml" />
+    <include file="db/changelog/db.changelog-r7.2.xml" />
+    <include file="db/changelog/db.changelog-r7.3.xml" />
+    <include file="db/changelog/db.changelog-r7.4.xml" />
+    <include file="db/changelog/db.changelog-r7.5.xml" />
+    <include file="db/changelog/db.changelog-r7.6.xml" />
+    <include file="db/changelog/db.changelog-r7.7.xml" />
+    <include file="db/changelog/db.changelog-r7.8.xml" />
+    <include file="db/changelog/db.changelog-r7.9.xml" />
+    <include file="db/changelog/db.changelog-r8.1.xml" />
+    <include file="db/changelog/db.changelog-r8.2.xml" />
+    <include file="db/changelog/db.changelog-r8.3.xml" />
+    <include file="db/changelog/db.changelog-r8.4.xml" />
+    <include file="db/changelog/db.changelog-r8.5.xml" />
+    <include file="db/changelog/db.changelog-r8.6.xml" />
+
+    <!-- THIS NEEDS TO BE LAST -->
+    <include file="db/changelog/db.changelog-runOnChange.xml" />
+    <include file="db/changelog/db.changelog-createViews.xml" />
+</databaseChangeLog>

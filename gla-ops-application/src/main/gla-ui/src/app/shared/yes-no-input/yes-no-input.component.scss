@@ -1,0 +1,18 @@
+:host{
+  &.block{
+    .yesNoInput{
+      display: block;
+    }
+  }
+}
+
+.yesNoInput {
+  display: inline-block;
+
+  input {
+    margin: 0.5em;
+    &:first-child{
+      margin-left: 0;
+    }
+  }
+}

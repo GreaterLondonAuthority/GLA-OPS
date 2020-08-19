@@ -1,0 +1,36 @@
+<!--<change-report-field-->
+    <!--ng-repeat="item in $ctrl.questions track by item.displayOrder"-->
+    <!--ng-attr-id="{{item.displayOrder}}"-->
+    <!--ng-class="{'text-area-field': item.isFreeText}"-->
+    <!--class="{{item.className}}"-->
+    <!--data="item"-->
+    <!--fields="'answer'"-->
+    <!--label="item.label"-->
+    <!--change-attribute="item.questionId"-->
+    <!--ng-hide="item.hide">-->
+<!--</change-report-field>-->
+
+
+<div ng-repeat="item in $ctrl.questions | filter: $ctrl.questionFilter track by item.questionId">
+  <change-report-field
+    ng-attr-id="{{item.displayOrder}}"
+    ng-class="{'text-area-field': item.isFreeText}"
+    class="{{item.className}}"
+    data="item"
+    fields="'answer'"
+    label="item.label"
+    change-attribute="item.questionId"
+    ng-if="!item.isFileUploadQuestion">
+  </change-report-field>
+
+  <change-report-field-files
+    ng-attr-id="{{item.displayOrder}}"
+    ng-class="{'text-area-field': item.isFreeText}"
+    class="{{item.className}}"
+    data="item"
+    field="'answer'"
+    label="item.label"
+    change-attribute="item.questionId"
+    ng-if="item.isFileUploadQuestion">
+  </change-report-field-files>
+</div>

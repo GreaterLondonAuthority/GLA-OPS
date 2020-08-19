@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="649" author="ughari">
+        <createTable tableName="cluster_lock">
+            <column name="key" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="server_id" type="varchar(255)"/>
+            <column name="expiry_time" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="650" author="ughari">
+        <renameColumn tableName="cluster_lock" oldColumnName="key" newColumnName="lock_type"/>
+    </changeSet>
+
+    <changeSet id="651" author="jsingh">
+        <addColumn tableName="programme">
+            <column name="company_email" type="varchar(100)" defaultValue="opsfinance@london.gov.uk"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="652" author="ybouhass">
+        <sql>update programme set company_email = ''</sql>
+    </changeSet>
+
+    <changeSet id="653" author="cmatias">
+        <modifyDataType tableName="outputs_costs_block" columnName="advance_payment" newDataType="decimal(12,2)" />
+    </changeSet>
+
+    <changeSet id="654" author="cmatias">
+        <addColumn tableName="assessment_template_section">
+            <column name="display_order" type="decimal(12,2)"/>
+        </addColumn>
+        <addColumn tableName="assessment_template_criteria">
+            <column name="display_order" type="decimal(12,2)"/>
+        </addColumn>
+
+        <sql>update assessment_template_section set display_order = id where display_order is null </sql>
+        <sql>update assessment_template_criteria set display_order = id where display_order is null</sql>
+
+        <addColumn tableName="assessment_section">
+            <column name="display_order" type="decimal(12,2)"/>
+        </addColumn>
+        <addColumn tableName="assessment_criteria">
+            <column name="display_order" type="decimal(12,2)"/>
+        </addColumn>
+        <sql>update assessment_section set display_order = id where display_order is null </sql>
+        <sql>update assessment_criteria set display_order = id where display_order is null</sql>
+    </changeSet>
+
+
+    <changeSet id="655" author="ybouhass">
+        <createSequence sequenceName="scheduled_notification_seq" startValue="100" incrementBy="1"/>
+        <createTable tableName="scheduled_notification">
+            <column name="id" type="INT4" autoIncrement="true"  defaultValueSequenceNext="scheduled_notification_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="text" type="varchar(1000)" />
+            <column name="scheduled_date_time" type="TIMESTAMP" />
+            <column name="status" type="varchar(20)" />
+            <column name="target_roles" type="varchar(1000)" remarks="roles to which the notification is sent, if blank means all" />
+            <column name="target_org_ids" type="varchar(1000)" remarks="organisations to which the notification is sent, if blank means all" />
+        </createTable>
+    </changeSet>
+    <changeSet id="656" author="cmatias">
+        <dropColumn tableName="assessment_section" columnName="display_order"/>
+        <dropColumn tableName="assessment_criteria" columnName="display_order"/>
+    </changeSet>
+
+    <changeSet id="657" author="cmelville">
+        <addColumn tableName="project_block">
+            <column name="has_updates_persisted" type="boolean"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

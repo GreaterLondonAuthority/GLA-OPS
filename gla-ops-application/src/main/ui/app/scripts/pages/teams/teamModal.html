@@ -1,0 +1,79 @@
+<div class="milestone-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss('cancel')" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Add a new team</h1>
+  </div>
+  <div class="modal-body">
+    <form class="form-gla" role="form" name="modalForm">
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="managing-org">Managing Organisation</label>
+            <select class="form-control"
+                    id="managing-org"
+                    name="morg"
+                    ng-change="$ctrl.onManagingOrgSelect()"
+                    ng-disabled="$ctrl.managingOrganisations.length < 2 || $ctrl.team.id"
+                    ng-model="$ctrl.team.organisationId"
+                    ng-options="org.id as org.name for org in $ctrl.managingOrganisations"
+                    required
+                    style-placeholder="">
+              <option disabled value="">Select team</option>
+            </select>
+            <div class="error-wrapper" role="alert" ng-if="(modalForm.morg.$touched && modalForm.morg.$error.required)">
+              <span class="error">Required</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="team-name">Team Name</label>
+            <input id="team-name"
+                   type="text"
+                   name="name"
+                   class="form-control"
+                   placeholder="Team name"
+                   ng-model="$ctrl.team.name"
+                   maxlength="50"
+                   ng-change="$ctrl.validateTeamName($ctrl.team)"
+                   required/>
+            <div class="error-wrapper" role="alert" ng-if="modalForm.name.$touched && modalForm.name.$invalid || !$ctrl.isUniqueName">
+              <span class="error" ng-if="modalForm.name.$error.required">Required</span>
+              <span class="error" ng-if="!$ctrl.isUniqueName">Team already exists, enter an alternative team name</span>
+            </div>
+          </div>
+
+          <div id="allow-new-registrations-checkbox" class="form-group">
+            <div class="inline-checkbox">
+              <label for="team-name">Allow new organisation registrations</label>
+              <input
+                class="form-control"
+                id="registration-allowed"
+                name="enabled"
+                ng-model="$ctrl.team.registrationAllowed"
+                type="checkbox"/>
+            </div>
+          </div>
+
+          <div id="access-to-skills-gateway-checkbox" class="form-group" ng-if="$ctrl.sgwAccessSelectable()">
+            <div class="inline-checkbox">
+              <label for="team-name">Access to Skills gateway</label>
+              <input
+                class="form-control"
+                id="skills-gateway-access-allowed"
+                name="enabled"
+                ng-model="$ctrl.team.skillsGatewayAccessAllowed"
+                type="checkbox"/>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$close($ctrl.team)" ng-disabled="modalForm.$invalid || !$ctrl.isUniqueName">CREATE</button>
+    <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$dismiss('cancel')">CANCEL</button>
+  </div>
+</div>

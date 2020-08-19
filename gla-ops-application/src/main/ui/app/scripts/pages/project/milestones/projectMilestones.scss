@@ -1,0 +1,103 @@
+.project-milestones{
+  width: 90%;
+  margin: auto;
+
+  .processingRoute {
+    h3 {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      line-height: 27px;
+      font-family: $font-family-default;
+      font-weight: bold;
+      font-size: 18px;
+
+    }
+  }
+
+  .addNewMilestoneBtn {
+    position: relative;
+    padding: 0.3rem 2.5rem 0.3rem 1.5rem !important;
+    b {
+      position: absolute;
+      top: 0.05rem;
+      font-size: 1.25rem;
+      margin-left: 0.5rem;
+    }
+  }
+}
+
+.milestone-modal .dateInput {
+  height: 30px;
+  input{
+    line-height: 1em;
+  }
+}
+
+.reclaim-milestone-modal {
+  .modal-body {
+    padding-top: 0px;
+  }
+  label{
+    margin-top: 10px;
+    font-family: $font-family-bolder;
+    color: $primary-text;
+  }
+}
+
+.claim-milestone-modal, .reclaim-milestone-modal {
+  .affordable-title {
+
+  }
+  .affordable-amount {
+
+  }
+
+  .modal-body{
+    margin-top: -10px;
+  }
+  .col-xs-6 {
+    padding: 0;
+  }
+  .modal-body {
+    font-size: 14px;
+    color: #9e9e9e;
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+  .bold {
+    color: black;
+    font-size: 15px;
+    font-family: "Gotham-medium", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+  }
+  .monetary-title {
+    font-size: 21px;
+    text-transform: uppercase;
+  }
+  .monetary-amount {
+    font-size: 22px;
+  }
+
+  .rounding-message{
+    font-size: 12px;
+  }
+}
+
+.reclaim-milestone-modal .modal-body{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+
+.info-modal{
+  .source:not(:first-child){
+    margin-top: 25px;
+  }
+  .original-value{
+    margin-bottom: 5px;
+  }
+
+  .reclaim-reason{
+    white-space: pre-line;
+    font-style: italic;
+  }
+}

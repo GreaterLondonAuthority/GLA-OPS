@@ -1,0 +1,91 @@
+<div class="teams-page page">
+
+  <gla-page-header class="mbottom10 no-padding" [hide-back-btn]="true">Teams</gla-page-header>
+
+  <div class="text-right">
+    <span class="pull-left" ng-if="$ctrl.teams.content.length > 0">
+      Add members to a team on the <a ui-sref="users" class="pageLink">All users</a> page
+    </span>
+    <button class="btn btn-secondary mbottom10" ng-click="$ctrl.showTeamModal({})" ng-if="$ctrl.canAddTeams">
+      ADD NEW <b>+</b>
+    </button>
+  </div>
+
+  <well class="row mbottom20 search-container">
+    <div class="col-sm-6 col-md-5 text-search search-filter">
+      <div>Search</div>
+      <search-field options="$ctrl.searchOptions"
+                    selected-option="$ctrl.selectedSearchOption"
+                    search-text="$ctrl.searchText"
+                    on-search="$ctrl.getTeams()"
+                    on-clear="$ctrl.clearSearchText()"></search-field>
+    </div>
+
+    <div class="col-sm-6 col-md-2 search-filter" ng-if="$ctrl.managingOrganisationsDropdown.length > 1">
+      <div class="text-nowrap">Managed by</div>
+      <checkbox-filter
+        id="managing-organisations-filter"
+        filter-dropdown-items="$ctrl.managingOrganisationsDropdown"
+        on-change="$ctrl.getTeams()"></checkbox-filter>
+    </div>
+
+    <div class="col-sm-6 col-md-2 search-filter">
+      <div>Status</div>
+      <checkbox-filter
+        id="status-filter"
+        filter-dropdown-items="$ctrl.orgStatusDropdown"
+        on-change="$ctrl.getTeams()"></checkbox-filter>
+    </div>
+
+    <div class="col-sm-6 col-md-1 mtop25">
+      <button
+        ng-if="$ctrl.showReset"
+        class="action-buttons action-buttons-reset text-nowrap"
+        ng-click="$ctrl.clearAll()"><span class="glyphicon glyphicon-remove"></span>Reset all
+      </button>
+    </div>
+  </well>
+
+  <pagination class="bottom-pagination"
+              current-page="$ctrl.currentPage"
+              items-per-page="$ctrl.itemsPerPage"
+              total-items="$ctrl.teams.totalElements"
+              number-of-elements="$ctrl.itemsPerPage"
+              show-items-per-page-dropdown="true"
+              on-change="$ctrl.getTeams()"></pagination>
+
+  <div class="table-responsive teams-table">
+    <div ng-if="!$ctrl.teams.content.length" class="empty-table">Not provided</div>
+    <table ng-if="$ctrl.teams.content.length" class="table table-hover table-bordered table-striped">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>NAME</th>
+        <th>ORG ID</th>
+        <th>MANAGED BY</th>
+        <th>MEMBERS</th>
+        <th>STATUS</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="team in $ctrl.teams.content track by team.id"
+            allow-enter
+            tabindex="0"
+            ui-sref="organisation.view({orgId: team.id, backNavigation: $ctrl.currentState})"
+            class="cursor-pointer">
+          <td>{{team.name}}</td>
+          <td>{{team.id}}</td>
+          <td>{{team.organisationName}}</td>
+          <td>{{team.members}}</td>
+          <td>
+            {{$ctrl.getTeamStatus(team)}}
+            <delete-button ng-if="team.canBeEdited" ng-click="$ctrl.delete(team); $event.stopPropagation();"></delete-button>
+          </td>
+        </tr>
+        <tr ng-if="!$ctrl.teams.content.length" class="bolder">
+          <td colspan="4">Not Provided</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

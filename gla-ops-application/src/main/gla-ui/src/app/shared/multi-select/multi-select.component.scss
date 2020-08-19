@@ -1,0 +1,68 @@
+@import "variables";
+
+:host {
+  display: inline-block;
+
+
+  border: 1px solid #ddd;
+  padding: 10px 10px 2px 10px;
+  max-height: 215px;
+  overflow: auto;
+  background-color: $white;
+
+  /* Overwrite the default to keep the scrollbar always visible */
+
+  &::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, .5);
+    box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+  }
+
+
+  .select-all-toggle {
+    margin: 5px 10px 5px 0;
+
+    a {
+      cursor: pointer;
+      font-size: 14px;
+      font-family: $font-family-bolder;
+    }
+  }
+
+  .multi-select-list.multi-select-list {
+    min-width: 250px;
+    background-color: $white;
+    color: #000;
+    padding-left: 0px;
+    list-style: none;
+
+    li {
+      &.group-item {
+        padding-left: 30px;
+      }
+
+      .checkbox {
+        float: left;
+        margin: 5px 10px 5px 0;
+      }
+
+      .li-item-label {
+        margin-left: 35px;
+        padding-top: 5px;
+      }
+
+      line-height: 25px;
+      clear: both;
+    }
+  }
+
+  .glyphicon.link {
+    padding: 5px 5px 5px 3px;
+  }
+}
+

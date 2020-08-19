@@ -1,0 +1,202 @@
+milestones-table {
+
+  .na-padding {
+    padding: 30px;
+  }
+
+  .addNewMilestoneBtn {
+    position: relative;
+    padding: 0.3rem 2.5rem 0.3rem 1.5rem !important;
+    b {
+      position: absolute;
+      top: 0.05rem;
+      font-size: 1.25rem;
+      margin-left: 0.5rem;
+    }
+  }
+
+  .manual-indicator {
+    width: 3px;
+    background-color: $dark-navy;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    &.conditional-indicator{
+      width: 6px;
+    }
+  }
+
+  tbody tr:first-child td .manual-indicator {
+    top: 1px;
+  }
+
+  table.table-with-inputs {
+    tr.with-manual-indicator.recently-added {
+      background-color: lighten($green-pearl, 5%);
+      td, input, .dateInput, date-input, textarea {
+        background-color: lighten($green-pearl, 5%);
+      }
+    }
+
+    tr.with-manual-indicator.with-conditional-indicator.recently-added {
+      background-color: lighten(#BEDDE7, 5%);
+      td, input, .dateInput, date-input, textarea {
+        background-color: lighten(#BEDDE7, 5%);
+      }
+    }
+
+    td.with-manual-indicator {
+      position: relative;
+      background-clip:padding-box;
+    }
+
+    td textarea{
+      min-width: 200px;
+      padding-bottom: 0px;
+      line-height: 1.5;
+    }
+
+    &.multiline{
+      td{
+        //vertical-align: middle;
+        date-input, textarea, input.monetary-value{
+          height: 64px;
+        }
+        textarea{
+          resize: vertical;
+        }
+        input.monetary-value{
+          padding-bottom: 40px;
+        }
+      }
+    }
+  }
+
+  .glyphicon-exclamation-sign{
+    color: $red;
+    &.info{
+      color: darken($peppermint, 20%);
+    }
+  }
+
+  .sub-heading td, .sub-row td{
+    font-family: $font-family-default !important;
+  }
+  .sub-row td{
+    background-color: $white;
+  }
+
+  .monetary-value-totals{
+    display: flex;
+    justify-content: space-between;
+    margin: 0 -30px;
+  }
+
+  .monetary-value-totals-col{
+    width: 33.33%;
+    padding: 0 30px 2px 30px;
+    display: block;
+    .section-header{
+      align-items: flex-start;
+      margin-bottom: 8px;
+      .section-header{
+        font-size: 12px;
+      }
+    }
+
+    .section-subheader{
+      font-size: 12px;
+    }
+
+    >div{
+      margin-bottom: 5px;
+    }
+
+    &:not(:last-child){
+      border-right: 1px solid #dddddd;
+    }
+  }
+
+  .monetary-value-totals-summary{
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+    display: flex;
+    margin: 20px -30px;
+    font-family: $font-family-bolder;
+    padding-top: 5px;
+    padding-bottom: 3px;
+    justify-content: space-between;
+    >div{
+      width: 33.33%;
+      text-align: right;
+      padding: 0 30px 2px 30px;
+    }
+  }
+}
+
+.milestone-modal .dateInput {
+  height: 30px;
+  input{
+    line-height: 1em;
+  }
+}
+
+.reclaim-milestone-modal {
+  .modal-body {
+    padding-top: 0px;
+  }
+}
+
+.claim-milestone-modal, .reclaim-milestone-modal {
+  .affordable-title {
+
+  }
+  .affordable-amount {
+
+  }
+
+  .modal-body{
+    margin-top: -10px;
+  }
+  .col-xs-6 {
+    padding: 0;
+  }
+  .modal-body {
+    font-size: 14px;
+    color: #9e9e9e;
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+  .bold {
+    color: black;
+    font-size: 15px;
+    font-family: "Gotham-medium", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+  }
+  .monetary-title {
+    font-size: 21px;
+    text-transform: uppercase;
+  }
+  .monetary-amount {
+    font-size: 22px;
+  }
+
+  .rounding-message{
+    font-size: 12px;
+  }
+}
+
+.info-modal{
+  .source:not(:first-child){
+    margin-top: 25px;
+  }
+  .original-value{
+    margin-bottom: 5px;
+  }
+
+  .reclaim-reason{
+    white-space: pre-line;
+    font-style: italic;
+  }
+}

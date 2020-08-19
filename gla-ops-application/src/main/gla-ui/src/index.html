@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Open Project System | Greater London Authority (GLA)</title>
+  <base href="/">
+  <meta content="" name="description">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" name="viewport">
+
+  <!-- Google Tag Manager -->
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push(
+
+    {'gtm.start': new Date().getTime(),event:'gtm.js'}
+  );var f=d.getElementsByTagName(s)[0],
+
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+
+  })(window,document,'script','dataLayer','GTM-KXBTQP');</script>
+
+  <!-- End Google Tag Manager -->
+  <style>
+    .keyboard-only{
+      position: absolute;
+      overflow: hidden;
+      height: 1px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="gla-wrapper">
+  <a class="keyboard-only" href="JavaScript:void(0)" id="skip-to-main-content" ng-click="$root.jumpTo('main-content')">Skip to main content</a>
+  <gla-header></gla-header>
+  <top-menu></top-menu>
+
+  <section class="gla-main-section">
+    <a href="JavaScript:void(0)" id="main-content" tabindex="-1"></a>
+    <div ui-view></div>
+  </section>
+
+  <gla-footer></gla-footer>
+</div>
+<loading-mask class="is-full-screen" ng-if="$root.showGlobalLoadingMask" text=""></loading-mask>
+
+<!-- Google Tag Manager (noscript) -->
+
+<noscript><iframe height="0" src="https://www.googletagmanager.com/ns.html?id=GTM-KXBTQP" style="display:none;visibility:hidden" width="0"></iframe></noscript>
+
+<!-- End Google Tag Manager (noscript) -->
+
+</body>
+</html>

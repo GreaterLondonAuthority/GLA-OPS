@@ -1,0 +1,84 @@
+OPS Category Code,OPS Category,Spend Permission,Receipts Permission
+1,Consultancy - Commissioned Report,ReadWrite,Hidden
+2,Consultancy - Evaluation Assessment,ReadWrite,Hidden
+3,Consultancy - Project Management,ReadWrite,Hidden
+4,Contracted Services Buildings,ReadWrite,Hidden
+5,Direct Construction cost,ReadWrite,Hidden
+6,Disposal Fees - Legal,ReadWrite,Hidden
+7,Disposal Fees - Valuation,ReadWrite,Hidden
+8,Estate agents fees,ReadWrite,Hidden
+9,Event Management Fee,ReadWrite,Hidden
+10,External Audit Fees,ReadOnly,Hidden
+11,External Meeting Room Hire & Expenses,ReadWrite,Hidden
+12,Finance use only,Hidden,Hidden
+13,Grants to External Organisations,ReadWrite,Hidden
+14,Legal Fees (non disposal related),ReadWrite,Hidden
+15,Management & Support Consultancy,ReadWrite,Hidden
+16,Marketing Photography & Video,ReadWrite,Hidden
+17,Marketing Strategy And Consultancy,ReadWrite,Hidden
+18,Other (Miscellaneous),ReadWrite,Hidden
+19,Other Fees (supplies and services),ReadOnly,Hidden
+20,Other income,ReadWrite,ReadWrite
+21,Other Professional Fees,ReadWrite,Hidden
+22,Planning & Development Consultancy,ReadWrite,Hidden
+23,Property - Planning Fees,ReadWrite,Hidden
+24,Property Consultancy Economic Appraisal,ReadWrite,Hidden
+25,Purchase of Infrastructure,ReadOnly,Hidden
+26,Purchase of land and building,ReadOnly,Hidden
+27,Quantity Surveyor fees,ReadWrite,Hidden
+28,Research & Study Fees,ReadWrite,Hidden
+29,Site Supervision,ReadWrite,Hidden
+30,Stamp duty,ReadWrite,Hidden
+31,Unspecified (for future years forecasting only),ReadOnly,Hidden
+32,Valuation Fees (general purposes),ReadWrite,Hidden
+33,Loans to External Organisations,ReadWrite,Hidden
+34,HZ Contingent Grant to Local Authorities,ReadWrite,Hidden
+35,HZ Loans to Local Authorities,ReadWrite,Hidden
+36,HZ Contingent Grant to Ext Org,ReadWrite,Hidden
+37,Direct Construction Cost Accruals,ReadWrite,Hidden
+1001,Business Rate Supplement,ReadWrite,ReadWrite
+1002,Cap Rec-Sale Investment Property,ReadWrite,ReadWrite
+1003,Capital Recpt-Property-on Completion,ReadWrite,ReadWrite
+1004,CCS Enforcement Revenue,ReadWrite,ReadWrite
+1005,Developers Contributions,ReadWrite,ReadWrite
+1006,EU Grants,ReadWrite,ReadWrite
+1007,Events,ReadWrite,ReadWrite
+1008,Functional Bodies Contributions,ReadWrite,ReadWrite
+1009,General Fees & Charges,ReadWrite,ReadWrite
+1010,Housing Land Overage,Hidden,ReadWrite
+1011,Interest Finance Leases,ReadWrite,ReadWrite
+1012,Interest Receivable - Balances Invested,ReadWrite,ReadWrite
+1013,Interest Receivable - Other,ReadWrite,ReadWrite
+1014,Interest Receivable from GLA,ReadWrite,ReadWrite
+1015,Interest Receivable on Grant Recoveries,ReadWrite,ReadWrite
+1016,Lease Inc Disc to FV,ReadWrite,ReadWrite
+1017,Licence Fees,ReadWrite,ReadWrite
+1018,Miscellaneous External Income,ReadWrite,ReadWrite
+1019,NHS Bodies Contributions,ReadWrite,ReadWrite
+1020,Other Contributions,ReadWrite,ReadWrite
+1021,Other Government Grants,ReadWrite,ReadWrite
+1022,Other Joint Funding Contributions,ReadWrite,ReadWrite
+1023,Other Local Authority Contributions,ReadWrite,ReadWrite
+1024,Other Public Sector Contributions,ReadWrite,ReadWrite
+1025,Property Rental Revenue,ReadWrite,ReadWrite
+1026,Service Charge Recoveries,ReadWrite,ReadWrite
+1027,Share of Disposal Proceeds,ReadWrite,ReadWrite
+1028,Unwind Discount on Finance Leases,ReadWrite,ReadWrite
+1029,Dev Prop Cap-Income,Hidden,Hidden
+1030,Finance Unclassified,Hidden,Hidden
+1031,Amortisation of Deferred Capital Grant,Hidden,Hidden
+1032,Amortisation of 3rd Party Funding,Hidden,Hidden
+1033,Local Authority Precept,Hidden,Hidden
+1034,Collection Fund Surplus/Deficit Accrual,Hidden,Hidden
+1035,3rd Party Capital Grants (Non Government,Hidden,Hidden
+1036,Transfer to Cap Res,Hidden,Hidden
+1037,Interest receivable - Escrow Accounts,Hidden,Hidden
+1038,Interest Received re Pension Fund Assets,Hidden,Hidden
+1039,Income-Receipt in Advance reversal,Hidden,Hidden
+1040,Year End Overheads recharge GLAP,Hidden,Hidden
+1041,RIA-reversal to I&E,Hidden,Hidden
+1042,Loan Capital Repayment,ReadWrite,ReadWrite
+1043,Capital Recpt-Refundble Deposit,ReadWrite,ReadWrite
+1044,Y/E Trf Inc to Capital Reserves,Hidden,Hidden
+1045,Non-Domestic Rates (NDR),Hidden,ReadWrite
+1046,Business Rates Enterprise Zone,Hidden,ReadWrite

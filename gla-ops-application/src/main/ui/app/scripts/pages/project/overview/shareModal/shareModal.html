@@ -1,0 +1,39 @@
+<div class="share-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Share Project P{{$ctrl.projectId}}</h1>
+  </div>
+
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-xs-6 col-xs-offset-3">
+        <div class="form-group has-feedback">
+          <input id="orgcode" type="text" name="orgcode" aria-label="Organisation Code" class="form-control" ng-minlength="3" org-lookup="$ctrl.orgName"
+                 ng-model="$ctrl.orgCode" placeholder="GLA provider number" required autofocus autocomplete="off"/>
+          <span ng-if="$ctrl.orgName" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+          <div class="error-wrapper" role="alert">
+            <span class="error" ng-if="$ctrl.orgCode.length > 2 && !$ctrl.orgName">Organisation number not recognised</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="organisation-name text-center mtop5" ng-if="$ctrl.orgName">
+       {{$ctrl.orgName}}
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$close($ctrl.orgCode)"
+                ng-disabled="modalForm.$pristine || modalForm.$invalid || !$ctrl.orgName">SHARE</button>
+
+        <button class="btn btn-default btn-secondary btn-center" type="button" ng-click="$dismiss()"
+                ng-disabled="modalForm.$pristine || modalForm.$invalid">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

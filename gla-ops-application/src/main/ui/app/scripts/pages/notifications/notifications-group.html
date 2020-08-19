@@ -1,0 +1,8 @@
+<div class="notification-group-title">{{$ctrl.notificationsGroup.title}}</div>
+<ul class="notification-group">
+  <li class="notification-repeater"
+    ng-repeat="content in $ctrl.notificationsGroup.notifications"
+    ng-class="{'notification-read':content.timeRead}">
+      <notification  class="delete-btn-container" content="content" notification-deleted="$ctrl.notificationDeleted()"></notification>
+  </li>
+</ul>

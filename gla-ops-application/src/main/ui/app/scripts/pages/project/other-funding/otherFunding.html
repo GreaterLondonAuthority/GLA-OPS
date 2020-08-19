@@ -1,0 +1,109 @@
+<div class="project-other-funding medium-page">
+  <div class="row text-center">
+    <gla-project-header [editable-block]="$ctrl" (on-back)="$ctrl.back()">{{$ctrl.projectBlock.blockDisplayName}}
+    </gla-project-header>
+  </div>
+
+  <div class="questions mtop30">
+    <div class="row" ng-if="$ctrl.projectBlock.validationFailures.question.length">
+      <div class="col-xs-12 mtop10 mbottom10 text-center">
+        <div class="error-wrapper error" ng-repeat="error in $ctrl.projectBlock.validationFailures.question">
+          {{error.description}}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group question"
+         ng-if="$ctrl.templateConfig.showPartnersFundingQuestion">
+      <label class="question-text" for="Q1">{{$ctrl.templateConfig.partnersFundingQuestion}}</label>
+      <gla-yes-no-input id="Q1"
+                        mode="bool"
+                        name="Q1"
+                        [read-only]="$ctrl.readOnly"
+                        (model-change)="$ctrl.save(false)"
+                        [(model)]="$ctrl.projectBlock.hasFundingPartners">
+      </gla-yes-no-input>
+    </div>
+
+    <div class="form-group question"
+         ng-if="$ctrl.projectBlock.hasFundingPartners || !$ctrl.templateConfig.showPartnersFundingQuestion">
+
+      <div class="other-funding-list row no-gutter mtop20">
+        <div></div>
+        <div class="text-right" ng-if="!$ctrl.readOnly">
+          <button class="btn btn-md btn-secondary mbottom10 mtop10" ng-click="$ctrl.showProjectOtherFundingModal({})">
+            ADD {{$ctrl.templateConfig.entityName.toUpperCase()}} <b>+</b>
+          </button>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.projectBlock.validationFailures.table.length">
+        <div class="col-xs-12 mtop10 mbottom10 text-center">
+          <div class="error-wrapper error" ng-repeat="error in $ctrl.projectBlock.validationFailures.table">
+            {{error.description}}
+          </div>
+        </div>
+      </div>
+
+      <other-funding-table block="$ctrl.projectBlock"
+                           org-id="$ctrl.project.organisation.id"
+                           template="$ctrl.templateConfig"
+                           funding-entries="$ctrl.otherFundings"
+                           on-entry-change="$ctrl.showProjectOtherFundingModal($event)"
+                           on-entry-delete="$ctrl.deleteOtherFunding($event)"
+                           read-only="$ctrl.readOnly">
+      </other-funding-table>
+
+    </div>
+    <div class="form-group question"
+         ng-if="$ctrl.templateConfig.showOtherFundingDetailsSection">
+      <div class="mtop30">
+        <label for="text">{{$ctrl.templateConfig.otherFundingDetailQuestion}}</label>
+        <textarea id="text"
+                  ng-trim="false"
+                  rows="3"
+                  class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  ng-model="$ctrl.projectBlock.otherFundingSummary"
+                  maxlength="1000"></textarea>
+        <gla-remaining-characters ng-if="!$ctrl.readOnly" [text]="$ctrl.projectBlock.otherFundingSummary" [max]="1000"></gla-remaining-characters>
+      </div>
+
+      <div class="mtop30">
+        <label for="q2">{{$ctrl.templateConfig.otherFundingSecureDateQuestion}}</label>
+        <gla-yes-no-input id="q2"
+                          mode="bool"
+                          name="q2"
+                          [read-only]="$ctrl.readOnly"
+                          (model-change)="$ctrl.save(false)"
+                          [(model)]="$ctrl.projectBlock.shouldSecureByDate">
+        </gla-yes-no-input>
+      </div>
+
+      <div class="mtop30"
+           ng-if="$ctrl.projectBlock.shouldSecureByDate != null && !$ctrl.projectBlock.shouldSecureByDate" >
+        <label  for="q3">{{$ctrl.templateConfig.otherFundingFinalDateQuestion}}</label>
+        <input id="q3"
+               name="q3"
+               type="text"
+               class="form-control"
+               gla-read-only="$ctrl.readOnly"
+               ng-model="$ctrl.projectBlock.finalSecuredBy"
+               maxlength="100"/>
+      </div>
+
+      <div class="mtop30">
+        <label for="Q4">{{$ctrl.templateConfig.otherFundingStrategyQuestion}}</label>
+        <textarea id="Q4"
+                  ng-trim="false"
+                  rows="3"
+                  class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  ng-model="$ctrl.projectBlock.fundingStrategy"
+                  maxlength="600"></textarea>
+        <gla-remaining-characters ng-if="!$ctrl.readOnly" [text]="$ctrl.projectBlock.fundingStrategy" [max]="600"></gla-remaining-characters>
+      </div>
+    </div>
+  </div>
+  <project-block-footer editable-block="$ctrl"></project-block-footer>
+</div>

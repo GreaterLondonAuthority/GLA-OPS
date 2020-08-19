@@ -1,0 +1,13 @@
+<div class="medium-page internal-questions">
+  <gla-project-header (on-back)="$ctrl.back()" [editable-block]="$ctrl">{{$ctrl.title}}</gla-project-header>
+
+  <div class="text-center">This block is only visible to GLA staff</div>
+
+  <questions class="mtop30"
+             ng-if="$ctrl.showQuestions"
+             project="$ctrl.project"
+             block="$ctrl.block"
+             questions="$ctrl.questions"
+             read-only="$ctrl.readOnly"></questions>
+
+</div>

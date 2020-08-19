@@ -1,0 +1,51 @@
+<div class="funding-claim-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Confirm claim for {{$ctrl.section.label}} {{$ctrl.section.year}}?</h1>
+    <div>Claim details</div>
+  </div>
+  <div class="modal-body text-left">
+
+    <div>
+      <div class="clearfix">
+        <span class="label">{{$ctrl.activity.categoryDescription}} - {{$ctrl.activity.name}}</span>
+        <span class="pull-right">{{$ctrl.activity.capitalValue + $ctrl.activity.revenueValue | currency:'£':2}}</span>
+      </div>
+      <div class="payment-group">
+        <div ng-if="$ctrl.activity.capitalValue && ($ctrl.showCapitalGla || $ctrl.showCapitalOther)">Capital Funding <span class="pull-right">{{$ctrl.activity.capitalValue | currency:'£':2}}</span></div>
+        <div ng-if="$ctrl.activity.revenueValue && ($ctrl.showRevenueGla || $ctrl.showRevenueOther)">Revenue Funding <span class="pull-right">{{$ctrl.activity.revenueValue | currency:'£':2}}</span></div>
+      </div>
+    </div>
+
+    <div class="mtop30">
+      <span ng-if="$ctrl.section.status === 'Claimed'">Milestone claims must be cancelled before the milestones can be edited.</span>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <button
+          id="claim-btn"
+          ng-if="!$ctrl.section.claim && !$ctrl.readOnly"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$close('claim')"
+          ang-disabled="!$ctrl.labelText || $ctrl.isExistingLabel">CONFIRM</button>
+
+        <button
+          id="cancel-claim-btn"
+          ng-if="$ctrl.section.claim && $ctrl.section.status !== 'Approved' && !$ctrl.readOnly"
+          class="btn btn-default btn-secondary btn-negative btn-center"
+          type="button"
+          ng-click="$close('cancel')">CLOSE</button>
+
+        <div class="mtop20 mbottom10">
+          <a href="JavaScript:void(0)" class="form-cancel dismiss-btn" ng-click="$dismiss()">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+template-blocks {
+  display: block;
+
+  table {
+    td {
+      &.display-order {
+        width: 20%;
+      }
+
+      &.type {
+        width: 25%;
+      }
+
+      &.name {
+        width: 35%;
+      }
+
+      &.appears-on-status {
+        width: 20%;
+      }
+    }
+  }
+}

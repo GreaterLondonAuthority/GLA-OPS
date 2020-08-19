@@ -1,0 +1,174 @@
+<multi-panel class="mbottom20 programme-template-config" ng-class="{'delete-btn-container':!$ctrl.readOnly}">
+  <div class="column">
+    <div class="section">
+      <mp-field label="$ctrl.labels.wbsCapital">
+        <span ng-if="$ctrl.readOnly">{{$ctrl.projectType.capitalWbsCode}}</span>
+        <input ng-if="!$ctrl.readOnly"
+               aria-label="{{$ctrl.labels.wbsCapital}}"
+               class="form-control"
+               type="text"
+               maxlength="50"
+               ng-model="$ctrl.projectType.capitalWbsCode">
+      </mp-field>
+
+      <mp-field label="$ctrl.labels.wbsRevenue">
+        <span ng-if="$ctrl.readOnly">{{$ctrl.projectType.revenueWbsCode}}</span>
+        <input ng-if="!$ctrl.readOnly"
+               aria-label="{{$ctrl.labels.wbsRevenue}}"
+               class="form-control"
+               type="text"
+               maxlength="50"
+               ng-model="$ctrl.projectType.revenueWbsCode">
+      </mp-field>
+
+      <mp-field label="$ctrl.labels.ceCode">
+        <span ng-if="$ctrl.readOnly || !$ctrl.canEditCeCode">{{$ctrl.projectType.ceCode}}</span>
+        <input ng-if="!$ctrl.readOnly && $ctrl.canEditCeCode"
+               aria-label="{{$ctrl.labels.ceCode}}"
+               class="form-control"
+               type="text"
+               maxlength="50"
+               ng-model="$ctrl.projectType.ceCode">
+      </mp-field>
+
+      <mp-field label="$ctrl.labels.paymentsEnabled">
+        <span ng-if="$ctrl.readOnly">{{$ctrl.projectType.paymentsEnabled ? 'Yes' : 'No'}}</span>
+
+        <div ng-if="!$ctrl.readOnly" class="radio-group">
+          <label class="radio-inline">
+            <input aria-label="{{$ctrl.labels.paymentsEnabled}} Yes"
+                   type="radio"
+                   ng-attr-name="pe{{$index}}"
+                   ng-model="$ctrl.projectType.paymentsEnabled"
+                   ng-value="true"> Yes
+          </label>
+          <label class="radio-inline">
+            <input aria-label="{{$ctrl.labels.paymentsEnabled}} No"
+                   type="radio"
+                   ng-attr-name="pe{{$index}}"
+                   ng-model="$ctrl.projectType.paymentsEnabled"
+                   ng-value="false"> No
+          </label>
+        </div>
+      </mp-field>
+
+      <mp-field label="$ctrl.labels.paymentDefault">
+        <span ng-if="$ctrl.readOnly">{{$ctrl.getWbsCodeType($ctrl.projectType.defaultWbsCodeType).label}}</span>
+        <select aria-label="{{$ctrl.labels.paymentDefault}}"
+                class="form-control"
+                ng-change="$ctrl.onDefaultWbsSelect($ctrl.projectType)"
+                ng-if="!$ctrl.readOnly"
+                ng-init="$ctrl.projectType.previousDefaultWbsCodeType=$ctrl.projectType.defaultWbsCodeType"
+                ng-model="$ctrl.projectType.defaultWbsCodeType"
+                ng-options="wbsCodeType.key as wbsCodeType.label for wbsCodeType in $ctrl.wbsCodeTypes">
+        </select>
+      </mp-field>
+
+
+      <mp-field label="$ctrl.labels.status">
+        <span ng-if="$ctrl.readOnly">{{$ctrl.projectType.status}}</span>
+        <select aria-label="{{$ctrl.labels.status}}"
+                class="form-control"
+                ng-change="$ctrl.onStatusSelect($ctrl.projectType)"
+                ng-if="!$ctrl.readOnly"
+                ng-init="$ctrl.projectType.previousStatus=$ctrl.projectType.status"
+                ng-model="$ctrl.projectType.status"
+                ng-options="status for status in $ctrl.statuses"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+      </mp-field>
+
+      <mp-field label="$ctrl.labels.statusModel">{{$ctrl.projectType.stateModelName}}</mp-field>
+
+    </div>
+  </div>
+
+  <div class="column">
+    <div class="section">
+      <mp-field label="$ctrl.labels.assessmentTemplates" mp-default="' '">
+        <button class="btn btn-secondary add-btn"
+                ng-click="$ctrl.showAssessmentTemplateModal()"
+                ng-if="!$ctrl.readOnly && $ctrl.availableAssessmentTemplates.length">ADD <b>+</b></button>
+        <span ng-if="$ctrl.readOnly && !$ctrl.projectType.assessmentTemplates.length">Not provided</span>
+      </mp-field>
+
+      <div ng-repeat="at in $ctrl.projectType.assessmentTemplates | orderBy : 'assessmentTemplate.name' track by at.assessmentTemplate.id"
+           class="delete-btn-container mtop5 assessment-template">
+        <div class="assessment-name">{{at.assessmentTemplate.name}}</div>
+        <div ng-if="at.noNewAssessments">
+          No new assessments
+        </div>
+        <div class="roles">{{$ctrl.usedByRolesText(at)}}</div>
+        <div class="actions">
+          <a href="JavaScript:void(0)" ng-click="$ctrl.showAssessmentTemplateModal(at)" ng-if="$ctrl.isAssessmentTemplateEditableOrDeletable(at)">Edit</a>
+          <a href="JavaScript:void(0)" class="view-link" ng-click="$ctrl.showAssessmentTemplateModal(at, true, $)" ng-if="!$ctrl.isAssessmentTemplateEditableOrDeletable(at)">View</a>
+        </div>
+
+        <delete-button ng-if="$ctrl.isAssessmentTemplateEditableOrDeletable(at)"
+                       class="small"
+                       style="margin-right: 30px"
+                       ng-click="$ctrl.removeAssessmentTemplate(at)"></delete-button>
+      </div>
+
+      <delete-button ng-if="!$ctrl.readOnly && !$ctrl.projectsCount"
+                     ng-click="$ctrl.onDelete({$event:$ctrl.projectType})"></delete-button>
+    </div>
+  </div>
+</multi-panel>
+
+<multi-panel class="organisation-access" ng-if="!$ctrl.projectType.isNew">
+  <div class="section full-page-section">
+    <div class="section-header">Organisation access for {{$ctrl.projectType.templateName}}</div>
+    <gla-teams-default-access-list ng-if="$ctrl.teams.length"
+                                   id="{{'team-access-table-' + $ctrl.projectType.templateName.toLowerCase().replace(' ', '-')}}"
+                                   [programme-managing-organisation-name]="$ctrl.programme.managingOrganisationName"
+                                   [template-name]="$ctrl.projectType.templateName"
+                                   [teams]="$ctrl.teams"
+                                   [read-only]="$ctrl.readOnly"
+                                   [mo-access]="$ctrl.managingOrgAccess"
+                                   (on-team-default-access-change)="$ctrl.onTeamDefaultAccessChange($event)"
+                                   (on-managing-org-access-change)="$ctrl.onManagingOrgAccessChange( $event)">
+    </gla-teams-default-access-list>
+
+    <div class="text-right">
+      <button class="btn btn-secondary mtop10 mbottom10"
+              id="{{'give-access-button-' + $ctrl.projectType.templateName.toLowerCase().replace(' ', '-')}}"
+              ng-click="$ctrl.showGiveOrganisationAccessModal()"
+              ng-if="!$ctrl.readOnly">GIVE ORGANISATION ACCESS
+      </button>
+    </div>
+
+    <div class="bolder"> Other organisations that can access all projects for the template</div>
+    <div class="table-responsive org-access-table">
+      <div ng-if="!$ctrl.getOtherOrganisationsDefaultAccess($ctrl.projectType.id.templateId).length" class="empty-table">No other organisations have access</div>
+      <table ng-if="$ctrl.getOtherOrganisationsDefaultAccess($ctrl.projectType.id.templateId).length" class="table table-default table-hover table-bordered blocks"
+             id="{{'org-access-table-' + $ctrl.projectType.templateName.toLowerCase().replace(' ', '-')}}">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>ORG NAME</th>
+          <th>ORG ID</th>
+          <th>TYPE</th>
+          <th>MO</th>
+          <th ng-if="!$ctrl.readOnly"></th>
+        </tr>
+        </thead>
+
+        <tbody >
+        <tr ng-if="!$ctrl.getOtherOrganisationsDefaultAccess($ctrl.projectType.id.templateId).length">
+          <td colspan="5">No other organisations have access</td>
+        </tr>
+        <tr ng-repeat="org in $ctrl.getOtherOrganisationsDefaultAccess($ctrl.projectType.id.templateId)">
+          <td class="org-name">{{org.organisationName}}</td>
+          <td class="org-id">{{org.organisationId}}</td>
+          <td class="type">{{org.relationshipType}}</td>
+          <td class="managing-org">{{org.managingOrganisationName}}</td>
+          <td ng-if="!$ctrl.readOnly" class="delete-btn-container">
+            <delete-button ng-click="$ctrl.delete(org.organisationId,org.organisationName)" ></delete-button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</multi-panel>

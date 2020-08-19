@@ -1,0 +1,106 @@
+overview-block {
+
+  .overview-block {
+    gla-icon-new{
+      position: static;
+    }
+
+    background-color: white;
+    cursor: pointer;
+    min-height: 145px;
+    /*padding: 10px;*/
+    width: 100%;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+    border: none;
+    position: relative;
+    border-radius: 2px;
+
+    &.with-border.with-border{
+      border-style: solid !important;
+      border-width: 1px !important;
+    }
+
+    &:hover{
+      border: 2px solid $gla-black !important;
+      //padding: 9px;
+
+    }
+
+    &:focus{
+      border: 1px solid $form-field-active !important;
+      //padding: 9px;
+    }
+
+    .block-overview-step-number {
+      color: $gla-black;
+      font-size: 24px;
+      padding-bottom: 5px;
+    }
+
+    .block-overview-name {
+      color: $gla-black;
+      font-family: $font-family-bolder;
+      text-transform: uppercase;
+      font-size: 14px;
+      padding-bottom: 20px;
+    }
+
+    .block-overview-status {
+      font-size: 12px;
+      font-family: $font-family-light;
+      .glyphicon{
+        font-size: 1rem;
+      }
+      margin-bottom: 10px;
+    }
+
+    //.block-overview-status-complete, .block-overview-status-approved {
+    //  color: $green;
+    //}
+    //
+    //.block-overview-status-incomplete, .block-overview-status-unapproved {
+    //  color: $amber;
+    //}
+
+    //&.active-block{
+    //  border: 1px solid $green;
+    //  color: $green;
+    //  &.block-unapproved, &.land-block-overview.incomplete-block{
+    //    border-color: $amber;
+    //    color: $amber;
+    //  }
+    //}
+
+    .block-overview-banner{
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      padding: 0;
+      padding-top: 1px;
+      height: 26px;
+      line-height: 26px;
+      background: $gla-red;
+      color: #ffffff;
+      font-size: 12px;
+      font-family: $font-family-light;
+    }
+
+    &.overview-block-green{
+      .status {
+        color: $gla-black;
+      }
+      color: $green;
+      border: 1px solid $green;
+    }
+
+    &.overview-block-amber{
+      .status {
+        color: $gla-black;
+      }
+      color: $amber;
+      border: 1px solid $amber;
+    }
+  }
+
+}

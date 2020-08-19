@@ -1,0 +1,285 @@
+@charset "utf-8";
+
+$error: #dd2209;
+
+$icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/bootstrap/";
+
+@import "../gla-ui/src/assets/scss/base/_variables.scss";
+//@import "../gla-ui/src/assets/scss/base/_mixins.scss";
+
+@import "../gla-ui/node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+@import "bootstrap_ms";
+@import "buttons";
+@import "modals";
+
+@import "fonts";
+@import "global";
+@import "form";
+@import "table";
+@import "print";
+@import "datepicker";
+@import "ui-resizer";
+@import "uib-tabs";
+@import "project-block";
+
+@import "../scripts/pages/home/home.scss";
+@import "../scripts/pages/user/home/userHome.scss";
+@import "../scripts/pages/registration/registration.scss";
+@import "../scripts/pages/organisations/organisations.scss";
+@import "../scripts/pages/organisation/organisation.scss";
+@import "../scripts/pages/organisation/organisationForm/organisationForm.scss";
+@import "../scripts/pages/organisation/programme/organisationProgramme.scss";
+@import "../scripts/pages/organisation/recoverable-grant-submission/grant-categories-table/grantCategoriesTable.scss";
+@import "../scripts/pages/organisation/recoverable-grant-submission/recoverableGrantSubmission.scss";
+@import "../scripts/pages/organisation/recoverable-grant-submission/recoverableGrantSubmissionForecast.scss";
+@import "../scripts/pages/programmes/programmes.scss";
+@import "../scripts/pages/programme/programme.scss";
+@import "../scripts/pages/programme/programme-project-type/programmeProjectType.scss";
+@import "../scripts/pages/projects/projects.scss";
+@import "../scripts/pages/projects/new/newProject.scss";
+@import "../scripts/pages/project/grant/grant";
+@import "../scripts/pages/project/grant/total-grant/totalGrant.scss";
+@import "../scripts/pages/project/grant/indicative-grant/indicativeGrant";
+@import "../scripts/pages/project/grant/grant-table/grantTable";
+@import "../scripts/pages/project/design-standards/designStandards.scss";
+@import "../scripts/pages/project/grant-source/grantSource";
+
+@import "../scripts/pages/project/project-budget/projectBudget.scss";
+@import "../scripts/pages/project/project-budget/financeSummary.scss";
+@import "../scripts/pages/project/project-budget/wbs-codes/wbsCodes.scss";
+@import "../scripts/pages/project/project-budget/forecast/projectBudgetForecast.scss";
+
+@import "../scripts/pages/project/details/projectDetails.scss";
+@import "../scripts/pages/project/funding/fundingPage.scss";
+@import "../scripts/pages/project/funding-claims/fundingClaims.scss";
+@import "../scripts/pages/project/funding-claims/funding-claims-table/fundingClaimsTable.scss";
+@import "../scripts/pages/project/funding-claims/funding-claims-table-procured/fundingClaimsTableProcured.scss";
+@import "../scripts/pages/project/other-funding/otherFunding.scss";
+@import "../scripts/pages/project/other-funding/other-funding-table/otherFundingTable.scss";
+@import "../scripts/pages/project/overview/projectOverview.scss";
+@import "../scripts/pages/project/milestones/projectMilestones.scss";
+@import "../scripts/pages/project/questions/questionsPage.scss";
+
+@import "../scripts/pages/project/outputs/outputs.scss";
+@import "../scripts/pages/project/outputs/wizard/outputsWizard.scss";
+@import "../scripts/pages/project/outputs/outputs-baselines-table/outputsBaselinesTable.scss";
+@import "../scripts/pages/project/outputs/financial-year-monthly-outputs-table/financialYearMonthlyOutputsTable.scss";
+@import "../scripts/pages/project/outputs/financial-year-quarterly-outputs-table/financialYearQuarterlyOutputsTable.scss";
+@import "../scripts/pages/project/receipts/receipts.scss";
+@import "../scripts/pages/project/risks/risks.scss";
+@import "../scripts/pages/project/units/units.scss";
+@import "../scripts/pages/project/deliveryPartners/deliveryPartners.scss";
+@import "../scripts/pages/project/objectives/objectivesPage.scss";
+@import "../scripts/pages/project/user-defined-outputs/userDefinedOutputsPage.scss";
+@import "../scripts/pages/project/elements/elementsPage.scss";
+@import "../scripts/pages/consortiums/consortiums.scss";
+@import "../scripts/pages/consortiums/consortium-form/consortiumForm.scss";
+@import "../scripts/pages/payments/pending-payments/pendingPayments.scss";
+@import "../scripts/pages/payments/all-payments/allPayments.scss";
+@import "../scripts/pages/payments/pending-payments/decline-dialog/declineDialog.scss";
+@import "../scripts/pages/payments/pending-payments/interest-dialog/interestDialog.scss";
+@import "../scripts/pages/payments/payment-summary/paymentSummary.scss";
+@import "../scripts/pages/reports/reports.scss";
+@import "../scripts/pages/summary-report/summaryReportPage.scss";
+@import "../scripts/pages/system/system.scss";
+@import "../scripts/pages/system-messages/messagesPage.scss";
+@import "../scripts/pages/system/sapData/page.scss";
+@import "../scripts/pages/system/templates-questions/templateQuestions.scss";
+@import "../scripts/pages/system/templates/templates.scss";
+@import "../scripts/pages/system/template-details/template-details-page.scss";
+@import "../scripts/pages/system/features/featuresPage.scss";
+@import "../scripts/pages/system/questions-form/questionForm.scss";
+@import "../scripts/pages/system/skill-profiles/skillProfiles.scss";
+@import "../scripts/pages/system/skill-profiles/skill-profiles-table/skillProfilesTable.scss";
+
+@import "../scripts/pages/finance-categories/financeCategories.scss";
+@import "../scripts/pages/change-report/changeReport.scss";
+@import "../scripts/pages/change-report/change-report-field/changeReportField.scss";
+@import "../scripts/pages/change-report/change-report-field-files/changeReportFieldFiles.scss";
+@import "../scripts/pages/change-report/change-report-table/changeReportTable.scss";
+@import "../scripts/pages/change-report/change-report-table-row/changeReportTableRow.scss";
+@import "../scripts/pages/change-report/change-report-tile-total/changeReportTileTotal.scss";
+@import "../scripts/pages/change-report/change-report-tiles/changeReportTiles.scss";
+@import "../scripts/pages/change-report/change-report-tiles/change-report-tile-row/changeReportTileRow.scss";
+@import "../scripts/pages/change-report/change-report-table-separator/changeReportTableSeparator.scss";
+@import "../scripts/pages/change-report/change-report-static-text/changeReportStaticText.scss";
+@import "../scripts/pages/user-account/user-account.scss";
+@import "../scripts/pages/organisation/annual-submission/annualSubmission.scss";
+@import "../scripts/pages/registration/registrationForm/userRegistrationForm.scss";
+@import "../scripts/pages/organisation-registration/organisation-registration-programme/organisationRegistrationProgramme.scss";
+@import "../scripts/pages/organisation-registration/organisation-registration-form/organisationRegistrationForm.scss";
+@import "../scripts/pages/organisation-registration/organisation-registration-user/organisationRegistrationUser.scss";
+
+@import "../scripts/pages/project/internal-assessment/internalAssessment.scss";
+@import "../scripts/pages/project/internal-risk/internalRisk.scss";
+@import "../scripts/pages/assessment/assessment.scss";
+@import "../scripts/pages/assessment/outcome-assessment-summary/outcomeAssessmentSummary.scss";
+@import "../scripts/pages/assessment-templates/assessmentTemplates.scss";
+@import "../scripts/pages/assessment-templates/add-criteria-modal/addCriteriaModal.scss";
+
+@import "../scripts/pages/project/progress-updates/progressUpdates.scss";
+@import "../scripts/pages/permissions/permissionsPage.scss";
+@import "../scripts/pages/project/learning-grant/learningGrant.scss";
+@import "../scripts/pages/labels/labelsPage.scss";
+@import "../scripts/pages/all-notifications/allNotificationsPage.scss";
+@import "../scripts/pages/overrides/overridesPage.scss";
+@import "../scripts/pages/outputs-configuration/outputsConfigurationPage.scss";
+
+@import "../scripts/components/project-block-footer/projectBlockFooter.scss";
+@import "../scripts/components/header-status/headerStatus.scss";
+@import "../scripts/components/project-history/projectHistory.scss";
+@import "../scripts/components/common/input/date-input/dateInput.scss";
+@import "../scripts/components/common/loading-mask/loadingMask.scss";
+@import "../scripts/components/common/overview-block/overviewBlock.scss";
+@import "../scripts/components/common/project-overview-block/projectOverviewBlock.scss";
+@import "../scripts/components/search-field/searchField.scss";
+@import "../scripts/components/checkbox-filter/checkboxFilter.scss";
+@import "../scripts/components/pagination/pagination.scss";
+@import "../scripts/components/banner-message/bannerMessage.scss";
+
+@import "../scripts/components/input-cost-budget/inputCostBudget.scss";
+@import "../scripts/components/well/well.scss";
+@import "../scripts/components/multi-panel/multiPanel.scss";
+@import "../scripts/components/confirmation/confirmation.scss";
+@import "../scripts/components/questions/questions.scss";
+
+@import "../scripts/components/footer/glaFooter.scss";
+@import "../scripts/directives/topmenu/_nav.scss";
+@import "../scripts/directives/header/_header.scss";
+@import "../scripts/directives/cookie-warning/_cookie-warning.scss";
+@import "../scripts/components/common/json-viewer-dialog/JSONViewerDialog.scss";
+@import "../scripts/components/messageModal/messageModal.scss";
+@import "../scripts/components/password-strength/passwordStrength.scss";
+@import "../scripts/components/toast/toast.scss";
+@import "../scripts/components/total-box/totalBox.scss";
+@import "../scripts/components/expandableTable/expandableTable.scss";
+@import "../scripts/components/section-header/sectionHeader.scss";
+@import "../scripts/components/section-header2/sectionHeader.scss";
+@import "../scripts/components/profiled-unit-wizard/profiledUnitWizard.scss";
+@import "../scripts/pages/project/units/profiled-unit-table/profiledUnitTable.scss";
+@import "../scripts/components/tenure-tiles/tenureTiles.scss";
+@import "../scripts/components/tile/tile.scss";
+@import "../scripts/components/comments-list/commentsList.scss";
+@import "../scripts/components/comments-form/commentsForm.scss";
+@import "../scripts/components/show-more-btn/showMoreBtn.scss";
+@import "../scripts/components/report-header/reportHeader.scss";
+@import "../scripts/components/report-subheader/reportSubHeader.scss";
+@import "../scripts/components/report-section/reportSection";
+@import "../scripts/components/output-summaries-table/outputSummariesTable.scss";
+@import "../scripts/components/output-unit-cost/outputUnitCost.scss";
+@import "../scripts/components/milestones-table/milestonesTable.scss";
+@import "../scripts/components/programme-templates-table/programmeTemplatesTable.scss";
+@import "../scripts/components/version-history-modal/versionHistoryModal.scss";
+@import "../scripts/components/learning-grant-table/learningGrantTable.scss";
+@import "../scripts/components/claim-modal/claimModal.scss";
+@import "../scripts/components/session-timeout-modal/sessionTimeoutModal.scss";
+@import "../scripts/components/template-blocks/templateBlocks.scss";
+@import "../scripts/components/template-block-questions/templateBlockQuestions.scss";
+@import "../scripts/components/template-block-outputs/templateBlockOutputs.scss";
+@import "../scripts/components/template-block/templateBlock.scss";
+@import "../scripts/components/template-block-details/detailsTemplateBlock.scss";
+@import "../scripts/components/template-block-objectives/templateBlockObjectives.scss";
+@import "../scripts/components/template-block-other-funding/templateBlockOtherFunding.scss";
+@import "../scripts/components/entities-list/entitiesList.scss";
+@import "../scripts/components/programmes-carousel/programmesCarousel.scss";
+@import "../scripts/pages/audit-activity/auditActivity.scss";
+
+
+@import "../scripts/pages/notifications/notifications-page.scss";
+@import "../scripts/pages/notifications/scheduledNotificationsPage.scss";
+@import "../scripts/pages/users/users.scss";
+@import "../scripts/pages/sql/new/newSql.scss";
+@import "../scripts/components/file-upload-modal/fileUploadModal.scss";
+@import "../scripts/components/navigation-circles/navigationCircles.scss";
+@import "../scripts/pages/confirmation/orgAndUserCreatedConfirmation.scss";
+
+.row {
+  // Not sure why this is needed - the default row seems to have 15px left and right margins
+  margin: 0;
+}
+
+.gla-main {
+  min-height: 60rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container-narrow > hr {
+  margin: 3rem 0;
+}
+
+.gla-banner {
+  padding-top: 1.2rem;
+  max-width: 96%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.gla-message {
+  text-align: center;
+  padding-top: 2.4rem;
+  font-size: 1.2rem;
+}
+
+.center-col{
+  float: none;
+  clear: both;
+  margin: auto;
+}
+div.ui-select-bootstrap ul.ui-select-choices div.ui-select-choices-row.active{
+  // background-color: #5CA9C4;
+  background-color: rgba(92, 169, 196, 0.3);
+}
+
+.continue-modal-button{
+  text-align: center;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.actual.link{
+  color: darken($peppermint, 20%);
+}
+
+.history-accordion{
+  div[class="panel-heading"] {
+    background: #5C7489 !important;
+  }
+
+  h4[class="panel-title"] {
+    color: white !important;
+  }
+
+  .panel-title{
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
+.pagination > .disabled > a {
+  pointer-events: none;
+}
+
+.page{
+  @include when-md {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@include when-sm {
+  .medium-page {
+    width: 90%;
+    margin: auto;
+  }
+
+  .small-page {
+    width: 83.333%;
+    margin: auto;
+    padding: 0 15px;
+  }
+}
+
+

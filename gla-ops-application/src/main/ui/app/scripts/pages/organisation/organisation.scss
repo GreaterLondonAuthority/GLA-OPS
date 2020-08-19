@@ -1,0 +1,112 @@
+.organisation {
+
+  h4{
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 28px;
+  }
+
+  .number-of-contracts, .number-of-programmes {
+    padding: 10px 0 5px 0;
+  }
+  .bold {
+    font-family: $font-family-bolder;
+  }
+
+  .org-contracts, .org-programmes {
+    display: block;
+  }
+
+  .checkbox {
+    cursor: pointer;
+  }
+
+  .checkbox-label {
+    margin-left: 40px;
+    width: 100px;
+  }
+  .no-checkbox {
+    margin: 10px 0;
+  }
+
+  .contract-name, .programme-name, .total-approved-budget, .column {
+    padding: 10px 20px 15px 20px;
+  }
+
+  .contracts-list, .programmes-list, .list {
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+  }
+  .text-align-center {
+    text-align: center;
+  }
+
+  .org-contract, .org-programme, .list-item {
+    border-bottom: 1px solid #eaeaea;
+    margin: 5px 0;
+    .row {
+      padding: 5px 0;
+    }
+  }
+
+  .list .row:last-child .list-item {
+    border-bottom: none;
+    margin-bottom: 0px;
+    .column {
+      padding-bottom: 0;
+    }
+  }
+
+  .approve-organisation, .reject-organisation {
+    margin: 5px;
+  }
+
+  .governance-section {
+    width: 100%;
+
+    @include when-sm {
+      .field-value{
+        padding-left: 20px;
+      }
+    }
+  }
+
+  show-more-btn{
+    margin-top: 15px;
+  }
+
+  .change-status-comments{
+    font-family: $font-family-default;
+    font-weight: normal;
+    margin-top: 5px;
+    white-space: pre-line;
+  }
+
+  .org-icon{
+    height: 65px;
+    border: 1px solid $base-border-color
+  }
+
+  .selected-org-icon{
+    height: 20px;
+    margin-left: 5px;
+    margin-top: -4px;
+  }
+}
+
+.org-modal .modal-header{
+  .glyphicon-exclamation-sign {
+    font-size: 40px;
+    color: #c63c32;
+    margin-bottom: 25px;
+  }
+
+  h1{
+    margin: 0;
+  }
+
+}
+
+

@@ -1,0 +1,36 @@
+<div class="scheduled-notifications-page page">
+  <gla-page-header header="Scheduled Notifications" [hide-back-btn]="true">
+    <ph-right>
+      <button ng-click="$ctrl.showCreateOrEditModal()" class="btn btn-primary btn-md">
+        CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </ph-right>
+  </gla-page-header>
+  <div ng-if="!$ctrl.scheduledNotifications.length" class="empty-table mtop10">Not provided</div>
+  <table id="scheduled-notifications"
+         ng-if="$ctrl.scheduledNotifications.length"
+         class="scheduled-notifications table table-hover table-bordered table-with-inputs">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>Scheduled date/time</th>
+      <th>Text</th>
+      <th>Status</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr allow-enter
+        ng-click="$ctrl.showCreateOrEditModal(notification)" ng-repeat="notification in $ctrl.scheduledNotifications"
+        tabindex="0">
+      <td>{{notification.scheduledDateTime | date: 'dd/MM/yyyy HH:mm'}}</td>
+      <td>{{notification.text}}</td>
+      <td class="delete-btn-container">
+        <span>{{notification.status}}</span>
+        <delete-button ng-click="$ctrl.delete(notification); $event.stopPropagation();"></delete-button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+

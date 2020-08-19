@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="564" author="ughari">
+        <addColumn tableName="learning_grant_block">
+            <column name="learner_support_allocation" type="decimal"
+                    remarks="monetary value, learner support allocation"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="566" author="cmatias">
+        <addColumn tableName="template_block">
+            <column name="default_recovery_output_id" type="INT"
+                    remarks="id of the default category as recovery output"/>
+        </addColumn>
+        <addColumn tableName="outputs_costs_block">
+            <column name="advance_payment" type="INT" remarks="monetary value, advance payment amount"/>
+            <column name="selected_recovery_output_id" type="INT"
+                    remarks="id of the selected category as recovery output"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="567" author="cmatias">
+        <addColumn tableName="template_block">
+            <column name="hide_advance_payment" type="boolean" defaultValue="false"/>
+        </addColumn>
+        <addColumn tableName="outputs_costs_block">
+            <column name="hide_advance_payment" type="boolean" defaultValue="false"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="565" author="cmelville">
+        <createSequence sequenceName="outputs_claim_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="outputs_claim" remarks="a claim for quarterly outputs">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="outputs_claim_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="original_id" type="INT4" remarks="primary key"/>
+            <column name="block_id" type="INT4" remarks="related block Id"/>
+            <column name="year" type="INT4" remarks="financial year"/>
+            <column name="quarter" type="INT4" remarks="quarter for claim"/>
+            <column name="amount" type="INT4" remarks="amount claimed"/>
+            <column name="claim_status" type="varchar(50)" remarks="The status of the outputs claim."/>
+            <column name="claim_type" type="varchar(50)" remarks="The type of the outputs claim."/>
+            <column name="claimed_on" type="TIMESTAMP" remarks="date record last modified"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="567" author="cmelville">
+        <addColumn tableName="template_block">
+            <column name="output_group_type" type="varchar(50)" defaultValue="ByCategory"
+                    remarks="if the outputs block should show groups by cat or by quarter"/>
+            <column name="show_forecast_total_column" type="boolean" defaultValueBoolean="false"
+                    remarks="If the forecast total column should be shown"/>
+            <column name="show_claimable_amount_column" type="boolean" defaultValueBoolean="false"
+                    remarks="If the claimable amount column should be shown"/>
+            <column name="show_actual_total_column" type="boolean" defaultValueBoolean="false"
+                    remarks="If the actual total colummn total column should be shown"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="568" author="ughari">
+        <createTable tableName="subcontracting_block">
+            <column name="id" type="INT4" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="570" author="jdimsa">
+        <addColumn tableName="template_block">
+            <column name="has_subcontractors_title" type="varchar(255)" remarks="question text to ask if there are subcontractors"/>
+            <column name="question2" type="varchar(255)" remarks="question text in subcontracting block"/>
+            <column name="question3" type="varchar(255)" remarks="question text in subcontracting block"/>
+            <column name="question4" type="varchar(255)" remarks="question text in subcontracting block"/>
+            <column name="question5" type="varchar(255)" remarks="question text in subcontracting block"/>
+        </addColumn>
+
+        <addColumn tableName="subcontracting_block">
+            <column name="has_subcontractors" type="boolean" remarks="question answer if there are subcontractors"/>
+            <column name="question2" type="boolean" remarks="question answer in subcontracting block"/>
+            <column name="question3" type="boolean" remarks="question answer in subcontracting block"/>
+            <column name="question4" type="boolean" remarks="question answer in subcontracting block"/>
+            <column name="question5" type="boolean" remarks="question answer in subcontracting block"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="571" author="ughari">
+        <addColumn tableName="payment_profile">
+            <column name="payment_date" type="TIMESTAMP" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="572" author="cmatias">
+        <createSequence sequenceName="subcontractor_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="subcontractor">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="subcontractor_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" remarks="The related block id."/>
+            <column name="identifier_type" type="varchar(50)" remarks="The identifier type of the subcontractor."/>
+            <column name="identifier" type="INT4" remarks="The ukprn/org id of subcontractor."/>
+            <column name="organisation_name" type="varchar(50)" remarks="The organisation name of the subcontractor."/>
+        </createTable>
+
+        <addColumn tableName="template_block">
+            <column name="subcontractor_type" type="varchar(50)" remarks="The subcontracting type defined in the subcontracting plan."/>
+            <column name="subcontractors" type="INT4" remarks="The subcontractors of subcontracting plan."/>
+        </addColumn>
+
+        <addColumn tableName="subcontracting_block">
+            <column name="subcontractor_type" type="varchar(50)" remarks="The subcontracting type defined in the subcontracting plan."/>
+            <column name="subcontractors" type="INT4" remarks="The subcontractors of subcontracting plan."/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="569" author="cmelville">
+        <modifyDataType tableName="outputs_claim" columnName="amount" newDataType="DECIMAL(12,2)" />
+    </changeSet>
+
+    <changeSet id="573" author="cmelville">
+        <createSequence sequenceName="provision_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="provision">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="provision_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="subcontractor_id" type="INT4" remarks="The related subcontractor"/>
+            <column name="provision_type" type="varchar(50)" remarks="The provision type"/>
+            <column name="learners" type="INT4" remarks="the number of learners"/>
+            <column name="allocation_amount" type="DECIMAL(12,2)" remarks="allocation for this provision"/>
+            <column name="retention_fee" type="DECIMAL(12,2)" remarks="retention fee for this provision"/>
+            <column name="comments" type="varchar(255)" remarks="Comments"/>
+
+        </createTable>
+
+        <createTable tableName="template_provision_types">
+            <column name="id" type="INT4" remarks="the template block id"/>
+            <column name="provision_type" type="varchar(255)" remarks="Provision type available for this provider"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="574" author="cmatias">
+        <dropColumn tableName="template_block" columnName="subcontractors"/>
+    </changeSet>
+
+    <changeSet id="575" author="ybouhass">
+        <dropSequence sequenceName="question_seq" />
+    </changeSet>
+
+    <changeSet id="576" author="ughari">
+        <addColumn tableName="template_block">
+            <column name="show_advanced_payment_balance_column" type="boolean" defaultValue="false"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="577" author="cmatias">
+        <createSequence sequenceName="override_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="override">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="override_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_id" type="INT4" remarks="The related project id."><constraints nullable="false"/></column>
+            <column name="override_reason" type="varchar(50)" remarks="The reason of deliveryOverride."><constraints nullable="false"/></column>
+            <column name="override_type" type="varchar(50)" remarks="The type of deliveryOverride."><constraints nullable="false"/></column>
+            <column name="tenure" type="varchar(10)" remarks="The tenure of the deliveryOverride."/>
+            <column name="reported_value" type="varchar(50)" remarks="The reported value of deliveryOverride."/>
+            <column name="reported_date" type="TIMESTAMP" remarks="The reported date of deliveryOverride."/>
+            <column name="overridden_by" type="varchar(50)" remarks="The user name of who did the deliveryOverride."><constraints nullable="false"/></column>
+            <column name="overridden_on" type="TIMESTAMP" remarks="The date time of deliveryOverride."><constraints nullable="false"/></column>
+        </createTable>
+    </changeSet>
+    <changeSet id="578" author="cmatias">
+        <renameTable oldTableName="override" newTableName="delivery_override"/>
+    </changeSet>
+    
+    <changeSet id="579" author="ughari">
+        <addColumn tableName="OUTPUT_TABLE_ENTRY">
+            <column name="amount_claimed" type="decimal"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="580" author="jdimsa">
+        <modifyDataType tableName="delivery_override" columnName="tenure" newDataType="varchar(50)" />
+        <addColumn tableName="delivery_override">
+            <column name="comments" type="varchar(255)" remarks="Comments for override"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="581" author="jdimsa">
+        <modifyDataType tableName="delivery_override" columnName="reported_value" newDataType="INT4" />
+    </changeSet>
+
+</databaseChangeLog>

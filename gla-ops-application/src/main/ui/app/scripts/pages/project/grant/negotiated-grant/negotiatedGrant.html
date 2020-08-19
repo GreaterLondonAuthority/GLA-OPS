@@ -1,0 +1,63 @@
+<div class="project-grant">
+  <div class="text-center">
+    <gla-project-header (on-back)="$ctrl.back()" [editable-block]="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
+  </div>
+
+  <div ng-if="$ctrl.data">
+    <div ng-if="$ctrl.showStartOnSiteMessage" class="text-center start-on-site-message">
+      {{$ctrl.startOnSiteRestrictionText}}
+    </div>
+
+    <div>
+        <div class="row grant-block-title">
+          1. Justify the grant requested for this project
+        </div>
+        <textarea id="reason" aria-label="Justification" rows="5" name="justification"
+                  ng-disabled="$ctrl.readOnly" class="form-control" ng-model="$ctrl.data.justification"
+                  placeholder="Enter comments to justify your grant request"
+                  gla-read-only="$ctrl.readOnly"
+                  maxlength="1000" ng-blur="$ctrl.saveTenure(true)"></textarea>
+
+      <div class="row no-padding">
+        <div class="col-xs-7 col-sm-9 no-padding">
+          <div class="sub-comment" ng-if="!$ctrl.readOnly">If you need to submit supporting documents, contact your Area Manager</div>
+        </div>
+        <div class="col-xs-5 col-sm-3 no-padding">
+          <gla-remaining-characters [text]="$ctrl.data.justification" [max]="1000"></gla-remaining-characters>
+        </div>
+      </div>
+
+      <div class="row" ng-if="$ctrl.data.validationFailures.Block1.length">
+        <div class="col-xs-12 mtop15 text-center">
+          <div class="error-wrapper error" ng-repeat="error in $ctrl.data.validationFailures.Block1">
+            {{error.description}} <span ng-if="error.rowId">({{error.rowId}})</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row grant-block-title">
+      2. Enter the units and tenure
+    </div>
+    <grant-table data="$ctrl.data" is-readonly="$ctrl.readOnly" on-tenure-change="$ctrl.saveTenure(true)">
+    </grant-table>
+
+    <div class="loading-mask-container">
+      <tenure-tiles tenures="$ctrl.tenureSummaryDetails"></tenure-tiles>
+      <total-grant total="$ctrl.data.totalGrantEligibility"></total-grant>
+      <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
+    </div>
+    <claimed-units ng-if="$ctrl.data.startOnSiteMilestoneAuthorised || $ctrl.data.completionMilestoneAuthorised"
+                   start-milestone="$ctrl.data.startOnSiteMilestoneAuthorised"
+                   completion-milestone="$ctrl.data.completionMilestoneAuthorised"
+                   total-start-on-site="$ctrl.data.totalStartOnSiteApprovedUnits"
+                   total-completion="$ctrl.data.totalCompletionApprovedUnits"
+                   tenures="$ctrl.tenureClaimedDetails"
+                   title="TOTAL UNITS CLAIMED"
+                   total="$ctrl.data.totalCompletionApprovedUnits || $ctrl.data.totalStartOnSiteApprovedUnits"
+                   is-unit="true">
+    </claimed-units>
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
+  </div>
+</div>

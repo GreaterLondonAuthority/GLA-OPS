@@ -1,0 +1,45 @@
+.totalBox {
+    font-size: 0.75rem;
+    color: $secondary-text;
+    padding: 1rem 2rem 1rem 2rem;
+    text-align: center;
+    background-color: #ffffff;
+    box-shadow: 0 0 0.6rem 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid $base-border-color;
+    .totalBox__title {
+        font-size: 18/16 + 0rem;
+        text-transform: uppercase;
+        color: $secondary-text;
+    }
+    .totalBox__valueContainer {
+        margin-top: 20/16 + 0rem;
+        width: 100%;
+        padding: 0 2rem 0 2rem;
+    }
+    .totalBox__label {
+        //font-family: $font-family-bolder;
+        color: $primary-text;
+        font-size: 14/16 + 0rem;
+        margin-bottom: 5/16 + 0rem;
+        line-height: 14/16 + 0rem;
+    }
+    .totalBox__value {
+        font-family: $font-family-bolder;
+        font-size: 14/16 + 0rem;
+        color: $primary-text;
+        line-height: 14/16 + 0rem;
+    }
+    .totalBox__totalValue {
+        font-family: $font-family-bolder;
+        color: $primary-text;
+        text-align: center;
+        hr {
+          width: 70%;
+          margin: 20/16 + 0rem auto;
+        }
+    }
+}
+
+.totalBox.box.noDescription {
+    min-height: 8rem;
+}

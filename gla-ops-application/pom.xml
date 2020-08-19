@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<artifactId>gla-ops-parent</artifactId>
+		<groupId>uk.gov.london</groupId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>gla-ops-application</artifactId>
+	<packaging>war</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>uk.gov.london</groupId>
+			<artifactId>gla-ops-framework</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.gov.london</groupId>
+			<artifactId>audit-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.gov.london</groupId>
+			<artifactId>file-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.gov.london</groupId>
+			<artifactId>notification-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.gov.london</groupId>
+			<artifactId>user-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<!--<scope>provided</scope>-->
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-file</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-xml</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-ftp</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-jdbc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>3.5.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.11.714</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.findify</groupId>
+			<artifactId>s3mock_2.12</artifactId>
+			<version>0.2.5</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.lookfirst</groupId>
+			<artifactId>sardine</artifactId>
+			<version>5.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.jknack</groupId>
+			<artifactId>handlebars</artifactId>
+			<version>4.0.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.5.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>1.5.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.kirviq</groupId>
+			<artifactId>dumbster</artifactId>
+			<version>1.7.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.10</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-sftp</artifactId>
+<!--			<version>4.2.5.RELEASE</version>-->
+		</dependency>
+
+		<dependency>
+			<groupId>com.nulab-inc</groupId>
+			<artifactId>zxcvbn</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.8.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.logback-extensions</groupId>
+			<artifactId>logback-ext-loggly</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback.contrib</groupId>
+			<artifactId>logback-json-classic</artifactId>
+			<version>0.1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback.contrib</groupId>
+			<artifactId>logback-jackson</artifactId>
+			<version>0.1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.gov.london</groupId>
+			<artifactId>gla-ops-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>gla-ops</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+			</plugin>
+
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-surefire-plugin</artifactId>-->
+<!--				<version>2.22.0</version>-->
+<!--&lt;!&ndash;				<configuration>&ndash;&gt;-->
+<!--&lt;!&ndash;					<parallel>all</parallel>&ndash;&gt;-->
+<!--&lt;!&ndash;					<useUnlimitedThreads>true</useUnlimitedThreads>&ndash;&gt;-->
+<!--&lt;!&ndash;				</configuration>&ndash;&gt;-->
+<!--				<configuration>-->
+<!--					<excludes>-->
+<!--						<exclude>**/*IntegrationTest</exclude>-->
+<!--					</excludes>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
+
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.0</version>
+
+				<configuration>
+					<workingDirectory>src/main/ui</workingDirectory>
+					<nodeVersion>v10.14.2</nodeVersion>
+					<npmVersion>6.9.0</npmVersion>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<phase>prepare-package</phase>
+					</execution>
+
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>grunt build</id>
+						<goals>
+							<goal>grunt</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<arguments>ngBuild</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>br.com.ingenieux</groupId>
+				<artifactId>beanstalk-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<configuration>
+					<applicationName>gla-${eb.env}-landmgmt-app</applicationName>
+					<s3Bucket>${s3.bucket}</s3Bucket>
+					<s3Key>${project.build.finalName}-${maven.build.timestamp}.war</s3Key>
+					<versionLabel>gla-ops-${build.release}.${build.number}</versionLabel>
+					<environmentName>gla${eb.env}ops</environmentName>
+					<environmentRef>gla${eb.env}ops</environmentRef>
+					<regionName>${eb.region}</regionName>
+					<artifactFile>../gla-ops.war</artifactFile>
+					<serverId>londonglaops.${eb.env}.eb.aws.amazon.com</serverId>
+					<silentUpload>false</silentUpload>
+					<verbose>true</verbose>
+					<multipartUpload>false</multipartUpload>
+				</configuration>
+			</plugin>
+
+
+
+			<plugin>
+				<groupId>org.codehaus.gmaven</groupId>
+				<artifactId>groovy-maven-plugin</artifactId>
+				<version>2.0</version>
+			</plugin>
+
+<!--			<plugin>-->
+<!--				<groupId>org.jacoco</groupId>-->
+<!--				<artifactId>jacoco-maven-plugin</artifactId>-->
+<!--				<version>0.7.7.201606060606</version>-->
+<!--				<configuration>-->
+<!--					<destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>-->
+<!--					<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>-->
+<!--					<excludes>-->
+<!--						<exclude>**/GlaApplication.*</exclude>-->
+<!--						<exclude>**/GlaWebSecurityConfig.*</exclude>-->
+<!--						<exclude>**/SAPFileProcessorConfiguration.*</exclude>-->
+<!--						<exclude>**/SpringSFTPConfiguration.*</exclude>-->
+<!--						<exclude>**/SwaggerConfig.*</exclude>-->
+<!--						<exclude>**/ApplicationContextListener.*</exclude>-->
+<!--						<exclude>**/di/*</exclude>-->
+<!--						<exclude>**/ProjectBuilder.*</exclude>-->
+<!--						<exclude>**/TemplateBuilder.*</exclude>-->
+<!--						<exclude>**/LogglyCustomJsonLayout.*</exclude>-->
+<!--						<exclude>**/PrimaryDataSourceConfiguration.*</exclude>-->
+<!--						<exclude>**/ReportingDataSourceConfiguration.*</exclude>-->
+<!--						<exclude>**/Q*Summary.*</exclude>-->
+<!--						<exclude>**/AuditableActivity.*</exclude>-->
+<!--						<exclude>**/QBaseOrganisation.*</exclude>-->
+<!--						<exclude>**/QOrganisation.*</exclude>-->
+<!--						<exclude>**/QProjectLedgerEntry.*</exclude>-->
+<!--						<exclude>**/QTeam.*</exclude>-->
+<!--					</excludes>-->
+<!--				</configuration>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>jacoco-initialize</id>-->
+<!--						<goals>-->
+<!--							<goal>prepare-agent</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--					<execution>-->
+<!--						<id>jacoco-check</id>-->
+<!--						<phase>test</phase>-->
+<!--						<goals>-->
+<!--							<goal>check</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<rules>-->
+<!--								<rule implementation="org.jacoco.maven.RuleConfiguration">-->
+<!--									<element>BUNDLE</element>-->
+<!--									<limits>-->
+<!--										<limit implementation="org.jacoco.report.check.Limit">-->
+<!--											<counter>INSTRUCTION</counter>-->
+<!--											<value>COVEREDRATIO</value>-->
+<!--											<minimum>${jacoco.coverage.ratio}</minimum>-->
+<!--										</limit>-->
+<!--										<limit implementation="org.jacoco.report.check.Limit">-->
+<!--											<counter>CLASS</counter>-->
+<!--											<value>MISSEDCOUNT</value>-->
+<!--											<maximum>${jacoco.missed.class.count}</maximum>-->
+<!--										</limit>-->
+<!--									</limits>-->
+<!--								</rule>-->
+<!--							</rules>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--					<execution>-->
+<!--						<id>jacoco-site</id>-->
+<!--						<phase>package</phase>-->
+<!--						<goals>-->
+<!--							<goal>report</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-checkstyle-plugin</artifactId>-->
+<!--				<version>3.1.1</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>validate</id>-->
+<!--						<phase>validate</phase>-->
+<!--						<configuration>-->
+<!--							<configLocation>${basedir}/config/checkstyle.xml</configLocation>-->
+<!--							<violationSeverity>warning</violationSeverity>-->
+<!--							<maxAllowedViolations>4700</maxAllowedViolations>-->
+<!--							<encoding>UTF-8</encoding>-->
+<!--							<consoleOutput>true</consoleOutput>-->
+<!--							<failsOnError>false</failsOnError>-->
+<!--							<failOnViolation>true</failOnViolation>-->
+<!--						</configuration>-->
+<!--						<goals>-->
+<!--							<goal>check</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+
+<!--			<plugin>-->
+<!--			    <groupId>com.mycila</groupId>-->
+<!--			    <artifactId>license-maven-plugin</artifactId>-->
+<!--			    <version>2.9</version>-->
+<!--			    <configuration>-->
+<!--			        <header>LICENCE.txt</header>-->
+<!--			        <includes>-->
+<!--			          <include>src/**/java/**/*.java</include>-->
+<!--			        </includes>-->
+<!--					<excludes>-->
+<!--						<exclude>src/main/ui/**/*</exclude>-->
+<!--					</excludes>-->
+<!--			    </configuration>-->
+
+<!--			    <executions>-->
+<!--			        <execution>-->
+<!--			            <goals>-->
+<!--			                <goal>check</goal>-->
+<!--			            </goals>-->
+<!--			           	<phase>validate</phase>-->
+<!--			        </execution>-->
+<!--			    </executions>-->
+<!--			</plugin>-->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<configuration>
+					<outputDirectory>target/sources</outputDirectory>
+					<finalName>gla-ops</finalName>
+					<attach>false</attach>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<executions>
+					<execution>
+					<phase>prepare-package</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+						<transformationSet>
+							<dir>src/main/resources/db/changelog</dir>
+							<includes>
+								<include>db.changelog-r${build.release}.xml</include>
+							</includes>
+							<stylesheet>src/main/resources/liquibase-stylesheet.xsl</stylesheet>
+							<fileMappers>
+								<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+									<pattern>.xml</pattern>
+									<replacement>.html</replacement>
+								</fileMapper>
+							</fileMappers>
+						</transformationSet>
+					</transformationSets>
+				</configuration>
+			</plugin>
+
+<!--			<plugin>-->
+<!--				<groupId>org.jetbrains.kotlin</groupId>-->
+<!--				<artifactId>kotlin-maven-plugin</artifactId>-->
+<!--				<version>${kotlin.version}</version>-->
+<!--				<configuration>-->
+<!--					<compilerPlugins>-->
+<!--						<plugin>jpa</plugin>-->
+<!--						<plugin>spring</plugin>-->
+<!--						<plugin>all-open</plugin>-->
+<!--					</compilerPlugins>-->
+<!--					<pluginOptions>-->
+<!--						<option>all-open:annotation=javax.persistence.Entity</option>-->
+<!--					</pluginOptions>-->
+<!--					<args>-->
+<!--						<arg>-Xjsr305=strict</arg>-->
+<!--					</args>-->
+<!--				</configuration>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>compile</id>-->
+<!--						<phase>process-sources</phase>-->
+<!--						<goals>-->
+<!--							<goal>compile</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<sourceDirs>-->
+<!--								<sourceDir>${project.basedir}/src/main/java</sourceDir>-->
+<!--							</sourceDirs>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--					<execution>-->
+<!--						<id>test-compile</id>-->
+<!--						<goals>-->
+<!--							<goal>test-compile</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<sourceDirs>-->
+<!--								<sourceDir>${project.basedir}/src/test/java</sourceDir>-->
+<!--							</sourceDirs>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--				<dependencies>-->
+<!--					<dependency>-->
+<!--						<groupId>org.jetbrains.kotlin</groupId>-->
+<!--						<artifactId>kotlin-maven-noarg</artifactId>-->
+<!--						<version>${kotlin.version}</version>-->
+<!--					</dependency>-->
+<!--					<dependency>-->
+<!--						<groupId>org.jetbrains.kotlin</groupId>-->
+<!--						<artifactId>kotlin-maven-allopen</artifactId>-->
+<!--						<version>${kotlin.version}</version>-->
+<!--					</dependency>-->
+<!--				</dependencies>-->
+<!--			</plugin>-->
+
+<!--			<plugin>-->
+<!--				<groupId>com.mysema.maven</groupId>-->
+<!--				<artifactId>apt-maven-plugin</artifactId>-->
+<!--				<version>1.1.3</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<phase>process-sources</phase>-->
+<!--						<goals>-->
+<!--							<goal>process</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<outputDirectory>${project.build.directory}/generated-sources</outputDirectory>-->
+<!--							<showWarnings>true</showWarnings>-->
+<!--							<processor>com.querydsl.apt.QuerydslAnnotationProcessor</processor>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+
+		</plugins>
+	</build>
+
+<!--	<reporting>-->
+<!--		<plugins>-->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-checkstyle-plugin</artifactId>-->
+<!--				<version>3.1.1</version>-->
+<!--				<reportSets>-->
+<!--					<reportSet>-->
+<!--						<reports>-->
+<!--							<report>checkstyle</report>-->
+<!--						</reports>-->
+<!--					</reportSet>-->
+<!--				</reportSets>-->
+<!--			</plugin>-->
+
+<!--			<plugin>-->
+<!--				<groupId>org.codehaus.mojo</groupId>-->
+<!--				<artifactId>findbugs-maven-plugin</artifactId>-->
+<!--				<version>3.0.5</version>-->
+<!--			</plugin>-->
+<!--		</plugins>-->
+
+<!--	</reporting>-->
+
+</project>

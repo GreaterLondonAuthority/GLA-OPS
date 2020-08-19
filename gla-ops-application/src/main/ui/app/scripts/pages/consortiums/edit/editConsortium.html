@@ -1,0 +1,14 @@
+<div class="text-center">
+  <gla-page-header (on-back)="$ctrl.back()" [editable-block]="$ctrl">
+    Consortiums & Partnerships
+  </gla-page-header>
+  <div class="consortium-name">{{$ctrl.title}}</div>
+  <consortium-form ng-if="!$ctrl.loading"
+                   data="$ctrl.data"
+                   programmes="$ctrl.programmes"
+                   lead-organisations="$ctrl.leadOrganisations"
+                   organisations-in-projects="$ctrl.organisationsInProjects"
+                   on-save="$ctrl.submit($event)"
+                   read-only="$ctrl.readOnly"></consortium-form>
+</div>
+

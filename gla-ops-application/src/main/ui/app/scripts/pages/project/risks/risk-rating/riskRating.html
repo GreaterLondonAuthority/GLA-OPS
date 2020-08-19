@@ -1,0 +1,54 @@
+<section-header>
+  Project Risk Rating
+</section-header>
+<div class="row no-gutter mtop30 mbottom15">
+  <div class="col-xs-12">
+    <label for="rating-dropdown">Overall Project Risk Rating</label>
+  </div>
+  <div class="col-xs-6">
+    <div class="risk-{{$ctrl.overallRating.color.toLowerCase()}}" ng-if="$ctrl.readOnly && $ctrl.overallRating">
+      <span class="risk-color">{{$ctrl.overallRating.color.toUpperCase()}}</span> - {{$ctrl.overallRating.description}}
+    </div>
+
+    <div ng-if="$ctrl.readOnly && !$ctrl.overallRating">
+      Not provided
+    </div>
+
+    <select class="rating-dropdown form-control"
+            id="rating-dropdown"
+            name="rating-dropdown"
+            ng-change="$ctrl.autoSave()"
+            ng-disabled="$ctrl.readOnly"
+            ng-if="!$ctrl.readOnly"
+            ng-model="$ctrl.overallRating"
+            ng-options="rating as (rating.color + ' - ' + rating.description) for rating in $ctrl.overallRatings track by rating.id">
+      <option value="">Not provided</option>
+    </select>
+  </div>
+</div>
+<div class="row no-gutter mbottom10">
+  <div class="col-xs-12">
+    <label for="explanation">Explanation of Risk Rating</label>
+  </div>
+  <div class="col-xs-12">
+    <div ng-if="$ctrl.readOnly && $ctrl.blockData.ratingExplanation">
+      {{$ctrl.blockData.ratingExplanation}}
+    </div>
+
+    <div ng-if="$ctrl.readOnly && !$ctrl.blockData.ratingExplanation">
+      Not provided
+    </div>
+
+    <textarea id="explanation" class="form-control"
+              name="explanation"
+              aria-label="explanation"
+              placeholder=""
+              ng-model="$ctrl.blockData.ratingExplanation"
+              maxlength="1000" rows="5"
+              ng-keypress=""
+              ng-if="!$ctrl.readOnly"
+              ng-disabled="$ctrl.readOnly"
+              change-on-blur="$ctrl.autoSave()">
+        </textarea>
+  </div>
+</div>

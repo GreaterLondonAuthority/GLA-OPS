@@ -1,0 +1,61 @@
+<div class="outputs">
+  <div class="text-center">
+    <gla-project-header (on-back)="$ctrl.back()" [editable-block]="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
+  </div>
+
+  <gla-spinner ng-if="$ctrl.loading"></gla-spinner>
+
+  <section-header subheader="">
+    Summary of Project Output Details
+  </section-header>
+
+  <div class="row mtop20 text-center">
+    <div class="mtop10 col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
+      <div class="form-group">
+        <label for="totalProjectSpend" ng-if="$ctrl.readOnly">Total Project Spend:</label>
+
+        <span ng-if="$ctrl.readOnly && $ctrl.projectBlock.totalProjectSpend">{{$ctrl.projectBlock.totalProjectSpend | currency:'£':2}}</span>
+        <span ng-if="$ctrl.readOnly && !$ctrl.projectBlock.totalProjectSpend">Not provided</span>
+
+        <label for="totalProjectSpend" ng-if="!$ctrl.readOnly">Enter Total Project Spend £:</label>
+        <input id="totalProjectSpend"
+               ng-if="!$ctrl.readOnly"
+               number-mask="2"
+               type="text"
+               ng-model="$ctrl.projectBlock.totalProjectSpend"
+               maxlength="13"
+               class="form-control"
+               aria-label="allocation">
+      </div>
+
+      <div class="form-group" ng-if="!$ctrl.projectBlock.hideAdvancePayment">
+        <label for="advancePayment" ng-if="$ctrl.readOnly">Advance Payment:</label>
+
+        <span ng-if="$ctrl.readOnly && $ctrl.projectBlock.advancePayment">{{$ctrl.projectBlock.advancePayment | currency:'£':2}}</span>
+        <span ng-if="$ctrl.readOnly && !$ctrl.projectBlock.advancePayment">Not provided</span>
+
+        <label for="advancePayment" ng-if="!$ctrl.readOnly">Enter Advance Payment £:</label>
+        <input id="advancePayment"
+               ng-if="!$ctrl.readOnly"
+               number-mask="2"
+               type="text"
+               ng-model="$ctrl.projectBlock.advancePayment"
+               ng-disabled="!$ctrl.canEditAdvancePayment()"
+               maxlength="13"
+               class="form-control"
+               aria-label="allocation">
+      </div>
+    </div>
+  </div>
+
+  <output-unit-cost project="$ctrl.project"
+                    block="$ctrl.projectBlock"
+                    read-only="$ctrl.readOnly"
+                    can-edit-advance-payment="$ctrl.canEditAdvancePayment()"
+                    show-recovery-column="!$ctrl.projectBlock.hideAdvancePayment"></output-unit-cost>
+
+  <div class="col-xs-12 mtop30">
+    <project-block-footer editable-block="$ctrl" class="mtop30"></project-block-footer>
+  </div>
+
+</div>

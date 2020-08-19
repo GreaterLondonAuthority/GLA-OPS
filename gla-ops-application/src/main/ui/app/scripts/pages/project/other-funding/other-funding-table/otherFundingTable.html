@@ -1,0 +1,51 @@
+<div class="table-responsive other-funding-table">
+  <div ng-if="!$ctrl.fundingEntries.length" class="empty-table">Not provided</div>
+  <table ng-if="$ctrl.fundingEntries.length" class="table table-hover table-bordered ">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th> Funding Source</th>
+      <th ng-if="$ctrl.showFunderName">{{$ctrl.funderNameText}}</th>
+      <th ng-if="$ctrl.showDescription">{{$ctrl.descriptionText}}</th>
+      <th ng-if="$ctrl.template.showAmount">{{$ctrl.amountText}}</th>
+      <th ng-if="$ctrl.template.showSecuredQuestion">SECURED?</th>
+      <th ng-if="$ctrl.showEvidence">EVIDENCE</th>
+      <th ng-if="$ctrl.template.showSecuredQuestion">SECURED/ESTIMATED DATE</th>
+      <th ng-if="!$ctrl.readOnly"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-if="!$ctrl.fundingEntries.length" class="bolder">
+      <td colspan="7">Not Provided</td>
+    </tr>
+    <tr ng-class="{'cursor-pointer': !$ctrl.readOnly}"
+        allow-enter ng-attr-tabindex="{{$ctrl.readOnly? undefined : 0}}"
+        ng-click="!$ctrl.readOnly && $ctrl.onEntryChange({$event:entry})"
+        ng-repeat="entry in $ctrl.fundingEntries track by entry.id">
+      <td> {{entry.fundingSource}}</td>
+      <td ng-if="$ctrl.showFunderName"> {{entry.funderName}}</td>
+      <td ng-if="$ctrl.showDescription"> {{entry.description}}</td>
+      <td ng-if="$ctrl.template.showAmount">
+        <span>{{entry.amount | currency:'':2}}</span>
+      </td>
+      <td ng-if="$ctrl.template.showSecuredQuestion">
+        {{entry.fundingSecured | bool}}
+      </td>
+      <td class="read-only" ng-if="$ctrl.showEvidence">
+        <a href="JavaScript:void(0);" ng-click="$ctrl.showEvidenceModal(entry);$event.stopPropagation();" ng-if="$ctrl.evidenceLinkText(entry)">{{$ctrl.evidenceLinkText(entry)}}</a>
+        <span ng-if="!$ctrl.evidenceLinkText(entry)">{{entry.fundingSecured? 'None added' : 'N/A'}}</span>
+      </td>
+      <td ng-if="$ctrl.template.showSecuredQuestion">
+        <span ng-if="entry.fundingSecured">{{entry.dateSecured | date: 'dd/MM/yyyy'}}</span>
+        <span ng-if="!entry.fundingSecured">{{entry.estimateDateSecured | date: 'dd/MM/yyyy'}}</span>
+      </td>
+      <td class="delete-btn-container" ng-if="!$ctrl.readOnly">
+        <delete-button ng-click="$ctrl.onEntryDelete({$event:entry}); $event.stopPropagation();"
+                       ng-if="!$ctrl.readOnly">
+        </delete-button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+

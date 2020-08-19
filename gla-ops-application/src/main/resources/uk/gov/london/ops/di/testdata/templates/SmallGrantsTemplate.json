@@ -1,0 +1,50 @@
+{
+  "name": "Small Grants Template",
+  "author": "Data Initialiser",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": [],
+      "maxBoroughs": 3
+    }
+ ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Stage 1",
+    "initialSubStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "MultiAssessment"
+  },
+  "detailsConfig": {
+    "addressRequirement": "optional",
+    "boroughRequirement": "optional",
+    "coordsRequirement": "optional",
+    "maincontactRequirement": "optional",
+    "maincontactemailRequirement": "optional",
+    "imageRequirement": "optional",
+    "contactRequirement": "optional",
+    "siteOwnerRequirement": "optional",
+    "interestRequirement": "optional",
+    "projectManagerRequirement": "optional",
+    "siteStatusRequirement": "optional",
+    "legacyProjectCodeRequirement": "optional",
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "optional"
+  },
+  "tenureTypes": [],
+  "shouldMilestonesBlockShowStatus": false,
+  "allowMonetaryMilestones": false,
+  "grantTypes": []
+}

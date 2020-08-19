@@ -1,0 +1,49 @@
+<div class="modal-header text-center">
+  <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <h1>Reclaim {{$ctrl.source}}</h1>
+</div>
+<div class="modal-body text-left reclaim-modal">
+  <div class="row">
+    <div class="col-md-10 center-col">
+      <form
+        id="reclaimForm"
+        role="form"
+        name="reclaimForm">
+        <div class="mbottom30">Reclaim {{$ctrl.source}} up to £{{$ctrl.allowedReclaimAmount | number}}</div>
+        <div class="form-group">
+          <label for="reclaim" class="label">Enter amount to reclaim</label>
+          <input id="reclaim"
+                 name="reclaim"
+                 ng-model="$ctrl.amount"
+                 required
+                 max="$ctrl.allowedReclaimAmount"
+                 number-mask="0"
+                 placeholder="Enter value £"
+                 class="form-control"/>
+
+          <div class="error-wrapper">
+            <span class="error" ng-if="reclaimForm.reclaim.$error.max">You cannot reclaim more than the original payment value. £{{$ctrl.allowedReclaimAmount | number}} is available to reclaim.</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <div class="row">
+    <div class="col-xs-12 text-center mbottom15">
+      <button class="btn btn-default btn-primary btn-center"
+              ng-click="$close($ctrl.amount)"
+              ng-disabled="reclaimForm.$invalid">CREATE RECLAIM
+      </button>
+
+
+      <button class="btn btn-default btn-primary btn-center"
+              type="button"
+              ng-click="$dismiss()">CANCEL
+      </button>
+    </div>
+  </div>
+</div>

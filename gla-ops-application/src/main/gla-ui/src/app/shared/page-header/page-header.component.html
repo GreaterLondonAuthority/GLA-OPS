@@ -1,0 +1,49 @@
+<div  [class]="{'with-buttons': hasButtons}">
+  <div class="title-row">
+    <div class="back-btn-col">
+      <button *ngIf="!hideBackBtn && !(stopEditing && !editableBlock?.readOnly)"
+              (click)="onBack.emit()"
+              title="Back"
+              class="back-button btn btn-md btn-default pull-left no-print">
+        <i class="glyphicon glyphicon-menu-left"></i>
+        <span>{{backBtnName || 'BACK'}}</span>
+      </button>
+    </div>
+    <div class="title-col">
+      <h2 class="page-title">
+        <ng-content></ng-content>
+        {{header}}
+      </h2>
+    </div>
+    <!-- TODO consider using parent scope instead -->
+    <div #editCol class="edit-col text-right" *ngIf="editableBlock || header">
+      <ng-content select="ph-right"></ng-content>
+      <!--Enable only if block can be edited (has permissions) and block is in readOnly mode -->
+      <div class="btn-sticky">
+        <button
+          class="btn btn-edit btn-md"
+          (click)="editableBlock?.edit()"
+          *ngIf="editableBlock?.editable && editableBlock?.readOnly"
+          title="Edit">
+          <span>EDIT</span><i class="glyphicon glyphicon-edit"></i>
+        </button>
+        <button
+          class="btn btn-edit btn-md"
+          id="stop-editing-button"
+          (click)="editableBlock?.stopEditing()"
+          *ngIf="stopEditing && editableBlock?.editable && !editableBlock?.readOnly"
+          title="Done">
+          <span>DONE</span><i class="glyphicon glyphicon-edit"></i>
+        </button>
+      </div>
+      <div class="pull-right locked-by"
+           *ngIf="editableBlock?.lockDetails && !editableBlock?.editable && currentUser != editableBlock?.lockDetails?.username">
+        Currently being edited by {{editableBlock.lockDetails.firstName}}
+        {{editableBlock.lockDetails.lastName}}
+      </div>
+    </div>
+  </div>
+  <hr class="form-header__hr">
+</div>
+
+

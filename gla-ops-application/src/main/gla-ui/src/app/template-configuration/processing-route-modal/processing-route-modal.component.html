@@ -1,0 +1,74 @@
+<div>
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{originalProcessingRoute?.name? 'UPDATE': 'ADD'}} PROCESSING ROUTE</h1>
+  </div>
+
+  <div class="modal-body">
+    <form #modalForm="ngForm" name="modalForm">
+      <div class="form-group">
+        <label for="name">Processing route name</label>
+        <input [(ngModel)]="processingRoute.name"
+               class="form-control"
+               id="name"
+               name="name"
+               placeholder="Processing route name"
+               required
+               #name="ngModel"
+               type="text"/>
+        <div *ngIf="(name.dirty || name.touched) && (name.invalid || !isNameUnique(processingRoute))" class="error-wrapper">
+          <div *ngIf="name?.errors?.required" class="error">Required</div>
+          <div *ngIf="!isNameUnique(processingRoute)" class="error">Duplicate processing route name</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="externalId">External id (optional)</label>
+        <input [(ngModel)]="processingRoute.externalId"
+               class="form-control"
+               id="externalId"
+               max="999999"
+               maxlength="6"
+               min="0"
+               name="externalId"
+               pattern="\d*"
+               placeholder="External id"
+               type="number"/>
+      </div>
+
+      <div class="form-group">
+        <label for="display-order">Display order</label>
+        <input [(ngModel)]="processingRoute.displayOrder"
+               class="form-control display-order-input"
+               id="display-order"
+               max="99"
+               maxlength="2"
+               min="0"
+               name="displayOrder"
+               pattern="\d*"
+               placeholder="Display Order"
+               #displayOrder="ngModel"
+               required
+               type="number"/>
+        <div *ngIf="(displayOrder.dirty || displayOrder.touched) && (displayOrder.invalid || !isDisplayOrderUnique(processingRoute))" class="error-wrapper">
+          <div *ngIf="displayOrder?.errors?.required" class="error">Required</div>
+          <div *ngIf="!isDisplayOrderUnique(processingRoute)" class="error">Duplicate display order</div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button (click)="activeModal.close(processingRoute)"
+                [disabled]="!isFormValid(modalForm, processingRoute)"
+                class="btn btn-primary">{{originalProcessingRoute?.name? 'UPDATE': 'ADD'}}
+        </button>
+        <button (click)="activeModal.dismiss()" class="btn btn-secondary">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,260 @@
+<form name="mForm"  ng-if="$ctrl.data" ng-model-options="{allowInvalid: false}" class="grant-table">
+  <div ng-include="'table-calculate-grant.html'" ng-if="$ctrl.data.blockType == 'CalculateGrant'" id="calculate-grant-table"></div>
+  <div ng-include="'table-negotiated-grant.html'" ng-if="$ctrl.data.blockType == 'NegotiatedGrant'" id="negotiated-grant-table"></div>
+  <div ng-include="'table-developer-led-grant.html'" ng-if="$ctrl.data.blockType == 'DeveloperLedGrant'" id="developer-led-grant-table"></div>
+  <div ng-include="'table-indicative-grant.html'" ng-if="$ctrl.data.blockType == 'IndicativeGrant'" id="indicative-grant-table"></div>
+
+  <div class="row" ng-if="$ctrl.data.errors.length">
+    <div class="col-xs-12 mtop15 text-center">
+      <div class="error-wrapper error" ng-repeat="error in $ctrl.data.errors">
+        {{error.description}} <span ng-if="error.rowId">({{error.rowId}})</span>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+<script type="text/ng-template" id="table-calculate-grant.html">
+  <table class="table table-hover table-bordered table-default table-with-inputs"
+         ng-class="{'edit-mode': !$ctrl.isReadonly}">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th style="width: 25%">TENURE TYPE</th>
+      <th class="number" style="width: 25%">TOTAL UNITS</th>
+      <th class="number" style="width: 25%">OF WHICH NIL GRANT UNITS</th>
+      <th class="number" style="width: 25%">£ TOTAL DEVELOPMENT COSTS</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="m in $ctrl.data.tenureTypeAndUnitsEntries track by m.id">
+      <td>{{ m.tenureType.name }}</td>
+<!--      ng-class="{'read-only': $ctrl.isNaFieldReadonly(m), 'cell-with-input': !$ctrl.isNaFieldReadonly(m)}"-->
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly, 'invalid-cell': $ctrl.hasErrors(m, 'totalUnits')}">
+        <input
+
+          ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.totalUnits"
+          maxlength="6"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="total-units-input">
+        <span ng-if="$ctrl.isReadonly">{{m.totalUnits | number}}</span>
+      </td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly,  'invalid-cell': $ctrl.hasErrors(m, 's106Units')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.s106Units"
+          maxlength="6"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="s106-units-input">
+        <span ng-if="$ctrl.isReadonly">{{m.s106Units | number}}</span>
+      </td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly, 'invalid-cell': $ctrl.hasErrors(m, 'totalCost')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.totalCost"
+          maxlength="13"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="total-cost-input">
+        <span ng-if="$ctrl.isReadonly">{{m.totalCost | number}}</span>
+      </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td>TOTAL</td>
+      <td class="number">{{$ctrl.data.totals.totalUnits | number}}</td>
+      <td class="number">{{$ctrl.data.totals.totalS106Units  | number}}</td>
+      <td class="number">{{$ctrl.data.totals.totalCost  | number}}</td>
+    </tr>
+    </tfoot>
+  </table>
+</script>
+
+
+
+<script type="text/ng-template" id="table-negotiated-grant.html">
+  <table class="table table-hover table-bordered table-default table-with-inputs tenure-types"
+         ng-class="{'edit-mode': !$ctrl.isReadonly}">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th style="width: 24%">TENURE TYPE</th>
+      <th class="number" style="width: 15%">£ GRANT REQUESTED</th>
+      <th class="number" style="width: 16%">TOTAL AFFORDABLE UNITS</th>
+      <th class="number" style="width: 17.5%">OF WHICH SUPPORTED & SPECIALISED UNITS</th>
+      <th class="number" style="width: 17.5%">£ TOTAL DEVELOPMENT COSTS</th>
+      <th class="number" style="width: 10%">GRANT AS % COSTS</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="m in $ctrl.data.tenureTypeAndUnitsEntries track by m.id">
+      <td>{{ m.tenureType.name }}</td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly,  'invalid-cell': $ctrl.hasErrors(m, 'grantRequested')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.grantRequested"
+          maxlength="13"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="grant-requested-input">
+        <span ng-if="$ctrl.isReadonly">{{m.grantRequested | number}}</span>
+      </td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly,'invalid-cell': $ctrl.hasErrors(m, 'totalUnits')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.totalUnits"
+          maxlength="6"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="total-units-input">
+        <span ng-if="$ctrl.isReadonly">{{m.totalUnits | number}}</span>
+      </td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly, 'invalid-cell': $ctrl.hasErrors(m, 'supportedUnits')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.supportedUnits"
+          maxlength="6"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="tenure-change-input">
+        <span ng-if="$ctrl.isReadonly">{{m.supportedUnits | number}}</span>
+      </td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly,  'invalid-cell': $ctrl.hasErrors(m, 'totalCost')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.totalCost"
+          maxlength="13"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="total-cost-input">
+        <span ng-if="$ctrl.isReadonly">{{m.totalCost | number}}</span>
+      </td>
+
+      <td class="read-only number">{{m.percentageOfTotalCost | number: 1}}</td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td>TOTAL</td>
+      <td class="read-only number">{{$ctrl.data.totals.totalGrantRequested | number}}</td>
+      <td class="read-only number">{{$ctrl.data.totals.totalUnits | number}}</td>
+      <td class="read-only number">{{$ctrl.data.totals.totalSupportedUnits | number}}</td>
+      <td class="read-only number">{{$ctrl.data.totals.totalCost | number}}</td>
+      <td class="read-only number">{{$ctrl.data.totals.percentageOfTotalCost | number: 1}}</td>
+    </tr>
+    </tfoot>
+  </table>
+</script>
+
+
+
+<script type="text/ng-template" id="table-developer-led-grant.html">
+  <table class="table table-hover table-bordered table-default table-with-inputs"
+         ng-class="{'edit-mode': !$ctrl.isReadonly}">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th class="number" style="width: 25%">TENURE TYPE</th>
+      <th class="number" style="width: 25%">S106 AGREEMENT UNITS</th>
+      <th class="number" style="width: 25%">ADDITIONAL AFFORDABLE UNITS</th>
+      <th class="number" style="width: 25%">TOTAL DEVELOPMENT COSTS £</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="m in $ctrl.data.tenureTypeAndUnitsEntries track by m.id">
+      <td>{{ m.tenureType.name }}</td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly, 'invalid-cell': $ctrl.hasErrors(m, 's106Units')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.s106Units"
+          maxlength="6"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="s106-units-input">
+        <span ng-if="$ctrl.isReadonly">{{m.s106Units | number}}</span>
+      </td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly,  'invalid-cell': $ctrl.hasErrors(m, 'additionalAffordableUnits')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.additionalAffordableUnits"
+          maxlength="6"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="additional-affordable-units-input">
+        <span ng-if="$ctrl.isReadonly">{{m.additionalAffordableUnits | number}}</span>
+      </td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly, 'invalid-cell': $ctrl.hasErrors(m, 'totalCost')}">
+        <input ng-if="!$ctrl.isReadonly"
+          number-mask="0"
+          type="text"
+          ng-model="m.totalCost"
+          maxlength="13"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="total-cost-input">
+        <span ng-if="$ctrl.isReadonly">{{m.totalCost | number}}</span>
+      </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td>TOTAL</td>
+      <td class="read-only number">{{$ctrl.data.totals.totalS106Units | number}}</td>
+      <td class="read-only number">{{$ctrl.data.totals.totalAdditionalUnits | number}}</td>
+      <td class="read-only number">{{$ctrl.data.totals.totalCost | number}}</td>
+    </tr>
+    </tfoot>
+  </table>
+</script>
+
+
+
+<script type="text/ng-template" id="table-indicative-grant.html">
+  <table class="table indicative-table table-hover table-bordered table-default table-with-inputs"
+         ng-class="{'edit-mode': !$ctrl.isReadonly}">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th style="width: 25%">TENURE TYPE</th>
+      <th  class="number" ng-repeat="data in $ctrl.data.tenureTypeAndUnitsEntries[0].indicativeTenureValuesSorted">
+        <div >
+          <span>{{data.year}}/{{data.year + 1 | limitTo:2:2}}</span>
+        </div>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="t in $ctrl.data.tenureTypeAndUnitsEntries track by t.id">
+      <td>{{ t.tenureType.name }}</td>
+
+      <td class="number" ng-class="{'read-only': $ctrl.isReadonly || m.disabled, 'cell-with-input': !$ctrl.isReadonly }" ng-repeat="m in t.indicativeTenureValuesSorted track by m.id">
+        <input ng-if="!$ctrl.isReadonly && !m.disabled"
+          number-mask="0"
+          type="text"
+          ng-model="m.units"
+          maxlength="6"
+          change-on-blur="$ctrl.tenureChange(m)"
+          aria-label="{{t.tenureType.name}}-{{m.year}}-units-input">
+        <span ng-if="$ctrl.isReadonly || m.disabled">{{m.units | number}}</span>
+      </td>
+    </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>TOTAL</td>
+        <td class="read-only number" ng-repeat="data in $ctrl.data.tenureTypeAndUnitsEntries[0].indicativeTenureValuesSorted track by $index">
+          {{$ctrl.data.totals[data.year] | number}}
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</script>

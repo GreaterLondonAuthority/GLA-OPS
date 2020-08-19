@@ -1,0 +1,125 @@
+//--- Main fonts ---
+
+$font-family-default: "Gotham-book", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+$font-family-light: "Gotham-light", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+$font-family-bolder: "Gotham-medium", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+$font-family-bold: "Gotham-bold", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+
+//--- Style guide main palette colours ---
+
+$dark-navy: #353c42;
+$navy: #3e4e5c;
+$grey: #f7f7f7;
+$white: #ffffff;
+$peppermint: #7fbeab;
+$moonstone: #5ca9c4;
+$green-pearl: #e4e6c3;
+$ice-blue: #f7f7f9;
+
+//--- Other colours (names from http://chir.ag/projects/name-that-color) ---
+
+$primary-black: #1f1f1f;
+$primary-white: #f9f9f9;
+$secondary-grey: #777777;
+$silver: #cccccc;
+$silver-dark: #bcbcbc;
+$abbey: #545656;
+$heather: #aebecb;
+$alto: #cecece;
+$grey-light: #eeeeee;
+$alto-light: #dddddd;
+$acapulco: #77af9c;
+$patina: #689989;
+$table-sub-header: rgb(205, 228, 236);
+$table-sub-header-grey: #E0E0E0;
+$danube-blue:#6699CC;
+
+$red: #c63c32;
+$amber: #ea961c;
+$green: #23ae52;
+
+$gla-black: #000105;
+$gla-red: #c33737;
+$gla-dark-grey: #2d3335;
+$gla-blue: #01577D;
+
+//$report-right-side-background: #E0E0E0;
+$report-right-side-background: #e5e5e5;
+
+
+//--- Style guide text colours ---
+
+//$primary-black Defined above
+//$primary-white Defined above
+//$secondary-grey Defined above
+
+$links: $moonstone;
+$form-field-inactive: $silver;
+$form-field-active: $abbey;
+$top-navigation-default-state: $heather;
+
+//--- Style guide RAG colours ---
+
+$error: $red;
+$pending: $amber;
+$validated: $green;
+
+//--- Style guide Primary/Secondary text colours ---
+
+$primary-text: $primary-black;
+$secondary-text: $secondary-grey;
+
+//---
+
+$inactive-field-text-color: $form-field-inactive;
+$accent-color: $moonstone;
+
+$gla-white: $primary-white;
+$gla-grey: $alto;
+
+
+//Font for form field values
+$form-field-focus-border: $dark-navy;
+$form-field-disabled-bg: $grey;
+
+//Menus
+$nav-bg-color: $navy;
+$nav-text-color: $top-navigation-default-state;
+$nav-text-hover: $primary-white;
+$nav-bg-active: #364450;
+
+
+
+
+//default values in cell (zeros)
+//read only text (details)
+//TODO placeholders
+$base-border-color: $alto-light;
+$table-border: $alto-light;
+
+//Same as primary text
+$label: $primary-text;
+
+
+
+//Buttons
+$btn-border-radius-base:        2px !default;
+$btn-border-radius-large:       2px !default;
+$btn-border-radius-small:       2px !default;
+
+$btn-primary-color:             $white !default;
+$btn-primary-bg:                $peppermint !default;
+$btn-primary-border:            transparent !default;
+$btn-primary-hover:             $patina;
+
+$btn-secondary-color:           $btn-primary-bg !default;
+$btn-secondary-bg:              $btn-primary-color !default;
+$btn-secondary-border:          $gla-grey !default;
+$btn-secondary-border-active:   $silver-dark !default;
+$btn-secondary-hover:           $grey;
+
+$btn-disabled-bg:               $silver !default;
+
+//Has to be at the end for overridden variables above to take precedence
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";
+

@@ -1,0 +1,10 @@
+<label for="quarter">Quarter</label><br/>
+<select class="form-control"
+        id="quarter"
+        ng-change="$ctrl.onMonthSelected({selectedMonth:$ctrl.selectedMonth})"
+        ng-disabled="$ctrl.readOnly"
+        ng-model="$ctrl.selectedMonth"
+        ng-options="item as item.label for item in $ctrl.quarterList track by item.label"
+        style-placeholder="">
+  <option disabled value="">Select</option>
+</select>

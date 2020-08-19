@@ -1,0 +1,37 @@
+<div class="includes-tables">
+  <div>
+      <div class="report-label mtop10">{{$ctrl.templateConfig.hasDeliveryPartnersTitle}}</div>
+      <div class="report-value">{{$ctrl.block.hasDeliveryPartners | bool}}</div>
+
+    <div ng-if="$ctrl.block.hasDeliveryPartners">
+      <div ng-if="$ctrl.templateConfig.question2">
+        <div class="report-label mtop10">{{$ctrl.templateConfig.question2}}</div>
+        <div class="report-value">{{$ctrl.block.question2 | bool}}</div>
+      </div>
+      <div ng-if="$ctrl.templateConfig.question3">
+        <div class="report-label mtop10">{{$ctrl.templateConfig.question3}}</div>
+        <div class="report-value">{{$ctrl.block.question3 | bool}}</div>
+      </div>
+      <div ng-if="$ctrl.templateConfig.question4">
+        <div class="report-label mtop10">{{$ctrl.templateConfig.question4}}</div>
+        <div class="report-value">{{$ctrl.block.question4 | bool}}</div>
+      </div>
+      <div ng-if="$ctrl.templateConfig.question5">
+        <div class="report-label mtop10">{{$ctrl.templateConfig.question5}}</div>
+        <div class="report-value">{{$ctrl.block.question5 | bool}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mtop20 table-responsive" ng-if="$ctrl.block.hasDeliveryPartners">
+    <delivery-partners-table
+      project="$ctrl.project"
+      project-block="$ctrl.block"
+      template-config="$ctrl.templateConfig"
+      read-only="true"
+      deliverable-types="$ctrl.deliverableTypes">
+    </delivery-partners-table>
+
+  </div>
+
+</div>

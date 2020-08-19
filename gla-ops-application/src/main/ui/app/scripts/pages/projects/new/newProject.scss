@@ -1,0 +1,16 @@
+.newProject {
+  .header {
+    h3 {
+      margin-top: 30px;
+    }
+    .gla-alert {
+      margin-bottom: 15px;
+    }
+  }
+
+  @include when-md {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+}

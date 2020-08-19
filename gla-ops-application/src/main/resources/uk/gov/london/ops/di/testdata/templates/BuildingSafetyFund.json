@@ -1,0 +1,4335 @@
+{
+  "name": "Building Safety Fund",
+  "author": "Helen",
+  "status": "Draft",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Application summary",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Applicant details",
+      "block": "Questions",
+      "displayOrder": 2,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 2.1,
+          "question": {
+            "id": 6272,
+            "text": "Applicant's Representative - Contact name",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6114,
+            "text": "Applicant’s Representative – Contact telephone number",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 11.1,
+          "question": {
+            "id": 6273,
+            "text": "Upload an obligations summary, highlighting its provisions for the right of the Applicant to undertake works of ACM cladding removal, remediation and replacement and to recover the cost of such works from leaseholders by way of service charge",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 100,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6259,
+            "text": "Applicant’s Representative – Contact email address",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 6116,
+            "text": "Confirm if the party submitting this application for funding (i.e. the Applicant's Representative) is the “Responsible Entity” for the building in question",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 6113,
+            "text": "Is the Applicant the freeholder?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 6115,
+            "text": "What is the relationship between the Applicant and the building in question?",
+            "answerType": "Dropdown",
+
+
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Management company"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Head leaseholder"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6113,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 6.1,
+          "question": {
+            "id": 6121,
+            "text": "Confirm that the Applicant is legally entitled to recover 100% of any costs of the repair, maintenance and renewal of the structure of the property from the leasehold occupiers (whether commercial or residential).",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6113,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 6110,
+            "text": "Upload your Title Summary document",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "optional",
+          "parentId": 6116,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 6123,
+            "text": "Upload a diagram of the ownership structure for the building including freeholder, head lessees, agents, Registered Providers of Social Housing, residential/commercial leaseholders, undertenants etc (as applicable)",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6112,
+            "text": "Applicant’s Representative – Organisation name (if different to name of Applicant)",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 6124,
+            "text": "Upload your Headlease",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 15,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6115,
+          "parentAnswerToMatch": "Head leaseholder"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6117,
+            "text": "Applicant’s Representative – Address",
+            "answerType": "FreeText",
+            "maxLength": 200,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 6119,
+            "text": "Describe this relationship",
+            "answerType": "FreeText",
+            "maxLength": 250,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6115,
+          "parentAnswerToMatch": "Other"
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 6120,
+            "text": "Explain the title structure and the relationship between the Applicant’s Representative, the Applicant, the fund beneficiaries (i.e. leasehold occupiers), the freeholder and, if appropriate, any Registered Providers of Social Housing",
+            "answerType": "FreeText",
+            "maxLength": 500,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6116,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6226,
+            "text": "Name of Applicant (i.e. the company or individual that is the Responsible Entity for the building)",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Building details",
+      "block": "Questions",
+      "displayOrder": 3,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 6131,
+            "text": "Height of block (m) measured to top of highest elevation from ground level",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 707,
+            "text": "Delta Reference number",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 6137,
+            "text": "Number of storeys in building",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 6133,
+            "text": "Height of block (m) measured to finished floor level of highest habitable floor from ground level",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6142,
+            "text": "Building name(s)",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6125,
+            "text": "Development name (state 'n/a' if not applicable)",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 6127,
+            "text": "Supply a copy of the title plan, indicating the full extent of the building for which you're seeking funding",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 15,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 6285,
+            "text": "Local authority",
+            "answerType": "Dropdown",
+
+
+            "answerOptions": [
+              {
+                "displayOrder": 19,
+                "option": "Kensington and Chelsea"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Bromley"
+              },
+              {
+                "displayOrder": 21,
+                "option": "Lambeth"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Camden"
+              },
+              {
+                "displayOrder": 18,
+                "option": "Islington"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Barnet"
+              },
+              {
+                "displayOrder": 13,
+                "option": "Haringey"
+              },
+              {
+                "displayOrder": 14,
+                "option": "Harrow"
+              },
+              {
+                "displayOrder": 28,
+                "option": "Sutton"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Hackney"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Greenwich"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Bexley"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Brent"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Hammersmith & Fulham"
+              },
+              {
+                "displayOrder": 6,
+                "option": "City of London"
+              },
+              {
+                "displayOrder": 30,
+                "option": "Waltham Forest"
+              },
+              {
+                "displayOrder": 23,
+                "option": "Merton"
+              },
+              {
+                "displayOrder": 24,
+                "option": "Newham"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Ealing"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Croydon"
+              },
+              {
+                "displayOrder": 32,
+                "option": "Westminster"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Enfield"
+              },
+              {
+                "displayOrder": 27,
+                "option": "Southwark"
+              },
+              {
+                "displayOrder": 26,
+                "option": "Richmond-upon-Thames"
+              },
+              {
+                "displayOrder": 16,
+                "option": "Hillingdon"
+              },
+              {
+                "displayOrder": 15,
+                "option": "Havering"
+              },
+              {
+                "displayOrder": 31,
+                "option": "Wandsworth"
+              },
+              {
+                "displayOrder": 20,
+                "option": "Kingston-upon-Thames"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Barking & Dagenham"
+              },
+              {
+                "displayOrder": 29,
+                "option": "Tower Hamlets"
+              },
+              {
+                "displayOrder": 17,
+                "option": "Hounslow"
+              },
+              {
+                "displayOrder": 22,
+                "option": "Lewisham"
+              },
+              {
+                "displayOrder": 25,
+                "option": "Redbridge"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 6143,
+            "text": "What is the use (e.g. office, retail) and location of the above non-residential space?",
+            "answerType": "FreeText",
+            "maxLength": 500,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 6126,
+            "text": "Number of properties in building",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6138,
+            "text": "Street",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 6132,
+            "text": "Date of original construction completion",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 6140,
+            "text": "What is the total external wall area of the building (m2)?",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 6261,
+            "text": "Upload Building Regulations completion certificate",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 6130,
+            "text": "Of these, number of privately owned long leasehold properties in building (exclude any tenancies of less than seven years in length)",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6139,
+            "text": "Building number",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6287,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 6134,
+            "text": "Of these, number of social rented properties in building",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 6128,
+            "text": "Name of original construction contractor",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 6136,
+            "text": "Of these, number of shared ownership properties in building",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6280,
+            "text": "Postcode",
+            "answerType": "Text",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1.1,
+          "question": {
+            "id": 6287,
+            "text": "Does the building have a number?",
+            "answerType": "YesNo",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 6129,
+            "text": "Building Regulations completion certificate issue date",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 6141,
+            "text": "What is the extent (m2) of non-residential space within the block? Do not include lift lobbies, plant rooms etc.",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Cladding details",
+      "block": "Questions",
+      "displayOrder": 4,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 28,
+          "question": {
+            "id": 6144,
+            "text": "Name of replacement cladding materials",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 6281,
+            "text": "Is sheathing board present?",
+            "answerType": "Dropdown",
+
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Don't know"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 6162,
+            "text": "What evidence are you supplying that the unsafe ACM cladding meets the eligibility requirements of this fund?",
+            "answerType": "Dropdown",
+
+
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Local authority notified MHCLG"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Other documentary evidence"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Date of test and test results"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 23.5,
+          "question": {
+            "id": 6293,
+            "text": "Upload evidence that the unsafe ACM cladding meets the requirements of this fund",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 10,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 32,
+          "question": {
+            "id": 6167,
+            "text": "Estimated start on site date for the remediation works (being the whole contract start date).",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 6171,
+            "text": "How much (£) additional funding is required to enable the remediation work to be fully funded?",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6156,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 6165,
+            "text": "Have you confirmed that this block has unsafe ACM cladding with the relevant local authority?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5.1,
+          "question": {
+            "id": 6288,
+            "text": "Do you have a warranty certificate?",
+            "answerType": "YesNo",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6163,
+            "text": "Name of unsafe ACM cladding installer",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 6150,
+            "text": "Provide the total area (m2) of unsafe ACM to be removed.",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6173,
+            "text": "When was the unsafe cladding installation completed?",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6158,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 6160,
+            "text": "What percentage (%) of the building is covered by unsafe ACM Cladding as a proportion of the total area of the building elevations?",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 6278,
+            "text": "Type of original ACM cladding",
+            "answerType": "Text",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 6145,
+            "text": "What is the value (£) of the accepted warranty claim?",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6155,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 6170,
+            "text": "Is the total area of new cladding to be installed different from above?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 31,
+          "question": {
+            "id": 6164,
+            "text": "What is the European fire rating of the replacement cladding materials?",
+            "answerType": "Dropdown",
+
+
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Neither A1 or A2 s1 d0"
+              },{
+                "displayOrder": 2,
+                "option": "A2 s1 d0"
+              },
+              {
+                "displayOrder": 1,
+                "option": "A1"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 6148,
+            "text": "Name of original ACM cladding",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 6175,
+            "text": "Confirm the total area (m2) of new cladding to be installed.",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6170,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 19.5,
+          "question": {
+            "id": 6292,
+            "text": "Name of original insulation",
+            "answerType": "Text",
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 6279,
+            "text": "Type of original insulation",
+            "answerType": "Text",
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 29,
+          "question": {
+            "id": 6174,
+            "text": "Confirm that the replacement cladding materials comply with  current building regulations (A1 or A2 s1 d0)",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6152,
+            "text": "Upload the unsafe ACM cladding specification.",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 6159,
+            "text": "Has a warranty claim been made in respect of the cost of remediating the ACM cladding on this block?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 6156,
+            "text": "Will this cover the full cost of the ACM cladding remediation work?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6155,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 6147,
+            "text": "Floors where unsafe ACM cladding is located (e.g. floors 0,1,2,3, and 4)",
+            "answerType": "FreeText",
+            "maxLength": 500,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 33,
+          "question": {
+            "id": 6169,
+            "text": "Estimated completion date for the remediation works (being the whole contract completion date).",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 30,
+          "question": {
+            "id": 6146,
+            "text": "Name of manufacturer of replacement cladding materials",
+            "answerType": "Text",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 6276,
+            "text": "Upload a measured survey report and/or marked up elevation drawings of the building in question. See further requirements in Cladding details section of [OPS User Guide](https://www.london.gov.uk/file/43267960)",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 6149,
+            "text": "Upload your warranty certificate",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6288,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 27,
+          "question": {
+            "id": 6277,
+            "text": "Category of original ACM cladding, as employed in Government’s 2017 large scale tests – ie category 1, 2 or 3",
+            "answerType": "Dropdown",
+
+
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "2. with fire retardant polyethylene filler"
+              },
+              {
+                "displayOrder": 3,
+                "option": "3. with unmodified polyethylene filler"
+              },
+              {
+                "displayOrder": 1,
+                "option": "1. with A2 filler"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 6157,
+            "text": "Date of test results",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6162,
+          "parentAnswerToMatch": "Date of test and test results"
+        },
+
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6158,
+            "text": "Was the unsafe ACM cladding installed as part of the original construction?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6154,
+            "text": "Unsafe ACM cladding warranty end date",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 6155,
+            "text": "Has a warranty claim been accepted in respect of the cost of remediating the ACM cladding on this building?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6159,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Cost recovery",
+      "block": "Questions",
+      "displayOrder": 5,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6270,
+            "text": "Upload evidence of cost recovery in relation to the installation of the unsafe ACM cladding system",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 100,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6286,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6286,
+            "text": "Do you have evidence of cost recovery in relation to the installation of the unsafe ACM cladding system?",
+            "answerType": "YesNo",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6268,
+            "text": "Enter the total amount (£) of costs, if any, recovered in relation to the installation of the unsafe ACM cladding system. Enter “0” if no costs have been recovered",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6269,
+            "text": "Of the above amount, how much should be repaid to the Government or deducted from your grant allocation? Enter “0” if no costs have been recovered",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6267,
+            "text": "Complete and upload the [cost recovery questionnaire](https://www.london.gov.uk/file/43267894)",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxCombinedUploadSizeInMb": 5,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Beneficiaries",
+      "block": "Questions",
+      "displayOrder": 6,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 6185,
+            "text": "Secure from all Fund Beneficiaries as listed in the Fund Beneficiary Schedule a completed and signed State aid declaration. Scan and merge these into a single PDF document (or a few if you have collected them in batches)",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 120,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 6260,
+            "text": "Have leaseholders been/Will leaseholders be consulted on the scope and costs for these works as outlined under section 20 of the 1985 Landlord and Tenant Act?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 6186,
+            "text": "Do any proposed fund beneficiaries let properties on a commercial basis?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6177,
+            "text": "Upload the relevant lease, or, if multiple properties are affected, up to four leases.",
+            "answerType": "FileUpload",
+            "quantity": 4,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6180,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 6188,
+            "text": "Is any part of the building leased to a Registered Provider of Social Housing?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 6271,
+            "text": "Confirm that the Leaseholders and any of the residents at the Building (where different) have been informed and notified as to the proposed financial treatment of the Project, the scope of the Works and the timeframe for completion of the Works",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 6187,
+            "text": "Upload the sub-lease (or sample sub-lease, if multiple properties are affected)",
+            "answerType": "FileUpload",
+            "quantity": 100,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6188,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6181,
+            "text": "Upload your completed [Fund Beneficiary Schedule](https://www.london.gov.uk/file/43076024)",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 6176,
+            "text": "Upload a Registered Provider's lease",
+            "answerType": "FileUpload",
+            "quantity": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6188,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 6182,
+            "text": "Upload each commercial lease",
+            "answerType": "FileUpload",
+            "quantity": 50,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6186,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6179,
+            "text": "Explain why you have not been able to complete your Fund Beneficiary Schedule",
+            "answerType": "FreeText",
+            "maxLength": 500,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6183,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 6227,
+            "text": "Explain the current status of the above State Aid Declarations, i.e. whether all Fund Beneficiaries have signed them, and if not, why.",
+            "answerType": "FreeText",
+            "maxLength": 500,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6183,
+            "text": "Have you been able to complete all relevant sections of your Fund Beneficiary Schedule?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 6184,
+            "text": "Confirm that the structure chart you uploaded in the Applicant Details section covers the Registered Provider(s)",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6180,
+            "text": "Do any proposed fund beneficiaries let their property on a residential underlease that is not an Assured Shorthold Tenancy?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Pre-Tender Works and Costs",
+      "block": "Questions",
+      "displayOrder": 7,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 6193,
+            "text": "When do you estimate that you will be ready to submit your full funding request? (note for this we will require full details of the works to be carried out and the associated costs)",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6197,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6196,
+            "text": "Are you applying for funding for pre-tender costs?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 6195,
+            "text": "When do you estimate that the physical work on site will be completed?",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6197,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6194,
+            "text": "Upload your completed [Pre-Tender Costs spreadsheet](https://www.london.gov.uk/file/43076026)",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6197,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 9.5,
+          "question": {
+            "id": 6190,
+            "text": "When do you estimate that the physical work to replace the cladding will begin on site?",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6197,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6192,
+            "text": "Enter total pre-tender costs (£) identified in the Pre-Tender Costs spreadsheet that are eligible for grant funding",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6197,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 6189,
+            "text": "When do you estimate that you will receive planning consent?",
+            "answerType": "Date",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6258,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6191,
+            "text": "Enter total pre-tender costs (£) identified in the Pre-Tender Costs spreadsheet",
+            "answerType": "Number",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6197,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 6258,
+            "text": "Do you require planning consent?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6197,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3.1,
+          "question": {
+            "id": 6289,
+            "text": "Upload evidence of fee proposals for each consultant identified in the Pre-Tender cost spreadsheet",
+            "answerType": "FileUpload",
+            "quantity": 12,
+            "maxUploadSizeInMb": 5,
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6197,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6197,
+            "text": "Are you able at this point in time to provide details of your pre-tender costs?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6196,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Full works and costs",
+      "block": "Questions",
+      "displayOrder": 8,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 6291,
+            "text": "Enter the total cost (£) eligible for grant funding from your Full Works and Costs spreadsheet",
+            "answerType": "Number",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6256,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6290,
+            "text": "Enter the total project cost (£) from your Full Works and Costs spreadsheet",
+            "answerType": "Number",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6256,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6256,
+            "text": "Are you able to provide details at this stage of the full works and costs?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6274,
+            "text": "Upload your completed [Cash Flow](https://www.london.gov.uk/file/43076027)",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6256,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6275,
+            "text": "Upload your completed [Project Team schedule](https://www.london.gov.uk/file/43076028)\n",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6256,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6257,
+            "text": "Upload your completed [Full Works and Costs spreadsheet](https://www.london.gov.uk/file/43076023) on the basis of tender prices",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6256,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Project documents",
+      "block": "Questions",
+      "displayOrder": 9,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 6198,
+            "text": "Upload your supporting drawings and documents and specialist reports submitted with planning applications (with a summary list)",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6230,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 6238,
+            "text": "Do you have collateral warranties in favour of the Government?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12002
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 6233,
+            "text": "Do you have supporting drawings, documents and specialist reports submitted with Building Control applications (as listed in the Approval)?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6213,
+            "text": "Upload your project directory including details of professional team, main contractor and sub-contractors",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6228,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12000
+        },
+        {
+          "displayOrder": 46,
+          "question": {
+            "id": 6251,
+            "text": "Do you have costs for managing the consultants and contractor employed by the Responsible Entity?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 32,
+          "question": {
+            "id": 6244,
+            "text": "Do you have pre-tender and post-tender programmes?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12004
+        },
+        {
+          "displayOrder": 36,
+          "question": {
+            "id": 6246,
+            "text": "Do you have a tender report for works?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 44,
+          "question": {
+            "id": 6250,
+            "text": "Do you have details of any payments made to consultants to date?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6230,
+            "text": "Do you have supporting drawings and documents and specialist reports submitted with planning applications (as listed in the consent granted)?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 6237,
+            "text": "Do you have terms of appointment for each member of the professional team appointed to date including scope of services, PII Certificates?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12002
+        },
+        {
+          "displayOrder": 54,
+          "question": {
+            "id": 6255,
+            "text": "Do you have a schedule of contract amendments including details of levels of insurance etc?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12006
+        },
+        {
+          "displayOrder": 28,
+          "question": {
+            "id": 6241,
+            "text": "Do you have details of any third party agreements – e.g. party wall awards, scaffold licences, Oversailing Section 106, 61 Agreements (if applicable)?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 6222,
+            "text": "Description of any other consents required and obtained, including Local Fire Authority consultation approval.",
+            "answerType": "FreeText",
+            "maxLength": 500,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 6223,
+            "text": "Upload collateral warranties in favour of the Government",
+            "answerType": "FileUpload",
+            "quantity": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6238,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12002
+        },
+        {
+          "displayOrder": 35,
+          "question": {
+            "id": 6216,
+            "text": "Upload your procurement strategy / tendering procedures",
+            "answerType": "FileUpload",
+            "quantity": 3,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6245,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 6224,
+            "text": "Upload your terms of appointment for each member of the professional team appointed to date, including scope of services, PII Certificates",
+            "answerType": "FileUpload",
+            "quantity": 20,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6237,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12002
+        },
+        {
+          "displayOrder": 41,
+          "question": {
+            "id": 6217,
+            "text": "Upload any certificates for payment to the contractor to date",
+            "answerType": "FileUpload",
+            "quantity": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6248,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 38,
+          "question": {
+            "id": 6247,
+            "text": "Do you have a contract sum analysis?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 52,
+          "question": {
+            "id": 6254,
+            "text": "Do you have a copy of signed building contract and associated documents? – contract must be recognised industry standard",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12006
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 6212,
+            "text": "Upload documents detailing any other consents required and obtained, including Local Fire Authority consultation approval.",
+            "answerType": "FileUpload",
+            "quantity": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6236,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 34,
+          "question": {
+            "id": 6245,
+            "text": "Do you have a procurement strategy / tendering procedures?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 2.5,
+          "question": {
+            "id": 6295,
+            "text": "Is planning permission required for this work?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6229,
+            "text": "Do you have copies of planning permission(s)?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001,
+          "parentId": 6295,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 25,
+          "question": {
+            "id": 6215,
+            "text": "Upload your specifications / employer’s requirements / schedule of rates / contractors proposals in relation to replacement of ACM cladding materials and internal fire safety works.",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6239,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 37,
+          "question": {
+            "id": 6202,
+            "text": "Upload your tender report for works",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6246,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 27,
+          "question": {
+            "id": 6199,
+            "text": "Upload your general arrangement drawings, details and elevations",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6240,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 55,
+          "question": {
+            "id": 6205,
+            "text": "Upload your schedule of contract amendments including details of levels of insurance etc.",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6255,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12006
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 6220,
+            "text": "Upload your Building Control tracker: Document listing all Building Control requirements with dates each item was approved.",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6234,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 45,
+          "question": {
+            "id": 6221,
+            "text": "Upload evidence of any payments made to consultants to date",
+            "answerType": "FileUpload",
+            "quantity": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6250,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 6214,
+            "text": "Upload your supporting drawings, documents and specialist reports submitted with Building Control applications (as listed in the Approval)",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6233,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 6225,
+            "text": "Details of Building Control Officer or Approved Inspector dealing with application",
+            "answerType": "FreeText",
+            "maxLength": 500,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6235,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 6204,
+            "text": "Upload your planning conditions tracker: document listing all planning conditions with dates each condition was validated and approved.",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6231,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6228,
+            "text": "Do you have a project directory including details of the professional team, main contractor and sub-contractors?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12000
+        },
+        {
+          "displayOrder": 31.2,
+          "question": {
+            "id": 6211,
+            "text": "Upload your pre-contract information (health and safety) and evidence of competency checks carried out.",
+            "answerType": "FileUpload",
+            "quantity": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6249,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 39,
+          "question": {
+            "id": 6210,
+            "text": "Upload your contract sum analysis",
+            "answerType": "FileUpload",
+            "quantity": 1,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6247,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 29,
+          "question": {
+            "id": 6203,
+            "text": "Upload evidence of any third party agreements – e.g. party wall awards, scaffold licences, Oversailing Section 106, 61 Agreements (if applicable)",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6241,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 40,
+          "question": {
+            "id": 6248,
+            "text": "Do you have any certificates for payment to the contractor to date?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 31.1,
+          "question": {
+            "id": 6249,
+            "text": "Do you have copies of pre-contract information (health and safety) and evidence of competency checks carried out?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 6234,
+            "text": "Do you have a Building Control tracker: document listing all Building Control requirements with dates each item was approved?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 6239,
+            "text": "Do you have specifications / employer’s requirements / schedule of rates / contractors’ proposals in relation to replacement of ACM cladding materials and internal fire safety works?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 31,
+          "question": {
+            "id": 6206,
+            "text": "Upload evidence of manufacturers’ guarantees",
+            "answerType": "FileUpload",
+            "quantity": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6242,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 50,
+          "question": {
+            "id": 6253,
+            "text": "Do you have details of main contractor and sub-contractors?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12006
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 6231,
+            "text": "Do you have a planning conditions tracker: document listing all planning conditions with dates each condition was validated and approved?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 6236,
+            "text": "Do you have documents detailing any other consents required and obtained, including Local Fire Authority consultation approval",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 30,
+          "question": {
+            "id": 6242,
+            "text": "Do you have details of manufacturer’s guarantees?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 47,
+          "question": {
+            "id": 6219,
+            "text": "Upload evidence of costs for managing the consultants and contractor employed by the Responsible Entity.",
+            "answerType": "FileUpload",
+            "quantity": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6251,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12005
+        },
+        {
+          "displayOrder": 26,
+          "question": {
+            "id": 6240,
+            "text": "Do you have general arrangement drawings, details and elevations?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12003
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 6235,
+            "text": "Do you have details of the Building Control Officer or Approved Inspector dealing with application?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6218,
+            "text": "Upload your planning permission(s), if required for this work",
+            "answerType": "FileUpload",
+            "quantity": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6229,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 6200,
+            "text": "Upload your Building Regulations Notice and Full Plans Approval",
+            "answerType": "FileUpload",
+            "quantity": 2,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6232,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 51,
+          "question": {
+            "id": 6209,
+            "text": "Upload details of main contractor and sub-contractors",
+            "answerType": "FileUpload",
+            "quantity": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6253,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12006
+        },
+        {
+          "displayOrder": 33,
+          "question": {
+            "id": 6207,
+            "text": "Upload your pre-tender and post-tender programmes",
+            "answerType": "FileUpload",
+            "quantity": 3,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6244,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12004
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 6232,
+            "text": "Do you have a Building Regulations Notice and Full Plans Approval?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12001
+        },
+        {
+          "displayOrder": 53,
+          "question": {
+            "id": 6208,
+            "text": "Upload your signed building contract and associated documents – contract must be recognised industry standard",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 10,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6254,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 12006
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 12003,
+          "displayOrder": 4,
+          "text": "Technical information"
+        },
+        {
+          "externalId": 12006,
+          "displayOrder": 7,
+          "text": "Building contract"
+        },
+        {
+          "externalId": 12005,
+          "displayOrder": 6,
+          "text": "Financial"
+        },
+        {
+          "externalId": 12002,
+          "displayOrder": 3,
+          "text": "Professional team appointments"
+        },
+        {
+          "externalId": 12000,
+          "displayOrder": 1,
+          "text": "General information"
+        },
+        {
+          "externalId": 12004,
+          "displayOrder": 5,
+          "text": "Programme"
+        },
+        {
+          "externalId": 12001,
+          "displayOrder": 2,
+          "text": "Statutory consents"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "GrantSourceTemplateBlock",
+      "blockDisplayName": "Approved Grant",
+      "block": "GrantSource",
+      "displayOrder": 11,
+      "paymentSourcesString": "Grant",
+      "nilGrantHidden": true,
+      "description": "Enter 0 in the field below initially. If you receive confirmation that MHCLG approves grant for this application, enter the cumulative amount of approved grant (i.e. the total covering pre-tender support and full costs) in the field below",
+      "grantTypes": [
+        "Grant"
+      ],
+      "paymentSources": [
+        "Grant"
+      ]
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "maxEvidenceAttachments": 5,
+      "autoCalculateMilestoneState": true,
+      "evidenceApplicability": "ALL_MILESTONES",
+      "displayOrder": 12,
+      "infoMessage": "For help completing this section, refer to the \"Milestones\" section in the OPS User Guide - Private Sector Cladding Remediation Fund",
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "externalId": 25195,
+          "name": "default",
+          "milestones": [
+            {
+              "summary": "Completion of Defects Liability Period",
+              "requirement": "optional",
+              "displayOrder": 7,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Works Start on Site",
+              "requirement": "optional",
+              "displayOrder": 4,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Tendering for Works Contracts Finalised",
+              "requirement": "optional",
+              "displayOrder": 2,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "All Works Contracts Executed",
+              "requirement": "optional",
+              "displayOrder": 3,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Works Practical Completion",
+              "requirement": "optional",
+              "displayOrder": 5,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Grant Funding Agreement completed",
+              "requirement": "optional",
+              "displayOrder": 1,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Post-Works Building Control Approval Received",
+              "requirement": "optional",
+              "displayOrder": 6,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            }
+          ]
+        }
+      ],
+      "descriptionEnabled": false,
+      "allMilestones": [
+        {
+          "summary": "Completion of Defects Liability Period",
+          "requirement": "optional",
+          "displayOrder": 7,
+          "monetary": false,
+          "keyEvent": false,
+          "naSelectable": false
+        },
+        {
+          "summary": "Works Start on Site",
+          "requirement": "optional",
+          "displayOrder": 4,
+          "monetary": false,
+          "keyEvent": false,
+          "naSelectable": false
+        },
+        {
+          "summary": "Tendering for Works Contracts Finalised",
+          "requirement": "optional",
+          "displayOrder": 2,
+          "monetary": false,
+          "keyEvent": false,
+          "naSelectable": false
+        },
+        {
+          "summary": "All Works Contracts Executed",
+          "requirement": "optional",
+          "displayOrder": 3,
+          "monetary": false,
+          "keyEvent": false,
+          "naSelectable": false
+        },
+        {
+          "summary": "Works Practical Completion",
+          "requirement": "optional",
+          "displayOrder": 5,
+          "monetary": false,
+          "keyEvent": false,
+          "naSelectable": false
+        },
+        {
+          "summary": "Grant Funding Agreement completed",
+          "requirement": "optional",
+          "displayOrder": 1,
+          "monetary": false,
+          "keyEvent": false,
+          "naSelectable": false
+        },
+        {
+          "summary": "Post-Works Building Control Approval Received",
+          "requirement": "optional",
+          "displayOrder": 6,
+          "monetary": false,
+          "keyEvent": false,
+          "naSelectable": false
+        }
+      ],
+      "defaultProcessingRoute": {
+        "externalId": 25195,
+        "name": "default",
+        "milestones": [
+          {
+            "summary": "Completion of Defects Liability Period",
+            "requirement": "optional",
+            "displayOrder": 7,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Works Start on Site",
+            "requirement": "optional",
+            "displayOrder": 4,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Tendering for Works Contracts Finalised",
+            "requirement": "optional",
+            "displayOrder": 2,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "All Works Contracts Executed",
+            "requirement": "optional",
+            "displayOrder": 3,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Works Practical Completion",
+            "requirement": "optional",
+            "displayOrder": 5,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Grant Funding Agreement completed",
+            "requirement": "optional",
+            "displayOrder": 1,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Post-Works Building Control Approval Received",
+            "requirement": "optional",
+            "displayOrder": 6,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          }
+        ]
+      },
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Bank details",
+      "block": "Questions",
+      "displayOrder": 13,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 6105,
+            "text": "Sort code",
+            "answerType": "Text",
+            "maxLength": 16,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6107,
+            "text": "Provide evidence of its registration under CMPS schemes",
+            "answerType": "FileUpload",
+            "quantity": 5,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6104,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6109,
+            "text": "Account number",
+            "answerType": "Text",
+            "maxLength": 16,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6106,
+            "text": "Provide details of a Trust Fund held for the benefit of leaseholders into which we will make grant payments",
+            "answerType": "FreeText",
+            "maxLength": 500,
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6104,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6108,
+            "text": "Confirm that this complies with the requirements of Section 42 of the Landlord and Tenant (LTA) Act 1987.",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 6104,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6104,
+            "text": "Is there a Client Money Account registered under the Client Money Protection Scheme (CMPS), Client Money Protection Schemes for Property Agents (Approval and Designation of Schemes) Regulations 2018?",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Declaration",
+      "block": "Questions",
+      "displayOrder": 14,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 6282,
+            "text": "Name of person making declaration",
+            "answerType": "Text",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 6284,
+            "text": "Organisation of person making declaration",
+            "answerType": "Text",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 6102,
+            "text": "the application for funding is complete and accurate, and in line with all requirements of the guidance and prospectus",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 6266,
+            "text": "the replacement cladding system complies with with A1 or A2-s1,d0 as classified in accordance with BS EN13501-1:2007+A1:2009 ",
+            "answerType": "Dropdown",
+
+
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "To be confirmed"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 6265,
+            "text": "the Applicant has sufficient funds available to complete the works being undertaken",
+            "answerType": "Dropdown",
+
+
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "To be confirmed"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 6101,
+            "text": "the Applicant is taking all reasonable steps to pursue legal action, warranties and insurance claims",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 6283,
+            "text": "Designation of person making declaration",
+            "answerType": "Text",
+
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "helen@gla.ops",
+            "editable": true,
+            "creatorName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 6103,
+            "text": "the cladding is unsafe Aluminium Composite Material (ACM), the same type which failed the series of BS8414 tests commissioned by the government over summer 2017 ",
+            "answerType": "YesNo",
+
+
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 6294,
+            "text": "Date of declaration",
+            "answerType": "Date",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 12007
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 12007,
+          "displayOrder": 1,
+          "text": "By submitting this application for funding, I confirm that:"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    }
+  ],
+  "internalBlocks": [
+    {
+      "json_type": "InternalQuestionsTemplateBlock",
+      "type": "Questions",
+      "displayOrder": 1,
+      "blockDisplayName": "QUESTIONS",
+      "questions": [
+        {
+          "displayOrder": 1.1,
+          "question": {
+            "id": 13000,
+            "text": "Total eligible costs approved by Board at application stage (including any eligible pre-tender support costs) - £",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1.2,
+          "question": {
+            "id": 13001,
+            "text": "Total amount approved by board",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory"
+        }
+      ]
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "MonetaryValue",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "numberOfProjectAllowedPerOrg": 1000,
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "postcodeRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "imageRequirement": "hidden",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": true,
+  "grantTypes": [
+    "Grant"
+  ],
+  "shouldMilestonesBlockShowStatus": false
+}
+
+

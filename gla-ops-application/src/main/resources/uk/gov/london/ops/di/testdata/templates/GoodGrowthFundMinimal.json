@@ -1,0 +1,108 @@
+{
+  "name": "Good Growth Fund Round 3 Minimal",
+  "author": "TBC",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "displayOrder": 6,
+      "autoCalculateMilestoneState": true,
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "externalId": 11783,
+          "name": "default",
+          "milestones": []
+        }
+      ],
+      "descriptionEnabled": true,
+      "allMilestones": [],
+      "defaultProcessingRoute": {
+        "externalId": 11783,
+        "name": "default",
+        "milestones": []
+      },
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "FundingTemplateBlock",
+      "blockDisplayName": "Budget",
+      "block": "Funding",
+      "displayOrder": 7,
+      "paymentSourcesString": "Grant",
+      "startYear": 2019,
+      "yearAvailableTo": 5,
+      "defaultActivityName": "Projected cost",
+      "activitiesRequired": true,
+      "fundingBalanceEnforced": true,
+      "fundingSpendType": "REVENUE_AND_CAPITAL",
+      "showCapitalGLAFunding": true,
+      "showRevenueGLAFunding": false,
+      "showCapitalOtherFunding": true,
+      "showRevenueOtherFunding": true,
+      "multipleBespokeActivitiesEnabled": true,
+      "budgetEvidenceAttachmentEnabled": true,
+      "showMilestones": true,
+      "showCategories": false,
+      "canClaimActivity": true,
+      "monetaryValueScale": 2,
+      "paymentSources": ["Grant"],
+      "grantTypes": ["Grant"]
+
+    }
+  ],
+  "internalBlocks": [
+    {
+      "json_type": "InternalAssessmentTemplateBlock",
+      "blockDisplayName": "ASSESSMENT",
+      "type": "Assessment",
+      "displayOrder": 100
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Stage 1",
+    "initialSubStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "MultiAssessment"
+  },
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "imageRequirement": "hidden",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "mandatory",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "shouldMilestonesBlockShowStatus": false,
+  "allowMonetaryMilestones": false,
+  "grantTypes": []
+}

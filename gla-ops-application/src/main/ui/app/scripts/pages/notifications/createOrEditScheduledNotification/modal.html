@@ -1,0 +1,98 @@
+<div class="create-or-edit-scheduled-notification-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.notification.id ? 'EDIT' : 'CREATE'}} SCHEDULED NOTIFICATION</h1>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="notification-scheduled-date-time">Schedule for</label>
+      <div class="row no-gutter">
+        <div class="col-xs-4">
+          <date-input id="notification-scheduled-date-time"
+                      name="notification-scheduled-date-time"
+                      ng-disabled="!$ctrl.isEditable()"
+                      ng-model="$ctrl.notification.scheduledDateTime"
+                      required
+                      style="display: block">
+          </date-input>
+        </div>
+        <div class="col-xs-4">
+          <input type="time" id="time" name="time" ng-model="$ctrl.time"
+                 class="notification-scheduled-time"
+                 ng-disabled="!$ctrl.isEditable()"
+                 placeholder="HH:mm:ss" min="00:00:00" max="23:59:59" required />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="notification-text">Text</label>
+      <textarea id="notification-text"
+                ng-trim="false"
+                rows="5"
+                placeholder=""
+                name="notification-text"
+                class="form-control"
+                ng-model="$ctrl.notification.text"
+                required
+                ng-disabled="!$ctrl.isEditable()"
+                ng-attr-maxlength="1000">
+       </textarea>
+      <gla-remaining-characters [text]="$ctrl.notification.text" [max]="1000"></gla-remaining-characters>
+    </div>
+
+    <div class="form-group active-update">
+      <input  id="all-users" type="checkbox"
+              class="onoffswitch-checkbox"
+              ng-change="$ctrl.allUsersSelected()"
+              ng-disabled="!$ctrl.isEditable()"
+              ng-model="$ctrl.notification.allUsers"/>
+      <label for="all-users">All users</label>
+    </div>
+
+    <div class="form-group">
+      <label for="notification-target-organisations">Send to users in organisations (comma separated IDs, not spaces)</label>
+      <textarea id="notification-target-organisations"
+                ng-trim="false"
+                rows="5"
+                placeholder="10000,10001,10002"
+                name="notification-text"
+                class="form-control"
+                ng-model="$ctrl.notification.targetOrgIdsString"
+                required
+                ng-disabled="!$ctrl.isEditable() || $ctrl.notification.allUsers"
+                ng-attr-maxlength="1000">
+       </textarea>
+      <gla-remaining-characters [text]="$ctrl.notification.targetOrgIdsString" [max]="1000"></gla-remaining-characters>
+    </div>
+
+    <div class="form-group">
+      <div class="label">Send to users with roles</div>
+      <div class="available-roles edit-mode">
+        <div ng-if="!$ctrl.notification.allUsers" class="roles-toggle">
+          <a href="JavaScript:void(0)" ng-click="$ctrl.toggleRoles(true)">Select All</a>
+          <a href="JavaScript:void(0)" ng-click="$ctrl.toggleRoles(false)">Deselect All</a>
+        </div>
+
+        <label ng-repeat="role in $ctrl.availableRoles" ng-attr-for="{{role.name}}">
+          <input ang-true-value="role.name" ng-model="role.selected" type="checkbox" ng-attr-id="{{role.name}}" ng-disabled="!$ctrl.isEditable() || $ctrl.notification.allUsers"> {{role.description}}
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button class="btn btn-primary" ng-disabled="!$ctrl.isEditable() || !$ctrl.isFormValid()" ng-click="$ctrl.createOrSave()">SUBMIT</button>
+        <button class="btn btn-secondary" ng-click="$dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+</div>

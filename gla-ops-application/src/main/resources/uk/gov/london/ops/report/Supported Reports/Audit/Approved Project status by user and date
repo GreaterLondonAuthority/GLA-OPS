@@ -1,0 +1,12 @@
+select distinct 
+ph.project_id,ph.id,
+ph.transition, ph.comments, ph.created_by, 
+to_char(ph.created_on,'DD/MM/YYYY')created_on
+from project_history ph
+inner join ( 
+select * from ( 
+select distinct project_id, Max(created_on) created
+from project_history where transition ='Approved' group by project_id 
+)a 
+)ma on ph.project_id = ma.project_id and ma.created = ph.created_on
+order by 1, 2,6

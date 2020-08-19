@@ -1,0 +1,77 @@
+<div class="table-responsive" >
+  <table class="table table-hover table-bordered table-default table-with-inputs" id="outputs-table" ng-class="{'edit-mode': !$ctrl.readOnly}">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th ng-style="{'width': $ctrl.tableColumnOffsetsHeader.category}" style="min-width: 200px">{{$ctrl.categoryName.toUpperCase()}}</th>
+      <th ng-if="$ctrl.displayOutputType" ng-style="{'width': $ctrl.tableColumnOffsetsHeader.outputType}">{{$ctrl.outputTypeName.toUpperCase()}}</th>
+      <th ng-if="$ctrl.blockConfig.showValueColumn" ng-style="{'width': $ctrl.tableColumnOffsetsHeader.value}">VALUE</th>
+      <th ng-style="{'width': $ctrl.tableColumnOffsetsHeader.month}">{{$ctrl.periodType === 'Quarterly' ? 'QUARTER' : 'MONTH'}}</th>
+      <th class="number" ng-style="{'width': $ctrl.tableColumnOffsetsHeader.forecast}">FORECAST</th>
+      <th class="number" ng-style="{'width': $ctrl.tableColumnOffsetsHeader.actual}">ACTUAL</th>
+      <th class="number" ng-style="{'width': $ctrl.tableColumnOffsetsHeader.difference}">DIFFERENCE</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr class="primary-row expandable"
+        ng-click="categoryRow.collapsed = !categoryRow.collapsed; $ctrl.onCollapseChange(categoryRow)"
+        ng-repeat-start="categoryRow in $ctrl.tableData track by categoryRow[0].config.id">
+      <th ng-attr-colspan="{{$ctrl.columnCount}}">
+        <toggle-icon (collapsed-change)="$ctrl.onCollapseChange(categoryRow)" [(collapsed)]="categoryRow.collapsed"></toggle-icon><span class="category">{{categoryRow[0].config.category}}</span>
+      </th>
+    </tr>
+
+    <tr class="sub-heading assumption-row" ng-if="$ctrl.showAssumptions && !categoryRow.collapsed">
+      <th colspan="2">Assumption</th>
+      <td ng-attr-colspan="{{$ctrl.columnCount - 4}}">
+        <div class="assumption-cell" default-value>{{$ctrl.getAssumption(categoryRow).assumption}}</div>
+      </td>
+      <td class="text-right" colspan="2" style="padding: .8rem">
+        <div ng-if="!$ctrl.readOnly">
+          <div class="delete-btn-container" style="display: inline-block; margin-right: 15px">
+            <delete-button class="small" ng-click="$ctrl.deleteAssumption($ctrl.getAssumption(categoryRow))" ng-if="$ctrl.getAssumption(categoryRow)"></delete-button>
+          </div>
+          <a href="JavaScript:void(0)" ng-click="$ctrl.showAssumptionModal($ctrl.getAssumption(categoryRow), categoryRow)">{{$ctrl.getAssumption(categoryRow).id? 'Edit' : 'Add'}} output assumption</a>
+        </div>
+      </td>
+    </tr>
+
+    <tr class="subcategory sub-row" ng-if="!categoryRow.collapsed" ng-repeat="subCategoryRow in categoryRow track by subCategoryRow.id" ng-repeat-end>
+      <td>{{subCategoryRow.config.subcategory}}</td>
+      <td ng-if="$ctrl.displayOutputType">{{$ctrl.getOutputTypeDesc(subCategoryRow.outputType)}}</td>
+      <td ng-if="$ctrl.blockConfig.showValueColumn">{{$ctrl.OutputsService.getUnitConfig()[subCategoryRow.config.valueType].label}}</td>
+      <td>{{$ctrl.getPeriodName(subCategoryRow.month)}}</td>
+      <td class="number">
+        <span class="read-only" ng-if="subCategoryRow.forecast && $ctrl.readOnly">
+          {{$ctrl.OutputsService.formatNumber(subCategoryRow.forecast, subCategoryRow.config.valueType)}}
+        </span>
+        <input
+          aria-label="Outputs forecast cell"
+          change-on-blur="$ctrl.onRowChanged({event: {data: subCategoryRow}})"
+          maxlength="13"
+          ng-if="!$ctrl.readOnly"
+          ng-model="subCategoryRow.forecast"
+          number-mask="$ctrl.OutputsService.getUnitPrecision(subCategoryRow.config.valueType)"
+          type="text" >
+      </td>
+      <td class="number">
+        <span class="read-only" ng-if="(subCategoryRow.actual && $ctrl.readOnly) || $ctrl.OutputsService.isFutureDate(subCategoryRow.month, subCategoryRow.year)">
+          {{$ctrl.OutputsService.formatNumber(subCategoryRow.actual, subCategoryRow.config.valueType)}}
+        </span>
+        <input
+          aria-label="Outputs actual cell"
+          change-on-blur="$ctrl.onRowChanged({event: {data: subCategoryRow}})"
+          maxlength="13"
+          ng-if="(!$ctrl.readOnly && !$ctrl.OutputsService.isFutureDate(subCategoryRow.month, subCategoryRow.year))"
+          ng-model="subCategoryRow.actual"
+          number-mask="$ctrl.OutputsService.getUnitPrecision(subCategoryRow.config.valueType)"
+          type="text">
+      </td>
+      <td  class="number delete-btn-container" ng-style="{'width': $ctrl.columnOffsets.difference}">
+        <span>{{$ctrl.OutputsService.formatDifference(subCategoryRow.difference, subCategoryRow.config.valueType)}}</span>
+        <delete-button ng-click="$ctrl.onDelete({event: {data: subCategoryRow}})" ng-if="!$ctrl.readOnly"></delete-button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

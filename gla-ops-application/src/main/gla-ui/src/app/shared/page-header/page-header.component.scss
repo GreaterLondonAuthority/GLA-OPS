@@ -1,0 +1,121 @@
+@import 'variables';
+@import 'mixins';
+
+:host {
+  display: block;
+  width: 100%;
+  margin: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+
+  text-align: center;
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    flex-flow: wrap;
+    .back-btn-col {
+      button {
+        margin-top: 0;
+      }
+      width: 50%;
+      order: 1;
+    }
+
+    .title-col {
+      width: 100%;
+      order: 3;
+    }
+
+    .edit-col {
+      button {
+        margin-top: 0;
+      }
+      width: 50%;
+      order: 2;
+    }
+
+
+  }
+
+  .form-header__hr {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+
+  h2 {
+    font-family: $font-family-bolder;
+    font-size: 1.5rem;
+    margin-top: 26/16 + 0rem;
+    margin-bottom: 24/16 + 0rem;
+    line-height: 34/16 + 0rem;
+  }
+
+  .locked-by {
+    font-size: 12/16 + 0rem;
+    text-align: right;
+    color: $red;
+  }
+
+  ::ng-deep {
+    ph-right {
+      display: inline-block;
+      text-align: right;
+      float: right;
+
+      .dropdown-menu {
+        margin-top: 0px;
+
+        li {
+          padding: 2px;
+        }
+      }
+
+      .btn-group.open .dropdown-toggle {
+        box-shadow: none;
+      }
+
+      .btn-default {
+        &:focus, &active {
+          background-color: white !important;
+          color: #5ca9c4 !important;
+          box-shadow: none !important;
+        }
+      }
+    }
+  }
+  .with-buttons {
+    margin-left: -15px;
+    margin-right: -15px;
+
+    .back-btn-col, .edit-col{
+      button {
+        margin-top: 15px;
+      }
+    }
+
+    @include when-ms {
+      .back-btn-col {
+        button {
+          margin-top: 0;
+        }
+        width: 22.5%;
+        order: 1;
+      }
+
+      .title-col {
+        width: 55%;
+        order: 2;
+      }
+
+      .edit-col {
+        button {
+          margin-top: 0;
+        }
+        width: 22.5%;
+        order: 3;
+      }
+    }
+  }
+}
+

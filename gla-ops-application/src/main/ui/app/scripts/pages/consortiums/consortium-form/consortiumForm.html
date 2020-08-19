@@ -1,0 +1,154 @@
+<form class="form-gla consortium-form" role="form" name="cForm" novalidate>
+  <div class="mbottom30"></div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-5 center-col">
+      <div class="form-group">
+        <label for="programme">Select a programme</label>
+
+        <select class="form-control"
+                id="programme"
+                name="programme"
+                ng-class="{'select-as-input': $ctrl.readOnly || $ctrl.isEdit}"
+                ng-disabled="$ctrl.readOnly || $ctrl.isEdit"
+                ng-model="$ctrl.data.programme"
+                ng-options="programme as programme.name for programme in $ctrl.programmes track by programme.id"
+                required
+                style-placeholder="">
+          <option disabled value="">Select a programme</option>
+        </select>
+
+        <div class="error-wrapper" role="alert"  ng-if="cForm.programme.$error && cForm.programme.$touched">
+          <span class="error" ng-if="cForm.programme.$error.required">Select a programme</span>
+        </div>
+      </div>
+
+      <div class="form-group agreement-type">
+        <label>Select agreement type</label>
+        <br>
+        <label class="form-check-inline consortium-radio" for="isConsortium">
+          <input class="form-check-input"
+                 type="radio"
+                 ng-model="$ctrl.data.type"
+                 name="type"
+                 id="isConsortium"
+                 ng-value="'Consortium'"
+                 ng-disabled="$ctrl.readOnly"
+                 required> Consortium
+        </label>
+        <label class="form-check-inline" for="isPartnership">
+          <input class="form-check-input"
+                 type="radio"
+                 ng-model="$ctrl.data.type"
+                 name="type"
+                 id="isPartnership"
+                 ng-value="'Partnership'"
+                 ng-disabled="$ctrl.readOnly"
+                 required> Partnership
+        </label>
+        <div class="error-wrapper" role="alert"
+             ng-if="cForm.type.$error && cForm.type.$touched">
+          <span class="error" ng-if="cForm.type.$error.required">Select agreement type</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="title">Enter a name for your consortium or partnership</label>
+        <input id="title"
+               name="title"
+               type="text"
+               class="form-control"
+               placeholder="Enter consortium or partnership name"
+               ng-model="$ctrl.data.name"
+               maxlength="50"
+               ng-disabled="$ctrl.readOnly"
+               required />
+        <div class="error-wrapper" role="alert"
+             ng-if="cForm.name.$error && cForm.name.$touched">
+          <span class="error" ng-if="cForm.name.$error.required">Enter a title</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="leadOrganisation">Lead organisation</label>
+
+        <select class="form-control"
+                id="leadOrganisation"
+                name="leadOrganisation"
+                ng-change="$ctrl.removeOrganisation($ctrl.data.leadOrganisationId)"
+                ng-class="{'select-as-input': $ctrl.readOnly || $ctrl.isEdit || $ctrl.leadOrganisations.length === 1}"
+                ng-disabled="$ctrl.readOnly || $ctrl.isEdit || $ctrl.leadOrganisations.length === 1"
+                ng-model="$ctrl.data.leadOrganisationId"
+                ng-options="organisation.id as organisation.name for organisation in $ctrl.leadOrganisations"
+                required
+                style-placeholder="">
+          <option disabled value="">Select an organisation</option>
+        </select>
+        <div class="error-wrapper" role="alert" ng-if="cForm.leadOrganisation.$touched || $ctrl.leadOrgError">
+          <span class="error" ng-if="cForm.leadOrganisation.$error.required">Select an organisation</span>
+          <span class="error" ng-if="$ctrl.leadOrgError">{{$ctrl.leadOrgError}}</span>
+        </div>
+      </div>
+
+
+      <div class="form-group" ng-class="{'with-comment': !$ctrl.readOnly && $ctrl.isEdit}">
+        <label for="orgCode">Enter the GLA OPS number of developing organisations</label>
+        <input id="orgCode"
+               type="text"
+               name="orgcode"
+               aria-label="Organisation Code"
+               class="form-control"
+               ng-model="$ctrl.orgCode"
+               placeholder="Enter GLA OPS number"
+               ng-change="$ctrl.lookupOrganisationCode($ctrl.orgCode)"
+               ng-class="{'ng-invalid': ($ctrl.orgCode.length > 2 && !$ctrl.org.name && !$ctrl.loading)}"
+               ng-disabled="$ctrl.readOnly || !$ctrl.data.leadOrganisationId"
+               autocomplete="off"
+               numbers-only/>
+        <div class="error-wrapper" role="alert">
+          <span class="error" ng-if="$ctrl.orgCode.length > 2 && !$ctrl.org.name && !$ctrl.orgCodeError">Organisation number not recognised</span>
+          <span class="error" ng-if="$ctrl.isOrganisationAlreadyAdded($ctrl.org)">Already in the list</span>
+          <span class="error" ng-if="$ctrl.org.id && ($ctrl.org.id === $ctrl.data.leadOrganisationId)">Lead organisation is already selected</span>
+          <span class="error" ng-if="$ctrl.orgCode.length > 2 && !$ctrl.org.name && $ctrl.orgCodeError">{{$ctrl.orgCodeError}}</span>
+        </div>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.errorMsg">
+        <div class="error text-center">{{$ctrl.errorMsg}}</div>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.org && !$ctrl.isOrganisationAlreadyAdded($ctrl.org) && $ctrl.org.id !== $ctrl.data.leadOrganisationId">
+        <div class="text-center organisation-block">
+          <div><label for="selectBtn">{{$ctrl.org.name}}</label></div>
+          <button class="btn btn-secondary" id="selectBtn" ng-click="$ctrl.addOrganisation()">SELECT</button>
+        </div>
+      </div>
+
+      <div ng-if="$ctrl.isEdit && !$ctrl.readOnly">
+        <div class="read-only-text text-left">To remove an organisation, project details must first be edited for any projects where the organisation is listed as a Developing Organisation, has grant liability or has created a project on behalf of the partnership.</div>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.data.organisations.length">
+        <div class="row no-gutter">
+          <div class="no-gutter organisations-group" ng-class="{'mtop15': !$ctrl.readOnly && $ctrl.isEdit}">
+            <div class="col-sm-12 col-xs-12" ng-repeat="org in $ctrl.data.organisations track by org.id">
+              <div class="selected__org__item">
+                <div class="selected__org__text" ng-class="{'disabled-field': $ctrl.readOnly || $ctrl.isOrganisationInAnyProject(org.id)}">{{ org.name }}</div>
+                <button class="btn btn-secondary selected__org__buttonClose"
+                        ng-disabled="$ctrl.readOnly || $ctrl.isOrganisationInAnyProject(org.id)"
+                        ng-click="$ctrl.confirmOrganisationRemoval(org)">X</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 text-center" ng-class="{'mtop30': !$ctrl.data.organisations.length}">
+      <button ng-if="!($ctrl.readOnly || cForm.$invalid || !$ctrl.data.type || !$ctrl.data.organisations.length || $ctrl.leadOrgError)"
+              class="btn btn-primary"
+              ng-click="$ctrl.save()">SAVE</button>
+    </div>
+  </div>
+</form>

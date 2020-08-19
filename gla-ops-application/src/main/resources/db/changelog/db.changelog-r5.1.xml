@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="451" author="rbettison">
+        <createSequence sequenceName="user_report_seq" startValue="1000" incrementBy="1"/>
+
+        <createTable tableName="user_report">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="user_report_seq">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="username" type="varchar(255)" remarks="user that generated report"></column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="452" author="rbettison">
+        <addColumn tableName="user_report">
+            <column name="start_time" type="TIMESTAMP"></column>
+            <column name="end_time" type="TIMESTAMP"></column>
+            <column name="status" type="VARCHAR(50)"></column>
+            <column name="attachment_file_id" type="INT4"></column>
+            <column name="report_id" type="INT4"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="453" author="rbettison">
+        <addColumn tableName="user_report">
+            <column name="name" type="VARCHAR(280)"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="454" author="rbettison">
+        <createTable tableName="report_filters">
+            <column name="report_id" type="INT4"></column>
+            <column name="filters" type="VARCHAR(280)"></column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="455" author="ybouhass">
+        <addColumn tableName="organisation">
+            <column name="registration_key" type="varchar(255)" remarks="used to look up the organisation when requesting access" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="456" author="cmelville">
+        <addColumn tableName="programme_template">
+            <column name="status" type="VARCHAR(80)" defaultValue="Active" remarks="the status of this template (currently active/inactive)" >
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="457" author="ybouhass">
+        <addColumn tableName="template_block">
+            <column name="default_activity_name" type="varchar(255)" remarks="default activity name when bespoke funding activities are disabled" />
+        </addColumn>
+
+        <addColumn tableName="programme">
+            <column name="multiple_bespoke_activities_enabled" type="boolean" defaultValue="false" remarks="determines whether multiple bespoke activities against milestones is enabled" />
+            <column name="budget_evidence_attachment_enabled" type="boolean" defaultValue="false" remarks="determines whether evidence attachment against an activity is enabled" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="458" author="ybouhass">
+        <addColumn tableName="template_block">
+            <column name="activities_required" type="boolean" defaultValue="false" remarks="determines if adding activities is mandatory for block completion" />
+        </addColumn>
+
+        <addColumn tableName="funding_block">
+            <column name="activities_required" type="boolean" defaultValue="false" remarks="determines if adding activities is mandatory for block completion" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="459" author="cmelville">
+        <addColumn tableName="annual_submission_category">
+            <column name="hidden" type="BOOLEAN" defaultValue="false" remarks="Whether this column is hidden in the wizard for annual returns"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="460" author="cmelville">
+        <addColumn tableName="template_block">
+            <column name="allow_zero_indicative_units" type="BOOLEAN" defaultValue="false" remarks="Whether to allow zero units on indicative block"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="461" author="ybouhass">
+        <addColumn tableName="question">
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+        </addColumn>
+
+        <dropSequence sequenceName="question_seq" />
+        <createSequence sequenceName="question_seq" startValue="10000" incrementBy="1" />
+    </changeSet>
+
+    <changeSet id="462" author="ybouhass">
+        <sql>DROP VIEW IF EXISTS v_budget_summaries;</sql>
+        <dropColumn tableName="project_ledger_entry" columnName="modified_on_copy" />
+        <dropTable tableName="sap_spend_category_codes" />
+        <dropTable tableName="sap_receipt_category_codes" />
+    </changeSet>
+
+</databaseChangeLog>

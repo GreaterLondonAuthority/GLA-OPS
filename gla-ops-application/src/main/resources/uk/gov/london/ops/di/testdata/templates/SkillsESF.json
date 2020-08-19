@@ -1,0 +1,279 @@
+{
+  "name": "Skills - ESF",
+  "author": "Data Initialiser",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "block": "Details",
+      "displayOrder": 0
+    },
+    {
+      "type": "OutputsCostsTemplateBlock",
+      "blockDisplayName": "ESF Output Cost",
+      "block": "OutputsCosts",
+      "displayOrder": 1,
+      "defaultRecoveryOutputId": 201,
+      "hideAdvancePayment": false
+    },
+    {
+      "type": "OutputsTemplateBlock",
+      "blockDisplayName": "Outputs",
+      "block": "Outputs",
+      "displayOrder": 2,
+      "outputConfigurationGroup": {
+        "id": 1003,
+        "periodType": "Quarterly",
+        "outputTypeName": "Output Type",
+        "categoryName": "Category",
+        "subcategoryName": "Sub Category",
+        "outputTypes": [
+          {
+            "key": "DIRECT",
+            "description": "Direct Output"
+          },
+          {
+            "key": "INDIRECT",
+            "description": "Indirect Output"
+          }
+        ],
+        "categories": [
+          {
+            "id": 36,
+            "category": "Additional learners supported",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 111,
+            "category": "New learners assisted (in courses leading to a full qualification)",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 40,
+            "category": "Additional apprenticeship starts",
+            "subcategory": "N/A",
+            "valueType": "POSITIONS",
+            "hidden": false
+          },
+          {
+            "id": 112,
+            "category": "Additional work placements started ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 113,
+            "category": "Area of new or improved learning/training floorspace (m2) ",
+            "subcategory": "N/A",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 102,
+            "category": "Cost savings",
+            "subcategory": "N/A",
+            "valueType": "MONETARY_VALUE",
+            "hidden": false
+          },
+          {
+            "id": 25,
+            "category": "Jobs Created (Potential)",
+            "subcategory": "N/A",
+            "valueType": "POSITIONS",
+            "hidden": false
+          },
+          {
+            "id": 114,
+            "category": "SEND learners supported ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 115,
+            "category": "LLDD learners supported",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 116,
+            "category": "NEETs into employment or training",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 44,
+            "category": "Additional students progressing to employment",
+            "subcategory": "Full Time",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 117,
+            "category": "New SMEs/businesses supported ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 118,
+            "category": "Employers engaged (direct result of the project)",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 119,
+            "category": "New businesses formed ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 120,
+            "category": "Improved attendance rates",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 121,
+            "category": "Amount of space with improved energy efficiency (m2) ",
+            "subcategory": "N/A",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 122,
+            "category": "Public realm improvements (m2)",
+            "subcategory": "N/A",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 123,
+            "category": "% Increase in water efficiency ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 124,
+            "category": "% Increase in materials recycling/reuse",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 125,
+            "category": "% reduction in waste production",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 126,
+            "category": "% Increase in green infrastructure",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 127,
+            "category": "% Reduction in carbon dioxide emissions ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 128,
+            "category": "New or improved commercial space or business space (m2) ",
+            "subcategory": "N/A",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          }
+        ],
+        "categoryIDs": [],
+        "outputTypeKeys": []
+      },
+      "showBaselines": false,
+      "showAssumptions": false,
+      "showTotalProjectOutputsTable": true,
+      "showValueColumn": false,
+      "showOutputTypeColumn": false,
+      "outputGroupType": "ByQuarter",
+      "showForecastTotalColumn": true,
+      "showClaimableAmountColumn": true,
+      "showActualTotalColumn": true,
+      "showAdvancedPaymentColumn": true,
+      "grantTypes": ["ESF"]
+    },
+    {
+      "type": "DeliveryPartnersTemplateBlock",
+      "blockDisplayName": "Subcontracting",
+      "block": "DeliveryPartners",
+      "displayOrder": 3,
+      "entityName": "Subcontractor",
+      "hasDeliveryPartnersTitle": "Does this project have subcontractors?",
+      "question2": "Do your due diligence and management processes for subcontractors comply with the Mayor’s ESF 2019-23 Programme Delivery Handbook?",
+      "question3": "Is your subcontracting funding retention and charges policy up to date and in accordance with the Mayor’s ESF 2019-23 Programme Delivery Handbook?",
+      "deliveryPartnerType": "LearningProvider",
+      "availableDeliverableTypes": ["OTHER"],
+      "retentionFeeThreshold": 10,
+      "deliverableName": "Provision",
+      "valueName": "Amount allocated",
+      "feeName": "Retention Fee",
+      "showDeliverables" : true,
+      "organisationNameColumnText": "Subcontractor",
+      "organisationTypeColumnName": "Org Type",
+      "showOrganisationType": false,
+      "roleColumnText": "Role",
+      "showRoleColumn": false,
+      "ukprnColumnText": "UKPRN",
+      "showUkprnColumn": true,
+      "contractValueColumnText": "Contract Value",
+      "showContractValueColumn": true
+    }
+  ],
+  "internalBlocks": [],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": true,
+  "milestoneType": "MonetarySplit",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "mandatory",
+    "wardIdRequirement": "hidden",
+    "postcodeRequirement": "mandatory",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": "mandatory",
+    "imageRequirement": "hidden",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "grantTypes": [],
+  "allowMonetaryMilestones": true
+}

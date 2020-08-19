@@ -1,0 +1,6 @@
+# vim: ft=yaml
+container_commands:
+  10-add-cwl-config:
+    command: "GLAENV=$(/opt/aws/bin/ec2-metadata|grep keyname|cut -d':' -f 2); /usr/bin/aws s3 sync s3://custom-config/cloudwatchlogs/${GLAENV}/ /var/awslogs/etc/config/ --region eu-west-2"
+  20-restart-cwlogs:
+    command: "/etc/init.d/awslogs restart"

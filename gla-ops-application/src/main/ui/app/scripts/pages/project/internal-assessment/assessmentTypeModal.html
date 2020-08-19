@@ -1,0 +1,31 @@
+<div class="assessment-type-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss('cancel')" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Select assessment type</h1>
+  </div>
+  <div class="modal-body">
+    <form class="form-gla" role="form" name="modalForm">
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+          <div class="form-group">
+            <label for="assessment-type">Assessment type</label>
+            <select class="form-control"
+                    id="assessment-type"
+                    ng-model="$ctrl.assessmentTemplate"
+                    ng-options="at.name for at in $ctrl.assessmentTemplates track by at.id"
+                    required
+                    style-placeholder>
+              <option disabled value="">Select assessment type</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$close($ctrl.assessmentTemplate)" ng-disabled="modalForm.$invalid">CONFIRM</button>
+    <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$dismiss('cancel')">CANCEL</button>
+  </div>
+</div>

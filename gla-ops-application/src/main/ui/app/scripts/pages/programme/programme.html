@@ -1,0 +1,308 @@
+<div class="page" ng-class="{'edit-mode': !$ctrl.readOnly}">
+
+  <gla-page-header [header]="$ctrl.title"
+               (on-back)="$ctrl.onBack()"
+               [back-btn-name]="'PROGRAMME LIST'"
+               [editable-block]="$ctrl"
+               [stop-editing]="true">
+  </gla-page-header>
+
+  <!--TODO move to component-->
+  <header-status class="mbottom30">
+    <hs-left class="row text-nowrap" ng-if="$ctrl.programme.createdOn && $ctrl.programme.creatorName && !($ctrl.programme.modifiedOn && $ctrl.programme.modifierName)">Created on {{($ctrl.programme.createdOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.programme.creatorName}}</hs-left>
+    <hs-left class="row text-nowrap" ng-if="$ctrl.programme.modifiedOn && $ctrl.programme.modifierName">Last updated on {{($ctrl.programme.modifiedOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.programme.modifierName}}</hs-left>
+    <hs-right ng-if="$ctrl.programme.id">Programme ID: <b id="programme-id">{{$ctrl.programme.id}}</b></hs-right>
+  </header-status>
+
+  <form class="form-gla" role="form" name="newProgForm">
+
+    <div class="form-group" ng-if="$ctrl.newProgrammeMode || $ctrl.editMode">
+      <label for="programme-name">Enter a programme name</label>
+      <input id="programme-name" name="name" type="text" class="form-control" required placeholder="Programme name" ng-model="$ctrl.programme.name" maxlength="50"/>
+      <div id="name-error" class="error-wrapper" role="alert" ng-show="newProgForm.$submitted || newProgForm.name.$touched">
+        <span class="error" ng-show="newProgForm.name.$error.required">Enter a name</span>
+      </div>
+    </div>
+
+    <multi-panel class="mbottom20 public-profile">
+      <div class="section full-page-section">
+        <div class="section-header">Public Profile</div>
+
+        <mp-field label="$ctrl.labels.description">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.description}}</span>
+
+          <div ng-if="!$ctrl.readOnly">
+            <textarea ng-if="!$ctrl.readOnly"
+                      aria-label="{{$ctrl.labels.description}}"
+                      class="form-control"
+                      maxlength="170"
+                      ng-model="$ctrl.programme.description"
+                      ng-trim="false"
+                      rows="3"
+                      type="text"></textarea>
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.totalFunding">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.totalFunding | currency:'£':0 }}</span>
+
+          <div ng-if="!$ctrl.readOnly">
+            <input ng-if="!$ctrl.readOnly"
+                   aria-label="{{$ctrl.labels.totalFunding}}"
+                   class="form-control"
+                   type="text"
+                   number-mask="0"
+                   maxlength="30"
+                   ng-model="$ctrl.programme.totalFunding">
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.websiteLink">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.websiteLink}}</span>
+
+          <div ng-if="!$ctrl.readOnly">
+            <input ng-if="!$ctrl.readOnly"
+                   aria-label="{{$ctrl.labels.websiteLink}}"
+                   class="form-control"
+                   type="text"
+                   maxlength="300"
+                   ng-model="$ctrl.programme.websiteLink">
+          </div>
+        </mp-field>
+
+      </div>
+    </multi-panel>
+
+    <multi-panel class="mbottom20 programme-information">
+      <div class="section full-page-section">
+        <div class="section-header">Programme information</div>
+
+        <mp-field label="$ctrl.labels.managingOrganisation">
+          <span ng-if="$ctrl.readOnly || !$ctrl.newProgrammeMode || $ctrl.managingOrganisations.length < 1">{{$ctrl.programme.managingOrganisationName}}</span>
+          <select aria-label="{{$ctrl.labels.managingOrganisation}}"
+                  class="form-control"
+                  id="managing-organisation"
+                  ng-change="$ctrl.onManagingOrganisation($ctrl.managingOrganisationModel)"
+                  ng-if="!$ctrl.readOnly && $ctrl.newProgrammeMode && $ctrl.managingOrganisations.length > 1"
+                  ng-model="$ctrl.managingOrganisationModel"
+                  ng-options="managingOrganisation as managingOrganisation.name for managingOrganisation in $ctrl.managingOrganisations track by managingOrganisation.id"
+                  required
+                  style-placeholder="">
+            <option disabled value="">Select</option>
+          </select>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.status">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.status}}</span>
+          <select aria-label="{{$ctrl.labels.status}}"
+                  class="form-control"
+                  id="programme-status"
+                  name="status"
+                  ng-if="!$ctrl.readOnly"
+                  ng-model="$ctrl.programme.status"
+                  ng-options="status for status in $ctrl.statuses"
+                  required
+                  style-placeholder="">
+            <option disabled value="">Select status</option>
+          </select>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.glaInternal">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.restricted ? 'Yes' : 'No'}}</span>
+
+          <div ng-if="!$ctrl.readOnly" class="radio-group">
+            <label class="radio-inline">
+            <input aria-label="{{$ctrl.labels.glaInternal}} Yes"
+                   type="radio"
+                   name="restricted"
+                   ng-disabled="$ctrl.totalProjectCount"
+                   ng-model="$ctrl.programme.restricted"
+                   ng-value="true"> Yes
+            </label>
+            <label class="radio-inline">
+            <input aria-label="{{$ctrl.labels.glaInternal}} No"
+                   type="radio"
+                   name="restricted"
+                   ng-disabled="$ctrl.totalProjectCount"
+                   ng-model="$ctrl.programme.restricted"
+                   ng-value="false"> No
+            </label>
+          </div>
+
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.companyName">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.companyName}}</span>
+
+          <div ng-if="!$ctrl.readOnly">
+            <input ng-if="!$ctrl.readOnly"
+                   aria-label="{{$ctrl.labels.companyName}}"
+                   class="form-control"
+                   type="text"
+                   maxlength="100"
+                   ng-model="$ctrl.programme.companyName">
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.companyEmail">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.companyEmail}}</span>
+
+          <div ng-if="!$ctrl.readOnly">
+            <input ng-if="!$ctrl.readOnly"
+                   aria-label="{{$ctrl.labels.companyEmail}}"
+                   class="form-control"
+                   type="text"
+                   maxlength="100"
+                   ng-model="$ctrl.programme.companyEmail">
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.enableForProjects">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.enabled ? 'Yes' : 'No'}}</span>
+
+          <div ng-if="!$ctrl.readOnly" class="radio-group">
+            <label class="radio-inline">
+              <input aria-label="{{$ctrl.labels.enableForProjects}} Yes"
+                     type="radio"
+                     name="enabled"
+                     ng-model="$ctrl.programme.enabled"
+                     ng-value="true"> Yes
+            </label>
+            <label class="radio-inline">
+              <input aria-label="{{$ctrl.labels.enableForProjects}} No"
+                     type="radio"
+                     name="enabled"
+                     ng-model="$ctrl.programme.enabled"
+                     ng-value="false"> No
+            </label>
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.markForAssessment">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.inAssessment ? 'Yes' : 'No'}}</span>
+
+          <div ng-if="!$ctrl.readOnly" class="radio-group">
+            <label class="radio-inline">
+              <input aria-label="{{$ctrl.labels.markForAssessment}} Yes"
+                     type="radio"
+                     name="inAssessment"
+                     ng-model="$ctrl.programme.inAssessment"
+                     ng-value="true"> Yes
+            </label>
+            <label class="radio-inline">
+              <input aria-label="{{$ctrl.labels.markForAssessment}} No"
+                     type="radio"
+                     name="inAssessment"
+                     ng-model="$ctrl.programme.inAssessment"
+                     ng-value="false"> No
+            </label>
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.totalProjects">{{$ctrl.programme.nbSubmittedProjects || 0}}
+
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.yearType">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.yearType}}</span>
+          <select aria-label="{{$ctrl.labels.yearType}}"
+                  class="form-control"
+                  id="programme-year-type"
+                  name="yearType"
+                  ng-if="!$ctrl.readOnly"
+                  ng-change="$ctrl.onYearTypeChange()"
+                  ng-model="$ctrl.programme.yearType"
+                  ng-options="yearType for yearType in $ctrl.yearTypes"
+                  style-placeholder="">
+            <option disabled value="">Select year type</option>
+          </select>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.startYear">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.formattedStartYear}}</span>
+          <div ng-if="!$ctrl.readOnly">
+            <input ng-if="!$ctrl.readOnly"
+                   aria-label="{{$ctrl.labels.startYear}}"
+                   class="form-control"
+                   placeholder="{{$ctrl.yearHintText}}"
+                   ng-change="$ctrl.onStartYearChange()"
+                   type="text"
+                   maxlength="{{$ctrl.yearLength}}"
+                   ng-model="$ctrl.formattedStartYear">
+            <div class="error-wrapper" ng-if="newProgForm.formattedStartYear.$touched || $ctrl.startYearInvalidMsg" role="alert">
+              <span class="error" id="start-year-invalid">{{$ctrl.startYearInvalidMsg}}</span>
+            </div>
+
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.endYear">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.formattedEndYear}}</span>
+          <div ng-if="!$ctrl.readOnly">
+            <input ng-if="!$ctrl.readOnly"
+                   aria-label="{{$ctrl.labels.endYear}}"
+                   class="form-control"
+                   placeholder="{{$ctrl.yearHintText}}"
+                   type="text"
+                   maxlength="{{$ctrl.yearLength}}"
+                   ng-change="$ctrl.onEndYearChange()"
+                   ng-model="$ctrl.formattedEndYear">
+            <div class="error-wrapper" ng-if="newProgForm.formattedEndYear.$touched || $ctrl.endYearInvalidMsg" role="alert">
+              <span class="error" id="end-year-invalid">{{$ctrl.endYearInvalidMsg}}</span>
+            </div>
+          </div>
+        </mp-field>
+
+        <div class="gla-label mtop10" ng-if="$ctrl.programme.id"><a ui-sref="projects({programmeId: $ctrl.programme.id})">View all projects for this programme</a></div>
+      </div>
+    </multi-panel>
+
+    <section-header2 class="collapse-project-types"
+                     show-bar="true"
+                     on-collapse-change="$ctrl.onProjectTypesCollapseChange()">Project type (template)</section-header2>
+
+    <div class="row no-gutter" ng-if="$ctrl.availableTemplates.length">
+      <div class="col-xs-6">
+        <a class="collapse-all"
+           href="JavaScript:void(0)"
+           ng-if="$ctrl.programme.templatesByProgramme.length"
+           ng-click="$ctrl.collapseTemplates()">{{$ctrl.getTemplatesToggleName()}}</a>
+        <span ng-if="!$ctrl.programme.templatesByProgramme.length">You can select multiple templates</span>
+      </div>
+      <div class="col-xs-6">
+        <button class="btn btn-secondary pull-right add-btn" ng-click="$ctrl.addNewTemplate()" ng-if="!$ctrl.readOnly" type="button" type="button">
+          ADD NEW TEMPLATE <b>+</b>
+        </button>
+      </div>
+    </div>
+
+
+    <programme-templates-table programme="$ctrl.programme"
+                               read-only="$ctrl.readOnly"
+                               projects-count="$ctrl.projectsCount"
+                               on-delete="$ctrl.onTemplateRemoved($event)"
+                               on-collapse-change="$ctrl.onCollapseChange()"
+                               gla-roles="$ctrl.glaRoles"
+                               allow-change-in-use-assessment-template="$ctrl.allowChangeInUseAssessmentTemplate"
+                               assessment-templates="$ctrl.filteredAssessmentTemplates"
+                               teams="$ctrl.teams"
+                               organisations-with-access="$ctrl.organisationsWithAccess">
+    </programme-templates-table>
+
+
+
+
+    <div class="mtop40 mbottom40 text-center" ng-if="!$ctrl.readOnly && !$ctrl.programme.id">
+      <button class="btn btn-primary" ng-class="{'btn-md': $ctrl.programme.id}"
+              ng-disabled="newProgForm.$error.required ||
+              !$ctrl.programme.templatesByProgramme.length ||
+              !$ctrl.programme.status ||
+              $ctrl.isSaving"
+              ng-click="$ctrl.stopEditing()">{{$ctrl.programme.id? 'DONE' : 'SAVE'}}<i class="glyphicon glyphicon-edit" ng-if="$ctrl.programme.id"></i></button>
+
+
+      <div class="mtop15" ng-if="!$ctrl.programme.id"><a href ui-sref="programmes" class="form-cancel">Cancel</a></div>
+    </div>
+
+  </form>
+</div>

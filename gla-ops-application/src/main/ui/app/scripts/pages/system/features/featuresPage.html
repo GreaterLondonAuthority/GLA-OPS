@@ -1,0 +1,36 @@
+<div class="features-page">
+
+  <gla-page-header (on-back)="$ctrl.back()" [editable-block]="$ctrl">Feature Toggles</gla-page-header>
+
+  <div class="table-responsive mtop15 features-table">
+    <div ng-if="!$ctrl.features.length" class="empty-table">Not provided</div>
+    <table ng-if="$ctrl.features.length" class="table table-hover table-bordered table-striped">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>Feature ID</th>
+        <th>Status</th>
+        <th>Updated</th>
+        <th>Updated By</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="feature in $ctrl.features | orderBy: 'name'">
+        <td>{{ feature.name }}</td>
+        <td>
+          <div class="status-text">{{ feature.enabled? 'Enabled' : 'Disabled' }}</div>
+          <button ng-if="!$ctrl.readOnly" class="btn btn-primary btn-md status-btn" ng-click="$ctrl.toggle(feature)">
+            {{feature.enabled? 'DISABLE' : 'ENABLE'}}
+          </button>
+        </td>
+        <td>{{(feature.modifiedOn || feature.createdOn) | date: "dd/MM/yyyy 'at' HH:mm"}}</td>
+        <td>{{(feature.modifiedByName)}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center">
+    <button ng-if="!$ctrl.readOnly" class="btn btn-primary mtop30" ng-click="$ctrl.save()">SAVE</button>
+  </div>
+</div>
+

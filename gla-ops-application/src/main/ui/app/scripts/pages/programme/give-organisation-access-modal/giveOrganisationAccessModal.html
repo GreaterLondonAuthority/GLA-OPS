@@ -1,0 +1,55 @@
+<div class="give-organisation-access-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Give organisation access to projects on {{$ctrl.templateName}} </h1>
+  </div>
+
+  <div class="modal-body text-left">
+      <form class="mtop40" name="modalForm">
+        <label for="orgcode" class="label">Organisation ID</label>
+        <div class="form-group has-feedback mbottom10">
+          <input id="orgcode" type="text" name="orgcode" aria-label="Organisation Code" class="form-control"
+                 ng-minlength="3" placeholder="Organisation ID"
+                 ng-model="$ctrl.organisationId"
+                 ng-change="$ctrl.onOrganisationIdChange($ctrl.organisationId)"
+                 autocomplete="off" numbers-only
+                 org-lookup="$ctrl.organisationExists"/>
+          <span ng-if="$ctrl.organisationExists" class="glyphicon glyphicon-ok form-control-feedback"
+                aria-hidden="true"></span>
+          <div class="error-wrapper" role="alert">
+            <span ng-if="$ctrl.organisationId && !$ctrl.organisationExists && !$ctrl.loading" class="error" id="invalid-organisation">Organisation not found</span>
+            <span ng-if="$ctrl.organisationExists && $ctrl.isDuplicateOrganisation" class="error" id="duplicate-organisation">This organisation already has access to the template</span>
+            <span ng-if="$ctrl.organisationExists && $ctrl.isProgrammeMO" class="error" id="already-managing-organisation">This organisation already has access</span>
+          </div>
+        </div>
+        <div class="form-group organisation-name mtop15" ng-if="$ctrl.organisationExists">
+          <span id="organisationName">{{$ctrl.organisation.name}}</span>
+        </div>
+      </form>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$ctrl.giveAccessToOrganisation()"
+          ng-disabled="!$ctrl.giveAccessButtonEnabled()">
+          GIVE ACCESS
+        </button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,66 @@
+<div class="request-organisation-access-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Add to team</h1>
+    <h3 ng-if="$ctrl.numberOfUsers == 1">Add 1 user to a team</h3>
+    <h3 ng-if="$ctrl.numberOfUsers > 1">Add {{$ctrl.numberOfUsers}} users to a team</h3>
+  </div>
+  <div class="modal-body" >
+    <div class="form-group">
+      <label for="team">Team</label>
+      <select class="form-control"
+                 id="team"
+                 name="team"
+                 ng-model="$ctrl.selection.selectedTeam"
+                 ng-options="team as ($ctrl.getTeamDisplayName(team)) for team in $ctrl.teams track by team.teamId"
+                 required
+              style-placeholder="">
+        <option disabled value="">Select a team</option>
+      </select>
+    </div>
+
+    <div class="table-responsivea" ng-class="{'fixed-header' : $ctrl.users.length > 6}">
+      <table class="table table-default table-hover table-bordered table-with-inputs">
+        <thead class="thead-inverse uppercase">
+          <tr>
+            <th class="name">Name</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+         <tr class="user-role-row" ng-repeat="user in $ctrl.users">
+          <td>
+            <label for="role">
+              {{ user.firstName }} {{user.lastName}}
+            </label>
+          </td>
+          <td>
+            <select class="form-control"
+                    id="role"
+                    name="role"
+                    ng-model="user.requestedRole"
+                    ng-options="role.name as role.description for role in $ctrl.assignableRoles"
+                    required
+                    style-placeholder="">
+              <option disabled value="">Select</option>
+            </select>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default btn-primary btn-center" type="button" ng-click="$dismiss()"
+              ng-disabled="modalForm.$pristine || modalForm.$invalid">CANCEL
+      </button>
+      <button class="btn btn-default btn-primary btn-center" type="button" ng-if="$ctrl.allowAdd()"
+              ng-click="$close($ctrl.selection)"
+              ng-disabled="modalForm.$pristine || modalForm.$invalid">ADD TO TEAM
+      </button>
+    </div>
+  </div>
+</div>

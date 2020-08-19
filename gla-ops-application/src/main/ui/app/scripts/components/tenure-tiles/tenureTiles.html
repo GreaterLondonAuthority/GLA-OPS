@@ -1,0 +1,9 @@
+<div class="row tenure-tiles" vertilize-container>
+  <ul class="tiles-list">
+    <li class="col-xs-3 grant-column" ng-repeat="grant in $ctrl.tenures track by grant.name">
+      <tile class="centered" hlevel="3" items="grant.items">
+        <div vertilize>{{ grant.name }}</div>
+      </tile>
+    </li>
+  </ul>
+</div>

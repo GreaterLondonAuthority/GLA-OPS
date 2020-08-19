@@ -1,0 +1,94 @@
+<div class="table-responsive" id="delivery-partners-table">
+  <div ng-if="!$ctrl.projectBlock.deliveryPartners.length" class="empty-table">Not provided</div>
+  <table ng-if="$ctrl.projectBlock.deliveryPartners.length" class="table table-bordered table-default collapsible ">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th></th>
+      <!--          <th>{{$ctrl.entityName.toUpperCase()}}</th>-->
+      <th>{{$ctrl.organisationNameColumnText}}</th>
+      <th ng-if="$ctrl.showOrganisationType"><span >{{$ctrl.organisationTypeColumnName}}</span></th>
+      <th ng-if="$ctrl.showRoleColumn"><span >{{$ctrl.roleColumnText}}</span></th>
+      <th ng-if="$ctrl.showUkprnColumn"><span >{{$ctrl.ukprnColumnText}}</span></th>
+      <th ng-if="$ctrl.showContractValueColumn"><span >{{$ctrl.contractValueColumnText}}</span></th>
+      <th ng-if="!$ctrl.showOrganisationType"></th>
+      <th ng-if="!$ctrl.showUkprnColumn"></th>
+      <th ng-if="!$ctrl.showRoleColumn"></th>
+      <th ng-if="!$ctrl.showContractValueColumn"></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody >
+    <td></td>
+    <td colspan="1"  ng-if="($ctrl.projectBlock.deliveryPartners.length == 0)">Not Provided</td>
+    <tr ng-attr-tabindex="{{$ctrl.readOnly? undefined : 0}}" ng-class="{'cursor-pointer': !$ctrl.readOnly}" ng-repeat-start="deliveryPartner in $ctrl.projectBlock.deliveryPartners | orderBy: 'organisationName'" on-enter="$ctrl.showProjectDeliveryPartnerModal(deliveryPartner)">
+      <td >
+        <toggle-icon (collapsed-change)="$ctrl.onCollapseChange($event)" [(collapsed)]="deliveryPartner.collapsed" ng-if="deliveryPartner.deliverables.length != 0"></toggle-icon>
+      </td>
+      <td ng-click="!$ctrl.readOnly && $ctrl.showProjectDeliveryPartnerModal(deliveryPartner)">{{deliveryPartner.organisationName}}</td>
+      <td ng-if="$ctrl.showOrganisationType" ng-click="!$ctrl.readOnly && $ctrl.showProjectDeliveryPartnerModal(deliveryPartner)">
+        <span >{{deliveryPartner.organisationType}}</span></td>
+      <td ng-if="$ctrl.showRoleColumn" ng-click="!$ctrl.readOnly && $ctrl.showProjectDeliveryPartnerModal(deliveryPartner)">
+        <span >{{deliveryPartner.role}}</span></td>
+      <td ng-click="!$ctrl.readOnly && $ctrl.showProjectDeliveryPartnerModal(deliveryPartner)">
+        <span ng-if="$ctrl.showUkprnColumn">{{deliveryPartner.identifier}}</span></td>
+      <td ng-click="!$ctrl.readOnly && $ctrl.showProjectDeliveryPartnerModal(deliveryPartner)" >
+        <span ng-if="$ctrl.showContractValueColumn && !$ctrl.templateConfig.showDeliverables">{{deliveryPartner.contractValue | currency:'£':2}}</span>
+        <span ng-if="$ctrl.showContractValueColumn && $ctrl.templateConfig.showDeliverables">{{deliveryPartner.deliverableContractValue | currency:'£':2}}</span>
+      </td>
+      <td ng-if="!$ctrl.showOrganisationType"></td>
+      <td ng-if="!$ctrl.showRoleColumn"></td>
+      <td class="delete-btn-container text-center">
+        <span ng-if="!$ctrl.readOnly && $ctrl.templateConfig.showDeliverables" ><a href="JavaScript:void(0);" ng-click="$ctrl.showDeliverableModal(deliveryPartner, {})">+ add {{$ctrl.deliverableName.toLowerCase()}}</a></span>
+        <delete-button ng-click="$ctrl.delete(deliveryPartner);$event.stopPropagation();"
+                       ng-if="!$ctrl.readOnly">
+        </delete-button>
+      </td>
+
+    </tr>
+    <tr ng-if="deliveryPartner.deliverables.length != 0 && !deliveryPartner.collapsed" class="deliverable-title">
+      <th width="50px"></th>
+      <th class="child-row">{{$ctrl.deliverableName}} Type</th>
+
+      <th>{{$ctrl.quantityName}}</th>
+      <th>{{$ctrl.valueName}}</th>
+      <th colspan="3">{{$ctrl.feeName}}</th>
+    </tr>
+    <tr allow-enter
+        ng-class="{'cursor-pointer': !$ctrl.readOnly}" ng-click="!$ctrl.readOnly && $ctrl.showDeliverableModal(deliveryPartner, deliverable)"
+        ng-attr-tabindex="{{$ctrl.readOnly? undefined : 0}}"
+        ng-if="deliveryPartner.deliverables.length != 0 && !deliveryPartner.collapsed"
+        ng-repeat-start="deliverable in deliveryPartner.deliverables | orderBy: 'id'">
+      <td></td>
+      <td>
+        <div class="deliverable-type-cell">
+          <toggle-icon [(collapsed)]="deliverable.collapsed" ng-if="deliverable.comments"></toggle-icon>
+          <div class="multiline-text word-break deliverable-type">
+            {{$ctrl.lookupDisplayValue(deliverable)}}
+          </div>
+        </div>
+      </td>
+      <td>{{deliverable.quantity | number}}</td>
+      <td>{{deliverable.value  | currency:'£':2}}</td>
+      <td class="delete-btn-container" colspan="3">
+        <div ng-class="{'deliverable-fee-above-threshold': deliverable.feeCalculation.feePercentageExceeded}">
+          <span>{{deliverable.fee | currency:'£':2}}</span><span ng-if="deliverable.feeCalculation.feePercentage"> ({{deliverable.feeCalculation.feePercentage}}%)</span>
+        </div>
+        <delete-button class="small" ng-click="$ctrl.deleteDeliverable(deliveryPartner, deliverable); $event.stopPropagation();"
+                       ng-if="!$ctrl.readOnly">
+        </delete-button>
+      </td>
+    </tr>
+    <tr  ng-repeat-end class="no-hover-row extra-row comments-title-row"  ng-if="deliverable.comments.length && !deliveryPartner.collapsed  && !deliverable.collapsed"  >
+      <td ></td>
+
+      <td colspan="6" class="child-row">
+        <div>
+          <div class="comment-label">Comments:</div>
+          <div class="multiline-text word-break">{{deliverable.comments}}</div>
+        </div>
+      </td>
+    </tr >
+    <tr ng-if="false" ng-repeat-end></tr>
+    </tbody>
+  </table>
+</div>

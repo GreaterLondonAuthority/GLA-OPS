@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="300" author="jdimsa">
+        <addColumn tableName="project_details_block">
+            <column name="dev_liability_org_id" type="INT4" remarks="Organisation with grant liability during development">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="project_details_block">
+            <column name="postcomp_liability_org_id" type="INT4" remarks="Organisation with grant liability after completion">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="dev_liability_org_id"
+                                 baseTableName="project_details_block"
+                                 constraintName="fk_project_details_block_dloi_organisation_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="organisation"/>
+
+        <addForeignKeyConstraint baseColumnNames="postcomp_liability_org_id"
+                                 baseTableName="project_details_block"
+                                 constraintName="fk_project_details_block_pcloi_organisation_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="organisation"/>
+
+
+    </changeSet>
+
+
+    <changeSet id="301" author="cmelville">
+        <createTable tableName="borough" remarks="list of boroughs and their respective wards"  >
+            <column name="id" type="INT4">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="display_order" type="INT4" remarks="display order for borough">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)" remarks="descriptive borough name">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="ward" remarks="list of wards"  >
+            <column name="id" type="INT4">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="display_order" type="INT4" remarks="display order for wards">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)" remarks="descriptive ward name">
+                <constraints nullable="false"/>
+            </column>
+            <column name="borough" type="INT4" remarks="parent borough for this ward">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="302" author="cmelville">
+        <addColumn tableName="project_details_block ">
+            <column name="ward_id" type="INT4" remarks="the ward for this project (based on borough selected)"></column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="ward_id"
+                                 baseTableName="project_details_block"
+                                 constraintName="fk_project_details_block_ward_id"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="ward"/>
+    </changeSet>
+
+    <changeSet id="303" author="sleach">
+        <createTable tableName="env_info" remarks="Environment information">
+            <column name="id" type="INT4" remarks="Row ID">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="env_code" type="VARCHAR(20)" remarks="Environment short code">
+                <constraints nullable="true" />
+            </column>
+            <column name="app_version" type="VARCHAR(40)" remarks="Application version">
+                <constraints nullable="true" />
+            </column>
+            <column name="start_time" type="TIMESTAMP" remarks="Application startup time">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <sql>
+            INSERT INTO env_info (id) VALUES (1)
+        </sql>
+    </changeSet>
+
+    <changeSet id="303" author="cmelville">
+        <addColumn tableName="template">
+            <column name="clone_of_template" type="INT4" remarks="the template this template was cloned from"></column>
+        </addColumn>
+        <addColumn tableName="template">
+            <column name="clone_modified" type="BOOLEAN" remarks="has this clone been modified post creation"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="304" author="cmelville">
+        <dropNotNullConstraint tableName="project_history" columnName="transition" columnDataType="varchar(20)"/>
+    </changeSet>
+</databaseChangeLog>

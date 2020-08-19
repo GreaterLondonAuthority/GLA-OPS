@@ -1,0 +1,49 @@
+<div>
+  <div class="text-center user-home_header" ng-if="$ctrl.user.loggedOn">
+    <gla-page-header [hide-back-btn]="true">Welcome to the Greater London Authority Open Project System (GLA-OPS)</gla-page-header>
+
+    <div class="row no-gutter mtop40">
+      <div class="col-sm-8 center-col">
+
+        <div ng-if="$ctrl.homePageMessage" class="multiline-text">
+          {{$ctrl.homePageMessage}}
+        </div>
+
+        <!--<div class="user-home_unapproved" ng-if="!$ctrl.user.approved">
+          <div class="user-home_unapproved-row">
+            Your registration has not yet been approved. You will receive an email confirming your registration in due course.
+          </div>
+          <div>
+            Please contact GLA if you have any concerns or you have been informed that your registration has been approved.
+          </div>
+        </div>-->
+
+        <multi-panel class="text-left mtop30 user-metrics-dashboard" ng-if="$ctrl.userDashboardMetricsToggle">
+          <div class="column">
+            <div class="section" ng-if="$ctrl.canViewProjects">
+              <section-header>Projects</section-header>
+              You have access to {{$ctrl.dashboardMetrics['projects.total'] || 0}} <a ui-sref="projects">projects</a>, of which {{$ctrl.dashboardMetrics['projects.active'] || 0 }} are active
+            </div>
+            <div class="section">
+              <section-header>Notifications</section-header>
+              You have {{$ctrl.dashboardMetrics['notifications.unread'] || 0}} unread <a ui-sref="notifications">notifications</a>
+            </div>
+          </div>
+          <div class="column">
+            <div class="section">
+              <section-header>Organisations</section-header>
+              You are a member of {{$ctrl.dashboardMetrics['organisations.active'] || 0}} <a ui-sref="organisations">organisations</a>, and have {{$ctrl.dashboardMetrics['organisations.pending'] || 0}} pending request for access
+            </div>
+          </div>
+        </multi-panel>
+
+
+              <div class="user-home_unapproved text-left" ng-if="!$ctrl.user.approved">
+          <div>You are logged in to GLA-OPS but you currently are not associated with any organisations.</div>
+          <div>Go to <a href ui-sref="organisations">Manage Organisations</a> to request access to an organisation.</div>
+          <div>If you have already made a request you will receive an email confirming your application in due course.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

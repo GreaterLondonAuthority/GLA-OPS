@@ -1,0 +1,15 @@
+funding-claims-table-procured {
+  display: block;
+  .glyphicon-exclamation-sign{
+    display: none;
+    //color: $red;
+  }
+
+  .threshold-exceeded {
+    color: $red;
+    .glyphicon-exclamation-sign{
+      display: inline-block;
+      top: 2px;
+    }
+  }
+}

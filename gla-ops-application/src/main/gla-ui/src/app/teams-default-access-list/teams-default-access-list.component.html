@@ -1,0 +1,45 @@
+<div class="bolder"> {{programmeManagingOrganisationName}} Teams that can be given access to the projects on this template</div>
+<div >All users  in  {{programmeManagingOrganisationName}} can access projects using this template:
+  <span class="bolder" *ngIf="readOnly || numberOfTeamsWithAccess()==0">{{moAccess ? 'Yes' : 'No'}} </span>
+  <gla-yes-no-input *ngIf="!readOnly && numberOfTeamsWithAccess()>0"
+                    [(model)]="moAccess"
+                    (modelChange)="onManagingOrganisationAccessChange()"
+                    name="{{'mo-access-' + getId(templateName)}}"
+                    mode="bool">
+  </gla-yes-no-input>
+</div>
+
+
+<div class="table-responsive mbottom20 team-access-table">
+  <div *ngIf="!teams.length" class="empty-table">No teams created</div>
+
+  <table *ngIf="teams.length" class="table table-default table-hover table-bordered blocks">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>TEAM NAME</th>
+      <th>TEAM ID</th>
+      <th>ACCESS</th>
+    </tr>
+    </thead>
+
+    <tbody >
+    <tr *ngIf="!teams.length">
+      <td colspan="5">No teams created</td>
+    </tr>
+
+    <tr *ngFor="let team of teams">
+      <td class="team-name">{{team.name}}</td>
+      <td class="team-id">{{team.id}}</td>
+      <td class="team-access">
+        <div *ngIf="readOnly || !canEditTeam(team)">{{team.hasDefaultAccess ? 'Yes' : 'No'}}</div>
+        <gla-yes-no-input *ngIf="!readOnly && canEditTeam(team)"
+                          [(model)]="team.hasDefaultAccess"
+                          (modelChange)="onDefaultAccessChange(team)"
+                          mode="bool"
+                          name="{{'default-access-' + getId(templateName) + '-team-' + getId(team.name) }}">
+        </gla-yes-no-input>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,21 @@
+//TODO move to generic form styles
+.project-details {
+  width: 90%;
+  margin: auto;
+
+  .borough__dropdown {
+    &.disabled .ui-select-match .ui-select-toggle span {
+      background-color: transparent;
+    }
+  }
+
+  .status__dropdown {
+    &.disabled .ui-select-match .ui-select-toggle span {
+      background-color: transparent;
+    }
+  }
+
+  .multi-select {
+    height: 160px;
+  }
+}

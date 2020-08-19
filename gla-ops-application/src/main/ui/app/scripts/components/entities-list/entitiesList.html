@@ -1,0 +1,8 @@
+<div class="entities-list col-xs-12 col-sm-8 col-md-6 center-col" ng-class="{'read-only': $ctrl.readOnly, 'edit-mode': !$ctrl.readOnly}">
+  <div ng-transclude="entitiesListItem"></div>
+  <div class="text-right mtop30" ng-if="!$ctrl.readOnly">
+    <button class="btn btn-secondary btn-add"
+            ng-disabled="$ctrl.isAddButtonDisabled()"
+            ng-click="$ctrl.addEmptyEntity()">ADD NEW</button>
+  </div>
+</div>

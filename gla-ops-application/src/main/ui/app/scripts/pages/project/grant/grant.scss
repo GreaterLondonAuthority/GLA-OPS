@@ -1,0 +1,46 @@
+.project-grant {
+  width: 90%;
+  margin: auto;
+
+  .grant-column {
+    padding: 0px;
+
+    tile {
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+  }
+
+  .grant{
+    position:relative;
+    margin-left: -8px;
+    margin-right: -8px;
+  }
+
+  .design-compliant{
+    margin-bottom: 5px;
+    label {
+      margin-right: 20px;
+    }
+  }
+
+  .sub-comment{
+    font-size: 12px;
+    margin-top: 5px;
+    font-family: $font-family-light;
+  }
+}
+
+.start-on-site-message {
+  padding-top: 10px;
+  color: $peppermint;
+  font-size: 12px;
+}
+
+section .grant-block-title{
+  margin-top: 30px;
+  margin-bottom: 10px;
+  line-height: 25px;
+  font-size: 18px;
+  font-family: $font-family-light;
+}

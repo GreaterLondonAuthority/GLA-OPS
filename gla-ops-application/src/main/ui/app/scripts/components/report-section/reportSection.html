@@ -1,0 +1,32 @@
+<div class="text-left report-block mtop20" ng-class="$ctrl.item.blockDisplayCls+'-section'" ng-attr-id="{{$ctrl.item.id}}">
+  <div>
+      <span class="report-block-title"
+            ng-click="$ctrl.onCollapseChange({$event: $ctrl.item})">
+        <span class="block-toggle no-print">
+          <span allow-enter
+                aria-expanded="{{!!$ctrl.item.expanded}}"
+                aria-hidden="true"
+                aria-label="{{!$ctrl.item.expanded? 'Expand' : 'Collapse'}}"
+                class="glyphicon glyphicon-triangle-bottom"
+                ng-class="{'glyphicon-triangle-bottom': !$ctrl.item.expanded, 'glyphicon-triangle-top': $ctrl.item.expanded}"
+                role="button"
+                tabindex="0"></span>
+        </span>
+        <span class="block-name">{{$ctrl.item.blockDisplayName}}</span>
+      </span>
+    <a class="jump-link pull-right no-print" href="JavaScript:void(0);" ng-click="$ctrl.jumpTo($ctrl.nextItem.id)" ng-if="$ctrl.nextItem">
+      <span>Jump to {{$ctrl.nextItem.blockDisplayName}}</span>
+    </a>
+  </div>
+
+  <div class="unapproved-changes-text" ng-if="$ctrl.showChanges && $ctrl.item.versionObj && ($ctrl.item.left || !$ctrl.item.right.lastModified)">
+    <span class="change-count-display"><span class="unapproved-changes-count">{{$ctrl.item.changes.count}}</span> unapproved changes</span>
+    <span class="unapproved-changes-count" ng-if="$ctrl.item.changes.count">Unapproved changes</span>
+    <span class="unapproved-changes-count" ng-if="!$ctrl.item.changes.count">No unapproved changes</span>
+  </div>
+  <div class="unapproved-changes-text" ng-if="(!$ctrl.item.left && $ctrl.item.right && $ctrl.item.right.lastModified)">
+    New block with edits
+  </div>
+
+  <div class="report-block-content" ng-show="$ctrl.item.expanded" ng-class="[$ctrl.item.blockDisplayCls, {'no-unapproved-block': $ctrl.item.left.id == $ctrl.item.right.id}]" ng-transclude></div>
+</div>

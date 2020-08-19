@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <!--
+    The motivation of this is to have a single file where placing the
+    definitions of the elements. Instead of having a historic file where we add
+    any change as a new changeset, like normal liquidbase approach, we have a
+    file where the changeset is executed every time we update it. So any change
+    in any view or any new view we create, would normally drive to
+    a change in the changeset.
+
+    Initially this is intended to be for views, but this approach can be
+    extended to any read-only element.
+
+    The logic behind the main changeset(id: 0, author: team) is anytime
+    we change the changeset, all the views are removed and created again.
+    So, if you are adding a new view, don't forget to add the corresponding
+    'DROP VIEW IF EXISTS ..."
+
+
+    (1) Notice that if any statement inside the changeset fails, although
+    doesn't break because of failOnError='false', it won't carry on executing
+    the changeset
+
+    (2) Why don't use <dropview ..>? The problem with this approach is that
+    fails if the view doesn't exist yet. Plus the explained in (1), it won't
+    execute the changeset and would produce unexpected results. So by using
+    <sql> we fix this issue.
+
+     (3) Also worthy to have into account that the views shouldn't be updated,
+     specially removed, directly as this changeset won't recreate them;
+     Remember it only runs if we change the changeset ;)
+    -->
+
+
+    <!--<changeSet id="V_ANNUAL_SPEND_BY_TYPE_H2_ON_CHANGE" author="team" dbms="h2" failOnError="false">-->
+        <!--<createView viewName="V_ANNUAL_SPEND_BY_TYPE" replaceIfExists="true">-->
+            <!--select ROWNUM() as id, * from (-->
+            <!--select CASE WHEN month &lt;  4 THEN  year -1-->
+            <!--ELSE year END as financial_year,  project_id, block_id, SUM(amount) as SPEND,-->
+            <!--ledger_status, spend_type from project_ledger_entry-->
+            <!--GROUP BY project_id, block_id,ledger_status, spend_type , financial_year-->
+            <!--order by  project_id, financial_year, ledger_status, spend_type asc)-->
+        <!--</createView>-->
+    <!--</changeSet>-->
+
+
+    <!--<changeSet id="V_ANNUAL_SPEND_BY_TYPE_POSTGRES_ON_CHANGE" author="team" dbms="postgresql" failOnError="false">-->
+        <!--&lt;!&ndash; comment update to force rerun after change to 1.1xml &ndash;&gt;-->
+        <!--<createView viewName="V_ANNUAL_SPEND_BY_TYPE" replaceIfExists="true">-->
+            <!--select ROW_NUMBER() OVER() AS id, CASE WHEN month &lt; 4 THEN  year -1-->
+            <!--ELSE year END as financial_year,  project_id, block_id, SUM(amount) as SPEND,-->
+            <!--ledger_status, spend_type from project_ledger_entry-->
+            <!--GROUP BY  project_id, block_id,ledger_status, spend_type , financial_year-->
+            <!--order by project_id, financial_year, ledger_status, spend_type asc;-->
+        <!--</createView>-->
+    <!--</changeSet>-->
+
+
+
+    <!--<changeSet id="CREATE_VIEWS_ON_CHANGE" author="team" failOnError="false" runAlways="true" runOnChange="true">-->
+        <!--&lt;!&ndash;-->
+        <!--DROP VIEWS-->
+        <!--&ndash;&gt;-->
+        <!--<sql>-->
+            <!--DROP VIEW IF EXISTS v_borough_report;-->
+            <!--DROP VIEW IF EXISTS v_indicative_units_1000_grouped;-->
+            <!--DROP VIEW IF EXISTS v_eligible_grant_1000_null_clean;-->
+            <!--DROP VIEW IF EXISTS v_eligible_grant_1000;-->
+            <!--DROP VIEW IF EXISTS v_tenure_items;-->
+            <!--DROP VIEW IF EXISTS v_indicative_1000;-->
+            <!--DROP VIEW IF EXISTS v_indicative_units_1000;-->
+            <!--DROP VIEW IF EXISTS v_indicative_units_1000;-->
+            <!--DROP VIEW IF EXISTS v_milestones_1000;-->
+            <!--DROP VIEW IF EXISTS v_questions_1000;-->
+            <!--DROP VIEW IF EXISTS v_add_questions_1000;-->
+            <!--DROP VIEW IF EXISTS v_project_details;-->
+            <!--DROP VIEW IF EXISTS v_grant_source;-->
+            <!--DROP VIEW IF EXISTS v_design_standards;-->
+            <!--DROP VIEW IF EXISTS v_project_summaries;-->
+            <!--DROP VIEW IF EXISTS v_project_permissions;-->
+            <!--DROP VIEW IF EXISTS v_total_grant;-->
+            <!--DROP VIEW IF EXISTS v_project_block_active;-->
+        <!--</sql>-->
+
+        <!--&lt;!&ndash;-->
+        <!--VIEWS CREATION-->
+         <!--&ndash;&gt;-->
+
+        <!--&lt;!&ndash;-->
+        <!--It should never happen that the APPROVED block is taken,-->
+        <!--as it will be always the LAST_APPROVED. If there is no LAST_APPROVED,-->
+        <!--then no block has been approved yet.-->
+        <!--However, just in case the scenario where there is an APPROVED block-->
+        <!--but no a LAST_APPROVED is covered.-->
+        <!--&ndash;&gt;-->
+        <!--<createView viewName="v_project_block_active" replaceIfExists="true">-->
+            <!--SELECT  id,block_display_name,project_block_type,block_type,display_order,-->
+            <!--project_id, last_modified, modified_by, block_status,-->
+            <!--approver_name, approval_timestamp,version_number-->
+            <!--FROM-->
+            <!--(-->
+            <!--SELECT pb.*, t.block_status_order max_block_status,-->
+            <!--CASE-->
+            <!--WHEN block_status = 'APPROVED' THEN 1-->
+            <!--WHEN block_status = 'LAST_APPROVED' THEN 2-->
+            <!--ELSE 0 END block_status_order-->
+            <!--FROM project_block pb-->
+            <!--INNER JOIN (-->
+            <!--SELECT-->
+            <!--project_id,project_block_type, display_order,-->
+            <!--MAX(CASE-->
+            <!--WHEN block_status = 'APPROVED' THEN 1-->
+            <!--WHEN block_status = 'LAST_APPROVED' THEN 2-->
+            <!--ELSE 0 END) block_status_order-->
+            <!--FROM project_block-->
+            <!--GROUP BY project_id,project_block_type, display_order-->
+            <!--) t ON t.project_id=pb.project_id-->
+            <!--AND t.project_block_type = pb.project_block_type-->
+            <!--AND t.display_order=pb.display_order-->
+
+            <!--) t WHERE t.block_status_order = t.max_block_status-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_total_grant" replaceIfExists="true">-->
+            <!--SELECT-->
+            <!--prg.name Programme,-->
+            <!--org.name Organisation,-->
+            <!--prj.title Project,-->
+            <!--SUM(tu.total_units) Units, SUM(tu.grant_requested) Grant_Requested-->
+            <!--FROM tenure_and_units tu-->
+            <!--LEFT OUTER JOIN tenure_type tt ON tu.tenure_type_id = tt.id-->
+            <!--LEFT OUTER JOIN project prj ON tu.project_id = prj.id-->
+            <!--LEFT OUTER JOIN programme prg ON prj.programme_id = prg.id-->
+            <!--LEFT OUTER JOIN organisation org ON prj.org_id = org.id-->
+            <!--LEFT OUTER JOIN template tmplt ON prj.template_id = tmplt.id-->
+            <!--WHERE tu.total_units > 0-->
+            <!--GROUP BY prg.name, org.name, prj.title-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_project_permissions" replaceIfExists="true">-->
+            <!--SELECT p.id project_id, p.org_id organisation_id, p.title project_title, p.organisation_group_id, r.username, r.name role_name-->
+            <!--FROM project p-->
+            <!--LEFT JOIN user_roles r ON ((r.organisation_id = 10000) OR (p.org_id = r.organisation_id))-->
+            <!--WHERE r.approved-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_project_summaries" replaceIfExists="true">-->
+            <!--SELECT prg.name prg_name, org.name org_name, tpl.name template_name, og.name og_name, og.type og_type, og.lead_organisation_id, p.*-->
+            <!--FROM project p-->
+            <!--LEFT JOIN programme prg ON p.programme_id = prg.id-->
+            <!--LEFT JOIN template tpl ON p.template_id = tpl.id-->
+            <!--LEFT JOIN organisation org ON p.org_id = org.id-->
+            <!--LEFT JOIN organisation_group og ON p.organisation_group_id = og.id-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_design_standards" replaceIfExists="true">-->
+            <!--SELECT-->
+            <!--project.id AS project_id,-->
+            <!--design_standards.meeting_design_guide AS ds_lhds_met,-->
+            <!--design_standards.reason_not_meeting_design_guide AS ds_lhds_comments-->
+            <!--FROM design_standards INNER JOIN project ON design_standards.id = project.design_standards-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_tenure_items" replaceIfExists="true">-->
+            <!--SELECT p.id,-->
+            <!--bt.grant_type grant_type,-->
+            <!--CASE-->
+            <!--WHEN bt.grant_type = 'CALCULATE' THEN tu.total_units-->
+            <!--WHEN bt.grant_type = 'NEGOTIATED' THEN tu.total_units-->
+            <!--WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.s106_units IS NULL-->
+            <!--THEN tu.additional_units-->
+            <!--WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.additional_units IS NULL-->
+            <!--THEN tu.s106_units-->
+            <!--WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.s106_units IS NOT NULL AND tu.additional_units IS NOT NULL-->
+            <!--THEN tu.s106_units + tu.additional_units-->
+            <!--ELSE null END eg_total_units,-->
+
+            <!--&#45;&#45; total units to calculate total grant-->
+            <!--CASE-->
+            <!--WHEN bt.grant_type = 'CALCULATE' AND tu.s106_units IS NULL THEN tu.total_units-->
+            <!--WHEN bt.grant_type = 'CALCULATE' THEN tu.total_units - tu.s106_units-->
+            <!--WHEN bt.grant_type = 'NEGOTIATED' THEN tu.total_units-->
+            <!--WHEN bt.grant_type = 'DEVELOPER-LED' AND (tu.s106_units IS NULL OR affordable_criteria_met != TRUE)-->
+            <!--THEN tu.additional_units-->
+            <!--WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.additional_units IS NOT NULL-->
+            <!--THEN tu.s106_units + tu.additional_units-->
+            <!--WHEN bt.grant_type = 'DEVELOPER-LED' AND tu.additional_units IS NULL-->
+            <!--THEN tu.s106_units-->
+            <!--ELSE null END eg_total_grant_units,-->
+
+            <!--CASE WHEN bt.grant_type = 'CALCULATE' THEN tu.s106_units ELSE NULL END eg_nil_grant_units,-->
+            <!--CASE WHEN bt.grant_type = 'NEGOTIATED' THEN tu.eligible_grant ELSE NULL END eg_calculate_eligible_grant,-->
+            <!--CASE WHEN bt.grant_type = 'DEVELOPER-LED' THEN tu.additional_units ELSE NULL END eg_add_aff_units,-->
+            <!--CASE WHEN bt.grant_type = 'DEVELOPER-LED' THEN tu.s106_units ELSE NULL END eg_s106_units,-->
+            <!--CASE WHEN bt.grant_type = 'CALCULATE' OR bt.grant_type = 'DEVELOPER-LED' OR bt.grant_type = 'NEGOTIATED' THEN tu.total_cost ELSE NULL END eg_dev_cost,-->
+            <!--CASE WHEN bt.grant_type = 'NEGOTIATED' THEN tu.supported_units ELSE NULL END eg_supp_units,-->
+            <!--CASE WHEN bt.grant_type = 'CALCULATE' OR bt.grant_type = 'DEVELOPER-LED' THEN tu.grant_per_unit-->
+            <!--WHEN bt.grant_type = 'NEGOTIATED' AND tu.eligible_units IS NOT NULL AND tu.eligible_units != 0 THEN CAST( ROUND( CAST (tu.eligible_grant AS FLOAT) / tu.eligible_units) AS INTEGER)-->
+            <!--ELSE NULL END eg_gpu,-->
+            <!--tt.external_id,-->
+            <!--bt.affordable_criteria_met-->
+            <!--from project p-->
+            <!--LEFT JOIN tenure_AND_units tu ON tu.project_id = p.id-->
+            <!--LEFT JOIN tenure_type  tt ON tu.tenure_type_id = tt.id-->
+            <!--INNER JOIN budget_AND_tenure bt ON tu.budget_id = bt.id-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_eligible_grant_1000" replaceIfExists="true">-->
+            <!--SELECT-->
+            <!--lar.id project_id,-->
+            <!--lar.grant_type grant_type,-->
+            <!--&#45;&#45; 4000-->
+            <!--lar.eg_total_units eg_total_units_lar,-->
+            <!--lar.eg_nil_grant_units eg_nil_grant_units_lar,-->
+            <!--lar.eg_Add_aff_units eg_Add_aff_units_lar,-->
+            <!--lar.eg_s106_units eg_s106_units_lar,-->
+            <!--lar.eg_supp_units eg_supp_units_lar,-->
+            <!--lar.eg_dev_cost eg_dev_cost_lar,-->
+            <!--lar.eg_gpu eg_gpu_lar,-->
+            <!--lar.eg_total_grant_units eg_eligible_units_lar,-->
+            <!--CASE WHEN lar.grant_type = 'NEGOTIATED' THEN lar.eg_calculate_eligible_grant ELSE lar.eg_total_grant_units * lar.eg_gpu END eg_total_eligible_grant_lar,-->
+            <!--&#45;&#45; 4001-->
+            <!--llr.eg_total_units eg_total_units_llr,-->
+            <!--llr.eg_nil_grant_units eg_nil_grant_units_llr,-->
+            <!--llr.eg_Add_aff_units eg_Add_aff_units_llr,-->
+            <!--llr.eg_s106_units eg_s106_units_llr,-->
+            <!--llr.eg_supp_units eg_supp_units_llr,-->
+            <!--llr.eg_dev_cost eg_dev_cost_llr,-->
+            <!--llr.eg_gpu eg_gpu_llr,-->
+            <!--llr.eg_total_grant_units eg_eligible_units_llr,-->
+            <!--CASE WHEN lar.grant_type = 'NEGOTIATED' THEN llr.eg_calculate_eligible_grant ELSE llr.eg_total_grant_units * llr.eg_gpu END eg_total_eligible_grant_llr,-->
+            <!--&#45;&#45; 4002-->
+            <!--so.eg_total_units eg_total_units_so,-->
+            <!--so.eg_nil_grant_units eg_nil_grant_units_so,-->
+            <!--so.eg_Add_aff_units eg_Add_aff_units_so,-->
+            <!--so.eg_s106_units eg_s106_units_so,-->
+            <!--so.eg_supp_units eg_supp_units_so,-->
+            <!--so.eg_dev_cost eg_dev_cost_so,-->
+            <!--so.eg_gpu eg_gpu_so,-->
+            <!--so.eg_total_grant_units eg_eligible_units_so,-->
+            <!--CASE WHEN lar.grant_type = 'NEGOTIATED' THEN so.eg_calculate_eligible_grant ELSE so.eg_total_grant_units * so.eg_gpu END eg_total_eligible_grant_so,-->
+            <!--&#45;&#45; 4003-->
+            <!--oa.eg_total_units eg_total_units_oa,-->
+            <!--oa.eg_nil_grant_units eg_nil_grant_units_oa,-->
+            <!--oa.eg_Add_aff_units eg_Add_aff_units_oa,-->
+            <!--oa.eg_s106_units eg_s106_units_oa,-->
+            <!--oa.eg_supp_units eg_supp_units_oa,-->
+            <!--oa.eg_dev_cost eg_dev_cost_oa,-->
+            <!--oa.eg_gpu eg_gpu_oa,-->
+            <!--oa.eg_total_grant_units eg_eligible_units_oa,-->
+            <!--CASE WHEN lar.grant_type = 'NEGOTIATED' THEN oa.eg_calculate_eligible_grant ELSE oa.eg_total_grant_units * oa.eg_gpu END eg_total_eligible_grant_oa,-->
+
+            <!--llr.affordable_criteria_met eg_40pct_hab_rooms-->
+            <!--FROM v_tenure_items lar-->
+            <!--LEFT JOIN v_tenure_items llr ON lar.id = llr.id-->
+            <!--LEFT JOIN v_tenure_items so ON lar.id = so.id-->
+            <!--LEFT JOIN v_tenure_items oa ON lar.id = oa.id-->
+            <!--where lar.external_id = 4000 AND-->
+            <!--llr.external_id = 4001 AND-->
+            <!--so.external_id = 4002 AND-->
+            <!--oa.external_id = 4003-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_grant_source" replaceIfExists="true">-->
+            <!--SELECT p.id project_id,-->
+            <!--gs.zero_grant_requested as gs_zero_grant_requested,-->
+            <!--gs.rcgf_value gs_rcgf_requested,-->
+            <!--gs.dpf_value gs_dpf_requested,-->
+            <!--gs.grant_value gs_grant_requested-->
+            <!--FROM grant_source gs-->
+            <!--LEFT JOIN project p ON p.grant_source = gs.id-->
+            <!--LEFT JOIN project_block pb ON pb.project_block_type = 'GrantSource' AND pb.project_id = p.id-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_project_details" replaceIfExists="true">-->
+            <!--SELECT p.id project_id,-->
+            <!--p.title project_title,-->
+
+            <!--CASE-->
+            <!--WHEN p.organisation_group_id IS NULL THEN 'Individual'-->
+            <!--ELSE bid_org_group.type END org_type,-->
+
+            <!--CASE-->
+            <!--WHEN p.organisation_group_id IS NULL THEN bid_org.name-->
+            <!--ELSE bid_org_group.name END bidding_arrangement,-->
+
+            <!--CASE-->
+            <!--WHEN p.organisation_group_id IS NULL THEN bid_org.name-->
+            <!--ELSE lead_org.name END lead_org_name,-->
+
+            <!--CASE-->
+            <!--WHEN p.organisation_group_id IS NULL THEN bid_org.id-->
+            <!--ELSE bid_org_group.lead_organisation_id END org_id,-->
+
+            <!--pr.name programme_name,-->
+            <!--t.name project_type,-->
+            <!--p.address,-->
+            <!--p.borough,-->
+            <!--p.postcode,-->
+            <!--p.description,-->
+            <!--p.coord_x x_coord,-->
+            <!--p.coord_y y_coord,-->
+            <!--dev_org.name developing_org,-->
+            <!--p.main_contact_name main_contact,-->
+            <!--p.planning_permission_reference planning_ref,-->
+            <!--ph.comments submit_comment,-->
+            <!--ph.created_on date_submitted-->
+
+
+            <!--FROM project p-->
+            <!--LEFT JOIN template t ON p.template_id = t.id-->
+            <!--LEFT JOIN programme pr ON p.programme_id = pr.id-->
+            <!--LEFT JOIN organisation dev_org ON p.developing_organisation_id = dev_org.id-->
+            <!--LEFT JOIN organisation_group bid_org_group ON p.organisation_group_id = bid_org_group.id-->
+            <!--LEFT JOIN organisation bid_org ON p.org_id = bid_org.id-->
+            <!--LEFT JOIN organisation lead_org ON bid_org_group.lead_organisation_id = lead_org.id-->
+            <!--LEFT JOIN project_history ph ON ph.id = (-->
+            <!--SELECT max(id)-->
+            <!--FROM project_history-->
+            <!--WHERE project_id = p.id AND transition = 'Submitted'-->
+            <!--)-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_add_questions_1000" replaceIfExists="true">-->
+            <!--SELECT pb.project_id,-->
+            <!--MAX(CASE WHEN a.question_id = 524 THEN numeric_answer ELSE NULL END) aq_selfcont_sh,-->
+            <!--MAX(CASE WHEN a.question_id = 511 THEN numeric_answer ELSE NULL END) aq_sharedfac_sh,-->
+            <!--MAX(CASE WHEN a.question_id = 512 THEN numeric_answer ELSE NULL END) aq_wheelchair_units,-->
+            <!--MAX(CASE WHEN a.question_id = 513 THEN answer ELSE NULL END) aq_client_group,-->
+            <!--MAX(CASE WHEN a.question_id = 514 THEN numeric_answer ELSE NULL END) aq_moveon_units,-->
+            <!--MAX(CASE WHEN a.question_id = 525 THEN numeric_answer ELSE NULL END) aq_other_pub_subsidy,-->
+            <!--MAX(CASE WHEN a.question_id = 526 THEN numeric_answer ELSE NULL END) aq_income_rents,-->
+            <!--MAX(CASE WHEN a.question_id = 527 THEN numeric_answer ELSE NULL END) aq_income_first_sales,-->
+            <!--MAX(CASE WHEN a.question_id = 528 THEN numeric_answer ELSE NULL END) aq_provider_contrib-->
+            <!--FROM answer a-->
+            <!--LEFT JOIN project_block pb ON a.questions_block = pb.id-->
+            <!--INNER JOIN v_project_block_active pba ON pba.id = pb.id-->
+            <!--GROUP BY pb.project_id-->
+
+        <!--</createView>-->
+
+        <!--<createView viewName="v_milestones_1000" replaceIfExists="true">-->
+            <!--SELECT-->
+            <!--pb.project_id,-->
+            <!--MAX(pr.name) ms_processing_route,-->
+            <!--MIN(CASE WHEN m.external_id = 3005 THEN milestone_date ELSE NULL END) ms_land_acquired,-->
+            <!--MIN(CASE WHEN m.external_id = 3005 THEN monetary_split ELSE NULL END) ms_land_acquired_pct,-->
+            <!--MIN(CASE WHEN m.external_id = 3005 THEN milestone_status ELSE NULL END) ms_land_acquired_status,-->
+            <!--MIN(CASE WHEN m.external_id = 3001 THEN milestone_date ELSE NULL END) ms_contractor,-->
+            <!--MIN(CASE WHEN m.external_id = 3001 THEN monetary_split ELSE NULL END) ms_contractor_pct	,-->
+            <!--MIN(CASE WHEN m.external_id = 3001 THEN milestone_status ELSE NULL END) ms_contractor_status,-->
+            <!--MIN(CASE WHEN m.external_id = 3006 THEN milestone_date ELSE NULL END) ms_plan_perm,-->
+            <!--MIN(CASE WHEN m.external_id = 3006 THEN monetary_split ELSE NULL END) ms_plan_perm_pct	,-->
+            <!--MIN(CASE WHEN m.external_id = 3006 THEN milestone_status ELSE NULL END) ms_plan_perm_status,-->
+            <!--MIN(CASE WHEN m.external_id = 3003 THEN milestone_date ELSE NULL END) ms_start_site,-->
+            <!--MIN(CASE WHEN m.external_id = 3003 THEN monetary_split ELSE NULL END) ms_start_site_pct,-->
+            <!--MIN(CASE WHEN m.external_id = 3003 THEN milestone_status ELSE NULL END) ms_start_site_status,-->
+            <!--MIN(CASE WHEN m.external_id = 3004 THEN milestone_date ELSE NULL END) ms_completion,-->
+            <!--MIN(CASE WHEN m.external_id = 3004 THEN monetary_split ELSE NULL END) ms_completion_pct,-->
+            <!--MIN(CASE WHEN m.external_id = 3004 THEN milestone_status ELSE NULL END) ms_completion_status-->
+            <!--FROM milestone m-->
+            <!--LEFT JOIN project_block pb ON pb.id = m.milestones_block-->
+            <!--LEFT JOIN milestones_block mb ON pb.id = mb.id-->
+            <!--LEFT JOIN processing_route pr ON mb.processing_route_id = pr.id-->
+            <!--INNER JOIN v_project_block_active pba ON pba.id = pb.id-->
+            <!--GROUP BY pb.project_id-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_indicative_units_1000" replaceIfExists="true">-->
+            <!--SELECT p.id project_id,-->
+            <!--iv.units,-->
+            <!--iv.year,-->
+            <!--tu.grant_per_unit ,-->
+            <!--tt.external_id-->
+            <!--FROM project p-->
+            <!--LEFT JOIN tenure_AND_units tu ON tu.project_id = p.id-->
+            <!--LEFT JOIN tenure_type  tt ON tu.tenure_type_id = tt.id-->
+            <!--INNER JOIN indicative_tenure_value iv ON tu.id = iv.tenure_units_id;-->
+        <!--</createView>-->
+
+
+        <!--<createView viewName="v_questions_1000" replaceIfExists="true">-->
+            <!--SELECT pb.project_id,-->
+            <!--MAX(CASE WHEN a.question_id = 530 THEN numeric_answer ELSE NULL END) q_larger_aff_homes	,-->
+            <!--MAX(CASE WHEN a.question_id = 501 THEN answer ELSE NULL END) q_other_aff_type,-->
+            <!--MAX(CASE WHEN a.question_id = 502 THEN answer ELSE NULL END) q_planning_status,-->
+            <!--MAX(CASE WHEN a.question_id = 503 THEN answer ELSE NULL END) q_land_status,-->
+            <!--MAX(CASE WHEN a.question_id = 529 THEN answer ELSE NULL END) q_tender_status,-->
+            <!--MAX(CASE WHEN a.question_id = 504 THEN answer ELSE NULL END) q_previously_funded,-->
+            <!--MAX(CASE WHEN a.question_id = 505 THEN numeric_answer ELSE NULL END) q_rcgf_land_amount,-->
+            <!--MAX(CASE WHEN a.question_id = 506 THEN answer ELSE NULL END) q_estate_regen,-->
+            <!--MAX(CASE WHEN a.question_id = 507 THEN answer ELSE NULL END) q_offsite_provision,-->
+            <!--MAX(CASE WHEN a.question_id = 509 THEN numeric_answer ELSE NULL END) q_ar_pct_mr,-->
+            <!--MAX(CASE WHEN a.question_id = 519 THEN numeric_answer ELSE NULL END) q_ind_conv_aff,-->
+            <!--MAX(CASE WHEN a.question_id = 520 THEN numeric_answer ELSE NULL END) q_ind_market_units,-->
+            <!--MAX(CASE WHEN a.question_id = 521 THEN numeric_answer ELSE NULL END) q_ind_afford_units,-->
+            <!--MAX(CASE WHEN a.question_id = 522 THEN numeric_answer ELSE NULL END) q_london_stock_owned-->
+            <!--FROM answer a-->
+            <!--LEFT JOIN project_block pb ON a.questions_block = pb.id-->
+            <!--INNER JOIN v_project_block_active pba ON pba.id = pb.id-->
+            <!--GROUP BY pb.project_id-->
+        <!--</createView>-->
+
+
+        <!--<createView viewName="v_indicative_1000" replaceIfExists="true">-->
+            <!--SELECT y17llr.project_id,-->
+            <!--y17llr.units ind_llr_1718_starts,-->
+            <!--y18llr.units ind_llr_1819_starts,-->
+            <!--y19llr.units ind_llr_1920_starts,-->
+            <!--y17lso.units ind_lso_1718_starts,-->
+            <!--y18lso.units ind_lso_1819_starts,-->
+            <!--y19lso.units ind_lso_1920_starts,-->
+            <!--y17llr.grant_per_unit ind_llr_gpu,-->
+            <!--y17lso.grant_per_unit ind_lso_gpu-->
+            <!--FROM v_indicative_units_1000 y17llr-->
+            <!--LEFT JOIN v_indicative_units_1000 y19llr ON y17llr.project_id = y19llr.project_id-->
+            <!--LEFT JOIN v_indicative_units_1000 y17lso ON y17llr.project_id = y17lso.project_id-->
+            <!--LEFT JOIN v_indicative_units_1000 y18lso ON y17llr.project_id = y18lso.project_id-->
+            <!--LEFT JOIN v_indicative_units_1000 y18llr ON y17llr.project_id = y18llr.project_id-->
+            <!--LEFT JOIN v_indicative_units_1000 y19lso ON y17llr.project_id = y19lso.project_id-->
+            <!--WHERE y17llr.year = 2017 AND y17llr.external_id = 4001-->
+            <!--AND y18llr.year = 2018 AND y18llr.external_id = 4001-->
+            <!--AND y19llr.year = 2019 AND y19llr.external_id = 4001-->
+            <!--AND y17lso.year = 2017 AND y17lso.external_id = 4002-->
+            <!--AND y18lso.year = 2018 AND y18lso.external_id = 4002-->
+            <!--AND y19lso.year = 2019 AND y19lso.external_id = 4002-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_eligible_grant_1000_null_clean" replaceIfExists="true">-->
+            <!--SELECT-->
+            <!--project_id,-->
+            <!--eg_40pct_hab_rooms,-->
+            <!--CASE WHEN-->
+            <!--eg_s106_units_lar IS NULL AND-->
+            <!--eg_s106_units_llr IS NULL AND-->
+            <!--eg_s106_units_so IS NULL AND-->
+            <!--eg_s106_units_oa IS NULL THEN TRUE-->
+            <!--ELSE false END s106_null,-->
+            <!--CASE-->
+            <!--WHEN eg_s106_units_lar IS NULL THEN 0-->
+            <!--ELSE eg_s106_units_lar END s106_lar,-->
+            <!--CASE-->
+            <!--WHEN eg_s106_units_llr IS NULL THEN 0-->
+
+            <!--ELSE eg_s106_units_llr END s106_llr,-->
+            <!--CASE-->
+            <!--WHEN eg_s106_units_so IS NULL THEN 0-->
+            <!--ELSE eg_s106_units_so END s106_so,-->
+            <!--CASE-->
+            <!--WHEN eg_s106_units_oa IS NULL THEN 0-->
+            <!--ELSE eg_s106_units_oa END s106_oa,-->
+
+            <!--CASE WHEN-->
+            <!--eg_add_aff_units_lar IS NULL AND-->
+            <!--eg_add_aff_units_llr IS NULL AND-->
+            <!--eg_add_aff_units_so IS NULL AND-->
+            <!--eg_add_aff_units_oa IS NULL THEN TRUE-->
+            <!--ELSE false END add_aff_null,-->
+            <!--CASE-->
+            <!--WHEN eg_add_aff_units_lar IS NULL THEN 0-->
+            <!--ELSE eg_add_aff_units_lar END add_aff_lar,-->
+            <!--CASE-->
+            <!--WHEN eg_add_aff_units_llr IS NULL THEN 0-->
+            <!--ELSE eg_add_aff_units_llr END add_aff_llr,-->
+            <!--CASE-->
+            <!--WHEN eg_add_aff_units_so IS NULL THEN 0-->
+            <!--ELSE eg_add_aff_units_so END add_aff_so,-->
+            <!--CASE-->
+            <!--WHEN eg_add_aff_units_oa IS NULL THEN 0-->
+            <!--ELSE eg_add_aff_units_oa END add_aff_oa,-->
+
+            <!--CASE WHEN-->
+            <!--eg_supp_units_lar IS NULL AND-->
+            <!--eg_supp_units_llr IS NULL AND-->
+            <!--eg_supp_units_so IS NULL AND-->
+            <!--eg_supp_units_oa IS NULL THEN TRUE-->
+            <!--ELSE false END eg_supp_units_null,-->
+            <!--CASE-->
+            <!--WHEN eg_supp_units_lar IS NULL THEN 0-->
+            <!--ELSE eg_supp_units_lar END eg_supp_units_lar,-->
+            <!--CASE-->
+            <!--WHEN eg_supp_units_llr IS NULL THEN 0-->
+            <!--ELSE eg_supp_units_llr END eg_supp_units_llr,-->
+            <!--CASE-->
+            <!--WHEN eg_supp_units_so IS NULL THEN 0-->
+            <!--ELSE eg_supp_units_so END eg_supp_units_so,-->
+            <!--CASE-->
+            <!--WHEN eg_supp_units_oa IS NULL THEN 0-->
+            <!--ELSE eg_supp_units_oa END eg_supp_units_oa,-->
+
+            <!--eg_total_units_lar lar_units,-->
+            <!--eg_total_units_llr llr_units,-->
+            <!--eg_total_units_so lso_units,-->
+            <!--eg_total_units_oa other_units-->
+            <!--FROM v_eligible_grant_1000-->
+        <!--</createView>-->
+
+        <!--<createView viewName="v_borough_report" replaceIfExists="true">-->
+            <!--SELECT-->
+            <!--proj.programme_id,-->
+            <!--p.programme_name,-->
+            <!--proj.template_id,-->
+            <!--proj.status,-->
+            <!--p.project_type,-->
+            <!--p.project_id,-->
+            <!--p.project_title,-->
+            <!--p.date_submitted,-->
+            <!--p.description,-->
+            <!--p.org_type,-->
+            <!--p.lead_org_name,-->
+            <!--p.developing_org,-->
+            <!--p.borough,-->
+            <!--p.postcode,-->
+            <!--p.x_coord,-->
+            <!--p.y_coord,-->
+            <!--p.planning_ref,-->
+            <!--ms.ms_start_site,-->
+            <!--ms.ms_completion,-->
+            <!--ms.ms_processing_route,-->
+            <!--eg.eg_40pct_hab_rooms affordable_criteria_met_dev_led,-->
+            <!--CASE-->
+            <!--WHEN eg.s106_null THEN NULL-->
+            <!--ELSE eg.s106_lar+eg.s106_llr+eg.s106_so+eg.s106_oa-->
+            <!--END s106_dev_led,-->
+            <!--CASE-->
+            <!--WHEN eg.add_aff_null THEN NULL-->
+            <!--ELSE eg.add_aff_lar+eg.add_aff_llr+eg.add_aff_so+eg.add_aff_oa-->
+            <!--END add_aff_units_dev_led,-->
+            <!--CASE-->
+            <!--WHEN eg.eg_supp_units_null THEN NULL-->
+            <!--ELSE eg.eg_supp_units_lar+eg.eg_supp_units_llr+eg.eg_supp_units_so+eg.eg_supp_units_oa-->
+            <!--END   eg_supp_units,-->
+            <!--eg.lar_units,-->
+            <!--eg.llr_units,-->
+            <!--eg.lso_units,-->
+            <!--eg.other_units,-->
+
+            <!--q.q_other_aff_type,-->
+            <!--q.q_planning_status,-->
+            <!--q.q_land_status,-->
+            <!--q.q_larger_aff_homes,-->
+            <!--aq.aq_wheelchair_units,-->
+            <!--aq.aq_client_group-->
+            <!--FROM v_project_details p-->
+            <!--INNER JOIN project proj ON proj.id=p.project_id-->
+            <!--LEFT JOIN v_eligible_grant_1000_null_clean eg ON p.project_id=eg.project_id-->
+            <!--LEFT JOIN v_milestones_1000 ms on ms.project_id=p.project_id-->
+            <!--LEFT JOIN v_questions_1000 q ON q.project_id=p.project_id-->
+            <!--LEFT JOIN v_add_questions_1000 aq ON aq.project_id=p.project_id-->
+        <!--</createView>-->
+
+    <!--</changeSet>-->
+
+
+</databaseChangeLog>

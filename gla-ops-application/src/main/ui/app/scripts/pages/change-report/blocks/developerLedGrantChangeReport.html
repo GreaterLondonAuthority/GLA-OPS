@@ -1,0 +1,37 @@
+<change-report-field
+  class="next-to-tables"
+  label="'1. Are 40% or more of the habitable rooms on the entire development, including open market sale and open market rent, affordable?'"
+  data="$ctrl.data"
+  fields="'affordableCriteriaMet'"
+  formats="'yesno'">
+</change-report-field>
+
+<change-report-static-text text="'2. Units & Tenure'" data="$ctrl.reportData" class="next-to-tables"></change-report-static-text>
+
+<change-report-table
+  rows="$ctrl.reportData.tenuresToCompare"
+  fields="$ctrl.tenuresFields"
+  changes="$ctrl.data.changes">
+</change-report-table>
+
+<change-report-table
+  heading="'TOTALS'"
+  rows="$ctrl.reportData.totalsToCompare"
+  fields="$ctrl.totalsFields"
+  changes="$ctrl.data.changes">
+</change-report-table>
+
+<change-report-tiles
+  heading-field="'name'"
+  rows="$ctrl.reportData.summariesToCompare"
+  fields="$ctrl.summariesFields"
+  changes="$ctrl.data.changes">
+</change-report-tiles>
+
+<change-report-tile-total
+  heading="'TOTAL GRANT ELIGIBLE'"
+  data="$ctrl.reportData"
+  format="'currency'"
+  field="'totalGrantEligibility'"
+  changes="$ctrl.data.changes">
+</change-report-tile-total>

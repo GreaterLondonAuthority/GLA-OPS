@@ -1,0 +1,83 @@
+{
+  "name": "Simple Subcontractor",
+  "author": "TBC",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "DeliveryPartnersTemplateBlock",
+      "blockDisplayName": "Partner Details",
+      "block": "DeliveryPartners",
+      "displayOrder": 2,
+      "paymentSourcesString": "",
+      "entityName": "Partner",
+      "hasDeliveryPartnersTitle": "Are multiple parties involved in delivering this project?",
+      "deliveryPartnerType": "Partner",
+      "retentionFeeThreshold": 10,
+      "availableDeliverableTypes": [
+        "OTHER"
+      ],
+      "deliverableName": "Deliverable",
+      "valueName": "Amount allocated",
+      "feeName": "Retention Fee",
+      "showDeliverables": true,
+      "availableDeliveryPartnerTypes": [
+        "Business Improvement District",
+        "Community interest company",
+        "Charity",
+        "Community benefit society",
+        "Cooperative society",
+        "Housing association",
+        "Limited company",
+        "Local Authority",
+        "Neighbourhood forum",
+        "Other public sector body",
+        "Other"
+      ],
+      "showOrganisationType": true,
+      "organisationTypeColumnName": "type of organisation",
+      "organisationNameColumnText": "name of organisation",
+      "roleColumnText": "their role in the project",
+      "showRoleColumn": true,
+      "ukprnColumnText": "UKPRN",
+      "showUkprnColumn": false,
+      "contractValueColumnText": "Contract Value",
+      "showContractValueColumn": false,
+      "grantTypes": [],
+      "paymentSources": []
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": "ChangeControlled",
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "imageRequirement": "hidden",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "mandatory",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "grantTypes": [],
+  "shouldMilestonesBlockShowStatus": false,
+  "allowMonetaryMilestones": false
+}

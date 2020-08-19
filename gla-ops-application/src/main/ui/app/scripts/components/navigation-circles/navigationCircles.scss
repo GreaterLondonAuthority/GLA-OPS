@@ -1,0 +1,133 @@
+navigation-circles {
+  $circle-border-width: 3;
+  $circle-border-color: #5E6869;
+  $circle-radius-size: 20px;
+  $circle-border: $circle-border-width * 1px solid $circle-border-color;
+  display: block;
+
+  .navigation-circles {
+    display: flex;
+    justify-content: space-around;
+
+    .item {
+      text-align: center;
+      width: 100%;
+
+      .bar-wrapper {
+        position: relative;
+        top: $circle-radius-size + $circle-border-width / 2;
+      }
+
+      &:first-child {
+        .bar-wrapper {
+          text-align: right;
+          font-size: 0;
+
+          .bar {
+            width: 50%;
+            display: inline-block;
+          }
+        }
+      }
+
+      &:last-child {
+        .bar-wrapper {
+          text-align: left;
+          font-size: 0;
+
+          .bar {
+            width: 50%;
+            display: inline-block;
+          }
+        }
+      }
+
+      .circle {
+        height: $circle-radius-size * 2;
+        width: $circle-radius-size * 2;
+        background-color: $gla-white;
+        border-radius: 50%;
+        display: inline-block;
+        border: $circle-border;
+        position: relative;
+        z-index: 1;
+        text-align: left;
+
+        //8 is half of the font size of glyphicon
+        .glyphicon {
+          position: absolute;
+          width: 16px;
+          height: 16px;
+          left: $circle-radius-size - $circle-border-width - 7;
+          top: $circle-radius-size - $circle-border-width - 8;
+          color: $white;
+        }
+      }
+
+      .bar {
+        border-top: $circle-border;
+      }
+
+      .title {
+      }
+
+      &.active {
+        .circle {
+          background-color: $silver-dark;
+          border-color: darken($circle-border-color, 20%);
+        }
+
+        .title {
+          font-family: $font-family-bolder;
+        }
+      }
+
+      &.completed {
+        .circle {
+          background-color: $btn-primary-bg;
+        }
+
+        .title {
+          font-family: $font-family-bolder;
+        }
+      }
+
+      &.active.completed {
+        .circle {
+          //background-color: $btn-primary-hover;
+        }
+      }
+    }
+  }
+
+  @include when-xs {
+    .navigation-circles {
+
+      margin-top: 20px;
+
+      padding: 0 15px;
+
+      flex-wrap: wrap;
+
+      .item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+
+      .circle {
+        float: left;
+      }
+
+      .title {
+        float: left;
+        padding-left: 10px;
+      }
+
+      .bar-wrapper {
+        display: none;
+      }
+    }
+  }
+}
+

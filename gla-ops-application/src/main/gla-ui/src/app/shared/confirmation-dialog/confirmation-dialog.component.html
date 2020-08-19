@@ -1,0 +1,14 @@
+<div class="confirmation-dialog">
+  <div class="modal-body text-center">
+    <button (keydown.enter)="activeModal.dismiss('cancel')" (mousedown)="activeModal.dismiss('cancel')" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span *ngIf="config.showIcon" [class]="{'info': config.info}" aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span>
+    <h1 *ngIf="config.title" class="title">{{config.title}}</h1>
+    <div [innerHTML]="config.message" class="text-center confirm-message"></div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="activeModal.close()" *ngIf="config.showApprove" class="btn btn-default btn-primary btn-center approve-btn min-padding" type="button">{{config.approveText}}</button>
+    <button (click)="activeModal.dismiss('cancel')" *ngIf="config.showDismiss" class="btn btn-default btn-secondary btn-center dismiss-btn min-padding" type="button">{{config.dismissText}}</button>
+  </div>
+</div>

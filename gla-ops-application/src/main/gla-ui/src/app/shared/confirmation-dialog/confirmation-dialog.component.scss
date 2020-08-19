@@ -1,0 +1,29 @@
+@import 'variables';
+
+.confirmation-dialog {
+  padding: 15px 0;
+  .glyphicon {
+    font-size: 40px;
+    color: $error;
+    margin-bottom: 20px;
+    &.info{
+      color: $peppermint;
+    }
+  }
+
+  .title {
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+  .close{
+    position: absolute;
+    top: -2px;
+    right: 15px;
+    font-family: $font-family-bolder;
+  }
+}
+
+.modal-confirm{
+  max-width: 500px;
+}
+

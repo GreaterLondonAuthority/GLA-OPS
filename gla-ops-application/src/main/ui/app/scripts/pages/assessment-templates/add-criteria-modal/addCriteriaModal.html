@@ -1,0 +1,118 @@
+<div class="add-criteria-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.criteriaModel.id ? 'EDIT' : 'ADD'}} CRITERIA</h1>
+  </div>
+
+  <div class="modal-body">
+    <form class="mtop40" name="modalForm">
+    <div class="form-group">
+      <label for="criteria-title">Title</label>
+      <textarea id="criteria-title"
+                ng-trim="false"
+                rows="5"
+                placeholder=""
+                name="criteria-title"
+                class="form-control"
+                ng-model="$ctrl.criteriaModel.title"
+                required
+                ng-attr-maxlength="200">
+       </textarea>
+      <gla-remaining-characters [text]="$ctrl.criteriaModel.title" [max]="200"></gla-remaining-characters>
+    </div>
+
+    <div class="form-group">
+      <label for="criteria-comments-requirement">Comment type</label>
+      <select class="form-control"
+              id="criteria-comments-requirement"
+              name="criteria-comments-requirement"
+              ng-model="$ctrl.criteriaModel.commentsRequirement"
+              ng-options="requirement.value as requirement.label for requirement in $ctrl.commentsRequirements"
+              required
+              style-placeholder="">
+        <option disabled value="">Select</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="displayOrder">Display Order</label>
+      <input id="displayOrder"
+             type="text"
+             class="form-control"
+             number-mask="2"
+             placeholder="Display Order"
+             ng-model="$ctrl.criteriaModel.displayOrder"
+             ng-keyup="$ctrl.validateDisplayOrder($ctrl.criteriaModel.displayOrder)"
+             maxlength="9"/>
+      <div class="error-wrapper" ng-if="modalForm.criteriaModel.displayOrder.$touched || $ctrl.isDuplicateDisplayOrder" role="alert">
+        <span class="error" id="duplicate-display-order">Duplicate display order</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="criteria-answer-type">Answer type</label>
+      <select class="form-control"
+              id="criteria-answer-type"
+              name="criteria-answer-type"
+              ng-model="$ctrl.criteriaModel.answerType"
+              ng-options="answerType.value as answerType.label for answerType in $ctrl.answerTypes"
+              on-change="$ctrl.onAnswerTypeChange()"
+              required
+              style-placeholder="">
+        <option disabled value="">Select</option>
+      </select>
+    </div>
+
+    <div class="form-group" ng-if="($ctrl.criteriaModel.answerType === 'Score') && $ctrl.assessmentTemplate.includeWeight">
+      <label for="criteria-weight">Weight %</label>
+      <input id="criteria-weight"
+             number-mask="0"
+             min="0"
+             max="100"
+             name="criteria-weight"
+             class="form-control"
+             placeholder=""
+             ng-model="$ctrl.criteriaModel.weight"
+             maxlength="40"/>
+    </div>
+
+    <div class="form-group" ng-if="$ctrl.criteriaModel.answerType === 'Dropdown'" id="dropdown-options">
+      <div class="dropdown-options-top">
+        <span class="label">Dropdown Options</span>
+        <button class="btn btn-secondary pull-right margin" style="margin-bottom: 10px"
+                ng-click="$ctrl.addNewDropdownOption()">ADD OPTION</button>
+      </div>
+      <div class="dropdown-option delete-btn-container" ng-repeat="option in $ctrl.criteriaModel.criteriaAnswerOptions track by $index"
+           ng-class="'dropdown-option-' + ($index + 1)">
+        <input id="dropdown-option"
+               type="text"
+               aria-label="{{'dropdown option ' + ($index + 1)}}"
+               class="form-control"
+               placeholder="Dropdown option"
+               maxlength="45"
+               ng-model="$ctrl.criteriaModel.criteriaAnswerOptions[$index].title"/>
+        <delete-button ng-click="$ctrl.deleteDropdownOption($index)"></delete-button>
+      </div>
+      <div class="dropdown-option error-wrapper" style="margin-top: 20px" ng-if="$ctrl.getValidOptions($ctrl.criteriaModel).length < 2">
+        <span class="error">At least two different dropdown options must be added.</span>
+      </div>
+    </div>
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button class="btn btn-primary" id="add-criteria" ng-click="$ctrl.addCriteria()"
+                ng-disabled="!$ctrl.isCriteriaAnswerOptionValid($ctrl.criteriaModel)">
+          {{$ctrl.criteriaModel.id ? 'SAVE' : 'ADD'}}
+        </button>
+        <button class="btn btn-secondary" ng-click="$dismiss()">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>

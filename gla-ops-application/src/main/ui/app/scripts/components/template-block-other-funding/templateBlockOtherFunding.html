@@ -1,0 +1,40 @@
+<div class="template-block-other-funding">
+
+  <div class="form-group">
+    <label for="evidence-requirement">Evidence requirement</label>
+    <select class="form-control"
+            id="evidence-requirement"
+            ng-disabled="$ctrl.readOnly"
+            ng-model="$ctrl.block.evidenceRequirement"
+            ng-options="requirement.id as requirement.label for requirement in $ctrl.requirementOptions"
+            style-placeholder="">
+      <option disabled value="">Evidence requirement</option>
+    </select>
+  </div>
+
+  <div class="form-group" >
+    <label for="max-amount-of-attachments">Max number of attachments</label>
+
+    <input class="form-control"
+           id="max-amount-of-attachments"
+           maxlength="2"
+           ng-disabled="$ctrl.readOnly"
+           ng-model="$ctrl.block.maxEvidenceAttachments"
+           number-mask="0"
+           placeholder="Max number of attachments"
+           type="text" />
+  </div>
+
+  <div class="form-group" >
+    <label for="max-attachment-size">Max attachment size (MB)</label>
+
+    <input class="form-control"
+           id="max-attachment-size"
+           maxlength="3"
+           ng-disabled="$ctrl.readOnly"
+           ng-model="$ctrl.block.maxUploadSizeInMb"
+           number-mask="0"
+           placeholder="Max attachment size"
+           type="text" />
+  </div>
+</div>

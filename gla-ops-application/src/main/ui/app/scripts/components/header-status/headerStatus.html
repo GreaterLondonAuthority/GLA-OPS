@@ -1,0 +1,9 @@
+<div class="row no-gutter header-status">
+  <div class="col-xs-12 text-xs-center text-sm-left status-left" ng-class="$ctrl.sidesCls" ng-transclude="hsLeft"></div>
+
+  <div class="col-xs-12 col-sm-6 status-center" ng-if="$ctrl.hasCenter" ng-transclude="hsCenter"></div>
+
+  <div class="col-xs-12 text-xs-center text-sm-right status-right" ng-class="$ctrl.sidesCls" ng-transclude="hsRight"></div>
+</div>
+
+

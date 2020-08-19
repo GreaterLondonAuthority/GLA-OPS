@@ -1,0 +1,157 @@
+.date-picker{
+  .dropdown-menu {
+    padding: 0px;
+    table {
+      width: 100%;
+      td {
+        button {
+          padding: 10px;
+          border: 2px solid lighten($secondary-grey, 15%);
+          color: darken($nav-text-color, 10%);
+          text-transform: uppercase;
+          font-family: $font-family-bolder;
+          font-size: 12px;
+          border-radius: 0;
+          background-color: $white;
+
+          &.btn-info{
+            &.active {
+              &,
+              &:hover,
+              .text-info {
+                background-color: $moonstone;
+                color: $nav-text-hover;
+              }
+
+              &:hover{
+                border-color: #9d9d9d;
+              }
+            }
+
+            &:hover{
+              background-color: $white;
+            }
+
+            &:focus{
+              @include tab-focus;
+              &:not(:focus-visible){
+                outline: none;
+              };
+            }
+          }
+
+          .text-info {
+            color: darken($nav-text-color, 10%);
+          }
+
+          &:hover, .text-info:hover {
+            color: $dark-navy;
+          }
+
+          &[disabled] {
+            &, span {
+              color: $nav-text-hover !important;
+              background-color: #DAE0DF !important;
+              opacity: 1;
+              border-color: #9d9d9d;
+            }
+          }
+        }
+
+        &.uib-day{
+          button{
+            &:active{
+              padding: 0;
+            }
+            padding: 0;
+            span{
+              display: block;
+              padding: 3px 8px;
+
+              &.text-muted{
+                background-color: #DAE0DF;
+                color: $nav-text-hover;
+                &:hover{
+                  color: $dark-navy;
+                }
+              }
+            }
+            &:hover{
+              background-color: $white;
+            }
+          }
+        }
+        &:nth-child(6), &:nth-child(7) {
+          button {
+            background-color: lighten($green-pearl, 5%);
+            color: darken($nav-text-color, 10%);
+            &:hover{
+              color: $dark-navy;
+              background-color: lighten($green-pearl, 5%);
+            }
+          }
+        }
+      }
+      thead th {
+        button {
+          background-color: $nav-bg-color;
+          color: darken($nav-text-color, 10%);
+          border: none;
+          &:hover {
+            color: $nav-text-hover;
+            background-color: $nav-bg-color;
+          }
+
+          &.btn.uib-title {
+            &[disabled] {
+              color: darken($nav-text-color, 10%);
+              cursor: initial;
+              opacity: 1;
+            }
+          }
+        }
+      }
+      tr:nth-child(2) th {
+        background-color: $gla-white;
+        color: $dark-navy;
+      }
+    }
+  }
+
+  input.white{
+    background-color: $white;
+  }
+
+  input{
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+  }
+
+  .input-group-addon{
+    padding-top: 0;
+    padding-bottom: 0;
+    cursor: pointer;
+    &.disabled{
+      cursor: not-allowed;
+      color: $silver-dark;
+    }
+  }
+}
+
+.date-picker.right-aligned {
+  position: relative;
+  .dropdown-menu {
+    left: auto !important;
+    right: 0px;
+  }
+}
+
+.uib-datepicker{
+  .btn.active{
+    @include tab-focus;
+  }
+
+  .btn.btn-sm, .btn-group-sm > .btn, .btn.btn-sm.btn-sm:active, .btn.btn-sm.btn-md:active{
+    //padding: 0;
+  }
+}

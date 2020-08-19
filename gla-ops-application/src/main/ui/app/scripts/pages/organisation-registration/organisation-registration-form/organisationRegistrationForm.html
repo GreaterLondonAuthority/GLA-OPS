@@ -1,0 +1,17 @@
+<div class="organisation-registration-page organisation-form page">
+  <gla-page-header back-btn-name="PROGRAMMES" [editable-block]="$ctrl" (on-back)="$ctrl.back()">Create a new organisation profile</gla-page-header>
+
+  <navigation-circles class="mtop10" items="$ctrl.registration.navigationCircles"></navigation-circles>
+
+  <div class="mtop40 mbottom40 text-center">You are registering with the {{$ctrl.registration.managingOrganisation.name}} <span ng-if="$ctrl.registration.programme">for {{$ctrl.registration.programme.name}}</span></div>
+
+  <multi-step-organisation-form managing-organisation-id="$ctrl.registration.managingOrganisation.id"
+                                managing-organisations="$ctrl.managingOrganisations"
+                                on-save="$ctrl.next()"
+                                on-form-validity-change="$ctrl.onFormValidityChange(event)"
+                                organisation="$ctrl.registration.org"
+                                organisation-types="$ctrl.organisationTypes"
+                                legal-statuses="$ctrl.legalStatuses"
+                                is-legal-status-enabled="$ctrl.isLegalStatusEnabled"></multi-step-organisation-form>
+
+</div>

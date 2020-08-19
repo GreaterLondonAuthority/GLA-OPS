@@ -1,0 +1,14 @@
+<div class="text-center">
+  <gla-page-header (on-back)="$ctrl.back()">Consortiums & Partnerships</gla-page-header>
+
+  <p ng-if="!$ctrl.leadOrganisations.length" class="mtop30">
+    You do not have valid permissions to create consortiums & partnerships
+  </p>
+
+  <consortium-form data="$ctrl.data" ng-if="$ctrl.leadOrganisations.length"
+                   programmes="$ctrl.programmes"
+                   lead-organisations="$ctrl.leadOrganisations"
+                   organisations-in-projects="$ctrl.organisationsInProjects"
+                   on-save="$ctrl.submit($event)"></consortium-form>
+</div>
+

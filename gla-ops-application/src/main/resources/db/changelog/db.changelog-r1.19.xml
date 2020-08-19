@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="431" author="cmelville" failOnError="false">
+        <createIndex indexName="project_block_duplicate_prevention" tableName="project_block" unique="true">
+            <column name="project_id" type="INT4" />
+            <column name="display_order"  type="INT4" />
+            <column name="latest_for_project" type="INT4" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="432" author="cmelville" >
+        <addColumn tableName="template_block">
+            <column name="show_milestone_status" type="BOOLEAN" remarks="If the milestone status column should be shown on the milestones block"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="433" author="ybouhass">
+        <renameColumn tableName="legacy_ims_project" oldColumnName="q_9913" newColumnName="pros_elig_hb_service_charge" />
+        <renameColumn tableName="legacy_ims_project" oldColumnName="q_9912" newColumnName="pros_non_elig_hb_service_charge" />
+        <renameColumn tableName="legacy_ims_project" oldColumnName="q_9915" newColumnName="exp_market_value_rent" />
+        <renameColumn tableName="legacy_ims_project" oldColumnName="q_9918" newColumnName="ave_net_wkly_rent_aho" />
+
+        <createSequence sequenceName="legacy_ims_reported_figures_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="legacy_ims_reported_figures">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="legacy_ims_reported_figures_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="scheme_id" type="INT4" />
+            <column name="programme" type="varchar(255)" />
+            <column name="tenure_type" type="varchar(255)" />
+            <column name="starts_achieved" type="INT4" />
+            <column name="completions_achieved" type="INT4" />
+            <column name="sos_date" type="varchar(255)" />
+            <column name="completion_date" type="varchar(255)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="434" author="ybouhass">
+        <modifyDataType tableName="legacy_ims_project" columnName="total_unit_size" newDataType="decimal(12,2)" />
+        <modifyDataType tableName="legacy_ims_project" columnName="initial_sales" newDataType="decimal(12,2)" />
+    </changeSet>
+
+    <changeSet id="435" author="ybouhass">
+        <createSequence sequenceName="indicative_tenure_config_year_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="indicative_tenure_config_year">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="indicative_tenure_config_year_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="indicative_tenure_config_id" type="INT4" />
+            <column name="year" type="INT4" />
+            <column name="external_id" type="INT4" />
+            <column name="tariff_rate" type="INT4" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="436" author="ybouhass">
+        <addColumn tableName="message">
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+            <column name="enabled" type="boolean" remarks="whether the message will display or not" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="437" author="rbettison">
+        <createTable tableName="year_quarters">
+            <column name="year" type="INT4"></column>
+            <column name="quarter" type="INT4"></column>
+        </createTable>
+        <insert tableName="year_quarters">
+            <column name="year" value="1"></column>
+            <column name="quarter" value="4"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="2"></column>
+            <column name="quarter" value="4"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="3"></column>
+            <column name="quarter" value="4"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="4"></column>
+            <column name="quarter" value="1"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="5"></column>
+            <column name="quarter" value="1"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="6"></column>
+            <column name="quarter" value="1"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="7"></column>
+            <column name="quarter" value="2"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="8"></column>
+            <column name="quarter" value="2"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="9"></column>
+            <column name="quarter" value="2"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="10"></column>
+            <column name="quarter" value="3"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="11"></column>
+            <column name="quarter" value="3"></column>
+        </insert>
+        <insert tableName="year_quarters">
+            <column name="year" value="12"></column>
+            <column name="quarter" value="3"></column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="438" author="cmelville">
+        <addColumn tableName="programme_template">
+            <column name="template_wbs_code" type="varchar(50)"/>
+        </addColumn>
+        <sql>update programme_template pt set template_wbs_code = (select wbs_code from programme p where p.id = pt.programme_id)</sql>
+    </changeSet>
+
+    <changeSet id="440" author="ybouhass">
+        <dropColumn tableName="indicative_tenure_config_year" columnName="indicative_tenure_config_id" />
+        <addColumn tableName="indicative_tenure_config_year">
+            <column name="template_block_id" type="INT4" />
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="441" author="ybouhass">
+        <addColumn tableName="report">
+            <column name="external" type="boolean" defaultValue="false" remarks="whether the report is available for external / RP users" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="442" author="rbettison">
+        <addColumn tableName="year_quarters">
+             <column name="modifier" type="INT4"></column>
+        </addColumn>
+        <update tableName="year_quarters">
+            <column name="modifier" value="0"></column>
+            <where>quarter &lt; 4</where>
+        </update>
+        <update tableName="year_quarters">
+            <column name="modifier" value="-1"></column>
+            <where>quarter = 4</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

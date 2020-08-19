@@ -1,0 +1,14 @@
+<div allow-enter
+     aria-expanded="{{!$ctrl.collapsed}}"
+     aria-label="{{$ctrl.collapsed? 'Expand' : 'Collapse'}}"
+     class="text-center show-more-button"
+     role="button"
+     tabindex="0">
+  <span ng-transclude>
+    <span ng-if="!$ctrl.collapsed">VIEW ALL</span>
+    <span ng-if="$ctrl.collapsed">VIEW LESS</span>
+  </span>
+  <div class="glyphicon"
+       ng-class="{'glyphicon-triangle-top': $ctrl.collapsed, 'glyphicon-triangle-bottom': !$ctrl.collapsed}">
+  </div>
+</div>

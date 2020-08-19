@@ -1,0 +1,13 @@
+grant-table {
+  display: block;
+  .grant-table-centered-th-text{
+    text-align: center;
+  }
+  .second-th-row {
+    border-top: 0px;
+  }
+
+  &.indicative-table{
+    table-layout: fixed;
+  }
+}

@@ -1,0 +1,540 @@
+select
+pj.project_id as "91 Project_ID",
+pj.programme,
+pj.from_date as  "92 LT_spend_start_yr",
+pj.to_date as "93 LT_spend_end_yr",
+
+coalesce(pj.capital,0) as "94 LT_approved_CAP",
+coalesce(pj.revenue,0) as "95 LT_approved_REV",
+
+round(sum(case when pl.year_month < '201204'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "96 Pre_2012_CAP_Fcast",
+round(sum(case when pl.year_month < '201204'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "97 Pre_2012_CAP_Actual",
+round(sum(case when pl.year_month < '201204'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month < '201204'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "97a Pre_2012_CAP_Rem_Act",
+
+round(sum(case when pl.year_month < '201204'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "98 Pre_2012_REV_Fcast",
+round(sum(case when pl.year_month < '201204'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "99 Pre_2012_REV_Actual",
+round(sum(case when pl.year_month < '201204'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month < '201204'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "99a Pre_2012_REV_Rem_Act" ,
+
+round(sum(case when pl.year_month between '201204'and'201303'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "100 2012_13_CAP_Fcast",
+round(sum(case when pl.year_month between '201204'and'201303'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "101 2012_13_CAP_Actual",
+round(sum(case when pl.year_month between '201204'and'201303'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201204'and'201303'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "101a 2012_13_CAP_Rem_Act",
+
+round(sum(case when pl.year_month between '201204'and'201303'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "102 2012_13_REV_Fcast",
+round(sum(case when pl.year_month between '201204'and'201303'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "103 2012_13_REV_Actual",
+round(sum(case when pl.year_month between '201204'and'201303'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201204'and'201303'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "103a 2012_13_REV_Rem_Act",
+
+round(sum(case when pl.year_month between '201304'and'201403'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "104 2013_14_CAP_Fcast",
+round(sum(case when pl.year_month between '201304'and'201403'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "105 2013_14_CAP_Actual",
+round(sum(case when pl.year_month between '201304'and'201403'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201304'and'201403'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "105a 2013_14_CAP_Rem_Act",
+
+round(sum(case when pl.year_month between '201304'and'201403'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "106 2013_14_REV_Fcast",
+round(sum(case when pl.year_month between '201304'and'201403'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "107 2013_14_REV_Actual",
+round(sum(case when pl.year_month between '201304'and'201403'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201304'and'201403'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "107a 2013_14_REV_Rem_Act",
+
+round(sum(case when pl.year_month between '201404'and'201503'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "108 2014_15_CAP_Fcast",
+round(sum(case when pl.year_month between '201404'and'201503'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "109 2014_15_CAP_Actual",
+round(sum(case when pl.year_month between '201404'and'201503'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201404'and'201503'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "109a 2014_15_CAP_Rem_Act",
+
+round(sum(case when pl.year_month between '201404'and'201503'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "110 2014_15_REV_Fcast",
+round(sum(case when pl.year_month between '201404'and'201503'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "111 2014_15_REV_Actual",
+round(sum(case when pl.year_month between '201404'and'201503'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201404'and'201503'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "111a 2014_15_REV_Rem_Act",
+
+round(sum(case when pl.year_month between '201504'and'201603'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "112 2015_16_CAP_Fcast",
+round(sum(case when pl.year_month between '201504'and'201603'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "113 2015_16_CAP_Actual",
+round(sum(case when pl.year_month between '201504'and'201603'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201504'and'201603'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "113a 2015_16_CAP_Rem_Act",
+
+round(sum(case when pl.year_month between '201504'and'201603'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "114 2015_16_REV_Fcast",
+round(sum(case when pl.year_month between '201504'and'201603'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "115 2015_16_REV_Actual",
+round(sum(case when pl.year_month between '201504'and'201603'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201504'and'201603'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "115a 2015_16_REV_Rem_Act",
+
+round(sum(case when pl.year_month between '201604'and'201703'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "116 2016_17_CAP_Fcast",
+round(sum(case when pl.year_month between '201604'and'201703'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "117 2016_17_CAP_Actual",
+round(sum(case when pl.year_month between '201604'and'201703'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201604'and'201703'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "117a 2016_17_CAP_Rem_Act",
+
+round(sum(case when pl.year_month between '201604'and'201703'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "118 2016_17_REV_Fcast",
+round(sum(case when pl.year_month between '201604'and'201703'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "119 2016_17_REV_Actual",
+round(sum(case when pl.year_month between '201604'and'201703'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201604'and'201703'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "119a 2016_17_REV_Rem_Act",
+
+
+
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "120 2017_18_CAP_Fcast",
+round(sum(case when cast(pl.year_month as int) between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "121 2017_18_CAP_Actual",
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "121a 2017_18_CAP_Rem_Act",
+
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "122 2017_18_REV_Fcast",
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int)  and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "123 2017_18_REV_Actual",
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "123a 2017_18_REV_Rem_Act",
+
+
+
+
+round(sum(case when pl.year_month between '201804'and'201903'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "124 2018_19_CAP_Fcast",
+round(sum(case when pl.year_month between '201804'and'201903'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "125 2018_19_CAP_Actual",
+round(sum(case when pl.year_month between '201804'and'201903'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201804'and'201903'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "125a 2018_19_CAP_Rem_Act",
+
+round(sum(case when pl.year_month between '201804'and'201903'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "126 2018_19_REV_Fcast",
+round(sum(case when pl.year_month between '201804'and'201903'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "127 2018_19_REV_Actual",
+round(sum(case when pl.year_month between '201804'and'201903'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201804'and'201903'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "127a 2018_19_REV_Rem_Act",
+
+round(sum(case when pl.year_month between '201904'and'202003'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "128 2019_20_CAP_Fcast",
+round(sum(case when pl.year_month between '201904'and'202003'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "129 2019_20_CAP_Actual",
+round(sum(case when pl.year_month between '201904'and'202003'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201904'and'202003'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "129a 2019_20_CAP_Rem_Act",
+
+round(sum(case when pl.year_month between '201904'and'202003'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "130 2019_20_REV_Fcast",
+round(sum(case when pl.year_month between '201904'and'202003'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "131 2019_20_REV_Actual",
+round(sum(case when pl.year_month between '201904'and'202003'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month between '201904'and'202003'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "131a 2019_20_REV_Rem_Act",
+
+round(sum(case when pl.year_month > '202003'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "132 2020+_CAP_Fcast",
+round(sum(case when pl.year_month > '202003'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "133 2020+_CAP_Actual",
+round(sum(case when pl.year_month > '202003'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month > '202003'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "133a 2020+_CAP_Rem_Act",
+
+round(sum(case when pl.year_month > '202003'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "134 2020+_REV_Fcast",
+round(sum(case when pl.year_month > '202003'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "135 2020+_REV_Actual",
+round(sum(case when pl.year_month > '202003'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end)+
+sum(case when pl.year_month > '202003'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "135a 2020+_REV_Rem_Act",
+
+
+round(sum(case when ledger_status ='FORECAST' and spend_type in('REVENUE','CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE','CAPITAL') then (pl.amount*-1) else 0 end),0)
+as "136 CAP REV_TOTAL_Fcast",
+
+
+round(sum(case when ledger_status ='ACTUAL' and spend_type in('REVENUE','CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE','CAPITAL') then (pl.amount*-1) else 0 end),0)
+as "137 CAP REV_TOTAL_Actual",
+
+round(sum(case when ledger_status ='ACTUAL'and spend_type in('REVENUE','CAPITAL') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) +
+sum(case when ledger_status ='FORECAST'and spend_type in('REVENUE','CAPITAL') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0)  -
+(round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE','CAPITAL') then (pl.amount*-1) else 0 end),0)
++
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE','CAPITAL') then (pl.amount*-1) else 0 end),0))
+as "137a CAP REV_TOTAL_Rem_Act",
+
+
+
+
+case when coalesce(pj.capital,0) >
+(round(sum(case when ledger_status ='ACTUAL'and spend_type in('CAPITAL') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) +
+sum(case when ledger_status ='FORECAST'and spend_type in('CAPITAL') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0)  -
+(round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
++
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0))
+)
+then
+coalesce(pj.capital,0) -
+(round(sum(case when ledger_status ='ACTUAL'and spend_type in('CAPITAL') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) +
+sum(case when ledger_status ='FORECAST'and spend_type in('CAPITAL') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0)  -
+(round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
++
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0))
+)
+else 0 end as "138 Avail to Fcast_CAP",
+
+
+case when coalesce(pj.revenue,0) >
+(round(sum(case when ledger_status ='ACTUAL'and spend_type in('REVENUE') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) +
+sum(case when ledger_status ='FORECAST'and spend_type in('REVENUE') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0)  -
+(round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
++
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0))
+)
+then
+coalesce(pj.revenue,0) -
+(round(sum(case when ledger_status ='ACTUAL'and spend_type in('REVENUE') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) +
+sum(case when ledger_status ='FORECAST'and spend_type in('REVENUE') and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0)  -
+(round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
++
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0))
+)
+else 0 end as "139 Avail to Fcast_REV",
+
+
+case when coalesce(pj.capital,0) > 0 or coalesce(pj.revenue,0) > 0
+then
+coalesce(pj.capital,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+)
+else 0 end as "140 Left to Spend_CAP",
+
+
+case when coalesce(pj.capital,0) > 0 or coalesce(pj.revenue,0) > 0
+then
+coalesce(pj.revenue,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('REVENUE') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+)
+else 0 end as "141 Left to Spend_REV",
+
+
+case when (
+case when coalesce(pj.capital,0) > 0   then
+case when
+coalesce(pj.capital,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+) <
+sum(case when ledger_status ='FORECAST' and spend_type ='CAPITAL' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+then
+coalesce(pj.capital,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+)
+else
+sum(case when ledger_status ='FORECAST' and spend_type ='CAPITAL' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+end else 0 end ) < 0 then 0
+else
+ (
+case when coalesce(pj.capital,0) > 0   then
+case when
+coalesce(pj.capital,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+) <
+sum(case when ledger_status ='FORECAST' and spend_type ='CAPITAL' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+then
+coalesce(pj.capital,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+)
+else
+sum(case when ledger_status ='FORECAST' and spend_type ='CAPITAL' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+end else 0 end )
+
+end as "142 Approved Fcast_CAP",
+
+
+
+
+
+
+case when (
+case when coalesce(pj.revenue,0) > 0   then
+case when
+coalesce(pj.revenue,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('REVENUE') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+) <
+sum(case when ledger_status ='FORECAST' and spend_type ='REVENUE' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+then
+coalesce(pj.revenue,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('REVENUE') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+)
+else
+sum(case when ledger_status ='FORECAST' and spend_type ='REVENUE' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+end else 0 end ) < 0 then 0
+else
+ (
+case when coalesce(pj.revenue,0) > 0   then
+case when
+coalesce(pj.revenue,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('REVENUE') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+) <
+sum(case when ledger_status ='FORECAST' and spend_type ='REVENUE' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+then
+coalesce(pj.revenue,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('REVENUE') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+)
+else
+sum(case when ledger_status ='FORECAST' and spend_type ='REVENUE' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+end else 0 end )
+
+
+end as "143 Approved Fcast_REV",
+
+
+
+
+
+
+
+case when coalesce(pj.capital,0) > 0  or coalesce(pj.revenue,0) > 0 then
+case when
+coalesce(pj.capital,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+) <
+sum(case when ledger_status ='FORECAST' and spend_type ='CAPITAL' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+then
+(
+sum(case when ledger_status ='FORECAST' and spend_type ='CAPITAL' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+) -
+(coalesce(pj.capital,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('CAPITAL') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('CAPITAL') then (pl.amount*-1) else 0 end),0)
+))
+else 0 end else 0 end as "144 Unappd Fcast_CAP",
+
+
+
+
+case when coalesce(pj.revenue,0) > 0  or coalesce(pj.capital,0) > 0 then
+case when
+coalesce(pj.revenue,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('REVENUE') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+) <
+sum(case when ledger_status ='FORECAST' and spend_type ='REVENUE' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+then
+(sum(case when ledger_status ='FORECAST' and spend_type ='REVENUE' and pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month < cast(pj.current as int) and ledger_status ='FORECAST'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+) -
+(coalesce(pj.revenue,0) -
+(round(sum(case when ledger_status ='ACTUAL' and spend_type in('REVENUE') and
+pl.year_month between cast(text(left(pj.from_date,4)||'04') as int) and cast(text((cast(left(pj.to_date,4) as int)+1)||'03') as int)
+then (pl.amount*-1) else 0 end),0) -
+round(sum(case when pl.year_month between '201704'and'201803'and pl.year_month >= cast(pj.current as int) and ledger_status ='ACTUAL'and spend_type in('REVENUE') then (pl.amount*-1) else 0 end),0)
+))
+else 0 end else 0 end as "145 Unappd Fcast_REV",
+
+
+
+
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='BUDGET'and spend_type ='CAPITAL' then (pl.amount) else 0 end),0) as "146 CAP_CurrYr_Budget",
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='BUDGET'and spend_type ='REVENUE' then (pl.amount) else 0 end),0) as "147 REV_CurrYr_Budget",
+
+
+round(sum(case when pl.year_month ='201704'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "148 CurrYr_Apr CAP Fcast",
+round(sum(case when pl.year_month ='201704'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "149 CurrYr_Apr CAP Act",
+round(sum(case when pl.year_month ='201704'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "150 CurrYr_Apr REV Fcast",
+round(sum(case when pl.year_month ='201704'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "151 CurrYr_Apr REV Act",
+
+round(sum(case when pl.year_month ='201705'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "152 CurrYr_May CAP Fcast",
+round(sum(case when pl.year_month ='201705'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "153 CurrYr_May CAP Act",
+round(sum(case when pl.year_month ='201705'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "154 CurrYr_May REV Fcast",
+round(sum(case when pl.year_month ='201705'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "155 CurrYr_May REV Act",
+
+round(sum(case when pl.year_month ='201706'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "156 CurrYr_Jun CAP Fcast",
+round(sum(case when pl.year_month ='201706'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "157 CurrYr_Jun CAP Act",
+round(sum(case when pl.year_month ='201706'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "158 CurrYr_Jun REV Fcast",
+round(sum(case when pl.year_month ='201706'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "159 CurrYr_Jun REV Act",
+
+round(sum(case when pl.year_month ='201707'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "160 CurrYr_Jul CAP Fcast",
+round(sum(case when pl.year_month ='201707'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "161 CurrYr_Jul CAP Act",
+round(sum(case when pl.year_month ='201707'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "162 CurrYr_Jul REV Fcast",
+round(sum(case when pl.year_month ='201707'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "163 CurrYr_Jul REV Act",
+
+round(sum(case when pl.year_month ='201708'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "164 CurrYr_Aug CAP Fcast",
+round(sum(case when pl.year_month ='201708'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "165 CurrYr_Aug CAP Act",
+round(sum(case when pl.year_month ='201708'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "166 CurrYr_Aug REV Fcast",
+round(sum(case when pl.year_month ='201708'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "167 CurrYr_Aug REV Act",
+
+round(sum(case when pl.year_month ='201709'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "168 CurrYr_Sep CAP Fcast",
+round(sum(case when pl.year_month ='201709'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "169 CurrYr_Sep CAP Act",
+round(sum(case when pl.year_month ='201709'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "170 CurrYr_Sep REV Fcast",
+round(sum(case when pl.year_month ='201709'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "171 CurrYr_Sep REV Act",
+
+round(sum(case when pl.year_month ='201710'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "172 CurrYr_Oct CAP Fcast",
+round(sum(case when pl.year_month ='201710'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "173 CurrYr_Oct CAP Act",
+round(sum(case when pl.year_month ='201710'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "174 CurrYr_Oct REV Fcast",
+round(sum(case when pl.year_month ='201710'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "175 CurrYr_Oct REV Act",
+
+round(sum(case when pl.year_month ='201711'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "176 CurrYr_Nov CAP Fcast",
+round(sum(case when pl.year_month ='201711'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "177 CurrYr_Nov CAP Act",
+round(sum(case when pl.year_month ='201711'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "178 CurrYr_Nov REV Fcast",
+round(sum(case when pl.year_month ='201711'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "179 CurrYr_Nov REV Act",
+
+round(sum(case when pl.year_month ='201712'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "180 CurrYr_Dec CAP Fcast",
+round(sum(case when pl.year_month ='201712'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "181 CurrYr_Dec CAP Act",
+round(sum(case when pl.year_month ='201712'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "182 CurrYr_Dec REV Fcast",
+round(sum(case when pl.year_month ='201712'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "183 CurrYr_Dec REV Act",
+
+round(sum(case when pl.year_month ='201801'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "184 CurrYr_Jan CAP Fcast",
+round(sum(case when pl.year_month ='201801'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "185 CurrYr_Jan CAP Act",
+round(sum(case when pl.year_month ='201801'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "186 CurrYr_Jan REV Fcast",
+round(sum(case when pl.year_month ='201801'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "187 CurrYr_Jan REV Act",
+
+round(sum(case when pl.year_month ='201802'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "188 CurrYr_Feb CAP Fcast",
+round(sum(case when pl.year_month ='201802'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "189 CurrYr_Feb CAP Act",
+round(sum(case when pl.year_month ='201802'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "190 CurrYr_Feb REV Fcast",
+round(sum(case when pl.year_month ='201802'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "191 CurrYr_Feb REV Act",
+
+round(sum(case when pl.year_month ='201803'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "192 CurrYr_Mar CAP Fcast",
+round(sum(case when pl.year_month ='201803'and ledger_status ='ACTUAL'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "193 CurrYr_Mar CAP Act",
+round(sum(case when pl.year_month ='201803'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "194 CurrYr_Mar REV Fcast",
+round(sum(case when pl.year_month ='201803'and ledger_status ='ACTUAL'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "195 CurrYr_Mar REV Act",
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='ACTUAL' and spend_type ='CAPITAL'
+and pl.year_month < cast(pj.current as int) then (pl.amount*-1) else 0 end),0) as "196 CurrYr_TOT CAP Act",
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='ACTUAL' and spend_type ='REVENUE'
+and pl.year_month < cast(pj.current as int) then (pl.amount*-1) else 0 end),0) as "197 CurrYr_TOT REV Act",
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='FORECAST' and spend_type ='CAPITAL'
+and pl.year_month >= cast(pj.current as int) then (pl.amount*-1) else 0 end),0) as "198 CurrYr_TOT CAP Rem_Fcast",
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='FORECAST' and spend_type ='REVENUE'
+and pl.year_month >= cast(pj.current as int) then (pl.amount*-1) else 0 end),0) as "199 CurrYr_TOT REV Rem_Fcast",
+
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='BUDGET'and spend_type ='CAPITAL' then pl.amount else 0 end),0)-
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='ACTUAL' and spend_type ='CAPITAL'
+and pl.year_month < cast(pj.current as int) then (pl.amount*-1) else 0 end),0)  as "200 Left to Spend_Ann_CAP",
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='BUDGET'and spend_type ='REVENUE' then pl.amount else 0 end),0)-
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='ACTUAL' and spend_type ='REVENUE'
+and pl.year_month < cast(pj.current as int) then (pl.amount*-1) else 0 end),0)  as "201 Left to Spend_Ann_REV",
+
+
+Case when round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='BUDGET'and spend_type ='CAPITAL' then pl.amount else 0 end),0)-
+(round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='FORECAST' and spend_type ='CAPITAL'
+and pl.year_month >= cast(pj.current as int) then (pl.amount*-1) else 0 end),0) +
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='ACTUAL' and spend_type ='CAPITAL'
+and pl.year_month < cast(pj.current as int) then (pl.amount*-1) else 0 end),0)) < 0 then 0 else
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='BUDGET'and spend_type ='CAPITAL' then pl.amount else 0 end),0)-
+(round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='FORECAST' and spend_type ='CAPITAL'
+and pl.year_month >= cast(pj.current as int) then (pl.amount*-1) else 0 end),0) +
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='ACTUAL' and spend_type ='CAPITAL'
+and pl.year_month < cast(pj.current as int) then (pl.amount*-1) else 0 end),0))  end  as "202 Avail Fcast_Ann_CAP",
+
+
+case when round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='BUDGET'and spend_type ='REVENUE' then pl.amount else 0 end),0)-
+(round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='FORECAST' and spend_type ='REVENUE'
+and pl.year_month >= cast(pj.current as int) then (pl.amount*-1) else 0 end),0) +
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='ACTUAL' and spend_type ='REVENUE'
+and pl.year_month < cast(pj.current as int) then (pl.amount*-1) else 0 end),0)) < 0 then 0 else
+
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='BUDGET'and spend_type ='REVENUE' then pl.amount else 0 end),0)-
+(round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='FORECAST' and spend_type ='REVENUE'
+and pl.year_month >= cast(pj.current as int) then (pl.amount*-1) else 0 end),0) +
+round(sum(case when pl.year_month between '201704'and'201803' and ledger_status ='ACTUAL' and spend_type ='REVENUE'
+and pl.year_month < cast(pj.current as int) then (pl.amount*-1) else 0 end),0)) end  as "203 Avail Fcast_Ann_REV",
+
+round(sum(case when pl.year_month between '201704'and'201803'and ledger_status ='FORECAST'and spend_type ='CAPITAL' then (pl.amount*-1) else 0 end),0) as "204 CY_total_fcast_CAP",
+round(sum(case when pl.year_month between '201704'and'201803'and ledger_status ='FORECAST'and spend_type ='REVENUE' then (pl.amount*-1) else 0 end),0) as "205 CY_total_fcast_REV"
+
+
+
+from project_block pb
+
+inner join (
+  select * from (
+select distinct
+pj.id project_id,
+pj.programme_id,
+coalesce(pg.name,'') programme,
+t.name project_type,
+max(ts.id) id2,
+max(ts.from_date) from_date,
+max(ts.to_date) to_date,
+max(ts.capital) capital,
+max(ts.revenue) revenue,
+
+max(case when cast(EXTRACT(MONTH FROM current_date) as int) < 10 then cast(EXTRACT(YEAR FROM current_date) as int) ||''|| '0'||cast(EXTRACT(MONTH FROM current_date) as int) else
+cast(EXTRACT(YEAR FROM current_date) as int) ||''|| cast(EXTRACT(MONTH FROM current_date) as int) end)  as "current"
+
+
+
+from project pj
+left join project_block pjb on pj.id = pjb.project_id
+left join organisation org on pj.org_id = org.id
+left join programme pg on pj.programme_id = pg.id
+left join template t on pj.template_id = t.id
+left join project_budgets ts on pjb.id = ts.id
+
+where programme_id in ( '1001','1004','1005') and pjb.reporting_version = 'true'
+group by pj.id, programme_id, pg.name, t.name
+) a  order by a.project_id
+) pj on pb.project_id = pj.project_id
+
+left join project_ledger_entry pl on pb.project_id = pl.project_id and pb.id = pl.block_id --and pl.amount is not null and pl.amount <>0
+where pb.reporting_version = 'true'
+--and pb.project_id in ('10367','10337','10388','10347','10393','10331')
+GROUP BY
+pj.project_id,
+pj.project_type,
+pj.programme,
+pj.from_date,
+pj.to_date,
+pj.capital,
+pj.revenue,
+pj.current
+order by 1
+

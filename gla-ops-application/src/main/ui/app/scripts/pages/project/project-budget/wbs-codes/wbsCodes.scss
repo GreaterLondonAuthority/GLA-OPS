@@ -1,0 +1,44 @@
+wbs-codes {
+  display: block;
+  text-align: center;
+
+  .delete-link {
+    text-align: right;
+  }
+  .read-only-codes{
+    text-align: center;
+  }
+  .wbs-code-row {
+    margin-bottom: 5px;
+    line-height: 14px;
+  }
+
+  .input-group-btn .btn.add-btn {
+    &:active,
+    &:focus,
+    & {
+      margin-left: 10px;
+      padding: 4px 12px;
+    }
+  }
+
+  .wbs-code-row {
+    &:first-child {
+      //margin-top: 12px;
+    }
+
+    &:last-child {
+      margin-bottom: 0px;
+    }
+  }
+
+  a{
+    &:hover,
+    &:focus,
+    &:hover,
+    & {
+      color: $btn-primary-bg;
+      font-weight: bold;
+    }
+  }
+}

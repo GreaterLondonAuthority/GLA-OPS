@@ -1,0 +1,39 @@
+<div class="form-group" style="margin-bottom: 0">
+  <div class="existing-wbs-codes">
+    <div ng-repeat="wbs in ($ctrl.filteredCodes =  ($ctrl.codes | filter:{type: $ctrl.type})) track by wbs.code" class="row wbs-code-row">
+      <div class="col-xs-12 read-only-codes property-value" ng-if="$ctrl.readOnly">
+        {{wbs.code}}
+      </div>
+      <div class="row property-value" ng-if="!$ctrl.readOnly">
+        <div class="col-xs-9 no-padding">{{wbs.code}}</div>
+        <div class="col-xs-3 no-padding delete-link">
+          <a href="JavaScript:void(0)" ng-class="'delete-' + wbs.code" ng-click="$ctrl.confirmDeletion(wbs)" ng-if="!$ctrl.readOnly && (!wbs.id || $ctrl.canDelete)">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="input-group" ng-class="{'mtop10': $ctrl.filteredCodes.length }" ng-if="$ctrl.filteredCodes.length < $ctrl.max && !$ctrl.readOnly">
+    <input ng-attr-id="{{'wbscode-'+ $ctrl.type | lowercase}}"
+           class="form-control wbs-code"
+           type="text"
+           name="wbsCode"
+           placeholder="Enter WBS code"
+           maxlength="20"
+           ng-disabled="$ctrl.readOnly"
+           ng-model="$ctrl.code"
+           aria-label="{{'WBS code ' + $ctrl.type | lowercase}}"
+           ng-keypress="$ctrl.clearErrorMessage()">
+    <span class="input-group-btn mtop15">
+      <button class="btn btn-secondary btn-md add-btn"
+              ng-attr-id="{{'add-wbscode-'+ $ctrl.type | lowercase}}"
+              ng-disabled="$ctrl.readOnly || !$ctrl.code || $ctrl.code.length < 2 || !$ctrl.isValid($ctrl.code)"
+              ng-click="$ctrl.add($ctrl.code)">
+        Add <span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </span>
+  </div>
+  <div class="error-wrapper error" ng-if="$ctrl.code.length > 1 && !$ctrl.isValid($ctrl.code)">WBS codes must be individual</div>
+  <div class="error-wrapper error" ng-if="$ctrl.code.length > 1 && $ctrl.projectIdsUsingWbsCode.length > 0">
+    WBS code is already associated with {{$ctrl.projectIdsUsingWbsCode.length > 1 ? 'projects' : 'project'}}: {{$ctrl.projectIdsUsingWbsCode.join()}}
+  </div>
+</div>

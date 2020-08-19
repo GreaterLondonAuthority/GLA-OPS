@@ -1,0 +1,631 @@
+Borough name,Ward name,One bedroom,Two bedrooms,Three bedrooms,Four bedrooms,Five bedrooms,Six bedrooms
+City of London,City of London,1493,1659,1825,1991,2157,2322
+Barking and Dagenham,Abbey,798,887,976,1064,1153,1242
+Barking and Dagenham,Alibon,711,790,869,948,1027,1106
+Barking and Dagenham,Becontree,912,1014,1115,1216,1318,1419
+Barking and Dagenham,Chadwell Heath,711,790,869,948,1027,1106
+Barking and Dagenham,Eastbrook,740,822,904,986,1068,1151
+Barking and Dagenham,Eastbury,756,840,924,1008,1092,1176
+Barking and Dagenham,Gascoigne,800,889,978,1067,1156,1245
+Barking and Dagenham,Goresbrook,690,767,844,921,997,1074
+Barking and Dagenham,Heath,682,758,834,910,985,1061
+Barking and Dagenham,Longbridge,844,938,1031,1125,1219,1313
+Barking and Dagenham,Mayesbrook,731,813,894,975,1057,1138
+Barking and Dagenham,Parsloes,715,795,874,953,1033,1112
+Barking and Dagenham,River,608,676,743,811,879,946
+Barking and Dagenham,Thames,764,849,934,1019,1104,1189
+Barking and Dagenham,Valence,821,912,1004,1095,1186,1277
+Barking and Dagenham,Village,670,744,819,893,968,1042
+Barking and Dagenham,Whalebone,752,836,919,1003,1086,1170
+Barnet,Brunswick Park,785,873,960,1047,1135,1222
+Barnet,Burnt Oak,670,744,819,893,968,1042
+Barnet,Childs Hill,967,1074,1181,1289,1396,1504
+Barnet,Colindale,814,905,995,1086,1176,1267
+Barnet,Coppetts,770,856,942,1027,1113,1198
+Barnet,East Barnet,716,796,875,955,1034,1114
+Barnet,East Finchley,869,965,1062,1158,1255,1352
+Barnet,Edgware,822,914,1005,1097,1188,1279
+Barnet,Finchley Church End,981,1090,1199,1308,1417,1526
+Barnet,Garden Suburb,990,1100,1210,1320,1430,1540
+Barnet,Golders Green,1005,1117,1228,1340,1452,1563
+Barnet,Hale,762,847,932,1016,1101,1186
+Barnet,Hendon,809,898,988,1078,1168,1258
+Barnet,High Barnet,751,834,918,1001,1084,1168
+Barnet,Mill Hill,905,1006,1106,1207,1307,1408
+Barnet,Oakleigh,759,844,928,1013,1097,1181
+Barnet,Totteridge,912,1014,1115,1217,1318,1419
+Barnet,Underhill,716,796,875,955,1034,1114
+Barnet,West Finchley,883,981,1079,1177,1275,1373
+Barnet,West Hendon,785,873,960,1047,1135,1222
+Barnet,Woodhouse,841,934,1028,1121,1215,1308
+Bexley,Barnehurst,857,952,1047,1142,1237,1333
+Bexley,Belvedere,780,867,954,1041,1127,1214
+Bexley,Blackfen and Lamorbey,794,882,970,1058,1146,1235
+Bexley,Blendon and Penhill,825,917,1009,1100,1192,1284
+Bexley,Brampton,870,966,1063,1160,1256,1353
+Bexley,Christchurch,851,946,1040,1135,1229,1324
+Bexley,Colyers,806,896,985,1075,1164,1254
+Bexley,Crayford,829,921,1013,1105,1197,1289
+Bexley,Cray Meadows,866,962,1058,1154,1250,1346
+Bexley,Danson Park,851,946,1040,1135,1229,1324
+Bexley,East Wickham,861,957,1053,1149,1244,1340
+Bexley,Erith,747,830,913,996,1079,1162
+Bexley,Falconwood and Welling,794,882,970,1058,1146,1235
+Bexley,Lesnes Abbey,780,867,954,1041,1127,1214
+Bexley,Longlands,895,994,1093,1193,1292,1392
+Bexley,North End,817,908,998,1089,1180,1271
+Bexley,Northumberland Heath,774,860,946,1032,1118,1204
+Bexley,St Mary's,996,1107,1218,1328,1439,1550
+Bexley,St Michael's,800,889,978,1067,1156,1245
+Bexley,Sidcup,882,980,1078,1176,1274,1372
+Bexley,Thamesmead East,664,738,812,886,959,1033
+Brent,Alperton,692,769,846,923,1000,1077
+Brent,Barnhill,670,744,819,893,968,1042
+Brent,Brondesbury Park,874,971,1068,1165,1262,1359
+Brent,Dollis Hill,708,787,866,944,1023,1102
+Brent,Dudden Hill,729,810,891,972,1053,1134
+Brent,Fryent,662,736,810,883,957,1030
+Brent,Harlesden,708,787,866,944,1023,1102
+Brent,Kensal Green,853,948,1043,1138,1233,1328
+Brent,Kenton,624,693,763,832,901,971
+Brent,Kilburn,869,966,1062,1159,1255,1352
+Brent,Mapesbury,845,939,1033,1127,1221,1315
+Brent,Northwick Park,655,727,800,873,946,1018
+Brent,Preston,678,753,828,904,979,1054
+Brent,Queens Park,936,1040,1144,1248,1352,1456
+Brent,Queensbury,784,872,959,1046,1133,1220
+Brent,Stonebridge,769,855,940,1026,1111,1197
+Brent,Sudbury,642,714,785,857,928,999
+Brent,Tokyngton,674,749,824,899,974,1049
+Brent,Welsh Harp,636,706,777,847,918,989
+Brent,Wembley Central,662,736,810,883,957,1030
+Brent,Willesden Green,810,900,990,1080,1170,1260
+Bromley,Bickley,1018,1131,1244,1357,1470,1583
+Bromley,Biggin Hill,832,924,1016,1109,1201,1294
+Bromley,Bromley Common and Keston,976,1084,1193,1301,1409,1518
+Bromley,Bromley Town,1009,1121,1234,1346,1458,1570
+Bromley,Chelsfield and Pratts Bottom,901,1001,1101,1201,1301,1401
+Bromley,Chislehurst,1065,1183,1302,1420,1538,1657
+Bromley,Clock House,965,1072,1179,1287,1394,1501
+Bromley,Copers Cope,1045,1162,1278,1394,1510,1626
+Bromley,Cray Valley East,846,940,1034,1128,1222,1315
+Bromley,Cray Valley West,781,867,954,1041,1128,1214
+Bromley,Crystal Palace,990,1100,1210,1320,1430,1540
+Bromley,Darwin,973,1081,1189,1297,1406,1514
+Bromley,Farnborough and Crofton,922,1024,1126,1229,1331,1434
+Bromley,Hayes and Coney Hall,911,1012,1113,1214,1315,1417
+Bromley,Kelsey and Eden Park,1171,1301,1431,1561,1691,1821
+Bromley,Mottingham and Chislehurst North,846,940,1034,1128,1222,1315
+Bromley,Orpington,867,964,1060,1156,1253,1349
+Bromley,Penge and Cator,969,1077,1185,1292,1400,1508
+Bromley,Petts Wood and Knoll,911,1012,1113,1214,1315,1417
+Bromley,Plaistow and Sundridge,954,1060,1166,1272,1378,1484
+Bromley,Shortlands,984,1093,1203,1312,1422,1531
+Bromley,West Wickham,941,1045,1150,1254,1359,1463
+Camden,Belsize,1157,1286,1415,1543,1672,1801
+Camden,Bloomsbury,989,1099,1209,1319,1429,1539
+Camden,Camden Town with Primrose Hill,1111,1234,1358,1481,1604,1728
+Camden,Cantelowes,839,932,1026,1119,1212,1305
+Camden,Fortune Green,907,1008,1109,1210,1311,1412
+Camden,Frognal and Fitzjohns,1253,1392,1531,1670,1809,1949
+Camden,Gospel Oak,901,1001,1101,1201,1301,1401
+Camden,Hampstead Town,1241,1379,1517,1655,1793,1931
+Camden,Haverstock,907,1008,1109,1210,1311,1412
+Camden,Highgate,928,1031,1134,1237,1340,1443
+Camden,Holborn and Covent Garden,1124,1249,1374,1499,1624,1749
+Camden,Kentish Town,950,1055,1161,1266,1372,1477
+Camden,Kilburn,846,940,1034,1128,1222,1316
+Camden,King's Cross,835,928,1021,1113,1206,1299
+Camden,Regent's Park,969,1076,1184,1292,1399,1507
+Camden,St Pancras and Somers Town,1017,1130,1243,1355,1468,1581
+Camden,Swiss Cottage,1129,1254,1380,1505,1630,1756
+Camden,West Hampstead,977,1086,1194,1303,1411,1520
+Croydon,Addiscombe,803,893,982,1071,1161,1250
+Croydon,Ashburton,948,1053,1159,1264,1369,1474
+Croydon,Bensham Manor,713,792,872,951,1030,1109
+Croydon,Broad Green,895,994,1094,1193,1292,1392
+Croydon,Coulsdon East,695,772,850,927,1004,1081
+Croydon,Coulsdon West,886,984,1083,1181,1280,1378
+Croydon,Croham,859,955,1050,1146,1241,1337
+Croydon,Fairfield,919,1021,1123,1225,1328,1430
+Croydon,Fieldway,722,802,883,963,1043,1123
+Croydon,Heathfield,695,772,850,927,1004,1081
+Croydon,Kenley,821,913,1004,1095,1187,1278
+Croydon,New Addington,706,784,863,941,1020,1098
+Croydon,Norbury,930,1034,1137,1240,1344,1447
+Croydon,Purley,908,1009,1110,1211,1312,1412
+Croydon,Sanderstead,996,1107,1218,1329,1439,1550
+Croydon,Selhurst,713,792,872,951,1030,1109
+Croydon,Selsdon and Ballards,868,965,1061,1158,1254,1350
+Croydon,Shirley,864,960,1056,1152,1248,1344
+Croydon,South Norwood,850,945,1039,1134,1228,1323
+Croydon,Thornton Heath,731,812,894,975,1056,1137
+Croydon,Upper Norwood,997,1107,1218,1329,1440,1550
+Croydon,Waddon,811,901,991,1081,1171,1261
+Croydon,West Thornton,664,738,812,886,960,1034
+Croydon,Woodside,731,812,894,975,1056,1137
+Ealing,Acton Central,870,967,1063,1160,1257,1353
+Ealing,Cleveland,896,995,1095,1195,1294,1394
+Ealing,Dormers Wells,670,745,819,894,968,1043
+Ealing,Ealing Broadway,966,1073,1181,1288,1395,1503
+Ealing,Ealing Common,941,1046,1151,1255,1360,1465
+Ealing,East Acton,814,905,995,1086,1176,1267
+Ealing,Elthorne,829,922,1014,1106,1198,1290
+Ealing,Greenford Broadway,718,797,877,957,1037,1116
+Ealing,Greenford Green,714,793,872,951,1031,1110
+Ealing,Hanger Hill,873,970,1067,1164,1261,1358
+Ealing,Hobbayne,803,892,981,1070,1159,1249
+Ealing,Lady Margaret,703,781,859,937,1015,1093
+Ealing,Northfield,885,983,1081,1180,1278,1376
+Ealing,North Greenford,683,759,835,911,987,1062
+Ealing,Northolt Mandeville,714,793,872,951,1031,1110
+Ealing,Northolt West End,674,748,823,898,973,1048
+Ealing,Norwood Green,709,788,866,945,1024,1103
+Ealing,Perivale,756,840,924,1008,1092,1176
+Ealing,South Acton,887,986,1084,1183,1282,1380
+Ealing,Southall Broadway,674,748,823,898,973,1048
+Ealing,Southall Green,705,784,862,940,1019,1097
+Ealing,Southfield,1006,1117,1229,1341,1452,1564
+Ealing,Walpole,897,997,1096,1196,1296,1396
+Enfield,Bowes,801,890,979,1068,1157,1246
+Enfield,Bush Hill Park,804,893,982,1072,1161,1250
+Enfield,Chase,712,791,870,949,1028,1107
+Enfield,Cockfosters,877,975,1072,1170,1267,1365
+Enfield,Edmonton Green,663,737,811,884,958,1032
+Enfield,Enfield Highway,691,768,844,921,998,1075
+Enfield,Enfield Lock,655,728,801,874,947,1020
+Enfield,Grange,842,935,1029,1123,1216,1310
+Enfield,Haselbury,630,700,770,840,911,981
+Enfield,Highlands,833,926,1019,1111,1204,1296
+Enfield,Jubilee,618,686,755,824,892,961
+Enfield,Lower Edmonton,660,733,806,879,953,1026
+Enfield,Palmers Green,816,907,998,1088,1179,1270
+Enfield,Ponders End,644,715,787,859,930,1002
+Enfield,Southbury,774,860,946,1032,1118,1204
+Enfield,Southgate,872,969,1066,1163,1260,1357
+Enfield,Southgate Green,884,983,1081,1179,1277,1376
+Enfield,Town,795,884,972,1060,1149,1237
+Enfield,Turkey Street,663,737,810,884,958,1031
+Enfield,Upper Edmonton,685,761,837,913,989,1065
+Enfield,Winchmore Hill,927,1030,1133,1236,1339,1442
+Greenwich,Abbey Wood,719,798,878,958,1038,1118
+Greenwich,Blackheath Westcombe,954,1060,1166,1272,1378,1484
+Greenwich,Charlton,801,890,979,1068,1157,1246
+Greenwich,Coldharbour and New Eltham,743,826,909,991,1074,1156
+Greenwich,Eltham North,739,821,903,985,1067,1149
+Greenwich,Eltham South,751,834,918,1001,1085,1168
+Greenwich,Eltham West,929,1032,1135,1238,1342,1445
+Greenwich,Glyndon,757,841,925,1009,1093,1177
+Greenwich,Greenwich West,1046,1162,1278,1394,1510,1626
+Greenwich,Kidbrooke with Hornfair,775,861,947,1033,1119,1205
+Greenwich,Middle Park and Sutcliffe,811,901,991,1081,1171,1261
+Greenwich,Peninsula,987,1097,1207,1316,1426,1536
+Greenwich,Plumstead,703,781,859,937,1015,1094
+Greenwich,Shooters Hill,734,816,897,979,1060,1142
+Greenwich,Thamesmead Moorings,697,774,852,929,1007,1084
+Greenwich,Woolwich Common,799,888,976,1065,1154,1243
+Greenwich,Woolwich Riverside,835,927,1020,1113,1206,1298
+Hackney,Brownswood,922,1025,1127,1230,1332,1434
+Hackney,Cazenove,809,899,989,1078,1168,1258
+Hackney,Clissold,922,1025,1127,1230,1332,1434
+Hackney,Dalston,917,1019,1121,1223,1325,1427
+Hackney,De Beauvoir,927,1030,1133,1236,1339,1442
+Hackney,Hackney Central,845,939,1032,1126,1220,1314
+Hackney,Hackney Downs,865,961,1057,1153,1249,1345
+Hackney,Hackney Wick,764,849,934,1018,1103,1188
+Hackney,Haggerston,917,1019,1121,1223,1325,1427
+Hackney,Homerton,839,932,1025,1119,1212,1305
+Hackney,Hoxton East and Shoreditch,988,1098,1208,1317,1427,1537
+Hackney,Hoxton West,1078,1198,1318,1438,1558,1678
+Hackney,King's Park,737,819,901,983,1064,1146
+Hackney,Lea Bridge,773,859,945,1030,1116,1202
+Hackney,London Fields,925,1027,1130,1233,1335,1438
+Hackney,Shacklewell,877,975,1072,1169,1267,1364
+Hackney,Springfield,719,799,879,959,1038,1118
+Hackney,Stamford Hill West,874,971,1068,1165,1262,1359
+Hackney,Stoke Newington,909,1009,1110,1211,1312,1413
+Hackney,Victoria,907,1007,1108,1209,1310,1410
+Hackney,Woodberry Down,863,958,1054,1150,1246,1342
+Hammersmith and Fulham,Addison,989,1099,1208,1318,1428,1538
+Hammersmith and Fulham,Askew,928,1031,1134,1237,1340,1443
+Hammersmith and Fulham,Avonmore and Brook Green,1067,1186,1305,1423,1542,1660
+Hammersmith and Fulham,College Park and Old Oak,863,959,1055,1151,1246,1342
+Hammersmith and Fulham,Fulham Broadway,1108,1231,1354,1477,1600,1723
+Hammersmith and Fulham,Fulham Reach,1067,1186,1305,1423,1542,1660
+Hammersmith and Fulham,Hammersmith Broadway,994,1105,1215,1326,1436,1547
+Hammersmith and Fulham,Munster,1092,1214,1335,1457,1578,1699
+Hammersmith and Fulham,North End,1034,1149,1264,1379,1494,1609
+Hammersmith and Fulham,Palace Riverside,1269,1410,1551,1692,1833,1974
+Hammersmith and Fulham,Parsons Green and Walham,1153,1281,1409,1537,1665,1793
+Hammersmith and Fulham,Ravenscourt Park,1000,1111,1222,1333,1445,1556
+Hammersmith and Fulham,Sands End,1269,1410,1551,1692,1833,1974
+Hammersmith and Fulham,Shepherd's Bush Green,927,1030,1133,1236,1339,1442
+Hammersmith and Fulham,Town,1108,1231,1354,1477,1600,1723
+Hammersmith and Fulham,Wormholt and White City,846,940,1034,1128,1222,1316
+Haringey,Alexandra,947,1053,1158,1263,1368,1474
+Haringey,Bounds Green,781,868,954,1041,1128,1215
+Haringey,Bruce Grove,756,840,924,1008,1092,1176
+Haringey,Crouch End,969,1076,1184,1292,1399,1507
+Haringey,Fortis Green,884,982,1080,1179,1277,1375
+Haringey,Harringay,882,980,1078,1176,1274,1372
+Haringey,Highgate,1012,1125,1237,1350,1462,1575
+Haringey,Hornsey,877,975,1072,1170,1267,1365
+Haringey,Muswell Hill,930,1034,1137,1240,1344,1447
+Haringey,Noel Park,787,874,962,1049,1137,1224
+Haringey,Northumberland Park,675,750,825,900,975,1050
+Haringey,St Ann's,756,840,924,1008,1092,1176
+Haringey,Seven Sisters,811,901,991,1082,1172,1262
+Haringey,Stroud Green,913,1015,1116,1218,1319,1421
+Haringey,Tottenham Green,780,867,953,1040,1127,1213
+Haringey,Tottenham Hale,746,829,912,995,1078,1161
+Haringey,West Green,767,852,937,1022,1107,1192
+Haringey,White Hart Lane,690,766,843,920,996,1073
+Haringey,Woodside,779,865,952,1039,1125,1212
+Harrow,Belmont,818,909,1000,1090,1181,1272
+Harrow,Canons,930,1033,1136,1240,1343,1446
+Harrow,Edgware,888,987,1086,1184,1283,1382
+Harrow,Greenhill,807,897,986,1076,1166,1255
+Harrow,Harrow on the Hill,839,932,1026,1119,1212,1305
+Harrow,Harrow Weald,760,844,928,1013,1097,1181
+Harrow,Hatch End,841,934,1027,1121,1214,1308
+Harrow,Headstone North,788,876,963,1051,1139,1226
+Harrow,Headstone South,785,873,960,1047,1134,1222
+Harrow,Kenton East,741,823,905,988,1070,1152
+Harrow,Kenton West,716,796,875,955,1035,1114
+Harrow,Marlborough,707,785,864,943,1021,1100
+Harrow,Pinner,854,949,1044,1139,1234,1329
+Harrow,Pinner South,900,999,1099,1199,1299,1399
+Harrow,Queensbury,708,786,865,944,1022,1101
+Harrow,Rayners Lane,696,773,851,928,1006,1083
+Harrow,Roxbourne,765,850,935,1020,1105,1190
+Harrow,Roxeth,665,739,813,887,961,1035
+Harrow,Stanmore Park,998,1109,1220,1330,1441,1552
+Harrow,Wealdstone,722,802,883,963,1043,1123
+Harrow,West Harrow,780,866,953,1040,1126,1213
+Havering,Brooklands,829,921,1013,1105,1197,1289
+Havering,Cranham,886,985,1083,1182,1280,1379
+Havering,Elm Park,798,887,976,1064,1153,1242
+Havering,Emerson Park,1010,1122,1234,1347,1459,1571
+Havering,Gooshays,798,887,976,1064,1153,1242
+Havering,Hacton,825,917,1009,1100,1192,1284
+Havering,Harold Wood,894,993,1092,1191,1291,1390
+Havering,Havering Park,781,868,954,1041,1128,1215
+Havering,Heaton,766,851,936,1021,1106,1191
+Havering,Hylands,868,965,1061,1158,1254,1351
+Havering,Mawneys,820,911,1002,1093,1184,1275
+Havering,Pettits,856,951,1046,1141,1236,1331
+Havering,Rainham and Wennington,673,748,823,898,973,1047
+Havering,Romford Town,820,911,1002,1093,1184,1275
+Havering,St Andrew's,842,935,1029,1122,1216,1309
+Havering,South Hornchurch,774,860,946,1032,1118,1204
+Havering,Squirrel's Heath,898,997,1097,1197,1297,1396
+Havering,Upminster,997,1108,1219,1330,1441,1551
+Hillingdon,Barnhill,707,786,864,943,1022,1100
+Hillingdon,Botwell,844,938,1032,1126,1220,1314
+Hillingdon,Brunel,804,893,983,1072,1162,1251
+Hillingdon,Cavendish,911,1012,1113,1214,1315,1417
+Hillingdon,Charville,680,756,832,907,983,1058
+Hillingdon,Eastcote and East Ruislip,978,1087,1195,1304,1413,1521
+Hillingdon,Harefield,882,980,1078,1176,1274,1372
+Hillingdon,Heathrow Villages,678,753,828,904,979,1054
+Hillingdon,Hillingdon East,814,904,995,1085,1176,1266
+Hillingdon,Ickenham,920,1023,1125,1227,1329,1432
+Hillingdon,Manor,880,978,1075,1173,1271,1369
+Hillingdon,Northwood,1017,1130,1242,1355,1468,1581
+Hillingdon,Northwood Hills,874,971,1068,1165,1263,1360
+Hillingdon,Pinkwell,680,756,832,907,983,1058
+Hillingdon,South Ruislip,881,979,1077,1174,1272,1370
+Hillingdon,Townfield,699,777,855,932,1010,1088
+Hillingdon,Uxbridge North,905,1005,1106,1207,1307,1408
+Hillingdon,Uxbridge South,721,801,881,961,1041,1121
+Hillingdon,West Drayton,842,935,1029,1122,1216,1309
+Hillingdon,West Ruislip,930,1033,1137,1240,1343,1447
+Hillingdon,Yeading,701,778,856,934,1012,1090
+Hillingdon,Yiewsley,734,816,897,979,1061,1142
+Hounslow,Bedfont,645,717,789,860,932,1004
+Hounslow,Brentford,859,955,1050,1146,1241,1336
+Hounslow,Chiswick Homefields,968,1076,1183,1291,1398,1506
+Hounslow,Chiswick Riverside,900,1000,1100,1200,1300,1400
+Hounslow,Cranford,658,731,804,877,950,1023
+Hounslow,Feltham North,647,718,790,862,934,1006
+Hounslow,Feltham West,658,731,804,877,950,1023
+Hounslow,Hanworth,650,722,794,866,939,1011
+Hounslow,Hanworth Park,666,740,814,888,962,1036
+Hounslow,Heston Central,658,731,804,877,950,1023
+Hounslow,Heston East,653,726,798,871,943,1016
+Hounslow,Heston West,679,754,829,905,980,1056
+Hounslow,Hounslow Central,714,793,872,952,1031,1110
+Hounslow,Hounslow Heath,677,752,827,903,978,1053
+Hounslow,Hounslow South,716,795,875,954,1034,1114
+Hounslow,Hounslow West,674,749,824,898,973,1048
+Hounslow,Isleworth,778,864,951,1037,1124,1210
+Hounslow,Osterley and Spring Grove,818,909,1000,1091,1182,1273
+Hounslow,Syon,847,941,1035,1129,1223,1317
+Hounslow,Turnham Green,931,1034,1137,1241,1344,1448
+Islington,Barnsbury,1121,1245,1370,1495,1619,1744
+Islington,Bunhill,1199,1333,1466,1599,1732,1866
+Islington,Caledonian,1023,1136,1250,1364,1477,1591
+Islington,Canonbury,1057,1174,1292,1409,1527,1644
+Islington,Clerkenwell,1246,1384,1523,1661,1800,1938
+Islington,Finsbury Park,840,934,1027,1120,1214,1307
+Islington,Highbury East,1057,1174,1292,1409,1527,1644
+Islington,Highbury West,1032,1147,1262,1377,1491,1606
+Islington,Hillrise,869,966,1062,1159,1255,1352
+Islington,Holloway,898,998,1097,1197,1297,1397
+Islington,Junction,869,966,1062,1159,1255,1352
+Islington,Mildmay,975,1083,1191,1300,1408,1516
+Islington,St George's,946,1051,1156,1261,1366,1471
+Islington,St Mary's,1109,1232,1355,1479,1602,1725
+Islington,St Peter's,1147,1274,1402,1529,1657,1784
+Islington,Tollington,831,923,1015,1107,1200,1292
+Kensington and Chelsea,Abingdon,1380,1533,1686,1840,1993,2146
+Kensington and Chelsea,Brompton and Hans Town,1470,1634,1797,1961,2124,2287
+Kensington and Chelsea,Campden,1388,1542,1696,1850,2005,2159
+Kensington and Chelsea,Chelsea Riverside,1193,1325,1458,1590,1723,1855
+Kensington and Chelsea,Colville,1167,1296,1426,1556,1685,1815
+Kensington and Chelsea,Courtfield,1408,1564,1721,1877,2034,2190
+Kensington and Chelsea,Dalgarno,1061,1178,1296,1414,1532,1650
+Kensington and Chelsea,Earl's Court,1163,1292,1421,1550,1679,1808
+Kensington and Chelsea,Golborne,1041,1157,1273,1388,1504,1620
+Kensington and Chelsea,Holland,1231,1368,1505,1642,1778,1915
+Kensington and Chelsea,Norland,1185,1316,1448,1580,1711,1843
+Kensington and Chelsea,Notting Dale,1003,1114,1226,1337,1448,1560
+Kensington and Chelsea,Pembridge,1226,1362,1498,1634,1770,1907
+Kensington and Chelsea,Queen's Gate,1504,1671,1838,2005,2173,2340
+Kensington and Chelsea,Redcliffe,1246,1385,1523,1662,1800,1938
+Kensington and Chelsea,Royal Hospital,1412,1569,1726,1883,2040,2197
+Kensington and Chelsea,St Helen's,1096,1217,1339,1461,1582,1704
+Kensington and Chelsea,Stanley,1197,1330,1463,1596,1729,1862
+Kingston upon Thames,Alexandra,847,942,1036,1130,1224,1318
+Kingston upon Thames,Berrylands,981,1090,1198,1307,1416,1525
+Kingston upon Thames,Beverley,889,988,1086,1185,1284,1383
+Kingston upon Thames,Canbury,1180,1311,1442,1573,1704,1835
+Kingston upon Thames,Chessington North and Hook,786,874,961,1048,1136,1223
+Kingston upon Thames,Chessington South,828,920,1012,1104,1196,1288
+Kingston upon Thames,Coombe Hill,967,1074,1181,1289,1396,1503
+Kingston upon Thames,Coombe Vale,927,1029,1132,1235,1338,1441
+Kingston upon Thames,Grove,1081,1201,1322,1442,1562,1682
+Kingston upon Thames,Norbiton,926,1029,1132,1235,1338,1441
+Kingston upon Thames,Old Malden,806,896,985,1075,1164,1254
+Kingston upon Thames,St James,936,1040,1144,1248,1352,1456
+Kingston upon Thames,St Mark's,1130,1256,1382,1507,1633,1758
+Kingston upon Thames,Surbiton Hill,1065,1183,1302,1420,1538,1656
+Kingston upon Thames,Tolworth and Hook Rise,876,973,1070,1168,1265,1362
+Kingston upon Thames,Tudor,1114,1238,1362,1485,1609,1733
+Lambeth,Bishop's,1017,1130,1243,1356,1469,1582
+Lambeth,Brixton Hill,913,1015,1116,1218,1319,1421
+Lambeth,Clapham Common,1000,1111,1223,1334,1445,1556
+Lambeth,Clapham Town,1006,1118,1230,1342,1454,1566
+Lambeth,Coldharbour,883,981,1079,1178,1276,1374
+Lambeth,Ferndale,978,1086,1195,1304,1412,1521
+Lambeth,Gipsy Hill,777,864,950,1036,1123,1209
+Lambeth,Herne Hill,909,1010,1111,1212,1313,1414
+Lambeth,Knight's Hill,727,807,888,969,1050,1130
+Lambeth,Larkhall,930,1033,1137,1240,1343,1447
+Lambeth,Oval,1090,1211,1332,1453,1575,1696
+Lambeth,Prince's,978,1087,1195,1304,1412,1521
+Lambeth,St Leonard's,797,886,975,1063,1152,1240
+Lambeth,Stockwell,898,998,1098,1198,1298,1397
+Lambeth,Streatham Hill,813,903,993,1083,1174,1264
+Lambeth,Streatham South,727,807,888,969,1050,1130
+Lambeth,Streatham Wells,767,852,938,1023,1108,1193
+Lambeth,Thornton,925,1027,1130,1233,1336,1438
+Lambeth,Thurlow Park,838,931,1024,1117,1210,1303
+Lambeth,Tulse Hill,838,931,1024,1117,1210,1303
+Lambeth,Vassall,917,1018,1120,1222,1324,1426
+Lewisham,Bellingham,726,807,888,968,1049,1130
+Lewisham,Blackheath,1018,1131,1244,1357,1470,1583
+Lewisham,Brockley,931,1034,1137,1241,1344,1448
+Lewisham,Catford South,783,870,957,1044,1131,1218
+Lewisham,Crofton Park,954,1060,1166,1272,1378,1484
+Lewisham,Downham,712,791,870,949,1029,1108
+Lewisham,Evelyn,1047,1163,1279,1396,1512,1628
+Lewisham,Forest Hill,892,991,1090,1189,1288,1387
+Lewisham,Grove Park,732,813,894,976,1057,1138
+Lewisham,Ladywell,928,1031,1134,1237,1340,1443
+Lewisham,Lee Green,843,937,1031,1124,1218,1312
+Lewisham,Lewisham Central,879,976,1074,1172,1269,1367
+Lewisham,New Cross,783,870,957,1044,1131,1218
+Lewisham,Perry Vale,879,976,1074,1172,1269,1367
+Lewisham,Rushey Green,830,922,1014,1107,1199,1291
+Lewisham,Sydenham,892,991,1090,1189,1288,1387
+Lewisham,Telegraph Hill,936,1040,1144,1248,1353,1457
+Lewisham,Whitefoot,698,775,853,931,1008,1086
+Merton,Abbey,939,1043,1148,1252,1356,1460
+Merton,Cannon Hill,933,1037,1141,1244,1348,1452
+Merton,Colliers Wood,914,1015,1117,1219,1320,1422
+Merton,Cricket Green,754,838,922,1006,1090,1173
+Merton,Dundonald,958,1065,1171,1278,1384,1491
+Merton,Figge's Marsh,735,816,898,979,1061,1143
+Merton,Graveney,877,974,1072,1169,1266,1364
+Merton,Hillside,1003,1115,1226,1338,1449,1561
+Merton,Lavender Fields,774,860,946,1032,1118,1204
+Merton,Longthornton,817,908,998,1089,1180,1271
+Merton,Lower Morden,799,887,976,1065,1154,1242
+Merton,Merton Park,885,984,1082,1181,1279,1377
+Merton,Pollards Hill,727,807,888,969,1050,1130
+Merton,Ravensbury,782,869,956,1043,1130,1216
+Merton,Raynes Park,931,1034,1137,1241,1344,1448
+Merton,St Helier,799,888,977,1066,1155,1243
+Merton,Trinity,939,1043,1148,1252,1356,1461
+Merton,Village,1090,1211,1332,1453,1575,1696
+Merton,West Barnes,901,1001,1101,1201,1301,1401
+Merton,Wimbledon Park,921,1024,1126,1228,1331,1433
+Newham,Beckton,604,671,738,805,872,939
+Newham,Boleyn,541,601,661,721,782,842
+Newham,Canning Town North,641,713,784,855,927,998
+Newham,Canning Town South,752,836,919,1003,1087,1170
+Newham,Custom House,577,641,705,769,833,897
+Newham,East Ham Central,549,610,671,732,793,854
+Newham,East Ham North,533,593,652,711,770,830
+Newham,East Ham South,553,614,676,737,798,860
+Newham,Forest Gate North,643,715,786,857,929,1000
+Newham,Forest Gate South,659,732,805,878,951,1025
+Newham,Green Street East,588,654,719,784,850,915
+Newham,Green Street West,580,645,709,774,838,903
+Newham,Little Ilford,547,608,669,729,790,851
+Newham,Manor Park,580,644,708,773,837,901
+Newham,Plaistow North,612,681,749,817,885,953
+Newham,Plaistow South,590,656,721,787,852,918
+Newham,Royal Docks,800,889,978,1067,1155,1244
+Newham,Stratford and New Town,762,846,931,1016,1100,1185
+Newham,Wall End,561,623,685,748,810,872
+Newham,West Ham,625,694,764,833,903,972
+Redbridge,Aldborough,899,999,1099,1199,1299,1399
+Redbridge,Barkingside,851,946,1040,1135,1229,1324
+Redbridge,Bridge,952,1058,1164,1270,1376,1481
+Redbridge,Chadwell,776,862,948,1035,1121,1207
+Redbridge,Church End,1050,1167,1284,1401,1517,1634
+Redbridge,Clayhall,907,1007,1108,1209,1310,1410
+Redbridge,Clementswood,839,932,1025,1119,1212,1305
+Redbridge,Cranbrook,851,946,1040,1135,1229,1324
+Redbridge,Fairlop,916,1018,1120,1222,1324,1425
+Redbridge,Fullwell,815,905,996,1086,1177,1267
+Redbridge,Goodmayes,753,837,920,1004,1088,1171
+Redbridge,Hainault,815,905,996,1086,1177,1267
+Redbridge,Loxford,786,873,960,1048,1135,1222
+Redbridge,Mayfield,712,791,870,949,1028,1107
+Redbridge,Monkhams,1068,1186,1305,1424,1542,1661
+Redbridge,Newbury,839,932,1025,1119,1212,1305
+Redbridge,Roding,943,1048,1152,1257,1362,1467
+Redbridge,Seven Kings,784,871,958,1045,1132,1219
+Redbridge,Snaresbrook,1056,1173,1290,1408,1525,1642
+Redbridge,Valentines,766,852,937,1022,1107,1192
+Redbridge,Wanstead,972,1080,1188,1295,1403,1511
+Richmond upon Thames,Barnes,1324,1471,1618,1765,1912,2059
+Richmond upon Thames,East Sheen,1122,1247,1371,1496,1621,1745
+Richmond upon Thames,Fulwell and Hampton Hill,999,1110,1221,1332,1443,1554
+Richmond upon Thames,"Ham, Petersham and Richmond Rive",1098,1220,1342,1464,1586,1708
+Richmond upon Thames,Hampton,994,1104,1215,1325,1436,1546
+Richmond upon Thames,Hampton North,923,1025,1128,1230,1333,1435
+Richmond upon Thames,Hampton Wick,1098,1220,1342,1464,1586,1708
+Richmond upon Thames,Heathfield,882,980,1078,1177,1275,1373
+Richmond upon Thames,Kew,1170,1300,1430,1560,1690,1820
+Richmond upon Thames,Mortlake and Barnes Common,1173,1304,1434,1564,1695,1825
+Richmond upon Thames,North Richmond,1119,1243,1368,1492,1617,1741
+Richmond upon Thames,St Margarets and North Twickenha,1118,1243,1367,1491,1615,1740
+Richmond upon Thames,South Richmond,1210,1344,1479,1613,1748,1882
+Richmond upon Thames,South Twickenham,1039,1155,1270,1386,1501,1617
+Richmond upon Thames,Teddington,1064,1182,1301,1419,1537,1655
+Richmond upon Thames,Twickenham Riverside,1107,1230,1353,1477,1600,1723
+Richmond upon Thames,West Twickenham,1020,1133,1247,1360,1473,1586
+Richmond upon Thames,Whitton,935,1039,1143,1247,1351,1455
+Southwark,Brunswick Park,812,902,992,1083,1173,1263
+Southwark,Camberwell Green,824,915,1007,1098,1190,1282
+Southwark,Cathedrals,1093,1215,1336,1458,1579,1700
+Southwark,Chaucer,941,1046,1150,1255,1359,1464
+Southwark,College,764,848,933,1018,1103,1188
+Southwark,East Dulwich,920,1022,1124,1227,1329,1431
+Southwark,East Walworth,887,986,1084,1183,1282,1380
+Southwark,Faraday,784,871,958,1046,1133,1220
+Southwark,Grange,977,1086,1194,1303,1412,1520
+Southwark,Livesey,760,845,929,1014,1098,1183
+Southwark,Newington,879,977,1075,1172,1270,1368
+Southwark,Nunhead,778,864,951,1037,1124,1210
+Southwark,Peckham,729,810,891,972,1053,1134
+Southwark,Peckham Rye,852,946,1041,1135,1230,1325
+Southwark,Riverside,1051,1168,1284,1401,1518,1635
+Southwark,Rotherhithe,925,1028,1131,1234,1337,1440
+Southwark,South Bermondsey,729,810,891,972,1053,1134
+Southwark,South Camberwell,863,959,1055,1151,1247,1343
+Southwark,Surrey Docks,922,1024,1127,1229,1331,1434
+Southwark,The Lane,848,942,1036,1130,1224,1318
+Southwark,Village,947,1052,1158,1263,1368,1473
+Sutton,Beddington North,726,807,887,968,1048,1129
+Sutton,Beddington South,698,775,853,930,1008,1085
+Sutton,Belmont,840,933,1026,1120,1213,1306
+Sutton,Carshalton Central,867,964,1060,1156,1253,1349
+Sutton,Carshalton South and Clockhouse,884,983,1081,1179,1277,1376
+Sutton,Cheam,1025,1139,1253,1367,1480,1594
+Sutton,Nonsuch,882,980,1078,1176,1273,1371
+Sutton,St Helier,721,801,882,962,1042,1122
+Sutton,Stonecot,821,912,1003,1094,1186,1277
+Sutton,Sutton Central,840,933,1026,1120,1213,1306
+Sutton,Sutton North,862,958,1054,1150,1246,1341
+Sutton,Sutton South,887,986,1084,1183,1281,1380
+Sutton,Sutton West,901,1001,1101,1201,1301,1401
+Sutton,The Wrythe,762,846,931,1015,1100,1185
+Sutton,Wallington North,778,865,951,1038,1124,1210
+Sutton,Wallington South,840,933,1026,1120,1213,1306
+Sutton,Wandle Valley,683,759,835,911,987,1063
+Sutton,Worcester Park,922,1025,1127,1230,1332,1435
+Tower Hamlets,Bethnal Green,925,1028,1130,1233,1336,1439
+Tower Hamlets,Blackwall and Cubitt Town,1004,1115,1227,1338,1450,1561
+Tower Hamlets,Bow East,879,976,1074,1172,1269,1367
+Tower Hamlets,Bow West,945,1050,1154,1259,1364,1469
+Tower Hamlets,Bromley North,828,920,1012,1104,1196,1288
+Tower Hamlets,Bromley South,846,940,1034,1128,1222,1316
+Tower Hamlets,Canary Wharf,1058,1176,1294,1411,1529,1646
+Tower Hamlets,Island Gardens,928,1031,1134,1237,1340,1443
+Tower Hamlets,Lansbury,795,883,971,1060,1148,1236
+Tower Hamlets,Limehouse,1099,1221,1343,1465,1587,1709
+Tower Hamlets,Mile End,857,952,1047,1142,1237,1333
+Tower Hamlets,Poplar,773,859,945,1031,1117,1203
+Tower Hamlets,St Dunstan's,879,976,1074,1172,1269,1367
+Tower Hamlets,St Katharine's and Wapping,1160,1289,1418,1546,1675,1804
+Tower Hamlets,St Peter's,956,1062,1168,1274,1380,1486
+Tower Hamlets,Shadwell,879,976,1074,1172,1269,1367
+Tower Hamlets,Spitalfields and Banglatown,1160,1289,1418,1546,1675,1804
+Tower Hamlets,Stepney Green,863,959,1055,1151,1247,1343
+Tower Hamlets,Weavers,1091,1213,1334,1455,1576,1698
+Tower Hamlets,Whitechapel,1135,1261,1387,1513,1639,1765
+Waltham Forest,Cann Hall,624,694,763,832,902,971
+Waltham Forest,Cathall,684,760,836,912,988,1064
+Waltham Forest,Chapel End,811,901,991,1081,1171,1261
+Waltham Forest,Chingford Green,750,833,916,1000,1083,1166
+Waltham Forest,Endlebury,752,836,920,1003,1087,1170
+Waltham Forest,Forest,750,833,916,1000,1083,1166
+Waltham Forest,Grove Green,862,958,1054,1150,1246,1342
+Waltham Forest,Hale End and Highams Park,684,760,836,912,988,1064
+Waltham Forest,Hatch Lane,713,793,872,951,1031,1110
+Waltham Forest,High Street,914,1016,1117,1219,1320,1422
+Waltham Forest,Higham Hill,710,789,868,947,1026,1105
+Waltham Forest,Hoe Street,793,882,970,1058,1146,1234
+Waltham Forest,Larkswood,621,690,759,828,897,966
+Waltham Forest,Lea Bridge,838,931,1025,1118,1211,1304
+Waltham Forest,Leyton,733,814,895,977,1058,1140
+Waltham Forest,Leytonstone,776,862,949,1035,1121,1207
+Waltham Forest,Markhouse,789,877,964,1052,1140,1228
+Waltham Forest,Valley,631,701,771,841,911,981
+Waltham Forest,William Morris,931,1035,1138,1242,1345,1449
+Waltham Forest,Wood Street,776,862,949,1035,1121,1207
+Wandsworth,Balham,1154,1282,1410,1538,1666,1794
+Wandsworth,Bedford,1082,1203,1323,1443,1564,1684
+Wandsworth,Earlsfield,1099,1221,1343,1465,1588,1710
+Wandsworth,East Putney,1152,1280,1408,1536,1664,1793
+Wandsworth,Fairfield,1115,1239,1363,1487,1611,1734
+Wandsworth,Furzedown,949,1055,1160,1266,1371,1476
+Wandsworth,Graveney,1021,1135,1248,1361,1475,1588
+Wandsworth,Latchmere,1032,1147,1261,1376,1491,1605
+Wandsworth,Nightingale,1120,1244,1369,1493,1618,1742
+Wandsworth,Northcote,1308,1454,1599,1745,1890,2035
+Wandsworth,Queenstown,1347,1497,1647,1796,1946,2096
+Wandsworth,Roehampton and Putney Heath,898,998,1098,1198,1297,1397
+Wandsworth,St Mary's Park,1212,1346,1481,1616,1750,1885
+Wandsworth,Shaftesbury,1207,1341,1475,1610,1744,1878
+Wandsworth,Southfields,1101,1223,1346,1468,1590,1713
+Wandsworth,Thamesfield,1238,1375,1513,1650,1788,1925
+Wandsworth,Tooting,981,1090,1199,1308,1417,1526
+Wandsworth,Wandsworth Common,1110,1234,1357,1480,1604,1727
+Wandsworth,West Hill,987,1097,1207,1317,1426,1536
+Wandsworth,West Putney,1070,1189,1308,1427,1546,1665
+Westminster,Abbey Road,1056,1174,1291,1408,1526,1643
+Westminster,Bayswater,1104,1227,1349,1472,1595,1717
+Westminster,Bryanston and Dorset Square,1159,1288,1417,1546,1674,1803
+Westminster,Churchill,1086,1206,1327,1448,1568,1689
+Westminster,Church Street,919,1022,1124,1226,1328,1430
+Westminster,Harrow Road,954,1060,1166,1272,1378,1484
+Westminster,Hyde Park,1125,1250,1375,1499,1624,1749
+Westminster,Knightsbridge and Belgravia,1379,1532,1686,1839,1992,2145
+Westminster,Lancaster Gate,1146,1274,1401,1528,1656,1783
+Westminster,Little Venice,1149,1277,1405,1533,1660,1788
+Westminster,Maida Vale,1094,1215,1337,1458,1580,1701
+Westminster,Marylebone High Street,1185,1317,1449,1580,1712,1844
+Westminster,Queen's Park,924,1026,1129,1232,1334,1437
+Westminster,Regent's Park,1155,1283,1411,1539,1668,1796
+Westminster,St James's,1187,1319,1450,1582,1714,1846
+Westminster,Tachbrook,1062,1180,1299,1417,1535,1653
+Westminster,Vincent Square,1152,1280,1408,1536,1664,1792
+Westminster,Warwick,1146,1274,1401,1528,1656,1783
+Westminster,Westbourne,974,1082,1191,1299,1407,1515
+Westminster,West End,1237,1375,1512,1650,1787,1925

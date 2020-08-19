@@ -1,0 +1,19 @@
+<div class="notifications-page">
+  <gla-page-header class="mbottom10" [hide-back-btn]="true">Notifications</gla-page-header>
+  <div class="col-xs-12 mtop15" ng-repeat="group in $ctrl.notifcationsGroups">
+    <notifications-group notifications-group="group" notification-deleted="$ctrl.notificationDeleted()">
+    </notifications-group>
+  </div>
+</div>
+<div class="row mbottom30" ng-if="$ctrl.allLoaded">
+  <div class="col-xs-12 text-center" ng-class="{'mtop30': !$ctrl.data.organisations.length}">
+    <button type="button" class="btn center-block btn-primary" ng-click="$ctrl.loadMore()" id="more-button">MORE</button>
+  </div>
+  <br>
+  <br>
+</div>
+<div class="row" ng-if="$ctrl.notifcationsGroups.length === 0 ">
+  <div class="col-xs-12">
+    No notifications
+  </div>
+</div>

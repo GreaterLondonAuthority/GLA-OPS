@@ -1,0 +1,192 @@
+<div class="project-funding-claims medium-page">
+  <div class="row text-center">
+    <gla-project-header [editable-block]="$ctrl" (on-back)="$ctrl.back()" [show-ukprn]="true">{{$ctrl.fundingClaims.blockDisplayName}}</gla-project-header>
+  </div>
+
+  <gla-spinner ng-if="$ctrl.loading"></gla-spinner>
+
+  <div class="row mtop20 text-center">
+
+    <div class="mtop10 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
+      <div class="contract-types" ng-if="$ctrl.isAebProcured">
+        <div class="label">{{$ctrl.labels.contractType}}</div>
+
+        <div id="{{$ctrl.id(lot.name) + '-contract-type'}}" ng-repeat="lot in $ctrl.fundingClaims.contractTypes">
+          <div class="form-group">
+            <label class="question-text" for="{{$ctrl.id(lot.name)}}">Are you delivering {{lot.name}}?</label>
+            <gla-yes-no-input id="{{$ctrl.id(lot.name)}}"
+                              name="{{$ctrl.id(lot.name)}}"
+                              mode="bool"
+                              [(model)]="lot.selected"
+                              [read-only]="$ctrl.readOnly"
+                              (model-change)="$ctrl.onContractTypeChange(lot)">
+            </gla-yes-no-input>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="form-group" ng-if="$ctrl.showTotalAllocation">
+        <label for="read-only-total-allocation">{{$ctrl.labels.totalAllocation}}</label>
+        <div id="read-only-total-allocation">{{$ctrl.fundingClaims.totalAllocation | number}}</div>
+      </div>
+
+      <div class="form-group">
+        <label for="academic-year">{{$ctrl.labels.academicYear}}</label>
+        <div ng-if="!$ctrl.showYearDropDown">{{$ctrl.academicYearFrom | fYear}}</div>
+        <financial-year id="academic-year"
+                        ng-if="$ctrl.showYearDropDown"
+                        from="$ctrl.academicYearFrom"
+                        to="$ctrl.academicYearTo"
+                        current-financial-year-const="$ctrl.currentFinancialYear"
+                        on-select="$ctrl.onSelectYear($ctrl.fromDateSelected.financialYear)"
+                        selected-year="$ctrl.fromDateSelected"
+                        populated-years="$ctrl.fundingClaims.populatedYears"></financial-year>
+      </div>
+
+      <div class="form-group">
+        <label for="read-only-delivery-allocation">{{$ctrl.labels.deliverAllocation}}</label>
+        <div id="read-only-delivery-allocation">{{$ctrl.currentAllocation.allocation | number}}</div>
+      </div>
+      <div ng-if="$ctrl.isAebGrant" class="form-group">
+        <label for="read-only-community-allocation">{{$ctrl.labels.communityAllocation}}</label>
+        <div id="read-only-community-allocation">{{$ctrl.currentAllocation.communityAllocation | number}}</div>
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.isAebProcured">
+        <label for="read-only-learner-support-allocation">{{$ctrl.labels.learnerSupportAllocation}}</label>
+        <div id="read-only-learner-support-allocation">{{$ctrl.currentAllocation.learnerSupportAllocation | number}}</div>
+      </div>
+
+    </div>
+  </div>
+
+  <section-header collapsed="$ctrl.blockSessionStorage.hideFundingClaims">Funding Claims</section-header>
+
+  <div class="mtop20" ng-if="!$ctrl.blockSessionStorage.hideFundingClaims">
+
+    <div class="row" ng-if="!$ctrl.isAebProcured || $ctrl.isSelectedContractType()">
+      <div class="mtop10 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
+        <div class="form-group">
+          <label for="periods">Funding Claim Period</label>
+          <select class="form-control"
+                  id="periods"
+                  name="period"
+                  ng-change="$ctrl.onSelectFundingClaimPeriod($ctrl.selectedPeriod)"
+                  ng-model="$ctrl.selectedPeriod"
+                  ng-options="period as period.text for period in $ctrl.periods"
+                  placeholder="Select funding claim period"
+                  style-placeholder>
+            <option disabled value="">Select funding claim period</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="mtop20 mbottom10" ng-if="!$ctrl.readOnly && $ctrl.selectedPeriod && !$ctrl.isAebProcured" >
+      <span> Please provide the Delivery to Date and Forecast Delivery details for your funding claim categories.</span>
+    </div>
+
+
+    <funding-claims-table block-id="$ctrl.fundingClaims.id" ng-if="!$ctrl.isAebProcured"
+                          funding-claims-entries="$ctrl.fundingClaims.fundingClaimsEntries"
+                          on-entry-change="$ctrl.onFundingClaimsEntryChange($event)"
+                          project-id="$ctrl.project.id"
+                          read-only="$ctrl.readOnly"
+                          selected-period="$ctrl.selectedPeriod"
+                          selected-year="$ctrl.fromDateSelected.financialYear"
+                          totals="$ctrl.fundingClaims.totals"
+                          can-edit-forecast="$ctrl.editFundingColumn">
+    </funding-claims-table>
+
+    <div class="mtop20 mbottom10" ng-if="!$ctrl.readOnly && $ctrl.selectedPeriod && $ctrl.isAebProcured && !$ctrl.isSelectedContractType()" >
+      Select contract type to display the funding claim table
+    </div>
+
+    <funding-claims-table-procured block-id="$ctrl.fundingClaims.id" ng-if="$ctrl.isAebProcured && $ctrl.isSelectedContractType()"
+                          funding-claims-entries="$ctrl.selectedYearEntries"
+                          on-entry-change="$ctrl.onFundingClaimsEntryChange($event)"
+                          project-id="$ctrl.project.id"
+                          read-only="$ctrl.readOnly"
+                          selected-period="$ctrl.selectedPeriod"
+                          selected-year="$ctrl.fromDateSelected.financialYear"
+                          totals="$ctrl.fundingClaims.totals"
+                          flexible-allocation-threshold="$ctrl.templateConfig.flexibleAllocationThreshold"
+                          can-edit-forecast="$ctrl.editFundingColumn"
+                          contract-types="$ctrl.activeContractTypes">
+    </funding-claims-table-procured>
+
+  </div>
+
+  <div ng-if="$ctrl.templateConfig.fundingVariationsEnabled">
+    <section-header collapsed="$ctrl.blockSessionStorage.showFundingVariations"  ng-if="(!$ctrl.isAebProcured ) || ($ctrl.isAebProcured && $ctrl.isSelectedContractType())">Funding Variations</section-header>
+
+    <form class="mtop20" id="funding-variation-form" ng-if="$ctrl.blockSessionStorage.showFundingVariations && ((!$ctrl.isAebProcured ) || ($ctrl.isAebProcured && $ctrl.isSelectedContractType()))">
+      <div class="form-group mtop20">
+        <label>Do you want to request a variation in the project allocation?</label>
+        <div class="radio-group" ng-if="!$ctrl.readOnly">
+          <label class="radio-inline">
+            <input aria-label="Do you want to request a variation in the project allocation? Yes"
+                   name="variationRequested"
+                   ng-change="$ctrl.onVariationRequestedChanged()"
+                   ng-model="$ctrl.fundingClaims.variationRequested"
+                   ng-value="true"
+                   type="radio"> Yes
+          </label>
+          <label class="radio-inline">
+            <input aria-label="Do you want to request a variation in the project allocation? No"
+                   name="variationRequested"
+                   ng-change="$ctrl.onVariationRequestedChanged()"
+                   ng-disabled="$ctrl.totalProjectCount"
+                   ng-model="$ctrl.fundingClaims.variationRequested"
+                   ng-value="false"
+                   type="radio"> No
+          </label>
+        </div>
+        <div ng-if="$ctrl.readOnly">{{$ctrl.fundingClaims.variationRequested | bool}}</div>
+      </div>
+
+      <div ng-if="$ctrl.fundingClaims.variationRequested">
+        <div class="form-group">
+          <label for="newAllocation">{{$ctrl.newAllocationText}}</label>
+          <div class="row no-gutter" ng-if="!$ctrl.readOnly">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+              <input class="form-control"
+                     id="newAllocation"
+                     maxlength="13"
+                     name="newTotalAllocation"
+                     ng-model="$ctrl.variation.allocation"
+                     number-mask="0"
+                     placeholder="{{$ctrl.newAllocationText}}"
+                     required type="text" />
+            </div>
+          </div>
+          <div default-value ng-if="$ctrl.readOnly">{{$ctrl.variation.allocation | number}}</div>
+        </div>
+
+        <div class="mbottom20 note secondary-text">{{$ctrl.newAllocationInfoMessage}} </div>
+
+        <div class="form-group">
+          <label for="description">{{$ctrl.newAllocationRationaleText}}</label>
+          <textarea class="form-control"
+                    id="description"
+                    maxlength="250"
+                    name="description"
+                    ng-if="!$ctrl.readOnly"
+                    ng-model="$ctrl.variation.description"
+                    ng-trim="false"
+                    placeholder="{{$ctrl.newAllocationRationaleText}}"
+                    rows="4">
+                  </textarea>
+          <gla-remaining-characters [max]="250" ng-if="!$ctrl.readOnly"
+                                    [text]="$ctrl.variation.description"></gla-remaining-characters>
+          <div class="multiline-text" default-value ng-if="$ctrl.readOnly">{{$ctrl.variation.description}}</div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <project-block-footer editable-block="$ctrl"></project-block-footer>
+</div>

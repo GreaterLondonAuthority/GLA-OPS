@@ -1,0 +1,506 @@
+<div class="project-details text-center">
+  <gla-project-header (on-back)="$ctrl.back($ctrl.newProjForm)"
+                  [editable-block]="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
+
+  <gla-spinner ng-if="loading && !$ctrl.project"></gla-spinner>
+
+  <form class="form-gla" role="form" name="$ctrl.newProjForm" style="margin-top: 30px" ng-if="$ctrl.project">
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="project-title">{{$ctrl.fields.title.label}}</label>
+          <input id="project-title"
+                 type="text"
+                 name="title"
+                 gla-read-only="$ctrl.readOnly"
+                 class="form-control"
+                 placeholder="{{$ctrl.fields.title.placeholder}}"
+                 ng-model="$ctrl.projectBlock.title"
+                 maxlength="50" required />
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.title.$touched">
+            <span class="error" ng-show="$ctrl.newProjForm.title.$error.required">Enter a title</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group bidding-arrangement">
+          <label for="bidding-arrangement">{{$ctrl.fields.organisationGroupId.label}}</label>
+          <select class="form-control"
+                     ng-if="$ctrl.organisationGroups.length > 1"
+                     id="bidding-arrangement"
+                     name="organisationGroup"
+                     ng-model="$ctrl.projectBlock.organisationGroupId"
+                     gla-read-only="$ctrl.readOnly || $ctrl.active"
+                     ng-change="$ctrl.changeBiddingArrangement()"
+                     ng-options="org.id as org.name for org in $ctrl.organisationGroups"
+                     style-placeholder>
+            <option disabled value="">{{$ctrl.fields.organisationGroupId.placeholder}}</option>
+          </select>
+
+          <div id="bidding-arrangement"
+               ng-if="$ctrl.organisationGroups.length === 1"
+               class="read-only-text">{{$ctrl.organisationGroups[0].name}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="org-name">Organisation name</label>
+          <div id="org-name" class="read-only-text">{{$ctrl.orgName}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="$ctrl.leadOrg">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="leadOrg">Lead organisation</label>
+          <div id="leadOrg" class="read-only-text">{{$ctrl.leadOrg.name}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="programme">Programme selected</label>
+          <div id="programme" class="read-only-text">{{$ctrl.project.programme.name}} </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="project-type">Project type selected</label>
+          <div id="project-type" class="read-only-text">{{$ctrl.template.name}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="$ctrl.organisations.length">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="developingOrg">{{$ctrl.fields.developingOrganisationId.label}}</label>
+          <select class="form-control"
+                     id="developingOrg"
+                     name="developingOrg"
+                     gla-read-only="$ctrl.readOnly"
+                     ng-model="$ctrl.projectBlock.developingOrganisationId"
+                     ng-options="org.id as org.name for org in $ctrl.organisations"
+                     style-placeholder>
+            <option disabled value="">{{$ctrl.fields.developingOrganisationId.placeholder}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Field is not controlled by template -->
+    <div class="row" ng-if="$ctrl.organisations.length">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="developmentLiabilityOrganisationId">{{$ctrl.fields.developmentLiabilityOrganisationId.label}}</label>
+          <select class="form-control"
+                     id="developmentLiabilityOrganisationId"
+                     name="developingOrg"
+                     ng-model="$ctrl.projectBlock.developmentLiabilityOrganisationId"
+                     gla-read-only="$ctrl.readOnly"
+                     ng-options="org.id as org.name for org in $ctrl.organisations"
+                     style-placeholder>
+            <option disabled value="">{{$ctrl.fields.developmentLiabilityOrganisationId.placeholder}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row" ng-if="$ctrl.organisations.length">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="postCompletionLiabilityOrganisationId">{{$ctrl.fields.postCompletionLiabilityOrganisationId.label}}</label>
+          <select class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="postCompletionLiabilityOrganisationId"
+                  name="postCompletionLiabilityOrgId"
+                  ng-model="$ctrl.projectBlock.postCompletionLiabilityOrganisationId"
+                  ng-options="org.id as org.name for org in $ctrl.organisations"
+                  style-placeholder>
+            <option disabled value="">{{$ctrl.fields.postCompletionLiabilityOrganisationId.placeholder}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.description.hidden">
+          <label for="project-desc">{{$ctrl.fields.description.label}}</label>
+          <textarea id="project-desc"
+                    rows="5"
+                    placeholder="{{$ctrl.fields.description.placeholder}}"
+                    name="description"
+                    gla-read-only="$ctrl.readOnly"
+                    class="form-control"
+                    ng-model="$ctrl.projectBlock.description"
+                    maxlength="1000">
+          </textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="$ctrl.projectBlock.showAddressRestrictedField">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" >
+          <input type="checkbox"
+                 ng-change="$ctrl.restrictedUpdated()"
+                 ng-if="!$ctrl.readOnly && $ctrl.projectBlock.canEditAddressRestrictedField"
+                 aria-label="address restricted"
+                 ng-model="$ctrl.projectBlock.addressRestricted"
+                 name="addressRestricted"/>
+          <label ng-if="($ctrl.projectBlock.canEditAddressRestrictedField && !$ctrl.readOnly ) || $ctrl.projectBlock.addressRestricted ">
+                 This address is sensitive/confidential
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+<!--        <div class="form-group" ng-if="!$ctrl.fields.address.hidden">-->
+        <div class="form-group" ng-if="!$ctrl.fields.address.hidden ">
+          <label for="project-addressLine">{{$ctrl.fields.address.label}}</label>
+          <div ng-if="!$ctrl.projectBlock.addressRestricted">
+            <textarea id="project-addressLine"
+                    maxlength="255"
+                    ng-if="!$ctrl.readOnly"
+                    ng-model="$ctrl.projectBlock.address"
+                    class="form-control"
+                    name="address"
+                    gla-read-only="$ctrl.readOnly"
+                    placeholder="{{$ctrl.fields.address.placeholder}}"
+                    rows="5" type="text">
+              </textarea>
+          </div>
+          <div default-value id="project-addressLine" ng-if="$ctrl.readOnly || $ctrl.projectBlock.addressRestricted">
+            {{$ctrl.projectBlock.addressRestricted ? 'Restricted' : $ctrl.projectBlock.address}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <!--        <div class="form-group" ng-if="!$ctrl.fields.address.hidden">-->
+        <div class="form-group" ng-if="!$ctrl.fields.address.hidden ">
+          <label for="project-borough">{{$ctrl.fields.borough.label}}</label>
+          <select class="form-control"
+                  id="project-borough"
+                  name="borough"
+                  ng-change="$ctrl.onBoroughChange ($ctrl.projectBlock.borough)"
+                  ng-if="!$ctrl.readOnly && !$ctrl.fields.borough.hidden && $ctrl.maxBoroughs==1"
+                  ng-model="$ctrl.projectBlock.borough"
+                  ng-options="b.boroughName as b.boroughName for b in $ctrl.boroughs"
+                  style-placeholder>
+            <option disabled value="">{{$ctrl.fields.borough.placeholder}}</option>
+          </select>
+
+          <div ng-if="!$ctrl.readOnly && !$ctrl.fields.borough.hidden && $ctrl.maxBoroughs>1 ">
+            <div class="mtop5 mbottom5">Select up to {{$ctrl.maxBoroughs}} Boroughs </div>
+            <gla-multi-select class="form-control multi-select"
+                          id="project-borough"
+                          [filter-dropdown-items]="$ctrl.boroughOptions"
+                          name="borough-multi-select"
+                          [max-selections]="$ctrl.maxBoroughs"
+                          (on-change)="$ctrl.onBoroughOptionChange($event, $ctrl.boroughOptions)">
+            </gla-multi-select>
+          </div>
+
+          <div  default-value ng-if="$ctrl.readOnly" id="project-borough">
+            {{$ctrl.projectBlock.borough}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <!--        <div class="form-group" ng-if="!$ctrl.fields.address.hidden">-->
+        <div class="form-group" ng-if="!$ctrl.fields.address.hidden ">
+
+          <label for="project-postcode">{{$ctrl.fields.postcode.label}}</label>
+          <input id="project-postcode"
+                 ng-if="!$ctrl.readOnly && !$ctrl.projectBlock.addressRestricted"
+                 title="Postcode"
+                 style="width: 180px"
+                 name="postcode"
+                 type="text"
+                 class="form-control"
+
+                 placeholder="{{$ctrl.fields.postcode.placeholder}}"
+                 ng-model="$ctrl.projectBlock.postcode"
+                 maxlength="10"
+                 ng-pattern="/^(([gG][iI][rR] {0,}0[aA]{2})|((([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y]?[0-9][0-9]?)|(([a-pr-uwyzA-PR-UWYZ][0-9][a-hjkstuwA-HJKSTUW])|([a-pr-uwyzA-PR-UWYZ][a-hk-yA-HK-Y][0-9][abehmnprv-yABEHMNPRV-Y]))) {0,}[0-9][abd-hjlnp-uw-zABD-HJLNP-UW-Z]{2}))$/" />
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.postcode.$touched">
+            <span class="error" ng-show="$ctrl.newProjForm.postcode.$error.pattern">Postcode must be entered in a standard format</span>
+          </div>
+          <div  default-value id="project-postcode" ng-if="$ctrl.readOnly || $ctrl.projectBlock.addressRestricted">
+            {{$ctrl.projectBlock.addressRestricted ? 'Restricted' : $ctrl.projectBlock.postcode}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.coords.hidden && !$ctrl.projectBlock.addressRestricted">
+          <label for="project-xCoord">{{$ctrl.fields.coords.label}}</label>
+          <div class="form-group row no-gutter">
+            <div class="col-md-5">
+              <input id="project-xCoord"
+                     title="X Coordinate" type="text"
+                     class="form-control"
+                     gla-read-only="$ctrl.readOnly"
+                     ng-pattern="/^\d{6}$/"
+                     placeholder="{{$ctrl.fields.coordX.placeholder}}"
+                     name="xCoord"
+                     ng-model="$ctrl.projectBlock.coordX"
+                     maxlength="8" />
+
+              <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.xCoord.$touched">
+                <span class="error" id="invalidX" ng-show="$ctrl.newProjForm.xCoord.$error.pattern">Enter 6 digit X coordinate</span>
+              </div>
+            </div>
+            <div class="col-md-5 col-md-offset-2">
+              <input id="project-yCoord"
+                     title="Y Coordinate"
+                     type="text"
+                     class="form-control"
+                     gla-read-only="$ctrl.readOnly"
+                     ng-pattern="/^\d{6}$/"
+                     placeholder="{{$ctrl.fields.coordY.placeholder}}"
+                     name="yCoord"
+                     ng-model="$ctrl.projectBlock.coordY"
+                     maxlength="7" />
+
+              <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.yCoord.$touched">
+                <span class="error" id="invalidY" ng-show="$ctrl.newProjForm.yCoord.$error.pattern">Enter 6 digit Y coordinate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group read-only-text"  ng-if="!$ctrl.fields.coords.hidden && $ctrl.projectBlock.addressRestricted">
+          <div ng-if="$ctrl.projectBlock.address || $ctrl.projectBlock.addressRestricted">
+            <label for="project-xCoord">
+              {{$ctrl.fields.coords.label}}
+            </label>
+            <div id="project-xCoord">
+              Restricted
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="!$ctrl.fields.address.hidden && !$ctrl.fields.borough.hidden && !$ctrl.fields.wardId.hidden  && !$ctrl.projectBlock.addressRestricted">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="ward">{{$ctrl.fields.wardId.label}}</label>
+          <select class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="ward"
+                  name="ward"
+                  ng-disabled="$ctrl.readOnly || !$ctrl.projectBlock.borough"
+                  ng-model="$ctrl.projectBlock.wardId"
+                  ng-options="w.id as w.wardName for w in $ctrl.wards">
+            <option value="">Not provided</option>
+          </select>
+
+          <div class="error-wrapper" role="alert" ng-show="!$ctrl.readOnly && !$ctrl.projectBlock.borough">
+            <span class="error ward-error">A borough must be selected before a ward can be selected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group read-only-text"  ng-if="!$ctrl.fields.address.hidden && !$ctrl.fields.borough.hidden && !$ctrl.fields.wardId.hidden  && $ctrl.projectBlock.addressRestricted">
+          <div ng-if="$ctrl.projectBlock.addressRestricted">
+            <label for="ward">
+              {{$ctrl.fields.wardId.label}}
+            </label>
+            <div id="ward">
+              Restricted
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.mainContact.hidden">
+          <label for="project-main-contact">{{$ctrl.fields.mainContact.label}}</label>
+          <input id="project-main-contact"
+                 type="text"
+                 gla-read-only="$ctrl.readOnly"
+                 class="form-control"
+                 name="mainContact"
+                 placeholder="{{$ctrl.fields.mainContact.placeholder}}"
+                 ng-model="$ctrl.projectBlock.mainContact"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.mainContactEmail.hidden">
+          <label for="project-main-contact-email">{{$ctrl.fields.mainContactEmail.label}}</label>
+          <input id="project-main-contact-email"
+                 type="email"
+                 gla-read-only="$ctrl.readOnly"
+                 name="email"
+                 class="form-control"
+                 ng-model="$ctrl.projectBlock.mainContactEmail"
+                 ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                 placeholder="{{$ctrl.fields.mainContactEmail.placeholder}}"
+                 maxlength="100"
+                 autofocus />
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.email.$touched">
+            <span class="error" id="invalidEmail" ng-show="$ctrl.newProjForm.email.$error.pattern || $ctrl.newProjForm.email.$error.email">Enter a valid email address</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.siteOwner.hidden">
+          <label for="project-site-owner">{{$ctrl.fields.siteOwner.label}}</label>
+          <input id="project-site-owner"
+                 name="siteOwner"
+                 type="text"
+                 class="form-control"
+                 gla-read-only="$ctrl.readOnly"
+                 placeholder="{{$ctrl.fields.siteOwner.placeholder}}"
+                 ng-model="$ctrl.projectBlock.siteOwner"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.interest.hidden">
+          <label for="project-interest">{{$ctrl.fields.interest.label}}</label>
+          <input id="project-interest"
+                 name="interest"
+                 type="text"
+                 class="form-control"
+                 gla-read-only="$ctrl.readOnly"
+                 placeholder="{{$ctrl.fields.interest.placeholder}}"
+                 ng-model="$ctrl.projectBlock.interest"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.projectManager.hidden">
+          <label for="project-project-manager">{{$ctrl.fields.projectManager.label}}</label>
+          <input id="project-project-manager"
+                 name="projectManager"
+                 type="text"
+                 class="form-control"
+                 ng-model="$ctrl.projectBlock.projectManager"
+                 placeholder="{{$ctrl.fields.projectManager.placeholder}}"
+                 gla-read-only="$ctrl.readOnly"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.siteStatus.hidden">
+          <label for="project-site-status">{{$ctrl.fields.siteStatus.label}}</label>
+          <select aria-label="{{$ctrl.fields.siteStatus.label}}" class="status__dropdown form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="project-site-status"
+                  name="siteStatus"
+                  ng-model="$ctrl.projectBlock.siteStatus"
+                  ng-options="siteStatus for siteStatus in $ctrl.siteStatuses"
+                  style-placeholder>
+            <option disabled value="">{{$ctrl.fields.siteStatus.placeholder}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.legacyProjectCode.hidden">
+          <label for="project-pcd-code">{{$ctrl.fields.legacyProjectCode.label}}</label>
+          <input id="project-pcd-code"
+                 name="legacyProjectCode"
+                 numbers-only
+                 class="form-control"
+                 gla-read-only="$ctrl.readOnly"
+                 placeholder="{{$ctrl.fields.legacyProjectCode.placeholder}}"
+                 ng-model="$ctrl.projectBlock.legacyProjectCode"
+                 change-on-blur="$ctrl.checkLegacyProjectCode()" />
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.existingProjectWithLegacyCode">
+            <span class="error" id="invalidPcsCode" ng-show="$ctrl.existingProjectWithLegacyCode">
+              This Legacy project code is already associated with OPS project P{{$ctrl.existingProjectWithLegacyCode}}. This code won't be saved, use an alternative code.
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.planningPermissionReference.hidden && !$ctrl.projectBlock.addressRestricted">
+          <label for="planning-permission-reference">{{$ctrl.fields.planningPermissionReference.label}}</label>
+          <input id="planning-permission-reference"
+                 name="planningPermissionReference"
+                 type="text"
+                 class="form-control"
+                 gla-read-only="$ctrl.readOnly"
+                 placeholder="{{$ctrl.fields.planningPermissionReference.placeholder}}"
+                 ng-model="$ctrl.projectBlock.planningPermissionReference"
+                 maxlength="20" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group read-only-text"  ng-if="!$ctrl.fields.coords.hidden && $ctrl.projectBlock.addressRestricted">
+          <div>
+            <label for="planning-permission-reference">
+              {{$ctrl.fields.planningPermissionReference.label}}
+            </label>
+            <div id="planning-permission-reference">
+              Restricted
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
+  </form>
+</div>

@@ -1,0 +1,28 @@
+<div class="template-block-outputs">
+  <div class="form-group" ng-repeat="field in $ctrl.configurableFields track by field.id">
+    <label ng-attr-for="{{field.id}}">{{field.label}}</label>
+
+    <div ng-if="field.id != 'outputConfigurationGroup' && field.id != 'grantTypes' && field.id != 'paymentSources'">
+      <gla-yes-no-input
+                    [disabled]="$ctrl.readOnly"
+                    mode="bool"
+                    name="{{field.id}}"
+                    ng-if="!$ctrl.readOnly"
+                    [(model)]="$ctrl.template.detailsConfig[field.id]"
+                    (model-change)="$ctrl.save(false)">
+      </gla-yes-no-input>
+      <div ng-if="$ctrl.readOnly">{{$ctrl.getAnswerAsText($ctrl.template.detailsConfig[field.id])}}</div>
+    </div>
+
+    <select class="form-control"
+            ng-attr-id="{{field.id}}"
+            ng-attr-name="{{field.id}}"
+            ng-disabled="$ctrl.readOnly"
+            ng-if="field.id === 'outputConfigurationGroup'"
+            ng-model="$ctrl.block.outputConfigurationGroup"
+            ng-options="outputConfigurationGroup as outputConfigurationGroup.id for outputConfigurationGroup in $ctrl.outputConfigurationsOptions track by outputConfigurationGroup.id"
+            style-placeholder="">
+      <option disabled value="">OutputConfigurationGroup</option>
+    </select>
+  </div>
+</div>

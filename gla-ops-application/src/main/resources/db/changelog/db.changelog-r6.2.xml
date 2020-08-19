@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="511" author="ughari">
+        <addColumn tableName="milestones_block">
+            <column name="milestone_marked_corporate" type="boolean" defaultValue="false"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="512" author="ughari">
+        <dropColumn tableName="milestones_block" columnName="milestone_marked_corporate"/>
+    </changeSet>
+
+    <changeSet id="513" author="ughari">
+        <addColumn tableName="milestone">
+            <column name="milestone_marked_corporate" type="boolean" defaultValue="false"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="514" author="cmelville">
+        <addColumn tableName="OUTPUT_TABLE_ENTRY">
+            <column name="baseline" type="INT4" remarks="Baseline for the outputs table" />
+        </addColumn>
+        <addColumn tableName="template_block">
+            <column name="show_baseline_for_outputs" type="BOOLEAN" remarks="If the outputs block should include baseline information" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="515" author="cmelville">
+        <dropNotNullConstraint tableName="OUTPUT_TABLE_ENTRY" columnName="OUTPUT_TYPE" columnDataType="INT4" />
+    </changeSet>
+
+    <changeSet id="516" author="ughari">
+        <createTable tableName="progress_update_block">
+            <column name="id" type="INT4">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="progress_update" type="varchar(2000)" />
+            <column name="private_update" type="varchar(2000)" />
+            <column name="public_update" type="varchar(2000)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="517" author="jdimsa">
+        <createSequence sequenceName="label_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="label">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="label_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="text" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="type" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="project_id" type="INT4">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+
+        </createTable>
+
+
+        <createSequence sequenceName="project_block_label_seq" startValue="10000" incrementBy="1" />
+        <createTable tableName="project_block_label">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="project_block_label_seq">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="project_block_id" type="INT4" />
+            <column name="label_id" type="INT4" />
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="518" author="cmelville">
+        <createSequence sequenceName="assumption_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="OUTPUT_CATEGORY_ASSUMPTION" remarks="Stores line assupmtions for the Outputs block">
+            <column name="id" type="INT4" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_id" type="INT4" remarks="the project this relates to">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="block_id" type="INT4" remarks="the block in the project this relates to">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="year" type="INT4" remarks="the year for this assumption">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="category" type="VARCHAR(100)" remarks="The category for this assumption">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="assumption" type="VARCHAR(200)" remarks="The text for this assumption">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="created_on" type="TIMESTAMP" remarks="date record created">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_on" type="TIMESTAMP" remarks="date record last modifited">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="created_by" type="varchar(255)" remarks="who created record">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_by" type="varchar(255)" remarks="who last updated record">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+
+    </changeSet>
+    <changeSet id="519" author="cmelville">
+        <addForeignKeyConstraint baseColumnNames="project_id"
+                                 baseTableName="output_category_assumption"
+                                 constraintName="fk_output_category_assumption_project_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="project"/>
+        <addForeignKeyConstraint baseColumnNames="block_id"
+                                 baseTableName="output_category_assumption"
+                                 constraintName="fk_output_category_assumption_block_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="project_block"/>
+
+    </changeSet>
+    <changeSet id="520" author="cmelville">
+        <addColumn tableName="template_block">
+            <column name="show_assumptions_for_outputs" type="BOOLEAN" remarks="If the outputs block should show assumption information" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="521" author="cmelville">
+        <addColumn tableName="project_risk">
+            <column name="risk_marked_corporate" type="boolean" defaultValue="false"/>
+        </addColumn>
+        <addColumn tableName="project_action">
+        <column name="action_marked_corporate" type="boolean" defaultValue="false"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="522" author="ughari">
+        <sql>update assessment set status = 'InProgress' where status = 'Draft'</sql>
+    </changeSet>
+
+    <changeSet id="523" author="cmelville">
+        <createSequence sequenceName="payment_profile_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="payment_profile">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="payment_profile_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="year" type="INT4" remarks="the year for this payment profile"/>
+            <column name="period" type="INT4" remarks="the year for this payment profile"/>
+            <column name="percentage" type="decimal(12,2)" remarks="the percentage for this payment profile entry"/>
+            <column name="type" type="varchar(30)" remarks="Type grant type for this payment profile"/>
+
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+
+        </createTable>
+    </changeSet>
+
+    <changeSet id="524" author="ybouhass">
+        <createTable tableName="learning_grant_block">
+            <column name="id" type="INT4">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="525" author="jdimsa">
+        <addColumn tableName="organisation">
+            <column name="ukprn" type="INT4" remarks="UKPRN number for organisations" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="526" author="ybouhass">
+        <addColumn tableName="learning_grant_block">
+            <column name="allocation" type="decimal" remarks="monetary value, year funding allocation" />
+        </addColumn>
+
+        <createSequence sequenceName="learning_grant_entry_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="learning_grant_entry">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="learning_grant_entry_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" />
+            <column name="academic_year" type="INT4" />
+            <column name="period" type="INT4" remarks="month number for the learning year: 1 to 12, August to July" />
+            <column name="allocation" type="decimal" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="527" author="jdimsa">
+        <addColumn tableName="assessment">
+            <column name="project_substatus" type="varchar(30)" remarks="project substatus at the time the assessment started" />
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

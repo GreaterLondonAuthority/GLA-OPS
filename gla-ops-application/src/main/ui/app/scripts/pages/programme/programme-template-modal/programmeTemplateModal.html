@@ -1,0 +1,41 @@
+<div class="abandon-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <h1>Add template</h1>
+  </div>
+  <div class="modal-body text-left">
+
+    <div class="form-group">
+      <label for="programme-template">Select a template</label>
+      <select class="form-control"
+              id="programme-template"
+              name="template"
+              ng-model="$ctrl.selectedTemplate"
+              ng-options="template as template.name for template in $ctrl.availableTemplates"
+              style-placeholder="">
+        <option disabled value="">Select a template</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          class="btn btn-primary btn-center"
+          type="button"
+          ng-click="$close($ctrl.selectedTemplate)"
+          ng-disabled="!$ctrl.selectedTemplate"
+          ng-disabled="">SAVE</button>
+
+        <button
+          class="btn btn-primary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

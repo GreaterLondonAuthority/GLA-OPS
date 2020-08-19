@@ -1,0 +1,100 @@
+<div class="assessment readonly-mode page">
+
+  <gla-page-header [back-btn-name]="$ctrl.backBtnName" [header]="$ctrl.assessmentTemplate.name" (on-back)="$ctrl.onBack()"
+               [editable-block]="$ctrl" [stop-editing]="true">
+  </gla-page-header>
+
+  <header-status>
+    <hs-left class="row text-nowrap"
+             ng-if="$ctrl.assessment.createdOn && $ctrl.assessment.creatorName && !($ctrl.assessment.modifiedOn && $ctrl.assessment.modifierName)">
+      Created on {{($ctrl.assessment.createdOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.assessment.creatorName}} for {{$ctrl.assessment.usersPrimaryOrganisationName}}
+    </hs-left>
+    <hs-left class="row text-nowrap" ng-if="$ctrl.assessment.modifiedOn && $ctrl.assessment.modifierName">
+      <div>Last updated on {{($ctrl.assessment.modifiedOn) | date: 'dd/MM/yyyy'}} by {{$ctrl.assessment.modifierName}} for {{$ctrl.assessment.usersPrimaryOrganisationName}}
+      </div>
+    </hs-left>
+    <hs-right>
+      <div><a id="project-title" ui-sref="project-overview({projectId: $ctrl.assessment.projectId, backNavigation: $ctrl.currentState})">{{$ctrl.project.title}}</a></div>
+      <div><span class="strong">Project ID:</span> <a id="project-id" ui-sref="project-overview({projectId: $ctrl.assessment.projectId, backNavigation: $ctrl.currentState})">P{{$ctrl.assessment.projectId}}</a></div>
+      <div><span class="strong">Assessment ID:</span> <span id="assessment-id">{{$ctrl.assessment.id}}</span></div>
+    </hs-right>
+  </header-status>
+
+  <div class="row no-gutter section-block">
+    <div class="col-sm-9 center-col" >
+      <section-header>Assessment Status</section-header>
+      <div class="bolder"  >{{$ctrl.assessmentStatus}}</div>
+
+
+      <div ng-if="$ctrl.assessmentStatus != 'Completed'" class="mtop10">
+        <div class="form-group yes-no">
+          <label for="complete">Assessment is complete?</label>
+            <span id="complete">No</span>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <div class="section-block" ng-if="$ctrl.assessment.outcomeSummary">
+    <section-header>Summary</section-header>
+    <hr class="section-bar">
+    <outcome-assessment-summary assessment="$ctrl.assessment"></outcome-assessment-summary>
+  </div>
+
+
+
+  <div ng-if="$ctrl.hasOutcomes" class="row no-gutter section-block">
+    <div class="col-sm-9 center-col">
+      <section-header>Assessment outcome</section-header>
+      <hr class="section-bar">
+      <span class="label">{{$ctrl.assessment.outcome.name}}</span>
+    </div>
+  </div>
+
+  <div name="sections">
+    <div class="row no-gutter section-block"
+         ng-repeat="section in $ctrl.assessment.sections | orderBy:'displayOrder' track by section.id">
+
+      <div class="col-sm-9 center-col">
+        <section-header>{{section.title}}<span class="section-weight" ng-if="$ctrl.assessmentTemplate.includeWeight"> (weight: {{section.weight}}%)</span></section-header>
+        <hr class="section-bar">
+
+        <div class="section">
+
+          <div class="section-comments" ng-if="section.commentsRequirement !== 'hidden'">
+            <div class="label">General comments</div>
+            <div class="word-wrap comments">{{section.comments|| 'Not provided'}}</div>
+          </div>
+
+          <div class="criteria row" ng-class="{'with-comment': criteria.comments && criteria.commentsRequirement !== 'hidden'}" ng-repeat="criteria in section.criteriaList | orderBy:'displayOrder' track by criteria.id">
+            <div class="label col-sm-10">{{$index+1}}. {{criteria.title}}<span class="criteria-weight" ng-if="criteria.answerType === 'Score'"> (weight: {{criteria.weight}}%)</span></div>
+            <div class="label col-sm-2 score-column">
+              <div ng-if="criteria.answerType === 'Score'">
+                <span ng-if="criteria.score != null">Score: {{criteria.score}} of {{$ctrl.maxScore.score}}</span>
+                <span ng-if="criteria.score == null">Not provided</span>
+              </div>
+
+              <div ng-if="criteria.answerType === 'PassFail'">
+                {{$ctrl.getFailedCriteriaText(criteria.failed) || 'Not provided'}}
+              </div>
+
+              <div ng-if="criteria.answerType === 'Number'">
+                {{criteria.number > 0 ? $ctrl.formatNumber(criteria.number) : 'Not provided'}}
+              </div>
+            </div>
+            <div class="label col-sm-10" ng-if="criteria.answerType === 'Dropdown'">
+              {{criteria.dropdown || 'Not provided'}}
+            </div>
+
+            <div class="word-wrap comments col-sm-12 no-padding" ng-if="criteria.commentsRequirement !== 'hidden' && criteria.comments">
+              {{criteria.comments}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

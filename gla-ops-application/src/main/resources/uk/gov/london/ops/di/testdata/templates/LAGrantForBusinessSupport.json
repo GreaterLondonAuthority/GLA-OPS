@@ -1,0 +1,216 @@
+{
+  "name": "Local Authority grant for business support",
+  "milestoneType": "MonetarySplit",
+  "grantTypes": [
+    "Grant"
+  ],
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "block": "Details",
+      "blockDisplayName": "Application details",
+      "displayOrder": 0
+    },
+    {
+      "type": "GrantSourceTemplateBlock",
+      "blockDisplayName": "Grant Amount",
+      "block": "GrantSource",
+      "displayOrder": 1,
+      "paymentSourcesString": "Grant",
+      "nilGrantHidden": true,
+      "description": "Request grant up to £1 million to make payments to SMEs and the self employed",
+      "grantTypes": [
+        "Grant"
+      ],
+      "paymentSources": [
+        "Grant"
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Distributing the grant",
+      "block": "Questions",
+      "displayOrder": 2,
+      "blockAppearsOnStatus": null,
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12179,
+            "externalKey": null,
+            "text": "How will grant funds be distributed to SMEs and self employed workers?",
+            "answerType": "FreeText",
+            "quantity": null,
+            "maxLength": 1000,
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "parentId": null,
+          "parentAnswerToMatch": null
+        }
+      ]
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "block": "Milestones",
+      "blockDisplayName": "Milestones",
+      "displayOrder": 3,
+      "autoCalculateMilestoneState": true,
+      "processingRoutes": [
+        {
+          "externalId": null,
+          "name": "default",
+          "milestones": [
+            {
+              "externalId": 7009,
+              "summary": "Expected spend on system development and/or project costs ",
+              "requirement": "mandatory",
+              "monetarySplit": 100,
+              "displayOrder": 1,
+              "monetary": true
+            },
+            {
+              "externalId": 7010,
+              "summary": "Small grant application service live ",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 2,
+              "monetary": true
+            },
+            {
+              "externalId": 7011,
+              "summary": "Expected first payment to SME applicant",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 3,
+              "monetary": true
+            },
+            {
+              "externalId": 7012,
+              "summary": "Expected final payment to SME applicant",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 4,
+              "monetary": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Impact of Coronavirus",
+      "block": "Questions",
+      "displayOrder": 4,
+      "blockAppearsOnStatus": null,
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12180,
+            "externalKey": null,
+            "text": "Estimated number of small businesses operational in the Borough",
+            "answerType": "Number",
+            "quantity": null,
+            "maxLength": null,
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "parentId": null,
+          "parentAnswerToMatch": null
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12181,
+            "externalKey": null,
+            "text": "Number of businesses licensed to provide food in the Borough",
+            "answerType": "Number",
+            "quantity": null,
+            "maxLength": null,
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "parentId": null,
+          "parentAnswerToMatch": null
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12182,
+            "externalKey": null,
+            "text": "Number of licensed restaurants in the Borough",
+            "answerType": "Number",
+            "quantity": null,
+            "maxLength": null,
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "parentId": null,
+          "parentAnswerToMatch": null
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12183,
+            "externalKey": null,
+            "text": "Number of registered beauty salons/nail bars etc in the Borough",
+            "answerType": "Number",
+            "quantity": null,
+            "maxLength": null,
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "parentId": null,
+          "parentAnswerToMatch": null
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12184,
+            "externalKey": null,
+            "text": "Estimated number of self employed workers in the Borough",
+            "answerType": "Number",
+            "quantity": null,
+            "maxLength": null,
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "parentId": null,
+          "parentAnswerToMatch": null
+        }
+      ]
+    },
+    {
+      "type": "ProjectObjectivesTemplateBlock",
+      "blockDisplayName": "Grant use",
+      "infoMessage" : "Explain how you will use the grant to meet the aim of financially supporting small businesses and self employed workers through the coronavirus crisis.",
+      "block": "ProjectObjectives",
+      "displayOrder": 5,
+      "paymentSourcesString": "",
+      "objectiveTextSingular": "Grant aim",
+      "objectiveTextPlural": "Grant aims",
+      "grantTypes": [],
+      "paymentSources": []
+    }
+  ],
+  "stateModel": "ChangeControlled",
+  "warningMessage": null,
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "descriptionRequirement": "mandatory",
+    "postcodeRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "imageRequirement": "optional",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "planningPermissionReferenceRequirement": "hidden"
+  }
+}

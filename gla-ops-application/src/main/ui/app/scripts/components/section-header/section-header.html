@@ -1,0 +1,32 @@
+<h3 class="section-header"
+    ng-if="$ctrl.level != 4"
+    ng-class="{'with-subheader': $ctrl.subheader, 'cursor-pointer': $ctrl.isCollapsible}"
+    ng-click="$ctrl.onSectionClick()">
+  <span allow-enter
+        aria-expanded="{{!$ctrl.collapsed}}"
+        aria-label="{{$ctrl.collapsed? 'Expand' : 'Collapse'}}"
+        class="glyphicon"
+        ng-class="{'glyphicon-triangle-bottom': $ctrl.collapsed, 'glyphicon-triangle-top': !$ctrl.collapsed}"
+        ng-if="$ctrl.isCollapsible"
+        role="button"
+        tabindex="0"></span>
+  <span ng-transclude class="section-title"></span>
+</h3>
+
+<!-- Exactly as above just h4 -->
+<h4 class="section-header"
+    ng-class="{'with-subheader': $ctrl.subheader, 'cursor-pointer': $ctrl.isCollapsible}"
+    ng-click="$ctrl.onSectionClick()"
+    ng-if="$ctrl.level == 4">
+ <span allow-enter
+       aria-expanded="{{!$ctrl.collapsed}}"
+       aria-label="{{$ctrl.collapsed? 'Expand' : 'Collapse'}}"
+       class="glyphicon"
+       ng-class="{'glyphicon-triangle-bottom': $ctrl.collapsed, 'glyphicon-triangle-top': !$ctrl.collapsed}"
+       ng-if="$ctrl.isCollapsible"
+       role="button"
+       tabindex="0"></span>
+  <span class="section-title" ng-transclude></span>
+</h4>
+
+<div ng-if="$ctrl.subheader" class="section-subheader">{{$ctrl.subheader}}</div>

@@ -1,0 +1,95 @@
+<div class="template-block">
+  <form class="form-gla" name="modalForm" role="form">
+    <div class="row">
+      <div class="col-xs-12 col-sm-10 center-col">
+        <gla-page-header header="Block details" (on-back)="$ctrl.onSave({$event: $ctrl.block})" class="mbottom20">
+          <ph-right>
+            <button class="btn btn-primary btn-md" ng-click="$ctrl.copyBlock()">
+              COPY<span class="glyphicon glyphicon-copy"></span>
+            </button>
+          </ph-right>
+        </gla-page-header>
+
+        <div class="form-group">
+          <label for="block-type">Block type</label>
+          <select class="form-control"
+                  id="block-type"
+                  name="block-type"
+                  ng-change="$ctrl.onBlockTypeSelect($ctrl.block.block)"
+                  ng-disabled="!$ctrl.isNew || $ctrl.readOnly"
+                  ng-model="$ctrl.block.block"
+                  ng-options="blockType.blockType as blockType.blockType for blockType in $ctrl.blockTypes"
+                  required
+                  style-placeholder="">
+            <option disabled value="">Block type</option>
+          </select>
+          <div class="error-wrapper" ng-if="(modalForm['block-type'].$touched && modalForm['block-type'].$error.required)" role="alert">
+            <span class="error">Required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="display-name">Display name</label>
+          <input class="form-control"
+                 id="display-name"
+                 maxlength="100"
+                 name="display-name"
+                 ng-model="$ctrl.block.blockDisplayName"
+                 ng-disabled="$ctrl.readOnly"
+                 placeholder="Display name"
+                 required
+                 type="text"/>
+          <div class="error-wrapper" ng-if="modalForm['display-name'].$touched && modalForm['display-name'].$invalid" role="alert">
+            <span class="error">Required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="display-order">Display order</label>
+          <input class="form-control"
+                 id="display-order"
+                 maxlength="5"
+                 name="display-order"
+                 ng-model="$ctrl.block.displayOrder"
+                 ng-disabled="$ctrl.readOnly"
+                 number-mask="0"
+                 placeholder="Display order"
+                 required
+                 type="text"/>
+          <div class="error-wrapper" ng-if="modalForm['display-order'].$touched && modalForm['display-order'].$invalid" role="alert">
+            <span class="error">Required</span>
+          </div>
+        </div>
+        <details-template-block block="$ctrl.block"
+                                ng-if="$ctrl.block.block === 'Details'"
+                                read-only="$ctrl.readOnly"
+                                template="$ctrl.template"></details-template-block>
+
+        <template-block-questions ng-if="$ctrl.block.block === 'Questions'"
+                                  block="$ctrl.block"
+                                  read-only="$ctrl.readOnly"></template-block-questions>
+
+        <template-block-milestones ng-if="$ctrl.block.block === 'Milestones'"
+                                   [read-only]="$ctrl.readOnly"
+                                   [block]="$ctrl.block"
+                                   [template]="$ctrl.template"></template-block-milestones>
+
+        <template-block-outputs ng-if="$ctrl.block.block === 'Outputs'"
+                                  block="$ctrl.block"
+                                  template="$ctrl.template"
+                                  read-only="$ctrl.readOnly"></template-block-outputs>
+
+        <template-block-objectives block="$ctrl.block"
+                                   ng-if="$ctrl.block.block === 'ProjectObjectives'"
+                                   read-only="$ctrl.readOnly"
+                                   template="$ctrl.template"></template-block-objectives>
+
+        <template-block-other-funding block="$ctrl.block"
+                                      ng-if="$ctrl.block.block === 'OtherFunding'"
+                                      read-only="$ctrl.readOnly"
+                                      template="$ctrl.template"></template-block-other-funding>
+
+      </div>
+    </div>
+  </form>
+</div>

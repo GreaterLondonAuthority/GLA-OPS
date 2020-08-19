@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="716" author="cmelville">
+        <createTable tableName="payment_source">
+            <column name="name"  type="varchar(50)" remarks="name of payment source and pk" >
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="description" type="varchar(255)" remarks="description of payment source "  />
+            <column name="grant_type" type="varchar(255)" remarks="legacy grant type"  />
+            <column name="send_to_sap" type="boolean" remarks="if this payment source should  be sent to sap" />
+        </createTable>
+
+    </changeSet>
+    <changeSet id="717" author="cmatias">
+        <sql>
+            insert into organisation_entity_type (id,entity_type) values (7, 'Small Business');
+        </sql>
+    </changeSet>
+
+    <changeSet id="718" author="cmatias">
+        <addColumn tableName="organisation">
+            <column name="company_code" type="varchar(10)" remarks="Small Business company code" />
+            <column name="vat_number" type="varchar(15)" remarks="Small Business VAT number" />
+            <column name="sort_code" type="varchar(8)" remarks="Small Business sort code" />
+            <column name="bank_account" type="varchar(10)" remarks="Small Business account number" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="719" author="cmelville" dbms="postgresql">
+        <sql>DROP RULE IF EXISTS delete_remove ON v_budget_summaries;</sql>
+        <sql>DROP VIEW IF EXISTS v_budget_summaries;</sql>
+
+    </changeSet>
+
+    <changeSet id="720" author="cmelville">
+        <modifyDataType tableName="project_ledger_entry" columnName="payment_source" newDataType="varchar(50)" />
+
+    </changeSet>
+
+    <changeSet id="721" author="jdimsa">
+        <addColumn tableName="user_roles">
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="722" author="cmelville">
+        <addColumn tableName="project_block">
+            <column name="last_monetary_approval_timestamp" type="timestamp" remarks="Date and time of last monetary approval" />
+            <column name="last_monetary_approval_user" type="varchar(255)" remarks="Last user that approved the payment" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="723" author="cmelville">
+        <sql>
+            update project_block
+            set (LAST_MONETARY_APPROVAL_USER, LAST_MONETARY_APPROVAL_TIMESTAMP)
+            =
+            (select authorised_by, max(created_on) from project_ledger_entry ple
+            where ple.block_id = project_block.id
+            group by block_id, authorised_by)
+            where block_type = 'LearningGrant'
+        </sql>
+    </changeSet>
+</databaseChangeLog>

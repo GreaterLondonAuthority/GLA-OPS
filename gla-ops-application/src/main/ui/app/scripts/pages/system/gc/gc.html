@@ -1,0 +1,30 @@
+<div class="gc-page">
+
+  <gla-page-header (on-back)="$ctrl.goBack()" back-btn-name="SYSTEM DASHBOARD">GC</gla-page-header>
+
+  <!--  chart-data: series data-->
+  <!--  chart-labels: x axis labels-->
+  <!--  chart-options (default: {}): Chart.js options-->
+  <!--  chart-series (default: []): series labels-->
+  <!--  chart-click (optional): onclick event handler-->
+  <!--  chart-hover (optional): onmousemove event handler-->
+  <!--  chart-colors (default to global colors): colors for the chart-->
+  <!--  chart-dataset-override (optional): override datasets individually-->
+  <canvas id="gc-graph"
+          class="chart chart-line mtop30"
+          chart-data="$ctrl.gcData.data"
+          chart-labels="$ctrl.gcData.labels"
+          chart-series="$ctrl.gcData.series"
+          chart-click="$ctrl.onClick"
+          chart-colors="['#f0bb40', '#7fd352', '#43a1f8']">
+  </canvas>
+
+  <div class="text-center mtop40">
+    <span>
+      <button id="refresh" class="btn btn-md btn-primary refreshBtn" ng-click="$ctrl.refresh()">REFRESH
+        <i class="glyphicon glyphicon-refresh"></i>
+      </button>
+    </span>
+  </div>
+
+</div>

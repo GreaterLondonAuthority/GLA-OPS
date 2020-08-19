@@ -1,0 +1,8 @@
+<select class="form-control"
+        ng-model="$ctrl.selectedYear"
+        ng-change="$ctrl.onSelectYearChange()"
+        ng-options="year as year.label for year in $ctrl.yearList track by year.financialYear"
+        style-placeholder="">
+  <option disabled value="">Select</option>
+</select>
+

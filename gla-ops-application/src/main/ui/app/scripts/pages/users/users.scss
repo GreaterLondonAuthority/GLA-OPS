@@ -1,0 +1,28 @@
+@import "./pending-users-list/pendingUsersList.scss";
+@import "./modal/addUserToTeamModal.scss";
+.users-page {
+  @include when-md {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  tr {
+    height: 50px;
+  }
+
+  .user-approved{
+    color: $green;
+  }
+
+  search-field .search-dropdown{
+    min-width: 170px;
+  }
+
+  td.no-border{
+    border-top: none !important;
+  }
+
+  .user-row:not(:last-child){
+    border-bottom: 3px solid $table-border;
+  }
+}

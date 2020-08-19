@@ -1,0 +1,110 @@
+<div class="table-responsive mtop15 learning-grant-table">
+
+  <a class="collapse-all-toggle no-print" href="JavaScript:void(0)" ng-click="$ctrl.collapseOrExpandRows()" ng-if="$ctrl.paymentsExist">
+    {{$ctrl.getToggleText()}}
+  </a>
+  <div ng-if="!$ctrl.data.length" class="empty-table">Not provided</div>
+  <table ng-if="$ctrl.data.length" class="table table-hover table-bordered table-striped collapsible">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th></th>
+      <th>{{$ctrl.columns.monthTitle}}</th>
+      <th>{{$ctrl.columns.profileTitle}}</th>
+      <th>{{$ctrl.columns.allocationTitle}}</th>
+      <th style="max-width: 160px">{{$ctrl.columns.cumulativeAllocationTitle}}</th>
+      <th ng-if="$ctrl.showColumns.cumulativeEarnings">{{$ctrl.columns.cumulativeEarningsTitle}}</th>
+      <th ng-if="$ctrl.showColumns.cumulativePayment">{{$ctrl.columns.cumulativePaymentTitle}}</th>
+      <th>{{$ctrl.columns.paymentDueTitle}}</th>
+      <th>{{$ctrl.columns.statusTitle}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat-start="entry in $ctrl.data | orderBy: 'period'" ng-class="entry.period == 13 ? 'thick-line' : ''" >
+      <td>
+        <toggle-icon (collapsed-change)="$ctrl.onCollapseChange()" [(collapsed)]="entry.collapsed" ng-if="entry.payments.length"></toggle-icon>
+      </td>
+
+      <td class="text-nowrap">
+        <span class="month">{{ $ctrl.ProjectSkillsService.periodName(entry.actualMonth)}}</span> (P{{entry.period}})
+      </td>
+
+
+      <td>{{entry.percentage || 'N/A'}}</td>
+
+      <td>
+        <span ng-if="entry.return">N/A</span>
+        <span ng-if="!entry.return">{{ (entry.allocation | currency:'£':2) }} </span>
+      </td>
+
+      <td>{{entry.cumulativeAllocation | currency:'£':2}}</td>
+
+      <td ng-if="!$ctrl.isSupportAllocation">{{ (entry.cumulativeEarnings | currency:'£':2) }}</td>
+
+      <td ng-if="$ctrl.isAebProcured && !$ctrl.isSupportAllocation">{{entry.cumulativePayment | currency:'£':2 }}</td>
+
+      <td>
+        <span ng-if="$ctrl.isAebProcured">
+          {{entry.paymentDue | currency:'£':2}}
+        </span>
+
+        <span ng-if="!$ctrl.isAebProcured">
+          <span ng-if="entry.canManuallyClaimValue">
+          <span ng-if="$ctrl.showClaimAmountBox(entry) && !$ctrl.isClaimedClaimForEntry(entry)">
+            <input id="r14adjustment"
+                   ng-if="!$ctrl.readOnly"
+                   number-mask="2"
+                   type="text"
+                   ng-model="entry.paymentDue"
+                   maxlength="14"
+                   negative-number
+                   class="form-control"
+                   change-on-blur="$ctrl.save()"
+                   aria-label="P14 Adjustment">
+
+          </span>
+          <span ng-if="!($ctrl.showClaimAmountBox(entry) && !$ctrl.isClaimedClaimForEntry(entry))">
+            {{entry.returnAllocationTotal | currency:'£':2 }}
+          </span>
+        </span>
+
+
+          <span ng-if="entry.return && !entry.canManuallyClaimValue && !$ctrl.showClaimAmountBox(entry)">
+            <span ng-if="entry.claim"> {{( entry.paymentDue | currency:'£':2) }}</span>
+            <span ng-if="!entry.claim"> N/A </span>
+          </span>
+          <span ng-if="!entry.return">{{entry.allocation | currency:'£':2}}</span>
+        </span>
+      </td>
+
+
+
+      <td>
+        <span id="status-no-link" ng-if="!$ctrl.showStatusAsLink(entry) && $ctrl.isAebProcured">{{$ctrl.getStatusColumnText(entry)  }}</span>
+
+        <a href="JavaScript:void(0)" ng-click="$ctrl.showClaimModal(entry)"  ng-if="$ctrl.showStatusAsLink(entry) && $ctrl.claimable && $ctrl.isAebProcured && $ctrl.getStatusColumnText(entry) && (!$ctrl.isSupportAllocation || $ctrl.isSupportAllocation && entry.claimable)">
+         {{$ctrl.getStatusColumnText(entry) || 'N/A'}}
+        </a>
+        <div ng-if="$ctrl.isAebGrant">
+
+          <a href="JavaScript:void(0)" ng-click="$ctrl.showClaimModal(entry)"  ng-if="$ctrl.showClaimLinkForEntry(entry)">
+            {{$ctrl.getStatusColumnText(entry) }}
+          </a>
+
+          <div ng-if="$ctrl.showPaymentStatusForEntry(entry)">
+             {{$ctrl.getScheduledPaymentStatus(entry) }}
+          </div>
+
+
+        </div>
+      </td>
+
+    </tr>
+<!--    <tr ng-repeat-end ng-if="!entry.collapsed && $ctrl.showPaymentHistoryFor(entry).length >-->
+    <tr ng-repeat-end ng-if="!entry.collapsed && entry.payments.length" ng-repeat="p in entry.payments | orderBy:'id' track by p.id">
+      <td></td>
+      <td ng-attr-colspan="{{$ctrl.visibleColumnCount}}" ng-if="!p.interestPayment">{{ p.authorisedOn | date: "dd/MM/yyyy 'at' HH:mm"}}
+        {{$ctrl.PaymentService.getPaymentType(p)}} of {{p.value | currency:'£':2}} authorised by {{p.authorisor}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

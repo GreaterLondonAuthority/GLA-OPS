@@ -1,0 +1,39 @@
+<div class="project-grant">
+  <div class="text-center">
+    <gla-project-header (on-back)="$ctrl.back()" [editable-block]="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
+  </div>
+
+  <gla-spinner ng-if="!$ctrl.data && $ctrl.loading"></gla-spinner>
+  <div ng-if="$ctrl.data">
+    <div ng-if="$ctrl.showStartOnSiteMessage" class="text-center start-on-site-message">
+      {{$ctrl.startOnSiteRestrictionText}}
+    </div>
+    <h3 class="row grant-block-title">
+      Enter the units and tenure
+    </h3>
+    <grant-table data="$ctrl.data" is-readonly="$ctrl.readOnly" on-tenure-change="$ctrl.saveTenure(true)">
+    </grant-table>
+
+    <div>
+      <tenure-tiles
+        tenures="$ctrl.tenureSummaryDetails"
+      ></tenure-tiles>
+      <total-grant total="$ctrl.data.totalGrantEligibility"></total-grant>
+      <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
+    </div>
+
+    <claimed-units ng-if="$ctrl.data.startOnSiteMilestoneAuthorised || $ctrl.data.completionMilestoneAuthorised"
+                   start-milestone="$ctrl.data.startOnSiteMilestoneAuthorised"
+                   completion-milestone="$ctrl.data.completionMilestoneAuthorised"
+                   total-start-on-site="$ctrl.data.totalStartOnSiteApprovedUnits"
+                   total-completion="$ctrl.data.totalCompletionApprovedUnits"
+                   tenures="$ctrl.tenureClaimedDetails"
+                   title="TOTAL UNITS CLAIMED"
+                   total="$ctrl.data.totalCompletionApprovedUnits || $ctrl.data.totalStartOnSiteApprovedUnits"
+                   is-unit="true">
+      <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
+    </claimed-units>
+
+    <project-block-footer editable-block="$ctrl"></project-block-footer>
+  </div>
+</div>

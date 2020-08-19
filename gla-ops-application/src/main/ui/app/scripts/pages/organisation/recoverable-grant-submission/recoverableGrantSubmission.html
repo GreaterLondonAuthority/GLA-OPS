@@ -1,0 +1,222 @@
+<div class="recoverable-grant-submission">
+  <gla-page-header (on-back)="$ctrl.stopEditing()" [editable-block]="$ctrl" [stop-editing]="true">
+    Annual {{$ctrl.grantSource}} Submission
+  </gla-page-header>
+  <form name="recoverableGrantSubmissionForm">
+    <section-header>
+      Recoverable grant for {{$ctrl.organisation.name}} for {{$ctrl.financialYear | fYear}}
+    </section-header>
+
+    <div class="row tiles mtop30">
+      <div class="col-sm-12">
+        <label>
+          Return balance for the past 3 years
+        </label>
+      </div>
+      <ul class="tiles-list">
+        <li class="col-md-4 col-sm-6 grant-column" ng-repeat="tile in $ctrl.tiles track by tile.name">
+          <tile items="tile.items" class="space-between">{{ tile.name }}
+            <div class="tile-status" id="tile-status">
+              <span class="green" ng-if="tile.status == 'Approved'"> Approved by GLA <i
+                class="glyphicon glyphicon-ok-sign"></i></span>
+              <span class="red" ng-if="tile.status != null && tile.status != 'Approved'"> {{tile.status}} status <i
+                class="glyphicon glyphicon-exclamation-sign"></i></span>
+              <span class="red" ng-if="tile.status == null"> <i class="glyphicon glyphicon-exclamation-sign"></i></span>
+            </div>
+          </tile>
+        </li>
+      </ul>
+    </div>
+
+    <div class="opening-balance-section">
+      <section-header>
+        <div class="row">
+          <div class="col-sm-12 no-padding">Opening balance for {{$ctrl.financialYear | fYear}}</div>
+        </div>
+      </section-header>
+
+      <div class="mtop20">
+        <sub-section-header ng-if="!$ctrl.readOnly && !$ctrl.isPreviousYearApproved()">
+          Enter the correct opening balance if you did not submit a return for the previous year that the GLA approved
+        </sub-section-header>
+
+        <div>
+          <label for="opening-balance">Opening balance</label>
+        </div>
+        <div ng-if="$ctrl.readOnly || $ctrl.isPreviousYearApproved()">
+          <span >{{$ctrl.block.openingBalance | currency:'£':0}}</span>
+        </div>
+        <div class="with-pound-sign" ng-if="!$ctrl.readOnly && !$ctrl.isPreviousYearApproved()">
+          &pound;&nbsp;<input id="opening-balance" type="text" name="openingBalance"
+                              class="form-control" ng-model="$ctrl.block.openingBalance"
+                              change-on-blur="$ctrl.autoSave()"
+                              number-mask="0"
+                              maxlength="11" required/>
+        </div>
+      </div>
+    </div>
+
+    <hr class="mtop40">
+
+    <section-header>Enter {{$ctrl.grantSource}} income generated in {{$ctrl.financialYear | fYear}}</section-header>
+
+
+    <grant-categories-table rows="$ctrl.block.generatedEntries"
+                            id="grant-generated"
+                            categories="$ctrl.availableCategoriesForGenerated"
+                            no-data-model="$ctrl.block.noGeneratedData"
+                            no-data-label="No {{$ctrl.grantSource}} generated"
+                            grant-type="$ctrl.grantSource"
+                            on-edit="$ctrl.showGrantIncomeModal(event)"
+                            on-add="$ctrl.showGrantIncomeModal()"
+                            on-no-data-change="$ctrl.autoSave()"
+                            read-only="$ctrl.readOnly"
+                            show-comments="$ctrl.showCommentsForGenerated"
+                            delete-row="$ctrl.deleteRow(row)"></grant-categories-table>
+
+    <hr class="mtop40">
+    <section-header>Enter {{$ctrl.grantSource}} spent in {{$ctrl.financialYear | fYear}}</section-header>
+
+    <grant-categories-table rows="$ctrl.block.spentEntries"
+                            id="grant-spent"
+                            categories="$ctrl.availableCategoriesForSpent"
+                            no-data-model="$ctrl.block.noSpentData"
+                            no-data-label="No {{$ctrl.grantSource}} spent"
+                            grant-type="$ctrl.grantSource"
+                            on-edit="$ctrl.showGrantIncomeModal(event, true)"
+                            on-add="$ctrl.showGrantIncomeModal(null, true)"
+                            on-no-data-change="$ctrl.autoSave()"
+                            read-only="$ctrl.readOnly"
+                            show-comments="$ctrl.showCommentsForSpent"
+                            delete-row="$ctrl.deleteRow(row)"></grant-categories-table>
+
+
+    <hr class="mtop40">
+    <div class="closing-balance-section">
+      <section-header>Closing Balance</section-header>
+      <div class="row">
+        <div class="col-sm-5 no-padding">Opening balance + Total generated - Total spent</div>
+      <div class="col-sm-5 closing-balance">{{$ctrl.block.closingBalance | currency: '£' : 0}}</div>
+      </div>
+
+      <div class="error mtop20 mbottom30 text-center" ng-if="$ctrl.block.closingBalance < 0">
+        Closing balance can't be a negative as you can't spend more than you have, adjust the amount spent or generated.
+      </div>
+    </div>
+
+    <hr class="mtop40">
+    <div class="expired-balance-section">
+      <section-header>Expired balance</section-header>
+      {{$ctrl.grantSource}} balances that are not spent within 3 years are repayable to the GLA. In exceptional
+      circumstances, the GLA may allow the {{$ctrl.grantSource}} not spent within the specified three year timeframe to be rolled over
+      into subsequent years on a case by case basis.
+
+      <div class="mtop20 total-unspent-grant">
+        <sub-section-header><label for="total-unspent-grant">{{$ctrl.grantSource}} grant</label></sub-section-header>
+
+        <div>
+          Enter the amount of {{$ctrl.grantSource}} remaining in the fund for 3 years by 31 March {{$ctrl.financialYear
+          + 1 }} (excluding interest)
+        </div>
+        <div ng-if="$ctrl.readOnly">
+          <span >{{$ctrl.block.totalUnspentGrant | currency:'£':0}}</span>
+        </div>
+        <div class="with-pound-sign" ng-if="!$ctrl.readOnly">
+          &pound;&nbsp;<input id="total-unspent-grant" type="text" name="totalUnspentGrant"
+                              class="form-control" ng-model="$ctrl.block.totalUnspentGrant"
+                              change-on-blur="$ctrl.autoSave()"
+                              number-mask="0"
+                              maxlength="11" required/>
+        </div>
+      </div>
+
+
+      <div class="mtop20 interested-accumulated" >
+        <sub-section-header><label for="interested-accumulated">Cumulative interest</label></sub-section-header>
+        <div>
+          Enter the cumulative interest accrued on {{$ctrl.grantSource}} grant remaining in the fund for 3 years as of
+          31 March {{$ctrl.financialYear + 1 }}
+        </div>
+        <div ng-if="$ctrl.readOnly">
+          <span >{{$ctrl.block.interestedAccumulated | currency:'£':0}}</span>
+        </div>
+        <div class="with-pound-sign" ng-if="!$ctrl.readOnly">
+          &pound;&nbsp;<input id="interested-accumulated" type="text"
+                              name="interestedAccumulated"
+                              class="form-control" ng-model="$ctrl.block.interestedAccumulated"
+                              change-on-blur="$ctrl.autoSave()"
+                              number-mask="0"
+                              maxlength="11" required/>
+        </div>
+        <div class="mtop20" ng-if="$ctrl.showGrantDependantFields()">
+          <label ng-attr-for="balanceRolloverConfirmed">
+            Are you requesting the GLA to consider roll over of 3 year {{$ctrl.grantSource}} grant and interest?
+          </label>
+
+          <div class="rollover-confirmation">
+            <label for="trueRadio">
+              <input id="trueRadio" name="balanceRolloverConfirmed" ng-change="$ctrl.autoSave()" type="radio"
+                     ng-disabled="$ctrl.readOnly" ng-model="$ctrl.block.balanceRolloverConfirmed" ng-value="true">
+              Yes
+            </label>
+            <label for="falseRadio">
+              <input id="falseRadio" name="balanceRolloverConfirmed" ng-change="$ctrl.autoSave()" type="radio"
+                     ng-disabled="$ctrl.readOnly" ng-model="$ctrl.block.balanceRolloverConfirmed" ng-value="false">
+              No
+            </label>
+          </div>
+
+
+        </div>
+
+        <div class="mtop20 rollover-unspent-grant" ng-if="$ctrl.showGrantDependantFields() && $ctrl.block.balanceRolloverConfirmed">
+          <div>
+            <label for="rollover-grant-amount">How much of the three-year unused {{$ctrl.grantSource}} grant noted above
+              are you requesting to roll over?</label>
+          </div>
+          <div ng-if="$ctrl.readOnly">
+            <span >{{$ctrl.block.rolledOverUnspentGrant | currency:'£':0}}</span>
+          </div>
+          <div class="with-pound-sign" ng-if="!$ctrl.readOnly">
+            &pound;&nbsp;<input id="rollover-grant-amount" type="text"
+                                name="rolledOverUnspentGrant"
+                                class="form-control" ng-model="$ctrl.block.rolledOverUnspentGrant"
+                                change-on-blur="$ctrl.autoSave()"
+                                number-mask="0"
+                                maxlength="11" required/>
+          </div>
+
+          <div class="error mtop10 mbottom30 text-left error-grant-exceeded"
+               ng-if="$ctrl.block.balanceRolloverConfirmed &&  ($ctrl.block.rolloverGrantExceeded === true)">
+            This requested rollover amount cannot exceed the value of the <b> {{$ctrl.grantSource}} grant</b>  remaining field above.
+          </div>
+
+          <div class="mtop20 rolledover-interest-accumulated" ng-if=" $ctrl.showGrantDependantFields && $ctrl.block.balanceRolloverConfirmed">
+            <div>
+              <label for="rollover-interest-amount">How much of the cumulative interest generated on the
+                {{$ctrl.grantSource}} grant noted above are you requesting to roll over?</label>
+            </div>
+            <div ng-if="$ctrl.readOnly">
+              <span >{{$ctrl.block.rolledOverInterestAccumulated | currency:'£':0}}</span>
+            </div>
+            <div class="with-pound-sign" ng-if="!$ctrl.readOnly">
+              &pound;&nbsp;<input id="rollover-interest-amount" type="text"
+                                  name="rolloverInterestAccumulated"
+                                  class="form-control"
+                                  ng-model="$ctrl.block.rolledOverInterestAccumulated"
+                                  change-on-blur="$ctrl.autoSave()"
+                                  number-mask="0"
+                                  maxlength="11" required/>
+
+            </div>
+            <div class="error mtop10 mbottom30 text-left error-interest-exceeded"
+                 ng-if="$ctrl.block.balanceRolloverConfirmed &&  ($ctrl.block.rolloverInterestExceeded === true)">
+              This requested rollover of cumulative three year interest cannot exceed the value of <b>cumulative interest</b> field above.
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

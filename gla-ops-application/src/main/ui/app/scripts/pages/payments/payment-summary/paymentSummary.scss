@@ -1,0 +1,28 @@
+.payment-summary {
+   section-header{
+     margin-top: 20px;
+     margin-bottom: 20px;
+     .section-header {
+       font-size: 1.5rem;
+     }
+   }
+
+  .form-group.row{
+    margin-bottom: 20px;
+  }
+}
+
+.additional-info{
+  white-space: pre-wrap;
+}
+
+.reclaim-modal{
+  .form-group{
+    margin-bottom: 0px;
+    .error-wrapper{
+      min-height: 12px;
+    }
+  }
+}
+
+

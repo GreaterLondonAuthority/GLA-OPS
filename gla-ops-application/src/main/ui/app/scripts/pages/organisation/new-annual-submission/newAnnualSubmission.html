@@ -1,0 +1,36 @@
+<gla-page-header class="no-padding" [hide-back-btn]="true">New annual submission</gla-page-header>
+
+
+
+<section-header>
+  Recoverable grant for {{$ctrl.organisation.name}}
+</section-header>
+<div class="col-xs-12 mtop15 no-padding form-group">
+  <div class="row">
+    <div class=" col-md-4">
+      <label for="submission-year">Select year</label>
+      <select class="form-control"
+              id="submission-year"
+              name="submission year"
+              ng-disabled="$ctrl.remainingYears.length == 0"
+              ng-model="$ctrl.selectedYear"
+              ng-options="year as year.label for year in $ctrl.remainingYears track by year.financialYear"
+              required
+              style-placeholder="">
+        <option disabled value="">Select</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mtop15 row">
+    <button
+      class="btn btn-primary btn-md mleft15 mright10"
+      ng-click="$ctrl.createNew()"
+      ng-disabled="!$ctrl.selectedYear">CREATE NEW</button>
+
+    <a
+      ui-sref="organisation.view({orgId: $ctrl.orgId})"
+      class="btn btn-secondary btn-md">CANCEL</a>
+  </div>
+</div>
+

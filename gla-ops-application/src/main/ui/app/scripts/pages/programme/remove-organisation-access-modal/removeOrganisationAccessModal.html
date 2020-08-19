@@ -1,0 +1,34 @@
+<div class="give-organisation-access-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Remove access to {{$ctrl.templateName}} </h1>
+  </div>
+
+  <div class="modal-body text-left">
+    {{$ctrl.organisationName}} won't have access to any projects on this template if you remove access.
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          ng-click="$ctrl.removeAccessToOrganisation()">
+          REMOVE ACCESS
+        </button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL</button>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="section-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.btnName}} Section</h1>
+  </div>
+
+  <div class="modal-body text-left">
+  <form name="modalForm">
+    <div class="form-group">
+      <label for="externalId">Section ID</label>
+      <input id="externalId"
+             type="text"
+             class="form-control"
+             number-mask="0"
+             placeholder="Section ID"
+             ng-model="$ctrl.section.externalId"
+             ng-keyup="$ctrl.validateExternalId($ctrl.section.externalId)"
+             maxlength="9"/>
+      <div class="error-wrapper" ng-if="modalForm.section.externalId.$touched || $ctrl.isDuplicateExternalId"
+           role="alert">
+        <span class="error" id="duplicate-section-id">Duplicate Section ID</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="title">Title</label>
+      <textarea id="title"
+                aria-label="title"
+                class="form-control"
+                name="title"
+                placeholder="Section Name"
+                ng-model="$ctrl.section.text"
+                maxlength="1000"
+                ng-trim="false"
+                rows="5">
+        </textarea>
+    </div>
+    <div class="form-group">
+      <label for="displayOrder">Display Order</label>
+      <input id="displayOrder"
+             type="text"
+             class="form-control"
+             number-mask="2"
+             placeholder="Display Order"
+             ng-model="$ctrl.section.displayOrder"
+             ng-keyup="$ctrl.validateDisplayOrder($ctrl.section.displayOrder)"
+             maxlength="9"/>
+      <div class="error-wrapper" ng-if="modalForm.section.displayOrder.$touched || $ctrl.isDuplicateDisplayOrder"
+           role="alert">
+        <span class="error" id="duplicate-display-order">Duplicate display order</span>
+      </div>
+    </div>
+  </form>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$ctrl.addSection()"
+          ng-disabled="!$ctrl.addButtonEnabled()">
+          {{$ctrl.btnName.toUpperCase()}}
+        </button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>

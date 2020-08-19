@@ -1,0 +1,96 @@
+{
+  "name": "London Business Support",
+  "milestoneType": "MonetarySplit",
+  "grantTypes": [
+    "Business Support Fund"
+  ],
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "block": "Details",
+      "blockDisplayName": "Application details",
+      "displayOrder": 0,
+      "infoMessage": "example text..."
+    },
+    {
+      "type": "GrantSourceTemplateBlock",
+      "blockDisplayName": "Grant value",
+      "block": "GrantSource",
+      "displayOrder": 1,
+      "paymentSourcesString": "Grant",
+      "nilGrantHidden": true,
+      "description": "(Example Text): Grant request should be £5000 unless specifically agreed otherwise.",
+      "grantTypes": [
+        "Business Support Fund"
+      ],
+      "paymentSources": [
+        "Business Support Fund"
+      ],
+      "paymentSourcesString": "Business Support Fund"
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "block": "Milestones",
+      "blockDisplayName": "Milestones",
+      "displayOrder": 2,
+      "autoCalculateMilestoneState": true,
+      "processingRoutes": [
+        {
+          "externalId": null,
+          "name": "default",
+          "milestones": [
+
+            {
+              "externalId": 7007,
+              "summary": "First day COVID-19 had an impact",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": true
+            },
+            {
+              "externalId": 7008,
+              "summary": "Payment claim date",
+              "requirement": "mandatory",
+              "monetarySplit": 100,
+              "displayOrder": 2,
+              "monetary": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ProjectObjectivesTemplateBlock",
+      "blockDisplayName": "Grant use",
+      "block": "ProjectObjectives",
+      "displayOrder": 3,
+      "paymentSourcesString": "",
+      "objectiveTextSingular": "Grant use",
+      "objectiveTextPlural": "Grant uses",
+      "grantTypes": [],
+      "paymentSources": []
+    }
+  ],
+
+  "stateModel": "ChangeControlled",
+  "warningMessage": null,
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "descriptionRequirement": "mandatory",
+    "postcodeRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "imageRequirement": "optional",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "planningPermissionReferenceRequirement": "hidden"
+
+  }
+}

@@ -1,0 +1,44 @@
+.user-account {
+
+  section-header {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    .section-header {
+      font-size: 1.5rem;
+    }
+  }
+
+  .form-group.row {
+    margin-bottom: 20px;
+  }
+  .org-user-approved {
+    display: inline-block;
+    margin-right: 10px;
+    color: #31ae52;
+  }
+
+  .organisations {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  td.spend-authority-edit {
+    padding: 4px;
+    input, .threshold {
+      width: 170px;
+      display: inline-block;
+    }
+  }
+
+  .edit-mode {
+      td {
+        .ui-select-container, select{
+          width: 200px;
+        }
+      }
+  }
+
+  .pending{
+    color: lighten($secondary-text, 10%);
+  }
+}

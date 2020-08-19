@@ -1,0 +1,30 @@
+.project-funding-claims {
+
+  //TODO why doesn't style correctly by default
+  .section-header .glyphicon {
+    top: 0;
+    margin-right: 5px;
+  }
+
+  //TODO form.scss
+  .radio-inline{
+    margin-bottom: 0;
+    input[type="radio"]{
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  .note{
+    margin-top: -10px;
+  }
+  .contract-types{
+    .label{
+      display: block;
+      margin-bottom: 20px;
+    }
+    label{
+      font-family: $font-family-default;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+<div class="abandon-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <h1>{{$ctrl.modal.title}}</h1>
+  </div>
+  <div class="modal-body text-center">
+    Are you sure you want to delete this notification?
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$dismiss()">KEEP</button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$ctrl.onDelete()">DELETE</button>
+      </div>
+    </div>
+    <div class="row">
+      <input type="checkbox"
+             id="do-not-show-again"
+             ng-attr-id="do-not-show-again"
+             name="selectInput"
+             ng-model="$ctrl.doNotShowAgain"
+             aria-label="do-not-show-again">
+      <label for="do-not-show-again">
+        Do not ask me again
+      </label>
+    </div>
+  </div>
+</div>

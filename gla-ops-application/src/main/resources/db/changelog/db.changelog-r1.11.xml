@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="357" author="jrogers">
+        <addColumn tableName="programme">
+            <column name="wbs_code" type="varchar(50)" remarks="wbs code" />
+        </addColumn>
+    </changeSet>
+    <changeSet id="358" author="cmelville">
+        <addColumn tableName="programme">
+            <column name="managing_organisation_id" type="INT4" remarks="Managing org for this programme" />
+        </addColumn>
+        <addColumn tableName="organisation">
+            <column name="managing_organisation_id" type="INT4" defaultValue="10000" remarks="Managing org for this organisation" />
+        </addColumn>
+        <addColumn tableName="organisation">
+            <column name="parent_organisation_id" type="INT4" remarks="Parent org id for this organisation" />
+        </addColumn>
+        <addColumn tableName="organisation_group">
+            <column name="managing_organisation_id" type="INT4" defaultValue="10000" remarks="Managing org for this organisation" />
+        </addColumn>
+        <addColumn tableName="project">
+            <column name="managing_organisation_id" type="INT4" remarks="Managing org for this project" />
+        </addColumn>
+        <addColumn tableName="project_ledger_entry">
+            <column name="managing_organisation_id" type="INT4" remarks="Managing org for this payment" />
+        </addColumn>
+
+    </changeSet>
+
+
+
+
+
+    <changeSet id="359" author="jrogers">
+        <modifyDataType tableName="programme" columnName="wbs_code" newDataType="varchar(60)" />
+    </changeSet>
+    <changeSet id="360" author="cmelville">
+        <sql>
+            update organisation set name = 'GLA Housing and Land' where id = 10000
+        </sql>
+    </changeSet>
+
+    <changeSet id="361" author="ybouhass">
+        <dropColumn tableName="project" columnName="unnapproved_changes_old" />
+        <dropColumn tableName="project" columnName="legacy_description" />
+        <dropColumn tableName="project" columnName="legacy_address" />
+        <dropColumn tableName="project" columnName="legacy_title" />
+        <dropColumn tableName="project" columnName="legacy_borough" />
+        <dropColumn tableName="project" columnName="legacy_postcode" />
+        <dropColumn tableName="project" columnName="legacy_coord_x" />
+        <dropColumn tableName="project" columnName="legacy_coord_y" />
+        <dropColumn tableName="project" columnName="legacy_main_contact_name" />
+        <dropColumn tableName="project" columnName="legacy_main_contact_email" />
+        <dropColumn tableName="project" columnName="legacy_site_owner" />
+        <dropColumn tableName="project" columnName="legacy_interest" />
+        <dropColumn tableName="project" columnName="legacy_project_manager" />
+        <dropColumn tableName="project" columnName="legacy_site_status" />
+        <dropColumn tableName="project" columnName="legacy_planning_permission_reference" />
+        <dropColumn tableName="project" columnName="legacy_pcs_project_code" />
+
+        <dropColumn tableName="project" columnName="developing_organisation_id" />
+
+        <dropColumn tableName="template" columnName="allow_monetary_milestones" />
+
+        <dropColumn tableName="organisation_programme" columnName="total_allocation" />
+        <dropColumn tableName="organisation_programme" columnName="approved_by" />
+        <dropColumn tableName="organisation_programme" columnName="approved_on" />
+    </changeSet>
+
+    <changeSet id="362" author="cmelville">
+        <addColumn tableName="template_question">
+            <column name="parent_id" type="INT4" remarks="parent question  id" ></column>
+        </addColumn>
+        <addColumn tableName="template_question">
+            <column name="parent_answer_to_match" type="VARCHAR(50)" remarks="parent answer to match, currently yes/no" ></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="363" author="ybouhass">
+        <addColumn tableName="milestone">
+            <column name="key_event" type="boolean" remarks="determines whether the milestone approval will generate a project history entry" />
+        </addColumn>
+
+        <addColumn tableName="milestone_template">
+            <column name="key_event" type="boolean" remarks="determines whether the milestone approval will generate a project history entry" />
+        </addColumn>
+
+        <sql>
+            update milestone set key_event = true where external_id = 3003;
+            update milestone set key_event = true where external_id = 3004;
+            update milestone set key_event = true where external_id = 3005;
+            update milestone_template set key_event = true where external_id = 3003;
+            update milestone_template set key_event = true where external_id = 3004;
+            update milestone_template set key_event = true where external_id = 3005;
+        </sql>
+    </changeSet>
+
+    <changeSet id="364" author="ybouhass">
+        <sql>
+            update milestone set key_event = false where key_event is null;
+            update milestone_template set key_event = false where key_event is null;
+        </sql>
+    </changeSet>
+
+    <changeSet id="365" author="ybouhass">
+        <!-- this allow us to delete history entries from the project entity -->
+        <dropNotNullConstraint tableName="project_history" columnName="project_id" columnDataType="INT4" />
+    </changeSet>
+
+    <changeSet id="366" author="cmelville">
+        <addColumn tableName="tenure_and_units">
+            <column name="total_units_at_sos" type="INT4"
+                    remarks="Total units requested when Start on Site milestone was authorised"/>
+        </addColumn>
+        <addColumn tableName="tenure_and_units">
+            <column name="total_units_at_completion" type="INT4"
+                    remarks="Total units requested when Completion milestone was authorised"/>
+        </addColumn>
+        <addColumn tableName="tenure_block">
+            <column name="sos_milestone_authorised" type="timestamp"
+                    remarks="Date when Start on Site milestone was authorised"/>
+        </addColumn>
+        <addColumn tableName="tenure_block">
+            <column name="completion_milestone_authorised" type="timestamp"
+                    remarks="Date when when Completion milestone was authorised"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="367" author="cmelville">
+        <addColumn tableName="project_history">
+            <column name="event_type" type="varchar(60)" defaultValue="StateTransition"
+                    remarks="Event type that caused this history entry"/>
+        </addColumn>
+        <addColumn tableName="project_history">
+            <column name="external_id" type="INT4"
+                    remarks="External ID of related entity"/>
+        </addColumn>
+        <sql>
+            INSERT INTO project_history (project_id, description, created_on, created_by, event_type , external_id)
+            SELECT DISTINCT
+            pb.project_id,
+            concat(summary, ' milestone authorised') AS description,
+            min(pb.last_modified) approval_date,
+            pb.approver_name,
+            'MilestoneClaimApproved',
+            mi.external_id
+            FROM project_block pb
+            INNER JOIN milestone mi ON pb.id = mi.milestones_block
+            WHERE mi.claim_status = 'Approved' and mi.key_event = true
+            GROUP BY pb.project_id, mi.claim_status, mi.external_id, pb.approver_name, mi.key_event,mi.summary
+        </sql>
+    </changeSet>
+
+    <changeSet id="368" author="cmelville">
+        <sql>
+            DELETE FROM project_history WHERE event_type = 'MilestoneClaimApproved'
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="368" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="start_on_site_restriction_text" type="varchar(1000)" remarks="optional text to be displayed in calculate grant blocks if SoS has been authorised" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="368-2" author="ybouhass">
+        <preConditions onError="MARK_RAN" onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from databasechangelog where id = '369'</sqlCheck>
+        </preConditions>
+        <sql>
+            update project_details_block set pcs_project_code = NULL where pcs_project_code = '';
+            update project_ledger_entry set pcs_project_number = NULL where pcs_project_number = '';
+        </sql>
+    </changeSet>
+
+    <changeSet id="369" author="ybouhass">
+        <modifyDataType tableName="project_details_block" columnName="pcs_project_code" newDataType="INT4" />
+        <modifyDataType tableName="project_ledger_entry" columnName="pcs_project_number" newDataType="INT4" />
+    </changeSet>
+
+    <changeSet id="370" author="ybouhass">
+        <sql>
+            update organisation set entity_type = 4 where entity_type is null;
+        </sql>
+
+        <addDefaultValue tableName="organisation" columnName="entity_type" defaultValue="4" />
+    </changeSet>
+
+</databaseChangeLog>

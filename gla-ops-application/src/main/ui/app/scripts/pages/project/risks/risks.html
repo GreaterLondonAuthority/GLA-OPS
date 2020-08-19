@@ -1,0 +1,47 @@
+<div class="project-risks-block">
+  <div class="row no-gutter text-center">
+    <gla-project-header (on-back)="$ctrl.back()" [editable-block]="$ctrl">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
+  </div>
+  <form class="form-gla form-group" name="risksForm" name="risks" ng-if="!$ctrl.loading">
+    <risk-rating
+      block-data="$ctrl.blockData"
+      overall-rating="$ctrl.overallRating"
+      overall-ratings="$ctrl.overallRatings"
+      read-only="$ctrl.readOnly"
+      auto-save="$ctrl.autoSave()"
+    ></risk-rating>
+
+    <div ng-if="$ctrl.showRisksAndIssues">
+      <hr class="mtop30">
+      <manage-project-risk read-only="$ctrl.readOnly"
+          risks="$ctrl.risks"
+          create-new-risk="$ctrl.createNewRisk()"
+          add-mitigation="$ctrl.addMitigation(risk)"
+          delete-mitigation="$ctrl.deleteMitigation(risk, mitigation)"
+          edit-risk="!$ctrl.readOnly && $ctrl.editRisk(risk)"
+          delete-risk="$ctrl.deleteRisk(risk)"
+          close-risk="$ctrl.closeRiskOrIssue(risk)"
+          block-session-storage="$ctrl.blockSessionStorage"
+          header="'Manage Project Risks'"
+          project-marked-corporate="$ctrl.projectMarkedCorporate"
+          subheader="'A risk is an event which has not yet happened but could have a negative impact on the project if it did occur.'"></manage-project-risk>
+
+      <hr class="mtop30">
+      <manage-project-issues read-only="$ctrl.readOnly"
+          issues="$ctrl.issues"
+          create-new-issue="$ctrl.createNewIssue()"
+          edit-issue="$ctrl.editIssue(issue)"
+          add-action="$ctrl.addAction(issue)"
+          delete-issue="$ctrl.deleteIssue(issue)"
+          delete-action="$ctrl.deleteAction(issue, action)"
+          close-issue="$ctrl.closeRiskOrIssue(issue)"
+          block-session-storage="$ctrl.blockSessionStorage"
+          header="'Manage Project Issues'"
+          project-marked-corporate="$ctrl.projectMarkedCorporate"
+          subheader="'An issue is anything which has already occurred and is having a negative impact on the project.'"></manage-project-issues>
+    </div>
+  </form>
+  <gla-spinner ng-if="$ctrl.loading"></gla-spinner>
+  <div class="row no-gutter separator"></div>
+  <project-block-footer editable-block="$ctrl"></project-block-footer>
+</div>

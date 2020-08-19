@@ -1,0 +1,3 @@
+select distinct   pj.id project_id,  coalesce(org_gp.name, org.name) bidding_arrangement
+from project pj left join organisation org on pj.org_id = org.id
+left join organisation_group org_gp on pj.organisation_group_id = org_gp.id

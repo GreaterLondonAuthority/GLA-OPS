@@ -1,0 +1,73 @@
+<div class="funding-claim-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.section.claim? 'CLAIMED' : 'CLAIM'}} PAYMENT</h1>
+    <div>Q{{$ctrl.section.quarter}} Milestones and activities</div>
+  </div>
+  <div class="modal-body text-left">
+    <div>
+      <div class="clearfix">
+        <span class="label">{{$ctrl.section.year | fYear}} Total Budget</span>
+        <span class="pull-right">{{$ctrl.budget.total | currency:'£':0}}</span>
+      </div>
+      <div class="payment-group">
+        <div ng-if="$ctrl.showCapitalGla || $ctrl.showCapitalOther">Capital Funding <span class="pull-right">{{$ctrl.budget.capital | currency:'£':0}}</span></div>
+        <div ng-if="$ctrl.showRevenueGla || $ctrl.showRevenueOther">Revenue Funding <span class="pull-right">{{$ctrl.budget.revenue | currency:'£':0}}</span></div>
+      </div>
+    </div>
+
+    <div class="mtop20 unclaimed grant" ng-if="!$ctrl.section.claim">
+      <div class="clearfix">
+        <span class="label">Unclaimed grant payment amount</span>
+        <span class="pull-right">{{$ctrl.unclaimedGrant.total | currency:'£':0}}</span>
+      </div>
+      <div class="payment-group">
+        <div ng-if="$ctrl.showCapitalGla || $ctrl.showCapitalOther">Capital Grant <span class="pull-right">{{$ctrl.unclaimedGrant.capital | currency:'£':0}}</span></div>
+        <div ng-if="$ctrl.showRevenueGla || $ctrl.showRevenueOther">Revenue Grant <span class="pull-right">{{$ctrl.unclaimedGrant.revenue | currency:'£':0}}</span></div>
+      </div>
+    </div>
+
+    <div class="mtop20">
+      <div class="clearfix">
+        <span class="label">Grant payment amount</span>
+        <span class="pull-right">{{(($ctrl.section.totalCapitalValue + $ctrl.section.totalRevenueValue) || 0) | currency:'£':0}}</span>
+      </div>
+      <div class="payment-group">
+        <div ng-if="$ctrl.showCapitalGla || $ctrl.showCapitalOther">Capital Grant <span class="pull-right">{{($ctrl.section.totalCapitalValue || 0) | currency:'£':0}}</span></div>
+        <div ng-if="$ctrl.showRevenueGla || $ctrl.showRevenueOther">Revenue Grant <span class="pull-right">{{($ctrl.section.totalRevenueValue || 0) | currency:'£':0}}</span></div>
+      </div>
+    </div>
+
+    <div class="mtop30">
+      <span ng-if="$ctrl.section.status === 'Claimed'">Milestone claims must be cancelled before the milestones can be edited.</span>
+      <span ng-if="!$ctrl.section.claim">By claiming the milestones and activities, you are confirming the milestones and activities have been completed. Claimed payments will display in the Payment section of GLA OPS once the project changes have been approved</span>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <button
+          id="claim-btn"
+          ng-if="!$ctrl.section.claim && !$ctrl.readOnly"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$close('claim')"
+          ang-disabled="!$ctrl.labelText || $ctrl.isExistingLabel">CLAIM Q{{$ctrl.section.quarter}} PAYMENT</button>
+
+        <button
+          id="cancel-claim-btn"
+          ng-if="$ctrl.section.claim && $ctrl.section.status !== 'Paid' && !$ctrl.readOnly"
+          class="btn btn-default btn-secondary btn-negative btn-center"
+          type="button"
+          ng-click="$close('cancel')">CANCEL CLAIM</button>
+
+        <div class="mtop20 mbottom10">
+          <a href="JavaScript:void(0)" class="form-cancel dismiss-btn" ng-click="$dismiss()">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

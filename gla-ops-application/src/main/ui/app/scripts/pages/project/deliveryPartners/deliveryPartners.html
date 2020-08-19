@@ -1,0 +1,120 @@
+<div class="delivery-partners-page medium-page">
+  <div class="row text-center">
+    <gla-project-header [editable-block]="$ctrl" (on-back)="$ctrl.back()">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
+  </div>
+  <div class="row" ng-if="$ctrl.projectBlock.validationFailures.question.length">
+    <div class="col-xs-12 mtop15 text-center">
+      <div class="error-wrapper error" ng-repeat="error in $ctrl.projectBlock.validationFailures.question">
+        {{error.description}}
+      </div>
+    </div>
+  </div>
+
+  <div class="questions mtop30">
+    <div class="form-group question">
+      <label class="question-text" for="q1">{{$ctrl.templateConfig.hasDeliveryPartnersTitle}}</label>
+      <gla-yes-no-input id="q1"
+                        [disabled]="$ctrl.readOnly"
+                        mode="bool"
+                        name="q1"
+                        ng-if="!$ctrl.readOnly"
+                        (model-change)="$ctrl.save(false)"
+                        [(model)]="$ctrl.projectBlock.hasDeliveryPartners">
+      </gla-yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.hasDeliveryPartners)}}</div>
+    </div>
+
+    <div class="form-group question" ng-if="$ctrl.projectBlock.hasDeliveryPartners && $ctrl.templateConfig.question2">
+      <label for="q2">{{$ctrl.templateConfig.question2}}</label>
+      <gla-yes-no-input id="q2"
+                        is-disabled="$ctrl.readOnly"
+                        mode="bool"
+                        name="q2"
+                        ng-if="!$ctrl.readOnly"
+                        (model-change)="$ctrl.save(false)"
+                        [(model)]="$ctrl.projectBlock.question2">
+      </gla-yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.question2)}}</div>
+
+    </div>
+
+    <div class="form-group question" ng-if="$ctrl.projectBlock.hasDeliveryPartners && $ctrl.templateConfig.question3">
+      <label for="q3">{{$ctrl.templateConfig.question3}}</label>
+      <gla-yes-no-input id="q3"
+                        [disabled]="$ctrl.readOnly"
+                        mode="bool"
+                        name="q3"
+                        ng-if="!$ctrl.readOnly"
+                        (model-change)="$ctrl.save(false)"
+                        [(model)]="$ctrl.projectBlock.question3">
+      </gla-yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.question3)}}</div>
+    </div>
+
+    <div class="form-group question" ng-if="$ctrl.projectBlock.hasDeliveryPartners && $ctrl.templateConfig.question4">
+      <label for="q4">{{$ctrl.templateConfig.question4}}</label>
+      <gla-yes-no-input id="q4"
+                        [disabled]="$ctrl.readOnly"
+                        mode="bool"
+                        name="q4"
+                        ng-if="!$ctrl.readOnly"
+                        (model-change)="$ctrl.save(false)"
+                        [(model)]="$ctrl.projectBlock.question4">
+      </gla-yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.question4)}}</div>
+    </div>
+
+    <div class="form-group question" ng-if="$ctrl.projectBlock.hasDeliveryPartners && $ctrl.templateConfig.question5">
+      <label for="q5">{{$ctrl.templateConfig.question5}}</label>
+      <gla-yes-no-input id="q5"
+                        [disabled]="$ctrl.readOnly"
+                        mode="bool"
+                        name="q5"
+                        ng-if="!$ctrl.readOnly"
+                        (model-change)="$ctrl.save(false)"
+                        [(model)]="$ctrl.projectBlock.question5">
+      </gla-yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.question5)}}</div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="$ctrl.projectBlock.validationFailures.table.length && $ctrl.projectBlock.hasDeliveryPartners">
+    <div class="col-xs-12 mtop15 text-center">
+      <div class="error-wrapper error" ng-repeat="error in $ctrl.projectBlock.validationFailures.table">
+        {{error.description}}
+      </div>
+    </div>
+  </div>
+
+  <div class="delivery-partners-list row no-gutter"  ng-if="$ctrl.projectBlock.hasDeliveryPartners">
+
+    <div class="col-sm-6" style="padding-top: 20px" > 
+      <span ng-if="$ctrl.projectBlock.deliveryPartners.length != 0 && $ctrl.templateConfig.showDeliverables">
+        <a class="text-nowrap" href="JavaScript:void(0)" ng-click="$ctrl.toggleExpansion()">{{$ctrl.showExpandAll? 'Expand all' : 'Collapse all'}}</a>
+      </span>
+    </div>
+    <div class="col-sm-6 text-right" ng-if="!$ctrl.readOnly">
+      <button class="btn btn-md btn-secondary mbottom10" ng-click="$ctrl.showProjectDeliveryPartnerModal({})">
+        ADD {{$ctrl.entityName.toUpperCase()}} <b>+</b>
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive" ng-if="$ctrl.projectBlock.hasDeliveryPartners">
+      <delivery-partners-table
+        project="$ctrl.project"
+        project-block="$ctrl.projectBlock"
+        template-config="$ctrl.templateConfig"
+        read-only="$ctrl.readOnly"
+        deliverable-types="$ctrl.deliverableTypes"
+        on-delivery-partner-change="$ctrl.onDeliveryPartnerChange(event)"
+        on-delivery-partner-deliverable-change = "$ctrl.onDeliveryPartnerDeliverableChange(event)"
+        on-delete="$ctrl.onDelete(event)"
+        on-delete-deliverable="$ctrl.onDeleteDeliverable(event)">
+      </delivery-partners-table>
+    </div>
+
+  </div>
+
+  <project-block-footer editable-block="$ctrl"></project-block-footer>
+</div>

@@ -1,0 +1,1602 @@
+{
+  "name": "LCPF",
+  "author": "TBC",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Title & contact",
+      "block": "Details",
+      "displayOrder": 0,
+      "infoMessage": "Title must be unique to project or activity. Avoid using 'LCPF' or similar."
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "VCS Organisations",
+      "block": "Questions",
+      "displayOrder": 3,
+      "infoMessage": "MOPAC has relationships with VCS organisations across London. This information is being requested in order to get a London-wide picture of VCS funding and to guard against double funding with any of MOPAC's pan-London contracts.",
+      "questions": [
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 4562,
+            "text": "Name of third VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4561,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 4556,
+            "text": "Name of first VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4555,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 4555,
+            "text": "Is this project being delivered in partnership with a voluntary or community organisation (VCSO) in 2020/21?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 4500,
+            "text": "Is this project being delivered in partnership with a voluntary or community organisation (VCSO) in 2019/20?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 4554,
+            "text": "Is your project being delivering in partnership with a fourth voluntary or community organisation (VCSO) in 2019/20?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4553,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 4563,
+            "text": "Third VSCO Amount in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4561,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 4502,
+            "text": "First VCSO Amount in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4500,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 4564,
+            "text": "Is your project being delivering in partnership with a fourth voluntary or community organisation (VCSO) in 2020/21?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4561,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 4561,
+            "text": "Is your project being delivering in partnership with a third voluntary or community organisation (VCSO) in 2020/21?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4558,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 12.2,
+          "question": {
+            "id": 4616,
+            "text": "Name of fifth VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4615,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 24.1,
+          "question": {
+            "id": 4621,
+            "text": "Is your project being delivering in partnership with a fifth voluntary or community organisation (VCSO) in 2020/21?",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4564,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 4553,
+            "text": "Is your project being delivering in partnership with a third voluntary or community organisation (VCSO) in 2019/20?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4552,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 4567,
+            "text": "Fourth VSCO Amount in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4564,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 4566,
+            "text": "Name of fourth VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4564,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 4507,
+            "text": "Third VSCO Amount in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4553,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 4501,
+            "text": "Name of first VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4500,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 24.5,
+          "question": {
+            "id": 4625,
+            "text": "Name of sixth VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4624,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 12.4,
+          "question": {
+            "id": 4618,
+            "text": "Is your project being delivering in partnership with a sixth voluntary or community organisation (VCSO) in 2019/20?",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4615,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 4506,
+            "text": "Name of third VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4553,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 4559,
+            "text": "Name of second VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4558,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 4552,
+            "text": "Is your project being delivering in partnership with a second voluntary or community organisation (VCSO) in 2019/20?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4500,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 4557,
+            "text": "First VCSO Amount in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4555,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 4558,
+            "text": "Is your project being delivering in partnership with a second voluntary or community organisation (VCSO) in 2020/21?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4555,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 12.6,
+          "question": {
+            "id": 4620,
+            "text": "Sixth VSCO Amount in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4618,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 4504,
+            "text": "Second VSCO Amount in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4552,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 24.4,
+          "question": {
+            "id": 4624,
+            "text": "Is your project being delivering in partnership with a sixth voluntary or community organisation (VCSO) in 2020/21?",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4621,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 4503,
+            "text": "Name of second VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4552,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 24.2,
+          "question": {
+            "id": 4622,
+            "text": "Name of fifth VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4621,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 24.6,
+          "question": {
+            "id": 4626,
+            "text": "Sixth VSCO Amount in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4624,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 4509,
+            "text": "Fourth VSCO Amount in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4554,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 4508,
+            "text": "Name of fourth VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4554,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 24.3,
+          "question": {
+            "id": 4623,
+            "text": "Fifth VSCO Amount in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4621,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 12.1,
+          "question": {
+            "id": 4615,
+            "text": "Is your project being delivering in partnership with a fifth voluntary or community organisation (VCSO) in 2019/20?",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4554,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 12.3,
+          "question": {
+            "id": 4617,
+            "text": "Fifth VSCO Amount in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4615,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 4560,
+            "text": "Second VSCO Amount in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4558,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11805
+        },
+        {
+          "displayOrder": 12.5,
+          "question": {
+            "id": 4619,
+            "text": "Name of sixth VCSO",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4618,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11804
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 11805,
+          "displayOrder": 2,
+          "text": "Partnerships in 2020/21"
+        },
+        {
+          "externalId": 11804,
+          "displayOrder": 1,
+          "text": "Partnerships in 2019/20"
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Funding",
+      "block": "Questions",
+      "displayOrder": 2,
+      "infoMessage": "MOPAC is requesting information on match funding to get a picture of the costs associated with delivering services at a local level. Only include match funding which is directly attributable to the delivery of this project.",
+      "questions": [
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 4590,
+            "text": "Second partner's contribution in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4586,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 4586,
+            "text": "Are you receiving funding from a second partner to support this project or activity (including in kind contributions)?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4525,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 4591,
+            "text": "Description of second partner's match funding contributions in kind in 2020/21",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4586,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 4596,
+            "text": "Third partner's contribution in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4592,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 4594,
+            "text": "Third partner's contribution in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4592,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 4582,
+            "text": "First partner's contribution in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4525,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 4524,
+            "text": "Description of match funding in kind contributions in 2020/21",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11806
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 4584,
+            "text": "First partner's contribution in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4525,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 4585,
+            "text": "Description of first partner's match funding contributions in kind in 2020/21",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4525,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 4588,
+            "text": "Second partner's contribution in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4586,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 4522,
+            "text": "Description of match funding in kind contributions in 2019/20",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11806
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 4583,
+            "text": "Description of first partner's match funding in kind contributions in 2019/20",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4525,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 4581,
+            "text": "Name of first partner",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4525,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 4589,
+            "text": "Description of second partner's match funding in kind contributions in 2019/20",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4586,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 4597,
+            "text": "Description of third partner's match funding contributions in kind in 2020/21",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4592,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 4519,
+            "text": "Proposed spend in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11808
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 4587,
+            "text": "Name of second partner",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4586,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 4520,
+            "text": "Proposed spend in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11808
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 4523,
+            "text": "Local Authority contribution in 2020/21",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11806
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 4592,
+            "text": "Are you receiving funding from a third partner to support this project or activity (including in kind contributions)?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4586,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 4525,
+            "text": "Are you receiving funding from partners to support this project or activity (including in kind contributions)?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 4521,
+            "text": "Local Authority contribution in 2019/20",
+            "answerType": "Number",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11806
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 4593,
+            "text": "Name of third partner",
+            "answerType": "Text",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4592,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 4595,
+            "text": "Description of third partner's match funding in kind contributions in 2019/20",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4592,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11807
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 11807,
+          "displayOrder": 3,
+          "text": "Partner match funding"
+        },
+        {
+          "externalId": 11806,
+          "displayOrder": 2,
+          "text": "Local Authority match funding"
+        },
+        {
+          "externalId": 11808,
+          "displayOrder": 1,
+          "text": "Proposed spend"
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Compliance",
+      "block": "Questions",
+      "displayOrder": 5,
+      "questions": [
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 4598,
+            "text": "Confirm acceptance of the [statement of compliance](https://www.london.gov.uk/sites/default/files/lcpf_statement_of_compliance.pdf).",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 4599,
+            "text": "Confirm that this project meets the general minimum standards, and minimum standards specific to this priority areas - [view standards](https://www.london.gov.uk/sites/default/files/lcpf_minimum_standards.pdf)",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 4537,
+            "text": "Confirm you have the authority to put forward this proposal for funding on behalf of this Local Authority",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 4629,
+            "text": "Provide link to your privacy notice",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11820,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 4605,
+            "text": "Provide details of how you intend to transition from current funding arrangements, particularly any services you intend to decommission",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 4628,
+            "text": "Confirm your compliance with the Data Protection Act 2018 and any other applicable privacy and data protection legislation, including the [General Data Protection Regulation](https://bit.ly/2F9nj6D)",
+            "answerType": "YesNo",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11820,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 4630,
+            "text": "Provide link to your data protection policy",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11820,
+          "appearsOnStatus": "Stage 2"
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 11820,
+          "displayOrder": 0,
+          "text": "GDPR compliance"
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Project Description",
+      "block": "Questions",
+      "displayOrder": 1,
+      "infoMessage": "The SMART outcomes provided in this section will be used for annual performance monitoring",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 4568,
+            "text": "Primary Police and Crime Plan priority area",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 5,
+                "option": "Wider criminal justice system"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Hate crime extremism"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Violence against women and girls"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Children and young people"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Neighbourhood policing"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11812
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 4576,
+            "text": "Describe the overarching aims of this project",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11819
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 4610,
+            "text": "Project category three",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Business crime"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Crime prevention"
+              },
+              {
+                "displayOrder": 16,
+                "option": "Substance misuse"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Mental health"
+              },
+              {
+                "displayOrder": 15,
+                "option": "Stalking/harassment"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Hate crime"
+              },
+              {
+                "displayOrder": 13,
+                "option": "Prostitution"
+              },
+              {
+                "displayOrder": 18,
+                "option": "Youth crime"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Extremism"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Harmful practices"
+              },
+              {
+                "displayOrder": 14,
+                "option": "Sexual violence"
+              },
+              {
+                "displayOrder": 1,
+                "option": "ASB and neighbourhood crime"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Gang crime"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Integrated offender management"
+              },
+              {
+                "displayOrder": 17,
+                "option": "Victim care"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Female offenders"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Child sexual exploitation"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Domestic abuse"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 11812
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 4575,
+            "text": "Provide details listing the authorities involved",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 4600,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 11812
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 4569,
+            "text": "Secondary Police and Crime Plan priority area",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 5,
+                "option": "Wider criminal justice system"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Hate crime extremism"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Violence against women and girls"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Children and young people"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Neighbourhood policing"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 11812
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 4606,
+            "text": "Describe the project, including a breakdown of spend, ouputs and activities",
+            "answerType": "FreeText",
+            "maxLength": 3000,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11812
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 4608,
+            "text": "Project category one",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Business crime"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Crime prevention"
+              },
+              {
+                "displayOrder": 16,
+                "option": "Substance misuse"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Mental health"
+              },
+              {
+                "displayOrder": 15,
+                "option": "Stalking/harassment"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Hate crime"
+              },
+              {
+                "displayOrder": 13,
+                "option": "Prostitution"
+              },
+              {
+                "displayOrder": 18,
+                "option": "Youth crime"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Extremism"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Harmful practices"
+              },
+              {
+                "displayOrder": 14,
+                "option": "Sexual violence"
+              },
+              {
+                "displayOrder": 1,
+                "option": "ASB and neighbourhood crime"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Gang crime"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Integrated offender management"
+              },
+              {
+                "displayOrder": 17,
+                "option": "Victim care"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Female offenders"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Child sexual exploitation"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Domestic abuse"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11812
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 4600,
+            "text": "Will this project involve working with other local authorities?",
+            "answerType": "YesNo",
+            "maxLength": 0,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11812
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 4607,
+            "text": "Input SMART performance outcomes",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 11819
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 4609,
+            "text": "Project category two",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Business crime"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Crime prevention"
+              },
+              {
+                "displayOrder": 16,
+                "option": "Substance misuse"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Mental health"
+              },
+              {
+                "displayOrder": 15,
+                "option": "Stalking/harassment"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Hate crime"
+              },
+              {
+                "displayOrder": 13,
+                "option": "Prostitution"
+              },
+              {
+                "displayOrder": 18,
+                "option": "Youth crime"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Extremism"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Harmful practices"
+              },
+              {
+                "displayOrder": 14,
+                "option": "Sexual violence"
+              },
+              {
+                "displayOrder": 1,
+                "option": "ASB and neighbourhood crime"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Gang crime"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Integrated offender management"
+              },
+              {
+                "displayOrder": 17,
+                "option": "Victim care"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Female offenders"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Child sexual exploitation"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Domestic abuse"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 11812
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 11819,
+          "displayOrder": 2,
+          "text": "Key aims and outcomes"
+        },
+        {
+          "externalId": 11812,
+          "displayOrder": 1,
+          "text": "Priority area and description"
+        }
+      ]
+    }
+  ],
+  "internalBlocks": [],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Stage 1",
+    "initialSubStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "MultiAssessment"
+  },
+  "warningMessage": "Do not enter more than 5 projects under this programme. If you wish to submit more than 5 projects, speak to your LCPF lead. Title must be unique to project or activity. Avoid using 'LCPF' or similar.",
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "wardIdRequirement": "hidden",
+    "postcodeRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": "mandatory",
+    "imageRequirement": "hidden",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "hidden",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": false,
+  "grantTypes": []
+}

@@ -1,0 +1,7 @@
+<div class="repeating-entity">
+  <div ng-transclude></div>
+  <div class="text-right" ng-if="!$ctrl.parentCtrl.readOnly && $ctrl.parentCtrl.entities.length > 1">
+    <delete-button class="small" ng-click="$ctrl.parentCtrl.deleteEntity($ctrl.entity)" text="Delete"></delete-button>
+  </div>
+  <hr class="entity-list-separator" ng-if="$ctrl.parentCtrl.entities.length > 1">
+</div>

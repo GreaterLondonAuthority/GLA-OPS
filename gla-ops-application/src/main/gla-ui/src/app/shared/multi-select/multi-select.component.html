@@ -1,0 +1,36 @@
+<form class="btn-group">
+  <ul aria-labelledby="filter-dropdown" class="multi-select-list filter-dropdown" role="menu">
+    <!--<li role="menuitem">
+      <div class="select-all-toggle">
+        <a (click)="toggleAllFilters($event, false)" href="JavaScript:void(0)" *ngIf="hasFilterSelections">Deselect All</a>
+        <a (click)="toggleAllFilters($event, true)" href="JavaScript:void(0)" *ngIf="!hasFilterSelections">Select All</a>
+      </div>
+    </li>-->
+    <ng-container *ngFor="let item of dropdownItems; index as i">
+    <li [class]="{group: item.items?.length, 'group-item': item.groupId, 'filter-item': !item.items?.length}"
+        *ngIf="item.items?.length || !item.groupId || !item.collapsed"
+        role="menuitem">
+
+      <div class="checkbox" [class]="{checked: item.model, unchecked: !item.model, focused: item.focused}">
+        <input #checkboxEl [attr.aria-label]="item.ariaLabel || item.label || item.option"
+               name="{{item.name || 'ch-'+ i}}"
+               [(ngModel)]="item.model"
+               (ngModelChange)="onCheckboxesChange(item, checkboxEl)"
+               (click)="$event.stopPropagation();"
+               type="checkbox">
+      </div>
+      <div class="li-item-label">
+        <span (click)="$event.stopPropagation();">{{item.label || item.option}}</span>
+        <span class="glyphicon link"
+              tabindex="0"
+              allow-enter
+              role="button"
+              [attr.aria-label]="(item.collapsed? 'Expand ': 'Collapse ') + (item.label || item.option)"
+              [class]="{'glyphicon-plus': item.collapsed, 'glyphicon-minus': !item.collapsed}"
+              (click)="toggle(item);$event.stopPropagation();"
+              *ngIf="item.items?.length"></span>
+      </div>
+    </li>
+    </ng-container>
+  </ul>
+</form>

@@ -1,0 +1,548 @@
+{
+  "name": "Small Projects and Equipment Fund",
+  "author": "Nahida Miah",
+  "blocksEnabled":
+  [
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Funding Eligibility",
+      "block": "Questions",
+      "displayOrder": 1,
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 675,
+            "text": "Confirm that you meet the eligibility requirements of this funding and are;",
+            "answerType": "Dropdown",
+            "answerOptions": [
+
+              {
+                "displayOrder": 1,
+                "option": "A FE college"
+              },
+              {
+                "displayOrder": 2,
+                "option": "On Rgstr of Approved Training Providers"
+              },
+              {
+                "displayOrder": 3,
+                "option": "On Rgstr of Apprenticeship Training Providers"
+              },
+              {
+                "displayOrder": 4,
+                "option": "On both Registers"
+              }
+            ]
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 676,
+            "text": "Confirm that you meet the eligibility requirements of this funding and are in receipt of funding from the Education and Skills Funding Agency;",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "In receipt of funding from ESFA in 17/18"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Funding in 17/18 & expecting future contract"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Expect to hold future ESFA funding contract"
+              }
+            ]
+          },
+          "requirement": "mandatory"
+        },
+        {
+
+          "displayOrder": 3,
+          "question": {
+            "id": 650,
+
+            "text": "Nature of tenure applicable to site of works",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Leasehold for less than 10 years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Leasehold for 10 years or more"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Freehold"
+              }
+            ]
+          },
+          "requirement": "mandatory"
+        }
+      ]
+    },
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 2,
+      "blockAppearsOnStatus": null
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Further Eligibility Details",
+      "block": "Questions",
+      "displayOrder": 3,
+      "questions": [
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 679,
+            "text": "If you are bidding for a small project, describe what sustainability measures are part of the project, including but not limited to BREEAM (please put N/A if this is an equipment only project)",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+
+          "displayOrder": 1,
+          "question": {
+            "id": 653,
+            "text": "Detail how the project meets eligibility and minimum requirements for Skills for Londoners funding",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 655,
+            "text": "Confirm that this project will be state aid compliant",
+            "answerType": "YesNo",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 502,
+            "text": "Select Planning Status",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 0,
+                "option": "Not required"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Not yet submitted"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Outline granted"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Detailed with no conditions preventing SoS"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Submitted"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Detailed with pre commencement conditions"
+              }
+            ]
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 656,
+            "text": "Summarise your planned or existing governance arrangements to oversee delivery of the project",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Strategic Fit With Priorities",
+      "block": "Questions",
+      "displayOrder": 4,
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 657,
+            "text": "Describe how the project meets the fund priorities. E.g. providing for future skills needs, improving the quality of learner provision or working collaboratively with employers",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 658,
+            "text": "How will the project support the priorities of Making Better Places, Empowering London’s People and Growing Prosperity?",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Cost & Expenditure Details",
+      "block": "Questions",
+      "displayOrder": 5,
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 661,
+            "text": "Capital project costs - acquisition, construction and furniture, fixtures and equipment (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 662,
+            "text": "Basis of project costs estimate",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Indicative estimates"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Professional quotes"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Final supplier costs"
+              }
+            ]
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 663,
+            "text": "Capital project costs - fees (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 664,
+            "text": "Basis of fees costs estimate",
+            "answerType": "Dropdown",
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Indicative estimates"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Professional quotes"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Final supplier costs"
+              }
+            ]
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 665,
+            "text": "Total capital project cost (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 666,
+            "text": "Funding requested from Skills for Londoners Capital Fund (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "hidden"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 667,
+            "text": "Funding requested ratio (%)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 668,
+            "text": "Match Funding amount (£)",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 669,
+            "text": "Match Funding source",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 678,
+            "text": "Please upload evidence of your match funding",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 733,
+            "text": "Please confirm that this project is a capital improvement costs and not an ongoing maintenance project",
+            "answerType": "YesNo",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 670,
+            "text": "Describe the options analysis undertaken in developing this proposal (include NPV if calculated)",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Finance & Quality Details",
+      "block": "Questions",
+      "displayOrder": 6,
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 671,
+            "text": "Provide a summary of your organisations recent financial health checks and quality assessments",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 672,
+            "text": "Briefly state how the project will address any actions or recommendations of any recent Ofsted Reports",
+            "answerType": "FreeText",
+            "answerOptions": []
+          },
+          "requirement": "mandatory"
+        }
+      ]
+    },
+    {
+      "type": "OutputsTemplateBlock",
+      "blockDisplayName": "Outputs",
+      "block": "Outputs",
+      "displayOrder": 7,
+      "showValueColumn": true,
+      "showOutputTypeColumn": true,
+      "blockAppearsOnStatus": null,
+      "outputConfigurationGroup":
+      {
+        "id": 1001,
+        "periodType": "Quarterly",
+        "outputTypeName": "Output Type",
+        "categoryName": "Category",
+        "subcategoryName": "Sub Category",
+        "outputTypes": [
+          {
+            "key": "DIRECT",
+            "description": "Direct Output"
+          },
+          {
+            "key": "INDIRECT",
+            "description": "Indirect Output"
+          }
+        ]
+
+      }
+
+
+
+    },
+    {
+      "type": "TemplateBlock",
+      "blockDisplayName": "Risks and Issues",
+      "block": "Risks",
+      "displayOrder": 8,
+      "blockAppearsOnStatus": null
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "displayOrder": 9,
+      "autoCalculateMilestoneState": true,
+      "maxEvidenceAttachments": 2,
+      "evidenceApplicability": "NEW_MILESTONES_ONLY",
+      "descriptionEnabled": true,
+      "processingRoutes": [
+        {
+          "externalId": null,
+          "name": "default",
+          "milestones": [
+
+            {
+              "externalId": 3047,
+              "summary": "Procurement completed",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": false
+            },
+            {
+              "externalId": 3006,
+              "summary": "Detailed planning permission achieved",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 2,
+              "monetary": false
+            },
+            {
+              "externalId": 3003,
+              "summary": "Start on site",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 3,
+              "monetary": false
+            },
+            {
+              "externalId": 3004,
+              "summary": "Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 4,
+              "monetary": false
+            },
+            {
+              "externalId": 3048,
+              "summary": "Evaluation completed",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 5,
+              "monetary": false
+            }
+
+          ]
+        }
+      ]
+    },
+    {
+      "block": "GrantSource",
+      "displayOrder": 11,
+      "type": "GrantSourceTemplateBlock",
+      "grantTotalText": "THE GRANT FOR THIS PROJECT IS",
+      "grantTypes": [
+        "Grant"
+      ]
+    },
+    {
+      "type": "FundingTemplateBlock",
+      "blockDisplayName": "Budget",
+      "block": "Funding",
+      "displayOrder": 12,
+      "blockAppearsOnStatus": null,
+      "startYear": 2018,
+      "yearAvailableTo": 5,
+      "maxEvidenceAttachments": 2,
+      "activitiesRequired": true,
+      "multipleBespokeActivitiesEnabled": true,
+      "budgetEvidenceAttachmentEnabled": true,
+      "canClaimActivity": false,
+      "evidenceAttachmentsMandatory": true
+    }
+  ],
+
+
+  "stateModel": "ChangeControlled",
+  "milestoneType":"MonetaryValue",
+  "warningMessage": null,
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "mandatory",
+    "postcodeRequirement": "optional",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": "mandatory",
+    "imageRequirement": "optional",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden"
+  },
+
+  "tenureTypes": [],
+  "indicativeTenureConfiguration": null
+
+}

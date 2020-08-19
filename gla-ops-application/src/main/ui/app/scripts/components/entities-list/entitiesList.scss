@@ -1,0 +1,24 @@
+entities-list {
+  display: block;
+
+  entities-list-item{
+    display: block;
+  }
+
+  .entity-list-separator{
+    margin-bottom: 30px;
+  }
+
+  .read-only{
+    .entity-list-separator{
+      margin-top: 30px;
+    }
+
+    entities-list-item:last-child{
+      .entity-list-separator {
+        display: none;
+      }
+    }
+  }
+}
+

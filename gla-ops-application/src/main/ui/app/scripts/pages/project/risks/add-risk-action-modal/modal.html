@@ -1,0 +1,62 @@
+<div class="risk-issue-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Add {{$ctrl.type}}</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="riskForm"
+      role="form"
+      name="riskForm"
+      class="form-group">
+
+
+
+       <label for="action">{{$ctrl.type}}</label>
+       <textarea id="action"
+         rows="5"
+         placeholder="Provide a description of the mtigation raised, max 200 characters."
+         name="action"
+         ng-disabled="$ctrl.readOnly"
+         class="form-control"
+         ng-model="$ctrl.dataBlock.action"
+         required
+         maxlength="200">
+       </textarea>
+       <label for="owner">Owner</label>
+       <input id="owner"
+         type="text"
+         name="owner"
+         ng-disabled="$ctrl.readOnly"
+         class="form-control owner"
+         placeholder="Owner"
+         ng-model="$ctrl.dataBlock.owner"
+         required
+         maxlength="75"  />
+
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row" ng-if="true">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="claim-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          ng-click="$close($ctrl.dataBlock)"
+          ng-disabled="riskForm.$invalid">CREATE</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15 no-border">
+        <a class="form-cancel" href="JavaScript:void(0)" ng-mousedown="$dismiss()" on-enter="$dismiss()">Close</a>
+      </div>
+    </div>
+  </div>
+</div>

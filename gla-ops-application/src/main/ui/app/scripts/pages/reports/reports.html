@@ -1,0 +1,126 @@
+<div class="reports">
+  <gla-page-header class="no-padding mbottom10" [hide-back-btn]="true">Reports</gla-page-header>
+
+  <well class="report-server" ng-if="$ctrl.canRunJasper">
+    <section-header>OPS reporting tool</section-header>
+    <div>Reports can be created in the <a ng-href="{{$ctrl.envVars['reportServer-url']}}" target="_blank">OPS reporting tool</a>.
+      Contact the GLA OPS team if you require a log-in.</div>
+  </well>
+
+  <well class="mtop30 sgw" ng-if="$ctrl.isCurrentUserAllowedToAccessSkillsGateway">
+    <section-header>Skills gateway</section-header>
+    <div>You can use the same login details to login to the <a ng-href="{{$ctrl.envVars['sgw-url']}}" target="_blank">skills gateway</a>.</div>
+  </well>
+
+  <well class="mtop30" ng-if="$ctrl.runAdhocReports">
+    <section-header>Ad-hoc reporting</section-header>
+    <div>Reports can be created in the <a href ui-sref="reports-sql-editor">OPS SQL editor</a>.</div>
+  </well>
+
+  <well class="mtop30 export-reports">
+    <div ng-if="!$ctrl.reportsAvailable">
+      There are no reports available for you to download.
+    </div>
+    <div ng-if="$ctrl.hasTooManyPendingReports()" class="error">
+      You can’t generate anymore reports for download as the limit of 4 concurrent reports has been reached. Once a report is ready to download you can generate a new one.
+    </div>
+    <div ng-if="$ctrl.reportsAvailable" class="reports-filter">
+      <section-header>Export reports</section-header>
+      <div class="row form">
+        <div class="col-md-6 col-sm-12 form-group">
+          <label for="reportOption">Report Title</label><br/>
+          <select class="form-control"
+                  id="reportOption"
+                  name="reportOption"
+                  ng-change="$ctrl.selectReportType($ctrl.selectedReportType)"
+                  ng-model="$ctrl.selectedReportType"
+                  ng-options="reportType as reportType.name for reportType in $ctrl.reportTypes | orderBy:'name'"
+                  style-placeholder="">
+            <option disabled value="">None selected</option>
+          </select>
+        </div>
+        <div class="col-xs-12 report-description" ng-if="$ctrl.selectedReportType.description">{{$ctrl.selectedReportType.description}}</div>
+      </div>
+
+      <div class="row form">
+        <div class="col-md-4 col-sm-12 form-group" ng-if="$ctrl.showProgrammeFilter">
+          <label for="programmeOption">Programme</label><br/>
+          <checkbox-filter id="programmeOption"
+                           is-disabled="!$ctrl.enabled.programmeSelector"
+                           filter-dropdown-items="$ctrl.filteredProgrammes"
+                           on-change="$ctrl.selectProgramme()"></checkbox-filter>
+
+        </div>
+
+        <div class="col-md-4 col-sm-12 form-group filter" ng-repeat="filter in $ctrl.selectedReportType.filters" ng-if="filter.name != 'Programme' && $ctrl.programmeIds.length">
+          <label ng-attr-for="{{filter.name}}">{{$ctrl.getLabel(filter)}}</label><br/>
+          <checkbox-filter ng-attr-id="{{filter.name}}"
+                           ng-if="!filter.singleSelect"
+                           filter-dropdown-items="$ctrl.getFilterDropDowns(filter)"
+                           is-disabled="!$ctrl.getFilterDropDowns(filter).length"></checkbox-filter>
+
+          <select class="form-control"
+                  ng-attr-id="{{filter.name}}"
+                  ng-disabled="!$ctrl.getFilterDropDowns(filter).length"
+                  ng-if="filter.singleSelect"
+                  ng-model="$ctrl.filterSingleSelectValues[filter.name]"
+                  ng-options="item.id as item.label for item in $ctrl.getFilterDropDowns(filter)"
+                  style-placeholder="">
+            <option disabled value="">None selected</option>
+          </select>
+        </div>
+
+        <div class="col-md-4 col-sm-12 reset-column">
+          <a href="JavaScript:void(0)"
+            ng-if="$ctrl.isAnyFilterApplied()"
+            class="action-buttons action-buttons-reset"
+            ng-click="$ctrl.resetFilters()"><span class="glyphicon glyphicon-remove"></span>Reset all</a>
+        </div>
+      </div>
+    </div>
+  </well>
+  <div class="text-center">
+    <a class="link downloadButton btn btn-primary btn-md form-control" id="generate-button"
+       ng-disabled="!$ctrl.isFormValid()"
+       ng-attr-data-url="{{$ctrl.reportUrl}}"
+       href="JavaScript:void(0)"
+       ng-click="$ctrl.downloadCSV()">
+      {{$ctrl.linkLabel}}<span class="glyphicon glyphicon-download-alt"/>
+    </a>
+  </div>
+
+  <div class="mtop20">
+    <div class="table-responsive mtop10 reports-table" id="user-report-table">
+      <table ng-if="$ctrl.generatedReports.length" class="table table-bordered table-striped">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>START DATE</th>
+          <th>START TIME</th>
+          <th>REPORT NAME</th>
+          <th class="status-col">STATUS</th>
+          <th>ACTIONS</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="r in $ctrl.generatedReports | orderBy: '-startTime'">
+          <td>{{r.startTime | date: "dd/MM/yyyy"}}</td>
+          <td>{{r.startTime | date: "HH:mm"}}</td>
+          <td>{{r.name}}</td>
+          <td><div class="reports-status-text">{{$ctrl.reportStatusMap[r.status] || r.status}}</div> <gla-spinner style="float:left;" ng-if="r.status == 'inProgress'" text="''"></gla-spinner></td>
+          <td>
+            <a ng-if="r.status === 'Complete'"
+               ng-href="/api/v1/file/{{r.attachmentFileId}}"
+               download
+               target="_blank">Download</a>
+          </td>
+          <td class="delete-btn-container text-center">
+            <delete-button ng-click="$ctrl.delete(r);"></delete-button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

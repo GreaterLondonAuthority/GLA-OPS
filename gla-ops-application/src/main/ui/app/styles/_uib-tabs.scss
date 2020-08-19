@@ -1,0 +1,34 @@
+.nav.nav-tabs {
+  border-bottom: 1px solid $alto;
+
+  > li.uib-tab {
+    min-width: 115px;
+    text-align: center;
+
+    a {
+      font-family: $font-family-bolder;
+      font-size: 12px;
+      padding: 8px 15px;
+      color: $gla-blue;
+
+      &:hover{
+        color: $gla-blue;
+      }
+
+      &:focus{
+        color: $gla-blue;
+      }
+    }
+
+    &.active {
+      > a {
+        &, &:focus {
+          background-color: $grey;
+          font-family: $font-family-bold;
+          color: $gla-black;
+        }
+      }
+    }
+  }
+}
+

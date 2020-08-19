@@ -1,0 +1,864 @@
+{
+  "name": "Emergency Equipment Fund",
+  "author": "Data Initialiser",
+  "status": "Draft",
+  "blocksEnabled": [
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Funding Eligibility",
+      "block": "Questions",
+      "displayOrder": 1,
+      "infoMessage": "If you do not satisfy the basic eligibility questions below then you are not eligible for funding and should not submit this application",
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 1336,
+            "text": "Confirm the UKPRN number of the lead organisation",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 1332,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1331,
+            "text": "Criteria C - Sub-contractor on the ESFA List of Declared Subcontractors",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 1329,
+            "text": "Criteria B(i) - Endorsed for direct contract/grant agreement to deliver education/training with the GLA for the devolved Adult Education Budget (learners aged 19+)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1330,
+            "text": "Confirm which of the following criteria are applicable to your organisation: Criteria A - On the Register of Apprenticeship Training Providers",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1332,
+            "text": "Are you applying in partnership with a lead provider?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 1333,
+            "text": "Confirm which of the following criteria are applicable to the lead organisation: Criteria A - On the Register of Apprenticeship Training Providers",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 1332,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 6.5,
+          "question": {
+            "id": 1338,
+            "text": "Criteria B(ii) - Endorsed for direct contract/grant agreement to deliver education/training with the Education and Skills Funding Agency (learners aged 16-18)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 1332,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 1334,
+            "text": "Criteria B(i) - Endorsed for direct contract/grant agreement to deliver education/training with the GLA for the devolved Adult Education Budget (learners aged 19+)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 1332,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 1335,
+            "text": "Criteria C - Sub-contractor on the ESFA List of Declared Subcontractors",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "parentId": 1332,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 2.5,
+          "question": {
+            "id": 1337,
+            "text": "Criteria B(ii) - Endorsed for direct contract/grant agreement to deliver education/training with the Education and Skills Funding Agency (learners aged 16-18)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "",
+            "modifierName": ""
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 1,
+          "displayOrder": 1,
+          "text": "Basic Eligibility"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 3,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "displayOrder": 5,
+      "infoMessage": "Start on site, Practical/substantial completion and Evaluation & completion milestones must be completed",
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "externalId": 10099,
+          "name": "default",
+          "milestones": [
+            {
+              "externalId": 4012,
+              "summary": "Enter development agreement",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 10,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4023,
+              "summary": "Phase 2 planning",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 20,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4007,
+              "summary": "Stage 3 cost plan",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 5,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4021,
+              "summary": "Phase 1 construction",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 18,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4014,
+              "summary": "Lease signed",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 12,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4020,
+              "summary": "Phase 1 planning",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 17,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4028,
+              "summary": "Discharge of retention fee",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 25,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4010,
+              "summary": "Planning submission",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 8,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4025,
+              "summary": "Phase 2 completion",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 22,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4013,
+              "summary": "Land acquisition/negotiation",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 11,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4017,
+              "summary": "Procurement completed",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 14,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4008,
+              "summary": "Stage 4 design",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 6,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4006,
+              "summary": "Stage 3 design",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 4,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4029,
+              "summary": "Evaluation and closure",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 26,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "externalId": 4027,
+              "summary": "Practical/substantial completion",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 24,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "externalId": 4009,
+              "summary": "Stage 4 cost plan",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 7,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4018,
+              "summary": "Contractor appointment",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 15,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4004,
+              "summary": "Stage 2 cost plan",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 2,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4026,
+              "summary": "Fit out completion",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 23,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4016,
+              "summary": "Tender issue",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 13,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4011,
+              "summary": "Planning consent",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 9,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4019,
+              "summary": "Start on site",
+              "requirement": "mandatory",
+              "monetarySplit": 0,
+              "displayOrder": 16,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "externalId": 4002,
+              "summary": "Design team appointment",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 0,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4024,
+              "summary": "Phase 2 construction",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 21,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4003,
+              "summary": "Stage 2 design",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 1,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4022,
+              "summary": "Phase 1 completion",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 19,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            }
+          ]
+        }
+      ],
+      "descriptionEnabled": false,
+      "showMilestoneStatus": true,
+      "defaultProcessingRoute": {
+        "externalId": 10099,
+        "name": "default",
+        "milestones": [
+          {
+            "externalId": 4012,
+            "summary": "Enter development agreement",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 10,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4023,
+            "summary": "Phase 2 planning",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 20,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4007,
+            "summary": "Stage 3 cost plan",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 5,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4021,
+            "summary": "Phase 1 construction",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 18,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4014,
+            "summary": "Lease signed",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 12,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4020,
+            "summary": "Phase 1 planning",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 17,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4028,
+            "summary": "Discharge of retention fee",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 25,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4010,
+            "summary": "Planning submission",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 8,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4025,
+            "summary": "Phase 2 completion",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 22,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4013,
+            "summary": "Land acquisition/negotiation",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 11,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4017,
+            "summary": "Procurement completed",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 14,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4008,
+            "summary": "Stage 4 design",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 6,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4006,
+            "summary": "Stage 3 design",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 4,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4029,
+            "summary": "Evaluation and closure",
+            "requirement": "mandatory",
+            "monetarySplit": 0,
+            "displayOrder": 26,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "externalId": 4027,
+            "summary": "Practical/substantial completion",
+            "requirement": "mandatory",
+            "monetarySplit": 0,
+            "displayOrder": 24,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "externalId": 4009,
+            "summary": "Stage 4 cost plan",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 7,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4018,
+            "summary": "Contractor appointment",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 15,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4004,
+            "summary": "Stage 2 cost plan",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 2,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4026,
+            "summary": "Fit out completion",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 23,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4016,
+            "summary": "Tender issue",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 13,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4011,
+            "summary": "Planning consent",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 9,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4019,
+            "summary": "Start on site",
+            "requirement": "mandatory",
+            "monetarySplit": 0,
+            "displayOrder": 16,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "externalId": 4002,
+            "summary": "Design team appointment",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 0,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4024,
+            "summary": "Phase 2 construction",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 21,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4003,
+            "summary": "Stage 2 design",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 1,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4022,
+            "summary": "Phase 1 completion",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 19,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          }
+        ]
+      },
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "FundingTemplateBlock",
+      "blockDisplayName": "Budget",
+      "block": "Funding",
+      "displayOrder": 6,
+      "infoMessage": "Please refer to the SPEF Round 2 Application guidance for support completing this section",
+      "paymentSourcesString": "Grant",
+      "startYear": 2020,
+      "yearAvailableTo": 0,
+      "maxEvidenceAttachments": 5,
+      "defaultActivityName": "Projected cost",
+      "activitiesRequired": false,
+      "fundingBalanceEnforced": true,
+      "fundingSpendType": "CAPITAL_ONLY",
+      "multipleBespokeActivitiesEnabled": true,
+      "budgetEvidenceAttachmentEnabled": false,
+      "showMilestones": true,
+      "showCategories": false,
+      "monetaryValueScale": 2,
+      "canClaimActivity": true,
+      "evidenceAttachmentsMandatory": false,
+      "paymentSources": [
+        "Grant"
+      ],
+      "grantTypes": [
+        "Grant"
+      ]
+    }
+  ],
+  "internalBlocks": [
+    {
+      "json_type": "InternalAssessmentTemplateBlock",
+      "blockDisplayName": "ASSESSMENT",
+      "type": "Assessment",
+      "displayOrder": 100
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "mandatory",
+    "wardIdRequirement": "hidden",
+    "postcodeRequirement": "mandatory",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "imageRequirement": "hidden",
+    "contactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "hidden",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": false,
+  "grantTypes": [
+    "Grant"
+  ],
+  "shouldMilestonesBlockShowStatus": true
+}

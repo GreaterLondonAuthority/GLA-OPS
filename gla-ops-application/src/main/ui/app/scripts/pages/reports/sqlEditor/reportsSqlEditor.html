@@ -1,0 +1,45 @@
+<div class="reports">
+  <gla-page-header (on-back)="$ctrl.back()" class="no-padding mbottom10">SQL Editor</gla-page-header>
+
+  <div class="form-group mtop20">
+    <label for="fileName">File name (optional):</label>
+    <input class="form-control"
+           id="fileName"
+           maxlength="80"
+           name="fileName"
+           ng-model="$ctrl.fileName"
+           type="text" />
+  </div>
+
+  <div class="form-group">
+    <label for="sql">SQL:</label>
+    <textarea class="form-control"
+              cols="50"
+              id="sql"
+              name="sql"
+              ng-model="$ctrl.sql"
+              ng-trim="false"
+              rows="5"
+              maxlength="100000"
+              ng-change="$ctrl.serverError = null"
+              ng-keypress="$ctrl.serverError = null">
+    </textarea>
+    <div role="alert" class="sql-validation-error" ng-show="$ctrl.sql && !$ctrl.isSQLValid()">
+      <span class="error" ng-if="$ctrl.sql && !$ctrl.isSQLValid()">Potentially unsafe SQL detected</span>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <a class="link downloadButton btn btn-primary btn-md form-control" id="generate-button"
+       ng-disabled="!$ctrl.sql || !$ctrl.isSQLValid()"
+       href="JavaScript:void(0)"
+       ng-click="$ctrl.generateCSV()">
+      GENERATE<span class="glyphicon glyphicon-download-alt"/>
+    </a>
+  </div>
+
+  <div role="alert" class="mtop20" ng-show="$ctrl.serverError">
+    <span class="error" ng-if="$ctrl.serverError">{{$ctrl.serverError}}</span>
+  </div>
+
+</div>

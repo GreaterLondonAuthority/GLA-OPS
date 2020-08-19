@@ -1,0 +1,132 @@
+<div class="template-block-questions expandableTable form-group">
+  <label for="questions">Questions</label>
+
+  <div class="text-right" style="padding-bottom: 10px">
+    <button class="btn btn-secondary mtop10" ng-click="$ctrl.showSectionModal()"
+            ng-if="!$ctrl.readOnly">
+      ADD SECTION <b>+</b>
+    </button>
+    <button class="btn btn-secondary mtop10" ng-click="$ctrl.showQuestionModal()"
+            ng-if="!$ctrl.readOnly">
+      ADD QUESTION <b>+</b>
+    </button>
+  </div>
+
+  <div id="questions" class="table-responsive questions-table">
+    <div class="table-responsive">
+      <div ng-if="!$ctrl.block.questions.length && !$ctrl.sortedSections.length" class="empty-table">Not provided</div>
+      <table ng-if="$ctrl.block.questions.length || $ctrl.sortedSections.length" class="table table-bordered" id="template-block-question-table">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>DISPLAY ORDER</th>
+          <th>QUESTION ID</th>
+          <th>QUESTION TEXT</th>
+          <th>ANSWER TYPE</th>
+          <th>REQUIREMENT</th>
+          <th>PARENT</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr class="bolder" ng-if="!$ctrl.block.questions.length">
+          <td colspan="7">Not provided</td>
+        </tr>
+
+        <tr class="secondaryRow"
+            ng-click="!$ctrl.readOnly && $ctrl.showQuestionModal(question)"
+            ng-if="!$ctrl.sortedQuestions[undefined].collapsed"
+            ng-repeat="question in $ctrl.sortedQuestions[undefined] track by question.question.id"
+            ng-repeat-end>
+          <td class="display-order">{{question.displayOrder}}</td>
+          <td class="id">{{question.question.id}}</td>
+          <td class="text">{{question.question.text}}</td>
+          <td class="answer-type">{{question.question.answerType}}
+            <span ng-if="(question.question.answerType == 'FreeText' || question.question.answerType == 'Text') && question.question.maxLength">{{question.question.maxLength}} char. max.</span>
+            <span ng-if="question.question.answerType == 'Text' && !question.question.maxLength">255 char. max.</span>
+            <div ng-if="question.question.answerType == 'Dropdown'">Max. answers: {{question.question.maxAnswers}}</div>
+            <div ng-if="question.question.answerType == 'FileUpload'">
+              <div ng-if="question.question.maxCombinedUploadSizeInMb">Max. file size: {{question.question.maxCombinedUploadSizeInMb | number}}MB</div>
+              <div ng-if="!question.question.maxCombinedUploadSizeInMb && question.question.maxUploadSizeInMb">Max. file size: {{question.question.maxUploadSizeInMb | number}}MB</div>
+              <div ng-if="!question.question.maxCombinedUploadSizeInMb && question.question.quantity">Max. no.: {{question.question.quantity}}</div>
+            </div>
+          </td>
+          <td class="requirement">{{question.requirement}}</td>
+          <td >
+            <span ng-if="question.parentId && question.parentAnswerToMatch"> {{question.parentId}} : {{question.parentAnswerToMatch}}</span>
+          </td>
+          <td class="delete-btn-container parent up-down-button text-nowrap" ng-click="$event.stopPropagation()">
+            <show-up-down-arrow-buttons
+              [current-item]=question
+              [sorted-collection-items]="$ctrl.sortedQuestions[section.externalId]"
+              [title-up]="'Move Question Up'"
+              [title-down]="'Move Question Down'"
+              (on-display-order-change)="$ctrl.updateQuestions();$event.stopPropagation()"
+              ng-if="!$ctrl.readOnly">
+            </show-up-down-arrow-buttons>
+            <delete-button class="medium" ng-click="$event.stopPropagation(); $ctrl.deleteQuestion(question);" ng-if="!$ctrl.readOnly && !$ctrl.isParentQuestion(question.question.id)"></delete-button>
+          </td>
+        </tr>
+
+        <tr class="primaryRow expandable"
+            ng-repeat-start="section in $ctrl.sortedSections track by $index">
+          <th ng-click="!$ctrl.readOnly && $ctrl.showSectionModal(section)" ng-attr-colspan="5" ng-if="$ctrl.block.sections.length != 0 && section.id != 'undefined'" >
+            <toggle-icon (collapsed-change)="$ctrl.onCollapseChange($ctrl.sortedQuestions[section.externalId])" [(collapsed)]="$ctrl.sortedQuestions[section.externalId].collapsed"></toggle-icon>
+            <span>{{section.text}}
+                <span class ="section-id">(Section ID {{section.externalId}})</span>
+            </span>
+          </th>
+          <th>
+          </th>
+          <th  class="delete-btn-container up-down-button text-nowrap"  >
+            <show-up-down-arrow-buttons
+              [current-item]=section
+              [sorted-collection-items]="$ctrl.sortedSections"
+              [title-up]="'Move Section Up'"
+              [title-down]="'Move Section Down'"
+              (on-display-order-change)="$ctrl.updateSections();$event.stopPropagation()"
+              ng-if="!$ctrl.readOnly">
+            </show-up-down-arrow-buttons>
+            <delete-button class="medium" ng-click=" $ctrl.deleteSection(section);$event.stopPropagation();" ng-if= "!$ctrl.readOnly && $ctrl.isSectionEmpty(section)"></delete-button>
+          </th>
+        </tr>
+        <tr class="secondaryRow"
+            ng-click="!$ctrl.readOnly && $ctrl.showQuestionModal(question)"
+            ng-if="!$ctrl.sortedQuestions[section.externalId].collapsed"
+            ng-repeat="question in $ctrl.sortedQuestions[section.externalId] track by question.question.id"
+            ng-repeat-end>
+          <td class="display-order">{{question.displayOrder}}</td>
+          <td class="id">{{question.question.id}}</td>
+          <td class="text" astyle="min-width: 200px">{{question.question.text}}</td>
+          <td class="answer-type">{{question.question.answerType}}
+            <span ng-if="(question.question.answerType == 'FreeText' || question.question.answerType == 'Text') && question.question.maxLength">{{question.question.maxLength}} char. max.</span>
+            <span ng-if="question.question.answerType == 'Text' && !question.question.maxLength">255 char. max.</span>
+            <div ng-if="question.question.answerType == 'Dropdown'">Max. answers: {{question.question.maxAnswers}}</div>
+            <div ng-if="question.question.answerType == 'FileUpload'">
+              <div ng-if="question.question.maxCombinedUploadSizeInMb">Max. file size: {{question.question.maxCombinedUploadSizeInMb | number}}MB</div>
+              <div ng-if="!question.question.maxCombinedUploadSizeInMb && question.question.maxUploadSizeInMb">Max. file size: {{question.question.maxUploadSizeInMb | number}}MB</div>
+              <div ng-if="!question.question.maxCombinedUploadSizeInMb && question.question.quantity">Max. no.: {{question.question.quantity}}</div>
+            </div>
+          </td>
+          <td  class="requirement">{{question.requirement}}</td>
+          <td >
+            <span ng-if="question.parentId && question.parentAnswerToMatch"> {{question.parentId}} : {{question.parentAnswerToMatch}}</span>
+          </td>
+          <td class="delete-btn-container parent up-down-button text-nowrap" ng-click="$event.stopPropagation()">
+            <show-up-down-arrow-buttons
+              [current-item]=question
+              [sorted-collection-items]="$ctrl.sortedQuestions[section.externalId]"
+              [title-up]="'Move Question Up'"
+              [title-down]="'Move Question Down'"
+              (on-display-order-change)="$ctrl.updateQuestions();$event.stopPropagation()"
+              ng-if="!$ctrl.readOnly">
+            </show-up-down-arrow-buttons>
+            <delete-button class="medium" ng-click="$event.stopPropagation(); $ctrl.deleteQuestion(question);" ng-if="!$ctrl.readOnly && !$ctrl.isParentQuestion(question.question.id)"></delete-button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

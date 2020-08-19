@@ -1,0 +1,10 @@
+<overview-block
+  ng-class="{'draft': !$ctrl.projectIsActive, 'complete': $ctrl.complete }"
+  name="$ctrl.block.blockDisplayName"
+  block-state="$ctrl.blockState"
+  new-block="$ctrl.block.newBlock || $ctrl.block.hasUpdates"
+  banner="$ctrl.banner"
+  status="$ctrl.status"
+  number="$ctrl.blockNumber"
+  icon="$ctrl.icon">
+</overview-block>

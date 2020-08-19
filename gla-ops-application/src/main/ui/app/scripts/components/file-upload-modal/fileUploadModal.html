@@ -1,0 +1,64 @@
+<div class="evidence-modal">
+
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" title="Close" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.config.title}}</h1>
+    <div class="info" ng-if="$ctrl.config.text">{{$ctrl.config.text}}</div>
+    <div class="mtop20">You can add up to {{$ctrl.config.maxEvidenceAttachments}} files. Maximum file size {{$ctrl.config.maxUploadSizeInMb}}MB.</div>
+  </div>
+
+  <div class="modal-body" ng-if="$ctrl.attachments.length">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped files table-default">
+        <thead class="thead-inverse uppercase">
+
+        <tr>
+          <th style="width: 200px; max-width:200px;">DOCUMENT NAME</th>
+          <th>UPLOAD DATE</th>
+          <th>UPLOADED BY</th>
+          <th ng-if="!$ctrl.readOnly">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="doc in $ctrl.attachments | orderBy:'createdOn'">
+          <td>
+            <div class="evidence-document-name">
+
+              <a ng-href="/api/v1/file/{{doc[$ctrl.config.fileIdColumn]}}" target="_blank" >
+                <span aria-hidden="true" class="glyphicon glyphicon-file"></span> {{doc.fileName}}
+              </a>
+            </div>
+          </td>
+          <td>{{doc.createdOn | date: 'dd/MM/yyyy'}}</td>
+          <td>{{doc.creatorName}}</td>
+          <td ng-if="!$ctrl.readOnly">
+            <a href="JavaScript:void(0)" ng-click="doc.showConfirmDelete = true" ng-if="!doc.showConfirmDelete">Delete</a>
+            <a class="text-nowrap" href="JavaScript:void(0)" ng-click="$ctrl.delete(doc)" ng-if="doc.showConfirmDelete">Confirm delete</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+
+        <file-upload class="add-document"
+                     cls="{{$ctrl.attachments.length? 'btn-secondary': 'btn-primary'}}"
+                     is-disabled="$ctrl.readOnly"
+                     label="{{$ctrl.attachments.length? 'ADD ANOTHER +' : 'UPLOAD EVIDENCE +'}}"
+                     ng-if="!$ctrl.readOnly && $ctrl.attachments.length < $ctrl.config.maxEvidenceAttachments && !$ctrl.config.disableAdd"
+                     on-complete="$ctrl.onFileUploadComplete(event)"
+                     on-error="$ctrl.onFileUploadError(event)"
+                     on-progress="$ctrl.onFileUploadProgress(event)"
+                     upload-params="$ctrl.uploadParams">
+        </file-upload>
+        <button class="btn btn-primary mleft10" ng-click="$close()" ng-if="!$ctrl.readOnly && $ctrl.attachments.length">DONE</button>
+      </div>
+    </div>
+  </div>
+</div>

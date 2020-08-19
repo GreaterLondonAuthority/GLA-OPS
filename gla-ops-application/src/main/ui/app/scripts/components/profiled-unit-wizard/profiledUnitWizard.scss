@@ -1,0 +1,83 @@
+profiled-unit-wizard {
+  display: block;
+
+  //.ui-select-match-text > span {
+  //  width: 80%;
+  //  overflow: hidden;
+  //  position: absolute;
+  //  white-space: nowrap;
+  //  text-overflow: ellipsis;
+  //  padding-right: 40px;
+  //}
+
+  .ui-select-match-text > span {
+    min-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 35px;
+    position: absolute;
+  }
+
+  label{
+    font-size: 12px;
+  }
+
+  .input-container{
+    display: flex;
+    flex-direction: column;
+
+    #marketType{
+      min-width: 100px;
+    }
+
+    .first-tranche-sales, .discount-off-market-value {
+      min-width: 215px;
+    }
+
+    @include when-lg{
+      flex-direction: row;
+      .numberOfUnitsGroup{
+        max-width: 140px;
+      }
+
+      &.multi-line-labels{
+        label{
+          min-height: 28px;
+        }
+        .first-tranche-sales{
+          min-width: 0px;
+          max-width: 165px;
+        }
+
+        .weekly-service-charge{
+          max-width: 175px;
+        }
+
+        .legacy-sales{
+          max-width: 160px;
+        }
+      }
+    }
+    >div{
+      //border: 1px solid black;
+      flex-grow: 1;
+
+      .dropdown-menu{
+        width: inherit;
+      }
+    }
+  }
+
+  .ui-select-container{
+    min-width: 80px;
+    .ui-select-search{
+      display: none;
+    }
+  }
+
+
+  div.ui-select-bootstrap div.ui-select-match .caret{
+    right: 10px;
+  }
+
+}

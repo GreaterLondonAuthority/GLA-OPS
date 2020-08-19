@@ -1,0 +1,28 @@
+<div class="main-content">
+  <div class="organisation-info">
+    <img alt="{{$ctrl.programmesGroup.name}}" class="org-icon" ng-if="$ctrl.programmesGroup.iconAttachmentId"
+         ng-src="/api/v1/file/{{$ctrl.programmesGroup.iconAttachmentId}}"/>
+    <div class="org-name">{{$ctrl.programmesGroup.name}}</div>
+  </div>
+  <div class="programme">
+    <div class="row no-gutter programme-title">
+      <div class="col-sm-10 col-xs-12 programme-name" ng-class="{'col-xs-10': $ctrl.selectedProgramme.totalFunding, 'col-xs-12': !$ctrl.selectedProgramme.totalFunding}">{{$ctrl.selectedProgramme.name || 'No programmes are currently open.'}}</div>
+      <div class="col-sm-2 col-xs-12 text-right programme-funding text-nowrap" ng-if="$ctrl.selectedProgramme.totalFunding">{{$ctrl.selectedProgramme.totalFunding | glaCurrency}}</div>
+    </div>
+    <div class="programme-description">{{$ctrl.selectedProgramme.description}}</div>
+    <div class="website-link" ng-if="$ctrl.selectedProgramme.websiteLink"><a ng-href="{{$ctrl.selectedProgramme.websiteLink}}" target="_blank">More info</a></div>
+  </div>
+</div>
+
+<div class="actions">
+  <div class="row no-gutter">
+    <div class="col-xs-7">
+      <button class="btn btn-primary register-button" ng-click="$ctrl.onRegister({event:$ctrl.selectedProgramme})">REGISTER</button>
+    </div>
+    <div class="col-xs-5 text-right page-navigation" ng-if="$ctrl.programmesGroup.programmes.length > 1">
+      <a class="previous-programme" href="JavaScript:void(0)" ng-click="$ctrl.previous()" title="Previous" aria-label="Previous"><span class="glyphicon glyphicon-arrow-left"></span></a>
+      <span class="link">{{$ctrl.index + 1}} of {{$ctrl.programmesGroup.programmes.length}}</span>
+      <a class="next-programme" href="JavaScript:void(0)" ng-click="$ctrl.next()" title="Next" aria-label="Next"><span class="glyphicon glyphicon-arrow-right"></span></a>
+    </div>
+  </div>
+</div>

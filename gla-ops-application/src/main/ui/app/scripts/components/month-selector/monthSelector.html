@@ -1,0 +1,10 @@
+<label for="receiptMonth">Month</label><br/>
+<select class="form-control"
+        id="receiptMonth"
+        ng-change="$ctrl.onMonthSelected({selectedMonth:$ctrl.selectedMonth})"
+        ng-disabled="$ctrl.readOnly"
+        ng-model="$ctrl.selectedMonth"
+        ng-options="item.label disable when $ctrl.isDisabled(item) for item in $ctrl.monthList track by item.value"
+        style-placeholder="">
+  <option disabled value="">Select</option>
+</select>

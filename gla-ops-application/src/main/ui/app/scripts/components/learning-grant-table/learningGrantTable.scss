@@ -1,0 +1,15 @@
+learning-grant-table, .project-learning-grant {
+  display: block;
+
+  .month {
+    font-weight: bold;
+  }
+
+  tr.thick-line td {
+    border-top: 2pt solid darkgrey;
+  }
+
+  a.collapse-all-toggle {
+    font-family: $font-family-bolder;
+  }
+}

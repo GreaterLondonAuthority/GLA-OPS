@@ -1,0 +1,52 @@
+{
+  "name":"Strategic Partnership",
+  "author":null,
+  "strategicTemplate" : true,
+  "blocksEnabled":[
+    {
+      "type":"ProjectDetailsTemplateBlock",
+      "blockDisplayName":null,
+      "block":"Details",
+      "displayOrder":1,
+      "blockAppearsOnStatus":null
+    },
+    {
+      "type":"MilestonesTemplateBlock",
+      "blockDisplayName":"Milestones",
+      "block":"Milestones",
+      "displayOrder":2,
+      "autoCalculateMilestoneState": true,
+      "descriptionEnabled": true
+    },
+    {
+      "block": "GrantSource",
+      "displayOrder": 3,
+      "type": "GrantSourceTemplateBlock",
+      "nilGrantHidden": true,
+      "grantTypes": [
+        "Grant",
+        "DPF"
+      ],
+      "description": "Select and enter the amount from each grant source"
+    }
+  ],
+  "milestoneType":"MonetaryValue",
+  "stateModel": "ChangeControlled",
+  "milestoneDescriptionHintText":"Enter description and date approved by Strategic Board",
+  "detailsConfig":{
+    "addressRequirement":"mandatory",
+    "boroughRequirement":"optional",
+    "postcodeRequirement":"optional",
+    "coordsRequirement":"optional",
+    "maincontactRequirement":"optional",
+    "maincontactemailRequirement":"optional",
+    "imageRequirement":"optional",
+    "contactRequirement":"optional",
+    "siteOwnerRequirement":"hidden",
+    "interestRequirement":"hidden",
+    "projectManagerRequirement":"hidden",
+    "siteStatusRequirement":"hidden",
+    "legacyProjectCodeRequirement":"hidden",
+    "descriptionRequirement":"mandatory"
+  }
+}

@@ -1,0 +1,7 @@
+<div class="gla-banner-message">
+  <div class="banner-message-text">
+    <i class="glyphicon glyphicon-exclamation-sign"></i>
+    {{$ctrl.message.text}}
+  </div>
+  <span class="glyphicon glyphicon-remove close-button pull-right banner-close-button" ng-if="$ctrl.canClose" ng-click="$ctrl.close()" allow-enter tabindex="0" role="button" aria-label="Close"></span>
+</div>

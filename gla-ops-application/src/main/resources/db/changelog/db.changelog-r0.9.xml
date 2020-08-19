@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="122" author="cmelville">
+
+        <createTable tableName="outputs" remarks="Stores data for the Outputs block">
+            <column name="id" type="INT4" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="123" author="ybouhass">
+        <addColumn tableName="organisation_group">
+            <column name="modified_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="124" author="cmelville">
+        <createSequence sequenceName="cat_seq" startValue="10000" incrementBy="1"/>
+        <createTable tableName="OUTPUT_CAT_CONFIG" remarks="Stores configuration data for categories/subcategories/value types used in the outputs tables">
+
+            <column name="id" type="INT4" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="category" type="VARCHAR(100)" remarks="The category of the output">
+                <constraints nullable="false" />
+            </column>
+            <column name="subcategory" type="VARCHAR(100)" remarks="The subcategory of the output">
+                <constraints nullable="false" />
+            </column>
+            <column name="value_type" type="VARCHAR(100)" remarks="The data type of the output, used to determine how the wizard/edit boxes will be displayed">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <createSequence sequenceName="output_seq" startValue="10000" incrementBy="1"/>
+        <createTable tableName="OUTPUT_TABLE_ENTRY" remarks="Stores line itmes for the Outputs block">
+            <column name="id" type="INT4" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_id" type="INT4" remarks="the project this relates to">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="block_id" type="INT4" remarks="the block in the project this relates to">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="configuration_id" type="INT4" remarks="the cat/sub cat information">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="year" type="smallint" remarks="year data recorded for ">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="month" type="smallint" remarks="month data is recorded for">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="year_month" type="INT4" remarks="concatenation of year and month">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="forecast" type="decimal(12,2)" defaultValue="0.00" remarks="forecast output value">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="actual" type="decimal(12,2)" defaultValue="0.00" remarks="actual output value">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="created_on" type="TIMESTAMP" remarks="date record created">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_on" type="TIMESTAMP" remarks="date record last modifited">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="created_by" type="varchar(255)" remarks="who created record">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_by" type="varchar(255)" remarks="who last updated record">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="project_id"
+                                 baseTableName="output_table_entry"
+                                 constraintName="fk_output_table_entry_project_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="project"/>
+
+        <addForeignKeyConstraint baseColumnNames="block_id"
+                                 baseTableName="output_table_entry"
+                                 constraintName="fk_output_table_entry_block_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="project_block"/>
+
+        <addForeignKeyConstraint baseColumnNames="configuration_id"
+                                 baseTableName="output_table_entry"
+                                 constraintName="fk_output_table_entry_configuration_id"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="output_cat_config"/>
+    </changeSet>
+
+    <!--<changeSet id="125" author="ybouhass">-->
+        <!--<sql>-->
+            <!--insert into project_block(block_display_name, project_block_type, block_type, display_order, project_id)-->
+            <!--select 'Total Spend', 'TotalSpend', 'TOTAL_SPEND', t.display_order, p.id from project p, template_block t-->
+            <!--where p.total_spend is not null and p.template_id = t.template_id-->
+        <!--</sql>-->
+    <!--</changeSet>-->
+
+    <!--<changeSet id="126" author="ybouhass">-->
+        <!--<sql>delete from project_block where project_block_type='TotalSpend'</sql>-->
+    <!--</changeSet>-->
+
+    <!--<changeSet id="127" author="ybouhass">-->
+            <!--<sql>-->
+                <!--insert into project_block(block_display_name, project_block_type, block_type, display_order, project_id)-->
+                <!--select 'Total Spend', 'TotalSpend', 'TOTAL_SPEND', tb.display_order, p.id from project p, template_block tb-->
+                <!--where p.total_spend is not null and p.template_id = tb.template_id and tb.block = 'TotalSpend'-->
+            <!--</sql>-->
+    <!--</changeSet>-->
+
+    <!-- CHANGES 125 to 127 are not needed -->
+    <!-- USE ID 128 NEXT -->
+
+    <changeSet id="129" author="sleach">
+        <createView viewName="v_project_permissions" replaceIfExists="true">
+            SELECT p.id project_id, p.org_id organisation_id, p.title project_title, p.organisation_group_id, r.username, r.name role_name
+            FROM project p
+            LEFT JOIN user_roles r ON ((r.organisation_id = 10000) OR (p.org_id = r.organisation_id))
+            WHERE r.approved
+        </createView>
+    </changeSet>
+    <changeSet id="130" author="sleach">
+        <createView viewName="v_project_summaries" replaceIfExists="true">
+            SELECT prg.name prg_name, org.name org_name, tpl.name template_name, og.name og_name, og.type og_type, p.*
+            FROM project p
+            LEFT JOIN programme prg ON p.programme_id = prg.id
+            LEFT JOIN template tpl ON p.template_id = tpl.id
+            LEFT JOIN organisation org ON p.org_id = org.id
+            LEFT JOIN organisation_group og ON p.organisation_group_id = og.id
+        </createView>
+    </changeSet>
+
+    <changeSet id="131" author="ybouhass">
+        <createTable tableName="receipts_block">
+            <column name="id" type="INT4" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <dropForeignKeyConstraint baseTableName="wbs_code" constraintName="fk_wbs_code_total_spend_id" />
+        <dropIndex tableName="wbs_code" indexName="wbs_code_total_spend_id_idx" />
+
+        <renameColumn tableName="wbs_code" oldColumnName="total_spend_id" newColumnName="block_id" />
+
+        <createIndex indexName="wbs_code_block_id_idx" tableName="wbs_code">
+            <column name="block_id" type="INT4" />
+        </createIndex>
+
+        <addColumn tableName="wbs_code">
+            <column name="wbs_type" type="VARCHAR(20)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <sql>update wbs_code set wbs_type = spend_type</sql>
+
+        <dropColumn tableName="wbs_code" columnName="spend_type" />
+    </changeSet>
+
+    <changeSet id="132" author="cmelville">
+        <addColumn tableName="output_table_entry">
+        <column name="output_type" type="varchar(40)" defaultValue="DIRECT" remarks="the output type for this table entry (direct / indirect etc">
+            <constraints nullable="false" />
+        </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="133" author="cmelville">
+        <dropSequence sequenceName="cat_seq" />
+        <addColumn tableName="output_cat_config">
+        <column name="display_order" type="INT4" defaultValue="0" remarks="display order for cat/subcat row info">
+            <constraints nullable="false" />
+        </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="134" author="ybouhass">
+        <addColumn tableName="sap_data">
+            <column name="interface_type" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <sql>update sap_data set interface_type = 'Payments' where file_name like 'Payments%'</sql>
+    </changeSet>
+
+    <changeSet id="135" author="ybouhass">
+        <dropColumn tableName="total_spend" columnName="wbs_revenue_code" />
+        <dropColumn tableName="total_spend" columnName="wbs_capital_code" />
+        <dropColumn tableName="grant_source" columnName="grant_selected" />
+        <dropColumn tableName="grant_source" columnName="rcgf_selected" />
+        <dropColumn tableName="grant_source" columnName="dpf_selected" />
+    </changeSet>
+
+    <changeSet id="136" author="sleach">
+        <createView viewName="v_project_summaries" replaceIfExists="true">
+            SELECT prg.name prg_name, org.name org_name, tpl.name template_name, og.name og_name, og.type og_type, og.lead_organisation_id, p.*
+            FROM project p
+            LEFT JOIN programme prg ON p.programme_id = prg.id
+            LEFT JOIN template tpl ON p.template_id = tpl.id
+            LEFT JOIN organisation org ON p.org_id = org.id
+            LEFT JOIN organisation_group og ON p.organisation_group_id = og.id
+        </createView>
+    </changeSet>
+
+    <changeSet id="137" author="ybouhass">
+        <addColumn tableName="project_block">
+            <column name="modified_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="138" author="ybouhass">
+        <addColumn tableName="users">
+            <column name="last_logged_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="139" author="ybouhass">
+        <addColumn tableName="question">
+            <column name="external_key" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

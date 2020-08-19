@@ -1,0 +1,293 @@
+<gla-page-header (on-back)="$ctrl.goBack()">Annual submission</gla-page-header>
+
+<header-status>
+  <hs-left class="submission-status">Status: {{ $ctrl.annualSubmission.status }}</hs-left>
+  <hs-center>
+    <div class="gla-alert" ng-repeat="message in $ctrl.annualSubmission.messages">
+      <span class="glyphicon glyphicon-exclamation-sign"></span>
+      <span>{{message.description}}</span>
+    </div>
+  </hs-center>
+</header-status>
+
+<form name="annualSubmissionForm">
+  <section-header class="mbottom30 text-center">
+    Recoverable grant for {{$ctrl.organisation.name}} for {{$ctrl.annualSubmission.financialYear | fYear}}
+  </section-header>
+
+  <div class="text-center annual-submission-blocks">
+    <div class="row no-gutter">
+      <div class="col-md-9 inverse-margin center-col">
+        <overview-block
+          ng-click="$ctrl.goToBlock(block)"
+          class="col-md-6 col-sm-6 col-xs-12 mbottom20 block"
+          ng-repeat="block in $ctrl.blocks"
+          name="block.name"
+          block-state="block.blockState"
+          status="block.status"
+          number=""
+          icon="block.icon">
+        </overview-block>
+      </div>
+    </div>
+  </div>
+  <div>
+    <section-header>Submission comment</section-header>
+
+    <textarea id="submission-comments-input" class="form-control"
+              ng-if="!$ctrl.showSubmissionCommentText"
+              name="comments"
+              aria-label="'submission-comments'"
+              placeholder="Add comments and explain any rollover being requested."
+              ng-model="$ctrl.annualSubmission.submissionComments"
+              maxlength="200" rows="5"
+              ng-trim="false"
+              ng-change="$ctrl.resetAgreementSigned()"
+              change-on-blur="$ctrl.autoSave()"
+              ng-disabled="!$ctrl.enableSubmissionCommentInput">
+              </textarea>
+    <gla-remaining-characters
+      ng-if="!$ctrl.showSubmissionCommentText"
+      [text]="$ctrl.annualSubmission.submissionComments" [max]="200">
+    </gla-remaining-characters>
+    <div class="comments-display" ng-if="$ctrl.showSubmissionCommentText">{{$ctrl.annualSubmission.submissionComments}}</div>
+
+    <div class="gla-certification">
+      <section-header>GLA Certification</section-header>
+      <div>
+        The GLA requires that all housing providers who complete a RCGF and/or a DPF annual return must confirm that the information submitted is accurate and certified by an authorised signatory of the organisation holding the RCGF or DPF fund. Please refer to the certification requirements <a ng-href="{{$ctrl.envVars['annual-submissions-agreement-url']}}" target="_blank">HERE</a> for details.
+      </div>
+
+      <div class="row mtop30 inverse-margin">
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <label for="authorisedBy">Name of authorised signatory</label>
+            <input change-on-blur="$ctrl.autoSave()"
+                   class="form-control"
+                   id="authorisedBy"
+                   name="authorisedBy"
+                   ng-disabled="!$ctrl.enableSubmissionCommentInput"
+                   ng-if="!$ctrl.showSubmissionCommentText"
+                   ng-model="$ctrl.annualSubmission.authorisedBy"
+                   ng-change="$ctrl.resetAgreementSigned()"
+                   placeholder="Enter name"
+                   required
+                   type="text"/>
+            <div class="error-wrapper" ng-show="annualSubmissionForm.$submitted || annualSubmissionForm.authorisedBy.$touched" role="alert">
+              <span class="error" ng-show="annualSubmissionForm.authorisedBy.$error.required">Required</span>
+            </div>
+            <div class="comments-display" ng-if="$ctrl.showSubmissionCommentText">{{$ctrl.annualSubmission.authorisedBy}}</div>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <label for="authorisedByJobTitle">Job title of authorised signatory</label>
+            <input change-on-blur="$ctrl.autoSave()"
+                   class="form-control"
+                   id="authorisedByJobTitle"
+                   name="authorisedByJobTitle"
+                   ng-disabled="!$ctrl.enableSubmissionCommentInput"
+                   ng-if="!$ctrl.showSubmissionCommentText"
+                   ng-model="$ctrl.annualSubmission.authorisedByJobTitle"
+                   ng-change="$ctrl.resetAgreementSigned()"
+                   placeholder="Enter job title"
+                   required
+                   type="text"/>
+            <div class="error-wrapper" ng-show="annualSubmissionForm.$submitted || annualSubmissionForm.authorisedByJobTitle.$touched" role="alert">
+              <span class="error" ng-show="annualSubmissionForm.authorisedByJobTitle.$error.required">Required</span>
+            </div>
+            <div class="comments-display" ng-if="$ctrl.showSubmissionCommentText">{{$ctrl.annualSubmission.authorisedByJobTitle}}</div>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <label for="authorisedOn">Date information was authorised</label>
+            <date-input id="authorisedOn"
+                        name="authorisedOn"
+                        ng-disabled="!$ctrl.enableSubmissionCommentInput"
+                        ng-if="!$ctrl.showSubmissionCommentText"
+                        ng-model="$ctrl.annualSubmission.authorisedOn"
+                        ng-change="$ctrl.resetAgreementSigned()"
+                        on-blur="$ctrl.authorisedOnTouched = true;$ctrl.autoSave()"
+                        required
+                        style="display: block">
+            </date-input>
+            <div class="error-wrapper" ng-show="$ctrl.authorisedOnTouched && !$ctrl.annualSubmission.authorisedOn">
+              <span class="error" ng-show="annualSubmissionForm.authorisedOn.$error.required">Required</span>
+            </div>
+            <div class="comments-display" ng-if="$ctrl.showSubmissionCommentText">{{$ctrl.annualSubmission.authorisedOn | date: "dd/MM/yyyy"}}</div>
+          </div>
+        </div>
+
+        <div class="col-xs-12 mtop10" ng-if="$ctrl.annualSubmission.authorisedBy && $ctrl.annualSubmission.authorisedByJobTitle && $ctrl.annualSubmission.authorisedOn">
+          <label for="sign">
+            <input id="sign"
+                   ng-disabled="!$ctrl.enableSubmissionCommentInput"
+                   ng-if="!$ctrl.showSubmissionCommentText"
+                   ng-model="$ctrl.agreementSigned"
+                   type="checkbox"/>
+              {{$ctrl.getAgreementText()}}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-if="$ctrl.showApprovalInputs || $ctrl.showApprovalText">
+    <section-header class="mbottom30">GLA Approvals</section-header>
+
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered annual-submission-table" id="annual-submission">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>Type</th>
+          <th>RCGF £</th>
+          <th>DPF £</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr ng-class="{'cursor-pointer': !$ctrl.showApprovalInputs}">
+          <td class="type-column">Grant rollover</td>
+          <td>
+            <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.rcgfRollover | currency:'£':0}}</span>
+            <input ng-if="$ctrl.showApprovalInputs" id="rcgf-rollover" type="text" name="rcgfRollover"
+                   class="form-control"
+                   ng-model="$ctrl.annualSubmission.rcgfRollover"
+                   change-on-blur="$ctrl.autoSave()"
+                   number-mask="0"
+                   maxlength="15"
+                   required />
+          </td>
+          <td>
+            <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.dpfRollover | currency:'£':0}}</span>
+            <input ng-if="$ctrl.showApprovalInputs" id="dpf-rollover" type="text" name="dpfRollover"
+                   class="form-control"
+                   ng-model="$ctrl.annualSubmission.dpfRollover"
+                   change-on-blur="$ctrl.autoSave()"
+                   number-mask="0"
+                   maxlength="15"
+                   required />
+          </td>
+        </tr>
+        <tr ng-class="{'cursor-pointer': !$ctrl.showApprovalInputs}">
+          <td class="type-column">Interest rollover</td>
+          <td>
+            <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.rcgfRolloverInterest | currency:'£':0}}</span>
+            <input ng-if="$ctrl.showApprovalInputs" id="rcgf-rollover-interest" type="text" name="rcgfRolloverInterest"
+                   class="form-control"
+                   ng-model="$ctrl.annualSubmission.rcgfRolloverInterest"
+                   change-on-blur="$ctrl.autoSave()"
+                   number-mask="0"
+                   maxlength="15"
+                   required />
+          <td>
+            <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.dpfRolloverInterest | currency:'£':0}}</span>
+            <input ng-if="$ctrl.showApprovalInputs" id="dgf-rollover-interest" type="text" name="dpfRolloverInterest"
+                   class="form-control"
+                   ng-model="$ctrl.annualSubmission.dpfRolloverInterest"
+                   change-on-blur="$ctrl.autoSave()"
+                   number-mask="0"
+                   maxlength="15"
+                   required />
+          </td>
+        </tr>
+        <tr ng-class="{'cursor-pointer': !$ctrl.showApprovalInputs}">
+          <td class="type-column">Grant withdrawal</td>
+          <td>
+            <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.rcgfWithdrawal | currency:'£':0}}</span>
+            <input ng-if="$ctrl.showApprovalInputs" id="rcgf-withdrawal" type="text" name="rcgfWithdrawal"
+                   class="form-control"
+                   ng-model="$ctrl.annualSubmission.rcgfWithdrawal"
+                   change-on-blur="$ctrl.autoSave()"
+                   number-mask="0"
+                   maxlength="15"
+                   required />
+          </td>
+          <td>
+            <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.dpfWithdrawal | currency:'£':0}}</span>
+            <input ng-if="$ctrl.showApprovalInputs" id="dpf-withdrawal" type="text" name="dpfWithdrawal"
+                   class="form-control"
+                   ng-model="$ctrl.annualSubmission.dpfWithdrawal"
+                   change-on-blur="$ctrl.autoSave()"
+                   number-mask="0"
+                   maxlength="15"
+                   required />
+          </td>
+        </tr>
+        <tr ng-class="{'cursor-pointer': !$ctrl.showApprovalInputs}">
+          <td class="type-column">Interest withdrawal</td>
+          <td>
+            <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.rcgfWithdrawalInterest | currency:'£':0}}</span>
+            <input ng-if="$ctrl.showApprovalInputs" id="rcgf-withdrawal-interest" type="text" name="rcgfWithdrawalInterest"
+                   class="form-control"
+                   ng-model="$ctrl.annualSubmission.rcgfWithdrawalInterest"
+                   change-on-blur="$ctrl.autoSave()"
+                   number-mask="0"
+                   maxlength="15"
+                   required />
+          </td>
+          <td>
+            <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.dpfWithdrawalInterest | currency:'£':0}}</span>
+            <input ng-if="$ctrl.showApprovalInputs" id="dpf-withdrawal-interest" type="text" name="dpfWithdrawalInterest"
+                   class="form-control"
+                   ng-model="$ctrl.annualSubmission.dpfWithdrawalInterest"
+                   change-on-blur="$ctrl.autoSave()"
+                   number-mask="0"
+                   maxlength="15"
+                   required />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <span class="error mtop10 mbottom30 text-left"
+            ng-if="$ctrl.showApprovalInputs && ($ctrl.annualSubmission.rcgfRollover == null || $ctrl.annualSubmission.dpfRollover == null
+                    || $ctrl.annualSubmission.rcgfRolloverInterest == null || $ctrl.annualSubmission.dpfRolloverInterest == null
+                    || $ctrl.annualSubmission.rcgfWithdrawal == null || $ctrl.annualSubmission.dpfWithdrawal == null
+                    || $ctrl.annualSubmission.rcgfWithdrawalInterest == null || $ctrl.annualSubmission.dpfWithdrawalInterest == null)">
+              Must enter 0 or more to approve the return.
+        </span>
+    </div>
+
+    <div ng-if="$ctrl.annualSubmission.approvedOn != null && $ctrl.annualSubmission.approvedBy != null">
+      <section-header class="mbottom30">Approval information</section-header>
+      <div class="last-approval-information">
+        Last approved on {{$ctrl.annualSubmission.approvedOn | date: $ctrl.dateFormat}} by {{$ctrl.annualSubmission.approvedBy}}.
+      </div>
+    </div>
+
+    <section-header class="mbottom30">
+      GLA comments
+    </section-header>
+    <div class="comments-display" ng-if="$ctrl.showApprovalText">{{$ctrl.annualSubmission.approvalComments ? $ctrl.annualSubmission.approvalComments : 'Not provided'}}</div>
+
+    <textarea id="approval-comments-input" class="form-control"
+              ng-if="$ctrl.showApprovalInputs"
+              name="comments"
+              aria-label="'approval-comments'"
+              placeholder="Add comments and explain any rollover being requested."
+              ng-model="$ctrl.annualSubmission.approvalComments"
+              maxlength="200" rows="5"
+              change-on-blur="$ctrl.autoSave()">
+              </textarea>
+    <gla-remaining-characters ng-if="$ctrl.showApprovalInputs"
+                              ng-trim="false"
+                              [text]="$ctrl.annualSubmission.approvalComments"
+                              [max]="200"></gla-remaining-characters>
+
+  </div>
+
+  <div class="row text-center" id="buttons">
+    <div class="col-xs-12 no-gutter mtop20">
+      <div  ng-repeat="buttonCfg in $ctrl.transitionButtons track by $index" class="col-xs-12 col-sm-{{12/$ctrl.transitionButtons.length}} col-md-{{12/$ctrl.transitionButtons.length}} mbottom10">
+        <button class="btn btn-md btn-primary"
+                ng-disabled="buttonCfg.disableState || ($ctrl[buttonCfg.disableStateFunction] && $ctrl[buttonCfg.disableStateFunction]())"
+                ng-click="$ctrl.transitionButtonsCallback(buttonCfg)">{{buttonCfg.text}}
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+

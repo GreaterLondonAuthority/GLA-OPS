@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="548" author="cmatias">
+        <createSequence sequenceName="risk_adjusted_figures_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="risk_adjusted_figures">
+            <column name="id" type="INT" autoIncrement="true" defaultValueSequenceNext="risk_adjusted_figures_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="project_id" type="INT4" remarks="Project id">
+                <constraints nullable="false" />
+            </column>
+            <column name="financial_year" type="INT4" remarks="Financial year"/>
+
+            <column name="starts" type="DECIMAL(12,2)" remarks="Total number of risk adjusted for housing starts"/>
+            <column name="completions" type="DECIMAL(12,2)" remarks="Total number of risk adjusted for completions"/>
+            <column name="grant" type="DECIMAL(12,2)" remarks="Total number of risk adjusted grant spend"/>
+        </createTable>
+
+        <addColumn tableName="internal_template_block">
+            <column name="risk_adjusted_figures_flag" type="boolean" remarks="The flag for risk adjusted figures" />
+        </addColumn>
+
+        <addColumn tableName="programme">
+            <column name="financial_year" type="INT4" remarks="Financial year"/>
+        </addColumn>
+
+    </changeSet>
+
+    <changeSet id="549" author="ughari">
+        <addColumn tableName="organisation">
+            <column name="contact" type="varchar(100)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="551" author="jdimsa">
+        <addColumn tableName="template_block">
+            <column name="profile_title" type="varchar(255)" remarks="used to display the profile column heading (PROFILE %, ALLOCATION PROFILE %, etc.)"/>
+            <column name="allocation_title" type="varchar(255)" remarks="used to display the allocation column heading (ALLOCATION £, MONTHLY ALLOCATION £, etc.)"/>
+            <column name="cumulative_payment_title" type="varchar(255)" remarks="used to display the cumulative payment column heading (CUMULATIVE PAYMENT £, etc.)"/>
+            <column name="ilr_total_title" type="varchar(255)" remarks="used to display the ilr total column heading (ILR TOTAL £, CUMULATIVE ILR VALUE £, etc.)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="552" author="cmatias">
+        <addColumn tableName="internal_risk_block">
+            <column name="risk_adjusted_figures_flag" type="boolean" defaultValue="false" remarks="The flag for risk adjusted figures" />
+        </addColumn>
+
+        <addDefaultValue tableName="internal_template_block" columnName="risk_adjusted_figures_flag" defaultValue="false"/>
+    </changeSet>
+
+    <changeSet id="553" author="ybouhass">
+        <createTable tableName="outputs_costs_block">
+            <column name="id" type="INT4">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="total_project_spend" type="DECIMAL(12,2)" />
+        </createTable>
+
+        <createSequence sequenceName="outputs_category_cost_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="outputs_category_cost">
+            <column name="id" type="INT" autoIncrement="true" defaultValueSequenceNext="outputs_category_cost_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" remarks="references the project outputs costs block" />
+            <column name="output_cat_config_id" type="INT4" remarks="references the output category configuration" />
+            <column name="unit_cost" type="DECIMAL(12,2)" remarks="cost price for the output" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="554" author="cmatias">
+        <addColumn tableName="risk_adjusted_figures">
+            <column name="block_id" type="INT4" remarks="Block id"/>
+        </addColumn>
+
+        <dropColumn tableName="risk_adjusted_figures" columnName="project_id" />
+    </changeSet>
+
+    <changeSet id="555" author="jdimsa">
+        <addColumn tableName="template_block">
+            <column name="cumulative_allocation_title" type="varchar(255)" remarks="used to display the cumulative allocation column heading (CUMULATIVE ALLOCATION £, etc.)"/>
+            <column name="payment_due_title" type="varchar(255)" remarks="used to display the payment due column heading (PAYMENT DUE £, etc.)"/>
+            <column name="grant_type" type="varchar(30)" remarks="skills grant type"/>
+        </addColumn>
+
+        <addColumn tableName="learning_grant_block">
+            <column name="grant_type" type="varchar(30)" remarks="skills grant type"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="556" author="jdimsa">
+        <sql>update payment_profile set type = 'AEB_GRANT' where type = 'AEB'</sql>
+    </changeSet>
+
+    <changeSet id="557" author="cmatias">
+        <renameColumn tableName="risk_adjusted_figures" oldColumnName="grant" newColumnName="grant_spend"/>
+    </changeSet>
+
+    <changeSet id="558" author="jdimsa">
+        <addColumn tableName="report">
+            <column name="description" type="varchar(250)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="559" author="cmelville">
+        <sql>UPDATE funding_claim SET CLAIM_STATUS = 'Approved' WHERE CLAIM_STATUS = 'APPROVED'</sql>
+        <sql>UPDATE funding_claim SET CLAIM_STATUS = 'Claimed' WHERE CLAIM_STATUS = 'CLAIMED'</sql>
+    </changeSet>
+
+    <changeSet id="560" author="cmatias">
+        <addColumn tableName="template_block">
+            <column name="show_total_project_outputs_table" type="boolean" defaultValue="true"
+              remarks="The flag to hide the project outputs table in the outputs block"/>
+
+            <column name="show_input_value_column" type="boolean"
+              remarks="If the outputs block should show value column"/>
+
+            <column name="show_output_type_column" type="boolean"
+              remarks="If the outputs block should show output type column"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="561" author="cmelville">
+        <createTable tableName="ptat_roles">
+            <column name="ptat_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(50)"></column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="562" author="cmelville">
+        <sql>update internal_template_block set risk_adjusted_figures_flag = false where risk_adjusted_figures_flag is null</sql>
+    </changeSet>
+
+    <changeSet id="563" author="ybouhass">
+        <sql>update template_block set show_input_value_column = true where show_input_value_column is null</sql>
+        <sql>update template_block set show_output_type_column = true where show_output_type_column is null</sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -15,6 +15,8 @@ class IndicativeGrantSummaryReport {
 
   $onInit() {
     this.data = this.GrantService.enhanceIndicativeBlock(this.block);
+    this.otherAffordableTenureTypes = _.find(this.template.blocksEnabled, {block: 'IndicativeGrant'}).otherAffordableTenureTypes;
+    this.showOtherAffordableQuestion = _.find(this.template.blocksEnabled, {block: 'IndicativeGrant'}).showOtherAffordableQuestion;
   }
 }
 
@@ -24,6 +26,7 @@ angular.module('GLA')
   .component('indicativeGrantSummaryReport', {
     bindings: {
       block: '<',
+      template: '<'
     },
     templateUrl: 'scripts/pages/summary-report/indicativeGrantSummaryReport.html',
     controller: IndicativeGrantSummaryReport

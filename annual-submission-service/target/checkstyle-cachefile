@@ -1,0 +1,16 @@
+#Mon Oct 18 15:56:06 BST 2021
+module-resource*?\:checkstyle-suppressions.xml=1110E5C0DB682A99A7622D25070778F667B78A87
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\AnnualSubmissionCategory.java=1634559737952
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\AnnualSubmissionEntity.java=1634559737953
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\AnnualSubmissionTransition.java=1634559737956
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\AnnualSubmissionEntryEntity.java=1634559737954
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\AnnualSubmissionAPI.java=1634559737946
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\AnnualSubmissionBlockTotals.java=1634559737950
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\implementation\\repository\\AnnualSubmissionEntryRepository.java=1634559737963
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\implementation\\repository\\AnnualSubmissionCategoryRepository.java=1634559737961
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\AnnualSubmissionBlockEntity.java=1634559737947
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\implementation\\repository\\AnnualSubmissionBlockRepository.java=1634559737960
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\implementation\\repository\\AnnualSubmissionRepository.java=1634559737964
+configuration*?=E30907C1AC95C4BC5859D8FF4C364BBCFEBE868E
+module-resource*?\:checkstyle-xpath-suppressions.xml=B5221F1DDBE676905D565E9E1AD9F0618BC192C9
+C\:\\Projects\\GLA\\GlaRefresh2021\\annual-submission-service\\src\\main\\java\\uk\\gov\\london\\ops\\annualsubmission\\AnnualSubmissionBlockYearBreakdown.java=1634559737951

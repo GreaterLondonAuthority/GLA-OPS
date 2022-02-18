@@ -17,7 +17,7 @@ import uk.gov.london.ops.framework.annotations.PermissionRequired;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.permission.PermissionService;
 import uk.gov.london.ops.permission.PermissionType;
-import uk.gov.london.ops.user.UserService;
+import uk.gov.london.ops.user.UserServiceImpl;
 
 import java.lang.reflect.Method;
 
@@ -29,7 +29,7 @@ public class PermissionRequiredAspect {
     private PermissionService permissionService;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Before("@annotation(uk.gov.london.ops.framework.annotations.PermissionRequired)")
     public void check(JoinPoint joinPoint) {

@@ -28,17 +28,19 @@ function PaymentService($http, config, MilestonesService) {
      * Return grouped payments by status. Defaults to ALL
      * @param status [PENDING | AUTHORISED | ALL]
      */
-    getPayments(projectIdOrName, orgName, programmeName, statuses, sources, programmes, toDate, fromDate, paymentDirection, page, size, sort){
+    getPayments(projectIdOrName, orgName, programmeName, sapId, statuses, sources, programmes, managingOrganisations, toDate, fromDate, paymentDirection, page, size, sort){
       const cfg = {
         params: {
           page: page,
           size: size,
           sort: sort,
+          sapVendorId: sapId,
           relevantStatuses: statuses,
           paymentSources: sources,
           project: projectIdOrName,
           organisation: orgName,
           programme: programmeName,
+          managingOrganisations,
           relevantProgrammes: programmes,
           paymentDirection: paymentDirection,
           toDate: toDate ? (moment(toDate).format('DD/MM/YYYY')) : null,
@@ -200,9 +202,6 @@ function PaymentService($http, config, MilestonesService) {
       return $http.post(`${config.basePath}/payments/decline/group/${groupId}`, data);
     },
 
-    setInterest(id, amount){
-      return $http.post(`${config.basePath}/payments/${id}/interest`,amount);
-    },
     setInterests(interests){
       let data = {};
       _.each(interests, (interest) => {
@@ -230,6 +229,12 @@ function PaymentService($http, config, MilestonesService) {
           description: 'By Organisation',
           hint: 'Enter the org name or id',
           maxLength: '50'
+        },
+        {
+          name: 'sapId',
+          description: 'By SAP ID',
+          hint: 'Enter the org SAP ID',
+          maxLength: '20'
         }
       ];
     },
@@ -314,63 +319,82 @@ function PaymentService($http, config, MilestonesService) {
     },
     statusOptions() {
       return [{
-        checkedClass: 'pending',
-        ariaLabel: 'Pending',
-        name: 'pending',
-        model: undefined,
-        label: 'Pending',
-        statusKey: 'Pending',
-      }, {
-        checkedClass: 'authorised',
         ariaLabel: 'Authorised',
         name: 'authorised',
         model: undefined,
-        label: 'Authorised',
+        collapsed: true,
+        label: 'All Authorised',
+        id: 'Authorised',
         statusKey: 'Authorised',
-        // Temp solutions while waiting for hierarchy
-        subStatusesKeys: ['Sent', 'UnderReview', 'SupplierError', 'Acknowledged', 'Cleared']
+        items: [
+          {
+            collapsed: true,
+            groupId: 'Authorised',
+            ariaLabel: 'Authorised: Authorised',
+            name: 'Authorised',
+            label: 'Authorised',
+            model: undefined,
+            statusKey: 'Authorised'
+          },
+          {
+            collapsed: true,
+            groupId: 'Authorised',
+            ariaLabel: 'Authorised: Sent',
+            name: 'Sent',
+            label: 'Sent',
+            model: undefined,
+            statusKey: 'Sent'
+          },
+          {
+            collapsed: true,
+            groupId: 'Authorised',
+            ariaLabel: 'Authorised: UnderReview',
+            name: 'UnderReview',
+            label: 'UnderReview',
+            model: undefined,
+            statusKey: 'UnderReview'
+          },
+          {
+            collapsed: true,
+            groupId: 'Authorised',
+            ariaLabel: 'Authorised: SupplierError',
+            name: 'SupplierError',
+            label: 'SupplierError',
+            model: undefined,
+            statusKey: 'SupplierError'
+          },
+          {
+            collapsed: true,
+            groupId: 'Authorised',
+            ariaLabel: 'Authorised: Acknowledged',
+            name: 'Acknowledged',
+            label: 'Acknowledged',
+            model: undefined,
+            statusKey: 'Acknowledged'
+          },
+          {
+            collapsed: true,
+            groupId: 'Authorised',
+            ariaLabel: 'Authorised: Cleared',
+            name: 'Cleared',
+            label: 'Cleared',
+            model: undefined,
+            statusKey: 'Cleared'
+          }
+        ]
       }, {
-        checkedClass: 'declined',
         ariaLabel: 'Declined',
         name: 'declined',
         model: undefined,
         label: 'Declined',
         statusKey: 'Declined',
-      // }, {
-      //   checkedClass: 'sent',
-      //   ariaLabel: 'Sent',
-      //   name: 'sent',
-      //   model: undefined,
-      //   label: 'Sent',
-      //   statusKey: 'Sent',
-      // }, {
-      //   checkedClass: 'underReview',
-      //   ariaLabel: 'UnderReview',
-      //   name: 'underReview',
-      //   model: undefined,
-      //   label: 'UnderReview',
-      //   statusKey: 'UnderReview',
-      // }, {
-      //   checkedClass: 'supplierError',
-      //   ariaLabel: 'SupplierError',
-      //   name: 'supplierError',
-      //   model: undefined,
-      //   label: 'SupplierError',
-      //   statusKey: 'SupplierError',
-      // }, {
-      //   checkedClass: 'acknowledged',
-      //   ariaLabel: 'Acknowledged',
-      //   name: 'acknowledged',
-      //   model: undefined,
-      //   label: 'Acknowledged',
-      //   statusKey: 'Acknowledged',
-      // }, {
-      //   checkedClass: 'cleared',
-      //   ariaLabel: 'Cleared',
-      //   name: 'cleared',
-      //   model: undefined,
-      //   label: 'Cleared',
-      //   statusKey: 'Cleared',
+      },
+      {
+        ariaLabel: 'Pending',
+        name: 'pending',
+        model: undefined,
+        label: 'Pending',
+        statusKey: 'Pending',
       }]
     },
 

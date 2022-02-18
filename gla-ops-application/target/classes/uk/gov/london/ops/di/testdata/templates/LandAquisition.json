@@ -1,0 +1,143 @@
+{
+  "name": "Land Acquisition",
+  "author": "Nahida Miah",
+  "blocksEnabled": [{
+    "type": "ProjectDetailsTemplateBlock",
+    "blockDisplayName": "Project Details",
+    "block": "Details",
+    "displayOrder": 1
+  }, {
+    "type": "MilestonesTemplateBlock",
+    "blockDisplayName": "Milestones",
+    "block": "Milestones",
+    "displayOrder": 2,
+    "autoCalculateMilestoneState": false,
+    "processingRoutes": [{
+      "externalId": null,
+      "name": "default",
+      "milestones": [{
+        "externalId": 3007,
+        "summary": "Strategy agreed",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 1,
+        "monetary": false
+      }, {
+        "externalId": 3022,
+        "summary": "Stage 1 budget approved",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 2,
+        "monetary": false
+      }, {
+        "externalId": 3023,
+        "summary": "Lawyers instructed",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 3,
+        "monetary": false
+      }, {
+        "externalId": 3024,
+        "summary": "Agent instructed",
+        "requirement": "optional",
+        "monetarySplit": 0,
+        "displayOrder": 4,
+        "monetary": false
+      }, {
+        "externalId": 3025,
+        "summary": "Pre-contract due diligence",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 5,
+        "monetary": false
+      }, {
+        "externalId": 3026,
+        "summary": "Heads of Terms agreed",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 6,
+        "monetary": false
+      }, {
+        "externalId": 3027,
+        "summary": "Valuation completed",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 7,
+        "monetary": false
+      }, {
+        "externalId": 3014,
+        "summary": "Mayoral Decision",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 8,
+        "monetary": false
+      }, {
+        "externalId": 3016,
+        "summary": "Contract exchanged",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 9,
+        "monetary": false
+      }, {
+        "externalId": 3017,
+        "summary": "Contract completed",
+        "requirement": "mandatory",
+        "monetarySplit": 0,
+        "displayOrder": 10,
+        "monetary": false
+      }]
+    }]
+  }, {
+    "type": "TemplateBlock",
+    "blockDisplayName": "Spend",
+    "block": "ProjectBudgets",
+    "displayOrder": 5
+  }, {
+    "type": "OutputsTemplateBlock",
+    "blockDisplayName": "Outputs",
+    "block": "Outputs",
+    "displayOrder": 4,
+    "showValueColumn": true,
+    "showOutputTypeColumn": true
+  }, {
+    "type": "QuestionsTemplateBlock",
+    "blockDisplayName": "Progress Update",
+    "block": "Questions",
+    "displayOrder": 3,
+    "questions": [{
+      "displayOrder": 1,
+      "question": {
+        "id": 532,
+        "text": "Progress update",
+        "answerType": "FreeText",
+        "answerOptions": []
+      },
+      "requirement": "optional"
+    }]
+  }, {
+    "type": "ReceiptsTemplateBlock",
+    "blockDisplayName": "Receipts",
+    "block": "Receipts",
+    "displayOrder": 7
+  }],
+
+
+  "stateModel": "AutoApproval",
+  "allowMonetaryMilestones": true,
+  "warningMessage": null,
+  "detailsConfig": {
+    "addressRequirement": "optional",
+    "boroughRequirement": "mandatory",
+    "postcodeRequirement": "optional",
+    "coordsRequirement": "optional",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "siteOwnerRequirement": "mandatory",
+    "interestRequirement": "mandatory",
+    "projectManagerRequirement": "mandatory",
+    "siteStatusRequirement": "mandatory",
+    "legacyProjectCodeRequirement": "optional"
+  },
+  "tenureTypes": [],
+  "indicativeTenureConfiguration": null
+}

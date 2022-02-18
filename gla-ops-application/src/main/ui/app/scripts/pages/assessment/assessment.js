@@ -69,7 +69,7 @@ class AssessmentCtrl {
 AssessmentCtrl.$inject = ['$state', '$stateParams', 'AssessmentService', '$window', 'SessionService'];
 
 angular.module('GLA')
-  .component('assessment', {
+  .component('glaAssessment', {
     templateUrl: 'scripts/pages/assessment/assessment.html',
     bindings: {
       editable: '<',

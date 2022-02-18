@@ -2,7 +2,9 @@
 
 $error: #dd2209;
 
-$icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/bootstrap/";
+//$icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/bootstrap/";
+$icon-font-path: "../../fonts/bootstrap/";
+
 
 @import "../gla-ui/src/assets/scss/base/_variables.scss";
 //@import "../gla-ui/src/assets/scss/base/_mixins.scss";
@@ -22,7 +24,6 @@ $icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/boots
 @import "uib-tabs";
 @import "project-block";
 
-@import "../scripts/pages/home/home.scss";
 @import "../scripts/pages/user/home/userHome.scss";
 @import "../scripts/pages/registration/registration.scss";
 @import "../scripts/pages/organisations/organisations.scss";
@@ -35,8 +36,6 @@ $icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/boots
 @import "../scripts/pages/programmes/programmes.scss";
 @import "../scripts/pages/programme/programme.scss";
 @import "../scripts/pages/programme/programme-project-type/programmeProjectType.scss";
-@import "../scripts/pages/projects/projects.scss";
-@import "../scripts/pages/projects/new/newProject.scss";
 @import "../scripts/pages/project/grant/grant";
 @import "../scripts/pages/project/grant/total-grant/totalGrant.scss";
 @import "../scripts/pages/project/grant/indicative-grant/indicativeGrant";
@@ -56,12 +55,10 @@ $icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/boots
 @import "../scripts/pages/project/funding-claims/funding-claims-table-procured/fundingClaimsTableProcured.scss";
 @import "../scripts/pages/project/other-funding/otherFunding.scss";
 @import "../scripts/pages/project/other-funding/other-funding-table/otherFundingTable.scss";
-@import "../scripts/pages/project/overview/projectOverview.scss";
 @import "../scripts/pages/project/milestones/projectMilestones.scss";
 @import "../scripts/pages/project/questions/questionsPage.scss";
 
 @import "../scripts/pages/project/outputs/outputs.scss";
-@import "../scripts/pages/project/outputs/wizard/outputsWizard.scss";
 @import "../scripts/pages/project/outputs/outputs-baselines-table/outputsBaselinesTable.scss";
 @import "../scripts/pages/project/outputs/financial-year-monthly-outputs-table/financialYearMonthlyOutputsTable.scss";
 @import "../scripts/pages/project/outputs/financial-year-quarterly-outputs-table/financialYearQuarterlyOutputsTable.scss";
@@ -92,17 +89,12 @@ $icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/boots
 @import "../scripts/pages/system/skill-profiles/skillProfiles.scss";
 @import "../scripts/pages/system/skill-profiles/skill-profiles-table/skillProfilesTable.scss";
 
-@import "../scripts/pages/finance-categories/financeCategories.scss";
 @import "../scripts/pages/change-report/changeReport.scss";
 @import "../scripts/pages/change-report/change-report-field/changeReportField.scss";
 @import "../scripts/pages/change-report/change-report-field-files/changeReportFieldFiles.scss";
-@import "../scripts/pages/change-report/change-report-table/changeReportTable.scss";
-@import "../scripts/pages/change-report/change-report-table-row/changeReportTableRow.scss";
 @import "../scripts/pages/change-report/change-report-tile-total/changeReportTileTotal.scss";
 @import "../scripts/pages/change-report/change-report-tiles/changeReportTiles.scss";
 @import "../scripts/pages/change-report/change-report-tiles/change-report-tile-row/changeReportTileRow.scss";
-@import "../scripts/pages/change-report/change-report-table-separator/changeReportTableSeparator.scss";
-@import "../scripts/pages/change-report/change-report-static-text/changeReportStaticText.scss";
 @import "../scripts/pages/user-account/user-account.scss";
 @import "../scripts/pages/organisation/annual-submission/annualSubmission.scss";
 @import "../scripts/pages/registration/registrationForm/userRegistrationForm.scss";
@@ -123,42 +115,26 @@ $icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/boots
 @import "../scripts/pages/labels/labelsPage.scss";
 @import "../scripts/pages/all-notifications/allNotificationsPage.scss";
 @import "../scripts/pages/overrides/overridesPage.scss";
-@import "../scripts/pages/outputs-configuration/outputsConfigurationPage.scss";
 
 @import "../scripts/components/project-block-footer/projectBlockFooter.scss";
 @import "../scripts/components/header-status/headerStatus.scss";
 @import "../scripts/components/project-history/projectHistory.scss";
 @import "../scripts/components/common/input/date-input/dateInput.scss";
-@import "../scripts/components/common/loading-mask/loadingMask.scss";
 @import "../scripts/components/common/overview-block/overviewBlock.scss";
 @import "../scripts/components/common/project-overview-block/projectOverviewBlock.scss";
-@import "../scripts/components/search-field/searchField.scss";
-@import "../scripts/components/checkbox-filter/checkboxFilter.scss";
-@import "../scripts/components/pagination/pagination.scss";
-@import "../scripts/components/banner-message/bannerMessage.scss";
 
 @import "../scripts/components/input-cost-budget/inputCostBudget.scss";
-@import "../scripts/components/well/well.scss";
-@import "../scripts/components/multi-panel/multiPanel.scss";
-@import "../scripts/components/confirmation/confirmation.scss";
 @import "../scripts/components/questions/questions.scss";
 
-@import "../scripts/components/footer/glaFooter.scss";
-@import "../scripts/directives/topmenu/_nav.scss";
-@import "../scripts/directives/header/_header.scss";
-@import "../scripts/directives/cookie-warning/_cookie-warning.scss";
 @import "../scripts/components/common/json-viewer-dialog/JSONViewerDialog.scss";
 @import "../scripts/components/messageModal/messageModal.scss";
 @import "../scripts/components/password-strength/passwordStrength.scss";
-@import "../scripts/components/toast/toast.scss";
 @import "../scripts/components/total-box/totalBox.scss";
 @import "../scripts/components/expandableTable/expandableTable.scss";
 @import "../scripts/components/section-header/sectionHeader.scss";
 @import "../scripts/components/section-header2/sectionHeader.scss";
-@import "../scripts/components/profiled-unit-wizard/profiledUnitWizard.scss";
 @import "../scripts/pages/project/units/profiled-unit-table/profiledUnitTable.scss";
 @import "../scripts/components/tenure-tiles/tenureTiles.scss";
-@import "../scripts/components/tile/tile.scss";
 @import "../scripts/components/comments-list/commentsList.scss";
 @import "../scripts/components/comments-form/commentsForm.scss";
 @import "../scripts/components/show-more-btn/showMoreBtn.scss";
@@ -169,17 +145,8 @@ $icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/boots
 @import "../scripts/components/output-unit-cost/outputUnitCost.scss";
 @import "../scripts/components/milestones-table/milestonesTable.scss";
 @import "../scripts/components/programme-templates-table/programmeTemplatesTable.scss";
-@import "../scripts/components/version-history-modal/versionHistoryModal.scss";
 @import "../scripts/components/learning-grant-table/learningGrantTable.scss";
-@import "../scripts/components/claim-modal/claimModal.scss";
-@import "../scripts/components/session-timeout-modal/sessionTimeoutModal.scss";
-@import "../scripts/components/template-blocks/templateBlocks.scss";
-@import "../scripts/components/template-block-questions/templateBlockQuestions.scss";
-@import "../scripts/components/template-block-outputs/templateBlockOutputs.scss";
-@import "../scripts/components/template-block/templateBlock.scss";
-@import "../scripts/components/template-block-details/detailsTemplateBlock.scss";
-@import "../scripts/components/template-block-objectives/templateBlockObjectives.scss";
-@import "../scripts/components/template-block-other-funding/templateBlockOtherFunding.scss";
+@import "../scripts/components/template-details/templateDetails.scss";
 @import "../scripts/components/entities-list/entitiesList.scss";
 @import "../scripts/components/programmes-carousel/programmesCarousel.scss";
 @import "../scripts/pages/audit-activity/auditActivity.scss";
@@ -228,7 +195,7 @@ $icon-font-path: "../../../gla-ui/node_modules/bootstrap-sass/assets/fonts/boots
   margin: auto;
 }
 div.ui-select-bootstrap ul.ui-select-choices div.ui-select-choices-row.active{
-  // background-color: #5CA9C4;
+  // background-color: $moonstone;
   background-color: rgba(92, 169, 196, 0.3);
 }
 
@@ -239,7 +206,7 @@ div.ui-select-bootstrap ul.ui-select-choices div.ui-select-choices-row.active{
 }
 
 .actual.link{
-  color: darken($peppermint, 20%);
+  color: darken($green-spring, 20%);
 }
 
 .history-accordion{
@@ -279,6 +246,14 @@ div.ui-select-bootstrap ul.ui-select-choices div.ui-select-choices-row.active{
     width: 83.333%;
     margin: auto;
     padding: 0 15px;
+  }
+}
+//TODO remove once full page/route is ng10
+gla-checkbox-filter {
+  .dropdown-menu.show {
+    will-change: unset !important;
+    transform: unset !important;
+    top: 34px !important;
   }
 }
 

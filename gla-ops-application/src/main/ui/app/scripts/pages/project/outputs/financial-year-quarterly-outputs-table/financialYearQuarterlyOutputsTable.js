@@ -6,6 +6,7 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 import NumberUtil from '../../../../util/NumberUtil';
+import {ClaimModalComponent} from '../../../../../../../gla-ui/src/app/claim-modal/claim-modal.component'
 
 const textsByStatus = {
   claim: `By claiming the outputs, you are confirming the outputs have been delivered. Claimed payments will display in the Payments section of OPS once the project changes have been approved`,
@@ -17,11 +18,11 @@ const textsByStatus = {
 let gla = angular.module('GLA');
 
 class FinancialYearQuarterlyOutputsTable {
-  constructor(OutputsService, PaymentService, ClaimModal, fYearFilter) {
+  constructor(OutputsService, PaymentService, fYearFilter, NgbModal) {
     this.OutputsService = OutputsService;
     this.PaymentService = PaymentService;
-    this.ClaimModal = ClaimModal;
     this.fYearFilter = fYearFilter;
+    this.NgbModal = NgbModal
   }
 
   $onInit() {
@@ -61,11 +62,13 @@ class FinancialYearQuarterlyOutputsTable {
       claimTypePeriod: quarter.quarter,
     };
 
-    let modal = this.ClaimModal.show(config, claimRequest);
+    let modal = this.NgbModal.open(ClaimModalComponent)
+    modal.componentInstance.config = config
+    modal.componentInstance.claimRequest = claimRequest
     modal.result.then((result) => {
       let event = {event: quarter};
       return (result === 'claim')? this.onClaim(event) : this.onCancelClaim(event);
-    });
+    }, err => {});
 
   }
 
@@ -134,7 +137,7 @@ class FinancialYearQuarterlyOutputsTable {
 
 }
 
-FinancialYearQuarterlyOutputsTable.$inject = ['OutputsService', 'PaymentService', 'ClaimModal', 'fYearFilter'];
+FinancialYearQuarterlyOutputsTable.$inject = ['OutputsService', 'PaymentService', 'fYearFilter', 'NgbModal'];
 
 gla.component('financialYearQuarterlyOutputsTable', {
   bindings: {

@@ -1,15 +1,15 @@
 <h3 class="section-header"
      ng-class="{'with-subheader': $ctrl.subheader, 'cursor-pointer': $ctrl.isCollapsible}"
      ng-click="$ctrl.onSectionClick()">
-  <div allow-enter
+  <span allow-enter
        class="glyphicon"
        ng-class="{'glyphicon-chevron-down': $ctrl.collapsed, 'glyphicon-chevron-up': !$ctrl.collapsed}"
        ng-if="$ctrl.isCollapsible"
        aria-expanded="{{!$ctrl.collapsed}}"
        aria-label="{{$ctrl.collapsed? 'Expand' : 'Collapse'}}"
        role="button"
-       tabindex="0"></div>
-  <div ng-transclude class="section-title"></div>
-  <hr ng-if="$ctrl.showBar">
+       tabindex="0"></span>
+  <span ng-transclude class="section-title"></span>
+  <span class="bar" ng-if="$ctrl.showBar"></span>
 </h3>
 <div ng-if="$ctrl.subheader" class="section-subheader">{{$ctrl.subheader}}</div>

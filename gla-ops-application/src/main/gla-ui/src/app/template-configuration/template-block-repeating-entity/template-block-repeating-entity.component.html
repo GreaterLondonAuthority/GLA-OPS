@@ -1,0 +1,51 @@
+<div class="template-block-repeating-entity">
+  <div class="form-group radio-button">
+    <label for="block-required">Ask if applicant has additional {{blockEntity}} before showing custom {{blockEntity}} fields</label>
+    <div>
+      <gla-yes-no-input [(model)]="block.hasBlockRequiredOption"
+                        id="block-required"
+                        [disabled]="readOnly || !editable"
+                        name="block-required"
+                        mode="bool">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question">
+    <div class="form-group" *ngIf="block.hasBlockRequiredOption">
+      <label for="block-required-text">Has {{blockEntity}} question text</label>
+      <input class="form-control"
+             id="block-required-text"
+             maxlength="50"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.blockRequiredOptionText"
+             number-mask="0"
+             placeholder="Do you have additional {{blockEntity}}?"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="min-number">Minimum entities required</label>
+    <input [(ngModel)]="block.minNumberOfEntities"
+           id="min-number"
+           aria-label="Minimum number"
+           name="minNumber"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="number"
+           maxlength="2">
+  </div>
+
+  <div class="form-group">
+    <label for="max-number">Maximum entities allowed</label>
+    <input [(ngModel)]="block.maxNumberOfEntities"
+           id="max-number"
+           aria-label="Maximum number"
+           name="maxNumber"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="number"
+           maxlength="2">
+  </div>
+</div>

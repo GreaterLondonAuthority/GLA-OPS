@@ -7,17 +7,15 @@
  */
 package uk.gov.london.ops.project.state;
 
-import static uk.gov.london.ops.project.state.ProjectStateMachine.ALL_MATCH;
-import static uk.gov.london.ops.project.state.ProjectStateMachine.ANY_MATCH;
-import static uk.gov.london.ops.project.state.ProjectStateMachine.NOT_IN_ASSESS;
-import static uk.gov.london.ops.project.state.ProjectStateMachine.OPEN;
-import static uk.gov.london.ops.project.state.ProjectStatus.Submitted;
+import org.apache.commons.lang3.StringUtils;
+import uk.gov.london.ops.project.ProjectTransition;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
-import uk.gov.london.ops.project.ProjectHistory;
+
+import static uk.gov.london.ops.project.state.ProjectStateMachine.*;
+import static uk.gov.london.ops.project.state.ProjectStatus.Submitted;
 
 public class StateTransition {
 
@@ -28,7 +26,7 @@ public class StateTransition {
     private String projectCompletion;
     private StateTransitionType transitionType;
     private String approvalWillGeneratePayments;
-    private ProjectHistory.Transition projectHistoryTransition;
+    private ProjectTransition projectHistoryTransition;
     private String projectHistoryDescription;
     private String actionName;
     private String notifcationKey;
@@ -57,7 +55,7 @@ public class StateTransition {
         this.transitionType = StringUtils.isNotEmpty(transitionType) ? StateTransitionType.valueOf(transitionType) : null;
         this.approvalWillGeneratePayments = approvalWillGeneratePayments;
         this.projectHistoryTransition =
-                StringUtils.isNotEmpty(projectHistoryTransition) ? ProjectHistory.Transition.valueOf(projectHistoryTransition)
+                StringUtils.isNotEmpty(projectHistoryTransition) ? ProjectTransition.valueOf(projectHistoryTransition)
                         : null;
         this.projectHistoryDescription = projectHistoryDescription;
         this.actionName = actionName;
@@ -167,11 +165,11 @@ public class StateTransition {
         this.approvalWillGeneratePayments = approvalWillGeneratePayments;
     }
 
-    public ProjectHistory.Transition getProjectHistoryTransition() {
+    public ProjectTransition getProjectHistoryTransition() {
         return projectHistoryTransition;
     }
 
-    public void setProjectHistoryTransition(ProjectHistory.Transition projectHistoryTransition) {
+    public void setProjectHistoryTransition(ProjectTransition projectHistoryTransition) {
         this.projectHistoryTransition = projectHistoryTransition;
     }
 
@@ -230,4 +228,5 @@ public class StateTransition {
         }
         return (!to.isCommentsRequired()) || commentsProvided.booleanValue();
     }
+
 }

@@ -31,7 +31,7 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
     this.boroughs = boroughs;
   }
 
-  $onInit(){
+  $onInit() {
     super.$onInit();
     // if no organisation group is selected, organisationGroupId value will be 'undefined', which breaks UI form field validation, forcing it null fixes that
     if (!this.projectBlock.organisationGroupId) {
@@ -55,10 +55,11 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
     this.organisations = (this.organisationGroup || {}).organisations;
 
     //Editable fields
-    this.fields =  this.ProjectDetailsService.fields(this.template.detailsConfig);
+    this.fields = this.ProjectDetailsService.fields(this.template.detailsConfig);
     let templateProjectDetails = _.find(this.template.blocksEnabled, {block: 'Details'});
     this.maxBoroughs = templateProjectDetails.maxBoroughs;
     this.boroughOptions = this.getMultiSelectBoroughOptions();
+    this.allocationQuestion = templateProjectDetails.allocationQuestion;
 
     this.siteStatuses = [
       'Operational',
@@ -68,6 +69,11 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
 
     let selectedBorough = _.find(this.boroughs, {boroughName: this.projectBlock.borough}) || {};
     this.wards = selectedBorough.wards || [];
+    this.sapIds = this.setSapIdDisplayName(this.project.organisation.sapIds || [] );
+    this.sapIds = _.sortBy(this.sapIds, (item) => {
+      return (item.description ? item.description: item.sapId)
+    });
+    this.sapIdSelected = this.setSapIdSelected();
   }
 
 
@@ -92,6 +98,7 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
    * Submit
    */
   submit() {
+    this.projectBlock.multipleOrganisations = !!this.organisations && !!this.organisations.length
     if (this.newProjForm && !this.newProjForm.$valid) return;
 
     if (this.existingProjectWithLegacyCode) {
@@ -99,6 +106,19 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
     }
 
     return this.ProjectService.updateProject(this.projectBlock, this.projectId);
+  }
+
+  setSapIdDisplayName(sapIds){
+    return _.forEach(sapIds, sapId => { sapId.displayName = sapId.description ? sapId.sapId + ':'+sapId.description: sapId.sapId})
+  }
+
+  setSapIdSelected() {
+    let sapIdSelected = _.find(this.sapIds, {sapId: this.projectBlock.sapId});
+    return sapIdSelected? sapIdSelected.displayName:''
+  }
+
+  canShowSapId(){
+    return this.project.statusType == 'Active' && this.sapIds.length >1
   }
 
   getMultiSelectBoroughOptions() {
@@ -116,7 +136,7 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
 
   isBoroughSelected(boroughName){
     return (this.projectBlock.borough
-         && this.projectBlock.borough.split(this.projectBlock.boroughDelimiter).includes(boroughName)) ? true: false
+         && this.projectBlock.borough.split(this.projectBlock.boroughDelimiter).indexOf(boroughName) !== -1) ? true: false
   }
 
   changeBiddingArrangement() {
@@ -174,7 +194,6 @@ class ProjectDetailsCtrl extends ProjectBlockCtrl{
   checkLegacyProjectCode() {
     this.ProjectService.lookupProjectIdByLegacyProjectCode(this.projectBlock.legacyProjectCode).then((resp)=>{
       this.existingProjectWithLegacyCode = resp.data;
-      console.log('existingProjectWithLegacyCode', this.existingProjectWithLegacyCode);
     });
   }
 

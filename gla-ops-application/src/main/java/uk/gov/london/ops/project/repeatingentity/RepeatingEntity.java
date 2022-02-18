@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.project.repeatingentity;
 
-import uk.gov.london.ops.domain.OpsEntity;
+import uk.gov.london.ops.framework.OpsEntity;
 
 public interface RepeatingEntity extends OpsEntity<Integer> {
 

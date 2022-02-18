@@ -20,7 +20,11 @@ export class ConfirmationDialogService {
       showDismiss: true,
       message: 'Are you sure?',
       info: false,
-      showIcon: true
+      showIcon: true,
+      showConfirmationCheckbox: false,
+      userCommentRequired:false,
+      existingComment:'',
+      maxCommentLength:200
     };
 
     const modal = this.modalService.open(ConfirmationDialogComponent);
@@ -28,7 +32,7 @@ export class ConfirmationDialogService {
     return modal;
   }
 
-  delete(message) {
+  delete(message?) {
     let config = {
       message: message || 'Are you sure you want to delete?',
       approveText: 'DELETE',
@@ -43,6 +47,21 @@ export class ConfirmationDialogService {
       message: message || 'Something went wrong!',
       dismissText: 'CLOSE',
       showApprove: false
+    };
+
+    return this.show(config);
+  }
+
+  warnAndContinue(message) {
+    let config = {
+      message: message || 'Something went wrong!',
+      dismissText: 'CLOSE',
+      showApprove: true,
+      title: false,
+      approveText: 'CONTINUE',
+      showDismiss: true,
+      info: false,
+      showIcon: true,
     };
 
     return this.show(config);

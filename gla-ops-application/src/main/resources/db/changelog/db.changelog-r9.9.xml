@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="789" author="jsingh">
+        <addColumn tableName="user_roles">
+            <column name="authorised_signatory" type="boolean" defaultValue="false"
+                    remarks="The user is designated authorised contract signatory for the organisation." ></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="790" author="aworrall">
+        <createTable tableName="organisation_contract_attachment">
+            <column name="organisation_contract_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attachment_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="791" author="cmatias">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM organisation_entity_type WHERE id IN (8,9,10,11,12,13,14,15,16,17,18,19,20,21);
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            update organisation_entity_type set entity_type = 'Local Authority' where id = 2;
+            insert into organisation_entity_type (id,entity_type) values (8, 'Team');
+            insert into organisation_entity_type (id,entity_type) values (9, 'Charitable Incorporated Organisation');
+            insert into organisation_entity_type (id,entity_type) values (10, 'Community Benefit Society');
+            insert into organisation_entity_type (id,entity_type) values (11, 'Community Interest Company Limited by Guarantee');
+            insert into organisation_entity_type (id,entity_type) values (12, 'Community Interest Company Limited by Shares');
+            insert into organisation_entity_type (id,entity_type) values (13, 'Company Limited by Guarantee (including Registered Charities/Specialist Designated Institutions)');
+            insert into organisation_entity_type (id,entity_type) values (14, 'Company Limited by Shares');
+            insert into organisation_entity_type (id,entity_type) values (15, 'Co-operative Society');
+            insert into organisation_entity_type (id,entity_type) values (16, 'Educational body (excluding Local Authorities/Limited Companies/Specialist Designated Institutions)');
+            insert into organisation_entity_type (id,entity_type) values (17, 'Limited Liability Partnership');
+            insert into organisation_entity_type (id,entity_type) values (18, 'Limited Partnership');
+            insert into organisation_entity_type (id,entity_type) values (19, 'Partnership (Unlimited)');
+            insert into organisation_entity_type (id,entity_type) values (20, 'Public Limited Company');
+            insert into organisation_entity_type (id,entity_type) values (21, 'Unincorporated Association');
+        </sql>
+    </changeSet>
+
+    <changeSet id="792" author="cmatias">
+        <sql>
+            update organisation_entity_type set entity_type = 'Registered Society (including Cooperative Societies and Community Benefit Societies)' where id = 10;
+            update organisation set entity_type = 10 where entity_type = 15;
+        </sql>
+    </changeSet>
+
+    <changeSet id="793" author="cmatias">
+        <modifyDataType tableName="tenure_block" columnName="justification" newDataType="VARCHAR(5000)"/>
+    </changeSet>
+
+    <changeSet id="794" author="jsingh">
+        <addColumn tableName="organisation_contract">
+            <column name="accepted_by" type="varchar(255)"
+                    remarks="User who has accepted the contract" ></column>
+            <column name="accepted_by_job_title" type="varchar(255)"
+                    remarks="User job title at the organisation, who has accepted the contract" ></column>
+            <column name="accepted_on" type="TIMESTAMP"
+                    remarks="Date on which contract offer was accepted" ></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="795" author="cmatias">
+        <addColumn tableName="tenure_block">
+            <column name="completion_only" type="boolean" defaultValue="false"></column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

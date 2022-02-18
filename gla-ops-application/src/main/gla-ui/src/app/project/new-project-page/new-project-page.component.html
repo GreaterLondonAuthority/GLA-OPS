@@ -1,0 +1,131 @@
+<div class="newProject">
+
+  <gla-page-header class="mbottom10" [hideBackBtn]="true">Enter project details</gla-page-header>
+
+  <div class="row">
+    <div class="col-xs-12 text-center gla-alert" *ngIf="selectedTemplate?.warningMessage">
+      <i class="glyphicon glyphicon-exclamation-sign"></i>{{selectedTemplate?.warningMessage}}
+    </div>
+  </div>
+
+  <form class="form-gla new-project-form" role="form" name="newProjForm">
+    <div class="mbottom30"></div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+
+        <div class="form-group">
+          <label for="project-programme">Select a programme for the project</label>
+          <select class="form-control"
+                  [ngClass]="{placeholder: !selectedProgramme}"
+                  id="project-programme"
+                  name="programme"
+                  (change)="selectProgramme(selectedProgramme)"
+                  [(ngModel)]="selectedProgramme"
+                  #programme="ngModel"
+                  required>
+            <option disabled value="null">Select a programme</option>
+            <option *ngFor="let programme of programmes" [ngValue]="programme">{{programme.name}}</option>
+          </select>
+
+          <div class="error-wrapper" role="alert" *ngIf="programme?.touched && programme?.errors?.required">
+            <span class="error">Select a programme</span>
+          </div>
+
+          <div class="error-wrapper" role="alert" *ngIf="selectedProgramme && !availableOrganisationsForProgrammeAndUser.length">
+              <span class="error">
+                You don't have a profile for this department, <a href="JavaScript:void(0)" (click)="goTo('organisation.new-profile', {managingOrgId: selectedProgramme.managingOrganisationId})">create</a> a profile to apply.
+              </span>
+          </div>
+
+          <div class="error-wrapper" role="alert" *ngIf="showPendingProfileProjectEditor">
+            <span class="error">You cannot create projects for {{selectedProgramme.managingOrganisationName}} whilst a profile is pending. Once GLA have approved this profile, you can create projects.</span>
+          </div>
+        </div>
+
+     <div class="form-group">
+          <label for="project-organisation">Which organisation are you creating the project for?</label>
+          <select class="form-control"
+                  [ngClass]="{placeholder: !selectedOrganisation}"
+                  id="project-organisation"
+                  name="organisation"
+                  [disabled]="!selectedProgramme || !availableOrganisationsForProgrammeAndUser.length"
+                  [(ngModel)]="selectedOrganisation"
+                  #organisation="ngModel"
+                  required
+                  style-placeholder="">
+            <option disabled value="null">Select a organisation</option>
+            <option *ngFor="let organisation of availableOrganisationsForProgrammeAndUser" [ngValue]="organisation">{{organisation.name}}</option>
+          </select>
+          <div class="error-wrapper" role="alert" *ngIf="organisation?.touched && (organisation?.errors?.required || (selectedProgramme && !availableOrganisationsForProgrammeAndUser.length))">
+            <span class="error" *ngIf="organisation?.errors?.required">Select a organisation</span>
+            <span class="error" *ngIf="selectedProgramme && !availableOrganisationsForProgrammeAndUser.length">No organisation</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="project-name">Project title</label>
+          <input id="project-name"
+                 name="title"
+                 type="text"
+                 class="form-control"
+                 placeholder="e.g. name of site"
+                 [(ngModel)]="title"
+                 maxlength="50"
+                 #titleRef="ngModel"
+                 required/>
+          <div class="error-wrapper" role="alert" *ngIf="titleRef?.touched && titleRef?.errors?.required">
+            <span class="error">Enter a title</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="project-template">Select the type of project you want to create</label>
+
+          <select class="form-control"
+                  id="project-template"
+                  name="template"
+                  (change)="canProjectBeAssignedToTemplate()"
+                  [disabled]="!selectedProgramme"
+                  [(ngModel)]="selectedTemplate"
+                  #template="ngModel"
+                  required>
+            <option disabled value="null">Select a template</option>
+            <option *ngFor="let template of templates" [ngValue]="template">{{template.name}}</option>
+          </select>
+
+          <div class="error-wrapper" role="alert" *ngIf="showMaxProjectsForTemplateError">
+            <span class="error">You are permitted {{selectedTemplate.numberOfProjectAllowedPerOrg}} {{selectedTemplate.numberOfProjectAllowedPerOrg > 1 ? 'projects' : 'project'}} for this project type</span>
+          </div>
+
+          <div class="error-wrapper" role="alert" *ngIf="template?.touched && template?.errors?.required">
+            <span class="error">Select a template</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row mtop15">
+      <div class="col-xs-12 text-center">
+        <button id="project-save"
+                [disabled]="
+                    showMaxProjectsForTemplateError ||
+                    showMissingProfileProjectEditor ||
+                    showMissingProfileOrgAdmin ||
+                    showPendingProfileProjectEditor ||
+                    organisation?.errors?.required ||
+                    titleRef?.errors?.required ||
+                    programme?.errors?.required ||
+                    template?.errors?.required ||
+                    isSaving ||
+                    selectedOrganisation?.isTechOrg"
+                class="btn btn-primary"
+                (click)="submit()">SAVE
+        </button>
+        <br/><br/>
+        <a href="JavaScript:void(0)" (click)="goTo('projects')" class="form-cancel">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>

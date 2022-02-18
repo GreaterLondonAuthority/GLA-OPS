@@ -1,0 +1,91 @@
+<div class="template-block-outputs">
+  <div class="form-group">
+    <label for="showBaselines">Show Baselines&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showBaselines"
+                        [disabled]="readOnly || !editable"
+                        name="showBaselines"
+                        mode="bool"
+                        [(model)]="block.showBaselines">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="showAssumptions">Show Assumptions&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showAssumptions"
+                        [disabled]="readOnly || !editable"
+                        name="showAssumptions"
+                        mode="bool"
+                        [(model)]="block.showAssumptions">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="showTotalProjectOutputsTable">Show Total Project Outputs Table&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showTotalProjectOutputsTable"
+                        [disabled]="readOnly || !editable"
+                        name="showTotalProjectOutputsTable"
+                        mode="bool"
+                        [(model)]="block.showTotalProjectOutputsTable">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="showValueColumn">Show Value Column&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showValueColumn"
+                        [disabled]="readOnly || !editable"
+                        name="showValueColumn"
+                        mode="bool"
+                        [(model)]="block.showValueColumn">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="showOutputTypeColumn">Show Output Type Column&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showOutputTypeColumn"
+                        [disabled]="readOnly || !editable"
+                        name="showOutputTypeColumn"
+                        mode="bool"
+                        [(model)]="block.showOutputTypeColumn">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="showAdvancedPaymentColumn">Show Advanced Payment Column&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showAdvancedPaymentColumn"
+                        [disabled]="readOnly || !editable"
+                        name="showAdvancedPaymentColumn"
+                        mode="bool"
+                        [(model)]="block.showAdvancedPaymentColumn">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+
+  <div class="form-group">
+    <label for="output-group">Output Configuration Group</label>
+    <div *ngIf="readOnly">{{block.outputConfigurationGroup.id}}</div>
+    <div *ngIf="!readOnly && editable" (click)="$event.stopPropagation()" class="form-group">
+      <select [(ngModel)]="block.outputConfigurationGroup"
+              name="outputConfigurationGroup"
+              #outputConfigurationGroup="ngModel"
+              [disabled]="readOnly || !editable"
+              class="form-control"
+              style-placeholder
+              id="output-configuration-group">
+        <option disabled value="">Output Configuration Group Id</option>
+        <option *ngFor="let outputConfigurationGroup of outputConfigurationsOptions;trackBy:trackByKey" [ngValue]="outputConfigurationGroup">{{outputConfigurationGroup.id}}</option>
+      </select>
+    </div>
+  </div>
+</div>

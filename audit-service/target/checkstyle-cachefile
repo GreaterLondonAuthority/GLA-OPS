@@ -1,0 +1,10 @@
+#Mon Oct 18 15:59:00 BST 2021
+C\:\\Projects\\GLA\\GlaRefresh2021\\audit-service\\src\\main\\java\\uk\\gov\\london\\ops\\audit\\implementation\\AuditableActivityQueryBuilder.java=1634559738091
+module-resource*?\:checkstyle-suppressions.xml=1110E5C0DB682A99A7622D25070778F667B78A87
+C\:\\Projects\\GLA\\GlaRefresh2021\\audit-service\\src\\main\\java\\uk\\gov\\london\\ops\\audit\\AuditServiceImpl.java=1634559738087
+C\:\\Projects\\GLA\\GlaRefresh2021\\audit-service\\src\\main\\java\\uk\\gov\\london\\ops\\audit\\implementation\\AuditActivityDataInitialiser.java=1634562851251
+C\:\\Projects\\GLA\\GlaRefresh2021\\audit-service\\src\\main\\java\\uk\\gov\\london\\ops\\audit\\AuditAPI.java=1634559738086
+C\:\\Projects\\GLA\\GlaRefresh2021\\audit-service\\src\\main\\java\\uk\\gov\\london\\ops\\audit\\implementation\\AuditRepository.java=1634559738090
+C\:\\Projects\\GLA\\GlaRefresh2021\\audit-service\\src\\main\\java\\uk\\gov\\london\\ops\\audit\\AuditableActivityEntity.java=1634559738088
+configuration*?=9DE314D71EEE26E5D8A090EF60559F4025C7CADC
+module-resource*?\:checkstyle-xpath-suppressions.xml=B5221F1DDBE676905D565E9E1AD9F0618BC192C9

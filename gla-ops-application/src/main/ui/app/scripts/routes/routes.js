@@ -8,6 +8,7 @@
 
 import './projectBlockRoutes'
 import './projectInternalBlockRoutes'
+import {MobileDeviceWarningComponent} from '../../../../../.././src/main/gla-ui/src/app/shared/mobile-device-warning/mobile-device-warning.component';
 
 angular.module('GLA')
   .config(['$stateProvider', '$urlRouterProvider', '$locationProvider',
@@ -17,24 +18,69 @@ angular.module('GLA')
       $urlRouterProvider.otherwise('/home');
 
       $stateProvider
+
+           .state('home2', {
+             url: '/home2',
+             params: {
+               reasonSuccess: null,
+               reasonError: null
+             },
+             templateUrl: 'scripts/pages/home/home.html',
+             controller: 'HomeCtrl',
+             controllerAs: '$ctrl',
+             pageTitle: 'Home',
+             resolve: {
+               isMobileCheck: ($rootScope, $cookies, $q, NgbModal, deviceDetector) => {
+                 const hasAlreadyBeenWarned = $cookies.get('has-been-warned-about-mobile');
+                 var deferred = $q.defer();
+                 if (!hasAlreadyBeenWarned) {
+                   if (deviceDetector.isMobile() && !deviceDetector.isTablet()) {
+                     $rootScope.showGlobalLoadingMask = false;
+                     const modal = NgbModal.open(MobileDeviceWarningComponent)
+                     modal.result.then(() => {
+                       $cookies.put('has-been-warned-about-mobile', true)
+                       deferred.resolve();
+                     });
+                   } else {
+                     deferred.resolve();
+                   }
+
+                 } else {
+                   deferred.resolve();
+                 }
+
+                 return deferred.promise;
+               }
+             }
+           })
+
         .state('home', {
           url: '/home',
           params: {
             reasonSuccess: null,
-            reasonError: null
+            reasonError: null,
+            redirectURL: null
           },
-          templateUrl: 'scripts/pages/home/home.html',
-          controller: 'HomeCtrl',
-          controllerAs: '$ctrl',
+          template: `<gla-login-page [message]="$resolve.message"
+                                     [reason-success]="$resolve.$stateParams.reasonSuccess"
+                                     [reason-error]="$resolve.$stateParams.reasonError"
+                                     [redirect-url]="$resolve.$stateParams.redirectURL"></gla-login-page>`,
           pageTitle: 'Home',
           resolve: {
-            isMobileCheck: ($rootScope, $cookies, $q, MobileDeviceWarning, deviceDetector) => {
+            logout(UserService) {
+              let user = UserService.currentUser();
+              if(user && user.loggedOn) {
+                return UserService.logout();
+              }
+            },
+            isMobileCheck: ($rootScope, $cookies, $q, NgbModal, deviceDetector) => {
               const hasAlreadyBeenWarned = $cookies.get('has-been-warned-about-mobile');
               var deferred = $q.defer();
               if (!hasAlreadyBeenWarned) {
                 if (deviceDetector.isMobile() && !deviceDetector.isTablet()) {
                   $rootScope.showGlobalLoadingMask = false;
-                  MobileDeviceWarning.show().result.then(() => {
+                  const modal = NgbModal.open(MobileDeviceWarningComponent)
+                  modal.result.then(() => {
                     $cookies.put('has-been-warned-about-mobile', true)
                     deferred.resolve();
                   });
@@ -47,6 +93,14 @@ angular.module('GLA')
               }
 
               return deferred.promise;
+            },
+
+            message(Downgrade, ConfigurationService) {
+              return Downgrade.toPromise(ConfigurationService.comingSoonMessage());
+            },
+
+            $stateParams($stateParams) {
+              return $stateParams
             }
           }
         })
@@ -60,26 +114,37 @@ angular.module('GLA')
         })
         .state('registration-type', {
           url: '/registration-type',
-          templateUrl: 'scripts/pages/registration/registrationType.html',
-          controller: 'RegistrationTypeCtrl',
-          controllerAs: '$ctrl',
-          pageTitle: 'Registration Options',
-          resolve: {
-            allowNewRegistrationProcess: ['FeatureToggleService', 'Downgrade', (FeatureToggleService, Downgrade) => {
-              return Downgrade.toPromise(FeatureToggleService.isFeatureEnabled('AllowNewRegistrationProcess'));
-            }],
-          },
+          template: `<gla-registration-type-page></gla-registration-type-page>`,
+          pageTitle: 'Registration Options'
         })
 
-        .state('request-password-reset', {
+        .state('password-expired', {
+          url: '/password-expired',
+          template: '<gla-password-expired [username]="$resolve.username"></gla-password-expired>',
+          controllerAs: '$ctrl',
+          pageTitle: 'Password Expired',
+          params: {
+            username:  undefined
+          },
+          resolve: {
+            username: ['$stateParams', ($stateParams) => {
+              return $stateParams.username;
+            }]
+          }
+        })
+
+       .state('request-password-reset', {
           url: '/request-password-reset',
           params: {
             reasonError: null
           },
-          templateUrl: 'scripts/pages/reset-password/requestPasswordReset.html',
-          controller: 'RequestPasswordResetCtrl',
-          controllerAs: '$ctrl',
-          pageTitle: 'Password Reset Request'
+          template: `<gla-request-password-reset-page [error-message]="$resolve.$stateParams.reasonError"></gla-request-password-reset-page>`,
+          pageTitle: 'Password Reset Request',
+          resolve: {
+            $stateParams($stateParams) {
+              return $stateParams
+            }
+          }
         })
 
         .state('password-reset', {
@@ -122,10 +187,8 @@ angular.module('GLA')
                 return {};
               }
             },
-            homePageMessage: (ConfigurationService) => {
-              return ConfigurationService.homePageMessage().then(resp => {
-                return resp.data;
-              });
+            homePageMessage: (Downgrade, ConfigurationService) => {
+              return Downgrade.toPromise(ConfigurationService.homePageMessage());
             }
           }
         })
@@ -247,20 +310,6 @@ angular.module('GLA')
           pageTitle: 'Create Organisation Profile'
         })
 
-        .state('organisation.new-with-user', {
-          url: '/organisation/new-with-user',
-          templateUrl: 'scripts/pages/organisation/organisationForm/organisationForm.html',
-          controller: 'NewOrganisationWithUserCtrl',
-          controllerAs: '$ctrl',
-          pageTitle: 'Register Organisation & User',
-          resolve: {
-            logout(UserService) {
-              //Needs to be called to avoid seeing page as logged in user.
-              return UserService.logout();
-            }
-          }
-        })
-
         .state('organisation.registration-programme', {
           url: '/organisation/new/programme',
           template: `<organisation-registration-programme-page
@@ -288,7 +337,8 @@ angular.module('GLA')
                         organisation-types="$resolve.organisationTypes"
                         legal-statuses="$resolve.legalStatuses"
                         is-legal-status-enabled="$resolve.isLegalStatusEnabled"
-                        managing-organisations="$resolve.managingOrganisations"></organisation-registration-form-page>`,
+                        managing-organisations="$resolve.managingOrganisations"
+                        organisation-templates="$resolve.organisationTemplates"></organisation-registration-form-page>`,
           pageTitle: 'Organisation Details',
           resolve: {
             logout(UserService, SessionService) {
@@ -324,7 +374,8 @@ angular.module('GLA')
                                       show-duplicate-org-as-link="$resolve.showDuplicateOrgAsLink"
                                       remaining-years="$resolve.remainingYears"
                                       legal-statuses="$resolve.legalStatuses"
-                                      is-legal-status-enabled="$resolve.isLegalStatusEnabled"></organisation-page>`,
+                                      is-legal-status-enabled="$resolve.isLegalStatusEnabled"
+                                      organisation-templates="$resolve.organisationTemplates"></organisation-page>`,
           pageTitle: 'Organisation',
           resolve: {
             organisation(OrganisationService, $stateParams) {
@@ -371,15 +422,9 @@ angular.module('GLA')
             isLegalStatusEnabled(FeatureToggleService, Downgrade) {
               return Downgrade.toPromise(FeatureToggleService.isFeatureEnabled('AllowLegalStatusOnRegistration'));
             },
-
-            // organisation: (OrganisationService, $stateParams) => {
-            //   if($stateParams.orgId){
-            //     return OrganisationService.getDetails($stateParams.orgId).then(resp => resp.data);
-            //   } else {
-            //     return false;
-            //   }
-            // },
-
+            organisationTemplates: (OrganisationService) => {
+              return OrganisationService.organisationTemplates();
+            },
             managingOrganisations(OrganisationService) {
               return OrganisationService.managingOrganisations(true).then(rsp => rsp.data);
             },
@@ -420,6 +465,51 @@ angular.module('GLA')
               let hasPermission = UserService.hasPermission('org.view.glacontact');
               let managingOrgId = organisation.managingOrganisationId;
               return hasPermission && managingOrgId ? OrganisationService.getOrganisationUsers(managingOrgId).then(rsp => rsp.data) : null;
+            }
+          }
+        })
+
+        .state('organisation.contract-details', {
+          url: '/organisation/:orgId/contract-details/:orgContractId',
+          template: `<gla-contract-details [organisation]="$resolve.organisation"
+                                           [contract]="$resolve.contract"></gla-contract-details>`,
+          controllerAs: '$ctrl',
+          params: {
+            orgId: null,
+            orgContractId: null
+          },
+          pageTitle: 'Contract Details',
+          resolve: {
+            organisation: (OrganisationService, $stateParams) => {
+              return OrganisationService.getDetails($stateParams.orgId).then(resp => resp.data);
+            },
+
+            contract: (OrganisationService, $stateParams) => {
+              return OrganisationService.getContract($stateParams.orgId, $stateParams.orgContractId).then(resp => {
+                return resp.data
+              });
+            }
+          }
+        })
+
+        .state('organisation.contract-variation', {
+          url: '/organisation/:orgId/contract-variation/:orgContractId',
+          template: `<gla-contract-variation [organisation]="$resolve.organisation"
+                                           [contract]="$resolve.contract"></gla-contract-variation>`,
+          controllerAs: '$ctrl',
+          params: {
+            orgId: null,
+            orgContractId: null
+          },
+          pageTitle: 'Variation Details',
+          resolve: {
+            organisation: (OrganisationService, $stateParams) => {
+              return OrganisationService.getDetails($stateParams.orgId).then(resp => resp.data);
+            },
+            contract: (OrganisationService, $stateParams) => {
+              return OrganisationService.getContract($stateParams.orgId, $stateParams.orgContractId).then(resp => {
+                return resp.data
+              });
             }
           }
         })
@@ -497,8 +587,31 @@ angular.module('GLA')
 
         .state('projects', {
           url: '/projects?title&organisationName&programmeName',
-          template: '<projects-page project-states="$resolve.projectStates" all-programmes="$resolve.allProgrammes"></projects-page>',
+          template: `<gla-projects-page [project-states]="$resolve.projectStates" [all-programmes]="$resolve.allProgrammes"></gla-projects-page>`,
           pageTitle: 'Projects',
+          resolve: {
+            allProgrammes(ProgrammeService) {
+              return ProgrammeService.getProgrammesFilters().then(resp => {
+                return resp.data;
+              });
+            },
+
+            projectStates(ProjectService) {
+              return ProjectService.getProjectStates().then(resp => resp.data);
+            }
+          },
+          params: {
+            title: null,
+            organisationName: null,
+            programmeId: null,
+            programmeName: null
+          }
+        })
+
+        .state('programme-allocations', {
+          url: '/programme-allocations',
+          template: `<gla-programme-allocations-page [project-states]="$resolve.projectStates" [all-programmes]="$resolve.allProgrammes"></gla-projects-page>`,
+          pageTitle: 'Programme Allocations',
           resolve: {
             allProgrammes(ProgrammeService) {
               return ProgrammeService.getProgrammesFilters().then(resp => {
@@ -520,7 +633,7 @@ angular.module('GLA')
 
         .state('projects-new', {
           url: '/projects/new',
-          template: '<new-project-page programmes="$resolve.programmes"></new-project-page>',
+          template: `<gla-new-project-page [programmes]="$resolve.programmes"></gla-new-project-page>`,
           params: {
             programmes: null
           },
@@ -547,36 +660,29 @@ angular.module('GLA')
             blockId: null
           },
           resolve: {
-            project: ($stateParams, ProjectService, $rootScope) => {
-              $rootScope.showGlobalLoadingMask = true;
+            project ($stateParams, ProjectService, $rootScope) {
               return ProjectService.getProject($stateParams.projectId)
                 .then(resp => {
-                  $rootScope.showGlobalLoadingMask = false;
                   return resp.data;
                 });
             },
-            template: (TemplateService, project, $rootScope) => {
-              $rootScope.showGlobalLoadingMask = true;
-              return TemplateService.getTemplate(project.templateId, false, true)
-                .then(resp => {
-                  $rootScope.showGlobalLoadingMask = false;
-                  return resp.data;
-                });
+            template(TemplateService, project, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getTemplate(project.templateId, false, true));
             }
           }
         })
 
-        .state('project-overview', {
+       .state('project-overview', {
           url: '/project/:projectId',
-          template: `<project-overview is-submit-to-approve-enabled="$resolve.isSubmitToApproveEnabled"
-                                       is-marked-for-corporate-enabled="$resolve.isMarkedForCorporateEnabled"
-                                       is-labels-feature-enabled="$resolve.isLabelsFeatureEnabled"
-                                       is-allow-all-file-download-enabled="$resolve.isAllFileDownloadEnabled"
-                                       is-project-sharing-enabled="$resolve.isProjectSharingEnabled"
-                                       label-message="$resolve.labelMessage"
-                                       project="$resolve.projectOverview"
-                                       template="$resolve.template"
-                                       pre-set-labels="$resolve.preSetLabels"></project-overview>`,
+          template: `<gla-project-overview-page [is-submit-to-approve-enabled]="$resolve.isSubmitToApproveEnabled"
+                                       [is-marked-for-corporate-enabled]="$resolve.isMarkedForCorporateEnabled"
+                                       [is-labels-feature-enabled]="$resolve.isLabelsFeatureEnabled"
+                                       [is-allow-all-file-download-enabled]="$resolve.isAllFileDownloadEnabled"
+                                       [is-project-sharing-enabled]="$resolve.isProjectSharingEnabled"
+                                       [label-message]="$resolve.labelMessage"
+                                       [project]="$resolve.projectOverview"
+                                       [template]="$resolve.template"
+                                       [pre-set-labels]="$resolve.preSetLabels"></gla-project-overview-page>`,
           params: {
             backNavigation: null
           },
@@ -586,8 +692,8 @@ angular.module('GLA')
               return ProjectService.getProjectOverview($stateParams.projectId).then(resp => resp.data);
             },
 
-            template(TemplateService, projectOverview, $rootScope) {
-              return TemplateService.getTemplate(projectOverview.templateId, false, true).then(resp => resp.data);
+            template(TemplateService, projectOverview, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getTemplate(projectOverview.templateId, false, true));
             },
 
             isSubmitToApproveEnabled(FeatureToggleService, Downgrade) {
@@ -610,8 +716,8 @@ angular.module('GLA')
               return Downgrade.toPromise(FeatureToggleService.isFeatureEnabled('ProjectSharing'));
             },
 
-            labelMessage(ConfigurationService) {
-              return ConfigurationService.getMessage('project-label').then(rsp => rsp.data);
+            labelMessage(Downgrade, ConfigurationService) {
+              return Downgrade.toPromise(ConfigurationService.getMessage('project-label'));
             },
             preSetLabels(LabelService, projectOverview) {
               return LabelService.getPreSetLabels(projectOverview.managingOrganisationId, projectOverview.markedForCorporate).then(rsp => rsp.data);
@@ -636,8 +742,8 @@ angular.module('GLA')
           controllerAs: '$ctrl',
           pageTitle: 'Create Programme',
           resolve: {
-            templatesList(TemplateService) {
-              return TemplateService.getAllProjectTemplates().then(rsp => rsp.data);
+            templatesList(TemplateService, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getAllProjectTemplatesSummaries());
             },
             assessmentTemplates(AssessmentService) {
               return AssessmentService.getAssessmentTemplates().then(rsp => _.sortBy(rsp.data, 'name'));
@@ -667,8 +773,8 @@ angular.module('GLA')
                 return rsp.data;
               });
             },
-            templatesList(TemplateService) {
-              return TemplateService.getAllProjectTemplates().then(rsp => _.sortBy(rsp.data, 'name'));
+            templatesList(TemplateService, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getAllProjectTemplatesSummaries()).then(rsp => _.sortBy(rsp, 'name'));
             },
             glaRoles(OrganisationService) {
               return OrganisationService.getGlaRoles().then(rsp => rsp.data);
@@ -745,10 +851,10 @@ angular.module('GLA')
 
         .state('assessment', {
           url: '/assessments/:id',
-          template: `<assessment assessment="$resolve.assessment"
+          template: `<gla-assessment assessment="$resolve.assessment"
                                  assessment-template="$resolve.assessmentTemplate"
                                  project="$resolve.project"
-                                 editable="$resolve.editable"></assessment>`,
+                                 editable="$resolve.editable"></gla-assessment>`,
           pageTitle: 'Assessment',
           resolve: {
             assessment($stateParams, AssessmentService) {
@@ -826,10 +932,8 @@ angular.module('GLA')
           controllerAs: '$ctrl',
           pageTitle: 'Notifications',
           resolve: {
-            config(ConfigurationService) {
-              return ConfigurationService.getConfig().then(function (resp) {
-                return resp.data;
-              });
+            config(Downgrade, ConfigurationService) {
+              return Downgrade.toPromise(ConfigurationService.getConfig());
             }
           }
         })
@@ -884,7 +988,8 @@ angular.module('GLA')
                                       is-reclaim-enabled="$resolve.isReclaimEnabled"
                                       reclaims="$resolve.reclaims"
                                       original-payment="$resolve.originalPayment"
-                                      payment-history="$resolve.paymentHistory"></payment-summary>`,
+                                      payment-history="$resolve.paymentHistory"
+                                      payment-project-block="$resolve.paymentProjectBlock"></payment-summary>`,
           controllerAs: '$ctrl',
           pageTitle: 'Payment Summary',
           resolve: {
@@ -912,6 +1017,10 @@ angular.module('GLA')
               return ProjectService.getProject(payment.projectId).then(resp => resp.data);
             },
 
+            paymentProjectBlock(payment, ProjectService) {
+              return ProjectService.getProjectBlock(payment.projectId, payment.blockId, false).then(resp => resp.data);
+            },
+
             originalPayment(payment, PaymentService) {
               let originalPaymentId = payment.reclaimOfPaymentId;
               if (originalPaymentId) {
@@ -935,29 +1044,17 @@ angular.module('GLA')
           url: '/reports',
           template: `<reports-page programmes="$resolve.programmes"
                                    env-vars="$resolve.envVars"
-                                   reports="$resolve.reports"
-                                   programme-report-enabled="$resolve.programmeReportEnabled"
-                                   affordable-housing-report-enabled="$resolve.affordableHousingReportEnabled"
-                                   borough-report-enabled="$resolve.boroughReportEnabled"></reports-page>`,
+                                   reports="$resolve.reports"></reports-page>`,
           pageTitle: 'Reports',
           resolve: {
-            envVars(ConfigurationService) {
-              return ConfigurationService.getConfig().then(rsp => rsp.data);
+            envVars(Downgrade, ConfigurationService) {
+              return Downgrade.toPromise(ConfigurationService.getConfig());
             },
             programmes(ProgrammeService) {
               return ProgrammeService.getProgrammes({statuses: ['Active', 'Archived']}).then(rsp => rsp.data.content);
             },
             reports(ReportService) {
               return ReportService.getReports().then(rsp => rsp.data);
-            },
-            programmeReportEnabled(FeatureToggleService, Downgrade) {
-              return Downgrade.toPromise(FeatureToggleService.isFeatureEnabled('outputCSV'));
-            },
-            affordableHousingReportEnabled(FeatureToggleService, Downgrade) {
-              return Downgrade.toPromise(FeatureToggleService.isFeatureEnabled('AffordableHousingReport'));
-            },
-            boroughReportEnabled(FeatureToggleService, Downgrade) {
-              return Downgrade.toPromise(FeatureToggleService.isFeatureEnabled('BoroughReport'));
             }
           }
         })
@@ -995,16 +1092,14 @@ angular.module('GLA')
             },
 
             lastApprovedProject: (ProjectService, $stateParams) => {
-              console.log('stateParams', $stateParams.comparisonDate);
-
               return ProjectService.getProject($stateParams.projectId, {
                 unapprovedChanges: false,
                 forComparison: true,
                 comparisonDate: $stateParams.comparisonDate
               }).then(resp => resp.data);
             },
-            template: (TemplateService, latestProject) => {
-              return TemplateService.getTemplate(latestProject.templateId, false, true).then(resp => resp.data);
+            template(TemplateService, latestProject, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getTemplate(latestProject.templateId, false, true));
             },
             projectHistory: (ProjectService, $stateParams) => {
               return ProjectService.getProjectHistory($stateParams.projectId);
@@ -1047,8 +1142,8 @@ angular.module('GLA')
               return ProjectService.getProject($stateParams.projectId, params).then(rsp => rsp.data);
             },
 
-            template(TemplateService, project) {
-              return TemplateService.getTemplate(project.templateId, false, true).then(rsp => rsp.data);
+            template(TemplateService, project, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getTemplate(project.templateId, false, true));
             },
 
             currentFinancialYear(ProjectService){
@@ -1099,8 +1194,8 @@ angular.module('GLA')
           template: `<messages-page messages="$resolve.messages"></messages-page>`,
           pageTitle: 'System Messages',
           resolve: {
-            messages(ConfigurationService){
-              return ConfigurationService.getMessages().then((resp)=>resp.data);
+            messages(Downgrade, ConfigurationService){
+              return Downgrade.toPromise(ConfigurationService.getMessages());
             }
           }
         })
@@ -1162,10 +1257,8 @@ angular.module('GLA')
           template: `<templates-page templates="$resolve.templates"></templates-page>`,
           pageTitle: 'Project Templates',
           resolve: {
-            templates(TemplateService) {
-              return TemplateService.getAllProjectTemplateSummaries(0, '', '').then(resp => {
-                return resp.data;
-              });
+            templates(TemplateService, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getAllProjectTemplateSummaries(0, '', ''));
             }
           }
         })
@@ -1174,33 +1267,38 @@ angular.module('GLA')
           url: '/system/template/:templateId',
           template: `<template-details-page template="$resolve.template"
                                             block-types="$resolve.blockTypes"
+                                            internal-block-types="$resolve.internalBlockTypes"
                                             original-template="$resolve.originalTemplate"></template-details-page>`,
           pageTitle: 'Project Template',
           resolve: {
-            template(TemplateService, $stateParams) {
-              return TemplateService.getTemplate($stateParams.templateId, true, false).then(resp => {
-                return resp.data;
-              });
+            template(TemplateService, $stateParams, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getTemplate($stateParams.templateId, true, false));
             },
-            originalTemplate(TemplateService, $stateParams) {
-              return TemplateService.getTemplate($stateParams.templateId, false, false).then(resp => {
-                return resp.data;
-              });
+            originalTemplate(TemplateService, $stateParams, Downgrade) {
+              return Downgrade.toPromise(TemplateService.getTemplate($stateParams.templateId, false, false));
             },
 
             blockTypes(ReferenceDataService, Downgrade) {
               return Downgrade.toPromise(ReferenceDataService.getBlockTypes());
+            },
+
+            internalBlockTypes(ReferenceDataService, Downgrade) {
+              return Downgrade.toPromise(ReferenceDataService.getInternalBlockTypes());
             }
           }
         })
 
         .state('system-template-details-create', {
           url: '/system/template-create',
-          template: `<template-details-page block-types="$resolve.blockTypes"></template-details-page>`,
+          template: `<template-details-page block-types="$resolve.blockTypes"
+                                            internal-block-types="$resolve.internalBlockTypes"></template-details-page>`,
           pageTitle: 'Create Project Template',
           resolve: {
             blockTypes(ReferenceDataService, Downgrade) {
               return Downgrade.toPromise(ReferenceDataService.getBlockTypes());
+            },
+            internalBlockTypes(ReferenceDataService, Downgrade) {
+              return Downgrade.toPromise(ReferenceDataService.getInternalBlockTypes());
             }
           }
         })
@@ -1220,6 +1318,12 @@ angular.module('GLA')
           url: '/system/skill-profiles',
           template: `<skill-profiles></skill-profiles>`,
           pageTitle: 'Skills Profiles'
+        })
+
+        .state('contract-types', {
+          url: '/system/contract-types',
+          template: `<gla-contract-types></gla-contract-types>`,
+          pageTitle: 'Contract Types'
         })
 
         .state('data-validation-details', {
@@ -1275,15 +1379,25 @@ angular.module('GLA')
           pageTitle: 'Audit Activity'
         })
 
-        .state('finance-categories', {
-          url: '/finance-categories',
-          template: `<finance-categories-page finance-categories="$resolve.financeCategories"></finance-categories-page>`,
+        .state('categories', {
+          url: '/categories',
+          template: `<gla-categories [finance-categories]="$resolve.financeCategories"
+                                     [output-categories]="$resolve.outputCategories"
+                                     [budget-categories]="$resolve.budgetCategories"
+                                     [state]="$state"
+                                     [state-params]="$stateParams"></gla-categories>`,
           controllerAs: '$ctrl',
-          pageTitle: 'Finance Categories',
+          pageTitle: 'Categories',
           resolve: {
-            financeCategories: (FinanceService) => {
-              return FinanceService.getFinanceCategories(true).then(resp => resp.data);
-            }
+            financeCategories: ['FinanceService', 'Downgrade', (FinanceService, Downgrade) => {
+              return Downgrade.toPromise(FinanceService.getFinanceCategories(true, {}));
+            }],
+            outputCategories: ['OutputCategoryService', 'Downgrade', (OutputCategoryService, Downgrade) => {
+              return Downgrade.toPromise(OutputCategoryService.getAllOutputConfiguration({}));
+            }],
+            budgetCategories: ['ReferenceDataService', 'Downgrade', (ReferenceDataService, Downgrade) => {
+              return Downgrade.toPromise(ReferenceDataService.getConfigItemsByType('BudgetCategories', {}));
+            }],
           }
         })
 
@@ -1362,13 +1476,8 @@ angular.module('GLA')
 
         .state('confirm-org-and-user-created', {
           url: '/confirmation/org-and-user-created',
-          template: '<org-and-user-created-confirmation show-navigation-circles="$resolve.allowNewRegistrationProcess"></org-and-user-created-confirmation>',
-          pageTitle: 'Organisation Registration Confirmation',
-          resolve: {
-            allowNewRegistrationProcess: ['FeatureToggleService', 'Downgrade', (FeatureToggleService, Downgrade) => {
-              return Downgrade.toPromise(FeatureToggleService.isFeatureEnabled('AllowNewRegistrationProcess'));
-            }],
-          },
+          template: '<org-and-user-created-confirmation show-navigation-circles="true"></org-and-user-created-confirmation>',
+          pageTitle: 'Organisation Registration Confirmation'
         })
         .state('permissions', {
           url: '/permissions',
@@ -1433,15 +1542,77 @@ angular.module('GLA')
             }
           }
         })
-        .state('outputs-configuration', {
-          url: '/outputsConfiguration',
-          template: `<outputs-configuration-page output-configurations="$resolve.outputConfigurations"></outputs-configuration-page>`,
-          pageTitle: 'Outputs Configuration',
+
+        .state('broadcasts', {
+          url: '/broadcasts',
+          template: `<gla-broadcasts [broadcasts]="$resolve.broadcasts"></gla-broadcasts>`,
+          pageTitle: 'Broadcasts',
           resolve: {
-            outputConfigurations(OutputConfigurationService) {
-              return OutputConfigurationService.getAllOutputConfiguration().then(rsp => rsp.data);
+            broadcasts: ['BroadcastService', 'Downgrade', (BroadcastService, Downgrade) => {
+              return Downgrade.toPromise(BroadcastService.getBroadcasts());
+            }]
+          }
+        })
+
+        .state('broadcast-create', {
+          url: '/broadcasts/create',
+          template: `<gla-broadcast [programmes]="$resolve.programmes"
+                                    [project-states]="$resolve.projectStates"></gla-broadcast>`,
+          pageTitle: 'Create Broadcast',
+          resolve: {
+            programmes(ProgrammeService) {
+              return ProgrammeService.getProgrammesFilters().then(resp => {
+                return resp.data;
+              });
+            },
+            projectStates(ProjectService) {
+              return ProjectService.getProjectStates().then(resp => resp.data);
             }
           }
         })
+
+        .state('broadcast', {
+          url: '/broadcasts/:broadcastId',
+          template: `<gla-broadcast [broadcast]="$resolve.broadcast"
+                                    [programmes]="$resolve.programmes"
+                                    [project-states]="$resolve.projectStates"></gla-broadcast>`,
+          pageTitle: 'Broadcast',
+          resolve: {
+            broadcast: ['$stateParams', 'BroadcastService', 'Downgrade', ($stateParams, BroadcastService, Downgrade) => {
+              return Downgrade.toPromise(BroadcastService.getBroadcast($stateParams.broadcastId));
+            }],
+            programmes(ProgrammeService) {
+              return ProgrammeService.getProgrammesFilters().then(resp => {
+                return resp.data;
+              });
+            },
+            projectStates(ProjectService) {
+              return ProjectService.getProjectStates().then(resp => resp.data);
+            }
+          }
+        })
+
+        .state('block-usage', {
+          url: '/block-usage',
+          template: `<gla-block-usage [block-types]="$resolve.blockTypes"
+                                      [internal-block-types]="$resolve.internalBlockTypes"></gla-block-usage>`,
+          pageTitle: 'Block Usage',
+          resolve: {
+            blockTypes(ReferenceDataService, Downgrade) {
+              return Downgrade.toPromise(ReferenceDataService.getBlockTypes());
+            },
+            internalBlockTypes(ReferenceDataService, Downgrade) {
+              return Downgrade.toPromise(ReferenceDataService.getInternalBlockTypes());
+            }
+          }
+        })
+
+        .state('email-reports', {
+          url: '/email-reports',
+          template: `<gla-email-reports></gla-email-reports>`,
+          pageTitle: 'Email Status Reports',
+          resolve: {}
+        })
+
     }
   ]);

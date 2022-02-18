@@ -10,7 +10,7 @@
 
 function RiskAndIssueModal($uibModal, RisksService) {
   return {
-    show: function (type, riskCategories, riskOrIssue) {
+    show: function (type, risksBlockConfig, riskCategories, riskOrIssue) {
       return $uibModal.open({
         bindToController: true,
         controllerAs: '$ctrl',
@@ -22,6 +22,7 @@ function RiskAndIssueModal($uibModal, RisksService) {
         },
         controller: ['$uibModalInstance', function ($uibModalInstance) {
           this.type = type;
+          this.risksBlockConfig = risksBlockConfig;
           this.riskCategories = riskCategories;
           this.dataBlock = riskOrIssue || {};
           this.btnName = this.dataBlock.id? 'SAVE' : 'CREATE';

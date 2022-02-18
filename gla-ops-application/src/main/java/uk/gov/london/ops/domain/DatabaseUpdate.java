@@ -8,8 +8,15 @@
 package uk.gov.london.ops.domain;
 
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  * Represents a database update made by support.
@@ -26,7 +33,8 @@ public class DatabaseUpdate {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "database_update_seq_gen")
-    @SequenceGenerator(name = "database_update_seq_gen", sequenceName = "database_update_seq", initialValue = 10000, allocationSize = 1)
+    @SequenceGenerator(name = "database_update_seq_gen", sequenceName = "database_update_seq",
+            initialValue = 10000, allocationSize = 1)
     private Integer id;
 
     @Column(name = "sql", nullable = false)

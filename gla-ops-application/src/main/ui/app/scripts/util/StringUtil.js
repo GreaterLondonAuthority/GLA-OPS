@@ -25,6 +25,7 @@ class StringUtil {
 
   static replaceMarkdownUrl(input){
     const linkRegExp = /\[([^\]]+)?\]\(([^)]+)\)/g;
+    const boldRegex = /\*\+(.+?)\+\*?/g
     let output = input;
     let match;
 
@@ -34,6 +35,17 @@ class StringUtil {
       const url = match[2];
 
       const replacement = `<a href="${url}" target="_blank">${text}</a>`;
+
+      if (replacement) {
+        output = output.replace(string, replacement);
+      }
+    }
+
+    while ((match = boldRegex.exec(input)) !== null) {
+      const string = match[0];
+      const text = match[1] || '';
+
+      const replacement = `<b>${text}</b>`;
 
       if (replacement) {
         output = output.replace(string, replacement);

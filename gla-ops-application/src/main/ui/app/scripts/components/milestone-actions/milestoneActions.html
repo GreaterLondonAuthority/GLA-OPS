@@ -1,5 +1,12 @@
 <div class="milestone-actions">
   <a href="JavaScript:void(0)" ng-click="$ctrl.onClaimCancel({$event:$ctrl.milestone})" ng-if="$ctrl.milestone.isCancelable">Cancel</a>
+  <a href="JavaScript:void(0)" ng-click="$ctrl.onWithdraw({$event:$ctrl.milestone})"
+     ng-if="$ctrl.milestone.isUserAbleToWithdraw">
+    Cancel</a>
+  <a  href="JavaScript:void(0)" ng-if="$ctrl.milestone.isUserAbleToCancelWithdraw"
+      ng-click="$ctrl.onCancelWithdraw({$event:$ctrl.milestone})">Withdraw Cancellation
+  </a>
+
   <a href="JavaScript:void(0)" ng-click="$ctrl.onClaim({$event:$ctrl.milestone})" ng-if="$ctrl.milestone.isClaimable">Claim</a>
   <a href="JavaScript:void(0)" ng-click="$ctrl.onRepay({$event:$ctrl.milestone})" ng-if="$ctrl.milestone.isRepayable">Repay</a>
 </div>

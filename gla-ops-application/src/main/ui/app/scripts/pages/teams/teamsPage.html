@@ -11,30 +11,27 @@
     </button>
   </div>
 
-  <well class="row mbottom20 search-container">
+  <gla-well class="row mbottom20 search-container">
     <div class="col-sm-6 col-md-5 text-search search-filter">
-      <div>Search</div>
-      <search-field options="$ctrl.searchOptions"
-                    selected-option="$ctrl.selectedSearchOption"
-                    search-text="$ctrl.searchText"
-                    on-search="$ctrl.getTeams()"
-                    on-clear="$ctrl.clearSearchText()"></search-field>
+      <gla-search-field [options]="$ctrl.searchOptions"
+                        [(selected-option)]="$ctrl.selectedSearchOption"
+                        [(search-text)]="$ctrl.searchText"
+                        (on-search)="$ctrl.getTeams()"
+                        (on-clear)="$ctrl.clearSearchText()"></gla-search-field>
     </div>
 
     <div class="col-sm-6 col-md-2 search-filter" ng-if="$ctrl.managingOrganisationsDropdown.length > 1">
-      <div class="text-nowrap">Managed by</div>
-      <checkbox-filter
-        id="managing-organisations-filter"
-        filter-dropdown-items="$ctrl.managingOrganisationsDropdown"
-        on-change="$ctrl.getTeams()"></checkbox-filter>
+      <label class="text-nowrap" for="managing-organisations-filter">Managed by</label>
+      <gla-checkbox-filter id="managing-organisations-filter"
+                           [filter-dropdown-items]="$ctrl.managingOrganisationsDropdown"
+                           (on-change)="$ctrl.getTeams()"></gla-checkbox-filter>
     </div>
 
     <div class="col-sm-6 col-md-2 search-filter">
-      <div>Status</div>
-      <checkbox-filter
-        id="status-filter"
-        filter-dropdown-items="$ctrl.orgStatusDropdown"
-        on-change="$ctrl.getTeams()"></checkbox-filter>
+      <label for="status-filter">Status</label>
+      <gla-checkbox-filter id="status-filter"
+                       [filter-dropdown-items]="$ctrl.orgStatusDropdown"
+                       (on-change)="$ctrl.getTeams()"></gla-checkbox-filter>
     </div>
 
     <div class="col-sm-6 col-md-1 mtop25">
@@ -44,15 +41,15 @@
         ng-click="$ctrl.clearAll()"><span class="glyphicon glyphicon-remove"></span>Reset all
       </button>
     </div>
-  </well>
+  </gla-well>
 
-  <pagination class="bottom-pagination"
-              current-page="$ctrl.currentPage"
-              items-per-page="$ctrl.itemsPerPage"
-              total-items="$ctrl.teams.totalElements"
-              number-of-elements="$ctrl.itemsPerPage"
-              show-items-per-page-dropdown="true"
-              on-change="$ctrl.getTeams()"></pagination>
+  <gla-pagination class="bottom-pagination"
+                  [(current-page)]="$ctrl.currentPage"
+                  [(items-per-page)]="$ctrl.itemsPerPage"
+                  [total-items]="$ctrl.teams.totalElements"
+                  [number-of-elements]="$ctrl.itemsPerPage"
+                  [show-items-per-page-dropdown]="true"
+                  (on-change)="$ctrl.getTeams()"></gla-pagination>
 
   <div class="table-responsive teams-table">
     <div ng-if="!$ctrl.teams.content.length" class="empty-table">Not provided</div>

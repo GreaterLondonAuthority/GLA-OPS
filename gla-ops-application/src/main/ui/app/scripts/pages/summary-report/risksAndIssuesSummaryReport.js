@@ -17,15 +17,12 @@ class RisksAndIssuesSummaryReport {
 
   $onInit() {
     this.blockData = this.data;
-    // TODO is there a way to move this to routes?
-    this.FeatureToggleService.isFeatureEnabled('ProjectRiskAndIssues').subscribe(resp => {
-      this.showRisksAndIssues = resp;
-    });
     this.hasRisks = false;
     this.hasIssues = false;
     this.overallRating = _.find(this.overallRatings, {id: this.blockData.rating});
     this.risks = this.RisksService.getRisks(this.blockData);
     this.issues = this.RisksService.getIssues(this.blockData);
+    this.risksBlockConfig = _.find(this.template.blocksEnabled, {block: 'Risks'});
 
     this.hasRisks = !!_.filter(this.risks, risk => risk.status !== 'Closed').length;
     this.hasIssues = !!_.filter(this.issues, issue => issue.status !== 'Closed').length;
@@ -38,6 +35,7 @@ angular.module('GLA')
   .component('risksAndIssuesSummaryReport', {
     bindings: {
       data: '<',
+      template: '<'
     },
     templateUrl: 'scripts/pages/summary-report/risksAndIssuesSummaryReport.html',
     controller: RisksAndIssuesSummaryReport

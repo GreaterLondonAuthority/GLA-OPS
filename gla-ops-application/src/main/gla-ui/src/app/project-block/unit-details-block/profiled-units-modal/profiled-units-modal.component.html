@@ -1,0 +1,212 @@
+<div class="profiled-unit-wizard">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{title}}</h1>
+  </div>
+
+  <div class="modal-body">
+    <form #modalForm="ngForm" name="modalForm">
+      <div class="form-group">
+        <label attr.for="{{'tenureType'+type}}">Tenure</label>
+        <select class="form-control"
+                name="tenureType"
+                attr.id="{{'tenureType'+type}}"
+                [ngClass]="{placeholder: !unit.tenure}"
+                (change)="onTenureSelect()"
+                [(ngModel)]="unit.tenure">
+          <option disabled value="undefined">Select</option>
+          <option *ngFor="let tenure of tenureDetails" [ngValue]="tenure">{{tenure.name}}</option>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="showMarketTypes">
+        <label attr.for="{{'marketType'+type}}">Market Type</label>
+        <select class="form-control"
+                [ngClass]="{placeholder: !unit?.marketType}"
+                attr.id="{{'marketType'+type}}"
+                name="marketType"
+                (change)="onMarketTypeSelect()"
+                [disabled]="!unit.tenure"
+                [(ngModel)]="unit.marketType">
+          <option disabled value="null">Select</option>
+          <option *ngFor="let item of unit.tenure?.marketTypes" [ngValue]="item">{{item.name}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label attr.for="{{'beds'+type}}">Bedroom(s)</label>
+        <select class="form-control"
+                [ngClass]="{placeholder: !unit?.nbBeds}"
+                attr.id="{{'beds'+type}}"
+                name="beds"
+                [(ngModel)]="unit.nbBeds">
+          <option disabled value="undefined">Select</option>
+          <option *ngFor="let item of config?.beds" [ngValue]="item">{{item.displayValue}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label attr.for="{{'unitDetails'+type}}">Unit Type</label><br/>
+        <select class="form-control"
+                [ngClass]="{placeholder: !unit?.unitType}"
+                attr.id="{{'unitDetails'+type}}"
+                name="unitType"
+                [(ngModel)]="unit.unitType" >
+          <option disabled value="undefined">Select</option>
+          <option *ngFor="let item of config?.unitDetails" [ngValue]="item">{{item.displayValue}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label attr.for="{{'numberOfUnits'+type}}">Number of Units</label>
+        <input attr.id="{{'numberOfUnits'+type}}"
+               [(ngModel)]="unit.nbUnits"
+               name="nbUnits"
+               maxlength="11"
+               mask="separator.0"
+               numberType
+               thousandSeparator=","
+               class="form-control"
+               placeholder="Enter units"/>
+      </div>
+
+      <div class="form-group" *ngIf="unit.type === 'Rent'">
+        <label for="avgNetWeeklyRent">Avg. Net Weekly Rent £</label>
+        <input id="avgNetWeeklyRent"
+               name="avgNetWeeklyRent"
+               [(ngModel)]="unit.netWeeklyRent"
+               maxlength="13"
+               mask="separator.2"
+               numberType
+               thousandSeparator=","
+               class="form-control"
+               placeholder="Enter rent £"/>
+      </div>
+
+      <div class="form-group" *ngIf="unit.type === 'Rent'">
+        <label for="avgWeeklyServiceCharge">Avg. Weekly Service Charge £</label><br/>
+        <input id="avgWeeklyServiceCharge"
+               [(ngModel)]="unit.weeklyServiceCharge"
+               name="avgWeeklyServiceCharge"
+               maxlength="13"
+               mask="separator.2"
+               numberType
+               thousandSeparator=","
+               class="form-control"
+               placeholder="Enter £"/>
+      </div>
+
+      <div class="form-group" *ngIf="unit.type === 'Rent' && unit?.marketType?.id === unitsService.LEGACY_RENT_MARKET_TYPE_ID">
+        <label for="avgWeeklyMarketRent">Avg. Weekly Market Rent £</label><br/>
+        <input id="avgWeeklyMarketRent"
+               name="avgWeeklyMarketRent"
+               [(ngModel)]="unit.weeklyMarketRent"
+               maxlength="13"
+               mask="separator.2"
+               numberType
+               thousandSeparator=","
+               class="form-control"
+               placeholder="Enter rent £"/>
+      </div>
+
+      <div class="form-group" *ngIf="unit.type === 'Sales'">
+        <label for="marketValue">Avg. Market Value £</label><br/>
+        <input id="marketValue"
+               name="marketValue"
+               [(ngModel)]="unit.marketValue"
+               maxlength="13"
+               mask="separator.0"
+               numberType
+               thousandSeparator=","
+               class="form-control"
+               placeholder="Enter £"/>
+      </div>
+
+      <div class="form-group first-tranche-sales" *ngIf="unit.type === 'Sales' && unit?.marketType?.id !== unitsService.DISCOUNTED_RATE_MARKET_TYPE_ID">
+        <label for="firstTrancheSales">Avg. First Tranche Sales %</label><br/>
+        <input
+          id="firstTrancheSales"
+          name="firstTrancheSales"
+          [(ngModel)]="unit.firstTrancheSales"
+          maxlength="13"
+          mask="separator.2"
+          numberType
+          thousandSeparator=","
+          class="form-control"
+          placeholder="Enter %"/>
+        <div class="error-wrapper error" *ngIf="unit.firstTrancheSales > 100">
+          Percentage field must be less than or equal to 100
+        </div>
+      </div>
+
+      <div class="form-group discount-off-market-value" *ngIf="unit.type === 'Sales' && unit?.marketType?.id === unitsService.DISCOUNTED_RATE_MARKET_TYPE_ID">
+         <label for="discountOffMarketValue">% Discount off Market Value</label><br/>
+         <input id="discountOffMarketValue"
+                name="discountOffMarketValue"
+                [(ngModel)]="unit.discountOffMarketValue"
+                maxlength="13"
+                mask="separator.2"
+                numberType
+                thousandSeparator=","
+                class="form-control"
+                placeholder="Enter %"/>
+        <div class="error-wrapper error" *ngIf="unit.discountOffMarketValue > 100">
+          Percentage field must be less than or equal to 100
+        </div>
+       </div>
+
+      <div class="form-group legacy-sales" *ngIf="unit.type === 'Sales' && unit?.marketType?.id === unitsService.LEGACY_SALES_MARKET_TYPE_ID">
+        <label for="avgNetWeeklyRentForSales">Avg. Net Weekly Rent £</label>
+        <input id="avgNetWeeklyRentForSales"
+               name="avgNetWeeklyRentForSales"
+               [(ngModel)]="unit.netWeeklyRent"
+               maxlength="13"
+               mask="separator.2"
+               numberType
+               thousandSeparator=","
+               class="form-control"
+               placeholder="Enter rent £"/>
+      </div>
+
+      <div class="form-group weekly-service-charge" *ngIf="unit.type === 'Sales'">
+        <label for="weeklyServiceCharge">Avg. Weekly Service Charge £</label>
+        <input id="weeklyServiceCharge"
+               name="weeklyServiceCharge"
+               [(ngModel)]="unit.weeklyServiceCharge"
+               maxlength="13"
+               mask="separator.2"
+               numberType
+               thousandSeparator=","
+               class="form-control"
+               placeholder="Enter £"/>
+      </div>
+
+      <div class="form-group rent-charged-unsold-equity" *ngIf="unit.type === 'Sales' && isSharedOwnership()">
+        <label for="rentChargedOnUnsoldEquity">% of Rent Charged on Unsold Equity</label>
+        <input id="rentChargedOnUnsoldEquity"
+               name="rentChargedOnUnsoldEquity"
+               [(ngModel)]="unit.rentChargedOnUnsoldEquity"
+               maxlength="13"
+               mask="separator.2"
+               numberType
+               thousandSeparator=","
+               class="form-control"
+               placeholder="Enter %"/>
+        <div class="error-wrapper error" *ngIf="unit.rentChargedOnUnsoldEquity > 100">
+          Percentage field must be less than or equal to 100
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="text-center">
+      <button (click)="add()"
+              [disabled]="!isValidForm()"
+              class="btn btn-primary">ADD</button>
+      <button (click)="activeModal.dismiss()" class="btn btn-secondary">CANCEL</button>
+    </div>
+  </div>
+</div>

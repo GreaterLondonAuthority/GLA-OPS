@@ -7,32 +7,21 @@
  */
 package uk.gov.london.ops.project.funding;
 
-import static uk.gov.london.common.user.BaseRole.GLA_FINANCE;
-import static uk.gov.london.common.user.BaseRole.GLA_ORG_ADMIN;
-import static uk.gov.london.common.user.BaseRole.GLA_PM;
-import static uk.gov.london.common.user.BaseRole.GLA_READ_ONLY;
-import static uk.gov.london.common.user.BaseRole.GLA_SPM;
-import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
-import static uk.gov.london.common.user.BaseRole.ORG_ADMIN;
-import static uk.gov.london.common.user.BaseRole.PROJECT_EDITOR;
-import static uk.gov.london.common.user.BaseRole.PROJECT_READER;
-import static uk.gov.london.common.user.BaseRole.TECH_ADMIN;
-import static uk.gov.london.ops.framework.OPSUtils.verifyBinding;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import java.util.List;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.gov.london.ops.project.StandardAttachment;
+import uk.gov.london.ops.project.claim.ClaimStatus;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+
+import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.ops.framework.OPSUtils.verifyBinding;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -46,9 +35,8 @@ public class ProjectFundingAPI {
             TECH_ADMIN})
     @RequestMapping(value = "/projects/{projectId}/funding/{blockId}", method = RequestMethod.GET)
     @ApiOperation(value = "returns a project funding block", notes = "returns a project funding block")
-    public FundingBlock getProjectFundingBlock(@PathVariable Integer projectId, @PathVariable Integer blockId,
-            @RequestParam(required = false) Integer year) {
-        return projectFundingService.getProjectFundingBlock(projectId, blockId, year);
+    public FundingBlock getProjectFundingBlock(@PathVariable Integer projectId, @PathVariable Integer blockId) {
+        return projectFundingService.getProjectFundingBlock(projectId, blockId);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, ORG_ADMIN, PROJECT_EDITOR})
@@ -110,6 +98,13 @@ public class ProjectFundingAPI {
     @ApiOperation(value = "deletes a pending claim", notes = "deletes a pending claim")
     public void deleteClaim(@PathVariable Integer projectId, @PathVariable List<Integer> claimIds) {
         projectFundingService.deleteClaim(projectId, claimIds);
+    }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, ORG_ADMIN, PROJECT_EDITOR})
+    @RequestMapping(value = "/projects/{projectId}/funding/claim", method = RequestMethod.PUT)
+    @ApiOperation(value = "deletes a pending claim", notes = "deletes a pending claim")
+    public void updateClaimStatuses(@PathVariable Integer projectId, @RequestParam List<Integer> claimIds, @RequestBody Map<String, String> json) {
+        projectFundingService.updateClaimStatuses(projectId, claimIds, ClaimStatus.valueOf(json.get("status")), json.get("reason"));
     }
 
 }

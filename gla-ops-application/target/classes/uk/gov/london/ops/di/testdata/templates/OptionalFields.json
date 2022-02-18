@@ -1,0 +1,43 @@
+{
+  "name": "Optional Fields",
+  "author": "nahida miah",
+  "blocksEnabled":
+  [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "block": "Details",
+      "displayOrder": 0
+    }
+
+  ],
+
+
+  "stateModel": "ChangeControlled",
+  "allowMonetaryMilestones": true,
+  "warningMessage": null,
+  "detailsConfig": {
+    "addressRequirement": "optional",
+    "boroughRequirement": "optional",
+    "wardIdRequirement": "optional",
+    "postcodeRequirement": "optional",
+    "coordsRequirement": "optional",
+    "maincontactRequirement": "optional",
+    "maincontactemailRequirement": "optional",
+    "siteOwnerRequirement": "optional",
+    "interestRequirement": "optional",
+    "projectManagerRequirement": "optional",
+    "siteStatusRequirement": "optional",
+    "legacyProjectCodeRequirement": "optional"
+  },
+  "tenureTypes":
+  [
+    {
+
+      "name": "London Shared Ownership",
+      "externalId": 4002,
+      "tariffRate": 28000,
+      "displayOrder": 2
+    }
+  ],
+  "indicativeTenureConfiguration": null
+}

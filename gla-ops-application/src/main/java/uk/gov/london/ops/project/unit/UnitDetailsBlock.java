@@ -7,38 +7,30 @@
  */
 package uk.gov.london.ops.project.unit;
 
-import static uk.gov.london.common.GlaUtils.nullSafeAdd;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import javax.validation.constraints.Max;
+import java.math.BigDecimal;
 import org.apache.commons.collections.CollectionUtils;
 import uk.gov.london.common.GlaUtils;
+import uk.gov.london.ops.framework.ComparableItem;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.framework.ComparableItem;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.block.ProjectDifference;
 import uk.gov.london.ops.project.block.ProjectDifferences;
+import uk.gov.london.ops.project.template.domain.TemplateBlock;
 import uk.gov.london.ops.project.template.domain.TemplateTenureType;
+import uk.gov.london.ops.project.template.domain.UnitDetailsTemplateBlock;
+
+import javax.persistence.*;
+import javax.validation.constraints.Max;
+import java.util.*;
+import java.util.stream.Collectors;
+import uk.gov.london.ops.project.unit.UnitDetailsTableEntry.Type;
+
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
+import static uk.gov.london.ops.project.block.ProjectBlockType.UnitDetails;
 
 /**
  * Created by chris on 25/05/2017.
@@ -53,6 +45,10 @@ public class UnitDetailsBlock extends NamedProjectBlock {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = UnitDetailsTableEntry.class)
     @JoinColumn(name = "block_id")
     private Set<UnitDetailsTableEntry> tableEntries = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = UnitDetailsBuildTypeEntry.class)
+    @JoinColumn(name = "block_id")
+    private Set<UnitDetailsBuildTypeEntry> buildTypeEntries = new HashSet<>();
 
     @Max(999999999)
     @Column(name = "new_build_units")
@@ -124,11 +120,16 @@ public class UnitDetailsBlock extends NamedProjectBlock {
                 && buildTypeValid()
                 && unitsByNumberOfPeopleValid()
                 && nbWheelChairUnitsValid()
-                && grossInternalAreaValid();
+                && grossInternalAreaValid()
+                && !percentageSalesInvalid();
     }
 
     @Override
     protected void generateValidationFailures() {
+        if (percentageSalesInvalid()) {
+            addErrorMessage("Percentages", "", "Sales Units percentages (%) must be less than or equal to 100");
+        }
+
         if (!profiledUnitsValid()) {
             addErrorMessage("ProfiledUnits", "", "Unit details profiled must match the total units against that tenure");
         }
@@ -148,6 +149,34 @@ public class UnitDetailsBlock extends NamedProjectBlock {
         if (!grossInternalAreaValid()) {
             addErrorMessage("GrossInternalArea", "", "This value must be provided");
         }
+
+        if (!ofWhichWheelchairUnitsValid()) {
+            addErrorMessage("OfWhichWheelChairUnits", "",
+                    "Of Which wheelchair units must not exceed the corresponding build type total");
+        }
+    }
+
+    @Override
+    protected void initFromTemplateSpecific(TemplateBlock templateBlock) {
+        if (templateBlock instanceof UnitDetailsTemplateBlock) {
+            UnitDetailsTemplateBlock unitDetailsTemplateBlock = (UnitDetailsTemplateBlock) templateBlock;
+            if (unitDetailsTemplateBlock.getBuildTypeOfWhichCategories() != null) {
+                for (String category : unitDetailsTemplateBlock.getBuildTypeOfWhichCategories()) {
+                    this.buildTypeEntries.add(new UnitDetailsBuildTypeEntry(null, category, null, null));
+                }
+            }
+        }
+    }
+
+    private boolean percentageSalesInvalid() {
+        List<UnitDetailsTableEntry> salesEntries = tableEntries.stream().filter(e -> Type.Sales.equals(e.getType()))
+                .collect(Collectors.toList());
+        return salesEntries.stream()
+                .anyMatch(e -> (e.getFirstTrancheSales() != null && e.getFirstTrancheSales().compareTo(new BigDecimal(100)) > 0)
+                        || (e.getDiscountOffMarketValue() != null
+                        && e.getDiscountOffMarketValue().compareTo(new BigDecimal(100)) > 0)
+                        || (e.getRentChargedOnUnsoldEquity() != null
+                        && e.getRentChargedOnUnsoldEquity().compareTo(new BigDecimal(100)) > 0));
     }
 
     private boolean profiledUnitsValid() {
@@ -165,11 +194,33 @@ public class UnitDetailsBlock extends NamedProjectBlock {
     }
 
     private boolean nbWheelChairUnitsValid() {
-        return nbWheelchairUnits != null && nbWheelchairUnits <= getTotalUnits();
+        TemplateBlock templateBlock = project.getTemplate()
+                .getSingleBlockByType(UnitDetails);
+
+        boolean wheelchairSectionHidded = false;
+        if (templateBlock instanceof UnitDetailsTemplateBlock) {
+            wheelchairSectionHidded = ((UnitDetailsTemplateBlock) templateBlock).getHideWheelChairSection();
+        }
+        return (wheelchairSectionHidded || (nbWheelchairUnits != null && nbWheelchairUnits <= getTotalUnits()));
     }
 
     private boolean grossInternalAreaValid() {
         return grossInternalArea != null;
+    }
+
+    private boolean ofWhichWheelchairUnitsValid() {
+        if (buildTypeEntries != null) {
+            int totalNewBuildUnits = newBuildUnits != null ? newBuildUnits : 0;
+            int totalRefurbishedUnits = refurbishedUnits != null ? refurbishedUnits : 0;
+            for (UnitDetailsBuildTypeEntry entry : buildTypeEntries) {
+                int ofWhichNewBuildUnits = entry.getNewBuildUnits() != null ? entry.getNewBuildUnits() : 0;
+                int ofWhichRefurbishedUnits = entry.getRefurbishedUnits() != null ? entry.getRefurbishedUnits() : 0;
+                if (ofWhichNewBuildUnits > totalNewBuildUnits || ofWhichRefurbishedUnits > totalRefurbishedUnits) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public Set<UnitDetailsTableEntry> getTableEntries() {
@@ -178,6 +229,14 @@ public class UnitDetailsBlock extends NamedProjectBlock {
 
     public void setTableEntries(Set<UnitDetailsTableEntry> tableEntries) {
         this.tableEntries = tableEntries;
+    }
+
+    public Set<UnitDetailsBuildTypeEntry> getBuildTypeEntries() {
+        return buildTypeEntries;
+    }
+
+    public void setBuildTypeEntries(Set<UnitDetailsBuildTypeEntry> buildTypeEntries) {
+        this.buildTypeEntries = buildTypeEntries;
     }
 
     public Integer getNewBuildUnits() {
@@ -296,6 +355,17 @@ public class UnitDetailsBlock extends NamedProjectBlock {
         this.setType8Units(unitDetailsBlock.type8Units);
         this.setNbWheelchairUnits(unitDetailsBlock.nbWheelchairUnits);
         this.setGrossInternalArea(unitDetailsBlock.grossInternalArea);
+
+        if (buildTypeEntries != null) {
+            for (UnitDetailsBuildTypeEntry updated : unitDetailsBlock.buildTypeEntries) {
+                UnitDetailsBuildTypeEntry existing = getBuildTypeEntry(updated.getId());
+                existing.merge(updated);
+            }
+        }
+    }
+
+    private UnitDetailsBuildTypeEntry getBuildTypeEntry(Integer id) {
+        return this.getBuildTypeEntries().stream().filter(e -> e.getId().equals(id)).findFirst().orElse(null);
     }
 
     @Override
@@ -318,6 +388,12 @@ public class UnitDetailsBlock extends NamedProjectBlock {
         if (tableEntries != null) {
             for (UnitDetailsTableEntry entry : tableEntries) {
                 unitDetailsBlock.getTableEntries().add(entry.copy());
+            }
+        }
+
+        if (buildTypeEntries != null) {
+            for (UnitDetailsBuildTypeEntry entry : buildTypeEntries) {
+                unitDetailsBlock.getBuildTypeEntries().add(entry.copy());
             }
         }
     }
@@ -572,6 +648,9 @@ public class UnitDetailsBlock extends NamedProjectBlock {
             }
             if (!GlaUtils.areEqual(leftEntry.getWeeklyServiceCharge(), rightEntry.getWeeklyServiceCharge())) {
                 differences.add(new ProjectDifference(leftEntry, "weeklyServiceCharge"));
+            }
+            if (!Objects.equals(leftEntry.getRentChargedOnUnsoldEquity(), rightEntry.getRentChargedOnUnsoldEquity())) {
+                differences.add(new ProjectDifference(leftEntry, "rentChargedOnUnsoldEquity"));
             }
         }
 

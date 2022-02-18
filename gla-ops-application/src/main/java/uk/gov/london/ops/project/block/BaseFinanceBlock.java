@@ -29,8 +29,11 @@ public abstract class BaseFinanceBlock extends NamedProjectBlock {
     }
 
     public void setPopulatedYears(Set<Integer> populatedYears) {
+        populatedYears.removeIf(y -> !canShowYear(y));
         this.populatedYears = populatedYears;
     }
+
+    protected abstract boolean canShowYear(Integer year);
 
     @Override
     protected void generateValidationFailures() {}

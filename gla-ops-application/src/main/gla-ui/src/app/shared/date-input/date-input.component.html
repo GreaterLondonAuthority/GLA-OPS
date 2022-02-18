@@ -1,0 +1,52 @@
+<div id="{{questionId}}"
+     class="dateInput form-control"
+     *ngIf="!readOnly"
+     [ngClass]="{'disabled': readOnly === true, 'focused': isFocused, 'invalid': !isValid && !isFocused }">
+  <input type="text"
+         [ngModel]="day"
+         class="dateInput__day"
+         placeholder="DD"
+         [maxLength]="2"
+         (focusin)="onInputFocus('day')"
+         (focusout)="onInputBlur('day')"
+         (input)="onDayChange($event)"
+         *ngIf="!readOnly"
+         focus-me="focusDay"
+         aria-label="Day"
+         #inputDay>
+
+  <div class="dateInput__divider">/</div>
+
+  <input type="text"
+         [ngModel]="month"
+         class="dateInput__month"
+         placeholder="MM"
+         [maxLength]="2"
+         (focusin)="onInputFocus('month')"
+         (focusout)="onInputBlur('month')"
+         ng-pattern="numbersOnly"
+         (input)="onMonthChange($event)"
+         *ngIf="!readOnly"
+         focus-me="focusMonth"
+         aria-label="Month"
+         #inputMonth>
+
+  <div class="dateInput__divider">/</div>
+
+  <input type="text"
+         [ngModel]="year"
+         class="dateInput__year"
+         placeholder="YYYY"
+         [maxLength]="4"
+         (focusin)="onInputFocus('year')"
+         (focusout)="onInputBlur('year')"
+         (input)="onYearChange($event)"
+         *ngIf="!readOnly"
+         focus-me="focusYear"
+         aria-label="Year"
+         #inputYear>
+</div>
+
+<div *ngIf="readOnly && day && month && year" id="{{questionId}}" class="readonly-form-el read-only-text multiline-text">{{day}} / {{month}} / {{year}}</div>
+<div *ngIf="readOnly && !(day && month && year)" id="{{questionId}}" class="readonly-form-el read-only-text multiline-text">Not provided</div>
+

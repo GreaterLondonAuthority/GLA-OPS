@@ -1,0 +1,12 @@
+<div class="includes-tables">
+  <div>
+    <div class="report-label">Amount Requested and Total Scheme Costs by Tenure Type</div>
+    <gla-indicative-grant-requested-table [tenures]="template.tenureTypes"
+                                          [grantTypes]="templateBlock.grantTypes"
+                                          [entries]="block.grantRequestedEntries"
+                                          [totals]="block.grantRequestedTotals"
+                                          [readOnly]="true">
+    </gla-indicative-grant-requested-table>
+  </div>
+</div>
+

@@ -16,8 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
-import uk.gov.london.ops.permission.PermissionService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.framework.environment.Environment;
+import uk.gov.london.ops.permission.PermissionServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
 import uk.gov.london.ops.user.domain.UserModel;
 import uk.gov.london.ops.user.domain.UsernameAndPassword;
 
@@ -37,10 +38,13 @@ public class SessionAPI {
     UserMapper userMapper;
 
     @Autowired
-    PermissionService permissionService;
+    PermissionServiceImpl permissionService;
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
+
+    @Autowired
+    Environment environment;
 
     @Value("${session.idle.duration}")
     private Integer sessionIdleDuration;
@@ -64,13 +68,14 @@ public class SessionAPI {
 
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 usernameAndPassword.getUsername().toLowerCase(), usernameAndPassword.getPassword()));
+
+        UserEntity user = (UserEntity) auth.getPrincipal();
+
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         String id = validatedSessionId(CURRENT);
 
-        User user = (User) auth.getPrincipal();
         userService.updateSuccessfulUserLogon(user);
-
         UserModel userModel = userMapper.toModel(user);
         userModel.setPermissions(permissionService.getPermissionsForUser(user));
         userModel.setIdleDuration(sessionIdleDuration);

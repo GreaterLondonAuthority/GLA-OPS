@@ -15,7 +15,12 @@ class QuarterSelectorCtrl {
     // generate financial quarter list
     let yW = $scope.$watch('$ctrl.year', value => {
       if(value) {
-        this.quarterList = DateUtil.generateQuarterList(value.financialYear.financialYear);
+        console.log('$ctrl.year', value)
+        this.quarterList = DateUtil.generateQuarterList(_.isNumber(value)? value : value.financialYear.financialYear);
+        console.log('this.quarterList', angular.copy(this.quarterList))
+        if(this.selectedQuarter != null) {
+          this.selectedMonth = this.quarterList[this.selectedQuarter - 1]
+        }
       }
     });
   }
@@ -33,6 +38,7 @@ angular.module('GLA')
       year: '<',
       onQuarterSelected: '&?',
       selectedMonth: '=',
+      selectedQuarter: '<?',
       readOnly: '<?'
     },
     controller: QuarterSelectorCtrl

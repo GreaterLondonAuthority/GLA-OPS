@@ -8,11 +8,18 @@ import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 })
 export class ConfirmationDialogComponent implements OnInit {
 
-  @Input()
-  config: any;
+  @Input() config: any;
+  confirmed: false;
 
+  userComment: any;
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit(): void {
+    this.userComment = this.config.existingComment
+  }
+
+  isModalValid(userCommentRequired, userComment){
+    return (!userCommentRequired || userComment != this.config.existingComment)
+      && (!this.config.showConfirmationCheckbox || this.confirmed)
   }
 }

@@ -18,7 +18,7 @@
           </div>
         </div>-->
 
-        <multi-panel class="text-left mtop30 user-metrics-dashboard" ng-if="$ctrl.userDashboardMetricsToggle">
+        <gla-multi-panel class="text-left mtop30 user-metrics-dashboard" ng-if="$ctrl.userDashboardMetricsToggle">
           <div class="column">
             <div class="section" ng-if="$ctrl.canViewProjects">
               <section-header>Projects</section-header>
@@ -35,7 +35,7 @@
               You are a member of {{$ctrl.dashboardMetrics['organisations.active'] || 0}} <a ui-sref="organisations">organisations</a>, and have {{$ctrl.dashboardMetrics['organisations.pending'] || 0}} pending request for access
             </div>
           </div>
-        </multi-panel>
+        </gla-multi-panel>
 
 
               <div class="user-home_unapproved text-left" ng-if="!$ctrl.user.approved">

@@ -9,6 +9,8 @@ package uk.gov.london.ops.notification;
 
 public interface NotificationTargetEntity {
 
+    Integer getId();
+
     String getIdAsString();
 
 }

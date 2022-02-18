@@ -46,7 +46,7 @@ class CollapsibleReportCtrl {
   }
 
   hasTables(item) {
-    let blockTypes = ['Grant', 'Milestones', 'Risk', 'OutputsBlock', 'Budgets', 'ReceiptsBlock'];
+    let blockTypes = ['Grant', 'Milestones', 'Risk', 'OutputsBlock', 'Budgets', 'ReceiptsBlock', 'AffordableHomesBlock'];
     for (let i = 0; i < blockTypes.length; i++) {
       if (item.type.indexOf(blockTypes[i]) > -1) {
         return true;

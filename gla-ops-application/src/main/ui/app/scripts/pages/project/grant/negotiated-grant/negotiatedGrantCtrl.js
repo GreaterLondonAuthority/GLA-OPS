@@ -24,6 +24,8 @@ class NegotiatedGrantCtrl extends ProjectBlockCtrl {
   $onInit() {
     super.$onInit();
     this.lastRequestId = 0;
+    this.otherAffordableTenureTypes = _.find(this.template.blocksEnabled, {block: 'NegotiatedGrant'}).otherAffordableTenureTypes;
+    this.showOtherAffordableQuestion = _.find(this.template.blocksEnabled, {block: 'NegotiatedGrant'}).showOtherAffordableQuestion;
     this.data = this.GrantService.sortTenureTypes(this.projectBlock);
     this.tenureSummaryDetails =  this.GrantService.negotiatedGrantBlock(this.data);
     this.tenureClaimedDetails =  this.GrantService.calculateClaimedTenure(this.data, this.project);

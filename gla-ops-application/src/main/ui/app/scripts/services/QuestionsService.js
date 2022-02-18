@@ -8,8 +8,11 @@
 
 QuestionsService.$inject = ['$http', 'config'];
 
+const INTERNAL_QUESTION_BLOCK_TYPE = 'Questions';
+
 function QuestionsService($http, config) {
   return {
+
     getQuestions(page, question, template) {
       let cfg = {
         params: {
@@ -29,6 +32,10 @@ function QuestionsService($http, config) {
       return $http.get(`${config.basePath}/questions/${id}?enrich=true`)
     },
 
+    getInternalQuestionTemplateConfig(template, displayOrder){
+      return _.find(template.internalBlocks, {type: INTERNAL_QUESTION_BLOCK_TYPE, displayOrder: displayOrder});
+    },
+
     saveQuestion(question, questionId) {
       if (questionId) {
         return $http.put(`${config.basePath}/questions/${questionId}`, question)
@@ -37,27 +44,54 @@ function QuestionsService($http, config) {
       }
     },
 
-    hasParentCondition(value) {
-      return !!value.parentId;
+    isSectionConditionMet(question, questions) {
+      if (question.section && question.section.parentId) {
+        let parentQuestion = _.find(questions, {id: question.section.parentId});
+        // recursion here as we might have multiple levels of conditional questions
+        let parentAnswerMatch = false;
+        if(parentQuestion.answer) {
+          const parentAnswers = parentQuestion.answer.split(parentQuestion.delimiter);
+          const childAnswersToMatch = question.section.parentAnswerToMatch.split(parentQuestion.delimiter);
+          const intersectionOfAnswers = parentAnswers.filter(value => childAnswersToMatch.indexOf(value) !== -1);
+          parentAnswerMatch = intersectionOfAnswers.length >= 1;
+        }
+        return this.isSectionConditionMet(parentQuestion, questions) &&
+          this.isParentConditionMet(parentQuestion, questions) &&
+          parentAnswerMatch;
+      } else {
+        return true;
+      }
     },
 
-    isParentConditionMet(value, array, match) {
-      let parentQuestion = _.find(array, match || {id: value.parentId});
+    isParentConditionMet(question, questions) {
+      let sectionConditionMet = this.isSectionConditionMet(question, questions);
+
+      if (!question.parentId) {
+        return sectionConditionMet;
+      }
+
+      let parentQuestion = _.find(questions, {id: question.parentId});
       // recursion here as we might have multiple levels of conditional questions
       let parentAnswerMatch = false;
       if(parentQuestion.answer) {
         const parentAnswers = parentQuestion.answer.split(parentQuestion.delimiter);
-        const childAnswersToMatch = value.parentAnswerToMatch.split(parentQuestion.delimiter);
+        const childAnswersToMatch = question.parentAnswerToMatch.split(parentQuestion.delimiter);
         const intersectionOfAnswers = parentAnswers.filter(value => childAnswersToMatch.indexOf(value) !== -1);
         parentAnswerMatch = intersectionOfAnswers.length >= 1;
       }
-      return (!this.hasParentCondition(parentQuestion) || this.isParentConditionMet(parentQuestion, array))
-        && parentAnswerMatch;
+      return this.isParentConditionMet(parentQuestion, questions) && parentAnswerMatch;
     },
 
+    isQuestionVisible(question, questions) {
+      if (question && question.isHidden) {
+        return false;
+      } else {
+        return this.isParentConditionMet(question, questions);
+      }
+    },
 
     getQuestionsFromBlock(blockData) {
-      let questions = blockData.questions;
+      let questions = blockData.questions || [];
       let sections = {};
 
       _.forEach(blockData.sections, section => {
@@ -84,13 +118,6 @@ function QuestionsService($http, config) {
           item.helpText = item.helpText;
           item.parentAnswerToMatch = item.parentAnswerToMatch;
           item.parentId = item.parentId;
-
-          if (item.sectionId) {
-            if (!item.section.alreadyUsed) {
-              item.isFirstInSection = true;
-              item.section.alreadyUsed = true;
-            }
-          }
 
           if (item.parentId) {
             if (item.sectionId) {
@@ -160,7 +187,28 @@ function QuestionsService($http, config) {
           }
         });
       });
+
+      this.updateSectionVisibility(questions);
       return questions;
+    },
+
+    updateSectionVisibility(questions){
+      questions = questions || [];
+      questions.forEach(q => {
+        if(q.section){
+          q.section.alreadyUsed = false;
+        }
+      });
+
+      questions.forEach(q => {
+        q.isFirstInSection = false;
+        if (q.sectionId) {
+          if (!q.section.alreadyUsed && this.isQuestionVisible(q, questions)) {
+            q.isFirstInSection = true;
+            q.section.alreadyUsed = true;
+          }
+        }
+      });
     },
 
     /**
@@ -173,7 +221,7 @@ function QuestionsService($http, config) {
       _.each(questions, question => {
         var answer = {};
         answer.questionId = question.id;
-        if(this.hasParentCondition(question) && !this.isParentConditionMet(question, questions)){
+        if (!this.isParentConditionMet(question, questions)) {
           answer.answer = undefined;
           answer.numericAnswer = undefined;
           answer.IdattachmentIds = undefined;
@@ -185,17 +233,11 @@ function QuestionsService($http, config) {
 
           // if (question.answer || question.answer === '' || _.isNumber(question.numericAnswer)) {
 
-
-
           if (question.answerType === 'Number' && _.isNumber(question.numericAnswer)) {
             answer.numericAnswer = question.numericAnswer;
           }
 
-
-
           answer.answer = question.answer;
-
-
           // TODO: this should move to a util
           // if date... format to YYYY-MM-DD
           if (question.answerType.toLowerCase() === 'date') {
@@ -217,8 +259,31 @@ function QuestionsService($http, config) {
         answers.push(answer);
 
       });
-
       return answers;
+    },
+
+    getQuestionUpLevel(inQuestionId, questions) {
+      let returnLevel = 0
+      questions.forEach(question => {
+        if (question.question.id == inQuestionId) {
+          if (question.parentId) {
+            returnLevel = 1 + this.getQuestionUpLevel(question.parentId, questions)
+          } else {
+            returnLevel = 1;
+          }
+        }
+      });
+      return returnLevel
+    },
+
+    getQuestionDownLevel(inQuestionId, questions) {
+      let returnLevel = 0
+      questions.forEach(question => {
+        if (question.parentId == inQuestionId) {
+          returnLevel = 1 + this.getQuestionDownLevel(question.question.id, questions)
+        }
+      });
+      return returnLevel
     }
   };
 }

@@ -1,0 +1,17 @@
+.indicative-starts-and-completions-table {
+
+  th {
+    text-align: center;
+  }
+
+  td {
+    text-align: center;
+  }
+
+}
+
+tr.totals-row, tr.darker-row {
+  td {
+    background-color: darken(#f7f7f9, 5%);
+  }
+}

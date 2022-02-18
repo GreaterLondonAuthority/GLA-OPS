@@ -1,0 +1,96 @@
+<div class="funding-claim-modal">
+    <div class="modal-header text-center">
+      <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h1>CANCEL CLAIM</h1>
+      <div>Q{{section.quarter}} Milestones and activities</div>
+    </div>
+    <div class="modal-body text-left">
+      <div>
+        <div class="clearfix">
+          <span class="label">{{section.year | fYear}} Total Budget</span>
+          <span class="pull-right"> {{budget.total | currency:'£':'symbol':'1.0-0'}}</span>
+        </div>
+        <div class="payment-group">
+          <div *ngIf="showCapitalGla || showCapitalOther">Capital Funding <span class="pull-right">{{budget.capital | currency:'£':'symbol':'1.0-0'}}</span></div>
+          <div *ngIf="showRevenueGla || showRevenueOther">Revenue Funding <span class="pull-right">{{budget.revenue | currency:'£':'symbol':'1.0-0'}}</span></div>
+        </div>
+      </div>
+  
+      <div class="mtop20 unclaimed grant" *ngIf="!section.claim">
+        <div class="clearfix">
+          <span class="label">Unclaimed grant payment amount</span>
+          <span class="pull-right"> {{unclaimedGrant.total | currency:'£':'symbol':'1.0-0'}}</span>
+        </div>
+        <div class="payment-group">
+          <div *ngIf="showCapitalGla || showCapitalOther">Capital Grant <span class="pull-right">{{unclaimedGrant.capital | currency:'£':'symbol':'1.0-0'}}</span></div>
+          <div *ngIf="showRevenueGla || showRevenueOther">Revenue Grant <span class="pull-right">{{unclaimedGrant.revenue | currency:'£':'symbol':'1.0-0'}}</span></div>
+        </div>
+      </div>
+  
+      <div class="mtop20">
+        <div class="clearfix">
+          <span class="label">Grant payment amount</span>
+          <span class="pull-right"> {{((section.totalCapitalValue + section.totalRevenueValue) || 0) | currency:'£':'symbol':'1.0-0'}}</span>
+        </div>
+        <div class="payment-group">
+          <div *ngIf="showCapitalGla || showCapitalOther">Capital Grant <span class="pull-right">{{(section.totalCapitalValue || 0) | currency:'£':'symbol':'1.0-0'}}</span></div>
+          <div *ngIf="showRevenueGla || showRevenueOther">Revenue Grant <span class="pull-right">{{(section.totalRevenueValue || 0) | currency:'£':'symbol':'1.0-0'}}</span></div>
+        </div>
+      </div>
+
+      <br/>
+
+      <div class="clearfix">
+            <span class="label">Claimed by:</span>
+            <span class="pull-right">{{section.claim.claimedBy}}</span>
+          </div>
+          <div class="clearfix">
+            <span class="label">Claimed on:</span>
+            <span class="pull-right">{{section.claim.claimedOn | date: 'dd/MM/yyyy HH:mm'}}</span>
+          </div>
+          <div class="clearfix">
+            <span class="label">Authorised by:</span>
+            <span class="pull-right">{{section.authorisedBy}}</span>
+          </div>
+          <div class="clearfix">
+            <span class="label">Authorised on:</span>
+            <span class="pull-right">{{section.authorisedOn | date: 'dd/MM/yyyy HH:mm'}}</span>
+          </div>
+
+      <br/>
+
+      <div class="form-group">
+            <label for="reason" class="pull-left">Reason for cancelling claim</label>
+            <textarea #reason="ngModel"
+                      [(ngModel)]="reasonComments"
+                      id="reason"
+                      name="reason"
+                      rows="5"
+                      class="form-control"
+                      required
+                      maxlength="200">
+            </textarea>
+          </div>
+    </div>
+  
+    <div class="modal-footer">
+      <div class="row">
+        <div class="col-xs-12 text-center">
+  
+          <button
+            id="cancel-approved-claim-btn"
+            class="btn btn-default btn-secondary btn-negative btn-center"
+            [disabled]="!reasonComments"
+            type="button"
+            (click)="onConfirm()">CANCEL CLAIM</button>
+  
+          <div class="mtop20 mbottom10">
+            <a href="JavaScript:void(0)" class="form-cancel dismiss-btn" (click)="activeModal.dismiss()">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

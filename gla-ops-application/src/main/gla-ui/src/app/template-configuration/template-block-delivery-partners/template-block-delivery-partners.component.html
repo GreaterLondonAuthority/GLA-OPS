@@ -1,0 +1,286 @@
+<div class="template-block-delivery-partners">
+
+  <div class="form-group">
+    <label for="entityName">Entity name</label>
+    <input class="form-control"
+           id="entityName"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.entityName"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="hasDeliveryPartnersTitle">Has delivery partner question 1 text</label>
+    <input class="form-control"
+           id="hasDeliveryPartnersTitle"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.hasDeliveryPartnersTitle"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="question2">Question 2 text</label>
+    <input class="form-control"
+           id="question2"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.question2"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="question3">Question 3 text</label>
+    <input class="form-control"
+           id="question3"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.question3"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="question4">Question 4 text</label>
+    <input class="form-control"
+           id="question4"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.question4"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="question5">Question 5 text</label>
+    <input class="form-control"
+           id="question5"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.question5"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="deliveryPartnerType">Delivery Partner type</label>
+    <select [(ngModel)]="block.deliveryPartnerType"
+            [disabled]="readOnly || !editable"
+            class="form-control"
+            id="deliveryPartnerType">
+      <option disabled value="undefined"></option>
+      <option *ngFor="let deliveryPartnerType of deliveryPartnerTypes" [ngValue]="deliveryPartnerType.id">{{deliveryPartnerType.label}}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="retentionFeeThreshold">Retention fee threshold (%)</label>
+    <input class="form-control"
+           id="retentionFeeThreshold"
+           mask="separator.2"
+           numberType
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.retentionFeeThreshold"
+           maxlength="12"
+           thousandSeparator=""/>
+  </div>
+
+  <div class="form-group">
+    <label class="mtop10 mbottom10" for="grant-types">
+      <gla-markdown [text]="'Available deliverable types'"></gla-markdown>
+    </label>
+    <div *ngIf="!readOnly && editable">
+      <gla-multi-select id="grant-types"
+                        (onChange)="onMultiSelectChange($event, deliverableTypes)"
+                        [filterDropdownItems]="deliverableTypes"></gla-multi-select>
+    </div>
+    <div *ngIf="readOnly || !editable">{{block.availableDeliverableTypes || 'Not provided'}}</div>
+  </div>
+
+  <hr/>
+  <div class="text-center bolder mtop5">Delivery Partner table columns</div>
+  <div class="text-center mbottom15">default column names will be used if not amended</div>
+
+  <div class="form-group">
+    <label for="organisationNameColumnText">Organisation name column text</label>
+    <input class="form-control"
+           id="organisationNameColumnText"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.organisationNameColumnText"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="showOrganisationType">Show organisation type&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showOrganisationType"
+                        [disabled]="readOnly || !editable"
+                        name="showorganisationtype"
+                        mode="bool"
+                        [(model)]="block.showOrganisationType">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group" *ngIf="block.showOrganisationType">
+    <label for="organisationTypeColumnName">Organisation type column text</label>
+    <input class="form-control"
+           id="organisationTypeColumnName"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.organisationTypeColumnName"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="showRoleColumn">Show role column&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showRoleColumn"
+                        [disabled]="readOnly || !editable"
+                        name="showrolecolumn"
+                        mode="bool"
+                        [(model)]="block.showRoleColumn">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group" *ngIf="block.showRoleColumn">
+    <label for="roleColumnText">Role column text</label>
+    <input class="form-control"
+           id="roleColumnText"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.roleColumnText"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="showUkprnColumn">Show UKPRN column&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showUkprnColumn"
+                        [disabled]="readOnly || !editable"
+                        name="showukprncolumn"
+                        mode="bool"
+                        [(model)]="block.showUkprnColumn">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group" *ngIf="block.showUkprnColumn">
+    <label for="ukprnColumnText">UKPRN column text</label>
+    <input class="form-control"
+           id="ukprnColumnText"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.ukprnColumnText"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="showContractValueColumn">Show contract value column&nbsp;&nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showContractValueColumn"
+                        [disabled]="readOnly || !editable"
+                        name="showcontractvaluecolumn"
+                        mode="bool"
+                        [(model)]="block.showContractValueColumn">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group" *ngIf="block.showContractValueColumn">
+    <label for="contractValueColumnText">Contract value column text</label>
+    <input class="form-control"
+           id="contractValueColumnText"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.contractValueColumnText"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <hr/>
+  <div class="text-center bolder mtop5 mbottom10" *ngIf="block.showDeliverables">Deliverable table columns</div>
+  <div class="text-center mbottom15" *ngIf="block.showDeliverables">default column names will be used if not amended</div>
+
+  <div class="form-group">
+    <label for="showDeliverables">Show deliverable table columns &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="showDeliverables"
+                        [disabled]="readOnly || !editable"
+                        name="showdeliverables"
+                        mode="bool"
+                        [(model)]="block.showDeliverables">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group" *ngIf="block.showDeliverables">
+    <label for="deliverableName">Deliverable name</label>
+    <input class="form-control"
+           id="deliverableName"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.deliverableName"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group" *ngIf="block.showDeliverables">
+    <label for="quantityName">Quantity name</label>
+    <input class="form-control"
+           id="quantityName"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.quantityName"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group" *ngIf="block.showDeliverables">
+    <label for="valueName">Value name</label>
+    <input class="form-control"
+           id="valueName"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.valueName"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+  <div class="form-group" *ngIf="block.showDeliverables">
+    <label for="feeName">Fee name</label>
+    <input class="form-control"
+           id="feeName"
+           maxlength="255"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.feeName"
+           number-mask="0"
+           placeholder=""
+           type="text"/>
+  </div>
+
+</div>

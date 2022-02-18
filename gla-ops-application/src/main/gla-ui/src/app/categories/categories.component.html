@@ -1,0 +1,47 @@
+<div class="categories-page">
+<gla-page-header hideBackBtn="true">Categories</gla-page-header>
+</div>
+
+<gla-well class="row categories-list-actions mbottom10 search-container">
+  <div class="col-md-5 search-column">
+    <gla-search-field [options]="searchOptions"
+                      [(selectedOption)]="selectedSearchOption"
+                      [(searchText)]="searchText"
+                      (onSelect)="select(selectedSearchOption)"
+                      (onSearch)="search()"
+                      (onClear)="clearSearchText()"></gla-search-field>
+  </div>
+</gla-well>
+
+<ul ngbNav #nav="ngbNav" class="nav-tabs mtop20" [(activeId)]="activeTabIndex" (navChange)="onNavChange($event)">
+
+  <li ngbNavItem [ngbNavItem]="tabs.budgetCategories" class="uib-tab" [ngClass]="{active: activeTabIndex == tabs.budgetCategories }">
+    <a ngbNavLink>BUDGET CATEGORIES</a>
+    <ng-template ngbNavContent>
+      <gla-config-list-items [budgetCategories]="budgetCategories"
+                             [state]="state"
+                             [stateParams]="stateParams">
+      </gla-config-list-items>
+    </ng-template>
+  </li>
+
+  <li ngbNavItem [ngbNavItem]="tabs.financeCategories" class="uib-tab" [ngClass]="{active: activeTabIndex == tabs.financeCategories}">
+    <a ngbNavLink>FINANCE CATEGORIES</a>
+    <ng-template ngbNavContent>
+      <gla-finance-categories [financeCategories]="financeCategories"
+                              [state]="state"
+                              [stateParams]="stateParams"></gla-finance-categories>
+    </ng-template>
+  </li>
+
+  <li ngbNavItem [ngbNavItem]="tabs.outputCategories" class="uib-tab" [ngClass]="{active: activeTabIndex == tabs.outputCategories}">
+    <a ngbNavLink>OUTPUT CATEGORIES</a>
+    <ng-template ngbNavContent>
+      <gla-output-categories [outputConfigurations]="outputCategories"></gla-output-categories>
+    </ng-template>
+  </li>
+
+
+</ul>
+<div [ngbNavOutlet]="nav"></div>
+

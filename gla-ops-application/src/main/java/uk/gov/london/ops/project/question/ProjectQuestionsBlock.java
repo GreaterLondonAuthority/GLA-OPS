@@ -7,11 +7,8 @@
  */
 package uk.gov.london.ops.project.question;
 
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.ReportPrefix;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -26,7 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
@@ -35,7 +32,6 @@ import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.block.ProjectDifference;
 import uk.gov.london.ops.project.block.ProjectDifferences;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
 import uk.gov.london.ops.project.state.StateTransition;
 import uk.gov.london.ops.project.template.domain.AnswerType;
 import uk.gov.london.ops.project.template.domain.Question;
@@ -236,21 +232,6 @@ public class ProjectQuestionsBlock extends NamedProjectBlock implements Question
     }
 
     @Override
-    public Map<String, Object> simpleDataExtract(SimpleProjectExportConfig config) {
-        Map<String, Object> map = new HashMap<>();
-        for (Answer answer : answers) {
-            map.put(buildDataExtractKey(answer.getQuestion()),
-                    answer.getAnswer() != null ? answer.getAnswer() : answer.getNumericAnswer());
-        }
-        return map;
-    }
-
-    private String buildDataExtractKey(Question question) {
-        return ReportPrefix.q_ + (StringUtils.isEmpty(question.getExternalKey()) ? ("q" + question.getId())
-                : question.getExternalKey());
-    }
-
-    @Override
     protected void initFromTemplateSpecific(TemplateBlock templateBlock) {
         QuestionsTemplateBlock qtb = (QuestionsTemplateBlock) templateBlock;
         for (TemplateQuestion tq : qtb.getQuestions()) {
@@ -267,12 +248,10 @@ public class ProjectQuestionsBlock extends NamedProjectBlock implements Question
     @Override
     protected void compareBlockSpecificContent(NamedProjectBlock other, ProjectDifferences differences) {
         ProjectQuestionsBlock otherQuestionsBlock = (ProjectQuestionsBlock) other;
-
         Map<Integer, Answer> thisAnswers = this.questionToAnswerMap();
         Map<Integer, Answer> otherAnswers = otherQuestionsBlock.questionToAnswerMap();
 
         for (Integer questionId : thisAnswers.keySet()) {
-
             // additions
             ProjectQuestion thisQuestion = this.getProjectQuestionByQuestionId(questionId);
             ProjectQuestion otherQuestion = otherQuestionsBlock.getProjectQuestionByQuestionId(questionId);

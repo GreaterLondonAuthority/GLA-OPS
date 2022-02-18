@@ -14,7 +14,7 @@
   .org-user-approved {
     display: inline-block;
     margin-right: 10px;
-    color: #31ae52;
+    color: $green-spring;
   }
 
   .organisations {
@@ -40,5 +40,9 @@
 
   .pending{
     color: lighten($secondary-text, 10%);
+  }
+
+  .lighter {
+    color: #6E6E6E
   }
 }

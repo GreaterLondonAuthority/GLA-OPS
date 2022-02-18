@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  margin: auto;
+
+  .multipanel-container {
+    padding: 20px;
+    position: relative;
+
+    .btn-edit {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      margin: 20px;
+    }
+  }
+}

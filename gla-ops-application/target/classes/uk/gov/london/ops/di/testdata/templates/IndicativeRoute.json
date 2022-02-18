@@ -1,0 +1,175 @@
+{
+
+  "name": "Indicative",
+  "author": "nahida miah",
+  "blocksEnabled":
+
+  [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "block": "Details",
+      "displayOrder": 0
+    },
+    {
+      "type": "IndicativeGrantTemplateBlock",
+      "block": "IndicativeGrant",
+      "displayOrder": 1,
+      "tenureYears": [
+        {
+          "year": 2017,
+          "externalId": 4001,
+          "tariffRate": 28000
+        },
+        {
+          "year": 2018,
+          "externalId": 4001,
+          "tariffRate": 29000
+        },
+        {
+          "year": 2019,
+          "externalId": 4001,
+          "tariffRate": 30000
+        },
+        {
+          "year": 2017,
+          "externalId": 4002,
+          "tariffRate": 28000
+        },
+        {
+          "year": 2019,
+          "externalId": 4002,
+          "tariffRate": 30000
+        }
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "block": "Questions",
+      "blockDisplayName": "Questions",
+      "displayOrder": 2,
+      "questions":
+      [
+        {
+          "question":
+          {
+            "id":519,
+            "text": "Please confirm how many of the units identified in your indicative bid are 'reserved' for potential conversion of market homes to affordable homes",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "mandatory",
+          "displayOrder": 0
+        },
+        {
+          "question":
+          {
+            "id":520,
+            "text": "Number of market homes in overall delivery programme (April 2015 - March 2021) in London",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "optional",
+          "displayOrder": 1
+        },
+        {
+          "question":
+          {
+            "id":521,
+            "text": "Number of affordable homes in overall delivery programme (April 2015 - March 2021) in London",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "optional",
+          "displayOrder": 2
+        },
+        {
+          "question":
+          {
+            "id": 522,
+            "text": "Total housing stock currently owned in London",
+            "answerType": "Number",
+            "answerOptions": []
+          },
+          "requirement": "optional",
+          "displayOrder" : 3
+        }
+      ]
+
+    }
+  ],
+  "internalBlocks": [
+    {
+      "json_type": "InternalRiskTemplateBlock",
+      "type": "Risk",
+      "displayOrder": 0,
+      "blockDisplayName": "RISK",
+      "riskAdjustedFiguresFlag": true,
+      "infoMessage": "abc",
+      "ratingList": [
+        {
+          "name":"Red",
+          "description":"Higher than 70% chance that the project will not achieve key milestones within the current financial year",
+          "color":"#c63c32",
+          "displayOrder":1
+        },
+        {
+          "name":"Amber",
+          "description":"Higher than 30% chance that the project will not achieve key milestones within the current financial year",
+          "color":"#ea961c",
+          "displayOrder":2
+        },
+        {
+          "name":"Green",
+          "description":"Less than 30% chance that the project will not achieve key milestones within the current financial year",
+          "color":"#23ae52",
+          "displayOrder":3
+        }
+      ]
+    },
+    {
+      "json_type": "InternalAssessmentTemplateBlock",
+      "type": "Assessment",
+      "displayOrder": 1,
+      "blockDisplayName": "ASSESSMENT",
+      "infoMessage": "abc"
+    }
+  ],
+
+  "stateModel": "ChangeControlled",
+  "allowMonetaryMilestones": true,
+  "warningMessage": null,
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "postcodeRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": null,
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden"
+  },
+
+  "tenureTypes":
+  [
+    {
+      "name": "London Shared Ownership",
+      "externalId": 4002,
+      "tariffRate": 28000,
+      "displayOrder": 1
+    },
+    {
+      "name": "London Living Rent",
+      "externalId": 4001,
+      "tariffRate": 28000,
+      "displayOrder": 0
+    }
+  ],
+
+  "indicativeTenureConfiguration": {
+    "indicativeTenureStartYear": 2017,
+    "indicativeTenureNumberOfYears": 3
+  }
+}

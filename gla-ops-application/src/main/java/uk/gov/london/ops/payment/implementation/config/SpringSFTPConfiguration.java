@@ -27,7 +27,6 @@ import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
 import uk.gov.london.ops.payment.implementation.sap.MoveItSynchroniser;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * SFTP Connection to sync directories
@@ -61,9 +60,6 @@ public class SpringSFTPConfiguration {
     @Value("${sap.ftp.remote.path.outgoing.invoices}")
     private String ftpRemoteOutgoingInvoicesDir;
 
-    @Value("${sap.ftp.remote.path.incoming}")
-    private String ftpRemoteIncomingDir;
-
     @Value("${sap.ftp.username}")
     private String username;
 
@@ -87,7 +83,6 @@ public class SpringSFTPConfiguration {
 
     @Bean
     public SessionFactory<ChannelSftp.LsEntry> sftpSessionFactory() {
-        CachingSessionFactory<ChannelSftp.LsEntry> lsEntryCachingSessionFactory = null;
         DefaultSftpSessionFactory factory = new DefaultSftpSessionFactory();
         factory.setHost(hostname);
         factory.setPort(port);
@@ -95,14 +90,13 @@ public class SpringSFTPConfiguration {
         factory.setPassword(password);
         factory.setTimeout(timeout);
         factory.setAllowUnknownKeys(true);
-        lsEntryCachingSessionFactory = new CachingSessionFactory<>(factory);
-
-        return lsEntryCachingSessionFactory;
+        return new CachingSessionFactory<>(factory);
     }
 
     @Bean(name = "actualsSynchroniser")
     public MoveItSynchroniser actualsSynchroniser() {
-        MoveItSynchroniser fileSynchroniser = new MoveItSynchroniser(sftpSessionFactory(), lockRegistry, SYNC_ACTUALS_TASK_KEY, SYNC_ACTUALS_LOCK_KEY);
+        MoveItSynchroniser fileSynchroniser = new MoveItSynchroniser(sftpSessionFactory(), lockRegistry, SYNC_ACTUALS_TASK_KEY,
+                SYNC_ACTUALS_LOCK_KEY);
         fileSynchroniser.setDeleteRemoteFiles(deleteRemoteFiles);
         fileSynchroniser.setRemoteDirectory(ftpRemoteOutgoingDir);
         fileSynchroniser.setLocalDirectory(ftpInboundDir);
@@ -112,7 +106,8 @@ public class SpringSFTPConfiguration {
 
     @Bean(name = "invoiceResponseSynchroniser")
     public MoveItSynchroniser invoiceResponseSynchroniser() {
-        MoveItSynchroniser fileSynchronizer = new MoveItSynchroniser(sftpSessionFactory(), lockRegistry, SYNC_INVOICES_TASK_KEY, SYNC_INVOICES_LOCK_KEY);
+        MoveItSynchroniser fileSynchronizer = new MoveItSynchroniser(sftpSessionFactory(), lockRegistry, SYNC_INVOICES_TASK_KEY,
+                SYNC_INVOICES_LOCK_KEY);
         fileSynchronizer.setDeleteRemoteFiles(deleteRemoteFiles);
         fileSynchronizer.setRemoteDirectory(ftpRemoteOutgoingInvoicesDir);
         fileSynchronizer.setLocalDirectory(ftpInboundInvoicesDir);
@@ -120,16 +115,8 @@ public class SpringSFTPConfiguration {
         return fileSynchronizer;
     }
 
-    private void testSftpConnection(MoveItSynchroniser fileSynchronizer) {
-        log.info("Testing SFTP file sync...");
-        List<String> remoteFileList = fileSynchronizer.getRemoteFileList();
-        for (String fileName : remoteFileList) {
-            log.info("  Found " + fileName);
-        }
-    }
-
     @Bean(name = "MessageSource")
-    @InboundChannelAdapter(channel = "sftpChannel", poller = @Poller(fixedRate = "300000", maxMessagesPerPoll = "-1") )
+    @InboundChannelAdapter(channel = "sftpChannel", poller = @Poller(fixedRate = "300000", maxMessagesPerPoll = "-1"))
     public MessageSource<File> sftpMessageSource() {
         SftpInboundFileSynchronizingMessageSource source = new SftpInboundFileSynchronizingMessageSource(actualsSynchroniser());
         source.setLocalDirectory(new File(ftpInboundDir));
@@ -140,9 +127,11 @@ public class SpringSFTPConfiguration {
     }
 
     @Bean(name = "InvoiceResponsesMessageSource")
-    @InboundChannelAdapter(channel = "invoiceResponsesSftpChannel", poller = @Poller(fixedRate = "60000", maxMessagesPerPoll = "-1") )
+    @InboundChannelAdapter(channel = "invoiceResponsesSftpChannel", poller = @Poller(fixedRate = "60000",
+            maxMessagesPerPoll = "-1"))
     public MessageSource<File> invoiceResponsesMessageSource() {
-        SftpInboundFileSynchronizingMessageSource source = new SftpInboundFileSynchronizingMessageSource(invoiceResponseSynchroniser());
+        SftpInboundFileSynchronizingMessageSource source =
+                new SftpInboundFileSynchronizingMessageSource(invoiceResponseSynchroniser());
         source.setLocalDirectory(new File(ftpInboundInvoicesDir));
         source.setAutoCreateLocalDirectory(true);
         source.setLocalFilter(new AcceptOnceFileListFilter<>());

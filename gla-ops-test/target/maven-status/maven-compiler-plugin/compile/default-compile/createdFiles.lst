@@ -1,0 +1,3 @@
+uk\gov\london\ops\test\BeanTester.class
+uk\gov\london\ops\test\BeanTester$BeanValidationFailure.class
+uk\gov\london\ops\test\OpsSpringBootTestConfig.class

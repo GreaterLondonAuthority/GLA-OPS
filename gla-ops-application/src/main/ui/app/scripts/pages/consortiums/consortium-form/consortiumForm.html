@@ -10,8 +10,8 @@
                 name="programme"
                 ng-class="{'select-as-input': $ctrl.readOnly || $ctrl.isEdit}"
                 ng-disabled="$ctrl.readOnly || $ctrl.isEdit"
-                ng-model="$ctrl.data.programme"
-                ng-options="programme as programme.name for programme in $ctrl.programmes track by programme.id"
+                ng-model="$ctrl.data.programmeId"
+                ng-options="programme.id as programme.name for programme in $ctrl.programmes"
                 required
                 style-placeholder="">
           <option disabled value="">Select a programme</option>

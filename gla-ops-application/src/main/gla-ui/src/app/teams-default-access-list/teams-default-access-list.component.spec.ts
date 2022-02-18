@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {TeamsDefaultAccessListComponent} from './teams-default-access-list.component';
 
@@ -6,7 +6,7 @@ describe('TeamsDefaultAccessListComponent', () => {
   let component: TeamsDefaultAccessListComponent;
   let fixture: ComponentFixture<TeamsDefaultAccessListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TeamsDefaultAccessListComponent ]
     })

@@ -10,9 +10,11 @@ package uk.gov.london.ops.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import uk.gov.london.ops.domain.Comment;
 import uk.gov.london.ops.framework.EntityType;
 
+@Repository
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     Page<Comment> findAllByEntityTypeAndEntityId(EntityType entityType, Integer entityId, Pageable pageable);

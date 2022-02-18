@@ -38,7 +38,7 @@
   </div>
   <hr class="mtop5">
 
-  <report-section item="item" ng-repeat="item in $ctrl.blocksToCompare track by item.id" on-collapse-change="$ctrl.toggleBlock($event, $ctrl.blocksToCompare)" show-changes="true">
+  <report-section item="item" ng-repeat="item in $ctrl.blocksToCompare track by item.id" on-collapse-change="$ctrl.toggleBlock($event, $ctrl.blocksToCompare)" show-changes="true" ang-if="item.type === 'IndicativeGrantBlock'">
     <div ng-if="item.type !== 'ProjectHistory'">
       <change-report-field ng-if="item.versionObj" data="item.versionObj" fields="'versionString'" class="block-version" ng-class="{'next-to-tables': $ctrl.hasTables(item)}"></change-report-field>
       <project-details-change-report data="item" ng-if="item.type === 'ProjectDetailsBlock'"></project-details-change-report>
@@ -68,11 +68,14 @@
       <internal-blocks-change-report ng-if="item.type === 'InternalBlocks'"
                                      project="$ctrl.latestProject"
                                      comments="$ctrl.internalRiskComments"></internal-blocks-change-report>
+
       <delivery-partners-change-report data="item" ng-if="item.type === 'DeliveryPartnersBlock'"></delivery-partners-change-report>
+
+      <gla-indicative-starts-and-completions-change-report [data]="item" ng-if="item.type === 'AffordableHomesBlock'"></gla-indicative-starts-and-completions-change-report>
       <hr ng-if="!$last">
     </div>
     <div class="report-block-content" ng-show="item.expanded" ng-if="item.type === 'ProjectHistory'"  ng-class="[item.blockDisplayCls]">
-      <div class="text-left lighter metainformation" id="metadata-{{$index}}">{{item.latestComment.createdOn | date: "dd/MM/yyyy 'at' HH:mm"}} {{item.latestComment.description || $ctrl.transitionMap[item.latestComment.transition] || item.latestComment.transition}} by {{ item.latestComment.createdByFirstName}} {{ item.latestComment.createdByLastName}}</div>
+      <div class="text-left lighter metainformation" id="metadata-{{$index}}">{{item.latestComment.createdOn | date: "dd/MM/yyyy 'at' HH:mm"}} {{item.latestComment.description || $ctrl.transitionMap[item.latestComment.transition] || item.latestComment.transition}} by {{ item.latestComment.creatorName}}</div>
       <div class="text-left comment">{{item.latestComment.comments}}</div>
     </div>
   </report-section>

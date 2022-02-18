@@ -8,6 +8,8 @@
 
 NotificationsService.$inject = ['$http', 'config'];
 
+const STATUS_DELETED = 'Deleted';
+
 function NotificationsService($http, config) {
   return {
 
@@ -32,11 +34,27 @@ function NotificationsService($http, config) {
         method: 'PUT'
       })
     },
-    updateNotificationStatus(id, status){
+
+    deleteNotification(id){
       return $http({
         url: `${config.basePath}/notifications/${id}/status`,
         method: 'PUT',
-        data:  status
+        data: STATUS_DELETED
+      })
+    },
+
+    deleteNotifications(ids){
+      let deleteNotificationsRequest = [];
+      _.forEach(ids, (id) => {
+        deleteNotificationsRequest.push({
+          id: id,
+          status: STATUS_DELETED
+        })
+      });
+      return $http({
+        url: `${config.basePath}/notifications/statuses`,
+        method: 'PUT',
+        data: deleteNotificationsRequest
       })
     },
 
@@ -50,6 +68,7 @@ function NotificationsService($http, config) {
       })
     },
 
+    //TODO remove
     watchEntity(userName, entityId, entityType){
       return $http({
         url: `${config.basePath}/subscriptions`,
@@ -61,6 +80,8 @@ function NotificationsService($http, config) {
         }
       })
     },
+
+    //TODO remove
     unwatchEntity(username, projectId, entityType) {
       return $http({
         url: `${config.basePath}/subscriptions/${username}/${entityType}/${projectId}`,
@@ -68,45 +89,21 @@ function NotificationsService($http, config) {
       })
     },
 
+    //TODO remove
     watchProject(username, projectId) {
       return this.watchEntity(username, projectId, 'project');
-      // return $http({
-      //   url: `${config.basePath}/subscriptions`,
-      //   method: 'POST',
-      //   data: {
-      //     username: username,
-      //     entityType: 'project',
-      //     entityId: projectId
-      //   }
-      // })
     },
 
+    //TODO remove
     unwatchProject(username, projectId) {
       return this.unwatchEntity(username, projectId, 'project');
-      // return $http({
-      //   url: `${config.basePath}/subscriptions/${username}/project/${projectId}`,
-      //   method: 'DELETE'
-      // })
     },
     watchOrganisation(username, organisationId) {
       return this.watchEntity(username, organisationId, 'organisation');
-      // return $http({
-      //   url: `${config.basePath}/subscriptions`,
-      //   method: 'POST',
-      //   data: {
-      //     username: username,
-      //     entityType: 'organiation',
-      //     entityId: projectId
-      //   }
-      // })
     },
 
     unwatchOrganisation(username, organisationId) {
       return this.unwatchEntity(username, organisationId, 'organisation');
-      // return $http({
-      //   url: `${config.basePath}/subscriptions/${username}/project/${projectId}`,
-      //   method: 'DELETE'
-      // })
     },
 
     getAllNotifications(){

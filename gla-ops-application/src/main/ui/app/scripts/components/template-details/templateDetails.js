@@ -10,7 +10,8 @@ const gla = angular.module('GLA');
 
 class TemplateDetails {
 
-  constructor() {
+  constructor(TemplateService) {
+    this.TemplateService = TemplateService
   }
 
   $onInit() {
@@ -28,13 +29,29 @@ class TemplateDetails {
         label: 'Multi Assessment'
       }
     ]
+    this.isEditingTemplateType = false
   }
 
   hasErrors(){
     return !!(this.template.numberOfProjectAllowedPerOrg && this.template.numberOfProjectAllowedPerOrg < 1);
   }
 
+  editTemplateType() {
+    if (this.isEditingTemplateType == false) {
+      this.isEditingTemplateType = true
+    } else {
+      this.isEditingTemplateType = false
+      this.performUpdate()
+    }
+  }
+
+  getReadOnlyText() {
+    return this.template.programmeAllocation ? 'Project Allocation' : 'Project'
+  }
+
 }
+
+TemplateDetails.$inject = ['TemplateService']
 
 gla.component('templateDetails', {
   templateUrl: 'scripts/components/template-details/templateDetails.html',
@@ -42,7 +59,10 @@ gla.component('templateDetails', {
   bindings: {
     template: '<',
     readOnly: '<',
-    hasErrors: '&'
+    templateId: '<',
+    editable: '<',
+    hasErrors: '&',
+    performUpdate: '&'
   },
 });
 

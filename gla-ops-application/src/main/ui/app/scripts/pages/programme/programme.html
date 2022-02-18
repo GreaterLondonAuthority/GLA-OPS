@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <multi-panel class="mbottom20 public-profile">
+    <gla-multi-panel class="mbottom20 public-profile">
       <div class="section full-page-section">
         <div class="section-header">Public Profile</div>
 
@@ -71,9 +71,9 @@
         </mp-field>
 
       </div>
-    </multi-panel>
+    </gla-multi-panel>
 
-    <multi-panel class="mbottom20 programme-information">
+    <gla-multi-panel class="mbottom20 programme-information">
       <div class="section full-page-section">
         <div class="section-header">Programme information</div>
 
@@ -144,17 +144,112 @@
           </div>
         </mp-field>
 
-        <mp-field label="$ctrl.labels.companyEmail">
-          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.companyEmail}}</span>
+        <mp-field label="$ctrl.labels.companyEmail" tooltip="!$ctrl.readOnly" tooltip-id="$ctrl.companyEmailTooltipId"
+                  tooltip-text="$ctrl.companyEmailTooltip">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.programme.companyEmail}} </span>
 
           <div ng-if="!$ctrl.readOnly">
             <input ng-if="!$ctrl.readOnly"
                    aria-label="{{$ctrl.labels.companyEmail}}"
-                   class="form-control"
+                   class="form-control mtop5"
                    type="text"
+                   name="companyEmail"
+                   id="companyEmail"
                    maxlength="100"
+                   ng-pattern="/^([\w+-.%]+@[\w.-]+\.[A-Za-z]{2,4})(,(\s)*[\w+-.%]+@[\w.-]+\.[A-Za-z]{2,4})*$/"
                    ng-model="$ctrl.programme.companyEmail">
+            <div class="error-wrapper" role="alert" ng-show="newProgForm.companyEmail.$error.pattern">
+              <span class="error">Email must be in a standard format</span>
+            </div>
           </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.openingDate" id="opening-date-field">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.openingDateString}}</span>
+          <div ng-if="!$ctrl.readOnly" class="date-picker" id="opening-date">
+            <div class="input-group">
+              <input ng-change="$ctrl.onOpeningDateChange($ctrl.openingDateModel)" ng-class="{white: !$ctrl.readOnly}"
+                     ng-click="showDatePopup = !showDatePopup"
+                     id="openingDate"
+                     placeholder="{{$ctrl.openingDateString? $ctrl.openingDateString : 'Select date'}}"
+                     class="form-control"
+                     uib-datepicker-popup="{{$ctrl.openingDateOptions.format}}"
+                     ng-model="$ctrl.openingDateModel"
+                     is-open="showDatePopup"
+                     datepicker-options="$ctrl.openingDateOptions"
+                     show-button-bar="false"
+                     readonly
+                     tabindex="-1"
+                     ng-disabled="$ctrl.readOnly"
+                     close-text="Close"/>
+              <span tabindex="0" allow-enter aria-label="Calendar" role="button" class="input-group-addon" ng-click="showDatePopup = !showDatePopup" ng-class="{disabled: $ctrl.readOnly}">
+                <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+            </div>
+
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.openingHour" id="opening-hour-field">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.openingHour.label}}</span>
+          <select aria-label="{{$ctrl.labels.openingHour}}"
+                  class="form-control"
+                  id="programme-year-type"
+                  name="openingHour"
+                  ng-if="!$ctrl.readOnly"
+                  ng-change="$ctrl.onHourChange()"
+                  ng-model="$ctrl.openingHour"
+                  ng-options="hour.label for hour in $ctrl.hourOptions"
+                  style-placeholder="">
+            <option disabled value="">Select opening hour</option>
+          </select>
+          <!-- <div class="error-wrapper" ng-if="newProgForm.formattedStartYear.$touched || $ctrl.startYearInvalidMsg" role="alert">
+            <span class="error" id="start-year-invalid">{{$ctrl.startYearInvalidMsg}}</span>
+          </div> -->
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.closingDate" id="closing-date-field">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.closingDateString}}</span>
+          <div ng-if="!$ctrl.readOnly" class="date-picker" id="closing-date">
+            <div class="input-group">
+              <input ng-change="$ctrl.onClosingDateChange($ctrl.closingDateModel)" ng-class="{white: !$ctrl.readOnly}"
+                     ng-click="showDatePopup = !showDatePopup"
+                     id="closingDate"
+                     placeholder="{{$ctrl.closingDateString? $ctrl.closingDateString : 'Select date'}}"
+                     class="form-control"
+                     uib-datepicker-popup="{{$ctrl.closingDateOptions.format}}"
+                     ng-model="$ctrl.closingDateModel"
+                     is-open="showDatePopup"
+                     datepicker-options="$ctrl.closingDateOptions"
+                     show-button-bar="false"
+                     readonly
+                     tabindex="-1"
+                     ng-disabled="$ctrl.readOnly"
+                     close-text="Close"/>
+              <span tabindex="0" allow-enter aria-label="Calendar" role="button" class="input-group-addon" ng-click="showDatePopup = !showDatePopup" ng-class="{disabled: $ctrl.readOnly}">
+                <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+            </div>
+
+          </div>
+        </mp-field>
+
+        <mp-field label="$ctrl.labels.closingHour" id="closing-hour-field">
+          <span ng-if="$ctrl.readOnly">{{$ctrl.closingHour.label}}</span>
+          <select aria-label="{{$ctrl.labels.closingHour}}"
+                  class="form-control"
+                  id="programme-year-type"
+                  name="closingHour"
+                  ng-if="!$ctrl.readOnly"
+                  ng-change="$ctrl.onHourChange()"
+                  ng-model="$ctrl.closingHour"
+                  ng-options="hour.label for hour in $ctrl.hourOptions"
+                  style-placeholder="">
+            <option disabled value="">Select closing hour</option>
+          </select>
+          <!-- <div class="error-wrapper" ng-if="newProgForm.formattedStartYear.$touched || $ctrl.startYearInvalidMsg" role="alert">
+            <span class="error" id="start-year-invalid">{{$ctrl.startYearInvalidMsg}}</span>
+          </div> -->
         </mp-field>
 
         <mp-field label="$ctrl.labels.enableForProjects">
@@ -166,6 +261,7 @@
                      type="radio"
                      name="enabled"
                      ng-model="$ctrl.programme.enabled"
+                     ng-disabled="!!$ctrl.programme.openingDatetime || !!ctrl.programme.closingDatetime"
                      ng-value="true"> Yes
             </label>
             <label class="radio-inline">
@@ -173,6 +269,7 @@
                      type="radio"
                      name="enabled"
                      ng-model="$ctrl.programme.enabled"
+                     ng-disabled="!!$ctrl.programme.openingDatetime || !!ctrl.programme.closingDatetime"
                      ng-value="false"> No
             </label>
           </div>
@@ -255,7 +352,7 @@
 
         <div class="gla-label mtop10" ng-if="$ctrl.programme.id"><a ui-sref="projects({programmeId: $ctrl.programme.id})">View all projects for this programme</a></div>
       </div>
-    </multi-panel>
+    </gla-multi-panel>
 
     <section-header2 class="collapse-project-types"
                      show-bar="true"

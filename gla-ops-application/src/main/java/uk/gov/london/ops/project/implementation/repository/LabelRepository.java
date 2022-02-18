@@ -14,14 +14,15 @@ import uk.gov.london.ops.project.label.Label;
 
 import java.util.Set;
 
-
 @Repository
 public interface LabelRepository extends JpaRepository<Label, Integer>  {
 
-    @Query(value = "select l.* from Label l inner join project_block_label pbl on pbl.project_block_id = ?1 and pbl.label_id = l.id", nativeQuery = true)
+    @Query(value = "select l.* from Label l inner join project_block_label pbl "
+            + "on pbl.project_block_id = ?1 and pbl.label_id = l.id", nativeQuery = true)
     Set<Label> findLabelsForBlock(Integer blockId);
 
     Set<Label> getAllByProjectId(Integer projectId);
 
     void deleteByProjectId(Integer projectId);
+
 }

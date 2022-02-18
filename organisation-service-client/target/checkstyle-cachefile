@@ -1,4 +1,10 @@
-#Thu Aug 13 12:22:40 BST 2020
-module-resource*?\:checkstyle-suppressions.xml=86BA3A19D50101CAD6227629BC87CB3D69A05F03
-module-resource*?\:checkstyle-xpath-suppressions.xml=E82AD8DF2BD1B0A54C5D5FF65FFE591FFF7C763B
-configuration*?=2F06CE4A65017AB8AC2A6E392684AE9AC04A9A69
+#Mon Oct 18 15:54:41 BST 2021
+module-resource*?\:checkstyle-suppressions.xml=1110E5C0DB682A99A7622D25070778F667B78A87
+C\:\\Projects\\GLA\\GlaRefresh2021\\organisation-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\organisation\\OrganisationGroupType.java=1634559744000
+C\:\\Projects\\GLA\\GlaRefresh2021\\organisation-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\organisation\\Organisation.java=1634559743997
+C\:\\Projects\\GLA\\GlaRefresh2021\\organisation-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\organisation\\OrganisationService.java=1634559744001
+C\:\\Projects\\GLA\\GlaRefresh2021\\organisation-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\organisation\\OrganisationStatus.java=1634559744002
+configuration*?=937AFE3D35B1B1A7D638AAA576AA44D4F5DDD66A
+module-resource*?\:checkstyle-xpath-suppressions.xml=B5221F1DDBE676905D565E9E1AD9F0618BC192C9
+C\:\\Projects\\GLA\\GlaRefresh2021\\organisation-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\organisation\\OrganisationChangeStatusReason.java=1634559743998
+C\:\\Projects\\GLA\\GlaRefresh2021\\organisation-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\organisation\\dto\\OrganisationModel.java=1634559744008

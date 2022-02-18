@@ -1,0 +1,58 @@
+<table class="table table-hover table-bordered table-default table-with-inputs"
+       ng-class="{'edit-mode': !$ctrl.isReadonly}">
+  <thead class="thead-inverse uppercase">
+  <tr>
+    <th scope="col" style="width: 25%">TENURE TYPE</th>
+    <th scope="col" class="number" style="width: 25%">TOTAL UNITS</th>
+    <th scope="col" class="number" style="width: 25%">OF WHICH NIL GRANT UNITS</th>
+    <th scope="col" class="number" style="width: 25%">£ TOTAL DEVELOPMENT COSTS</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="m in $ctrl.data.tenureTypeAndUnitsEntries track by m.id">
+    <th scope="row">{{ m.tenureType.name }}</th>
+    <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly, 'invalid-cell': $ctrl.hasErrors(m, 'totalUnits')}">
+      <input
+
+        ng-if="!$ctrl.isReadonly"
+        number-mask="0"
+        type="text"
+        ng-model="m.totalUnits"
+        maxlength="6"
+        change-on-blur="$ctrl.tenureChange(m)"
+        aria-label="total-units-input">
+      <span ng-if="$ctrl.isReadonly">{{m.totalUnits | number}}</span>
+    </td>
+
+    <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly,  'invalid-cell': $ctrl.hasErrors(m, 's106Units')}">
+      <input ng-if="!$ctrl.isReadonly"
+             number-mask="0"
+             type="text"
+             ng-model="m.s106Units"
+             maxlength="6"
+             change-on-blur="$ctrl.tenureChange(m)"
+             aria-label="s106-units-input">
+      <span ng-if="$ctrl.isReadonly">{{m.s106Units | number}}</span>
+    </td>
+
+    <td class="number" ng-class="{'read-only': $ctrl.isReadonly, 'cell-with-input': !$ctrl.isReadonly, 'invalid-cell': $ctrl.hasErrors(m, 'totalCost')}">
+      <input ng-if="!$ctrl.isReadonly"
+             number-mask="0"
+             type="text"
+             ng-model="m.totalCost"
+             maxlength="13"
+             change-on-blur="$ctrl.tenureChange(m)"
+             aria-label="total-cost-input">
+      <span ng-if="$ctrl.isReadonly">{{m.totalCost | number}}</span>
+    </td>
+  </tr>
+  </tbody>
+  <tfoot>
+  <tr>
+    <td>TOTAL</td>
+    <td class="number"><span role="status" class="sr-only">Total value for the column is </span>{{$ctrl.data.totals.totalUnits | number}}</td>
+    <td class="number"><span role="status" class="sr-only">Total value for the column is </span>{{$ctrl.data.totals.totalS106Units  | number}}</td>
+    <td class="number"><span role="status" class="sr-only">Total value for the column is </span>{{$ctrl.data.totals.totalCost  | number}}</td>
+  </tr>
+  </tfoot>
+</table>

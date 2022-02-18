@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="746" author="jsingh">
+        <addColumn tableName="project">
+            <column name="suspend_payments" type="boolean" defaultValue="false"
+                    remarks="true - any payments on the project are suspended." >
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="747" author="cmelville">
+        <addColumn tableName="milestone">
+            <column name="withdraw_reason" type="varchar(255)" remarks="reason for withdrawing the milestone" >
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

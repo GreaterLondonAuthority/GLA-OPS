@@ -13,7 +13,7 @@
 
     <properties>
         <jacoco.coverage.ratio>0.6</jacoco.coverage.ratio>
-        <jacoco.missed.class.count>0</jacoco.missed.class.count>
+        <jacoco.missed.class.count>4</jacoco.missed.class.count>
     </properties>
 
     <dependencies>
@@ -25,14 +25,62 @@
 
         <dependency>
             <groupId>uk.gov.london</groupId>
+            <artifactId>file-service-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.london</groupId>
             <artifactId>notification-service-client</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>uk.gov.london</groupId>
+            <artifactId>payment-service-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.london</groupId>
+            <artifactId>project-service-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.london</groupId>
+            <artifactId>user-service-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.london</groupId>
+            <artifactId>audit-service-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars</artifactId>
+            <version>4.0.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.london</groupId>
             <artifactId>gla-ops-test</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.kirviq</groupId>
+            <artifactId>dumbster</artifactId>
+            <version>1.7.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

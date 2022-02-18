@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<BugCollection version='4.0.4' threshold='medium' effort='default'><Error></Error><Project><SrcDir>C:\Projects\GLA\GlaRefresh2021\programme-service\src\main\java</SrcDir><SrcDir>C:\Projects\GLA\GlaRefresh2021\programme-service\target\generated-sources</SrcDir><SrcDir>C:\Projects\GLA\GlaRefresh2021\programme-service\target\generated-sources\annotations</SrcDir><SrcDir>C:\Projects\GLA\GlaRefresh2021\programme-service\src\test\java</SrcDir></Project></BugCollection>

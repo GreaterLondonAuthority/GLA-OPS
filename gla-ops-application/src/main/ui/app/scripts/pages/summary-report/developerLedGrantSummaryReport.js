@@ -16,6 +16,8 @@ class DeveloperLedGrantSummaryReport {
   $onInit() {
     this.data = this.GrantService.sortTenureTypes(this.block);
     this.affordableCriteriaMet = this.GrantService.getYesNoAnswer(this.data.affordableCriteriaMet);
+    this.otherAffordableTenureTypes = _.find(this.template.blocksEnabled, {block: 'DeveloperLedGrant'}).otherAffordableTenureTypes;
+    this.showOtherAffordableQuestion = _.find(this.template.blocksEnabled, {block: 'DeveloperLedGrant'}).showOtherAffordableQuestion;
   }
 }
 
@@ -25,6 +27,7 @@ angular.module('GLA')
   .component('developerLedGrantSummaryReport', {
     bindings: {
       block: '<',
+      template: '<'
     },
     templateUrl: 'scripts/pages/summary-report/developerLedGrantSummaryReport.html',
     controller: DeveloperLedGrantSummaryReport

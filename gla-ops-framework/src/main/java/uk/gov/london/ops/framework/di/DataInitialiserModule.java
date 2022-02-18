@@ -12,14 +12,14 @@ import java.util.function.Consumer;
 /**
  * Interface for pluggable DataInitialiser modules.
  *
- * DataInitialiser code should be implemented (or refactored) as a set of classes each of which
- * implements this interface, and that is annotated as a Spring @Component.
+ * DataInitialiser code should be implemented (or refactored) as a set of classes each of which implements this interface, and
+ * that is annotated as a Spring @Component.
  *
- * The new DataInitialiser framework finds all these components, and then calls each of the methods
- * on this interface on each component, in turn.
+ * The new DataInitialiser framework finds all these components, and then calls each of the methods on this interface on each
+ * component, in turn.
  *
- * Each method is run on all the components before moving on to the next method. This ensures that all
- * templates are created before all programmes, and all programmes before all projects, for example.
+ * Each method is run on all the components before moving on to the next method. This ensures that all templates are created
+ * before all programmes, and all programmes before all projects, for example.
  */
 public interface DataInitialiserModule extends Comparable<DataInitialiserModule> {
 
@@ -31,16 +31,16 @@ public interface DataInitialiserModule extends Comparable<DataInitialiserModule>
      * Each step is associated with a method that performs the step for the module implementation.
      */
     enum Step {
-        BEFORE          ("before initialisation",   DataInitialiserModule::beforeInitialisation),
-        CLEANUP         ("cleanup old data",        DataInitialiserModule::cleanupOldData),
-        REF_DATA        ("add reference data",      DataInitialiserModule::addReferenceData),
-        ORGANISATIONS   ("add organisations",       DataInitialiserModule::addOrganisations),
-        USERS           ("add users",               DataInitialiserModule::addUsers),
-        TEMPLATES       ("add templates",           DataInitialiserModule::addTemplates),
-        PROGRAMMES      ("add programmes",          DataInitialiserModule::addProgrammes),
-        PROJECTS        ("add projects",            DataInitialiserModule::addProjects),
-        SUPPLEMENTAL    ("add supplemental data",   DataInitialiserModule::addSupplementalData),
-        AFTER           ("after initialisation",    DataInitialiserModule::afterInitialisation);
+        BEFORE("before initialisation", DataInitialiserModule::beforeInitialisation),
+        CLEANUP("cleanup old data", DataInitialiserModule::cleanupOldData),
+        REF_DATA("add reference data", DataInitialiserModule::addReferenceData),
+        ORGANISATIONS("add organisations", DataInitialiserModule::addOrganisations),
+        USERS("add users", DataInitialiserModule::addUsers),
+        TEMPLATES("add templates", DataInitialiserModule::addTemplates),
+        PROGRAMMES("add programmes", DataInitialiserModule::addProgrammes),
+        PROJECTS("add projects", DataInitialiserModule::addProjects),
+        SUPPLEMENTAL("add supplemental data", DataInitialiserModule::addSupplementalData),
+        AFTER("after initialisation", DataInitialiserModule::afterInitialisation);
 
         private final Consumer<DataInitialiserModule> method;
         private final String summary;
@@ -74,16 +74,35 @@ public interface DataInitialiserModule extends Comparable<DataInitialiserModule>
         return false;
     }
 
-    default void beforeInitialisation() {}
-    default void cleanupOldData() {}
-    default void addReferenceData() {}
-    default void addUsers() {}
-    default void addOrganisations() {}
-    default void addTemplates() {}
-    default void addProgrammes() {}
-    default void addProjects() {}
-    default void addSupplementalData() {}
-    default void afterInitialisation() {}
+    default void beforeInitialisation() {
+    }
+
+    default void cleanupOldData() {
+    }
+
+    default void addReferenceData() {
+    }
+
+    default void addUsers() {
+    }
+
+    default void addOrganisations() {
+    }
+
+    default void addTemplates() {
+    }
+
+    default void addProgrammes() {
+    }
+
+    default void addProjects() {
+    }
+
+    default void addSupplementalData() {
+    }
+
+    default void afterInitialisation() {
+    }
 
     /**
      * The execution order of the module.

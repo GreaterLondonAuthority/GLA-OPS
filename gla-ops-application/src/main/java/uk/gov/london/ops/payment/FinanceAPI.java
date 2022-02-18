@@ -7,27 +7,37 @@
  */
 package uk.gov.london.ops.payment;
 
+import static uk.gov.london.common.user.BaseRole.GLA_FINANCE;
+import static uk.gov.london.common.user.BaseRole.GLA_ORG_ADMIN;
+import static uk.gov.london.common.user.BaseRole.GLA_PM;
+import static uk.gov.london.common.user.BaseRole.GLA_PROGRAMME_ADMIN;
+import static uk.gov.london.common.user.BaseRole.GLA_READ_ONLY;
+import static uk.gov.london.common.user.BaseRole.GLA_SPM;
+import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
+import static uk.gov.london.common.user.BaseRole.ORG_ADMIN;
+import static uk.gov.london.common.user.BaseRole.PROJECT_EDITOR;
+import static uk.gov.london.common.user.BaseRole.PROJECT_READER;
+import static uk.gov.london.common.user.BaseRole.TECH_ADMIN;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import uk.gov.london.ops.framework.calendar.FinancialCalendar;
-import uk.gov.london.ops.framework.exception.ValidationException;
-import uk.gov.london.ops.payment.implementation.sap.MoveItSynchroniser;
-import uk.gov.london.ops.refdata.FinanceCategory;
-import uk.gov.london.ops.refdata.FinanceCategoryService;
-
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-
-import static uk.gov.london.common.user.BaseRole.*;
+import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import uk.gov.london.ops.framework.calendar.FinancialCalendar;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.payment.implementation.sap.MoveItSynchroniser;
 
 /**
  * Proof-of-concept Finance API
@@ -50,9 +60,6 @@ public class FinanceAPI {
 
     @Autowired
     SapDataService sapDataService;
-
-    @Autowired
-    FinanceCategoryService financeCategoryService;
 
     @Resource(name = "actualsSynchroniser")
     MoveItSynchroniser moveItSynchroniser;
@@ -188,32 +195,10 @@ public class FinanceAPI {
         file.transferTo(new File(ftpInboundDir + file.getOriginalFilename()));
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
-    @RequestMapping(value = "/finance/categories", method = RequestMethod.GET)
-    @ApiOperation(value = "get the finance categories")
-    public List<FinanceCategory> getFinanceCategories() {
-        return financeCategoryService.getFinanceCategories();
-    }
-
-    @Secured({OPS_ADMIN, TECH_ADMIN})
-    @RequestMapping(value = "/finance/categories", method = RequestMethod.POST)
-    @ApiOperation(value = "create new finance category")
-    public FinanceCategory createFinanceCategory(@RequestBody FinanceCategory category) {
-        return financeCategoryService.createFinanceCategory(category);
-    }
-
-    @Secured({OPS_ADMIN, TECH_ADMIN})
-    @RequestMapping(value = "/finance/categories/{id}", method = RequestMethod.PUT)
-    @ApiOperation(value = "edit an existing finance category")
-    public FinanceCategory editFinanceCategory(@PathVariable Integer id, @RequestBody FinanceCategory category) {
-        return financeCategoryService.updateFinanceCategory(id, category);
-    }
-
     @RequestMapping(value = "/finance/currentFinancialYear", method = RequestMethod.GET)
     @ApiOperation(value = "returns current financial year as an integer")
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+        TECH_ADMIN, GLA_PROGRAMME_ADMIN})
     public Integer getCurrentFinancialYear() {
         return financialCalendar.currentYear();
     }

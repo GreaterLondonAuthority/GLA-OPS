@@ -17,18 +17,17 @@ class Questions {
   }
 
   isVisible(question) {
-    if(question && question.isHidden){
-      return false;
-    }else if(this.QuestionsService.hasParentCondition(question)){
-      return this.QuestionsService.isParentConditionMet(question, this.questions);
-    }else{
-      return true;
-    }
+    return this.QuestionsService.isQuestionVisible(question, this.questions);
+  }
+
+  updateSectionVisibility(){
+    this.QuestionsService.updateSectionVisibility(this.questions);
   }
 
   onMultiSelectChange(check, question) {
     let answers = (question.answerOptions || []).filter(ao => !!ao.model);
-    question.answer = answers.map(ao => ao.label).join(question.delimiter)
+    question.answer = answers.map(ao => ao.label).join(question.delimiter);
+    this.updateSectionVisibility();
   }
 
   formatDropdownAnswer(question){
@@ -42,7 +41,7 @@ class Questions {
 Questions.$inject = ['QuestionsService'];
 
 angular.module('GLA')
-  .component('questions', {
+  .component('glaQuestions', {
     templateUrl: 'scripts/components/questions/questions.html',
     bindings: {
       questions: '<',

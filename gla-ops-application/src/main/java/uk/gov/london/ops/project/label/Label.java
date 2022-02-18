@@ -7,14 +7,10 @@
  */
 package uk.gov.london.ops.project.label;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.domain.PreSetLabel;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.framework.OpsEntity;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
-
 
 @Entity(name = "label")
 public class Label implements OpsEntity<Integer> {
@@ -29,7 +25,7 @@ public class Label implements OpsEntity<Integer> {
 
     @ManyToOne(cascade = {})
     @JoinColumn(name = "pre_set_label_id")
-    private PreSetLabel preSetLabel;
+    private PreSetLabelEntity preSetLabel;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
@@ -38,22 +34,17 @@ public class Label implements OpsEntity<Integer> {
     @Column(name = "project_id")
     private Integer projectId;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "created_by")
-    private User creator;
+    @Column(name = "created_by")
+    private String createdBy;
 
     @Column(name = "created_on", updatable = false)
     private OffsetDateTime createdOn;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "modified_by")
-    private User modifiedBy;
+    @Column(name = "modified_by")
+    private String modifiedBy;
 
     @Column(name = "modified_on")
     private OffsetDateTime modifiedOn;
-
 
     public Label() {
     }
@@ -78,11 +69,11 @@ public class Label implements OpsEntity<Integer> {
         this.text = text;
     }
 
-    public PreSetLabel getPreSetLabel() {
+    public PreSetLabelEntity getPreSetLabel() {
         return preSetLabel;
     }
 
-    public void setPreSetLabel(PreSetLabel preSetLabel) {
+    public void setPreSetLabel(PreSetLabelEntity preSetLabel) {
         this.preSetLabel = preSetLabel;
     }
 
@@ -102,22 +93,14 @@ public class Label implements OpsEntity<Integer> {
         this.projectId = projectId;
     }
 
-    public User getCreator() {
-        return creator;
-    }
-
-    public void setCreator(User creator) {
-        this.creator = creator;
-    }
-
     @Override
     public String getCreatedBy() {
-        return creator != null ? creator.getUsername() : null;
+        return createdBy;
     }
 
     @Override
     public void setCreatedBy(String createdBy) {
-        this.creator = new User(createdBy);
+        this.createdBy = createdBy;
     }
 
     @Override
@@ -132,12 +115,12 @@ public class Label implements OpsEntity<Integer> {
 
     @Override
     public String getModifiedBy() {
-        return modifiedBy != null ? modifiedBy.getUsername() : null;
+        return modifiedBy;
     }
 
     @Override
     public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = new User(modifiedBy);
+        this.modifiedBy = modifiedBy;
     }
 
     @Override
@@ -149,4 +132,5 @@ public class Label implements OpsEntity<Integer> {
     public void setModifiedOn(OffsetDateTime modifiedOn) {
         this.modifiedOn = modifiedOn;
     }
+
 }

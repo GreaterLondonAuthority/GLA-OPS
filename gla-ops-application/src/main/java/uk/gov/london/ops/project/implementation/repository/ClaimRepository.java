@@ -21,7 +21,10 @@ public interface ClaimRepository extends JpaRepository<Claim, Integer> {
      * In the query there are 2 CASE statements to be able to join different type of columns:
      * For example claim vs output_table_entry: (2017/Q4 vs 2018/Jan, Q1 vs May)
      */
-    @Query(value = "select count(*) from output_table_entry ote left join claim c on c.block_id = ote.block_id and c.claim_type = 'QUARTER' and (CASE WHEN ote.month < 4 THEN (ote.year - 1) = c.year ELSE ote.year = c.year  END) and (CASE WHEN ote.month < 4 THEN 4 ELSE (ote.month-1)/3  END) = c.claim_type_period where ote.block_id = ?1 and year_month < (?2*100 + ?3) and c.id is null", nativeQuery = true)
+    @Query(value = "select count(*) from output_table_entry ote left join claim c on c.block_id = ote.block_id "
+            + "and c.claim_type = 'QUARTER' and (CASE WHEN ote.month < 4 THEN (ote.year - 1) = c.year ELSE ote.year = c.year END) "
+            + "and (CASE WHEN ote.month < 4 THEN 4 ELSE (ote.month-1)/3  END) = c.claim_type_period "
+            + "where ote.block_id = ?1 and year_month < (?2*100 + ?3) and c.id is null", nativeQuery = true)
     Integer countPreviouslyUnclaimedOutputEntries(Integer blockId, Integer year, Integer month);
 
     List<Claim> findAllByBlockId(Integer blockId);

@@ -11,9 +11,12 @@ import CollapsibleReportCtr from '../../controllers/collapsibleReportCtrl.js';
 
 
 class ChangeReportCtrl extends CollapsibleReportCtr {
-  constructor($injector) {
+  constructor($injector, GlaReportService) {
     super($injector);
+    this.GlaReportService = GlaReportService;
+
     this.ReportService.setHalfWidth();
+    this.GlaReportService.setHalfWidth();
   }
 
   $onInit(){
@@ -105,7 +108,7 @@ class ChangeReportCtrl extends CollapsibleReportCtr {
   }
 }
 
-ChangeReportCtrl.$inject = ['$injector'];
+ChangeReportCtrl.$inject = ['$injector', 'GlaReportService'];
 
 
 angular.module('GLA')

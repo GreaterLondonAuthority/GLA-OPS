@@ -18,4 +18,6 @@ public interface FundingActivityRepository extends JpaRepository<FundingActivity
 
     List<FundingActivity> findAllByBlockIdAndYear(Integer blockId, Integer year);
 
+    List<FundingActivity> findAllByBlockIdAndYearAndQuarter(Integer blockId, Integer year, Integer quarter);
+
 }

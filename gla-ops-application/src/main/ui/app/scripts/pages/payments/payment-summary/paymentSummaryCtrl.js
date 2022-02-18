@@ -62,8 +62,9 @@ class PaymentSummaryCtrl {
       paymentTitle: this.getPaymentTitle(this.payment),
       reclaimValue: this.payment.interestPayment? 'Reclaim Interest:' : 'Reclaim Value:'
     };
-
     this.showMilestoneSection = this.payment.category !== 'Skills';
+    let paymentBlock = _.find(this.project.projectBlocksSorted, {displayOrder: this.paymentProjectBlock.displayOrder});
+    this.paymentBlockPosition = this.project.projectBlocksSorted.indexOf(paymentBlock) + 1
   }
 
   back() {
@@ -144,7 +145,8 @@ angular.module('GLA')
       reclaims: '<',
       isReclaimEnabled: '<',
       originalPayment: '<',
-      paymentHistory: '<'
+      paymentHistory: '<',
+      paymentProjectBlock: '<'
     },
     controller: PaymentSummaryCtrl
   });

@@ -13,11 +13,15 @@ import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.question.Answer;
 import uk.gov.london.ops.project.question.ProjectQuestion;
 import uk.gov.london.ops.project.question.QuestionsBlock;
-import uk.gov.london.ops.project.template.domain.*;
+import uk.gov.london.ops.project.template.domain.InternalQuestionsTemplateBlock;
+import uk.gov.london.ops.project.template.domain.InternalTemplateBlock;
+import uk.gov.london.ops.project.template.domain.QuestionsBlockSection;
+import uk.gov.london.ops.project.template.domain.TemplateQuestion;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity(name = "internal_questions_block")
 @DiscriminatorValue("QUESTIONS")
@@ -40,6 +44,10 @@ public class InternalQuestionsBlock extends InternalProjectBlock implements Ques
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = ProjectQuestion.class)
     @JoinColumn(name = "internal_questions_block_id")
     private Set<ProjectQuestion> questions = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = QuestionsBlockSection.class)
+    @JoinColumn(name = "internal_questions_block_id")
+    private Set<QuestionsBlockSection> sections = new HashSet<>();
 
     public InternalQuestionsBlock() {
         setType(InternalBlockType.Questions);
@@ -72,11 +80,13 @@ public class InternalQuestionsBlock extends InternalProjectBlock implements Ques
 
     @Override
     public Set<QuestionsBlockSection> getSections() {
-        return null;
+        return sections;
     }
 
     @Override
-    public void setSections(Set<QuestionsBlockSection> sections) {}
+    public void setSections(Set<QuestionsBlockSection> sections) {
+        this.sections = sections;
+    }
 
     @Override
     public InternalQuestionsBlock clone() {
@@ -98,6 +108,10 @@ public class InternalQuestionsBlock extends InternalProjectBlock implements Ques
         for (TemplateQuestion tq : iqtb.getQuestions()) {
             addTemplateQuestion(tq);
         }
+        getSections().addAll(iqtb.getSections().stream().map(QuestionsBlockSection::copy).collect(Collectors.toSet()));
     }
 
+    public TemplateQuestion getTemplateQuestionByQuestionId(int id) {
+        return getTemplateQuestions().stream().filter(q -> q.getQuestion().getId().equals(id)).findFirst().orElse(null);
+    }
 }

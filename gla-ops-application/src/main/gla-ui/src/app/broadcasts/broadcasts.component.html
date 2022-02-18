@@ -1,0 +1,49 @@
+<div class="page broadcasts">
+  <div class="text-center">
+    <gla-page-header hideBackBtn="true" class="mbottom10">Broadcasts</gla-page-header>
+  </div>
+  <div class="text-right">
+    <button *ngIf="canAddBroadcast" class="btn btn-primary btn-md" (click)="addBroadcast()">
+      ADD BROADCAST<span class="glyphicon glyphicon-plus"></span>
+    </button>
+  </div>
+  <div class="table-responsive mtop20 broadcasts-table">
+    <div *ngIf="broadcasts.length == 0" class="empty-table text-center">No broadcasts</div>
+    <table *ngIf="broadcasts.length > 0" class="table table-hover table-bordered">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>ID</th>
+        <th>AUTHOR</th>
+        <th>SUBJECT</th>
+        <th>MANAGING ORGANISATION</th>
+        <th>LAST UPDATED</th>
+        <th>STATUS</th>
+        <th>OPTIONS</th>
+        <th></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngIf="broadcasts.length == 0"><td colspan="6">Not provided</td></tr>
+      <tr class="cursor-pointer" *ngFor="let broadcast of broadcasts">
+        <td>{{broadcast.id}}</td>
+        <td>{{broadcast.createdByName}}</td>
+        <td>{{broadcast.subject}}</td>
+        <td>{{broadcast.managingOrganisationName}}</td>
+        <td>{{(broadcast.modifiedOn) | date: 'dd/MM/yyyy'}}</td>
+        <td>{{broadcast.status}}</td>
+        <td>
+          <a href="JavaScript:void(0)" title="'View'" (click)="viewBroadcast(broadcast.id)">
+            View
+          </a>
+        </td>
+        <td class="delete-btn-container" ng-if="broadcast.canDelete">
+          <delete-button  (click)="deleteBroadcast(broadcast)">
+          </delete-button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

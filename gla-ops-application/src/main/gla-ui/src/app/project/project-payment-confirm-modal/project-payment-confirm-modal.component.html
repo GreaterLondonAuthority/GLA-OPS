@@ -1,0 +1,98 @@
+<div class="confirmation-dialog">
+  <div class="modal-body text-center">
+    <button (keydown.enter)="activeModal.dismiss('cancel')" (mousedown)="activeModal.dismiss('cancel')"
+            aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span *ngIf="config.showIcon" [ngClass]="{'info': config.info}" aria-hidden="true"
+          class="glyphicon glyphicon-exclamation-sign"></span>
+    <h1 class="title" *ngIf="config.title">
+      <label for="comment">{{config.title}}</label>
+    </h1>
+
+    <div *ngIf="config.paymentOnlyApprovalPossible">
+      <h1 class="title">
+        <label for="option">Would you like to:</label>
+      </h1>
+
+      <div class="form-group radio-button">
+        <div>
+          <input (ngModelChange)="onRadioValueChange('showPaymentsOnlyBtn')"
+                 [(ngModel)]="showPaymentsOnlyBtn"
+                 [name]="'option'"
+                 [value]="true"
+                 attr.name="{{'option'}}"
+                 id="option-payments-only"
+                 tabindex="0"
+                 type="radio">
+          <label for="{{'showPaymentsOnlyBtn'}}" class="mleft5"> Request payments only</label>
+        </div>
+
+        <div>
+          <input (ngModelChange)="onRadioValueChange('showApproveChangesBtn')"
+                 [(ngModel)]="showPaymentsOnlyBtn"
+                 [name]="'option'"
+                 [value]="false"
+                 attr.name="{{'option'}}"
+                 id="option-approve-and-payments"
+                 tabindex="0"
+                 type="radio">
+          <label for="{{'showApproveChangesBtn'}}" class="mleft5"> Request payments and approve all changes </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="reason" *ngIf="showPaymentsOnlyBtn" class="pull-left">Reason for requesting payments only</label>
+        <label for="reason" *ngIf="showApproveChangesBtn" class="pull-left">Authority for approving changes</label>
+        <textarea #reason="ngModel"
+                  [(ngModel)]="reasonComments"
+                  [disabled]="!showPaymentsOnlyBtn && !showApproveChangesBtn"
+                  id="reason"
+                  name="reason"
+                  rows="5"
+                  class="form-control"
+                  required
+                  maxlength="200">
+        </textarea>
+      </div>
+
+    </div>
+
+
+    <div [innerHTML]="config.message" *ngIf="!config.paymentOnlyApprovalPossible" class="text-center confirm-message"></div>
+    <div *ngIf="config.userCommentRequired">
+              <textarea #comment="ngModel"
+                        [(ngModel)]="userComment"
+                        id="comment"
+                        name="comment"
+                        rows="5"
+                        class="form-control"
+                        required
+                        maxlength="{{config.maxCommentLength}}">
+              </textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="closeModal('approve')"
+            *ngIf="!config.paymentOnlyApprovalPossible"
+            [disabled]="!isModalValid(config.userCommentRequired, userComment)"
+            class="btn btn-default btn-primary btn-center approve-btn min-padding"
+            type="button">{{config.approveText}}</button>
+
+    <button (click)="closeModal('paymentsOnly')"
+            *ngIf="config.paymentOnlyApprovalPossible && showPaymentsOnlyBtn"
+            class="btn btn-default btn-primary btn-center approve-btn min-padding"
+            [disabled]="!isReasonCommentsPopulated()"
+            type="button">REQUEST PAYMENT ONLY</button>
+
+    <button (click)="closeModal('approve')"
+            *ngIf="config.paymentOnlyApprovalPossible && showApproveChangesBtn"
+            [disabled]="!isReasonCommentsPopulated()"
+            class="btn btn-default btn-primary btn-center approve-btn min-padding"
+            type="button">REQUEST PAYMENT & APPROVE CHANGES</button>
+
+    <button (click)="activeModal.dismiss('cancel')" *ngIf="config.showDismiss"
+            class="btn btn-default btn-secondary btn-center dismiss-btn min-padding"
+            type="button">{{config.dismissText}}</button>
+  </div>
+</div>

@@ -1,47 +1,61 @@
 <div class="payments all-payments">
   <gla-page-header class="no-padding" [hide-back-btn]="true">All Payments</gla-page-header>
 
-  <well class="row mbottom10 search-container">
+  <gla-well class="row mbottom10 search-container">
 
     <div class="col-xs-12 no-padding mbottom10">
       <div class="col-xs-12 col-md-5 search-column">
-        <div class="text-align-left">Search</div>
-        <search-field options="$ctrl.searchOptions"
-                      selected-option="$ctrl.selectedSearchOption"
-                      search-text="$ctrl.searchTextModel"
-                      on-select="$ctrl.select($ctrl.selectedSearchOption)"
-                      on-search="$ctrl.search()"
-                      on-clear="$ctrl.clearSearch()"></search-field>
+        <gla-search-field [options]="$ctrl.searchOptions"
+                          [(selected-option)]="$ctrl.selectedSearchOption"
+                          [(search-text)]="$ctrl.searchTextModel"
+                          (on-select)="$ctrl.select($ctrl.selectedSearchOption)"
+                          (on-search)="$ctrl.search()"
+                          (on-clear)="$ctrl.clearSearch()"></gla-search-field>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
         <div class="status-box">
-          <div class="text-align-left">Source</div>
-          <checkbox-filter id="source-filter" filter-dropdown-items="$ctrl.sourceDropdownItems" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+          <label class="text-align-left" for="source-filter">Source</label>
+          <gla-checkbox-filter id="source-filter"
+                           [filter-dropdown-items]="$ctrl.sourceDropdownItems"
+                           (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
         </div>
       </div>
 
       <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
         <div class="status-box">
-          <div class="text-align-left"><Status>In/Out</Status></div>
-          <checkbox-filter id="payment-direction-filter" filter-dropdown-items="$ctrl.paymentDirectionDropdownItems" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+          <label class="text-align-left" for="payment-direction-filter">In/Out</label>
+          <gla-checkbox-filter id="payment-direction-filter"
+                               [filter-dropdown-items]="$ctrl.paymentDirectionDropdownItems"
+                               (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
         </div>
       </div>
     </div>
     <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
       <div class="status-box">
-        <div class="text-align-left">Programme</div>
-        <checkbox-filter
-          id="programme-filter"
-          filter-dropdown-items="$ctrl.programmeDropDownItems"
-          on-change="$ctrl.updateFilters(true, $event)"
-          is-disabled="$ctrl.selectedSearchOption.name === $ctrl.byProgrammeOption.name"
-        ></checkbox-filter>
+        <label class="text-align-left" for="programme-filter">Managing Org</label>
+        <gla-checkbox-filter id="managing-org-filter"
+                             [filter-dropdown-items]="$ctrl.managingOrgDropdownItems"
+                             (on-change)="$ctrl.updateFilters(true, $event)"
+        ></gla-checkbox-filter>
       </div>
     </div>
     <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
       <div class="status-box">
-        <div class="text-align-left"><Status>Status</Status></div>
-        <checkbox-filter id="status-filter" filter-dropdown-items="$ctrl.statusDropdownItems" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+        <label class="text-align-left" for="programme-filter">Programme</label>
+        <gla-checkbox-filter id="programme-filter"
+                             [filter-dropdown-items]="$ctrl.programmeDropDownItems"
+                             (on-change)="$ctrl.updateFilters(true, $event)"
+                             [is-disabled]="$ctrl.selectedSearchOption.name === $ctrl.byProgrammeOption.name"
+        ></gla-checkbox-filter>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column">
+      <div class="status-box">
+        <label class="text-align-left" for="status-filter">Status</label>
+        <gla-checkbox-filter id="status-filter"
+                             [filter-dropdown-items]="$ctrl.statusDropdownItems"
+                             (on-change)="$ctrl.updateFilters(true, $event)"
+                             [grouped]="true"></gla-checkbox-filter>
       </div>
     </div>
     <!--<div class="col-xs-12 col-sm-6 col-md-4 no-padding mtop30" ng-if="$ctrl.invalidForShowDateFiltering">-->
@@ -96,23 +110,23 @@
         </div>
       </row>
     </div>
-    <div class="col-xs-12 col-sm-6 col-md-2 no-padding reset-column">
-      <div class="clear-filter-and-search-box pull-left">
+    <div class="clear-filter-and-search-box pull-right text-align-right">
+      <div class="clear-filter-and-search-box pull-right col-md-12 text-align-left">
         <button
           ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState"
           class="action-buttons action-buttons-reset"
           ng-click="$ctrl.clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset all</button>
       </div>
     </div>
-  </well>
+  </gla-well>
 
-  <div class="col-xs-12 mtop15 no-padding">
-    <pagination class="bottom-pagination"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                total-items="$ctrl.totalItems"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.updateFilters()"></pagination>
+  <div class="col-xs-12 no-padding">
+    <gla-pagination class="bottom-pagination"
+                    [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                    [total-items]="$ctrl.totalItems"
+                    [number-of-elements]="$ctrl.itemsPerPage"
+                    (on-change)="$ctrl.updateFilters()"></gla-pagination>
     <div ng-if="!$ctrl.payments.length" class="no-payments-message">
       <span ng-if="!($ctrl.searchText || !$ctrl.isDefaultFilterState)">There are currently no payments</span>
       <span ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState">0 results match your search. Check your filter selection and try again.</span>
@@ -165,11 +179,11 @@
       </table>
     </div>
   </div>
-  <pagination class="bottom-pagination"
-              current-page="$ctrl.currentPage"
-              items-per-page="$ctrl.itemsPerPage"
-              total-items="$ctrl.totalItems"
-              number-of-elements="$ctrl.itemsPerPage"
-              on-change="$ctrl.updateFilters()"></pagination>
+  <gla-pagination class="bottom-pagination"
+                  [(current-page)]="$ctrl.currentPage"
+                  [(items-per-page)]="$ctrl.itemsPerPage"
+                  [total-items]="$ctrl.totalItems"
+                  [number-of-elements]="$ctrl.itemsPerPage"
+                  (on-change)="$ctrl.updateFilters()"></gla-pagination>
 
 </div>

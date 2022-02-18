@@ -43,6 +43,7 @@ class InternalRiskCtrl {
 
       this.block.riskAdjustedFiguresList.push(this.currentRiskAdjustedFigures);
     }
+    this.infoMessage = this.block.infoMessage
   }
 
   back() {
@@ -64,8 +65,9 @@ class InternalRiskCtrl {
   }
 
   saveComment(comment) {
-    this.CommentsService.saveInternalRiskComments(this.project.id, this.block.id, comment).then(() => {
-      this.CommentsService.getInternalRiskComments(this.block.id).then(rsp => {
+    const INTERNAL_RISK_BLOCK_TYPE  = 'internalRiskBlock';
+    this.CommentsService.saveInternalComments(this.project.id, this.block.id,INTERNAL_RISK_BLOCK_TYPE, comment).then(() => {
+      this.CommentsService.getInternalComments(this.block.id, INTERNAL_RISK_BLOCK_TYPE).then(rsp => {
         this.comments = rsp.data.content;
       })
     });

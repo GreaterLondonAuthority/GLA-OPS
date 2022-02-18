@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="756" author="jsingh">
+        <addColumn tableName="funding_claims_entry">
+            <column name="parent_category_id" type="INT4">  </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="757" author="cmelville">
+        <sql>update template_block set BLOCK_TYPE = 'NEGOTIATED_GRANT' where block = 'NegotiatedGrant'</sql>
+        <addColumn tableName="tenure_block">
+            <column name="show_specialised_units" type="boolean" defaultValue="true"
+                    remarks="whether block should show specialised units column"/>
+        </addColumn>
+        <addColumn tableName="tenure_block">
+            <column name="show_development_cost" type="boolean" defaultValue="true"
+                    remarks="whether block should show development costs column"/>
+        </addColumn>
+        <addColumn tableName="tenure_block">
+            <column name="show_percentage_costs" type="boolean" defaultValue="true"
+                    remarks="whether block should show percentage costs breakdown column"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="758" author="ybouhass">
+        <createSequence sequenceName="indicative_starts_and_completions_entry_seq" startValue="10000" incrementBy="1" />
+        <createTable tableName="indicative_starts_and_completions_entry" >
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="indicative_starts_and_completions_entry_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" />
+            <column name="year" type="INT4" />
+            <column name="tenure_type_id" type="INT4" />
+            <column name="type" type="varchar(50)" />
+            <column name="units" type="INT4" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="759" author="cmatias">
+        <dropColumn tableName="organisation" columnName="is_register_provider" />
+    </changeSet>
+
+</databaseChangeLog>

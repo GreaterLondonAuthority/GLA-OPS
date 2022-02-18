@@ -6,7 +6,6 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-const _ = require('lodash');
 const TYPE_INITIAL = 'Initial';
 const TYPE_ADDITIONAL = 'Additional';
 const DEFAULT_NUMBER_BUDGET_ENTRIES_SHOWN = 3;
@@ -61,12 +60,6 @@ class OrganisationProgrammeCtrl {
     //Init grant types dropdown for modal
     this.grantTypes.forEach(grantType => this.grantTypesDropdown.push(this.grantRecord(grantType, false, TYPE_ADDITIONAL)));
     this.grantTypes.forEach(grantType => this.grantTypesDropdown.push(this.grantRecord(grantType, true, TYPE_ADDITIONAL)));
-
-    console.log('grantTypesDropdown', this.grantTypesDropdown);
-
-
-    console.log('init', this.initialBudgets);
-    console.log('init', this.initialStrategicBudgets);
   }
 
   isGrantTypeAvailable(type) {
@@ -299,8 +292,6 @@ class OrganisationProgrammeCtrl {
   }
 
   onCollapseChange(collapsed){
-    console.log('collapsed', collapsed);
-    console.log('onCollapseChange', JSON.stringify(this.delegatedApprovalEntries, null, 4));
     this.showExpandAll = !(_.some(this.delegatedApprovalEntries, {collapsed: false}));
   }
 

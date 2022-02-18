@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="689" author="ybouhass">
+        <addColumn tableName="annual_submission_block">
+            <column name="opening_balance" type="INT4" />
+            <column name="closing_balance" type="INT4" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="690" author="jdimsa">
+        <addColumn tableName="organisation">
+            <column name="default_programme_id" type="INT4" remarks="programme id selected in org registration" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="691" author="cmatias">
+        <addColumn tableName="annual_submission">
+            <column name="rcgf_rollover_interest" type="INT4" remarks="rcgf rollover interest" />
+            <column name="dpf_rollover_interest" type="INT4" remarks="dpf rollover interest" />
+            <column name="rcgf_withdrawal" type="INT4" remarks="rcgf withdrawal" />
+            <column name="dpf_withdrawal" type="INT4" remarks="dpf withdrawal" />
+            <column name="rcgf_withdrawal_interest" type="INT4" remarks="rcgf withdrawal interest" />
+            <column name="dpf_withdrawal_interest" type="INT4" remarks="dpf withdrawal interest" />
+
+            <column name="approved_on" type="TIMESTAMP" remarks="date when user approved the annual submission"/>
+            <column name="approved_by" type="varchar(255)" remarks="user who approved the annual submission"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="692" author="cmelville">
+        <createSequence sequenceName="contract_type_selection_seq" startValue="1000" incrementBy="1" />
+
+        <createTable tableName="contract_type_selection" remarks="Stores contract type selection">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="project_element_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" />
+            <column name="name" type="varchar(255)" remarks="name of contract type" />
+            <column name="selected" type="Boolean" remarks="Whether selected "/>
+        </createTable>
+        <createIndex indexName="contract_type_block_id_idx" tableName="contract_type_selection">
+            <column name="block_id" type="INT4" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="693" author="cmelville">
+        <createSequence sequenceName="contract_type_funding_entry_seq" startValue="1000" incrementBy="1" />
+
+        <createTable tableName="contract_type_funding_entry" remarks="Stores contract type  values">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="contract_type_funding_entry_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="entry_id" type="INT4" remarks="foreign key back to " />
+            <column name="contract_value" type="decimal" remarks="value of contract type (lot)" />
+            <column name="flexible_allocation" type="decimal" remarks="flexible allocation of contract value" />
+            <column name="contract_type" type="varchar(255)" remarks="contract type (LOT) from template" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="694" author="cmatias">
+        <createIndex indexName="project_objective_id_idx" tableName="project_objective">
+            <column name="id" type="INT4" />
+        </createIndex>
+        <createIndex indexName="project_objective_block_id_idx" tableName="project_objective">
+            <column name="block_id" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="other_funding_id_idx" tableName="other_funding">
+            <column name="id" type="INT4" />
+        </createIndex>
+        <createIndex indexName="other_funding_block_id_idx" tableName="other_funding">
+            <column name="block_id" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="other_funding_attachment_other_funding_id_idx" tableName="other_funding_attachment">
+            <column name="other_funding_id" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="user_defined_output_id_idx" tableName="user_defined_output">
+            <column name="id" type="INT4" />
+        </createIndex>
+        <createIndex indexName="user_defined_output_block_id_idx" tableName="user_defined_output">
+            <column name="block_id" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="project_element_id_idx" tableName="project_element">
+            <column name="id" type="INT4" />
+        </createIndex>
+        <createIndex indexName="project_element_block_id_idx" tableName="project_element">
+            <column name="block_id" type="INT4" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="695" author="cmatias">
+        <addColumn tableName="programme">
+            <column name="description" type="varchar(200)" remarks="Description of the programme"/>
+            <column name="website_link" type="varchar(500)" remarks="Link to the programme/gla website"/>
+            <column name="total_funding" type="BIGINT" remarks="Total funding value available"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="696" author="cmatias">
+        <dropIndex tableName="project_objective" indexName="project_objective_id_idx"/>
+        <dropIndex tableName="project_objective" indexName="project_objective_block_id_idx"/>
+        <createIndex indexName="project_objective_block_id_idx" tableName="project_objective">
+            <column name="block_id" type="INT4" />
+            <column name="id" type="INT4" />
+        </createIndex>
+
+        <dropIndex tableName="other_funding" indexName="other_funding_id_idx"/>
+        <dropIndex tableName="other_funding" indexName="other_funding_block_id_idx"/>
+        <createIndex indexName="other_funding_block_id_idx" tableName="other_funding">
+            <column name="block_id" type="INT4" />
+            <column name="id" type="INT4" />
+        </createIndex>
+
+        <dropIndex tableName="user_defined_output" indexName="user_defined_output_id_idx"/>
+        <dropIndex tableName="user_defined_output" indexName="user_defined_output_block_id_idx"/>
+        <createIndex indexName="user_defined_output_block_id_idx" tableName="user_defined_output">
+            <column name="block_id" type="INT4" />
+            <column name="id" type="INT4" />
+        </createIndex>
+
+        <dropIndex tableName="project_element" indexName="project_element_id_idx"/>
+        <dropIndex tableName="project_element" indexName="project_element_block_id_idx"/>
+        <createIndex indexName="project_element_block_id_idx" tableName="project_element">
+            <column name="block_id" type="INT4" />
+            <column name="id" type="INT4" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="697" author="ybouhass">
+        <modifyDataType tableName="audit_activity" columnName="summary" newDataType="varchar(4000)" />
+    </changeSet>
+
+    <changeSet id="698" author="jsingh">
+        <addColumn tableName="delivery_partner">
+            <column name="original_id" type="INT4" remarks="Used to track changes to same table row entry between block versions"></column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="700" author="ybouhass">
+        <modifyDataType tableName="annual_submission" columnName="rcgf_rollover" newDataType="BIGINT" />
+        <modifyDataType tableName="annual_submission" columnName="dpf_rollover" newDataType="BIGINT" />
+        <modifyDataType tableName="annual_submission" columnName="rcgf_rollover_interest" newDataType="BIGINT" />
+        <modifyDataType tableName="annual_submission" columnName="dpf_rollover_interest" newDataType="BIGINT" />
+        <modifyDataType tableName="annual_submission" columnName="rcgf_withdrawal" newDataType="BIGINT" />
+        <modifyDataType tableName="annual_submission" columnName="dpf_withdrawal" newDataType="BIGINT" />
+        <modifyDataType tableName="annual_submission" columnName="rcgf_withdrawal_interest" newDataType="BIGINT" />
+        <modifyDataType tableName="annual_submission" columnName="dpf_withdrawal_interest" newDataType="BIGINT" />
+    </changeSet>
+
+</databaseChangeLog>

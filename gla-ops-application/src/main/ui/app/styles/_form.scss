@@ -145,7 +145,7 @@ a.form-cancel {
   color: $form-field-active;
   letter-spacing: 0.5px;
   box-shadow: none;
-  border: 1px solid $form-field-inactive;
+  border: 1px solid $silver;
   //TODO replace with component ui-select
   option:disabled{
     color: $form-field-inactive;
@@ -174,7 +174,6 @@ a.form-cancel {
   &:focus {
     border-color: $form-field-focus-border;
     box-shadow: none;
-    outline: none;
   }
 }
 
@@ -191,6 +190,8 @@ select::-ms-expand {
 select:focus::-ms-value {
   color: $form-field-active;
   background: $white;
+  outline: 2px solid $gla-black;
+  outline-offset: -6px;
 }
 
 select:not([multiple]) {
@@ -271,6 +272,14 @@ form .group-field{
     letter-spacing: .5px;
     text-decoration: none;
   }
+
+  a:focus,
+  a:active:focus {
+    @include tab-focus;
+    outline: 2px solid $gla-black;
+    outline-offset: 2px;
+  }
+
   .caret {
     color: $accent-color;
   }

@@ -7,6 +7,8 @@
  */
 package uk.gov.london.ops.project.grant;
 
+import static uk.gov.london.ops.project.grant.AffordableHomesType.StartOnSite;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.london.ops.project.BaseProjectService;
@@ -41,6 +43,17 @@ public class ProjectGrantService extends BaseProjectService {
         checkForLock(project.getIndicativeGrantBlock());
         project.getIndicativeGrantBlock().merge(block);
         releaseOrRefreshLock(project.getIndicativeGrantBlock(), !autosave);
+        return this.updateProject(project);
+    }
+
+    public Project updateProjectAffordableHomesBlock(Project project, AffordableHomesBlock block, boolean autosave) {
+        checkForLock(project.getAffordableHomesBlock());
+        project.getAffordableHomesBlock().merge(block);
+        if (project.getAffordableHomesBlock().getCompletionOnly()) {
+            project.getAffordableHomesBlock().getEntries().stream().filter(entry -> entry.getType().equals(StartOnSite))
+                    .forEach(entry -> entry.setUnits(null));
+        }
+        releaseOrRefreshLock(project.getAffordableHomesBlock(), !autosave);
         return this.updateProject(project);
     }
 

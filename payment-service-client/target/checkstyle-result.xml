@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.29">
+<file name="C:\Projects\GLA\GlaRefresh2021\payment-service-client\src\main\java\uk\gov\london\ops\payment\LedgerSource.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\payment-service-client\src\main\java\uk\gov\london\ops\payment\LedgerStatus.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\payment-service-client\src\main\java\uk\gov\london\ops\payment\LedgerType.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\payment-service-client\src\main\java\uk\gov\london\ops\payment\PaymentFilterOption.java">
+<error line="42" severity="warning" message="&apos;METHOD_DEF&apos; should be separated from previous statement." source="com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyLineSeparatorCheck"/>
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\payment-service-client\src\main\java\uk\gov\london\ops\payment\PaymentGroup.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\payment-service-client\src\main\java\uk\gov\london\ops\payment\ProjectLedgerItemRequest.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\payment-service-client\src\main\java\uk\gov\london\ops\payment\SpendType.java">
+</file>
+</checkstyle>

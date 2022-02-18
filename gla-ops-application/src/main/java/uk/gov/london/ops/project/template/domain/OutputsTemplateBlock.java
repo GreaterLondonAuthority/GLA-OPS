@@ -7,17 +7,12 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.refdata.OutputConfigurationGroup;
+
+import javax.persistence.*;
 
 /**
  * empty subclass as no specific information is currently required. Created by chris on 16/02/2017.

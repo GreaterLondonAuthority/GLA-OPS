@@ -6,14 +6,15 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
+import {OrganisationRequestAccessModalComponent} from '../../../../../gla-ui/src/app/organisation-request-access-modal/organisation-request-access-modal.component'
+
 class OrganisationsCtrl {
-  constructor($rootScope, $state, $stateParams, OrganisationService, RequestOrganisationAccessModal, ToastrUtil, UserService, organisationTypes, SessionService, NotificationsService, watchedOrganisations, ConfirmationDialog, managingOrganisationsTeams, canFilterByTeams) {
+  constructor($rootScope, $state, $stateParams, OrganisationService, ToastrUtil, UserService, organisationTypes, SessionService, NotificationsService, watchedOrganisations, ConfirmationDialog, managingOrganisationsTeams, canFilterByTeams, NgbModal) {
     $rootScope.showGlobalLoadingMask = true;
     this.$rootScope = $rootScope;
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.OrganisationService = OrganisationService;
-    this.RequestOrganisationAccessModal = RequestOrganisationAccessModal;
     this.ToastrUtil = ToastrUtil;
     this.UserService = UserService;
     this.SessionService = SessionService;
@@ -23,6 +24,7 @@ class OrganisationsCtrl {
     this.ConfirmationDialog = ConfirmationDialog;
     this.canFilterByTeams = canFilterByTeams;
     this.managingOrganisationsTeams= managingOrganisationsTeams;
+    this.NgbModal = NgbModal
 
     this.showFilters = true;
     this.loading = true;
@@ -53,17 +55,27 @@ class OrganisationsCtrl {
     this.getOrganisations(false, true);
   }
 
+  select(searchOption) {
+    this.searchText = null;
+    this.selectedSearchOption = searchOption;
+  };
+
   initSearchDropdown() {
     this.searchOptions = [
       {
-        name: 'title',
-        description: 'Organisation',
+        name: 'organisation',
+        description: 'By Organisation',
         hint: 'Enter organisation ID or name',
+        maxLength: '50'
+      },
+      {
+        name: 'sapVendorId',
+        description: 'By SAP ID',
+        hint: 'Enter SAP ID',
         maxLength: '50'
       }
     ];
     this.selectedSearchOption = this.searchOptions[0];
-    console.log('this.$stateParams', this.$stateParams);
     this.searchText = this.$stateParams.searchText || (this.cachedOrgsFilter || {}).searchText;
   }
 
@@ -72,11 +84,13 @@ class OrganisationsCtrl {
     this.orgTypeDropdown = Object.keys(this.organisationTypes).reduce((items, key) => {
       items.push({
         id: key,
-        label: this.organisationTypes[key],
+        label: this.organisationTypes[key].summary,
+        displayOrder: this.organisationTypes[key].displayOrder,
         model: selections.indexOf(key) === -1 ? false : true
       });
       return items;
     }, []);
+    this.orgTypeDropdown = _.sortBy(this.orgTypeDropdown, 'displayOrder');
   };
 
   initOrgStatusDropdown() {
@@ -178,7 +192,7 @@ class OrganisationsCtrl {
 
 
       this.updateBrowserUrl();
-      this.OrganisationService.retrieveAll(page, size, sort, userRegStatuses, this.searchText, orgTypes, orgStatuses, teamStatuses).then(response => {
+      this.OrganisationService.retrieveAll(page, size, sort, userRegStatuses, this.selectedSearchOption.name, this.searchText, orgTypes, orgStatuses, teamStatuses).then(response => {
         this.lastSearchText = this.searchText;
         this.$rootScope.showGlobalLoadingMask = false;
         this.loading = false;
@@ -258,7 +272,7 @@ class OrganisationsCtrl {
   }
 
   requestOrganisationAccess() {
-    var modal = this.RequestOrganisationAccessModal.show(this);
+    let modal = this.NgbModal.open(OrganisationRequestAccessModalComponent)
     modal.result.then(orgCode => {
       if (orgCode) {
         this.OrganisationService.linkUserToOrganisation(orgCode, this.user.username).then(() => {
@@ -308,7 +322,7 @@ class OrganisationsCtrl {
   }
 }
 
-OrganisationsCtrl.$inject = ['$rootScope', '$state', '$stateParams', 'OrganisationService', 'RequestOrganisationAccessModal', 'ToastrUtil', 'UserService', 'organisationTypes', 'SessionService', 'NotificationsService', 'watchedOrganisations', 'ConfirmationDialog', 'managingOrganisationsTeams', 'canFilterByTeams'];
+OrganisationsCtrl.$inject = ['$rootScope', '$state', '$stateParams', 'OrganisationService', 'ToastrUtil', 'UserService', 'organisationTypes', 'SessionService', 'NotificationsService', 'watchedOrganisations', 'ConfirmationDialog', 'managingOrganisationsTeams', 'canFilterByTeams', 'NgbModal'];
 
 
 angular.module('GLA')

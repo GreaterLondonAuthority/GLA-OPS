@@ -1,23 +1,23 @@
 <div class="reports">
   <gla-page-header class="no-padding mbottom10" [hide-back-btn]="true">Reports</gla-page-header>
 
-  <well class="report-server" ng-if="$ctrl.canRunJasper">
+  <gla-well class="report-server" ng-if="$ctrl.canRunJasper">
     <section-header>OPS reporting tool</section-header>
     <div>Reports can be created in the <a ng-href="{{$ctrl.envVars['reportServer-url']}}" target="_blank">OPS reporting tool</a>.
       Contact the GLA OPS team if you require a log-in.</div>
-  </well>
+  </gla-well>
 
-  <well class="mtop30 sgw" ng-if="$ctrl.isCurrentUserAllowedToAccessSkillsGateway">
+  <gla-well class="mtop30 sgw" ng-if="$ctrl.isCurrentUserAllowedToAccessSkillsGateway">
     <section-header>Skills gateway</section-header>
     <div>You can use the same login details to login to the <a ng-href="{{$ctrl.envVars['sgw-url']}}" target="_blank">skills gateway</a>.</div>
-  </well>
+  </gla-well>
 
-  <well class="mtop30" ng-if="$ctrl.runAdhocReports">
+  <gla-well class="mtop30" ng-if="$ctrl.runAdhocReports">
     <section-header>Ad-hoc reporting</section-header>
     <div>Reports can be created in the <a href ui-sref="reports-sql-editor">OPS SQL editor</a>.</div>
-  </well>
+  </gla-well>
 
-  <well class="mtop30 export-reports">
+  <gla-well class="mtop30 export-reports">
     <div ng-if="!$ctrl.reportsAvailable">
       There are no reports available for you to download.
     </div>
@@ -45,19 +45,19 @@
       <div class="row form">
         <div class="col-md-4 col-sm-12 form-group" ng-if="$ctrl.showProgrammeFilter">
           <label for="programmeOption">Programme</label><br/>
-          <checkbox-filter id="programmeOption"
-                           is-disabled="!$ctrl.enabled.programmeSelector"
-                           filter-dropdown-items="$ctrl.filteredProgrammes"
-                           on-change="$ctrl.selectProgramme()"></checkbox-filter>
+          <gla-checkbox-filter id="programmeOption"
+                           [is-disabled]="!$ctrl.enabled.programmeSelector"
+                           [filter-dropdown-items]="$ctrl.filteredProgrammes"
+                           (on-change)="$ctrl.selectProgramme()"></gla-checkbox-filter>
 
         </div>
 
         <div class="col-md-4 col-sm-12 form-group filter" ng-repeat="filter in $ctrl.selectedReportType.filters" ng-if="filter.name != 'Programme' && $ctrl.programmeIds.length">
           <label ng-attr-for="{{filter.name}}">{{$ctrl.getLabel(filter)}}</label><br/>
-          <checkbox-filter ng-attr-id="{{filter.name}}"
+          <gla-checkbox-filter ng-attr-id="{{filter.name}}"
                            ng-if="!filter.singleSelect"
-                           filter-dropdown-items="$ctrl.getFilterDropDowns(filter)"
-                           is-disabled="!$ctrl.getFilterDropDowns(filter).length"></checkbox-filter>
+                           [filter-dropdown-items]="$ctrl.getFilterDropDowns(filter)"
+                           [is-disabled]="!$ctrl.getFilterDropDowns(filter).length"></gla-checkbox-filter>
 
           <select class="form-control"
                   ng-attr-id="{{filter.name}}"
@@ -78,7 +78,7 @@
         </div>
       </div>
     </div>
-  </well>
+  </gla-well>
   <div class="text-center">
     <a class="link downloadButton btn btn-primary btn-md form-control" id="generate-button"
        ng-disabled="!$ctrl.isFormValid()"

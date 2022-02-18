@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,13 +31,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
-import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.ComparableItem;
+import uk.gov.london.ops.framework.OpsEntity;
+import uk.gov.london.ops.framework.enums.GrantType;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.framework.jpa.NonJoin;
 import uk.gov.london.ops.project.StandardAttachment;
-import uk.gov.london.ops.framework.ComparableItem;
 import uk.gov.london.ops.project.claim.ClaimStatus;
-import uk.gov.london.ops.project.grant.GrantType;
 
 /**
  * Entity to represent a project milestone
@@ -131,6 +132,9 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
 
     @Column(name = "reclaim_reason")
     private String reclaimReason;
+
+    @Column(name = "withdraw_reason")
+    private String withdrawReason;
 
     @Column(name = "reclaimed")
     private Boolean reclaimed;
@@ -403,6 +407,14 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
         this.milestoneMarkedCorporate = milestoneMarkedCorporate;
     }
 
+    public String getWithdrawReason() {
+        return withdrawReason;
+    }
+
+    public void setWithdrawReason(String withdrawReason) {
+        this.withdrawReason = withdrawReason;
+    }
+
     public boolean isNotApplicable() {
         return notApplicable;
     }
@@ -527,6 +539,12 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
         this.reclaimed = reclaimed;
     }
 
+    public boolean isWithdrawable() {
+        // approved, and non monetary, or no existing claims
+        return Approved.equals(this.claimStatus);
+    }
+
+
     /**
      * @return if this is a monetary milestone with a non zero split or value.
      */
@@ -536,4 +554,20 @@ public class Milestone implements OpsEntity<Integer>, ComparableItem {
                         || (monetaryValue != null && BigDecimal.ZERO.compareTo(monetaryValue) != 0));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Milestone milestone = (Milestone) o;
+        return Objects.equals(summary, milestone.summary) && Objects.equals(milestoneDate, milestone.milestoneDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(summary, milestoneDate);
+    }
 }

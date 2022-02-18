@@ -17,10 +17,13 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.enums.Requirement;
+import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.block.ProjectBlockType;
+import uk.gov.london.ops.project.template.domain.RepeatingEntityTemplateBlock;
+import uk.gov.london.ops.project.template.domain.TemplateBlock;
 import uk.gov.london.ops.project.template.domain.UserDefinedOutputTemplateBlock;
 
 /**
@@ -93,6 +96,6 @@ public class UserDefinedOutputBlock extends RepeatingEntityBlock<UserDefinedOutp
                         || getUserDefinedOutputs().size() > blockTemplate.getMaxNumberOfEntities();
             }
         }
-        return super.isComplete() && !hasMissingBaseline && !incorrectNumberOfEntities;
+        return isNotRequired() || (super.isComplete() && !hasMissingBaseline && !incorrectNumberOfEntities);
     }
 }

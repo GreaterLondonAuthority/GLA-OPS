@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="83" author="ybouhass">
+        <addColumn tableName="milestone_template">
+            <column name="external_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <addColumn tableName="milestone">
+            <column name="external_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <addColumn tableName="tenure_type">
+            <column name="external_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="84" author="ybouhass">
+        <dropColumn tableName="users" columnName="organisation_id" />
+        <dropColumn tableName="users" columnName="approved" />
+        <dropColumn tableName="users" columnName="approved_on" />
+        <dropColumn tableName="users" columnName="approved_by" />
+        <dropColumn tableName="users" columnName="registration_ims_number" />
+        <dropColumn tableName="users" columnName="registration_org_id" />
+    </changeSet>
+    
+    <changeSet id="85" author="ybouhass">
+        <renameTable oldTableName="subsidy_source" newTableName="grant_source" />
+
+        <renameColumn tableName="budget_and_tenure" oldColumnName="SUBSIDY_TYPE" newColumnName="GRANT_TYPE" />
+
+        <sql>update budget_and_tenure set GRANT_TYPE='NEGOTIATED' where GRANT_TYPE='REQUEST'</sql>
+        <sql>update budget_and_tenure set GRANT_TYPE='DEVELOPER-LED' where GRANT_TYPE='S106'</sql>
+
+        <renameColumn tableName="project" oldColumnName="calculate_subsidy" newColumnName="calculate_grant" />
+        <renameColumn tableName="project" oldColumnName="subsidy_source" newColumnName="grant_source" />
+        <renameColumn tableName="project" oldColumnName="request_subsidy" newColumnName="negotiated_grant" />
+        <renameColumn tableName="project" oldColumnName="s106_subsidy" newColumnName="developer_led_grant" />
+        <renameColumn tableName="project" oldColumnName="indicative_subsidy" newColumnName="indicative_grant" />
+
+        <dropForeignKeyConstraint baseTableName="project" constraintName="fk_project_budget_and_tenure" />
+        <dropForeignKeyConstraint baseTableName="project" constraintName="fk_project_subsidy_source" />
+
+        <addForeignKeyConstraint baseColumnNames="calculate_grant"
+                                 baseTableName="project"
+                                 constraintName="fk_project_calculate_grant"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="budget_and_tenure"/>
+
+        <addForeignKeyConstraint baseColumnNames="grant_source"
+                                 baseTableName="project"
+                                 constraintName="fk_project_grant_source"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="grant_source"/>
+    </changeSet>
+
+    <changeSet id="86" author="ybouhass" dbms="h2">
+        <dropSequence sequenceName="subsidy_source_seq" />
+        <createSequence sequenceName="grant_source_seq" startValue="100001" incrementBy="1" />
+    </changeSet>
+    <changeSet id="86" author="ybouhass" dbms="postgresql">
+        <sql>ALTER SEQUENCE subsidy_source_seq RENAME TO grant_source_seq;</sql>
+        <sql>ALTER SEQUENCE subsidy_source_id_seq RENAME TO grant_source_id_seq;</sql>
+    </changeSet>
+
+    <changeSet id="87" author="ybouhass">
+        <renameColumn tableName="project" oldColumnName="total_subsidy_requested" newColumnName="total_grant_eligibility" />
+        <renameColumn tableName="grant_source" oldColumnName="zero_subsidy_requested" newColumnName="zero_grant_requested" />
+        <renameColumn tableName="tenure_and_units" oldColumnName="subsidy_requested" newColumnName="grant_requested" />
+
+        <sql>update template_block set block='CalculateGrant' where block='CalculateSubsidy'</sql>
+        <sql>update project_block set project_block_type='CalculateGrant' where project_block_type='CalculateSubsidy'</sql>
+
+        <sql>update template_block set block='GrantSource' where block='SubsidySource'</sql>
+        <sql>update project_block set project_block_type='GrantSource' where project_block_type='SubsidySource'</sql>
+
+        <sql>update template_block set block='NegotiatedGrant' where block='RequestSubsidy'</sql>
+        <sql>update project_block set project_block_type='NegotiatedGrant' where project_block_type='RequestSubsidy'</sql>
+
+        <sql>update template_block set block='DeveloperLedGrant' where block='S106Subsidy'</sql>
+        <sql>update project_block set project_block_type='DeveloperLedGrant' where project_block_type='S106Subsidy'</sql>
+
+        <sql>update template_block set block='IndicativeGrant' where block='IndicativeSubsidy'</sql>
+        <sql>update project_block set project_block_type='IndicativeGrant' where project_block_type='IndicativeSubsidy'</sql>
+    </changeSet>
+
+    <changeSet id="88" author="cmelville">
+        <createTable tableName="lock_details">
+            <column name="id" type="INT4">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="firstname" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="lastname" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="lock_timeout_time" type="TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="89" author="ybouhass">
+        <addColumn tableName="programme">
+            <column name="enabled" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="90" author="ybouhass">
+        <createSequence sequenceName="processing_route_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="processing_route">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="processing_route_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="external_id" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="template_block_id" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <addColumn tableName="milestone_template">
+            <column name="processing_route_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="template_block_id"
+                                 baseTableName="processing_route"
+                                 constraintName="fk_processing_route_template_block_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="template_block"/>
+
+        <createIndex indexName="processing_route_template_block_id_idx" tableName="processing_route">
+            <column name="template_block_id" type="INT4" />
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="processing_route_id"
+                                 baseTableName="milestone_template"
+                                 constraintName="fk_milestone_template_processing_route_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="processing_route"/>
+
+        <createIndex indexName="milestone_template_processing_route_id_idx" tableName="milestone_template">
+            <column name="processing_route_id" type="INT4" />
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="91" author="ybouhass">
+        <addColumn tableName="milestones_block">
+            <column name="processing_route_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="92" author="cmelville">
+        <createSequence sequenceName="ledger_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="PROJECT_LEDGER_ENTRY">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="ledger_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="project_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="block_id" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="year" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="month" type="smallint">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="year_month" type="INT4">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="ledger_status" type="VARCHAR(55)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="ledger_type" type="VARCHAR(55)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="spend_type" type="VARCHAR(55)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="category" type="VARCHAR(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="value" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        <createIndex indexName="project_ledger_entry_block_id_idx" tableName="project_ledger_entry">
+            <column name="block_id" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="project_ledger_entry_project_id_idx" tableName="project_ledger_entry">
+            <column name="project_id" type="INT4" />
+        </createIndex>
+
+        <createTable tableName="ANNUAL_SPEND">
+            <column name="id" type="INT4" >
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="is_complete" type="boolean"  defaultValue="false">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="93" author="cmelville">
+        <sql>update project set site_status = null</sql>
+    </changeSet>
+
+    <changeSet id="94" author="ybouhass">
+        <createView viewName="v_total_grant" replaceIfExists="true">
+            SELECT
+            prg.name Programme,
+            org.name Organisation,
+            prj.title Project,
+            SUM(tu.total_units) Units, SUM(tu.grant_requested) Grant_Requested
+            FROM tenure_and_units tu
+            LEFT OUTER JOIN tenure_type tt ON tu.tenure_type_id = tt.id
+            LEFT OUTER JOIN project prj ON tu.project_id = prj.id
+            LEFT OUTER JOIN programme prg ON prj.programme_id = prg.id
+            LEFT OUTER JOIN organisation org ON prj.org_id = org.id
+            LEFT OUTER JOIN template tmplt ON prj.template_id = tmplt.id
+            WHERE tu.total_units > 0
+            GROUP BY prg.name, org.name, prj.title
+        </createView>
+    </changeSet>
+
+</databaseChangeLog>

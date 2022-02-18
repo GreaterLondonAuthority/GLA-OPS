@@ -15,25 +15,21 @@
       </div>
       <ul class="tiles-list">
         <li class="col-md-4 col-sm-6 grant-column" ng-repeat="tile in $ctrl.tiles track by tile.name">
-          <tile items="tile.items" class="space-between">{{ tile.name }}
-            <div class="tile-status" id="tile-status">
+          <gla-tile [items]="tile.items" class="space-between" [hlevel]="4">{{ tile.name }}
+            <span class="tile-status">
               <span class="green" ng-if="tile.status == 'Approved'"> Approved by GLA <i
                 class="glyphicon glyphicon-ok-sign"></i></span>
               <span class="red" ng-if="tile.status != null && tile.status != 'Approved'"> {{tile.status}} status <i
                 class="glyphicon glyphicon-exclamation-sign"></i></span>
               <span class="red" ng-if="tile.status == null"> <i class="glyphicon glyphicon-exclamation-sign"></i></span>
-            </div>
-          </tile>
+            </span>
+          </gla-tile>
         </li>
       </ul>
     </div>
 
     <div class="opening-balance-section">
-      <section-header>
-        <div class="row">
-          <div class="col-sm-12 no-padding">Opening balance for {{$ctrl.financialYear | fYear}}</div>
-        </div>
-      </section-header>
+      <section-header>Opening balance for {{$ctrl.financialYear | fYear}}</section-header>
 
       <div class="mtop20">
         <sub-section-header ng-if="!$ctrl.readOnly && !$ctrl.isPreviousYearApproved()">

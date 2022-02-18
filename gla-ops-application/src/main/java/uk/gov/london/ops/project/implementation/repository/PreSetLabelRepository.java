@@ -8,8 +8,9 @@
 package uk.gov.london.ops.project.implementation.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import uk.gov.london.ops.domain.PreSetLabel;
-import uk.gov.london.ops.organisation.model.Organisation;
+import org.springframework.stereotype.Repository;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
+import uk.gov.london.ops.project.label.PreSetLabelEntity;
 
 import java.util.List;
 
@@ -18,9 +19,10 @@ import java.util.List;
  *
  * @author Carmina Matias
  */
-public interface PreSetLabelRepository extends JpaRepository<PreSetLabel, Integer> {
+@Repository
+public interface PreSetLabelRepository extends JpaRepository<PreSetLabelEntity, Integer> {
 
-    PreSetLabel findByLabelNameAndManagingOrganisation(String labelName, Organisation managingOrganisation);
+    PreSetLabelEntity findByLabelNameAndManagingOrganisation(String labelName, OrganisationEntity managingOrganisation);
 
-    List<PreSetLabel> findAllByManagingOrganisation(Organisation organisation);
+    List<PreSetLabelEntity> findAllByManagingOrganisation(OrganisationEntity organisation);
 }

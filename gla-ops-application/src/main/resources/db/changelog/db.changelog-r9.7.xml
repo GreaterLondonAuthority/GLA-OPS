@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="779" author="cmatias">
+        <addColumn tableName="questions_block_section">
+            <column name="parent_id" type="INT4" remarks="parent question id" ></column>
+        </addColumn>
+        <addColumn tableName="questions_block_section">
+            <column name="parent_answer_to_match" type="VARCHAR(50)" remarks="parent answer to match" ></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="780" author="aworrall">
+        <addColumn tableName="programme">
+            <column name="opening_datetime" type="TIMESTAMP"></column>
+            <column name="closing_datetime" type="TIMESTAMP"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="781" author="cmatias">
+        <addColumn tableName="units_table_entry">
+            <column name="rent_charged_on_unsold_equity" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="780" author="ybouhass">
+        <createSequence sequenceName="units_details_build_type_entry_seq" startValue="10000" incrementBy="1" />
+        <createTable tableName="units_details_build_type_entry">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="units_details_build_type_entry_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" />
+            <column name="category" type="varchar(255)" />
+            <column name="new_build_units" type="INT4" />
+            <column name="refurbished_units" type="INT4" />
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

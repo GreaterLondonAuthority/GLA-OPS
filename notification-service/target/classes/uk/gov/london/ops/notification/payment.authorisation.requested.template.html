@@ -1,0 +1,20 @@
+<p>
+Dear {{user.firstName}} {{user.lastName}},
+</p>
+<p>
+Authorisation has been requested for the following payment(s):
+</p>
+<p>
+    <b> Payment ID:</b> {{paymentIds}} <br/>
+
+    <b>Project ID:</b> {{projectId}}, <b>Project title:</b> {{projectName}} <br/>
+
+    <b>Organisation ID:</b> {{organisation.id}}, <b>Organisation name:</b> {{organisation.name}} <br/>
+
+    <b>Programme ID:</b> {{programme.id}}, <b>Programme name:</b>  {{programme.name}} <br/>
+</p>
+<p>
+Regards,<br/>
+GLA OPS
+</p>
+<a href="{{glaOpsUrl}}">{{glaOpsUrl}}</a>

@@ -8,19 +8,19 @@
 package uk.gov.london.ops.role;
 
 import org.springframework.stereotype.Service;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.organisation.OrganisationService;
 import uk.gov.london.ops.role.implementation.RoleRepository;
 import uk.gov.london.ops.role.model.Role;
 import uk.gov.london.ops.role.model.RoleNameAndDescription;
-import uk.gov.london.ops.user.UserService;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static uk.gov.london.common.user.BaseRole.*;
-import static uk.gov.london.common.user.BaseRole.GLA_READ_ONLY_DESC;
+import static uk.gov.london.ops.user.UserUtils.currentUser;
 
 @Service
 public class RoleService {
@@ -31,11 +31,13 @@ public class RoleService {
             new RoleNameAndDescription(GLA_SPM, GLA_SPM_DESC),
             new RoleNameAndDescription(GLA_PM, GLA_PM_DESC, true),
             new RoleNameAndDescription(GLA_REGISTRATION_APPROVER, GLA_REGISTRATION_APPROVER_DESC),
+            new RoleNameAndDescription(GLA_PROGRAMME_ADMIN, GLA_PROGRAMME_ADMIN_DESC),
             new RoleNameAndDescription(GLA_FINANCE, GLA_FINANCE_DESC),
-            new RoleNameAndDescription(GLA_READ_ONLY, GLA_READ_ONLY_DESC)
+            new RoleNameAndDescription(GLA_READ_ONLY, GLA_READ_ONLY_DESC),
+            new RoleNameAndDescription(INTERNAL_BLOCK_EDITOR, INTERNAL_BLOCK_EDITOR_DESC)
     );
 
-    private static final List<RoleNameAndDescription> team_roles = Arrays.asList(
+    private static final List<RoleNameAndDescription> team_assignable_roles = Arrays.asList(
             new RoleNameAndDescription(GLA_ORG_ADMIN, GLA_ORG_ADMIN_DESC),
             new RoleNameAndDescription(GLA_SPM, GLA_SPM_DESC),
             new RoleNameAndDescription(GLA_PM, GLA_PM_DESC),
@@ -47,6 +49,7 @@ public class RoleService {
             new RoleNameAndDescription(GLA_SPM, GLA_SPM_DESC),
             new RoleNameAndDescription(GLA_PM, GLA_PM_DESC, true),
             new RoleNameAndDescription(GLA_REGISTRATION_APPROVER, GLA_REGISTRATION_APPROVER_DESC),
+            new RoleNameAndDescription(GLA_PROGRAMME_ADMIN, GLA_PROGRAMME_ADMIN_DESC),
             new RoleNameAndDescription(GLA_FINANCE, GLA_FINANCE_DESC),
             new RoleNameAndDescription(GLA_READ_ONLY, GLA_READ_ONLY_DESC)
     );
@@ -64,14 +67,11 @@ public class RoleService {
     );
 
     final OrganisationService organisationService;
-    final UserService userService;
     final RoleRepository roleRepository;
     final Environment environment;
 
-    public RoleService(OrganisationService organisationService, UserService userService, RoleRepository roleRepository,
-                       Environment environment) {
+    public RoleService(OrganisationService organisationService, RoleRepository roleRepository, Environment environment) {
         this.organisationService = organisationService;
-        this.userService = userService;
         this.roleRepository = roleRepository;
         this.environment = environment;
     }
@@ -102,21 +102,26 @@ public class RoleService {
     }
 
     public List<RoleNameAndDescription> getTeamRoles() {
-        return team_roles;
+        return team_assignable_roles;
     }
 
     public List<RoleNameAndDescription> getAssignableRoles(Integer orgId) {
         if (organisationService.isManagingOrganisation(orgId)) {
-            if (userService.currentUser().isOpsAdmin()) {
+            if (currentUser().isOpsAdmin()) {
                 return ops_admin_assignable_roles;
             } else {
                 return managing_organisation_assignable_roles;
             }
+        } else if (organisationService.isTeamOrganisation(orgId)) {
+            return team_assignable_roles;
         } else if (organisationService.isTechSupportOrganisation(orgId)) {
             return tech_organisation_assignable_roles;
         } else {
             return organisation_assignable_roles;
         }
+    }
+    public Set<String> getAuthorisedSignatories(Integer orgId) {
+        return roleRepository.getAuthorisedSignatories(orgId);
     }
 
 }

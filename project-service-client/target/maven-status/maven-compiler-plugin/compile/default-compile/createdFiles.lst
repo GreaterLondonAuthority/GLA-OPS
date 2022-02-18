@@ -1,0 +1,5 @@
+uk\gov\london\ops\project\template\TemplateService.class
+uk\gov\london\ops\project\label\LabelService.class
+uk\gov\london\ops\project\state\ProjectStateService.class
+uk\gov\london\ops\project\state\StateModel.class
+uk\gov\london\ops\project\ProjectFacade.class

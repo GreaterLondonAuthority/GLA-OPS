@@ -1,0 +1,37 @@
+<div class="design-standards">
+  <div class="text-center">
+    <gla-project-header (onBack)="back()" [editableBlock]="$ctrl">{{projectBlock.blockDisplayName}}</gla-project-header>
+  </div>
+  <div>
+    <div class="row grant-block-title">
+      Confirm that this project is intended to meet the <a href="https://www.london.gov.uk/what-we-do/regeneration/regeneration-publications/london-housing-design-guide" target="_blank">design standards</a> for this programme
+    </div>
+
+    <div id="radios" class="design-compliant">
+      <gla-yes-no-input id="trueRadio"
+                        [readOnly]="readOnly"
+                        mode="bool"
+                        name="meets-design-guide"
+                        [(model)]="projectBlock.meetingLondonHousingDesignGuide">
+      </gla-yes-no-input>
+
+      <div *ngIf="projectBlock.meetingLondonHousingDesignGuide === false" class="reason-label">Provide a brief explanation for why the London Housing Design Guide standards are not being met.</div>
+    </div>
+
+    <div *ngIf="projectBlock.meetingLondonHousingDesignGuide === false">
+      <ng-container *ngIf="!readOnly">
+        <textarea id="reason"
+                  aria-label="Reason" rows="5"
+                  name="reason"
+                  [disabled]="readOnly"
+                  class="form-control"
+                  [(ngModel)]="projectBlock.reasonForNotMeetingDesignGuide"
+                  #reason="ngModel"
+                  maxlength="1000" required></textarea>
+        <div class="error-wrapper error" *ngIf="reason?.touched && reason?.errors?.required" role="alert">Required</div>
+      </ng-container>
+      <div *ngIf="readOnly" id="reason" class="readonly-form-el read-only-text multiline-text">{{projectBlock.reasonForNotMeetingDesignGuide}}</div>
+      <gla-remaining-characters *ngIf="!readOnly" [text]="projectBlock.reasonForNotMeetingDesignGuide" [max]="1000"></gla-remaining-characters>
+    </div>
+  </div>
+</div>

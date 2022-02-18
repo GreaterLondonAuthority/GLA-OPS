@@ -12,20 +12,17 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.london.ops.framework.Environment;
-import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.framework.OpsEntity;
+import uk.gov.london.ops.framework.environment.Environment;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
 
+import static uk.gov.london.ops.framework.OPSUtils.currentUsername;
+
 @Aspect
 @Component
 public class EntityAuditingAspect {
-
-    @Autowired
-    UserService userService;
 
     @Autowired
     Environment environment;
@@ -43,37 +40,37 @@ public class EntityAuditingAspect {
     void auditEntityChange(JoinPoint joinPoint) throws Throwable {
         Object entity = joinPoint.getArgs()[0];
 
-        auditChangesWhereApplicable(entity,true);
+        auditChangesWhereApplicable(entity, true);
 
         Field[] fields = entity.getClass().getDeclaredFields();
-        for (Field field: fields) {
+        for (Field field : fields) {
             field.setAccessible(true);
-            auditChangesWhereApplicable(field.get(entity),false);
+            auditChangesWhereApplicable(field.get(entity), false);
         }
     }
 
-    void auditChangesWhereApplicable(Object entity,boolean updateLastModificationValues) {
+    void auditChangesWhereApplicable(Object entity, boolean updateLastModificationValues) {
         if (entity instanceof OpsEntity) {
-            auditChanges((OpsEntity) entity,updateLastModificationValues);
+            auditChanges((OpsEntity) entity, updateLastModificationValues);
         }
 
         if (entity instanceof Collection) {
             Collection collection = (Collection) entity;
             collection.stream()
                     .filter(o -> o instanceof OpsEntity)
-                    .forEach(o -> auditChanges((OpsEntity) o,updateLastModificationValues));
+                    .forEach(o -> auditChanges((OpsEntity) o, updateLastModificationValues));
         }
     }
 
-    private void auditChanges(OpsEntity entity,boolean updateLastModificationValues) {
-        User currentUser = userService.currentUser();
+    private void auditChanges(OpsEntity entity, boolean updateLastModificationValues) {
+        String currentUsername = currentUsername();
 
         if (updateLastModificationValues) {
-            if (currentUser != null) {
+            if (currentUsername != null) {
                 if (entity.getCreatedBy() == null) {
-                    entity.setCreatedBy(currentUser.getUsername());
+                    entity.setCreatedBy(currentUsername);
                 } else {
-                    entity.setModifiedBy(currentUser.getUsername());
+                    entity.setModifiedBy(currentUsername);
                 }
             }
             if (entity.getCreatedOn() == null) {
@@ -82,8 +79,8 @@ public class EntityAuditingAspect {
                 entity.setModifiedOn(environment.now());
             }
         } else {
-            if (currentUser != null && entity.getCreatedBy() == null) {
-                entity.setCreatedBy(currentUser.getUsername());
+            if (currentUsername != null && entity.getCreatedBy() == null) {
+                entity.setCreatedBy(currentUsername);
             }
             if (entity.getCreatedOn() == null) {
                 entity.setCreatedOn(environment.now());

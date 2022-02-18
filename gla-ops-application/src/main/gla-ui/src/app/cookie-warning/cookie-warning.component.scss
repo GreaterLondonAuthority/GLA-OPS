@@ -1,0 +1,43 @@
+@import "variables";
+@import "mixins";
+
+.gla-cookie-warning {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  z-index: 1001;
+  font-size: 13px;
+  background-color: $green-pearl;
+
+  a,
+  a:hover,
+  a:focus,
+  a:active:hover,
+  a:active:focus {
+    color: $accent-color;
+    text-decoration: none;
+    font-family: $font-family-bold;
+  }
+
+  a:focus,
+  a:active:focus {
+    outline: 2px solid $gla-black;
+    outline-offset: 2px;
+  }
+
+  .close-button{
+    cursor: pointer;
+    font-size: 18px;
+    color: $gla-black;
+    &:focus,
+    &:active:focus {
+      outline: 2px solid $gla-black;
+      outline-offset: 2px;
+    }
+  }
+
+  .cookie-warning-text{
+    flex-grow: 1;
+  }
+}

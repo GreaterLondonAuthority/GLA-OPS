@@ -1,208 +1,100 @@
-  //TODO move to generic form styles
-  .funding-page {
+.yearly-budget-funding-totals-table {
+  .footer-row {
+    background-color: white;
 
-    .left-indent {
-      padding-left: 30px
-    }
-
-    .dbl-left-indent {
-      padding-left: 45px
-    }
-
-
-    .no-left-padding {
-      padding-left: 0;
-    }
-    table {
-      text-align: left;
-    }
-    .right-border-divider{
-      border-right: 1px solid $alto;
-    }
-
-    .wizzard {
-      padding: .5rem .8rem .5rem .8rem;
-      background-color: white;
-      border: 1px solid #eaeaea;
-      box-shadow: 0 0 0.6rem 0 rgba(0, 0, 0, 0.05);
-      button {
-        padding: .3rem .5rem .3rem .5rem !important;
-      }
-    }
-
-    .annual-expenditure{
-      .form-group{
-        text-align: left;
-        clear: both;
-        label{
-          display: block;
-        }
-        .form-control{
-          margin-bottom: 20px;
-        }
-      }
-    }
-
-    .ui-select-match-text {
-      overflow-x:hidden;
-      text-overflow: ellipsis;
-    }
-
-    .ui-select-bootstrap > .ui-select-choices{
-      width: auto;
-    }
-
-    .match-funding-input{
-      width: 188px;
-    }
-  }
-
-  .yearly-budget-funding-summary-table{
-    .highlight-cell {
-      background-color: #E0E0E0  !important;
-      color: black !important;
-      //text-align: center;
-      font-family: $font-family-bold;
-    }
-
-    .activity-row {
-      background-color: $grey !important;
-    }
-
-    .footer-row {
-      background-color: white;
-      td {
-        background-color: #4a4d4e !important;
-        color: white !important;
-
-      }
-    }
-
-    tr.year-row {
-      background-color: blue !important;
-      //font-family: $font-family-bolder;
-    }
-  }
-
-  .yearly-budget-capital-revenue-table {
-    .highlight-cell {
+    td, th {
       background-color: #E0E0E0 !important;
       color: black !important;
-      //text-align: center;
-      font-family: $font-family-bold;
-    }
 
-    tr.year-row {
-      background-color: $white !important;
+    }
+  }
+
+  .invalid-input {
+    border: 1px solid $red;
+  }
+
+  .year-column-cell {
+    background-color: #E0E0E0 !important;
+    color: black !important;
+  }
+
+  .no-border {
+    border-width: 0 !important;
+  }
+
+  .left-indent {
+    padding-left: 20px
+  }
+
+  .dbl-left-indent {
+    padding-left: 35px
+  }
+
+  table tbody tr.divider {
+    height: 5px;
+    background-color: #cccccc;
+
+    td {
+      padding: 0;
+    }
+  }
+
+  .footer-row {
+    td, th {
+      color: white !important;
+      background-color: #4a4d4e !important;
+    }
+  }
+
+  .quarter-row {
+    td {
+      font-family: $font-family-bolder;
+      font-size: 12px;
+    }
+  }
+
+  .milestone-row {
+    td {
       font-family: $font-family-bolder;
     }
-
-    .footer-row {
-      background-color: white;
-      td {
-        background-color: #4a4d4e !important;
-        color: white !important;
-
-      }
-    }
   }
 
-  .yearly-budget-funding-totals-table, .yearly-budget-balance-summary-table {
-    .year-column-cell{
-      //text-align: center;
-    }
-
-    .footer-row {
-      background-color: white;
-      td {
-        background-color: #E0E0E0 !important;
-        color: black !important;
-
-      }
-    }
-  }
-  .yearly-budget-funding-totals-table, .yearly-budget-balance-summary-table, .quarterly-budget-container{
-    .invalid-input {
-      border: 1px solid $red;
-    }
-    .year-column-cell {
-      background-color: #E0E0E0  !important;
-      color: black !important;
-    }
-
-    .no-border {
-      border-width: 0 !important;
-    }
-
-    .left-indent {
-      padding-left: 20px
-    }
-
-    .dbl-left-indent {
-      padding-left: 35px
-    }
-
-    table tbody tr.divider {
-      height: 5px;
-      background-color: #cccccc;
-      td{
-          padding: 0;
-      }
-    }
-
-    .footer-row {
-      td {
-        color: white  !important;
-        background-color: #4a4d4e  !important;
-      }
-    }
-
-    .quarter-row{
-      td{
-        font-family: $font-family-bolder;
-        font-size: 12px;
-      }
-    }
-    .milestone-row{
-      td{
-        font-family: $font-family-bolder;
-      }
-    }
-    .activity-row{
-
-    }
-
-    .top-border {
-      border-top: thin solid;
-      border-color: #cccccc;
-
-    }
-
-    .footer-row{
-      td{
-        font-family: $font-family-bolder;
-      }
-    }
-
-    .claim-link{
-      margin-right: 15px;
-      display: inline-block;
-      a {
-        color: #4a4d4e;
-      }
-
-      .error{
-        font-family: $font-family-bolder;
-      }
-    }
+  .activity-row {
 
   }
 
-  .funding-claim-modal{
-    .payment-group{
-      border: 1px solid $alto;
-      padding: 5px;
+  .top-border {
+    border-top: thin solid;
+    border-color: #cccccc;
+
+  }
+
+  .footer-row {
+    td, th {
+      font-family: $font-family-bolder;
     }
   }
+
+  .claim-link {
+    margin-right: 15px;
+    display: inline-block;
+
+    a {
+      color: #4a4d4e;
+    }
+
+    .error {
+      font-family: $font-family-bolder;
+    }
+  }
+
+}
+
+.funding-claim-modal {
+  .payment-group {
+    border: 1px solid $alto;
+    padding: 5px;
+  }
+}
 
 

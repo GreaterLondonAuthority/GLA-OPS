@@ -8,26 +8,27 @@ section-header2 {
     margin-right: 10px;
   }
 
-  h3 {
+  .bar {
     margin-top: 0;
     margin-bottom: 0;
     line-height: 28px;
+    flex: 1;
+    border-top: 1px solid $alto;
   }
 
   .section-header {
     .glyphicon {
-      color: $peppermint;
+      color: $green-spring;
       margin-right: 5px;
       top: 0;
+    }
+    .glyphicon-info-sign {
+      color: $gla-black;
     }
   }
 
   .section-subheader {
     margin-top: 0;
-  }
-
-  hr {
-    flex: 1;
   }
 
 

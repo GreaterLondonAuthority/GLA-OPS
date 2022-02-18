@@ -7,24 +7,21 @@
  */
 package uk.gov.london.ops.project.receipt;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.payment.LedgerStatus;
 import uk.gov.london.ops.payment.LedgerType;
 import uk.gov.london.ops.payment.ProjectLedgerItemRequest;
-import uk.gov.london.ops.project.BaseProjectFinanceService;
-import uk.gov.london.ops.project.EnrichmentRequiredListener;
-import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.SAPMetaData;
-import uk.gov.london.ops.project.WbsCode;
+import uk.gov.london.ops.project.*;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -90,7 +87,7 @@ public class ProjectReceiptsService extends BaseProjectFinanceService implements
             throw new ValidationException("cannot have more than " + MAX_WBS_CODES + " WBS codes in the receipts block!");
         }
 
-        for (WbsCode wbsCode : updatedBlock.getWbsCodes()) {
+        for (WbsCodeEntity wbsCode : updatedBlock.getWbsCodes()) {
             if (updatedBlock.getWbsCodes().stream().filter(c -> c.getCode().equals(wbsCode.getCode())).count() > 1) {
                 throw new ValidationException(
                         "cannot have duplicate WBS codes in the receipts block! code: " + wbsCode.getCode());

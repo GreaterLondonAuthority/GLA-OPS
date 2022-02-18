@@ -1,0 +1,26 @@
+:host {
+  display: block;
+
+  table {
+    td {
+      &.display-order {
+        width: 20%;
+      }
+
+      &.type {
+        width: 30%;
+      }
+
+      &.up-down-arrows {
+        width: 10%;
+        gla-show-up-down-arrow-buttons{
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          padding: 4px 0;
+          right: 15px;
+        }
+      }
+    }
+  }
+}

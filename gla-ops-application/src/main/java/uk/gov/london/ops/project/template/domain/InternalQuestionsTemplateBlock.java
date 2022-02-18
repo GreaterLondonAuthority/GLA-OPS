@@ -7,6 +7,9 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import uk.gov.london.ops.framework.JSONUtils;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.internalblock.InternalBlockType;
@@ -29,6 +32,15 @@ public class InternalQuestionsTemplateBlock extends InternalTemplateBlock implem
     )
     private Set<TemplateQuestion> questions = new HashSet<>();
 
+    @JoinData(joinType = Join.JoinType.ManyToOne, sourceTable = "internal_template_block", sourceColumn = "id",
+            targetColumn = "internal_template_block_id", targetTable = "questions_block_section", comment = "")
+    @OneToMany(cascade = CascadeType.ALL, targetEntity = QuestionsBlockSection.class)
+    @JoinColumn(name = "internal_template_block_id")
+    private Set<QuestionsBlockSection> sections = new HashSet<>();
+
+    @Transient
+    private boolean showComments = false;
+
     public InternalQuestionsTemplateBlock() {
         super(InternalBlockType.Questions);
     }
@@ -45,19 +57,51 @@ public class InternalQuestionsTemplateBlock extends InternalTemplateBlock implem
         this.questions = questions;
     }
 
+    public boolean isShowComments() {
+        return showComments;
+    }
+
+    public void setShowComments(boolean showComments) {
+        this.showComments = showComments;
+    }
+
     @Override
     public Set<QuestionsBlockSection> getSections() {
-        return null;
+        return sections;
+    }
+
+    public void setSections(Set<QuestionsBlockSection> sections) {
+        this.sections = sections;
+    }
+
+    @PostLoad
+    void loadBlockData() {
+        InternalQuestionsTemplateBlock data = JSONUtils.fromJSON(this.blockData, InternalQuestionsTemplateBlock.class);
+        if (data != null) {
+            this.setShowComments(data.isShowComments());
+        }
     }
 
     @Override
     public InternalQuestionsTemplateBlock clone() {
         InternalQuestionsTemplateBlock clone = (InternalQuestionsTemplateBlock) super.clone();
+        clone.setShowComments(this.showComments);
         for (TemplateQuestion question : questions) {
             TemplateQuestion copy = question.copy();
             clone.getQuestions().add(copy);
         }
+        for (QuestionsBlockSection section : sections) {
+            QuestionsBlockSection clonedSection = new QuestionsBlockSection(section.getExternalId(), section.getDisplayOrder(),
+                    section.getText());
+            clone.getSections().add(clonedSection);
+        }
         return clone;
     }
 
+    @Override
+    public List<TemplateBlockCommand> getTemplateBlockCommands() {
+        List<TemplateBlockCommand> globalCommands = super.getTemplateBlockCommands().stream().collect(Collectors.toList());
+        globalCommands.add(TemplateBlockCommand.REMOVE_QUESTION);
+        return globalCommands;
+    }
 }

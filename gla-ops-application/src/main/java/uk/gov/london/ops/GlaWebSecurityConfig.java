@@ -21,10 +21,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import uk.gov.london.ops.framework.security.OPSAuthenticationEntryPoint;
-import uk.gov.london.ops.user.UserService;
+import uk.gov.london.ops.user.UserServiceImpl;
 
 import javax.servlet.http.HttpServletResponse;
+
+import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
 
 @Configuration
 @EnableWebSecurity
@@ -33,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 public class GlaWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -41,22 +45,27 @@ public class GlaWebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests()
-                .antMatchers("/sysops/**").access("@userService.checkActuatorEndpointAccess(authentication)")
-//                .antMatchers("/api/v1/support/sql/update/**").access("hasIpAddress('127.0.0.1') or true")
+                .antMatchers("/sysops/**").access("@userServiceImpl.checkActuatorEndpointAccess(authentication)")
+//                .antMatchers("/swagger-ui.html").hasRole(OPS_ADMIN.replace("ROLE_", "")) //ROLE_ pre-pended by spring auth
+                .antMatchers("/swagger-ui.html").authenticated()
+                // .antMatchers("/api/v1/support/sql/update/**").access("hasIpAddress('127.0.0.1') or true")
                 .antMatchers("/**").permitAll();
 
 
+        // only used by the spring security form page
         http.formLogin()
                 // this will disable redirect after login success or failure
                 .successHandler((request, response, authentication) -> {/*nothing*/})
                 .failureHandler((request, response, e) -> response.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
+                //currently only using spring security login screen for swagger
+                .defaultSuccessUrl("/swagger-ui.html", true)
                 .permitAll();
 
         http.httpBasic();
 
         http.exceptionHandling()
-                // this avoids the redirect to the login screen when auth fails
-                .authenticationEntryPoint(opsAuthenticationEntryPoint());
+                // this avoids the redirect to the login screen when auth fails for APIs
+                .defaultAuthenticationEntryPointFor(opsAuthenticationEntryPoint(), new AntPathRequestMatcher("/api/v1/**"));
 
         http.logout()
                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())

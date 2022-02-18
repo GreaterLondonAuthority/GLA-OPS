@@ -33,13 +33,18 @@
       <change-report-field ng-if="item.versionObj" data="item.versionObj" fields="'versionString'" class="block-version" ng-class="{'next-to-tables': $ctrl.hasTables(item)}"></change-report-field>
       <project-details-change-report data="item" ng-if="item.type === 'ProjectDetailsBlock'"></project-details-change-report>
       <budgets-summary-report block="item.left" financial-year="$ctrl.currentFinancialYear" ng-if="item.type === 'ProjectBudgetsBlock'"></budgets-summary-report>
-      <calculate-grant-summary-report block="item.left" ng-if="item.type === 'CalculateGrantBlock'"></calculate-grant-summary-report>
-      <negotiated-grant-summary-report block="item.left" ng-if="item.type === 'NegotiatedGrantBlock'"></negotiated-grant-summary-report>
-      <developer-led-grant-summary-report block="item.left" ng-if="item.type === 'DeveloperLedGrantBlock'"></developer-led-grant-summary-report>
-      <indicative-grant-summary-report block="item.left" ng-if="item.type === 'IndicativeGrantBlock'"></indicative-grant-summary-report>
+      <calculate-grant-summary-report block="item.left" template="$ctrl.template" ng-if="item.type === 'CalculateGrantBlock'"></calculate-grant-summary-report>
+      <negotiated-grant-summary-report block="item.left" template="$ctrl.template" ng-if="item.type === 'NegotiatedGrantBlock'"></negotiated-grant-summary-report>
+      <developer-led-grant-summary-report block="item.left" template="$ctrl.template" ng-if="item.type === 'DeveloperLedGrantBlock'"></developer-led-grant-summary-report>
+      <indicative-grant-summary-report block="item.left" template="$ctrl.template" ng-if="item.type === 'IndicativeGrantBlock'"></indicative-grant-summary-report>
       <grant-source-summary-report data="item" ng-if="item.type === 'GrantSourceBlock'"></grant-source-summary-report>
       <design-standards-change-report data="item" ng-if="item.type === 'DesignStandardsBlock'"></design-standards-change-report>
-      <risks-and-issues-summary-report data="item.left" ng-if="item.type === 'ProjectRisksBlock'"></risks-and-issues-summary-report>
+
+      <risks-and-issues-summary-report data="item.left"
+                                       ng-if="item.type === 'ProjectRisksBlock'"
+                                       template="$ctrl.template">
+      </risks-and-issues-summary-report>
+
       <additional-questions-change-report data="item" ng-if="item.type === 'ProjectQuestionsBlock'"></additional-questions-change-report>
 
       <outputs-summary-report ng-if="item.type === 'OutputsBlock'"
@@ -77,6 +82,11 @@
                                    project="$ctrl.project"
                                    template="$ctrl.template"></outputs-cost-summary-report>
 
+      <gla-indicative-starts-and-completions-summary-report [block]="item.left"
+                                   ng-if="item.type === 'AffordableHomesBlock'"
+                                   [project]="$ctrl.project"
+                                   [template]="$ctrl.template"></gla-indicative-starts-and-completions-summary-report>
+
       <internal-blocks-change-report ng-if="item.type === 'InternalBlocks'"
                                      project="$ctrl.latestProject"
                                      comments="$ctrl.internalRiskComments"></internal-blocks-change-report>
@@ -84,7 +94,7 @@
     </div>
 
     <div class="report-block-content" ng-show="item.expanded" ng-if="item.type === 'ProjectHistory'"  ng-class="[item.blockDisplayCls]">
-      <div class="text-left lighter metainformation" id="metadata-{{$index}}">{{item.latestComment.createdOn | date: "dd/MM/yyyy 'at' HH:mm"}} {{item.latestComment.description || $ctrl.transitionMap[item.latestComment.transition] || item.latestComment.transition}} by {{ item.latestComment.createdByFirstName}} {{ item.latestComment.createdByLastName}}</div>
+      <div class="text-left lighter metainformation" id="metadata-{{$index}}">{{item.latestComment.createdOn | date: "dd/MM/yyyy 'at' HH:mm"}} {{item.latestComment.description || $ctrl.transitionMap[item.latestComment.transition] || item.latestComment.transition}} by {{ item.latestComment.creatorName}}</div>
       <div class="text-left comment">{{item.latestComment.comments}}</div>
     </div>
   </report-section>

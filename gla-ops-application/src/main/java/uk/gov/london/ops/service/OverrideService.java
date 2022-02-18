@@ -17,8 +17,8 @@ import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.ProjectService;
 import uk.gov.london.ops.repository.OverrideRepository;
+import uk.gov.london.ops.user.User;
 import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
 
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static uk.gov.london.ops.user.UserUtils.currentUser;
 
 /**
  * Spring JPA Service for Pre-set Labels information.
@@ -53,15 +55,27 @@ public class OverrideService {
     }
 
     public List<DeliveryOverride> getOverrides() {
-        return overrideRepository.findAll();
+        List<DeliveryOverride> overrides = overrideRepository.findAll();
+        for (DeliveryOverride override: overrides) {
+            enrich(override);
+        }
+        return overrides;
+    }
+
+    private void enrich(DeliveryOverride override) {
+        if (override.getOverriddenBy() != null) {
+            override.setOverriddenByName(userService.getUserFullName(override.getOverriddenBy()));
+        }
     }
 
     public Map<String, List<String>> getOverridesMetadata() {
         //TODO should it be enums?
         Map<String, List<String>> metadata = new HashMap<>();
         metadata.put("reasons", Stream.of("Adjustment", "Correction", "Project Restart").collect(Collectors.toList()));
-        metadata.put("types", Stream.of("Starts", "Completions", "Acquisition", "RCGF", "DPF", "Grant").collect(Collectors.toList()));
-        metadata.put("tenures", Stream.of("Affordable Tenure TBC", "London Living Rent / Shared Ownership", "Other Intermediate", "Social Rent (and LAR at benchmarks)", "Other Affordable Rent").collect(Collectors.toList()));
+        metadata.put("types",
+                Stream.of("Starts", "Completions", "Acquisition", "RCGF", "DPF", "Grant").collect(Collectors.toList()));
+        metadata.put("tenures", Stream.of("Affordable Tenure TBC", "London Living Rent / Shared Ownership", "Other Intermediate",
+                "Social Rent (and LAR at benchmarks)", "Other Affordable Rent").collect(Collectors.toList()));
         return metadata;
     }
 
@@ -121,11 +135,11 @@ public class OverrideService {
     }
 
     private DeliveryOverride getOverrideUser(DeliveryOverride deliveryOverride) {
-      User currentUser = userService.currentUser();
+      User currentUser = currentUser();
       if (currentUser == null) {
         throw new ValidationException("overriddenBy", "DeliveryOverride must have an overridden user");
       } else {
-        deliveryOverride.setOverriddenBy(currentUser);
+        deliveryOverride.setOverriddenBy(currentUser.getUsername());
         deliveryOverride.setOverriddenOn(OffsetDateTime.now());
       }
 

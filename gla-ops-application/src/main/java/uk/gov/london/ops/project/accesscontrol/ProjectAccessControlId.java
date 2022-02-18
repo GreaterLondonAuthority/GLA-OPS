@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Embeddable
 public class ProjectAccessControlId implements Serializable {
@@ -21,12 +23,17 @@ public class ProjectAccessControlId implements Serializable {
     @Column(name = "organisation_id")
     private Integer organisationId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "relationship_type")
+    private AccessControlRelationshipType relationshipType;
+
     public ProjectAccessControlId() {
     }
 
-    public ProjectAccessControlId(Integer projectId, Integer organisationId) {
+    public ProjectAccessControlId(Integer projectId, Integer organisationId, AccessControlRelationshipType relationshipType) {
         this.projectId = projectId;
         this.organisationId = organisationId;
+        this.relationshipType = relationshipType;
     }
 
     public Integer getProjectId() {
@@ -45,6 +52,14 @@ public class ProjectAccessControlId implements Serializable {
         this.organisationId = organisationId;
     }
 
+    public AccessControlRelationshipType getRelationshipType() {
+        return relationshipType;
+    }
+
+    public void setRelationshipType(AccessControlRelationshipType relationshipType) {
+        this.relationshipType = relationshipType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -54,12 +69,14 @@ public class ProjectAccessControlId implements Serializable {
             return false;
         }
         ProjectAccessControlId that = (ProjectAccessControlId) o;
-        return Objects.equals(projectId, that.projectId) && Objects.equals(organisationId, that.organisationId);
+        return Objects.equals(projectId, that.projectId)
+                && Objects.equals(organisationId, that.organisationId)
+                && relationshipType == that.relationshipType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(projectId, organisationId);
+        return Objects.hash(projectId, organisationId, relationshipType);
     }
 
 }

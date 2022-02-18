@@ -8,40 +8,36 @@
   </gla-page-header>
 
 
-  <well class="row mbottom20 search-container">
+  <gla-well class="row mbottom20 search-container">
     <div class="col-sm-6 col-md-5 text-search search-filter">
-      <div>Search</div>
-      <search-field options="$ctrl.searchOptions"
-                    selected-option="$ctrl.selectedSearchOption"
-                    search-text="$ctrl.searchText"
-                    on-search="$ctrl.getProgrammeData()"
-                    on-clear="$ctrl.clearSearchText()"></search-field>
+      <gla-search-field [options]="$ctrl.searchOptions"
+                        [(selected-option)]="$ctrl.selectedSearchOption"
+                        [(search-text)]="$ctrl.searchText"
+                        (on-search)="$ctrl.getProgrammeData()"
+                        (on-clear)="$ctrl.clearSearchText()"></gla-search-field>
     </div>
 
     <div class="col-sm-6 col-md-2 search-filter">
-      <div class="text-nowrap">Programme status</div>
-      <checkbox-filter
-        id="programme-status"
-        filter-dropdown-items="$ctrl.programmeStatusDropdown"
-        on-change="$ctrl.getProgrammeData()"></checkbox-filter>
+      <label class="text-nowrap" for="programme-status">Programme status</label>
+      <gla-checkbox-filter id="programme-status"
+                       [filter-dropdown-items]="$ctrl.programmeStatusDropdown"
+                       (on-change)="$ctrl.getProgrammeData()"></gla-checkbox-filter>
     </div>
 
     <div class="col-sm-6 col-md-2 search-filter" ng-if="$ctrl.programmeManagingOrganisationsDropdown.length > 1">
-      <div class="text-nowrap">Managing organisation</div>
-      <checkbox-filter
-        id="programme-managing-organisations"
-        filter-dropdown-items="$ctrl.programmeManagingOrganisationsDropdown"
-        on-change="$ctrl.getProgrammeData()"></checkbox-filter>
+      <label class="text-nowrap" for="programme-managing-organisations">Managing organisation</label>
+      <gla-checkbox-filter id="programme-managing-organisations"
+                       [filter-dropdown-items]="$ctrl.programmeManagingOrganisationsDropdown"
+                       (on-change)="$ctrl.getProgrammeData()"></gla-checkbox-filter>
     </div>
 
     <div class="clear-filter-and-search-box pull-left">
-      <button
-        ng-if="$ctrl.isAnyFilterApplied()"
+      <button ng-if="$ctrl.isAnyFilterApplied()"
         class="action-buttons action-buttons-reset"
         ng-click="$ctrl.clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset all
       </button>
     </div>
-  </well>
+  </gla-well>
 
   <div class="row mtop15 no-gutter">
     <div class="col-xs-12" ng-show="$ctrl.programmes.length == 0">

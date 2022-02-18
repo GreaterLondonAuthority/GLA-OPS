@@ -1,0 +1,46 @@
+.radio-button{
+  margin-bottom: 5px;
+  label {
+    margin-right: 10px;
+  }
+}
+.conditional-question{
+  label{
+    margin-top: -4px;
+    color: darken(#6E6E6E, 7%);
+    font-family: "Gotham-medium", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+    font-weight: 100;
+    font-size: 13px;
+  }
+
+  .form-group {
+    border-left: 1px solid #dddddd;
+    padding-left: 15px;
+  }
+
+  &.ng-enter{
+    opacity: 0;
+    transition: opacity ease-in 0.5s;
+    &.ng-enter-active{
+      opacity: 1;
+    }
+  }
+
+  &.ng-leave {
+    opacity: 1;
+    transition: opacity ease-out 0.5s;
+    &.ng-leave-active {
+      opacity: 0;
+    }
+  }
+}
+.yesNoInput {
+  display: inline-block;
+
+  input {
+    margin: 0.5em;
+    &:first-child{
+      margin-left: 0;
+    }
+  }
+}

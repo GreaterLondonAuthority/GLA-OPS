@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import uk.gov.london.common.GlaUtils;
-import uk.gov.london.ops.framework.EnvironmentUtils;
+import uk.gov.london.ops.framework.environment.EnvironmentUtils;
 import uk.gov.london.ops.payment.PaymentSummary;
 import uk.gov.london.ops.project.claim.Claim;
 import uk.gov.london.ops.project.claim.ClaimStatus;

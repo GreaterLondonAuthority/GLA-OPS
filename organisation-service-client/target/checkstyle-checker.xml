@@ -243,7 +243,7 @@
         <module name="AbbreviationAsWordInName">
             <property name="ignoreFinal" value="false"/>
             <property name="allowedAbbreviationLength" value="1"/>
-            <property name="allowedAbbreviations" value="AEB,API,CSV,DPF,DTO,ESF,GLA,JSON,ILR,IMS,OPS,PCS,RCGF,SAP,SFTP,SQL,XML,WBS" />
+            <property name="allowedAbbreviations" value="ACM,AEB,API,CE,CRUD,CSV,DB,DPF,DTO,ESF,FTP,GGF,GLA,HNL,JPA,JSON,ILR,IMS,MO,OPS,PCS,POC,QA,RCGF,RP,SAP,SDE,SFTP,SOS,SQL,XML,WBS" />
 <!--            <property name="tokens"-->
 <!--                      value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, ANNOTATION_DEF, ANNOTATION_FIELD_DEF,-->
 <!--                    PARAMETER_DEF, VARIABLE_DEF, METHOD_DEF"/>-->

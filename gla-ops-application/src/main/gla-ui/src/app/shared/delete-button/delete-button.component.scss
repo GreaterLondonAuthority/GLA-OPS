@@ -42,6 +42,13 @@
         background-color: darken($white, 5%);
       }
     }
+    &:focus, &:active:focus {
+      outline: 2px solid $gla-black;
+      outline-offset: 2px;
+      &:not(:focus-visible){
+        outline: none;
+      }
+    }
   }
 
   &.small {

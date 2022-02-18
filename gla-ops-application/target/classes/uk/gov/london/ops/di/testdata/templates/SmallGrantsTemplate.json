@@ -1,0 +1,114 @@
+{
+  "name": "Small Grants Template",
+  "author": "Data Initialiser",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": [],
+      "maxBoroughs": 3
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "displayOrder": 4,
+      "processingRoutes": [
+        {
+          "externalId": 10023,
+          "name": "default",
+          "milestones": [
+            {
+              "externalId": 3020,
+              "summary": "Project Start",
+              "requirement": "mandatory",
+              "monetarySplit": 75,
+              "displayOrder": 1,
+              "monetary": true,
+              "keyEvent": true,
+              "naSelectable": false
+            },
+            {
+              "externalId": 3003,
+              "summary": "Project Completion",
+              "requirement": "mandatory",
+              "monetarySplit": 25,
+              "displayOrder": 2,
+              "monetary": true,
+              "keyEvent": true,
+              "naSelectable": false
+            }
+          ],
+          "monetarySplitValid": true
+        }
+      ],
+      "descriptionEnabled": false,
+      "evidenceApplicability": "ALL_MILESTONES",
+      "showEvidences": "PAST_MILESTONE_DATE",
+      "autoCalculateMilestoneState": true,
+      "defaultProcessingRoute": {
+        "externalId": 10023,
+        "name": "default",
+        "milestones": [
+          {
+            "externalId": 3020,
+            "summary": "Project Start",
+            "requirement": "mandatory",
+            "monetarySplit": 75,
+            "displayOrder": 1,
+            "monetary": true,
+            "keyEvent": true,
+            "naSelectable": false
+          },
+          {
+            "externalId": 3003,
+            "summary": "Project Completion",
+            "requirement": "mandatory",
+            "monetarySplit": 25,
+            "displayOrder": 2,
+            "monetary": true,
+            "keyEvent": true,
+            "naSelectable": false
+          }
+        ]
+      },
+      "grantTypes": [],
+      "paymentSources": []
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {
+    "addressRequirement": "optional",
+    "boroughRequirement": "optional",
+    "coordsRequirement": "optional",
+    "maincontactRequirement": "optional",
+    "maincontactemailRequirement": "optional",
+    "siteOwnerRequirement": "optional",
+    "interestRequirement": "optional",
+    "projectManagerRequirement": "optional",
+    "siteStatusRequirement": "optional",
+    "legacyProjectCodeRequirement": "optional",
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "optional"
+  },
+  "tenureTypes": [],
+  "shouldMilestonesBlockShowStatus": false,
+  "allowMonetaryMilestones": false,
+  "grantTypes": []
+}

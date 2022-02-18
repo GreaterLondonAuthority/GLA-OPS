@@ -1,0 +1,49 @@
+{
+  "id": 2,
+  "name": "LOCAL_AUTHORITY",
+  "description": "Local Authority",
+  "displayOrder": "11",
+  "blocks": [
+    {
+      "blockName": "Organisation Details",
+      "displayOrder": 0,
+      "showBusinessDetails": false,
+      "showAddressDetails": true,
+      "showRegulatoryInformation": true,
+      "questions": [
+        {
+          "modelAttribute": "knownAs",
+          "requirement": "optional"
+        },
+        {
+          "modelAttribute": "providerNumber",
+          "requirement": "mandatory"
+        },
+        {
+          "modelAttribute": "ukprn",
+          "requirement": "optional"
+        }
+      ]
+    },
+    {
+      "blockName": "GLA Governance",
+      "displayOrder": 1,
+      "questions": []
+    },
+    {
+      "blockName": "Programmes",
+      "displayOrder": 2,
+      "questions": []
+    },
+    {
+      "blockName": "Contracts",
+      "displayOrder": 3,
+      "questions": []
+    },
+    {
+      "blockName": "Annual Returns",
+      "displayOrder": 4,
+      "questions": []
+    }
+  ]
+}

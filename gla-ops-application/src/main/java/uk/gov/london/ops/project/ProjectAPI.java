@@ -7,63 +7,55 @@
  */
 package uk.gov.london.ops.project;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static uk.gov.london.common.user.BaseRole.GLA_FINANCE;
-import static uk.gov.london.common.user.BaseRole.GLA_ORG_ADMIN;
-import static uk.gov.london.common.user.BaseRole.GLA_PM;
-import static uk.gov.london.common.user.BaseRole.GLA_READ_ONLY;
-import static uk.gov.london.common.user.BaseRole.GLA_SPM;
-import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
-import static uk.gov.london.common.user.BaseRole.ORG_ADMIN;
-import static uk.gov.london.common.user.BaseRole.PROJECT_EDITOR;
-import static uk.gov.london.common.user.BaseRole.PROJECT_READER;
-import static uk.gov.london.common.user.BaseRole.TECH_ADMIN;
-import static uk.gov.london.ops.framework.OPSUtils.verifyBinding;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Set;
-import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uk.gov.london.common.error.ApiError;
+import uk.gov.london.ops.framework.annotations.PermissionRequired;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.feature.Feature;
 import uk.gov.london.ops.framework.feature.FeatureStatus;
 import uk.gov.london.ops.project.accesscontrol.GrantAccessTrigger;
-import uk.gov.london.ops.project.block.DesignStandardsBlock;
-import uk.gov.london.ops.project.block.LockRequestStatus;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockHistoryItem;
-import uk.gov.london.ops.project.block.ProjectBlockService;
-import uk.gov.london.ops.project.block.ProjectDetailsBlock;
+import uk.gov.london.ops.project.block.*;
 import uk.gov.london.ops.project.claim.Claim;
 import uk.gov.london.ops.project.claim.ClaimService;
 import uk.gov.london.ops.project.grant.GrantSourceBlock;
 import uk.gov.london.ops.project.internalblock.InternalProjectBlock;
 import uk.gov.london.ops.project.label.Label;
 import uk.gov.london.ops.project.state.ProjectState;
-import uk.gov.london.ops.project.state.ProjectStateService;
+import uk.gov.london.ops.project.state.ProjectStateServiceImpl;
 import uk.gov.london.ops.project.state.ProjectStatus;
 import uk.gov.london.ops.project.state.StateTransitionResult;
+import uk.gov.london.ops.user.UserIdAndName;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.ops.framework.OPSUtils.verifyBinding;
+import static uk.gov.london.ops.permission.PermissionType.PROJ_ASSIGN;
+import static uk.gov.london.ops.permission.PermissionType.VIEW_PROGRAMME_ALLOCATIONS;
 
 /**
  * REST API for managing Projects.
@@ -89,41 +81,67 @@ public class ProjectAPI {
     FeatureStatus featureStatus;
 
     @Autowired
-    ProjectStateService projectStateService;
+    ProjectStateServiceImpl projectStateService;
 
     @Autowired
     ClaimService claimService;
 
-    @Secured({PROJECT_EDITOR, PROJECT_READER, ORG_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_SPM, OPS_ADMIN,
-        TECH_ADMIN})
+    @Autowired
+    protected Environment environment;
+
+    @Autowired
+    protected ProjectNotificationScheduler projectNotificationScheduler;
+
+    @Secured({PROJECT_EDITOR, PROJECT_READER, ORG_ADMIN, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY, GLA_ORG_ADMIN,
+            GLA_SPM, OPS_ADMIN, TECH_ADMIN})
     @RequestMapping(value = "/projects", method = GET, produces = "application/json")
     @ApiOperation(value = "get all project data", notes = "retrieves a list of all projects that the user has access to")
     @Transactional(readOnly = true)
-    public Page<ProjectSummary> getAll(@RequestParam(name = "project", required = false) String project,
-                                       @RequestParam(name = "organisation", required = false) String organisation,
-                                       @RequestParam(name = "programme", required = false) String programme,
-                                       @RequestParam(name = "programmes", required = false) List<Integer> programmes,
-                                       @RequestParam(name = "templates", required = false) List<Integer> templates,
-                                       @RequestParam(name = "states", required = false) List<String> states,
-                                       @RequestParam(name = "watchingProject", required = false, defaultValue = "false")
-                                           boolean watchingProject,
-                                       Pageable pageable) {
-        return service.findAll(project, organisation, programme, programmes, templates, states, watchingProject, pageable);
+    public Page<ProjectSummary> getAllProjects(@RequestParam(name = "project", required = false) String project,
+                                               @RequestParam(name = "organisation", required = false) String organisation,
+                                               @RequestParam(name = "programme", required = false) String programme,
+                                               @RequestParam(name = "assignee", required = false) String assignee,
+                                               @RequestParam(name = "programmes", required = false) List<Integer> programmes,
+                                               @RequestParam(name = "templates", required = false) List<Integer> templates,
+                                               @RequestParam(name = "states", required = false) List<String> states,
+                                               @RequestParam(name = "watchingProject", required = false, defaultValue = "false")
+                                                       boolean watchingProject,
+                                               Pageable pageable) {
+        return service.findAll(project, organisation, programme, assignee, programmes, templates, states, watchingProject,
+                false, pageable);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @PermissionRequired(VIEW_PROGRAMME_ALLOCATIONS)
+    @RequestMapping(value = "/programmeAllocations", method = GET, produces = "application/json")
+    @ApiOperation(value = "get all project data", notes = "retrieves a list of all projects that the user has access to")
+    @Transactional(readOnly = true)
+    public Page<ProjectSummary> getAllProgrammeAllocations(@RequestParam(name = "project", required = false) String project,
+                                               @RequestParam(name = "organisation", required = false) String organisation,
+                                               @RequestParam(name = "programme", required = false) String programme,
+                                               @RequestParam(name = "assignee", required = false) String assignee,
+                                               @RequestParam(name = "programmes", required = false) List<Integer> programmes,
+                                               @RequestParam(name = "templates", required = false) List<Integer> templates,
+                                               @RequestParam(name = "states", required = false) List<String> states,
+                                               @RequestParam(name = "watchingProject", required = false, defaultValue = "false")
+                                                       boolean watchingProject,
+                                               Pageable pageable) {
+        return service.findAll(project, organisation, programme, assignee, programmes, templates, states, watchingProject,
+                true, pageable);
+    }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_PROGRAMME_ADMIN, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN,
+            PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/projects/{id}", method = GET)
     public Project get(@PathVariable Integer id,
                        @RequestParam(required = false, defaultValue = "true") boolean unapprovedChanges,
-                       @RequestParam(required = false) NamedProjectBlock.BlockStatus compareToStatus,
+                       @RequestParam(required = false) ProjectBlockStatus compareToStatus,
                        @RequestParam(required = false) String comparisonDate,
                        @RequestParam(required = false, defaultValue = "false") boolean forComparison) {
         return service.getEnrichedProject(id, unapprovedChanges, true, compareToStatus, comparisonDate, forComparison);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_PROGRAMME_ADMIN, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN,
+            PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/projectOverview/{id}", method = GET)
     public BaseProject getOverview(@PathVariable Integer id) {
         return service.projectOverview(id);
@@ -167,7 +185,7 @@ public class ProjectAPI {
         return service.handleBulkOperation(updateOperation);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_PROGRAMME_ADMIN, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/details", method = RequestMethod.PUT)
     @ApiOperation(value = "updates an existing named project detail block", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -189,8 +207,8 @@ public class ProjectAPI {
         return service.recordRecommendation(id, recommendation, comments);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY, ORG_ADMIN,
+            PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/projects/{id}/design", method = GET)
     @ApiOperation(value = "get a project's design details", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -198,15 +216,15 @@ public class ProjectAPI {
         return service.get(id).getDesignStandardsBlock();
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY,
+            ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/projects/{projectId}/grant", method = GET)
     @ApiOperation(value = "gets a project's design standards details", notes = "")
     public GrantSourceBlock getGrantSource(@PathVariable Integer projectId) {
         return service.getProjectGrantSource(projectId);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_PROGRAMME_ADMIN, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{projectId}/grant", method = RequestMethod.PUT)
     @ApiOperation(value = "set a project's design standards details", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -250,14 +268,14 @@ public class ProjectAPI {
             service.validateTransitionProjectToStatus(project, new ProjectState(request.getStatus(), request.getSubStatus()));
         } else {
             StateTransitionResult result = service.transitionProjectToStatus(project, new ProjectState(request.getStatus(),
-                request.getSubStatus()), request.getComments());
+                request.getSubStatus()), request.getComments(), request.isApprovePaymentsOnly(), request.getReason());
             if (!result.wasSuccessful()) {
                 throw new ValidationException(result.getFailureMessage());
             }
         }
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_PROGRAMME_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/reinstate", method = RequestMethod.PUT)
     @ApiOperation(value = "reinstates a closed project state with comments")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -278,12 +296,13 @@ public class ProjectAPI {
         service.saveDraftComments(id, comments);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY, ORG_ADMIN,
+            PROJECT_EDITOR, PROJECT_READER,
         TECH_ADMIN})
     @RequestMapping(value = "/projects/{id}/history", method = GET)
     @ApiOperation(value = "get a project's history", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
-    public List<ProjectHistory> getProjectHistory(@PathVariable Integer id) {
+    public List<ProjectHistoryEntity> getProjectHistory(@PathVariable Integer id) {
         return service.getProjectHistory(id);
     }
 
@@ -305,7 +324,8 @@ public class ProjectAPI {
         return "Locks cleared";
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY,
+            ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/lock/{blockId}", method = GET)
     @ApiOperation(value = "lock a project block", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -315,7 +335,7 @@ public class ProjectAPI {
     }
 
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, GLA_PROGRAMME_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects/{id}/unlock/{blockId}", method = RequestMethod.PUT)
     @ApiOperation(value = "simple unlock on a project block", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -331,8 +351,8 @@ public class ProjectAPI {
         service.updateProject(fromDB);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY,
+            ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/projects/{id}/block/{blockId}/revert", method = RequestMethod.PUT)
     @ApiOperation(value = "get a project block by ID", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -347,8 +367,8 @@ public class ProjectAPI {
     }
 
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY,
+            ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/projects/{id}/{blockId}", method = GET)
     @ApiOperation(value = "get a project block by ID", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -407,19 +427,19 @@ public class ProjectAPI {
         return block;
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY, ORG_ADMIN,
+            PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/projects/{projectId}/displayOrder/{displayOrder}/history", method = GET)
-    @ApiOperation(value = "get a project block history", notes = "")
+    @ApiOperation(value = "get a project block history")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
     public List<ProjectBlockHistoryItem> getProjectBlockHistory(@PathVariable Integer projectId,
                                                                 @PathVariable Integer displayOrder) {
         return service.getHistoryForBlock(projectId, displayOrder);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PROGRAMME_ADMIN, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/projects", method = RequestMethod.POST)
-    @ApiOperation(value = "creates a project", notes = "")
+    @ApiOperation(value = "creates a project")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
     public Integer create(@Valid @RequestBody Project project, BindingResult bindingResult) {
         verifyBinding("Invalid project!", bindingResult);
@@ -427,7 +447,7 @@ public class ProjectAPI {
         return service.createProject(project).getId();
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PROGRAMME_ADMIN, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, TECH_ADMIN})
     @RequestMapping(value = "/projects/{projectId}/blocks/{blockId}", method = RequestMethod.PUT)
     public NamedProjectBlock updateProjectBlock(@PathVariable Integer projectId,
                                                 @PathVariable Integer blockId,
@@ -505,8 +525,8 @@ public class ProjectAPI {
         }
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY,
+            ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN, INTERNAL_BLOCK_EDITOR})
     @RequestMapping(value = "/projects/filters/statuses", method = GET)
     @ApiOperation(value = "Get available statuses depending on logged in user",
         notes = "Get available statuses depending on logged in user")
@@ -531,7 +551,7 @@ public class ProjectAPI {
         claimService.deleteClaim(projectId, blockId,  claimId);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, ORG_ADMIN, PROJECT_EDITOR, TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_PROGRAMME_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, ORG_ADMIN, PROJECT_EDITOR, TECH_ADMIN})
     @RequestMapping(value = "/projects/template/{templateId}//organisation/{organisationId}/createAllowed", method = GET)
     public boolean canProjectBeAssignedToTemplate(@PathVariable Integer templateId, @PathVariable Integer organisationId) {
         return service.canProjectBeAssignedToTemplate(templateId, organisationId);
@@ -564,4 +584,68 @@ public class ProjectAPI {
     public void updateProjectTitleHistory(@RequestBody List<Integer> projectIds) {
         service.updateProjectTitleHistory(projectIds);
     }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM})
+    @RequestMapping(value = "/projects/{projectId}/suspendPayments", method = RequestMethod.PUT)
+    @ApiOperation(value = "suspend or resume payments on a project", notes = "suspend or resume payments on a project")
+    public void suspendPayments(@PathVariable Integer projectId,
+                                @RequestParam (name = "paymentsSuspended", required = true)  boolean paymentsSuspended,
+                                @RequestBody String comments) {
+        service.suspendProjectPayments(projectId, paymentsSuspended, comments);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/project/{projectId}/file/{fileId}")
+    @ApiOperation(value = "file download", notes = "Endpoint for downloading an file")
+    public void download(@PathVariable Integer projectId,
+                         @PathVariable Integer fileId,
+                         HttpServletResponse response) throws IOException {
+        service.getFileForProject(fileId, projectId, response);
+    }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
+    @RequestMapping(value = "/projects/{projectId}/downloadAllAnswers", produces = "application/zip", method = RequestMethod.GET)
+    public void downloadAllAnswers(@PathVariable Integer projectId, HttpServletResponse response) throws IOException {
+        if (featureStatus.isEnabled(Feature.AllowAllFileDownload)) {
+            response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + "P" + projectId + ".zip\"");
+            response.addHeader(HttpHeaders.CONTENT_TYPE, "application/zip");
+            response.flushBuffer();
+            service.getZipFileForProject(projectId, response.getOutputStream());
+            response.flushBuffer();
+        }  else {
+            throw new ForbiddenAccessException("This feature is currently disabled.");
+        }
+    }
+
+    @PermissionRequired(PROJ_ASSIGN)
+    @GetMapping("/projects/{projectId}/assignableUsers")
+    Set<UserIdAndName> getProjectAssignableUsers(@PathVariable Integer projectId) {
+        return service.getProjectAssignableUsers(projectId);
+    }
+
+    @PermissionRequired(PROJ_ASSIGN)
+    @GetMapping("/projects/assignableUsers")
+    Set<UserIdAndName> getProjectAssignableUsers(@RequestParam String projectIds) {
+        List<Integer> parsedIds = Arrays.stream(projectIds.split(",")).map(Integer::valueOf).collect(Collectors.toList());
+        return service.getProjectAssignableUsers(parsedIds);
+    }
+
+    @PermissionRequired(PROJ_ASSIGN)
+    @PutMapping("/projects/{projectId}/assignee")
+    public void assignProject(@PathVariable Integer projectId, @RequestBody List<String> assignee) {
+        service.assignProject(projectId, assignee);
+    }
+
+    @PermissionRequired(PROJ_ASSIGN)
+    @PutMapping("/projects/assignUsers")
+    public void assignProject(@RequestBody List<ProjectAssigneesSummary> projectIdsMapping) {
+        service.assignMultipleProjects(projectIdsMapping);
+    }
+
+    @PermissionRequired(PROJ_ASSIGN)
+    @PutMapping("/projects/unassignUsers")
+    public void unassignProject(@RequestBody ProjectAssigneesSummary summary) {
+        service.unassignMultipleProjects(summary.getProjectIds(), summary.getAssignees());
+    }
+
 }

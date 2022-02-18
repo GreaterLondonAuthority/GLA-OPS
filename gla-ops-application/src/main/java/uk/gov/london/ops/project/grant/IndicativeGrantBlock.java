@@ -7,22 +7,7 @@
  */
 package uk.gov.london.ops.project.grant;
 
-import static uk.gov.london.common.GlaUtils.nullSafeAdd;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.Project;
@@ -35,6 +20,16 @@ import uk.gov.london.ops.project.template.domain.IndicativeGrantTemplateBlock;
 import uk.gov.london.ops.project.template.domain.TemplateBlock;
 import uk.gov.london.ops.project.template.domain.TemplateTenureType;
 import uk.gov.london.ops.project.template.domain.TenureYear;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
 
 /**
  * Created by chris on 13/10/2016.
@@ -296,6 +291,7 @@ IndicativeGrantBlock extends BaseGrantBlock {
         if (!Objects.equals(this.getTotalGrantEligibility(), otherIndicativeGrantBlock.getTotalGrantEligibility())) {
             differences.add(new ProjectDifference(this, "totalGrantEligibility"));
         }
+
     }
 
     @Override

@@ -12,17 +12,22 @@ import org.springframework.stereotype.Service;
 import uk.gov.london.ops.audit.AuditService;
 import uk.gov.london.ops.framework.EntityType;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
-import uk.gov.london.ops.organisation.OrganisationService;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.Organisation;
+import uk.gov.london.ops.organisation.OrganisationServiceImpl;
+import uk.gov.london.ops.organisation.model.OrganisationContract;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.permission.implementation.DefaultAccessControlRepository;
 import uk.gov.london.ops.permission.implementation.DefaultAccessControlSummaryRepository;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.ProjectService;
 import uk.gov.london.ops.project.accesscontrol.*;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.UserServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
 
 import java.util.List;
+import java.util.Set;
+
+import static uk.gov.london.common.user.BaseRole.*;
 
 /**
  * Provides data access control functionality for GLA OPS.
@@ -33,7 +38,7 @@ import java.util.List;
 public class DataAccessControlService {
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
 
     @Autowired
     AuditService auditService;
@@ -42,7 +47,7 @@ public class DataAccessControlService {
     ProjectService projectService;
 
     @Autowired
-    OrganisationService organisationService;
+    OrganisationServiceImpl organisationService;
 
     @Autowired
     DefaultAccessControlRepository defaultAccessControlRepository;
@@ -53,7 +58,7 @@ public class DataAccessControlService {
     /**
      * Returns true if the specified user has access to the specified project.
      */
-    public boolean hasAccess(User user, Project project) {
+    public boolean hasAccess(UserEntity user, Project project) {
         for (ProjectAccessControl pac: project.getAccessControlList()) {
             if (hasAccess(user, pac.getOrganisation())) {
                 return true;
@@ -65,7 +70,7 @@ public class DataAccessControlService {
     /**
      * Returns true if the specified user has access to the specified organisation.
      */
-    public boolean hasAccess(User user, Organisation organisation) {
+    public boolean hasAccess(UserEntity user, OrganisationEntity organisation) {
         if (user.isOpsAdmin()) {
             return true;
         }
@@ -80,16 +85,53 @@ public class DataAccessControlService {
     }
 
     /**
+     * Returns true if the specified user has access to the specified organisation contract.
+     */
+    public boolean hasAccess(UserEntity user, OrganisationContract contract) {
+        if (user.isOpsAdmin()) {
+            return true;
+        }
+
+        if (contract == null) {
+            return false;
+        }
+
+        return user.hasRole(GLA_ORG_ADMIN) || user.hasRole(GLA_PM) || user.hasRole(GLA_SPM)
+                || user.hasRole(PROJECT_READER) || user.hasRole(PROJECT_EDITOR) || user.hasRole(ORG_ADMIN);
+    }
+
+    /**
+     * Returns true if the target user belongs to an org associated with MOs the current user has GLA_ORG_ADMIN roles in
+     * or if the current user is an OPS_ADMIN
+     * @param targetUser user whose password is intended for reset
+     * @param currentUser current user
+     * @return true if current user can reset target user's password
+     */
+    public boolean hasPasswordResetAccess(UserEntity targetUser, UserEntity currentUser) {
+        if (currentUser.isOpsAdmin()) {
+            return true;
+        }
+
+        Set<OrganisationEntity> targetOrganisations = targetUser.getOrganisations();
+        for (Organisation org : targetOrganisations) {
+            if ((org.getManagingOrganisation() != null && currentUser.hasRoleInOrganisation(GLA_ORG_ADMIN, org.getManagingOrganisation().getId())) || currentUser.hasRoleInOrganisation(GLA_ORG_ADMIN, org.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns true if the current user has access to the specified organisation.
      */
-    public boolean currentUserHasAccess(Organisation organisation) {
+    public boolean currentUserHasAccess(OrganisationEntity organisation) {
         return userService.currentUser() != null && hasAccess(userService.currentUser(), organisation);
     }
 
     /**
      * Returns true if the specified user has access to the specified organisation userse.
      */
-    public boolean hasAccessToOrganisationUsers(User user, Organisation organisation) {
+    public boolean hasAccessToOrganisationUsers(UserEntity user, OrganisationEntity organisation) {
         if (user.isOpsAdmin() || (user.isGla() && organisation != null && organisation.isInternalOrganisation())) {
             return true;
         }
@@ -102,11 +144,28 @@ public class DataAccessControlService {
      * @throws ForbiddenAccessException
      *      if the user does not have access to the organisation
      */
-    public void checkAccess(User user, Organisation organisation) {
+    public void checkAccess(UserEntity user, OrganisationEntity organisation) {
         if (! hasAccess(user, organisation)) {
-            auditService.auditActivityForUser(user.getUsername(), "User blocked from access to organisation " + organisation.getId());
+            auditService.auditActivityForUser(user.getUsername(),
+                    "User blocked from access to organisation " + organisation.getId());
 
             throw new ForbiddenAccessException("User " + user.getUsername() + " attempted to access a restricted organisation");
+        }
+    }
+
+    /**
+     * Checks that the specified user has access to the specified organisation contract.
+     *
+     * @throws ForbiddenAccessException
+     *      if the user does not have access to the contract
+     */
+    public void checkAccess(UserEntity user, OrganisationContract contract) {
+        if (! hasAccess(user, contract)) {
+            auditService.auditActivityForUser(user.getUsername(),
+                "User blocked from access to organisation contract" + contract.getId());
+
+            throw new ForbiddenAccessException("User " + user.getUsername() + " attempted to " +
+                "access a restricted organisation contract");
         }
     }
 
@@ -116,7 +175,7 @@ public class DataAccessControlService {
      * @throws ForbiddenAccessException
      *      if the user does not have access to the organisation
      */
-    public void checkAccess(Organisation organisation) {
+    public void checkAccess(OrganisationEntity organisation) {
         checkAccess(userService.loadCurrentUser(), organisation);
     }
 
@@ -126,7 +185,7 @@ public class DataAccessControlService {
      * @throws ForbiddenAccessException
      *      if the user does not have access to the project
      */
-    public void checkAccess(User user, Project project) {
+    public void checkAccess(UserEntity user, Project project) {
         if (! hasAccess(user, project)) {
             auditService.auditActivityForUser(user.getUsername(), "User blocked from access to project " + project.getId());
 
@@ -176,7 +235,8 @@ public class DataAccessControlService {
         return defaultAccessControlSummaryRepository.findAllByProgrammeIdAndTemplateId(programmeId, templateId);
     }
 
-    public void insertDefaultAccessControl(Integer programmeId, Integer templateId, Integer organisationId, AccessControlRelationshipType type) {
+    public void insertDefaultAccessControl(Integer programmeId, Integer templateId, Integer organisationId,
+            AccessControlRelationshipType type) {
         DefaultAccessControl accessControl = new DefaultAccessControl(programmeId, templateId, organisationId, type);
         defaultAccessControlRepository.saveAndFlush(accessControl);
     }

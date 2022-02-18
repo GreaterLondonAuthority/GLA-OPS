@@ -1,0 +1,11 @@
+uk\gov\london\ops\refdata\CategoryValue$Category.class
+uk\gov\london\ops\refdata\RefDataService.class
+uk\gov\london\ops\refdata\CategoryValue.class
+uk\gov\london\ops\refdata\OutputCategoryConfiguration$InputValueType.class
+uk\gov\london\ops\refdata\OutputType.class
+uk\gov\london\ops\refdata\OutputConfigurationGroup$PeriodType.class
+uk\gov\london\ops\refdata\FinanceCategoryStatus.class
+uk\gov\london\ops\refdata\OutputConfigurationGroup.class
+uk\gov\london\ops\refdata\MarketType.class
+uk\gov\london\ops\refdata\OutputCategoryConfiguration.class
+uk\gov\london\ops\refdata\TenureType.class

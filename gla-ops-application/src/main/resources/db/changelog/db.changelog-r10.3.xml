@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="807" author="aworrall">
+        <addColumn tableName="claim">
+            <column name="authorised_on" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="claim">
+            <column name="authorised_by" type="VARCHAR(50)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="808" author="aworrall">
+        <createTable tableName="repeating_entity_block">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="indicative_tenure_config_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="na" type="boolean" defaultValue="false"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="809" author="aworrall">
+        <validCheckSum>7:42d91ae8e498a1d196da644500b1f4e8</validCheckSum>
+        <comment>
+            Repeating entity blocks already exist however the table is new so to prevent errors when loading the objects this custom sql
+            is executed to pre-populate the table if an entry is not already present.
+            Previously the if present condition was missed which has prevented this changeset executing on the test environments but
+            because it has run successfully on PPD a validCheckSum tag is required.
+        </comment>
+        <sql>insert into repeating_entity_block (id, na) select id, false from project_block where project_block_type in ('OtherFunding', 'ProjectElements', 'ProjectObjectives', 'UserDefinedOutput') and not exists(select id from repeating_entity_block where repeating_entity_block.id = project_block.id);</sql>
+    </changeSet>
+    
+    <changeSet id="810" author="aworrall">
+        <renameColumn tableName="repeating_entity_block" oldColumnName="na" newColumnName="block_required"/>
+    </changeSet>
+</databaseChangeLog>

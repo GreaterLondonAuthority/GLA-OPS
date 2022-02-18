@@ -7,24 +7,10 @@
  */
 
 
-
-const SESSION_DEFAULTS = {
-  idleDuration: 60*25,
-  timeoutDuration: 60*5,
-  keepAliveInterval: 60*5
-};
-
-UserService.$inject = ['$http', 'config', '$rootScope', '$sessionStorage', '$state', 'SessionService', '$cookies', '$localStorage', 'Idle', 'Keepalive'];
+UserService.$inject = ['$http', 'config', '$rootScope', '$sessionStorage', '$state', 'SessionService', '$cookies', '$localStorage', 'GlaUserService'];
 
 
-function UserService($http, config, $rootScope, $sessionStorage, $state, SessionService, $cookies, $localStorage, Idle, Keepalive) {
-
-  let user = {
-    data: {
-      loggedOn: false
-    }
-  };
-
+function UserService($http, config, $rootScope, $sessionStorage, $state, SessionService, $cookies, $localStorage, GlaUserService) {
 
   let userService = {
 
@@ -133,6 +119,13 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
             model: undefined,
             label: 'Registration Approver',
             key: 'ROLE_GLA_REGISTRATION_APPROVER',
+          },{
+            checkedClass: 'programmeAdmin',
+            ariaLabel: 'Programme Admin',
+            name: 'programmeAdmin',
+            model: undefined,
+            label: 'Programme Admin',
+            key: 'ROLE_GLA_PROGRAMME_ADMIN',
           }, {
             checkedClass: 'glaFinance',
             ariaLabel: 'GLA Finance',
@@ -147,6 +140,13 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
             model: undefined,
             label: 'GLA Read Only',
             key: 'ROLE_GLA_READ_ONLY',
+          }, {
+            checkedClass: 'noRoles',
+            ariaLabel: 'No Roles',
+            name: 'noRoles',
+            model: undefined,
+            label: 'No Roles',
+            key: 'NO_ROLES',
           }, {
           checkedClass: 'technicalAdmin',
           ariaLabel: 'Technical Admin',
@@ -187,12 +187,13 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
       let res = [];
       _.forEach(organisationTypes, (type, index) => {
         res.push({
-          checkedClass: _.camelCase(type),
-          ariaLabel: type,
-          name: _.camelCase(type),
+          checkedClass: _.camelCase(type.summary),
+          ariaLabel: type.summary,
+          name: _.camelCase(type.summary),
           model: undefined,
-          label: type,
+          label: type.summary,
           key: index,
+          displayOrder: type.displayOrder
         })
       });
       return res;
@@ -345,20 +346,30 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
     },
 
     /**
+    * Update the user's primary organisation
+    * @param {String} userEmail - user email
+    * @param {Object} organisationId - new organisation to make primary
+    * @param {String} roleName - role name
+    * @param {boolean} signatory - is authorised signatory
+    * @returns {Object} promise
+    */
+    updateAuthorisedSignatory (userEmail, organisationId, roleName, signatory) {
+     return $http({
+        url: config.basePath + '/users/' + userEmail.toLowerCase() + '/authorisedSignatory/' + organisationId
+          + '/roleName/' + roleName + '/signatory/' + signatory,
+        method: 'PUT',
+        serialize: false
+        });
+    },
+
+    /**
      * Log in with username and password
      * @param {string} username
      * @param {string} password
      * @returns {Promise}
      */
     login (username, password) {
-      return $http({
-        url: config.basePath + '/sessions',
-        method: 'POST',
-        data: {
-          username: username,
-          password: password
-        }
-      }).then(this.userLoginHandler);
+      return GlaUserService.login(username, password).toPromise();
     },
 
     /**
@@ -366,26 +377,11 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
      * @returns {Promise}
      */
     logout (logoutMsg) {
-      var promise = $http({
-        url: config.basePath + '/sessions/_current',
-        method: 'DELETE'
-      });
-      userLogoutHandler(logoutMsg);
-      return promise;
+      return GlaUserService.logout().toPromise();
     },
 
     currentUser() {
-      if(!user.data.SID) {
-        // let cookieUser = $cookies.getObject('user');
-        let cookieUser = $localStorage.user;// $sessionStorage.user;
-        // $window;
-        // $localStorage;
-        if(cookieUser){
-          //On new tab or refresh session is not lost but $sessionStorage is empty so using $cookies instead
-          user.data =  cookieUser;
-        }
-      }
-      return user.data
+      return GlaUserService.currentUser();
     },
 
 
@@ -439,16 +435,26 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
     },
 
     hasPermission:function(permission, orgId){
-      let permissions = this.currentUser().permissions || [];
-      return permissions.some(p => {
-        return p == permission || p == `${permission}.*` || (orgId && p == `${permission}.${orgId}`)
-      });
+      return GlaUserService.hasPermission(permission, orgId);
     },
 
     hasPermissionStartingWith:function(permission){
-      return (this.currentUser().permissions || []).some(p => {
-        return p.indexOf(permission) == 0;
-      });
+      return GlaUserService.hasPermissionStartingWith(permission);
+    },
+
+    canChangeAuthorisedSignatory(role){
+      if (role != null && ( role == 'ROLE_PROJECT_EDITOR' || role == 'ROLE_PROJECT_READER' || role == 'ROLE_ORG_ADMIN' )) {
+        return true
+      }
+      return  false
+    },
+
+    getActionsColumnToolTop(){
+      return 'You can request the Organisation Admin role only when your existing Organisation Admin can no longer fulfil this role.'
+    },
+
+    getAuthorisedSignatoryTooltip(){
+      return 'Do *+not+* check this field to designate a person as an “authorised signatory” *+unless+* your organisation has completed and submitted to the GLA supporting evidence to the reasonable satisfaction of the GLA that such person is duly and validly authorised to accept GLA funding offers, execute agreements for and on behalf of and legally bind your organisation in this manner (electronically within OPS).';
     },
 
     isCurrentUserAllowedToAccessSkillsGateway() {
@@ -473,31 +479,6 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
         method: 'POST',
         data: user
       });
-    },
-
-    /**
-    * Stores current user object for use accross application
-    * @param response
-    * @returns {*}
-    */
-    userLoginHandler(response) {
-      //Moved from USER.js
-      //TODO we don't need user.data
-      user.data.loggedOn = true;
-      user.data.SID = response.data.id;
-      _.assign(user.data, response.data.user);
-      user.data.isAdmin = (user.data.primaryRole === 'Admin');
-      // $cookies.putObject('user', user.data);
-
-      SessionService.setDoNotShowAgainDeleteNotificationModal(false);
-      SessionService.clear();
-      // $sessionStorage.user = user.data;
-      $localStorage.user = user.data;
-
-
-      $rootScope.$broadcast('user.login');
-
-      return user;
     },
 
     checkCurrentUserAccess(entityType, entityId, ignoreErrors) {
@@ -558,12 +539,40 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
       return $http.put(`${config.basePath}/users/${username}/status?enabled=${enabled}`);
     },
 
+    resetUserPassword(username, password) {
+      return $http({
+        url: `${config.basePath}/admin/users/${username}/password`,
+        method: 'PUT',
+        data: password
+      })
+    },
+
+    updateUserDetails(data) {
+      return $http({
+        url: config.basePath + '/users/changes',
+        method: 'PUT',
+        data: data,
+        serialize: false
+      })
+    },
     getUserThresholds(username){
       return $http.get(`${config.basePath}/userThresholds/${username}/`);
     },
 
+    getUserThresholdsByOrgId(orgId){
+      return $http.get(`${config.basePath}/userThresholds/organisation/${orgId}`);
+    },
+
     updateUserThreshold(username, orgId, pendingAmount){
       return $http.put(`${config.basePath}/userThresholds/${username}/organisation/${orgId}/pendingThreshold/`, pendingAmount);
+    },
+
+    requestOrgAdminRole(username, orgId){
+      return $http.put(`${config.basePath}/user/${username}/organisation/${orgId}/requestOrgAdminRole`);
+    },
+
+    closeOrgAdminRole(username, orgId){
+      return $http.put(`${config.basePath}/user/${username}/organisation/${orgId}/closeOrgAdminRequest`);
     },
 
     approveUserThreshold(username, orgId){
@@ -574,53 +583,14 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
       return $http.put(`${config.basePath}/userThresholds/${username}/organisation/${orgId}/decline/`);
     },
 
-    getSessionConfig(){
-      let userSessionConfig = _.pick(this.currentUser(), _.keys(SESSION_DEFAULTS));
-      return _.merge(angular.copy(SESSION_DEFAULTS), userSessionConfig);
+    onLogin(callback){
+      return GlaUserService.onLogin(callback);
     },
 
-    setupUserSession() {
-      let user = this.currentUser();
-      if (user && user.loggedOn) {
-        let sessionConfig = this.getSessionConfig();
-        Idle.setIdle(sessionConfig.idleDuration);
-        Idle.setTimeout(sessionConfig.timeoutDuration);
-        Idle.watch();
-        Keepalive.setInterval(sessionConfig.keepAliveInterval);
-        Keepalive.start();
-      }
+    onLogout(callback){
+      return GlaUserService.onLogout(callback);
     }
-
   };
-
-  $rootScope.$on('user.login', function() {
-    userService.setupUserSession();
-  });
-
-
-  /**
-   * Removes current user object
-   * @param logoutMsg
-   * @returns {*}
-   */
-  function userLogoutHandler(logoutMsg) {
-    //Moved from USER.js
-    user.data = {
-      loggedOn: false
-    };
-    SessionService.clear();
-    delete $localStorage.user;
-    $cookies.remove('user');
-
-    $rootScope.$broadcast('user.logout');
-    if($state.current.name !== 'home') {
-      $state.go('home', {reasonError: logoutMsg});
-    }else{
-      $rootScope.showGlobalLoadingMask = false;
-    }
-
-    return logoutMsg;
-  }
 
   return userService;
 

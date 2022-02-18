@@ -23,6 +23,8 @@ class CalculateGrantCtrl extends ProjectBlockCtrl{
   $onInit() {
     super.$onInit();
     this.data = this.GrantService.sortTenureTypes(this.projectBlock);
+    this.otherAffordableTenureTypes = _.find(this.template.blocksEnabled, {block: 'CalculateGrant'}).otherAffordableTenureTypes;
+    this.showOtherAffordableQuestion = _.find(this.template.blocksEnabled, {block: 'CalculateGrant'}).showOtherAffordableQuestion;
     this.tenureSummaryDetails =  this.GrantService.calculateGrantBlock(this.data);
 
     this.tenureClaimedDetails =  this.GrantService.calculateClaimedTenure(this.data, this.project);

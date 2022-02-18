@@ -1,5 +1,5 @@
 
-<change-report-static-text text="'Summary of Units by Tenure on the Project'" subtext="'Total Units reflects the number of units already on the project; these must match the number of Profiled Units detailed in this block.'" data="$ctrl.data" class="next-to-tables"></change-report-static-text>
+<gla-change-report-static-text [text]="'Summary of Units by Tenure on the Project'" [subtext]="'Total Units reflects the number of units already on the project; these must match the number of Profiled Units detailed in this block.'" [data]="$ctrl.data" class="next-to-tables"></gla-change-report-static-text>
 
 <change-report-tiles
   ng-if="$ctrl.reportData.tenureSummariesToCompare"
@@ -10,41 +10,41 @@
   changes="$ctrl.data.changes">
 </change-report-tiles>
 
-<change-report-table
+<gla-change-report-table
   ng-if="$ctrl.reportData"
-  show-no-element-message="!!$ctrl.data.right"
-  label="'Details of Rental Units'"
-  rows="$ctrl.reportData.rentalsUnits"
-  fields="$ctrl.rentalsUnitsFields"
-  changes="$ctrl.data.changes">
-</change-report-table>
+  [show-no-element-message]="!!$ctrl.data.right"
+  [label]="'Details of Rental Units'"
+  [rows]="$ctrl.reportData.rentalsUnits"
+  [fields]="$ctrl.rentalsUnitsFields"
+  [changes]="$ctrl.data.changes">
+</gla-change-report-table>
 
-<change-report-table
+<gla-change-report-table
   ng-if="$ctrl.reportData"
-  show-no-element-message="!!$ctrl.data.right"
-  label="'Details of Sales Units'"
-  rows="$ctrl.reportData.salesUnits"
-  fields="$ctrl.salesUnitsFields"
-  changes="$ctrl.data.changes">
-</change-report-table>
+  [show-no-element-message]="!!$ctrl.data.right"
+  [label]="'Details of Sales Units'"
+  [rows]="$ctrl.reportData.salesUnits"
+  [fields]="$ctrl.salesUnitsFields"
+  [changes]="$ctrl.data.changes">
+</gla-change-report-table>
 
-<change-report-static-text text="'Project Details'" data="$ctrl.data" class="next-to-tables"></change-report-static-text>
+<gla-change-report-static-text [text]="'Project Details'" [data]="$ctrl.data" class="next-to-tables"></gla-change-report-static-text>
 <change-report-field label="'Build Type'" data="$ctrl.reportData.buildTypeTotalText" fields="'text'"></change-report-field>
-<change-report-table
+<gla-change-report-table
   ng-if="$ctrl.reportData.buildType"
-  rows="$ctrl.reportData.buildType"
-  fields="$ctrl.buildTypeFields"
-  changes="$ctrl.data.changes">
-</change-report-table>
+  [rows]="$ctrl.reportData.buildType"
+  [fields]="$ctrl.buildTypeFields"
+  [changes]="$ctrl.data.changes">
+</gla-change-report-table>
 
 
 <change-report-field label="'Units by Number of People'" data="$ctrl.reportData.byNumberOfPeopleText" fields="'text'"></change-report-field>
-<change-report-table
+<gla-change-report-table
   ng-if="$ctrl.reportData.byNumberOfPeople"
-  rows="$ctrl.reportData.byNumberOfPeople"
-  fields="$ctrl.byNumberOfPeopleFields"
-  changes="$ctrl.data.changes">
-</change-report-table>
+  [rows]="$ctrl.reportData.byNumberOfPeople"
+  [fields]="$ctrl.byNumberOfPeopleFields"
+  [changes]="$ctrl.data.changes">
+</gla-change-report-table>
 
 <change-report-field label="'Number of Wheelchair Units'" sublabel="'In total (including any specialised units) how many units are either wheelchair accessible or wheelchair adaptable?'" data="$ctrl.data" fields="'nbWheelchairUnits'" formats="'number'"></change-report-field>
 <change-report-field label="'Gross Internal Area'" sublabel="'The total gross internal area in sqm for all units in the project, excluding communal areas e.g. lifts.'" data="$ctrl.data" fields="'grossInternalArea'" formats="'number'"></change-report-field>

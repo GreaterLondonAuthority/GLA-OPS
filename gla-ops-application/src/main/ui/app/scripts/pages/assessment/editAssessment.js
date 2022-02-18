@@ -51,7 +51,7 @@ class EditAssessmentCtrl {
     let requestId = ++this.lastRequestId;
     let p = this.$q.all(this.requestsQueue).then(() => {
       this.assessment.status = this.assessmentCompleted ? 'Completed' : 'InProgress';
-      return this.AssessmentService.saveAssessment(this.assessment.projectId, this.assessment).then((resp) => {
+      return this.AssessmentService.updateAssessment(this.assessment.projectId, this.assessment).then((resp) => {
         if (requestId === this.lastRequestId) {
           this.assessment = resp.data;
         }

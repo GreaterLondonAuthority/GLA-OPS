@@ -9,6 +9,7 @@ package uk.gov.london.ops.project.implementation.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import liquibase.util.StringUtils;
 import uk.gov.london.ops.project.QProjectSummary;
 
 import java.util.ArrayList;
@@ -106,6 +107,25 @@ class ProjectSummaryQueryBuilder {
             List<Predicate> watchingPredicates = new ArrayList<>();
             watchingPredicates.add(QProjectSummary.projectSummary.subscriptions.containsIgnoreCase("|" + watchingProjectUsername));
             predicateBuilder.andAnyOf(watchingPredicates.toArray(new Predicate[watchingPredicates.size()]));
+        }
+        return this;
+    }
+
+    public ProjectSummaryQueryBuilder withAssignee(String assignee) {
+        if (StringUtils.isNotEmpty(assignee)) {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(QProjectSummary.projectSummary.assignee.containsIgnoreCase(assignee));
+            predicates.add(QProjectSummary.projectSummary.assigneeName.containsIgnoreCase(assignee));
+            predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));
+        }
+        return this;
+    }
+
+    public ProjectSummaryQueryBuilder withIsProgrammeAllocation(Boolean isProgrammeAllocation) {
+        if (isProgrammeAllocation != null) {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(QProjectSummary.projectSummary.isProgrammeAllocation.eq(isProgrammeAllocation));
+            predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));
         }
         return this;
     }

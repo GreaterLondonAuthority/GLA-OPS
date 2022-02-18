@@ -1,0 +1,4433 @@
+{
+  "name": "Building Safety Fund",
+  "author": "Jav Sondh",
+  "status": "Draft",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Application summary",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "maxBoroughs": 1,
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Applicant details",
+      "block": "Questions",
+      "displayOrder": 2,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 3.3,
+          "question": {
+            "id": 12243,
+            "text": "Applicant’s Representative – Contact telephone number",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12246,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3.2,
+          "question": {
+            "id": 12242,
+            "text": "Applicant's Representative - Contact name",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12246,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3.4,
+          "question": {
+            "id": 12244,
+            "text": "Applicant’s Representative – Contact email address",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12246,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 8.6,
+          "question": {
+            "id": 12344,
+            "text": "On what date does the appointment of the Right to Manage company end?",
+            "answerType": "Date",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12342,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12240,
+            "text": "Contact details for Applicant",
+            "answerType": "FreeText",
+            "maxLength": 1000,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12239,
+            "text": "Name of Applicant (i.e. the company or individual that is the Responsible Entity for the building)",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4.1,
+          "question": {
+            "id": 12249,
+            "text": "Second Applicant’s Representative – Organisation name (if different to name of Applicant)",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12248,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12248,
+            "text": "Confirm if the Applicant will be appointing a second Applicant’s Representative with regards to the fund application",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12246,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12338,
+            "text": "Is the Applicant a Right to Manage (RTM) company?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "helpText": "Applicants should keep the GLA updated about any changes in Right to Manage status"
+        },
+        {
+          "displayOrder": 8.4,
+          "question": {
+            "id": 12342,
+            "text": "Confirm the RTM company has been appointed as a Property Manager for a period of time that will permit completion of all necessary remediation works for which funding is sought",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12340,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 4.5,
+          "question": {
+            "id": 12253,
+            "text": "Second Applicant’s Representative – Address",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12248,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12256,
+            "text": "Confirm that the Leaseholders and any of the residents at the Building (where different) have been informed and notified as to the proposed financial treatment of the Project, the scope of the Works and the timeframe for completion of the Works",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4.2,
+          "question": {
+            "id": 12250,
+            "text": "Second Applicant's Representative - Contact name",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12248,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 8.3,
+          "question": {
+            "id": 12341,
+            "text": "Confirm the RTM company is entitled to enter into a funding agreement on behalf of leaseholders",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12340,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12254,
+            "text": "Confirm that the Applicant has formally appointed the Applicant’s Representative(s) to act on behalf of the Applicant and that evidence of this appointment is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 8.1,
+          "question": {
+            "id": 12339,
+            "text": "Confirm the RTM company has been appropriately formed, the Building comprises qualifying premises and that the correct notices have been served",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12338,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3.1,
+          "question": {
+            "id": 12241,
+            "text": "Applicant’s Representative – Organisation name (if different to name of Applicant)",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12246,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 8.2,
+          "question": {
+            "id": 12340,
+            "text": "Confirm the RTM company has legally acquired the right to manage the Building and is entitled to undertake all necessary remediation works for which funding is sought",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12338,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12255,
+            "text": "Confirm which of the following positions the Applicant holds in connection with the Property",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Head Leaseholder"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Freeholder"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Management Company"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12246,
+            "text": "Confirm if the Applicant will be appointing an Applicant’s Representative with regards to the fund application - see [BSF OPS User Guide](https://www.london.gov.uk/file/50732016)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4.3,
+          "question": {
+            "id": 12251,
+            "text": "Second Applicant’s Representative – Contact telephone number",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12248,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4.4,
+          "question": {
+            "id": 12252,
+            "text": "Second Applicant’s Representative – Contact email address",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12248,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12247,
+            "text": "Upload [template declaration](https://www.london.gov.uk/file/50732200) confirming appointment as Applicant’s Representative by Applicant. This should be for each representative",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12246,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3.5,
+          "question": {
+            "id": 12245,
+            "text": "Applicant’s Representative – Address",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12246,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 8.5,
+          "question": {
+            "id": 12343,
+            "text": "Confirm the RTM company is entitled to enter into a funding agreement on behalf of leaseholders",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12342,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Building details",
+      "block": "Questions",
+      "displayOrder": 3,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12258,
+            "text": "Building name(s)",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12263,
+            "text": "Local Authority area in which the block is located",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 19,
+                "option": "Kensington and Chelsea"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Bromley"
+              },
+              {
+                "displayOrder": 21,
+                "option": "Lambeth"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Camden"
+              },
+              {
+                "displayOrder": 18,
+                "option": "Islington"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Barnet"
+              },
+              {
+                "displayOrder": 13,
+                "option": "Haringey"
+              },
+              {
+                "displayOrder": 14,
+                "option": "Harrow"
+              },
+              {
+                "displayOrder": 28,
+                "option": "Sutton"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Hackney"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Greenwich"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Bexley"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Brent"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Hammersmith & Fulham"
+              },
+              {
+                "displayOrder": 6,
+                "option": "City of London"
+              },
+              {
+                "displayOrder": 30,
+                "option": "Waltham Forest"
+              },
+              {
+                "displayOrder": 23,
+                "option": "Merton"
+              },
+              {
+                "displayOrder": 24,
+                "option": "Newham"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Ealing"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Croydon"
+              },
+              {
+                "displayOrder": 32,
+                "option": "Westminster"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Enfield"
+              },
+              {
+                "displayOrder": 27,
+                "option": "Southwark"
+              },
+              {
+                "displayOrder": 26,
+                "option": "Richmond-upon-Thames"
+              },
+              {
+                "displayOrder": 16,
+                "option": "Hillingdon"
+              },
+              {
+                "displayOrder": 15,
+                "option": "Havering"
+              },
+              {
+                "displayOrder": 31,
+                "option": "Wandsworth"
+              },
+              {
+                "displayOrder": 20,
+                "option": "Kingston-upon-Thames"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Barking & Dagenham"
+              },
+              {
+                "displayOrder": 29,
+                "option": "Tower Hamlets"
+              },
+              {
+                "displayOrder": 17,
+                "option": "Hounslow"
+              },
+              {
+                "displayOrder": 22,
+                "option": "Lewisham"
+              },
+              {
+                "displayOrder": 25,
+                "option": "Redbridge"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12257,
+            "text": "Registration Reference Number",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12264,
+            "text": "Upload a plan showing the footprint of the building for which you are seeking funding",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 50,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12260,
+            "text": "Development name, if applicable",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12345,
+            "text": "Identify four residential properties within the Building held on open market lease terms which would be consistent with the leases which have been generally issued in the Building",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "helpText": "This information is requred to enable our legal advisors to confirm that remediation costs may be passed to leaseholders"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12259,
+            "text": "Building number",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12261,
+            "text": "Street",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12262,
+            "text": "Post code",
+            "answerType": "Text",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Pre-tender support",
+      "block": "Questions",
+      "displayOrder": 4,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12265,
+            "text": "Do you require any advance funding in order to undertake the design, specification and tendering required to start the remediation Works?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Bank details",
+      "block": "Questions",
+      "displayOrder": 5,
+      "infoMessage": "Applicants seeking Pre-Tender Support and/or submitting a full works and costs application must provide bank details at this stage (unless they are registered providers of social housing)",
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 4.5,
+          "question": {
+            "id": 12369,
+            "text": "Applicant’s company house address details (Name/number, street, post code, city)",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 1.5,
+          "question": {
+            "id": 12266,
+            "text": "Is the Applicant a registered provider of social housing? (i.e. a housing association or a local authority)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12361,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3.7,
+          "question": {
+            "id": 12366,
+            "text": "Applicant’s VAT Registration number",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4.2,
+          "question": {
+            "id": 12349,
+            "text": "Sort code for Trust Fund account",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 4.6,
+          "question": {
+            "id": 12370,
+            "text": "Applicant’s Companies House number",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12361,
+            "text": "Are you able to provide information about the building’s bank account into which we can make grant payments?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3.1,
+          "question": {
+            "id": 12269,
+            "text": "Account number for Client Money Account registered under the CMPS",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12267,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4.8,
+          "question": {
+            "id": 12350,
+            "text": "Confirm that this trust arrangement complies with the requirements of Section 42 of the Landlord and Tenant (LTA) Act 1987",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 3.6,
+          "question": {
+            "id": 12365,
+            "text": "Applicant’s Companies House number",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "yes",
+          "helpText": "In some cases this might be an individual that works as a managing agent on behalf of the Applicant"
+        },
+        {
+          "displayOrder": 4.1,
+          "question": {
+            "id": 12348,
+            "text": "Account number for Trust Fund account",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 4.4,
+          "question": {
+            "id": 12368,
+            "text": "Telephone number for individual that manages bank account",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 4.7,
+          "question": {
+            "id": 12371,
+            "text": "Applicant’s VAT Registration number",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no"
+        },
+        {
+          "displayOrder": 3.3,
+          "question": {
+            "id": 12362,
+            "text": "Email address for individual that manages bank account",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12268,
+            "text": "Provide evidence that this account is registered with an accredited Client Money Protection Scheme provider as required under the Client Money Protection Schemes for Property Agents (Approval and Designation of Schemes) Regulations 2018",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 5,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12267,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12347,
+            "text": "Provide details of an equivalent trust deed which nominates your chosen account and legally requires that any funds provided to that account are held for the benefit of leaseholders ('a Trust Fund')",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no",
+          "helpText": "This will be required before we are able to make grant payments into that account"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12267,
+            "text": "Does the Applicant have a Client Money Account, registered with an accredited Client Money Protection Scheme provider, into which we can make grant payments?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12266,
+          "parentAnswerToMatch": "no",
+          "helpText": "The applicant should provide details of Client Money Account or Trust Fund into which the GLA will make grant payments.\nIf applicants are utilising a Client Money Account they are required to provide evidence that this account is registered under the Client Money Protection Scheme (CMPS), Client Money Protection Schemes for Property Agents (Approval and Designation of Schemes) Regulations 2018. This regime includes CM Protect, UKALA, Safeagent (previously National Approved Letting Scheme (NALS)), ARLA Propertymark and Money Shield."
+        },
+        {
+          "displayOrder": 4.9,
+          "question": {
+            "id": 12351,
+            "text": "Upload a copy of the proposed deed so that this can be verified ([Template deed available here](https://www.london.gov.uk/file/50732201))",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxUploadSizeInMb": 50,
+            "maxAnswers": 2,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no",
+          "helpText": "This must certify that the funds are held for the benefit of leaseholders and detail a legally binding trust arrangement with them for this purpose"
+        },
+        {
+          "displayOrder": 3.4,
+          "question": {
+            "id": 12363,
+            "text": "Telephone number for individual that manages bank account",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3.2,
+          "question": {
+            "id": 12346,
+            "text": "Sort code for Client Money Account registered under the CMPS",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12267,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3.5,
+          "question": {
+            "id": 12364,
+            "text": "Applicant’s company house address details (Name/number, street, post code, city)",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4.3,
+          "question": {
+            "id": 12367,
+            "text": "Email address for individual that manages bank account",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12267,
+          "parentAnswerToMatch": "no",
+          "helpText": "In some cases this might be an individual that works as a managing agent on behalf of the Applicant"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "State Aid",
+      "block": "Questions",
+      "displayOrder": 6,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12329,
+            "text": "Are you ready to enter information about leaseholders that are Undertakings and/or properties in the building that are used for social housing?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12271,
+            "text": "Secure from all Undertakings as listed in the Undertakings Summary Schedule a completed and signed State Aid Declaration. Scan and merge these into a single PDF document (or a few if you have collected them in batches)",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 50,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12329,
+          "parentAnswerToMatch": "yes",
+          "helpText": "An Undertaking is any leaseholder who uses their property for financial gain whether residential or commercial"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12273,
+            "text": "How many units?",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12272,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12335,
+            "text": "Confirm that all properties owned and let by the social housing provider(s) are either let at sub-market rents or on shared ownership terms",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12272,
+          "parentAnswerToMatch": "yes",
+          "helpText": "Where any property is let by the social housing provider either: (a)  at a market rent or (b) on a long lease granted on market terms or on a shared ownership lease that has staircased to 100% these will not be capable of inclusion within any SGEI Agreement executed by the Registered Provider and any Residential Undertakings should be declared"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12275,
+            "text": "Provide contact details for social housing provider(s)",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12272,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12272,
+            "text": "Are there any properties in the block that are used for any tenure of social housing, including shared ownership and affordable rent?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12329,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12274,
+            "text": "Provide name(s) of the social housing provider(s)",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12272,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12270,
+            "text": "Upload your completed [Undertaking Summary Schedule](https://www.london.gov.uk/file/50732108)",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12329,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones & Payments",
+      "block": "Milestones",
+      "displayOrder": 7,
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "externalId": 10158,
+          "name": "default",
+          "displayOrder": 1,
+          "milestones": [
+            {
+              "summary": "Project team appointed",
+              "requirement": "mandatory",
+              "displayOrder": 1,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Planning application submitted",
+              "requirement": "mandatory",
+              "displayOrder": 5,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "summary": "Payment - Practical Completion",
+              "requirement": "mandatory",
+              "displayOrder": 14,
+              "monetary": true,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "summary": "Building control approval obtained",
+              "requirement": "mandatory",
+              "displayOrder": 7,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "summary": "Payment - Signed Works Contract",
+              "requirement": "mandatory",
+              "displayOrder": 12,
+              "monetary": true,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "summary": "Tenders returned",
+              "requirement": "mandatory",
+              "displayOrder": 3,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Payment - Pre-Tender Support",
+              "requirement": "mandatory",
+              "displayOrder": 11,
+              "monetary": true,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "summary": "Tender period commenced",
+              "requirement": "mandatory",
+              "displayOrder": 2,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Works Contract executed",
+              "requirement": "mandatory",
+              "displayOrder": 4,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Start on site achieved",
+              "requirement": "mandatory",
+              "displayOrder": 9,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Practical completion achieved",
+              "requirement": "mandatory",
+              "displayOrder": 10,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": false
+            },
+            {
+              "summary": "Planning approval determined",
+              "requirement": "mandatory",
+              "displayOrder": 6,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "summary": "All required statutory approvals obtained (excluding building control and planning permission)",
+              "requirement": "mandatory",
+              "displayOrder": 8,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            }
+          ]
+        }
+      ],
+      "maxEvidenceAttachments": 10,
+      "descriptionEnabled": false,
+      "showMilestoneStatus": true,
+      "evidenceApplicability": "ALL_MILESTONES",
+      "autoCalculateMilestoneState": false,
+      "defaultProcessingRoute": {
+        "externalId": 10158,
+        "name": "default",
+        "displayOrder": 1,
+        "milestones": [
+          {
+            "summary": "Project team appointed",
+            "requirement": "mandatory",
+            "displayOrder": 1,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Planning application submitted",
+            "requirement": "mandatory",
+            "displayOrder": 5,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "summary": "Payment - Practical Completion",
+            "requirement": "mandatory",
+            "displayOrder": 14,
+            "monetary": true,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "summary": "Building control approval obtained",
+            "requirement": "mandatory",
+            "displayOrder": 7,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "summary": "Payment - Signed Works Contract",
+            "requirement": "mandatory",
+            "displayOrder": 12,
+            "monetary": true,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "summary": "Tenders returned",
+            "requirement": "mandatory",
+            "displayOrder": 3,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Payment - Pre-Tender Support",
+            "requirement": "mandatory",
+            "displayOrder": 11,
+            "monetary": true,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "summary": "Tender period commenced",
+            "requirement": "mandatory",
+            "displayOrder": 2,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Works Contract executed",
+            "requirement": "mandatory",
+            "displayOrder": 4,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Start on site achieved",
+            "requirement": "mandatory",
+            "displayOrder": 9,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Practical completion achieved",
+            "requirement": "mandatory",
+            "displayOrder": 10,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": false
+          },
+          {
+            "summary": "Planning approval determined",
+            "requirement": "mandatory",
+            "displayOrder": 6,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "summary": "All required statutory approvals obtained (excluding building control and planning permission)",
+            "requirement": "mandatory",
+            "displayOrder": 8,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          }
+        ]
+      },
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Full Works and Costs",
+      "block": "Questions",
+      "displayOrder": 8,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 12285,
+            "text": "Add any additional information you need to make us aware of or queries about Project team appointments",
+            "answerType": "FreeText",
+            "maxLength": 1000,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 12288,
+            "text": "Confirm that you hold formal written evidence, available on request, that Planning approval is not required",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12286,
+          "parentAnswerToMatch": "no",
+          "sectionId": 13001
+        },
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 12297,
+            "text": "Explain your tender strategy",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12296,
+          "parentAnswerToMatch": "Other",
+          "sectionId": 13002
+        },
+        {
+          "displayOrder": 33,
+          "question": {
+            "id": 12306,
+            "text": "Confirm that the lead designer agrees that any Contractor’s Design Portion elements are suitable and sufficient in order to complete the design development in accordance with the Fund requirements, and that evidence of this is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003
+        },
+        {
+          "displayOrder": 9.1,
+          "question": {
+            "id": 12353,
+            "text": "Explain why that is the case and specify when confirmation can be provided in the free text box below",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12283,
+          "parentAnswerToMatch": "no",
+          "sectionId": 13000
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 12296,
+            "text": "Confirm your tender strategy",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Negotiated"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Obtaining Quotes/ Open tender"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13002,
+          "helpText": "Obtaining Quotes / Open tender: quotations and proposals are sought from numerous contractors. \nNegotiate: a single contractor is approached to conduct the Works and costs are negotiated."
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 12294,
+            "text": "Confirm your procurement strategy",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Design & Build"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Traditional"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13002,
+          "helpText": "Traditional: contractors tender on the basis of a fully designed project. \nDesign & Build: contractors tender based on partially complete design information on the basis the appointed contractor will have the responsibility for completing the design."
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 12292,
+            "text": "Add any additional information you need to make us aware of, or queries about statutory approvals",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13001
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 12293,
+            "text": "Confirm the Fund’s [standard contract requirements](https://www.london.gov.uk/file/50809796) have been included within the Works Contract",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13002
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 12295,
+            "text": "Explain your procurement strategy",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12294,
+          "parentAnswerToMatch": "Other",
+          "sectionId": 13002
+        },
+        {
+          "displayOrder": 34,
+          "question": {
+            "id": 12307,
+            "text": "Add any additional information you need to make us aware of, or queries about contract execution",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003
+        },
+        {
+          "displayOrder": 26,
+          "question": {
+            "id": 12300,
+            "text": "Enter the total project cost from your Full Works and Costs spreadsheet (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003
+        },
+        {
+          "displayOrder": 30,
+          "question": {
+            "id": 12303,
+            "text": "Confirm that a ‘competent professional’ agrees and has signed off that the split of costs between eligible and ineligible costs are accurate and that the breakdown is accurate and the totals are correct, and evidence of this is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003,
+          "helpText": "This confirmation may take the form of a tender report or tender recommendation"
+        },
+        {
+          "displayOrder": 0,
+          "question": {
+            "id": 12334,
+            "text": "Are you able to provide details at this stage of the full works and costs?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 13000
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12276,
+            "text": "Confirm that a ‘competent professional’ has certified that the planned remediation design and Works comply with the Building Safety Fund’s requirements, and that you have on file formal written evidence of this, that is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000,
+          "helpText": "Guidance regarding what constitutes a ‘competent professional’ can be found within the BSF Fund Application Guidance.  \nCertification may take the form of a design report or technical note certifying that the design meets the requirements"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 12290,
+            "text": "Confirm that Full Plans Approval or a Plans Certificate will be in place prior to start on site, or (where a Design and Build contract will be used) that Full Plans Approval or a Plans Certificate will be in place at completion of RIBA Stage 4",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13001,
+          "helpText": "RIBA stands for Royal Institute of British Architects"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12352,
+            "text": "Explain why that is the case and specify when confirmation can be provided in the free text box below",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12282,
+          "parentAnswerToMatch": "no",
+          "sectionId": 13000,
+          "helpText": "Guidance regarding appropriate professional indemnity insurance levels should be sought from a Competent Professional if required and held on file when followed"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12278,
+            "text": "Applicants are required to hold and maintain a Project Directory of existing and proposed professional team appointments. Confirm you have such a directory and that it is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 12284,
+            "text": "Confirm that residents and leaseholders will be informed of the proposed Start on Site Date at least two weeks prior to such date",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12282,
+            "text": "Confirm that appropriate levels of Professional Indemnity Insurance and limits of liability, for the risk associated and in accordance with industry best practice, are in place for all current appointments and evidence of this is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000,
+          "helpText": "Applicants are required to keep evidence of Professional Indemnity Insurance for all existing and proposed professional team and contractor appointments and information on any limits of liability. \nGuidance regarding appropriate professional indemnity insurance levels should be sought from a Competent Professional if required and held on file when followed."
+        },
+        {
+          "displayOrder": 27,
+          "question": {
+            "id": 12301,
+            "text": "Enter the value of total eligible costs from your Full Works and Costs spreadsheet (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003
+        },
+        {
+          "displayOrder": 29,
+          "question": {
+            "id": 12302,
+            "text": "Confirm that a  ‘competent professional’ agrees that the contract sum represents a reasonable sum for the Works cost given current market conditions, taking into account any qualifications or exclusions, and that evidence of this is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003,
+          "helpText": "Contract sum: total Works cost split between ineligible and eligible costs.  Confirmation may take the form of a tender report or tender recommendation"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12279,
+            "text": "Confirm you have appointment documentation for all appointments made to date, and that these are available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000,
+          "helpText": "Applicants are required to keep all existing appointment documentation (including scope of service, fee and the Applicant’s acceptance) for all professional team appointments"
+        },
+        {
+          "displayOrder": 32,
+          "question": {
+            "id": 12305,
+            "text": "Confirm if the Works Contract will require any design to be carried out by the contractor (Contractor’s Design Portion)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12277,
+            "text": "Confirm sign off of the Specification or Employer's Requirements detailing the full project Works has been provided by a 'competent professional' and that evidence of specification sign-off and records in accordance with the above are available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000,
+          "helpText": "Applicants must have a ‘competent professional’ sign off the Specification or Employer's Requirements detailing the full project Works (details of the BS EN 13501 classification of the replacement cladding material, insulation and sheathing board, where applicable, should be recorded and the BS EN 13501 classification of any of these materials which are being retained regardless of quantity)"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 12286,
+            "text": "Do the Works require Planning approval?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13001
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 12287,
+            "text": "Confirm that planning approval will be in place prior to start on site",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12286,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13001
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 12289,
+            "text": "Confirm that you have Full Plans Approval or a Plans Certificate (available on request)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13001
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12281,
+            "text": "Confirm that you have on file formal written evidence of competence for all professional project team appointments, signed off by the Applicant or appointed 'competent professional', and that this is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000,
+          "helpText": "Applicants are required to keep evidence of competence for all professional project team appointments (evidence of membership to professional bodies and record of project experience etc.)"
+        },
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 12298,
+            "text": "Add any additional information you need to make us aware of, or queries about Procurement",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13002
+        },
+        {
+          "displayOrder": 31,
+          "question": {
+            "id": 12304,
+            "text": "Confirm that a ‘competent professional’ agrees and has signed off that the Works programme has been reviewed and is considered a reasonable estimate of time for the Works, and that evidence of this is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003,
+          "helpText": "This confirmation may take the form of a tender report or tender recommendation"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12283,
+            "text": "Confirm that appropriate levels of Professional Indemnity Insurance and limits of liability are contractually required for all future appointments and that you have on file formal written evidence of such cover so it is available on request",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000,
+          "helpText": "Guidance regarding appropriate professional indemnity insurance levels should be sought from a Competent Professional if required and held on file when followed"
+        },
+        {
+          "displayOrder": 28,
+          "question": {
+            "id": 12354,
+            "text": "Confirm that costs are based on a tender price",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003
+        },
+        {
+          "displayOrder": 25,
+          "question": {
+            "id": 12299,
+            "text": "Upload your completed pricing document ([Full Works and Costs spreadsheet](https://www.london.gov.uk/file/50732117))",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13003
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 12291,
+            "text": "Confirm all remaining Statutory Approvals will be in place within the timescales required by the authorities providing the approvals",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13001,
+          "helpText": "Other statutory approvals required may include highways, network rail, utilities providers etc"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12280,
+            "text": "Confirm a ‘competent professional’ has agreed the existing and proposed scoping documentation covers the full scope of Works and there are no scope or coordination gaps, and that you have on file formal written evidence of this (available on request)",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12334,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13000,
+          "helpText": "This confirmation may take the form of a competent professional signing off all scoping documentation as having been reviewed and is fully coordinated.\nGuidance regarding what constitutes a ‘competent professional’ can be found within the BSF Fund Application Guidance.\nCertification may take the form of a design report or technical note certifying that the design meets the requirements"
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 13002,
+          "displayOrder": 3,
+          "text": "Procurement"
+        },
+        {
+          "externalId": 13000,
+          "displayOrder": 1,
+          "text": "Scope of Works, Project Team Appointments and Resident/Leaseholder Notifications"
+        },
+        {
+          "externalId": 13001,
+          "displayOrder": 2,
+          "text": "Statutory Approvals"
+        },
+        {
+          "externalId": 13003,
+          "displayOrder": 4,
+          "text": "Contract Execution"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Key project team appointments",
+      "block": "Questions",
+      "displayOrder": 9,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12375,
+            "text": "Has the Applicant appointed a Project Manager?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12310,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12378,
+            "text": "Enter company name of Contractor",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12377,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12379,
+            "text": "Has the Applicant appointed a Cost Consultant?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12310,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12376,
+            "text": "Enter company name of Project Manager",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12375,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12310,
+            "text": "Are you able to enter information about key project team appointments?",
+            "answerType": "YesNo",
+            "quantity": 1,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 12380,
+            "text": "Enter company name of Cost Consultant",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12379,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12373,
+            "text": "Has the Applicant appointed a Design Team?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12310,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12372,
+            "text": "Upload the [Key Project Team Appointments Spreadsheet](https://www.london.gov.uk/file/50732166)",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12310,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12377,
+            "text": "Has the Applicant appointed a Contractor?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12310,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12374,
+            "text": "Enter names of Design Team companies",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12373,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Project documents",
+      "block": "Questions",
+      "displayOrder": 10,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12359,
+            "text": "Contract Execution",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 25,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12355,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12357,
+            "text": "Statutory Approvals",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 25,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12355,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12355,
+            "text": "Has the GLA requested that you provide specific project documents?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "helpText": "Answer ‘No’ unless the GLA or one of its advisers has requested you upload particular documents"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12390,
+            "text": "Other",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 25,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12355,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12356,
+            "text": "Scope of Works, Project Team Appointments and Resident / Leaseholder Notifications",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 25,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12355,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12358,
+            "text": "Procurement",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 25,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "optional",
+          "parentId": 12355,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "GrantSourceTemplateBlock",
+      "blockDisplayName": "Approved Grant",
+      "block": "GrantSource",
+      "displayOrder": 11,
+      "paymentSourcesString": "Grant",
+      "nilGrantHidden": true,
+      "description": "Enter 0 in the field below initially. If you receive confirmation that MHCLG approves grant for this application, enter the cumulative amount of approved grant (i.e. the total covering pre-tender support and full costs) in the field below",
+      "grantTypes": [
+        "Grant"
+      ],
+      "paymentSources": [
+        "Grant"
+      ]
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Cost recovery",
+      "block": "Questions",
+      "displayOrder": 12,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12332,
+            "text": "Do you have evidence of cost recovery in relation to the installation of the unsafe non-ACM cladding system?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12308,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12309,
+            "text": "Upload your completed cost recovery questionnaire",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12308,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12330,
+            "text": "Enter the total amount (£) of costs, if any, recovered in relation to the installation of the unsafe non-ACM cladding system. Enter “0” if no costs have been recovered (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12308,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12308,
+            "text": "Have you completed a [cost recovery questionnaire](https://www.london.gov.uk/file/50732102)?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12331,
+            "text": "Of the above amount, how much should be repaid to the Government or deducted from your grant allocation? Enter “0” if no costs have been recovered (£)",
+            "answerType": "Number",
+            "quantity": 1,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12308,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12333,
+            "text": "Upload evidence of cost recovery in relation to the installation of the unsafe non-ACM cladding system",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12332,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Declaration",
+      "block": "Questions",
+      "displayOrder": 13,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12393,
+            "text": "Organisation of person making declaration",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 13010
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12394,
+            "text": "Date of declaration",
+            "answerType": "Date",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 13010
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12337,
+            "text": "The application for funding is complete and accurate, and in line with all requirements of the guidance and prospectus and I/we accept that any incorrect information supplied may entitle MHCLG to recover the whole or part of any funding amount provided",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 13010
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12391,
+            "text": "Name of person making declaration",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 13010
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12392,
+            "text": "Designation of person making declaration",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 13010
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 13010,
+          "displayOrder": 1,
+          "text": "By submitting this application for funding, I confirm:"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Project progress and Variations",
+      "block": "Questions",
+      "displayOrder": 14,
+      "infoMessage": "Information in this section and the 'Milestones & Payments’ section must be updated at least once per month",
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12311,
+            "text": "Has this project received an allocation of grant to fund the full works and costs?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12382,
+            "text": "What is the Forecast Outturn of Total Eligible Costs for this project? (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12311,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 12324,
+            "text": "Provide the impact on the planned completion date in number of weeks",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12319,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13005,
+          "helpText": "If agreement of time has not been reached with the contractor, a competent professional is to provide an estimated time impact for the variation"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12312,
+            "text": "Has the removal of all eligible unsafe cladding systems started?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12311,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 12320,
+            "text": "Confirm that the Applicant’s Contract Administrator (or equivalent i.e. Employer’s Agent, NEC Project Manager) has confirmed that the cost variation in question is an allowable claim under the “Works Contract”",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12319,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13005
+        },
+        {
+          "displayOrder": 9.5,
+          "question": {
+            "id": 12319,
+            "text": "Have there been any Variations to the scope of the Works (see definitions in the funding agreement)?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12311,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13005,
+          "helpText": "As part of the funding agreement, the Applicant is expected to provide notice of any cost variations within a reasonable timescale. Dependent on the contract type and the variation it may not be possible to provide finalised estimates of cost and time resulting from the variation. As such, the Applicant is requested to provide estimates in support of any variation requests, with final time and cost contract agreements to be uploaded as soon as practicably possible"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12315,
+            "text": "Enter date that all eligible unsafe cladding systems were finally removed",
+            "answerType": "Date",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12314,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 12323,
+            "text": "Provide final time and cost agreements if estimates are used to support any variation requests",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 50,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12319,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13005
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 12322,
+            "text": "Confirm if the cost and time impact of the variation are firm and agreed with the contractor",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12319,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13005
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12316,
+            "text": "What is the cumulative spend against Total Eligible Costs to date? (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12311,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 12321,
+            "text": "Briefly explain how the additional costs have arisen, the extent of necessary work and why it relates to the cladding remediation",
+            "answerType": "FreeText",
+            "maxLength": 1000,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12319,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13005
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12314,
+            "text": "Have all eligible unsafe cladding systems been removed?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12311,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12317,
+            "text": "Does the Forecast Outturn of Total Eligible Cost include variations to the Works Contract?",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Non-applicable (no variations)"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12311,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        },
+        {
+          "displayOrder": 8.5,
+          "question": {
+            "id": 12383,
+            "text": "Add commentary to explain any changes to forecast Practical Completion date in the ‘Milestones & Payments’ section (or state 'N/a' if no changes)",
+            "answerType": "FreeText",
+            "maxLength": 1000,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12311,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12318,
+            "text": "Confirm that estimates or firm costs for any known variations have been uploaded to the portal",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Non-applicable (no variations)"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12311,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12313,
+            "text": "Enter date removal of all eligible unsafe cladding systems started",
+            "answerType": "Date",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12312,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 13004
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 13005,
+          "displayOrder": 2,
+          "text": "Variations"
+        },
+        {
+          "externalId": 13004,
+          "displayOrder": 1,
+          "text": "Project progress"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    }
+  ],
+  "internalBlocks": [
+    {
+      "json_type": "InternalQuestionsTemplateBlock",
+      "blockDisplayName": "GLA Application Monitoring",
+      "type": "Questions",
+      "displayOrder": 1,
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12500,
+            "text": "Building name(s)",
+            "answerType": "FreeText",
+            "maxLength": 80,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 42,
+          "question": {
+            "id": 12541,
+            "text": "Costs - Exceptional issues for Board's attention",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 27,
+          "question": {
+            "id": 12526,
+            "text": "GLA case officer comments on stage 1 recommendation for Board’s attention – reasons for exceptions",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 60,
+          "question": {
+            "id": 12559,
+            "text": "Proposed variations – Exceptional issues for Board’s attention",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 49,
+          "question": {
+            "id": 12548,
+            "text": "Total eligible costs approved by Board at stage 2 (including any eligible pre-tender support costs) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 52,
+          "question": {
+            "id": 12551,
+            "text": "Has Applicant been notified about outcome of stage 2?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 43,
+          "question": {
+            "id": 12542,
+            "text": "Technical / Scope of works - Exceptional Issues for Board's attention",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 47,
+          "question": {
+            "id": 12546,
+            "text": "Stage 2 GLA recommendation",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "None"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Recommend approve"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Recommend reject"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 12510,
+            "text": "Applicant-end (client-side) support – main advisor contact details",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 63,
+          "question": {
+            "id": 12562,
+            "text": "Total variations sought to eligible costs rejected by Board (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 54,
+          "question": {
+            "id": 12553,
+            "text": "Required Completion Date as per Funding Agreement",
+            "answerType": "Date",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12503,
+            "text": "GLA case officer has made contact with Applicant",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 12517,
+            "text": "Current GLA case officer recommendation status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Ready for stage 1 approval"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Ready for variations approval"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Ready for stage 2 approval"
+              },
+              {
+                "displayOrder": 1,
+                "option": "No current recommendations"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Ready for both stage 1 and 2 approval"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 12520,
+            "text": "GLA case officer comments on stage 1 legal due diligence status",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 58,
+          "question": {
+            "id": 12557,
+            "text": "Variations status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "All approval decisions on variations made"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Applicant currently seeking variations"
+              },
+              {
+                "displayOrder": 1,
+                "option": "No variations have been proposed"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 53,
+          "question": {
+            "id": 12552,
+            "text": "Start on Site Date as per Funding Agreement ",
+            "answerType": "Date",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 37,
+          "question": {
+            "id": 12536,
+            "text": "Total Contract Sum (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 44,
+          "question": {
+            "id": 12543,
+            "text": "Upload stage 2 legal due diligence report(s)",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 12522,
+            "text": "Estimated Eligible Costs (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12504,
+            "text": "Project Cost Estimate (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 64,
+          "question": {
+            "id": 12563,
+            "text": "Total variations to grant amount approved and contractually committed to Applicant (i.e. the increase in grant amount only) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12505,
+            "text": "GLA Legal advisor – firm",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Womble Bond Dickinson"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Gowling"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Eversheds Sutherland"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 12523,
+            "text": "Pre-Tender Support Amount Sought (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 12514,
+            "text": "GLA case officer rating of Applicant engagement with GLA",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Low"
+              },
+              {
+                "displayOrder": 1,
+                "option": "High"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Medium"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 50,
+          "question": {
+            "id": 12549,
+            "text": "Total Grant Funding approved at stage 2 (excluding any pre-tender support grant) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 57,
+          "question": {
+            "id": 12556,
+            "text": "Upload executed funding agreement and ancillary docs",
+            "answerType": "FileUpload",
+            "quantity": 10,
+            "maxUploadSizeInMb": 50,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 66,
+          "question": {
+            "id": 12565,
+            "text": "Total Grant Funding for project following approved variations (including any pre-tender support grant) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 12518,
+            "text": "Stage 1 approval status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Deferred"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Rejected"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Approved"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Not yet approved"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 35,
+          "question": {
+            "id": 12534,
+            "text": "GLA case officer has sent completed Cost Recovery Questionnaire been sent to MHCLG",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 56,
+          "question": {
+            "id": 12555,
+            "text": "Grant amount contractually committed to Applicant (including any pre-tender support) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 12515,
+            "text": "Triage status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "1. Non-applicable"
+              },
+              {
+                "displayOrder": 3,
+                "option": "3. Project with MHCLG technical support"
+              },
+              {
+                "displayOrder": 4,
+                "option": "4. Project with MHCLG policy support"
+              },
+              {
+                "displayOrder": 2,
+                "option": "2. Project with Applicant-end support"
+              },
+              {
+                "displayOrder": 5,
+                "option": "5. Project with GLA Cost Consultant"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12508,
+            "text": "GLA Cost consultant / technical advisor – main advisor contact details (name, number, email)",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 29,
+          "question": {
+            "id": 12528,
+            "text": "Have template funding agreements been shared with the Applicant?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 48,
+          "question": {
+            "id": 12547,
+            "text": "GLA case officer comments on stage 2 recommendation for Board’s attention – reasons for exceptions",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 39,
+          "question": {
+            "id": 12538,
+            "text": "Are Eligible Costs above benchmark threshold?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 59,
+          "question": {
+            "id": 12558,
+            "text": "Recommended cumulative increase in Grant Funding as a result of variations (following any state aid deductions) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 51,
+          "question": {
+            "id": 12550,
+            "text": "Total Grant Funding approved at stage 2 (including any pre-tender support grant) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12506,
+            "text": "GLA Legal advisor – main advisor contact details (name, number, email)",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 12509,
+            "text": "Applicant-end (client-side) support – firm",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 12521,
+            "text": "Level of legal due diligence",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Basic"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Enhanced"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Deep Dive"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 40,
+          "question": {
+            "id": 12539,
+            "text": "Recommended Grant Funding for Approval (Total Eligible Costs less any state aid deductions) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 65,
+          "question": {
+            "id": 12564,
+            "text": "Total Grant Funding for project following approved variations (excluding any pre-tender support grant) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 62,
+          "question": {
+            "id": 12561,
+            "text": "Total variations to eligible costs approved by Board (i.e. the increase in eligible costs) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 67,
+          "question": {
+            "id": 12566,
+            "text": "Final eligible costs of Works (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 38,
+          "question": {
+            "id": 12537,
+            "text": "Total Eligible Costs (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 46,
+          "question": {
+            "id": 12545,
+            "text": "Upload stage 2 technical due diligence report(s)",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 45,
+          "question": {
+            "id": 12544,
+            "text": "Are there any stage 2 technical due diligence reports?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 12512,
+            "text": "GLA case officer RAG rating given Application status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Red"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Amber"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Green"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 34,
+          "question": {
+            "id": 12533,
+            "text": "Stage 2 technical due diligence status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Not yet started"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Completed"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Ongoing"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12501,
+            "text": "Registration Reference Number (MHCLG code)",
+            "answerType": "FreeText",
+            "maxLength": 80,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 26,
+          "question": {
+            "id": 12525,
+            "text": "Stage 1 GLA case officer recommendation",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "None"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Recommend approve"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Recommend reject"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 12516,
+            "text": "Triage status – GLA case officer comments",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 61,
+          "question": {
+            "id": 12560,
+            "text": "Has Applicant requested early release of variation funds (i.e. prior to practical completion)?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 25,
+          "question": {
+            "id": 12524,
+            "text": "Upload stage 1 legal due diligence report(s)",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 28,
+          "question": {
+            "id": 12527,
+            "text": "Has Applicant been notified about outcome of stage 1?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 33,
+          "question": {
+            "id": 12532,
+            "text": "Stage 2 legal due diligence status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Not yet started"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Completed"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Ongoing"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12502,
+            "text": "GLA case officer (name, number, email)",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 32,
+          "question": {
+            "id": 12531,
+            "text": "Stage 2 approval status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "Deferred"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Rejected"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Approved"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Not yet approved"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 55,
+          "question": {
+            "id": 12554,
+            "text": "Grant amount contractually committed to Applicant (excluding any pre-tender support) (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 12513,
+            "text": "GLA case officer comments on application status RAG rating",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 12519,
+            "text": "Stage 1 legal due diligence status",
+            "answerType": "Dropdown",
+            "maxAnswers": 1,
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "ongoing"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Not yet started"
+              },
+              {
+                "displayOrder": 3,
+                "option": "completed"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 41,
+          "question": {
+            "id": 12540,
+            "text": "Explanation of any State Aid Deductions for Board’s attention",
+            "answerType": "FreeText",
+            "maxLength": 500,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 31,
+          "question": {
+            "id": 12530,
+            "text": "Upload executed Pre-Tender Support agreement",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxUploadSizeInMb": 50,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 30,
+          "question": {
+            "id": 12529,
+            "text": "Pre-Tender Support – grant approved at Stage 1 (£)",
+            "answerType": "Number",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12507,
+            "text": "GLA Cost consultant / technical advisor – firm",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 36,
+          "question": {
+            "id": 12535,
+            "text": "GLA case officer confirms that the ‘full works and costs’ application is complete with all relevant fields self-certified without issue",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        }
+      ]
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "MonetaryValue",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "numberOfProjectAllowedPerOrg": 1000,
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "postcodeRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": true,
+  "grantTypes": [
+    "Grant"
+  ],
+  "shouldMilestonesBlockShowStatus": true
+}

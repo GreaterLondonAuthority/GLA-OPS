@@ -1,0 +1,47 @@
+
+<gla-page-header hideBackBtn="true" >Contract Types</gla-page-header>
+
+
+<div *ngIf="!contracts">
+  No contracts
+</div>
+<div *ngIf="contracts">
+  <table class="table table-bordered table-striped-groups mtop15" id="contract-types" >
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th [width]="180">
+        Contract type ID
+      </th>
+      <th>
+        Contract type
+      </th>
+      <th>
+        Project types
+      </th>
+      <th>
+        Contracts workflow
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <ng-container *ngFor="let contract of contracts; let i = index">
+      <tr [ngClass]="{'odd-row': i % 2 === 1}">
+        <td>
+          {{contract.id}}
+        </td>
+        <td>
+          {{contract.name}}
+        </td>
+        <td>
+          <div *ngFor="let templateName of contract.templateNames">
+            {{templateName}}
+          </div>
+        </td>
+        <td>
+          {{contract.workflowName}}
+        </td>
+      </tr>
+    </ng-container>
+    </tbody>
+  </table>
+</div>

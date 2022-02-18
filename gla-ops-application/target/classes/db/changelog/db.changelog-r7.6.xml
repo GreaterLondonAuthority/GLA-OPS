@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="658" author="cmelville">
+        <addColumn tableName="assessment">
+            <column name="project_id" type="INT4"  remarks="linked project for this assessment"/>
+        </addColumn>
+        <addColumn tableName="assessment">
+            <column name="managing_org_id" type="INT4"  remarks="managing org for this assessment"/>
+        </addColumn>
+        <sql>
+            UPDATE assessment SET project_id = (
+                SELECT pb.project_id FROM internal_project_block pb
+                WHERE pb.id = block_id
+            )
+        </sql>
+        <sql>
+            UPDATE assessment SET managing_org_id = (
+                SELECT p.managing_organisation_id  FROM internal_project_block pb
+                INNER JOIN project p ON p.id = pb.project_id
+                WHERE pb.id = block_id
+            )
+        </sql>
+        <createIndex indexName="assessment_managing_org_id_idx" tableName="assessment">
+            <column name="managing_org_id" type="INT4" />
+        </createIndex>
+        <addNotNullConstraint columnDataType="INT4"
+                              columnName="project_id"
+                              tableName="assessment"/>
+        <addNotNullConstraint columnDataType="INT4"
+                              columnName="managing_org_id"
+                              tableName="assessment"/>
+    </changeSet>
+
+    <changeSet id="659" author="ktran">
+        <addColumn tableName="template_block">
+            <column name="current_quarters_claimed" type="boolean" defaultValueBoolean="false"/>
+            <column name="evidence_attachments_mandatory" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+
+        <addColumn tableName="funding_block">
+            <column name="current_quarters_claimed" type="boolean" defaultValueBoolean="false"/>
+            <column name="evidence_attachments_mandatory" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="660" author="cmatias">
+        <addColumn tableName="template_block">
+            <column name="show_deliverables" type="boolean" defaultValueBoolean="true" remarks="whether to show the deliverables"/>
+        </addColumn>
+        <addColumn tableName="subcontracting_block">
+            <column name="show_deliverables" type="boolean" defaultValueBoolean="true" remarks="whether to show the deliverables"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="661" author="cmatias">
+        <addColumn tableName="template_block">
+            <column name="entity_name" type="varchar(50)" defaultValue="Subcontractor" remarks="Configurable name of main block entity, ex: subcontractor or partner"/>
+        </addColumn>
+        <addColumn tableName="subcontracting_block">
+            <column name="entity_name" type="varchar(50)" defaultValue="Subcontractor" remarks="Configurable name of main block entity, ex: subcontractor or partner"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="662" author="ktran">
+        <renameColumn tableName="template_block" oldColumnName="current_quarters_claimed" newColumnName="can_claim_current_quarter"/>
+        <renameColumn tableName="funding_block" oldColumnName="current_quarters_claimed" newColumnName="can_claim_current_quarter"/>
+    </changeSet>
+
+    <changeSet id="663" author="cmelville">
+        <addColumn tableName="subcontractor">
+            <column name="organisation_type" type="varchar(255)" remarks="organisation type of the delivery partner"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="664" author="cmatias">
+        <addColumn tableName="subcontractor">
+            <column name="role" type="varchar(255)" remarks="role of the delivery partner"/>
+            <column name="contract_value" type="decimal(12,2)" remarks="contract value of the delivery partner"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="665" author="cmelville">
+        <renameTable oldTableName="subcontractor" newTableName="delivery_partner" />
+        <renameTable oldTableName="subcontracting_block" newTableName="delivery_partners_block" />
+        <renameColumn tableName="delivery_partners_block" oldColumnName="has_subcontractors" newColumnName="has_delivery_partners"/>
+        <renameColumn tableName="delivery_partners_block" oldColumnName="subcontractor_type" newColumnName="delivery_partner_type"/>
+        <sql>
+            update template_block set block_type = 'DELIVERY_PARTNERS' where block_type = 'SUBCONTRACTING';
+        </sql>
+        <sql>
+            update project_block set block_type = 'DELIVERY_PARTNERS' where block_type = 'SUBCONTRACTING';
+        </sql>
+        <renameColumn tableName="template_block" oldColumnName="has_subcontractors_title" newColumnName="has_delivery_partners_title"/>
+        <renameColumn tableName="template_block" oldColumnName="subcontractor_type" newColumnName="delivery_partner_type"/>
+
+    </changeSet>
+
+  <changeSet id="666" author="cmelville">
+        <sql>
+            update template_block set BLOCK = 'DeliveryPartners' where block_type = 'Subcontracting';
+        </sql>
+        <sql>
+            update project_block set project_block_type = 'DeliveryPartners' where block_type = 'Subcontracting';
+        </sql>
+    </changeSet>
+
+ <changeSet id="667" author="cmelville">
+        <sql>
+            update template_block set BLOCK = 'DeliveryPartners' where BLOCK = 'Subcontracting';
+        </sql>
+        <sql>
+            update project_block set project_block_type = 'DeliveryPartners' where project_block_type = 'Subcontracting';
+        </sql>
+    </changeSet>
+
+    <changeSet id="668" author="jsingh">
+        <renameColumn tableName="template_block" oldColumnName="can_claim_current_quarter" newColumnName="can_claim_activity"/>
+        <renameColumn tableName="funding_block" oldColumnName="can_claim_current_quarter" newColumnName="can_claim_activity"/>
+    </changeSet>
+
+    <changeSet id="669" author="cmatias">
+        <renameColumn tableName="deliverable" oldColumnName="subcontractor_id" newColumnName="delivery_partner_id"/>
+    </changeSet>
+
+    <changeSet id="670" author="cmelville">
+        <createSequence sequenceName="project_objective_seq" startValue="1000" incrementBy="1" />
+
+        <createTable tableName="project_objective" remarks="Stores project objectives">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="project_objective_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" />
+            <column name="original_id" type="INT4" />
+            <column name="title" type="varchar(60)" remarks="title for this objective"/>
+            <column name="summary" type="varchar(2000)" remarks="summary for this objective"/>
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="project_objectives">
+            <column name="id" type="INT4" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="671" author="cmatias">
+        <createSequence sequenceName="other_funding_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="other_funding">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="other_funding_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" remarks="The related block of funding"/>
+            <column name="funding_source" type="varchar(50)" remarks="The funding source"/>
+            <column name="funder_name" type="varchar(100)" remarks="The funder name"/>
+            <column name="description" type="varchar(255)" remarks="The description of funding"/>
+            <column name="amount" type="DECIMAL(12,2)" remarks="The amount for funding"/>
+            <column name="is_funding_secured" type="BOOLEAN" remarks="The answer for funding secured question"/>
+            <column name="date_secured" type="TIMESTAMP" remarks="Date when the funding is secured"/>
+            <column name="estimate_date_secured" type="TIMESTAMP" remarks="Estimate date when funding will be secured"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="672" author="cmatias">
+        <addColumn tableName="other_funding">
+            <column name="original_id" type="INT4" />
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+        </addColumn>
+
+        <createTable tableName="other_funding_block">
+            <column name="id" type="INT4" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="673" author="jsingh">
+        <addNotNullConstraint tableName="template_block" columnDataType = "boolean" columnName="can_claim_activity" defaultNullValue="false"/>
+        <addNotNullConstraint tableName="funding_block" columnDataType = "boolean" columnName="can_claim_activity" defaultNullValue="false"/>
+    </changeSet>
+
+    <changeSet id="674" author="ybouhass">
+        <addColumn tableName="claim">
+            <column name="claimed_by" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="675" author="ybouhass">
+        <sql>
+            update template_block
+            set evidence_attachments_mandatory = budget_evidence_attachment_enabled
+            where block = 'Funding'
+        </sql>
+    </changeSet>
+
+    <changeSet id="676" author="cmatias">
+        <createIndex indexName="label_project_id_idx" tableName="label">
+            <column name="project_id" type="INT4"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

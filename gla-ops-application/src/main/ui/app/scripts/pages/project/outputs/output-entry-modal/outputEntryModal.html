@@ -1,0 +1,135 @@
+<div class="output-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{$ctrl.btnName}}</h1>
+  </div>
+
+  <div class="modal-body">
+    <form class="form-gla" name="modalForm" role="form">
+      <div ng-if="!$ctrl.baseline" class="form-group mtop15">
+        <month-selector
+          ng-if="$ctrl.periodType === 'Monthly'"
+          read-only="$ctrl.readOnly"
+          year="$ctrl.year"
+          on-month-selected="$ctrl.onMonthSelected(selectedMonth)"
+          disabled-months="$ctrl.disabledMonths"
+          selected-month="$ctrl.addOutputsMonth">
+        </month-selector>
+
+        <quarter-selector
+          ng-if="$ctrl.periodType === 'Quarterly'"
+          read-only="$ctrl.readOnly"
+          year="$ctrl.year"
+          on-quarter-selected="$ctrl.onMonthSelected(selectedMonth)"
+          selected-month="$ctrl.addOutputsMonth">
+        </quarter-selector>
+      </div>
+
+      <div class="form-group mtop15">
+        <label for="outputsCategory">{{$ctrl.categoryName}}</label><br/>
+        <select class="form-control"
+                id="outputsCategory"
+                ng-change="$ctrl.categorySelected($ctrl.outputsCategory)"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.outputsCategory"
+                ng-options="item as item[0].category for item in $ctrl.categories"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+
+      <div class="form-group mtop15" ng-if="$ctrl.subCategories.length > 1">
+        <label for="outputsSubCategory">{{$ctrl.subcategoryName}}</label><br/>
+        <!-- if there is no subcategories selected or that sub category only has 1 option -> disable -->
+        <select class="form-control"
+                id="outputsSubCategory"
+                ng-change="$ctrl.subCategorySelected($ctrl.outputsSubCategory)"
+                ng-disabled="$ctrl.readOnly || $ctrl.subCategories.length < 2"
+                ng-model="$ctrl.outputsSubCategory"
+                ng-options="item as item.subcategory for item in $ctrl.subCategories"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+
+      <div ng-if="!$ctrl.baseline && $ctrl.displayOutputType" class="form-group mtop15">
+        <label for="directOrIndirect">{{$ctrl.outputTypeName}}</label><br/>
+        <select class="form-control"
+                id="directOrIndirect"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.directOrIndirect"
+                ng-options="item as item.description for item in $ctrl.directOrIndirectChoices"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+
+      <div ng-if="!$ctrl.baseline" class="form-group mtop15">
+        <label for="outputsType">Forecast or Actual</label><br/>
+        <select class="form-control"
+                id="outputsType"
+                ng-disabled="$ctrl.readOnly"
+                ng-model="$ctrl.forcastOrActual"
+                ng-options="item as item.label for item in $ctrl.forecastOrActualChoices track by item.id"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+        </select>
+      </div>
+
+      <div class="form-group outputsValue mtop15">
+        <label for="outputsValue">{{$ctrl.selectedUnits.label || '&nbsp'}}</label><br/>
+        <input class="form-control"
+               id="outputsValue"
+               type="text"
+               placeholder="{{$ctrl.selectedUnits.placeholder}}"
+               ng-model="$ctrl.outputsValue"
+               number-mask="$ctrl.selectedUnits.precision || 0"
+               maxlength="13"
+               ng-disabled="$ctrl.readOnly || !$ctrl.selectedUnits">
+      </div>
+
+      <div class="form-group mtop15" ng-if="$ctrl.displayUnitCost">
+        <label for="outputsUnitCost">{{'Unit Cost £' || '&nbsp'}}</label><br/>
+        <input class="form-control"
+               id="outputsUnitCost"
+               type="text"
+               placeholder="Not provided"
+               ng-model="$ctrl.outputsUnitCost"
+               ng-disabled="true">
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+
+        <button ng-if="$ctrl.baseline"
+                id="add-baseline-btn" type="button"
+                class="btn btn-default btn-primary btn-center"
+                ng-click="$ctrl.addBaselinedOutput()"
+                ng-disabled="!$ctrl.canAddBaseline()">
+          {{$ctrl.btnName.toUpperCase()}}
+        </button>
+
+        <button ng-if="!$ctrl.baseline"
+                id="add-output-btn" type="button"
+                class="btn btn-default btn-primary btn-center"
+                ng-click="$ctrl.addForecastOutput()"
+                ng-disabled="!$ctrl.canAddOutput()">
+          {{$ctrl.btnName.toUpperCase()}}
+        </button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          ng-click="$dismiss()">CANCEL
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>

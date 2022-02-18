@@ -140,12 +140,12 @@
             <button class="btn btn-secondary pull-right" ng-click="$ctrl.addNewDropdownOption()">ADD</button>
           </div>
           <div class="dropdown-option delete-btn-container" ng-repeat="option in $ctrl.question.answerOptions track by $index" ng-class="'dropdown-option-' + ($index + 1)">
-            <input type="text"
+            <textarea type="text"
                    aria-label="{{'dropdown option ' + ($index + 1)}}"
                    class="form-control"
                    placeholder="Dropdown option"
-                   maxlength="45"
-                   ng-model="$ctrl.question.answerOptions[$index].option"/>
+                   maxlength="100"
+                   ng-model="$ctrl.question.answerOptions[$index].option"></textarea>
             <delete-button ng-click="$ctrl.deleteDropdownOption($index)"></delete-button>
           </div>
           <div class="error-wrapper" ng-if="$ctrl.hasAnswersRestrictedText" role="alert">

@@ -37,6 +37,19 @@
   display: inline-block;
   text-align: left;
   vertical-align: middle;
+
+  button.close{
+    opacity: 1;
+    &:focus,
+    &:active:focus {
+      @include tab-focus;
+      outline: 2px solid $gla-black;
+      outline-offset: 2px;
+      &:not(:focus-visible){
+        outline: none;
+      }
+    }
+  }
 }
 
 .modal-body{

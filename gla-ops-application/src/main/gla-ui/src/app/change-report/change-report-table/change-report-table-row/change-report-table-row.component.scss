@@ -1,0 +1,15 @@
+@import "variables";
+:host {
+  display: block;
+
+  .changed-value a{
+    color: $red;
+  }
+
+  .glyphicon-file{
+    margin-right: 3px;
+  }
+}
+.second-heading{
+  padding-left: 10px !important;
+}

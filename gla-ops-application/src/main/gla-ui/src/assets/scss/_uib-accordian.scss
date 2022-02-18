@@ -1,3 +1,5 @@
+@import "variables";
+
 uib-accordion{
   .panel-heading{
     padding: 0;
@@ -9,3 +11,24 @@ uib-accordion{
     }
   }
 }
+
+ngb-accordion{
+  .card-header{
+    background: #5C7489;
+    padding: 0;
+
+    button.btn-link {
+      color: white;
+      font-size: 16px;
+      width: 100%;
+      text-decoration: none;
+      padding: 5px 15px;
+      //TODO doesn't work
+      //&:focus{
+      //  outline: 2px solid #000105;
+      //  outline-offset: 2px;
+      //}
+    }
+  }
+}
+

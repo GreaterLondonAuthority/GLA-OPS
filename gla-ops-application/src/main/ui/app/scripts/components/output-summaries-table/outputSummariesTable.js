@@ -25,6 +25,11 @@ class OutputsSummaryTable {
     const precision = this.unitConfig[valueType].precision || 0;
     return value ? this.NumberUtil.formatWithCommas(value, precision) : '';
   }
+
+  showSubCategory(category) {
+    let notApplicableSubcategory = _.find(category, {subcategory: 'N/A'});
+    return notApplicableSubcategory == undefined;
+  }
 }
 
 OutputsSummaryTable.$inject = ['OutputsService', 'Util'];

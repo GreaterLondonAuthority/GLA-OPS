@@ -18,6 +18,7 @@ function DeclinePaymentsDialog($uibModal, $timeout, _) {
         animation: false,
         templateUrl: 'scripts/pages/payments/pending-payments/decline-dialog/declineDialog.html',
         size: 'confirm',
+        backdrop  : 'static',
         controller: [
           function() {
             this.groupToDecline = groupToDecline;

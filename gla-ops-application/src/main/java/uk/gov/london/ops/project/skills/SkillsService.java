@@ -7,17 +7,6 @@
  */
 package uk.gov.london.ops.project.skills;
 
-import static java.util.Comparator.comparing;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +16,30 @@ import org.springframework.stereotype.Service;
 import uk.gov.london.common.skills.FundingRecord;
 import uk.gov.london.common.skills.SkillsGrantType;
 import uk.gov.london.ops.audit.AuditService;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.project.implementation.repository.SkillsFundingSummaryRepository;
 import uk.gov.london.ops.project.implementation.repository.SkillsPaymentProfileRepository;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 /**
  * service for managing the skills payment profiling data. Is organised by grant type.
  */
 @Service
 public class SkillsService {
+
+    static final int PAYMENT_MONTH = 7; // AUGUST;
 
     Logger log = LoggerFactory.getLogger(getClass());
 
@@ -91,7 +94,6 @@ public class SkillsService {
     }
 
     private OffsetDateTime getPaymentDateFor(SkillsPaymentProfile profile) {
-        final int PAYMENT_MONTH = 7; // AUGUST;
         int paymentMonth = PAYMENT_MONTH + profile.getPeriod() > 12 ? (PAYMENT_MONTH + profile.getPeriod()) - 12
                 : PAYMENT_MONTH + profile.getPeriod();
         int paymentYear = PAYMENT_MONTH + profile.getPeriod() > 12 ? profile.getYear() + 1 : profile.getYear();

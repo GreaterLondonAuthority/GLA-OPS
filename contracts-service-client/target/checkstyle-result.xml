@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.29">
+<file name="C:\Projects\GLA\GlaRefresh2021\contracts-service-client\src\main\java\uk\gov\london\ops\contracts\ContractAction.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\contracts-service-client\src\main\java\uk\gov\london\ops\contracts\ContractActionDetails.java">
+<error line="24" severity="warning" message="Line is longer than 132 characters (found 136)." source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\contracts-service-client\src\main\java\uk\gov\london\ops\contracts\ContractAPI.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\contracts-service-client\src\main\java\uk\gov\london\ops\contracts\ContractModel.java">
+<error line="83" severity="warning" message="Line is longer than 132 characters (found 134)." source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\contracts-service-client\src\main\java\uk\gov\london\ops\contracts\ContractService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\contracts-service-client\src\main\java\uk\gov\london\ops\contracts\ContractSummary.java">
+<error line="237" column="48" severity="warning" message="&apos;&amp;&amp;&apos; should be on a new line." source="com.puppycrawl.tools.checkstyle.checks.whitespace.OperatorWrapCheck"/>
+<error line="238" column="65" severity="warning" message="&apos;&amp;&amp;&apos; should be on a new line." source="com.puppycrawl.tools.checkstyle.checks.whitespace.OperatorWrapCheck"/>
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\contracts-service-client\src\main\java\uk\gov\london\ops\contracts\ContractTemplatesModel.java">
+<error line="32" severity="warning" message="switch without &quot;default&quot; clause." source="com.puppycrawl.tools.checkstyle.checks.coding.MissingSwitchDefaultCheck"/>
+</file>
+</checkstyle>

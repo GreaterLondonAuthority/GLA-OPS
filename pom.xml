@@ -12,32 +12,51 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<kotlin.version>1.3.61</kotlin.version>
+		<kotlin.version>1.4.21</kotlin.version>
 		<kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-		<jacoco.coverage.ratio>0.51</jacoco.coverage.ratio>
-		<jacoco.missed.class.count>215</jacoco.missed.class.count>
+		<jacoco.coverage.ratio>0.85</jacoco.coverage.ratio>
+		<jacoco.missed.class.count>6</jacoco.missed.class.count>
 		<spotbugs.version>3.1.8</spotbugs.version>
 		<spotbugs-plugin-version>3.1.1</spotbugs-plugin-version>
 	</properties>
 
 	<modules>
 		<module>gla-ops-framework</module>
+		<module>annual-submission-service</module>
+		<module>annual-submission-service-client</module>
+		<module>assessment-service</module>
+		<module>assessment-service-client</module>
 		<module>audit-service</module>
-        <module>audit-service-client</module>
+		<module>audit-service-client</module>
+		<module>contracts-service</module>
 		<module>file-service</module>
 		<module>file-service-client</module>
 		<module>notification-service</module>
 		<module>notification-service-client</module>
+		<module>organisation-service</module>
+		<module>organisation-service-client</module>
+		<module>payment-service</module>
+		<module>payment-service-client</module>
+		<module>programme-service</module>
+		<module>programme-service-client</module>
+		<module>project-service</module>
+		<module>project-service-client</module>
+		<module>refdata-service</module>
+		<module>refdata-service-client</module>
+		<module>report-service</module>
+		<module>report-service-client</module>
 		<module>user-service</module>
         <module>user-service-client</module>
 		<module>gla-ops-application</module>
 		<module>gla-ops-test</module>
+		<module>gla-ops-test-aggregate-report</module>
+		<module>contracts-service-client</module>
 	</modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.2.RELEASE</version>
+		<version>2.4.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -53,7 +72,7 @@
 		<dependency>
 			<groupId>uk.gov.london</groupId>
 			<artifactId>gla-common</artifactId>
-			<version>0.0.17-SNAPSHOT</version>
+			<version>0.0.23-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -78,18 +97,21 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
-			<version>4.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
-			<version>4.2.1</version>
 		</dependency>
 
 		<dependency>
@@ -183,7 +205,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.5</version>
+				<version>0.7.7.201606060606</version>
 				<configuration>
 					<destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
 					<dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
@@ -206,6 +228,10 @@
 						<exclude>**/QOrganisation.*</exclude>
 						<exclude>**/QProjectLedgerEntry.*</exclude>
 						<exclude>**/QTeam.*</exclude>
+						<exclude>**/*DataInitialiser.*</exclude>
+						<exclude>**/FileRepositoryHelper.*</exclude>
+						<exclude>**/OwnCloudFileStore.*</exclude>
+						<exclude>**/S3FileStore.*</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -262,7 +288,7 @@
 						<configuration>
 							<configLocation>config/checkstyle.xml</configLocation>
 							<violationSeverity>warning</violationSeverity>
-							<maxAllowedViolations>2500</maxAllowedViolations>
+							<maxAllowedViolations>600</maxAllowedViolations>
 							<encoding>UTF-8</encoding>
 							<consoleOutput>true</consoleOutput>
 							<failsOnError>false</failsOnError>
@@ -373,7 +399,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<!--Security checks-->
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
@@ -388,6 +413,8 @@
 				</dependencies>
 				<configuration>
 					<failOnError>false</failOnError>
+					<xmlOutput>true</xmlOutput>
+					<xmlOutputDirectory>target/site</xmlOutputDirectory>
 					<plugins>
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
@@ -406,11 +433,47 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!--Security checks-->
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>${spotbugs-plugin-version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs</artifactId>
+						<version>3.1.8</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<failOnError>false</failOnError>
+					<xmlOutput>true</xmlOutput>
+					<xmlOutputDirectory>target/site</xmlOutputDirectory>
+					<plugins>
+						<plugin>
+							<groupId>com.h3xstream.findsecbugs</groupId>
+							<artifactId>findsecbugs-plugin</artifactId>
+							<version>1.9.0</version>
+						</plugin>
+					</plugins>
+				</configuration>
+				<executions>
+					<execution>
+						<id>findbugs</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>spotbugs</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
 	<reporting>
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -423,6 +486,7 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>

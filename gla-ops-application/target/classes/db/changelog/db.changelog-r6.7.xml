@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    
+    <changeSet id="606" author="ybouhass">
+        <addColumn tableName="template_block">
+            <!-- start year already exists in the template block -->
+            <!--<column name="start_year" type="INT4" remarks="start year for the grant" />-->
+            <column name="number_of_years" type="INT4" remarks="number of years the grant runs for" />
+        </addColumn>
+
+        <addColumn tableName="learning_grant_block">
+            <column name="start_year" type="INT4" remarks="start year for the grant" />
+            <column name="number_of_years" type="INT4" remarks="number of years the grant runs for" />
+        </addColumn>
+
+        <createSequence sequenceName="learning_grant_allocation_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="learning_grant_allocation">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="learning_grant_allocation_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="block_id" type="INT4" remarks="learning grant block the allocation belongs to" />
+            <column name="year" type="INT4" />
+            <column name="allocation" type="decimal" remarks="monetary value, year funding allocation" />
+            <column name="learner_support_allocation" type="decimal" remarks="monetary value, learner support allocation"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="607" author="jdimsa">
+        <addColumn tableName="learning_grant_entry">
+            <column name="type" type="varchar(30)" remarks="Type of learning grant table entry (delivery, support)"/>
+        </addColumn>
+        <sql>
+            update learning_grant_entry set type = 'DELIVERY' where type is null
+        </sql>
+    </changeSet>
+
+    <changeSet id="608" author="cmatias">
+        <addColumn tableName="project_block">
+            <column name="payment_sources" type="varchar(50)" remarks="Payment sources for project block" />
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="609" author="cmelville">
+        <sql>
+            update template_block set grant_types = 'Grant' where block_type = 'FUNDING'
+        </sql>
+        <sql>
+            update project_block set payment_sources = 'Grant' where block_type = 'Funding'
+        </sql>
+        <sql>
+            update template_block set grant_types = payment_source where block_type = 'OUTPUTS'
+        </sql>
+        <sql>
+            update project_block set payment_sources = (
+                select o.payment_source from outputs o where o.id = project_block.id
+            )
+        </sql>
+
+
+    </changeSet>
+
+    <changeSet id="610" author="ybouhass">
+        <addColumn tableName="learning_grant_entry">
+            <column name="cumulative_allocation" type="decimal" remarks="amount to be paid"/>
+            <column name="cumulative_earnings" type="decimal" remarks="amount to be paid"/>
+            <column name="cumulative_payment" type="decimal" remarks="amount to be paid"/>
+            <column name="payment_due" type="decimal" remarks="amount to be paid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="611" author="ybouhass">
+        <renameColumn tableName="learning_grant_block" oldColumnName="allocation" newColumnName="total_allocation" />
+    </changeSet>
+
+    <changeSet id="612" author="cmelville">
+        <addColumn tableName="learning_grant_entry">
+            <column name="original_id" type="INT4" remarks="Used to track changes to same table row entry between block versions"></column>
+        </addColumn>
+        <sql>
+            update learning_grant_entry set original_id = id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="613" author="cmelville">
+        <addColumn tableName="annual_submission_block">
+            <column name="rolled_over_unspent_grant" type="INT4" defaultValueNumeric="0" remarks="grant rollover requested" />
+        </addColumn>
+        <addColumn tableName="annual_submission_block">
+            <column name="rolled_over_interested_accumulated" type="INT4" defaultValueNumeric="0" remarks="grant rollover requested" />
+        </addColumn>
+        <sql>
+            update annual_submission_block set rolled_over_unspent_grant = total_unspent_grant where balance_rollover_confirmed = true
+        </sql>
+        <sql>
+            update annual_submission_block set rolled_over_interested_accumulated = rolled_over_interested_accumulated where balance_rollover_confirmed = true
+        </sql>
+    </changeSet>
+
+    <changeSet id="614" author="cmelville">
+        <addColumn tableName="audit_activity">
+            <column name="affected_username" type="varchar(255)" remarks="user potentially affected by this auditable event" />
+            <column name="organisation_id" type="INT4" remarks="organisation potentially affected by this auditable event" />
+            <column name="amount" type="decimal" remarks="any monetary or other value related to this event" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="615" author="ughari">
+        <addColumn tableName="annual_submission">
+            <column name="authorised_by" type="varchar(255)" remarks="certification authorised by"/>
+            <column name="authorised_by_job_title" type="varchar(255)" remarks="job title of authoriser"/>
+            <column name="authorised_on" type="TIMESTAMP" remarks="date of authorisation"/>
+            <column name="submitted_on" type="TIMESTAMP" remarks="date user submitted the agreement"/>
+            <column name="submitted_by" type="varchar(255)" remarks="string email of user who submitted agreement"/>
+            <column name="agreement_signed" type="boolean" defaultValue="false" remarks="has agreement been signed or not"/>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="616" author="cmelville">
+        <addColumn tableName="annual_submission">
+            <column name="agreement_text" type="varchar(500)" remarks="aggreement text certified by the user"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

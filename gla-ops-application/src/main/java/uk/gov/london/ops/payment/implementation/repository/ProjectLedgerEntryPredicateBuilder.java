@@ -31,8 +31,7 @@ class ProjectLedgerEntryPredicateBuilder {
             if (projectId != null) {
                 predicates.add(QProjectLedgerEntry.projectLedgerEntry.projectId.eq(projectId));
             }
-        }
-        else if (organisationName != null) {
+        } else if (organisationName != null) {
             predicates.add(QProjectLedgerEntry.projectLedgerEntry.vendorName.containsIgnoreCase(organisationName));
         }
         predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));

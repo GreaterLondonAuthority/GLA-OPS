@@ -7,8 +7,9 @@
  */
 package uk.gov.london.ops.project.template.domain
 
-import uk.gov.london.ops.domain.Requirement
 import uk.gov.london.ops.framework.JSONUtils
+import uk.gov.london.ops.framework.enums.Requirement
+import java.util.stream.Collectors
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
 import javax.persistence.PostLoad
@@ -20,19 +21,13 @@ import javax.persistence.Transient
  */
 @Entity
 @DiscriminatorValue("USER_DEFINED_OUTPUTS")
-class UserDefinedOutputTemplateBlock : TemplateBlock() {
+class UserDefinedOutputTemplateBlock : RepeatingEntityTemplateBlock() {
 
     @Transient
     var definedOutputTextSingular = "User Defined Output"
 
     @Transient
     var definedOutputTextPlural = "User Defined Outputs"
-
-    @Transient
-    var minNumberOfEntities: Int? = null
-
-    @Transient
-    var maxNumberOfEntities: Int? = null
 
     @Transient
     var outputNameText: String? = null
@@ -62,13 +57,12 @@ class UserDefinedOutputTemplateBlock : TemplateBlock() {
     var monitorQuestionCharacterLimit: String? = null
 
     @PostLoad
-    fun loadBlockData() {
+    override fun loadBlockData() {
+        super.loadBlockData()
         val data = JSONUtils.fromJSON(this.blockData, UserDefinedOutputTemplateBlock::class.java)
         if (data != null) {
             this.definedOutputTextSingular = data.definedOutputTextSingular
             this.definedOutputTextPlural = data.definedOutputTextPlural
-            this.minNumberOfEntities = data.minNumberOfEntities
-            this.maxNumberOfEntities = data.maxNumberOfEntities
             this.outputNameText = data.outputNameText
             this.outputNameCharacterLimit = data.outputNameCharacterLimit
             this.amountToDeliverText = data.amountToDeliverText
@@ -86,8 +80,6 @@ class UserDefinedOutputTemplateBlock : TemplateBlock() {
         val cloned = clone as UserDefinedOutputTemplateBlock
         cloned.definedOutputTextSingular = definedOutputTextSingular
         cloned.definedOutputTextPlural = definedOutputTextPlural
-        cloned.minNumberOfEntities = minNumberOfEntities
-        cloned.maxNumberOfEntities = maxNumberOfEntities
         cloned.outputNameText = outputNameText
         cloned.outputNameCharacterLimit = outputNameCharacterLimit
         cloned.amountToDeliverText = amountToDeliverText
@@ -102,5 +94,28 @@ class UserDefinedOutputTemplateBlock : TemplateBlock() {
     override fun shouldSaveBlockData(): Boolean {
         return true
     }
+
+    override fun getTemplateBlockCommands(): List<TemplateBlockCommand>? {
+        val globalCommands: MutableList<TemplateBlockCommand> = super.getTemplateBlockCommands()!!.stream().collect(Collectors.toList())
+        globalCommands.add(TemplateBlockCommand.EDIT_USER_DEFINED_OUTPUT_BLOCK)
+        return globalCommands
+    }
+
+    override fun mergeConfig(updatedBlock: TemplateBlock) {
+        super.mergeConfig(updatedBlock)
+        val updated = updatedBlock as UserDefinedOutputTemplateBlock
+        definedOutputTextSingular = updated.definedOutputTextSingular
+        definedOutputTextPlural = updated.definedOutputTextPlural
+        outputNameText = updated.outputNameText
+        outputNameCharacterLimit = updated.outputNameCharacterLimit
+        amountToDeliverText = updated.amountToDeliverText
+        amountToDeliverCharacterLimit = updated.amountToDeliverCharacterLimit
+        baselineRequirement = updated.baselineRequirement
+        baselineText = updated.baselineText
+        baselineCharacterLimit = updated.baselineCharacterLimit
+        monitorQuestion = updated.monitorQuestion
+        monitorQuestionCharacterLimit = updated.monitorQuestionCharacterLimit
+    }
+
 
 }

@@ -1,5 +1,5 @@
 <div class="file-upload" ng-class="'file-upload-'+$ctrl.question.id">
-  <well class="row" ng-if="!$ctrl.readOnly">
+  <gla-well class="row" ng-if="!$ctrl.readOnly">
     <h4>Attachments</h4>
 
     <h5 ng-if="!$ctrl.question.maxCombinedUploadSizeInMb" class="bold">
@@ -17,29 +17,28 @@
     <div class="row mbottom15">
 
       <div class="col-xs-12 no-padding">
-        <file-upload
-                    class="add-document"
-                     component-input-id="'file-upload-'+$ctrl.question.id"
-                     context="$ctrl.question"
-                     is-disabled="$ctrl.addDocumentButtonDisabled()"
-                     label="ADD DOCUMENT +"
-                     on-complete="$ctrl.onFileUploadComplete(event)"
-                     on-error="$ctrl.onFileUploadError(event)"
-                     on-progress="$ctrl.onFileUploadProgress(event)"
-                     upload-params="$ctrl.uploadParams",
-                     max-file-size-in-mb="$ctrl.question.maxUploadSizeInMb || 5",
-                     max-combined-upload-size-in-mb="$ctrl.question.maxCombinedUploadSizeInMb"
-                     remaining-combined-file-size="$ctrl.remainingCombinedFileSize"
-                     post-url="'/questions/'+$ctrl.question.id+'/file?programmeId='+$ctrl.project.programmeId+'&projectId='+$ctrl.project.id+'&blockId='+$ctrl.block.id">
-        </file-upload>
+        <gla-file-upload-button class="add-document"
+                                [component-input-id]="'file-upload-'+$ctrl.question.id"
+                                [context]="$ctrl.question"
+                                [is-disabled]="$ctrl.addDocumentButtonDisabled()"
+                                [label]="'ADD DOCUMENT +'"
+                                (on-complete)="$ctrl.onFileUploadComplete($event)"
+                                (on-error)="$ctrl.onFileUploadError($event)"
+                                (on-progress)="$ctrl.onFileUploadProgress($event)"
+                                [upload-params]="$ctrl.uploadParams"
+                                [max-file-size-in-mb]="$ctrl.question.maxUploadSizeInMb || 5"
+                                [max-combined-upload-size-in-mb]="$ctrl.question.maxCombinedUploadSizeInMb"
+                                [remaining-combined-file-size]="$ctrl.remainingCombinedFileSize"
+                                [post-url]="'/questions/'+$ctrl.question.id+'/file?programmeId='+$ctrl.project.programmeId+'&projectId='+$ctrl.project.id+'&blockId='+$ctrl.block.id">
+        </gla-file-upload-button>
       </div>
     </div>
-  </well>
+  </gla-well>
 
   <div class="row">
 
       <div class="table-responsive attached-files text-left" ng-attr-id="{{'file-uploaded-table-'+$ctrl.question.id}}">
-        <div ng-if="($ctrl.question.attachments.length + $ctrl.question.fileAttachments.length) == 0" class="empty-table no-attached-files">No files added.</div>
+        <div ng-if="($ctrl.question.attachments.length + $ctrl.question.fileAttachments.length) == 0" class="empty-table no-attached-files mtop5">No files added.</div>
         <table ng-if="($ctrl.question.attachments.length + $ctrl.question.fileAttachments.length) != 0" class="table table-hover table-bordered table-striped">
           <thead class="thead-inverse uppercase">
           <tr>
@@ -52,7 +51,7 @@
           <tbody>
           <tr class="staged-file" ng-repeat="attachment in $ctrl.question.attachments | orderBy:'createdOn':true">
             <td>
-              <a class="uploaded-file-link" href="/api/v1/file/{{attachment.fileId}}"><span aria-hidden="true" class="glyphicon glyphicon-file"></span> {{attachment.fileName}}</a>
+              <a class="uploaded-file-link" href="/api/v1/project/{{$ctrl.project.id}}/file/{{attachment.fileId}}"><span aria-hidden="true" class="glyphicon glyphicon-file"></span> {{attachment.fileName}}</a>
             </td>
             <td>{{attachment.createdOn | date: 'MMM d, yyyy'}}</td>
             <td>{{attachment.creatorName}}</td>
@@ -66,7 +65,7 @@
           </tr>
           <tr class="attached-file" ng-repeat="attachment in $ctrl.question.fileAttachments | orderBy:'createdOn':true">
             <td>
-              <a class="uploaded-file-link" href="/api/v1/file/{{attachment.id}}">
+              <a class="uploaded-file-link" href="/api/v1/project/{{$ctrl.project.id}}/file/{{attachment.id}}">
                 <span aria-hidden="true" class="glyphicon glyphicon-file"></span> {{attachment.fileName}}
               </a>
             </td>

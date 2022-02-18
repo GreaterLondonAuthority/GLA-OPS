@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.29">
+<file name="C:\Projects\GLA\GlaRefresh2021\annual-submission-service-client\src\main\java\uk\gov\london\ops\annualsubmission\AnnualSubmissionGrantType.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\annual-submission-service-client\src\main\java\uk\gov\london\ops\annualsubmission\AnnualSubmissionService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\annual-submission-service-client\src\main\java\uk\gov\london\ops\annualsubmission\AnnualSubmissionStatus.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\annual-submission-service-client\src\main\java\uk\gov\london\ops\annualsubmission\AnnualSubmissionStatusType.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\annual-submission-service-client\src\main\java\uk\gov\london\ops\annualsubmission\AnnualSubmissionType.java">
+</file>
+</checkstyle>

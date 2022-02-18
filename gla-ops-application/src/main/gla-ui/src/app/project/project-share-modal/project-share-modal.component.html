@@ -1,0 +1,50 @@
+<div class="share-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Share Project P{{projectId}}</h1>
+  </div>
+
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+          <div class="form-group has-feedback">
+            <input id="orgcode"
+                   type="text"
+                   name="orgcode"
+                   aria-label="Organisation Code"
+                   class="form-control"
+                   minlength="3"
+                   [(ngModel)]="orgCode"
+                   placeholder="GLA provider number"
+                   autofocus
+                   autocomplete="off"
+                   (glaOrgLookup)="orgName = $event"/>
+            <span *ngIf="orgName" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+            <div class="error-wrapper" role="alert">
+              <span class="error" *ngIf="orgCode?.length > 2 && !orgName">Organisation number not recognised</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="organisation-name text-center" *ngIf="orgName">
+        {{orgName}}
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-default btn-primary btn-center"
+            type="button"
+            (click)="activeModal.close(orgCode)"
+            [disabled]="!orgName">SHARE
+    </button>
+
+    <button class="btn btn-default btn-secondary btn-center"
+            type="button"
+            (click)="activeModal.dismiss()">CANCEL
+    </button>
+  </div>
+</div>

@@ -60,6 +60,8 @@ table.table {
     &:focus,
     tr:focus {
       @include tab-focus;
+      outline: 2px solid $gla-black;
+      outline-offset: -6px;
       &:not(:focus-visible){
         outline: none;
       }
@@ -137,6 +139,16 @@ table.table-default, table.table-default.table-with-inputs {
         }
       }
 
+      &.number-input{
+        input{
+          text-align: right;
+          padding-right: 22px;
+          &:focus{
+            padding-right: 21px;
+          }
+        }
+      }
+
       &:not(:first-child) {
         border-left: 0;
       }
@@ -172,6 +184,10 @@ table.table-default, table.table-default.table-with-inputs {
     }
   }
 
+  tbody tr th{
+    background-color: $read-only-cell;
+  }
+
   &.edit-mode {
     tbody tr {
       th, td {
@@ -186,7 +202,7 @@ table.table-default, table.table-default.table-with-inputs {
 
 table.table-with-inputs {
 
-  td:first-child, tfoot td {
+  td:first-child, tbody th:first-child, tfoot td {
     font-family: $font-family-bolder;
   }
 

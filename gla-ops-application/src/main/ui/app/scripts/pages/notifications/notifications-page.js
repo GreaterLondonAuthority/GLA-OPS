@@ -7,12 +7,14 @@
  */
 
 class NotificationsPageCtrl {
-  constructor($rootScope, NotificationsService, FeatureToggleService, MetadataService) {
+  constructor($rootScope, NotificationsService, FeatureToggleService, MetadataService, SessionService, DeleteNotificationModal) {
     this.$rootScope = $rootScope;
     this.MetadataService = MetadataService;
     this.NotificationsService = NotificationsService
     this.maxDisplay = this.$rootScope.envVars['notifications-max-display'];
     this.FeatureToggleService = FeatureToggleService;
+    this.SessionService = SessionService;
+    this.DeleteNotificationModal = DeleteNotificationModal;
   }
 
   $onInit() {
@@ -81,9 +83,44 @@ class NotificationsPageCtrl {
     this.loadNotificationsPage(0);
     this.MetadataService.fireMetadataUpdate();
   }
+
+  anyNotificationSelected() {
+    return this.getSelectedNotificationIds().length > 0;
+  }
+
+  getSelectedNotificationIds() {
+    let notificationIdsToBeDeleted = [];
+    _.forEach(this.notifcationsGroups, (group) => {
+      _.forEach(group.notifications, (notification) => {
+        if (notification.notification.isSelected) {
+          notificationIdsToBeDeleted.push(notification.id)
+        }
+      });
+    });
+    return notificationIdsToBeDeleted;
+  }
+
+  deleteNotifications() {
+    if(this.SessionService.getDoNotShowAgainDeleteNotificationModal()) {
+      this._deleteNotifications();
+    }else{
+      this.DeleteNotificationModal.show().result.then((doNotShowAgain)=>{
+        this.SessionService.setDoNotShowAgainDeleteNotificationModal(doNotShowAgain);
+        this._deleteNotifications();
+      });
+    }
+  }
+
+  _deleteNotifications() {
+    let notificationIdsToBeDeleted = this.getSelectedNotificationIds();
+    this.NotificationsService.deleteNotifications(notificationIdsToBeDeleted).then(()=>{
+      this.notificationDeleted();
+    });
+  }
+
 }
 
-NotificationsPageCtrl.$inject = ['$rootScope','NotificationsService', 'FeatureToggleService', 'MetadataService'];
+NotificationsPageCtrl.$inject = ['$rootScope','NotificationsService', 'FeatureToggleService', 'MetadataService', 'SessionService', 'DeleteNotificationModal'];
 
 
 angular.module('GLA')

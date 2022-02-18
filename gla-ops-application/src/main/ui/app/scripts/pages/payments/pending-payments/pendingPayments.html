@@ -42,10 +42,14 @@
               </div>
 
               <div ng-if="!$ctrl.showSapIdError(group) ">
-                <button ng-if=" (((group.hasReclaim && group.interestAssessed) || !group.hasReclaim) && $ctrl.canAuthoriseGroup(group)) && $ctrl.isAllowToAuthorisePayments(group) && !group.thresholdExceeded" class="btn btn-md btn-primary btn-authorise" ng-click="$ctrl.authorisePayments(group)">AUTHORISE<i class="glyphicon glyphicon-ok"></i></button>
+                <button ng-if=" (((group.hasReclaim && group.interestAssessed) || !group.hasReclaim) && $ctrl.canAuthoriseGroup(group)) && $ctrl.isAllowToAuthorisePayments(group) && !group.thresholdExceeded && !group.suspendPayments" class="btn btn-md btn-primary btn-authorise" ng-click="$ctrl.authorisePayments(group)">AUTHORISE<i class="glyphicon glyphicon-ok"></i></button>
                 <button ng-if="group.hasReclaim && $ctrl.canSetInterest" class="btn btn-md btn-primary btn-interest" ng-click="$ctrl.openInterestModal(group)">{{group.interestAssessed ? 'EDIT INTEREST' : 'SET INTEREST'}}<i class="glyphicon glyphicon-credit-card"></i></button>
                 <button ng-if="$ctrl.canAuthoriseGroup(group)" class="btn btn-md btn-secondary btn-decline" ng-click="$ctrl.declinePayments(group)">DECLINE<i class="glyphicon glyphicon-remove"></i></button>
-                <span ng-if="group.thresholdExceeded" class="error">
+                <span ng-if="group.suspendPayments" class="error">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  <span>You can't authorise this payment as payments have been suspended.</span>
+                </span>
+                <span ng-if="!group.suspendPayments && group.thresholdExceeded" class="error">
                   <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                   <span>You can't authorise this payment as your <a class="user-account" ui-sref="user-account({userId:$ctrl.username})">authorised spend limit</a> is below this amount.</span>
                 </span>

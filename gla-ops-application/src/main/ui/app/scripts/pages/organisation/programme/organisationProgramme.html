@@ -210,41 +210,41 @@
       <table id="grant-source-total-table" class="table table-bordered table-responsive">
         <thead class="thead-inverse uppercase">
         <tr class="mainHeader">
-          <th>ALL {{$ctrl.grantSourceData.projectCount}} PROJECT(S)</th>
-          <th>REQUESTED</th>
-          <th>PAID</th>
+          <th scope="col">ALL {{$ctrl.grantSourceData.projectCount}} PROJECT(S)</th>
+          <th scope="col">REQUESTED</th>
+          <th scope="col">PAID</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-if="$ctrl.isGrantTypeAvailable('Grant')">
-          <td class="header-cell">GRANT VALUE £</td>
+          <th scope="row" class="header-cell">GRANT VALUE £</th>
           <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.grantApproved : $ctrl.grantSourceData.grantRequested) | number}}</td>
           <td>{{$ctrl.grantSourceData.grantPaid | number}}</td>
         </tr>
         <tr ng-if="$ctrl.isGrantTypeAvailable('RCGF')">
-          <td class="header-cell">RCGF VALUE £</td>
+          <th scope="row" class="header-cell">RCGF VALUE £</th>
           <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.rcgfApproved : $ctrl.grantSourceData.rcgfRequested) | number}}</td>
           <td>{{$ctrl.grantSourceData.rcgfPaid | number}}</td>
         </tr>
         <tr ng-if="$ctrl.isGrantTypeAvailable('DPF')">
-          <td class="header-cell">DPF VALUE £</td>
+          <th scope="row" class="header-cell">DPF VALUE £</th>
           <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.dpfApproved : $ctrl.grantSourceData.dpfRequested) | number}}</td>
           <td>{{$ctrl.grantSourceData.dpfPaid | number}}</td>
         </tr>
         <tr ng-if="$ctrl.showTotals">
-          <td class="header-cell">TOTALS</td>
+          <th scope="row" class="header-cell">TOTALS</th>
           <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.projectApprovedTotal : $ctrl.grantSourceData.projectRequestedTotal) | number}}</td>
           <td>{{$ctrl.grantSourceData.totalPaid | number}}</td>
         </tr>
         <tr class="divider" ng-if="$ctrl.showIndicative"><td colspan="3"></td></tr>
         <tr ng-if="$ctrl.showIndicative">
-          <td class="header-cell">INDICATIVE PROJECT ALLOCATION £</td>
+          <th scope="row" class="header-cell">INDICATIVE PROJECT ALLOCATION £</th>
           <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.indicativeGrantApproved : $ctrl.grantSourceData.indicativeGrantRequested)| number}}</td>
           <td>N/A</td>
         </tr>
         <tr class="divider" ng-if="$ctrl.showIndicative"><td colspan="3"></td></tr>
         <tr ng-if="$ctrl.showIndicative">
-          <td class="header-cell">TOTAL OF ALL PROJECTS + INDICATIVE</td>
+          <th scope="row" class="header-cell">TOTAL OF ALL PROJECTS + INDICATIVE</th>
           <td>{{($ctrl.showApprovedOnlyCheckbox ? $ctrl.grantSourceData.totalApproved : $ctrl.grantSourceData.totalRequested) | number}}</td>
           <td>{{$ctrl.grantSourceData.totalPaid | number}}</td>
         </tr>
@@ -270,29 +270,29 @@
       <table id="strategic-partnership-total-table" class="table table-bordered table-responsive">
         <thead class="thead-inverse uppercase">
         <tr class="mainHeader">
-          <th>STRATEGIC PROJECT</th>
-          <th>REQUESTED</th>
-          <th>PAID</th>
+          <th scope="col">STRATEGIC PROJECT</th>
+          <th scope="col">REQUESTED</th>
+          <th scope="col">PAID</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-if="$ctrl.isGrantTypeAvailable('Grant')">
-          <td class="header-cell">GRANT VALUE £</td>
+          <th scope="row" class="header-cell">GRANT VALUE £</th>
           <td>{{($ctrl.showApprovedOnlyCheckboxStrategic ? $ctrl.strategicRecord.grantApproved : $ctrl.strategicRecord.grantRequested) | number}}</td>
           <td>{{$ctrl.strategicRecord.grantPaid | number}}</td>
         </tr>
         <tr ng-if="$ctrl.isGrantTypeAvailable('RCGF')">
-          <td class="header-cell">RCGF VALUE £</td>
+          <th scope="row" class="header-cell">RCGF VALUE £</th>
           <td>{{($ctrl.showApprovedOnlyCheckboxStrategic ? $ctrl.strategicRecord.rcgfApproved : $ctrl.strategicRecord.rcgfRequested) | number}}</td>
           <td>{{$ctrl.strategicRecord.rcgfPaid | number}}</td>
         </tr>
         <tr ng-if="$ctrl.isGrantTypeAvailable('DPF')">
-          <td class="header-cell">DPF VALUE £</td>
+          <td scope="row" class="header-cell">DPF VALUE £</td>
           <td>{{($ctrl.showApprovedOnlyCheckboxStrategic ? $ctrl.strategicRecord.dpfApproved : $ctrl.strategicRecord.dpfRequested) | number}}</td>
           <td>{{$ctrl.strategicRecord.dpfPaid | number}}</td>
         </tr>
         <tr ng-if="$ctrl.showTotals">
-          <td class="header-cell">TOTALS</td>
+          <th scope="row" class="header-cell">TOTALS</th>
           <td>{{($ctrl.showApprovedOnlyCheckboxStrategic ? $ctrl.strategicRecord.projectApprovedTotal : $ctrl.strategicRecord.projectRequestedTotal) | number}}</td>
           <td>{{$ctrl.strategicRecord.totalPaid | number}}</td>
         </tr>
@@ -302,14 +302,14 @@
       <table id="associated-projects-total-table" class="table table-bordered table-responsive mtop15">
         <thead class="thead-inverse uppercase">
         <tr class="mainHeader">
-          <th>ALL {{$ctrl.associatedProjectsRecord.projectCount}} ASSOCIATED PROJECT(S)</th>
-          <th>REQUESTED</th>
-          <th>PROJECTS THAT HAVE STARTED ON SITE</th>
+          <th scope="col">ALL {{$ctrl.associatedProjectsRecord.projectCount}} ASSOCIATED PROJECT(S)</th>
+          <th scope="col">REQUESTED</th>
+          <th scope="col">PROJECTS THAT HAVE STARTED ON SITE</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td class="header-cell">TOTAL VALUE £</td>
+          <th scope="row" class="header-cell">TOTAL VALUE £</th>
           <td>{{$ctrl.associatedProjectsRecord.projectCount ? ($ctrl.associatedProjectsRecord.strategicRequested | number) : 'N/A'}}</td>
           <td>{{$ctrl.associatedProjectsRecord.projectCount ? ($ctrl.associatedProjectsRecord.startedOnSite | number) : 'N/A'}}</td>
         </tr>
@@ -318,14 +318,14 @@
       <table id="variance-total-table" class="table table-bordered table-responsive mtop15">
         <thead class="thead-inverse uppercase">
         <tr class="mainHeader">
-          <th>VARIANCE</th>
-          <th>REQUESTED VARIANCE</th>
-          <th>VARIANCE BETWEEN PAID AND SOS CLAIMED</th>
+          <th scope="col">VARIANCE</th>
+          <th scope="col">REQUESTED VARIANCE</th>
+          <th scope="col">VARIANCE BETWEEN PAID AND SOS CLAIMED</th>
         </tr>
         </thead>
         <tbody>
         <tr>
-          <td class="header-cell">TOTAL VALUE £</td>
+          <th scope="row" class="header-cell">TOTAL VALUE £</th>
           <td>{{$ctrl.associatedProjectsRecord.projectCount ? ($ctrl.associatedProjectsRecord.requestedVariance | number) : 'N/A'}}</td>
           <td>{{$ctrl.associatedProjectsRecord.projectCount ? ($ctrl.associatedProjectsRecord.varianceBetweenPaidAndSoSClaimed | number) : 'N/A'}}</td>
         </tr>
@@ -350,15 +350,15 @@
     <table id="strategic-partnership-unit-summary-table" class="table table-bordered table-responsive strategic-partnership-unit-summary-table">
       <thead class="thead-inverse uppercase">
       <tr class="mainHeader">
-        <th><div>TENURE</div></th>
-        <th><div>STRATEGIC TARGET</div></th>
-        <th><div>ALL ASSOCIATED UNITS</div></th>
-        <th><div>UNITS CLAIMED AT SOS</div></th>
+        <th scope="col"><div>TENURE</div></th>
+        <th scope="col"><div>STRATEGIC TARGET</div></th>
+        <th scope="col"><div>ALL ASSOCIATED UNITS</div></th>
+        <th scope="col"><div>UNITS CLAIMED AT SOS</div></th>
       </tr>
       </thead>
       <tbody>
         <tr ng-repeat="record in $ctrl.strategicPartnershipUnitSummary.associatedRecords">
-          <td class="header-cell">{{record.tenureTypeName}}</td>
+          <th scope="row" class="header-cell">{{record.tenureTypeName}}</th>
           <td ng-if="$ctrl.readOnly">{{record.unitsPlanned | number}}</td>
           <td ng-if="!$ctrl.readOnly" class="input-cell">
             <input class="form-control planned-units-input"
@@ -373,7 +373,7 @@
           <td>{{$ctrl.showApprovedUnitSummary? record.approvedAtSoS: record.requestedAtSoS | number}}</td>
         </tr>
         <tr>
-          <td class="header-cell">TOTAL</td>
+          <th scope="row" class="header-cell">TOTAL</th>
           <td>{{$ctrl.strategicPartnershipUnitSummary.unitsPlannedTotal | number}}</td>
           <td>{{$ctrl.showApprovedUnitSummary? $ctrl.strategicPartnershipUnitSummary.approvedUnitsTotal : $ctrl.strategicPartnershipUnitSummary.requestedUnitsTotal | number}}</td>
           <td>{{$ctrl.showApprovedUnitSummary? $ctrl.strategicPartnershipUnitSummary.approvedAtSoSTotal : $ctrl.strategicPartnershipUnitSummary.requestedAtSoSTotal | number}}</td>

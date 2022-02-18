@@ -7,40 +7,21 @@
  */
 package uk.gov.london.ops.project.risk;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.StringUtils;
+import uk.gov.london.ops.framework.ComparableItem;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
+import uk.gov.london.ops.project.block.ProjectDifference;
+import uk.gov.london.ops.refdata.CategoryValue;
+
+import javax.persistence.*;
+import java.util.*;
+
 import static uk.gov.london.common.GlaUtils.nullSafeMultiply;
 import static uk.gov.london.ops.project.block.ProjectDifference.DifferenceType.Addition;
 import static uk.gov.london.ops.project.block.ProjectDifference.DifferenceType.Deletion;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.util.StringUtils;
-import uk.gov.london.ops.framework.jpa.Join;
-import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.framework.ComparableItem;
-import uk.gov.london.ops.project.block.ProjectDifference;
-import uk.gov.london.ops.refdata.CategoryValue;
 
 /**
  * Created by chris on 17/08/2017.
@@ -283,7 +264,12 @@ public class ProjectRiskAndIssue implements ComparableItem {
                 Optional<ProjectAction> first = this.getActions().stream().filter(a -> a.getId().equals(action.getId()))
                         .findFirst();
                 first.ifPresent(
-                        projectAction -> projectAction.setMarkedForCorporateReporting(action.isMarkedForCorporateReporting()));
+                        projectAction -> {
+                            projectAction.setOwner(action.getOwner());
+                            projectAction.setAction(action.getAction());
+                            projectAction.setLastModified(action.getLastModified());
+                            projectAction.setMarkedForCorporateReporting(action.isMarkedForCorporateReporting());
+                        });
             }
         }
 

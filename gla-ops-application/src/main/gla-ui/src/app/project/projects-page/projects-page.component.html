@@ -1,0 +1,200 @@
+<div class="projects-page">
+  <gla-page-header header="Projects" [hideBackBtn]="true">
+    <ph-right>
+      <button *ngIf="canCreate" class="btn btn-primary btn-md" id="create-new-btn" (click)="createNewProject()">
+        CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </ph-right>
+  </gla-page-header>
+
+  <gla-well class="row programmes-list-actions mbottom10 search-container">
+    <div class="col-md-5 search-column">
+      <gla-search-field [options]="searchOptions"
+                        [(selectedOption)]="selectedSearchOption"
+                        [(searchText)]="searchTextModel"
+                        (onSelect)="select(selectedSearchOption)"
+                        (onSearch)="search()"
+                        (onClear)="clearSearch()"></gla-search-field>
+    </div>
+
+    <div class="col-xs-12 col-sm-3 col-md-2 project-status search-column">
+      <div class="status-box pull-left">
+        <label class="text-align-left" for="project-status-filter">Project status</label>
+        <gla-checkbox-filter id="project-status-filter"
+                             [filterDropdownItems]="groupedFilterDropdownItems"
+                             (onChange)="getProjects(true)"
+                             (onCollapseExpandToggle)="saveProjectStatusesToCache()"
+                             [grouped]="true"></gla-checkbox-filter>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-5 col-md-2 project-status search-column">
+      <div class="pull-left">
+        <label class="text-align-left" for="programmes-filter">Programmes</label>
+        <gla-checkbox-filter id="programmes-filter"
+                             [filterDropdownItems]="programmesDropdown"
+                             (onChange)="onProgrammeSelected()"
+                             [isDisabled]="selectedSearchOption.name === byProgrammeOption.name">
+        </gla-checkbox-filter>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-5 col-md-2 project-status search-column">
+      <div class="pull-left">
+        <label class="text-align-left" for="templates-filter">Project type</label>
+        <gla-checkbox-filter id="templates-filter"
+                             [filterDropdownItems]="templatesDropdown"
+                             (onChange)="getProjects(true)"></gla-checkbox-filter>
+      </div>
+    </div>
+
+    <div class="watched-filter-box pull-left">
+      <input class="checkbox-watched-input" [ngClass]="{checked: watchingProject}"
+             type="checkbox"
+             id="watchedCheckbox"
+             aria-label="watched"
+             name="watchingProject"
+             [(ngModel)]="watchingProject"
+             (change)="onWatchedCheckboxClick()">
+      <label class="checkbox-watched-label inline" for="watchedCheckbox">Watched</label>
+    </div>
+
+    <div *ngIf="isAnyFilterApplied()" class="clear-filter-and-search-box pull-right col-md-12 text-align-right">
+      <button
+        class="action-buttons action-buttons-reset"
+        (click)="clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset all
+      </button>
+    </div>
+
+  </gla-well>
+
+  <div class="row" *ngIf="projects.length == 0" id="no-results">
+    <hr/>
+    <span *ngIf="searchText">
+        0 results match your search {{selectedSearchOption.description}} {{searchText}}. Check your search query and filters and try again.
+        For Project ID and Organisation Code searches, ensure you have entered the full number as a partial number will not return any search results
+      </span>
+    <span *ngIf="!searchText && isAnyFilterApplied()">
+         0 projects match your filter selections. Check your filter criteria and try again.
+      </span>
+
+
+    <span *ngIf="!isAnyFilterApplied()">
+        There are currently no projects available for you to view.
+      </span>
+  </div>
+  <div *ngIf="projects.length > 0">
+    <div class="row">
+      <div class="no-padding">
+        <div>
+          <div *ngIf="showActions()" class="actions-panel pull-left">
+            <span class="bolder">Project Actions:</span>
+            <button
+              *ngIf="canAssess"
+              class="action-buttons"
+              (click)="setToAssess()"
+              [disabled]="!assessEnabled()"><span class="icon-Assess icon"></span> Set to Assess
+            </button>
+
+            <button
+              *ngIf="canTransfer"
+              class="action-buttons"
+              (click)="transfer()"
+              [disabled]="!transferEnabled()"><span class="glyphicon glyphicon-transfer"></span> Transfer
+            </button>
+
+            <button
+              *ngIf="canAssign"
+              class="action-buttons"
+              (click)="assign()"
+              [disabled]="!assignEnabled()"><span class="glyphicon glyphicon-user"></span> Assign
+            </button>
+
+            <button
+              *ngIf="canAssign"
+              class="action-buttons"
+              (click)="unassign()"
+              [disabled]="!unassignEnabled()"><span class="glyphicon glyphicon-remove"></span> Unassign
+            </button>
+          </div>
+
+          <gla-pagination class="pagination-top pull-right"
+                          [(currentPage)]="currentPage"
+                          [(itemsPerPage)]="itemsPerPage"
+                          [totalItems]="totalItems"
+                          [numberOfElements]="itemsPerPage"
+                          (onChange)="getProjects()"></gla-pagination>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 project-table table-responsive no-padding">
+        <table id="projects-table" class="table table-hover table-bordered table-striped table-selectable-row">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th *ngIf="canAssess">
+              <div class="checkbox checkbox-white-focus" [ngClass]="{checked: allSelected}">
+                <input type="checkbox"
+                       aria-label="Select all projects"
+                       name="selectInput"
+                       [(ngModel)]="allSelected"
+                       (change)="onAllCheckboxChange()">
+              </div>
+            </th>
+            <th>Project ID</th>
+            <th>Project Title</th>
+            <th>Org Name</th>
+            <th>Org Code</th>
+            <th *ngIf="canViewAssignee">Assignee</th>
+            <th>Programme</th>
+            <th>Project Type</th>
+            <th>Status</th>
+            <th>Modified</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr tabindex="0"
+              (keydown.enter)="goToProjectOverview(project.id)"
+              (click)="goToProjectOverview(project.id)"
+              *ngFor="let project of projects"
+              class="project-row">
+            <td *ngIf="canAssess">
+              <div class="checkbox" [ngClass]="{checked: project.isSelected}">
+                <input type="checkbox"
+                       aria-label="Select project"
+                       name="selectInput"
+                       [(ngModel)]="project.isSelected"
+                       (change)="onProjectCheckboxClick()"
+                       (click)="$event.stopPropagation()">
+              </div>
+
+            </td>
+            <td class="project-id">P{{ project.id }}</td>
+            <td>
+              <div class="title-cell">{{ project.title }}</div>
+            </td>
+            <td>{{ project.orgName }}</td>
+            <td>{{ project.orgId }}</td>
+            <td *ngIf="canViewAssignee">
+              <div class ="assignee-cell" *ngFor="let item of project.assigneeName?.split('|')">{{item}}</div>
+            </td>
+            <td>{{ project.programmeName }}</td>
+            <td>{{ project.templateName }}</td>
+            <td class="project-status-column">{{project.fullStatus}}</td>
+            <td>{{ project.lastModified | date: 'MMM d, yyyy HH:mm'}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <gla-pagination class="pagination-bottom pull-right"
+                    [(currentPage)]="currentPage"
+                    [(itemsPerPage)]="itemsPerPage"
+                    [totalItems]="totalItems"
+                    [numberOfElements]="itemsPerPage"
+                    (onChange)="getProjects()"></gla-pagination>
+  </div>
+</div>

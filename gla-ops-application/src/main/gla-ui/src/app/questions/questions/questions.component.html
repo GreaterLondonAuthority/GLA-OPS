@@ -1,0 +1,148 @@
+<form class="form-gla questions" name="qForm" name="questions">
+  <div *ngFor="let question of questions; trackBy: trackByQuestion">
+    <div class="row no-gutter animationIf question"
+         [ngClass]="{'conditional-question': question.subQuestion, 'section-question': question.section}"
+         *ngIf="questions.length && isVisible(question)">
+      <div class="section-header-questions" *ngIf="question.isFirstInSection">
+        <hr>
+        {{question.section.text}}
+      </div>
+      <div class="col-xs-12 col-sm-8 center-col" [ngSwitch]="question.answerType">
+        <gla-icon-new *ngIf="question.newQuestion"></gla-icon-new>
+
+        <div class="form-group" *ngSwitchCase="'YesNo'">
+          <div [ngClass]="{'label-with-tooltip': question.helpText}">
+            <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span *ngIf="question.isOptional">(optional)</span></label>
+            <gla-info-tooltip id="{{'info-question-' + question.id}}" *ngIf="question.helpText" [helpText]="question.helpText"></gla-info-tooltip>
+          </div>
+          <gla-yes-no-input id="{{question.id}}"
+                            [disabled]="readOnly"
+                            [name]="question.id"
+                            [readOnly]="readOnly"
+                            (modelChange)="updateSectionVisibility()"
+                            [(model)]="question.answer">
+          </gla-yes-no-input>
+        </div>
+
+        <div class="form-group" *ngSwitchCase="'Number'">
+          <div [ngClass]="{'label-with-tooltip': question.helpText}">
+            <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span *ngIf="question.isOptional">(optional)</span></label>
+            <gla-info-tooltip id="{{'info-question-' + question.id}}" *ngIf="question.helpText" [helpText]="question.helpText"></gla-info-tooltip>
+          </div>
+          <input class="form-control"
+                 id="{{question.id}}"
+                 [maxlength]="18"
+                 name="{{question.id}}"
+                 negativeNumber
+                 *ngIf="!readOnly"
+                 [(ngModel)]="question.numericAnswer"
+                 numberMask="0" type="number" />
+          <div id="{{question.id}}" class="readonly-form-el read-only-text multiline-text numeric-answer" *ngIf="readOnly" [(ngModel)]="question.numericAnswer">
+            {{!question.numericAnswer && question.numericAnswer !== 0 ? 'Not provided' : question.numericAnswer}}
+          </div>
+        </div>
+
+        <div class="Text-question form-group" *ngSwitchCase="'Text'">
+          <div [ngClass]="{'label-with-tooltip': question.helpText}">
+            <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span *ngIf="question.isOptional">(optional)</span></label>
+            <gla-info-tooltip id="{{'info-question-' + question.id}}" *ngIf="question.helpText" [helpText]="question.helpText"></gla-info-tooltip>
+          </div>
+          <input class="form-control"
+                 id="{{question.id}}"
+                 maxlength="80"
+                 name="{{question.id}}"
+                 *ngIf="!readOnly"
+                 [(ngModel)]="question.answer"
+                 type="text" />
+          <div id="{{question.id}}" class="readonly-form-el read-only-text multiline-text" *ngIf="readOnly">
+            {{!question.answer || question.answer.length < 1 ? 'Not provided' : question.answer}}
+          </div>
+        </div>
+
+        <div class="form-group" *ngSwitchCase="'Date'">
+          <div [ngClass]="{'label-with-tooltip': question.helpText}">
+            <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span *ngIf="question.isOptional">(optional)</span></label>
+            <gla-info-tooltip id="{{'info-question-' + question.id}}" *ngIf="question.helpText" [helpText]="question.helpText"></gla-info-tooltip>
+          </div>
+          <div>
+            <gla-date-input id="{{question.id}}"
+                        [questionId]="question.id"
+                        name="{{question.id}}"
+                        [readOnly]="readOnly"
+                        [(formattedDate)]="question.answer">
+            </gla-date-input>
+          </div>
+        </div>
+
+        <div class="FreeText-question form-group" *ngSwitchCase="'FreeText'">
+          <div [ngClass]="{'label-with-tooltip': question.helpText}">
+            <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span *ngIf="question.isOptional">(optional)</span></label>
+            <gla-info-tooltip id="{{'info-question-' + question.id}}" *ngIf="question.helpText" [helpText]="question.helpText"></gla-info-tooltip>
+          </div>
+          <textarea class="form-control"
+                    cols="50"
+                    *ngIf="!readOnly"
+                    id="{{question.id}}"
+                    name="{{question.id}}"
+                    maxlength="{{question.maxLength}}"
+                    [(ngModel)]="question.answer"
+                    trim="false" rows="4">
+              </textarea>
+          <div id="{{question.id}}" class="readonly-form-el read-only-text multiline-text" *ngIf="readOnly">
+            {{!question.answer || question.answer.length < 1 ? 'Not provided' : question.answer}}
+          </div>
+          <gla-remaining-characters [max]="question.maxLength" *ngIf="!readOnly" [text]="question.answer"></gla-remaining-characters>
+        </div>
+
+        <div class="form-group" *ngSwitchCase="'Dropdown'">
+          <div [ngClass]="{'label-with-tooltip': question.helpText}">
+            <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span *ngIf="question.isOptional">(optional)</span></label>
+            <gla-info-tooltip  id="{{'info-question-' + question.id}}" *ngIf="question.helpText" [helpText]="question.helpText"></gla-info-tooltip>
+          </div>
+          <select class="form-control"
+                  id="{{question.id}}"
+                  name="{{question.id}}"
+                  *ngIf="(!question.maxAnswers || question.maxAnswers == 1) && !readOnly"
+                  [(ngModel)]="question.answer"
+                  (change)="updateSectionVisibility()">
+            <option selected>Not provided</option>
+            <option *ngFor="let item of question.answerOptions">{{item}}</option>
+          </select>
+
+          <div *ngIf="!readOnly && question.maxAnswers > 1">
+            <div class="mtop10 mbottom10">Maximum {{question.maxAnswers || 1}} {{question.maxAnswers > 1? 'answers' : 'answer'}} can be selected</div>
+            <gla-multi-select [filterDropdownItems]="question.answerOptions"
+                              [maxSelections]="question.maxAnswers"
+                              (onChange)="onMultiSelectChange($event, question)"></gla-multi-select>
+          </div>
+
+          <div *ngIf="readOnly">{{formatDropdownAnswer(question) || 'Not provided'}}</div>
+        </div>
+
+        <div class="form-group" *ngSwitchCase="'FileUpload'">
+          <div [ngClass]="{'label-with-tooltip': question.helpText}">
+            <label for="{{question.id}}"><gla-markdown [text]="question.text"></gla-markdown> <span *ngIf="question.isOptional">(optional)</span></label>
+            <gla-info-tooltip id="{{'info-question-' + question.id}}" *ngIf="question.helpText" [helpText]="question.helpText"></gla-info-tooltip>
+          </div>
+          <div class="form-group">
+              <gla-file-upload
+                [attachmentsTotalSize]="question.totalAttachmentsSize"
+                [attachments]="question.fileAttachments"
+                [maxNumberAttachments]="question.quantity"
+                [maxUploadSizeInMbPerAttachment]="question.maxUploadSizeInMb"
+                [maxCombinedUploadSizeInMb]="question.maxCombinedUploadSizeInMb"
+                [readOnly]="readOnly"
+                [additionalCompletionActions]="true"
+                [additionalRemovalActions]="true"
+                [uploadParams]="uploadParams"
+                [downloadUrl]="'/api/v1/project/' + uploadParams.projectId + '/file/'"
+                [uniqueId]="question.id"
+                (onCompleteActions)="onFileUploadComplete($event, question)"
+                (onRemovalActions)="onFileRemoval($event, question)"
+                [postUrl]="getPostUrl(question)"></gla-file-upload>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,12 @@
+.gla-tooltip {
+  display: inline;
+}
+
+.glyphicon-info-sign{
+  font-size: 20px;
+  top: 4px;
+  &:focus {
+    outline: 2px solid #000000;
+    outline-offset: 2px;
+  }
+}

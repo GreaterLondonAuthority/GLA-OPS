@@ -27,7 +27,7 @@ const config = {
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Test',
     lastName: 'Approved',
-    imsNumber: 'L4241'
+    providerNumber: 'L4241'
   },
 
   //This user is never approved. Don't change status in tests
@@ -36,7 +36,7 @@ const config = {
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Test',
     lastName: 'Unapproved',
-    imsNumber: 'L4241'
+    providerNumber: 'L4241'
   },
 
   //This user is changed in tests from unapproved to approved. It is reverted after tests back to unapproved
@@ -46,7 +46,7 @@ const config = {
     firstName: 'Test',
     lastName: 'Unapproved',
     organisationId: 9999,
-    imsNumber: 'L4241'
+    providerNumber: 'L4241'
   },
 
   //This user is removed in tests. It is reverted after tests back to unapproved
@@ -61,7 +61,15 @@ const config = {
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Org',
     lastName: 'Admin',
-    imsNumber: 'FAKE1'
+    providerNumber: 'FAKE1'
+  },
+
+  withoutRoleUser: {
+    username: 'without.role@gla.com',
+    password: process.env.ADMIN_PASSWORD,
+    firstName: 'Without',
+    lastName: 'Role',
+    providerNumber: 'FAKE1'
   },
 
   userWithMultipleOrg: {
@@ -70,12 +78,12 @@ const config = {
     firstName: 'Multi',
     lastName: 'Org',
     orgA: {
-      imsNumber: 'FAKE1',
+      providerNumber: 'FAKE1',
       organisationId: 9999,
       organisationName: 'Test Registered Partner'
     },
     orgB: {
-      imsNumber: 'FAKE2',
+      providerNumber: 'FAKE2',
       organisationId: 9998,
       organisationName: 'Test Registered Partner 2'
     }
@@ -101,6 +109,11 @@ const config = {
     password: process.env.ADMIN_PASSWORD
   },
 
+  progAdmin: {
+    username: 'programme.admin@gla.com',
+    password: process.env.ADMIN_PASSWORD
+  },
+
   financeUser: {
     username: 'finance.gla@gla.com',
     password: process.env.ADMIN_PASSWORD
@@ -113,6 +126,26 @@ const config = {
 
   lesserSeniorProjectManagerUser: {
     username: 'less_senior_pm@gla.com',
+    password: process.env.ADMIN_PASSWORD
+  },
+
+  multiOrgSpmUser: {
+    username: 'spm.multi.managing.orgs@gla.com',
+    password: process.env.ADMIN_PASSWORD
+  },
+
+  multiOrgPmUser: {
+    username: 'pm.multi.managing.orgs@gla.com',
+    password: process.env.ADMIN_PASSWORD
+  },
+
+  expiredPasswordUser: {
+    username: 'expired_pw@gla.ops',
+    password: process.env.ADMIN_PASSWORD
+  },
+
+  expiredPasswordUserMixedCase: {
+    username: 'exPired_Pw@gla.ops',
     password: process.env.ADMIN_PASSWORD
   },
 
@@ -153,6 +186,21 @@ const config = {
 
   regenRP: {
     username: 'regen.rp@gla.com',
+    password: process.env.ADMIN_PASSWORD
+  },
+
+  businessAllocationsRP: {
+    username: 'jack@jackspanners.com',
+    password: process.env.ADMIN_PASSWORD
+  },
+
+  businessNoAllocationsRP: {
+    username: 'other.rp@gla.com',
+    password: process.env.ADMIN_PASSWORD
+  },
+
+  boroughRP: {
+    username: 'borough.rp@gla.com',
     password: process.env.ADMIN_PASSWORD
   },
 
@@ -235,6 +283,19 @@ const config = {
   northEast: {
     username: 'north.east@gla.com',
     password: process.env.ADMIN_PASSWORD
+  },
+  externalRequestingTeamAccessUser: {
+    username: 'external.requesting.team.access@gla.ops',
+    password: process.env.ADMIN_PASSWORD
+  },
+
+  //This user is always approved. Don't change status in tests
+  internalBlockEditor: {
+    username: 'internalblock.editor@gla.com',
+    password: process.env.ADMIN_PASSWORD,
+    firstName: 'Internal Block',
+    lastName: 'Editor',
+    organisationId: '10000'
   },
 
   browserSize: {

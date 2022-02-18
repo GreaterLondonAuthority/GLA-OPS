@@ -16,12 +16,14 @@
           <gla-spinner></gla-spinner>
         </li>
 
+        <ng-container *ngIf="!loading">
         <li role="menuitem" *ngFor="let item of linkMenuItems">
           <a href="JavaScript:void(0)" *ngIf="!item.hr" title="{{item.displayText}}" (click)="goTo(item.stateName, item.stateParams)">
             {{item.displayText}}
           </a>
           <hr *ngIf="item.hr"/>
         </li>
+        </ng-container>
 
         <!--<li><hr></li>-->
 
@@ -36,13 +38,14 @@
           </a>
         </li>
 
-<!--        <li *ngIf="reportMenuItems.length && actionMenuItems.length"><hr></li>-->
+        <ng-container *ngIf="!loading">
         <li role="menuitem" *ngFor="let item of actionMenuItems">
           <a href="JavaScript:void(0)" (click)="onActionClicked.emit(item)" title="{{item.displayText}}">
             <span class="glyphicon" [class]="item.icon" aria-hidden="true"></span>
             {{item.displayText}}
           </a>
         </li>
+        </ng-container>
       </ul>
     </div>
 
@@ -55,7 +58,7 @@
 <!-- Project header status -->
 <div class="row subtitle-row" *ngIf="editableBlock?.project.id">
   <div class="col-xs-12  col-sm-4 no-padding text-xs-center text-sm-left  block-version"
-       [class]="{'col-sm-4': editableBlock.infoMessage, 'col-sm-8': !editableBlock.infoMessage }"
+       [ngClass]="{'col-sm-4': editableBlock.infoMessage, 'col-sm-8': !editableBlock.infoMessage }"
        *ngIf="editableBlock.version || editableBlock.revertable">
     <span>{{editableBlock.version}} </span>
     <span class="text-nowrap">
@@ -73,13 +76,13 @@
   </div>
 
   <div class="col-xs-12 no-padding project-message green"
-       [class]="{'col-sm-4' : editableBlock.version || editableBlock.revertable, 'col-sm-6 col-sm-offset-3' : !editableBlock.version && !editableBlock.revertable}"
+       [ngClass]="{'col-sm-4' : editableBlock.version || editableBlock.revertable, 'col-sm-6 col-sm-offset-3' : !editableBlock.version && !editableBlock.revertable}"
        *ngIf="editableBlock.infoMessage">
     <div>{{editableBlock.infoMessage}}</div>
   </div>
 
   <div class="col-xs-12 no-padding text-sm-right  project-id ukprn"
-       [class]="{'text-xs-center': editableBlock.infoMessage || editableBlock.version || editableBlock.revertable,
+       [ngClass]="{'text-xs-center': editableBlock.infoMessage || editableBlock.version || editableBlock.revertable,
          'col-sm-4': editableBlock.version || editableBlock.revertable,
          'col-sm-3': !editableBlock.version && !editableBlock.revertable,
          'col-sm-offset-9' : !editableBlock.infoMessage && !editableBlock.version && !editableBlock.revertable}">

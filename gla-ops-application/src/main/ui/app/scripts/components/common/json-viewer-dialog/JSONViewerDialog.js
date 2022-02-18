@@ -32,7 +32,7 @@ function JSONViewerDialog($uibModal, _, TemplateService) {
         controller: [function() {
           this.config = _.merge(defaultConfig, config);
           this.onAdd = (data) => {
-            return TemplateService.createTemplate(data).then(resp => {
+            return TemplateService.createTemplate(data).toPromise().then(resp => {
               this.$close();
               return this.$state.go(this.$state.current, this.$state.params, {reload: true});
             }, (resp)=>{

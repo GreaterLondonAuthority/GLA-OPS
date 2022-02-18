@@ -72,7 +72,7 @@ public class QuestionsTemplateBlock extends TemplateBlock implements TemplateQue
 
         for (QuestionsBlockSection section : sections) {
             QuestionsBlockSection clonedSection = new QuestionsBlockSection(section.getExternalId(), section.getDisplayOrder(),
-                    section.getText());
+                    section.getText(), section.getParentId(), section.getParentAnswerToMatch());
             cloned.getSections().add(clonedSection);
         }
 
@@ -96,6 +96,13 @@ public class QuestionsTemplateBlock extends TemplateBlock implements TemplateQue
 
     public List<TemplateQuestion> getQuestionsByParentId(Integer parentId) {
         return questions.stream().filter(tq -> parentId.equals(tq.getParentId())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TemplateBlockCommand> getTemplateBlockCommands() {
+        List<TemplateBlockCommand> globalCommands = super.getTemplateBlockCommands().stream().collect(Collectors.toList());
+        globalCommands.add(TemplateBlockCommand.REMOVE_QUESTION);
+        return globalCommands;
     }
 
 }

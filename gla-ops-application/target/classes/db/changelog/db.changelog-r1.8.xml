@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="323" author="cmelville">
+        <createSequence sequenceName="action_seq" startValue="1000" incrementBy="1" />
+
+        <createTable tableName="project_action" remarks="Stores project actions and mitigations">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="action_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="risk_id" type="INT4" remarks="the risk or issue this relates to"/>
+            <column name="action_title" type="varchar(200)" remarks="title for this action">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner" type="varchar(75)" remarks="owner for this action">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified" type="TIMESTAMP" remarks="last modification date for this action">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="324" author="ybouhass">
+        <addColumn tableName="milestone">
+            <column name="description" type="varchar(200)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="monetary_value" type="decimal(12,2)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="325" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="milestone_type" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <sql>UPDATE template SET milestone_type = 'NonMonetary' WHERE allow_monetary_milestones = FALSE</sql>
+        <sql>UPDATE template SET milestone_type = 'MonetarySplit' WHERE allow_monetary_milestones = TRUE</sql>
+    </changeSet>
+
+    <changeSet id="326" author="ybouhass">
+        <createTable tableName="organisation_programme">
+            <column name="programme_id" type="INT4">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="org_id" type="INT4">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="is_strategic_partnership" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="created_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="modified_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="approved_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="approved_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="total_allocation" type="decimal(12,2)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="327" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="json" type="CLOB">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="328" author="ybouhass">
+        <addColumn tableName="template_block">
+            <column name="nil_grant_hidden" type="BOOLEAN">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="grant_types" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="description" type="varchar(1000)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <sql>UPDATE template_block SET nil_grant_hidden = false WHERE block = 'GrantSource'</sql>
+
+        <sql>UPDATE template_block SET block_type = 'GRANT_SOURCE' WHERE block = 'GrantSource'</sql>
+    </changeSet>
+
+    <changeSet id="329" author="cmelville">
+
+        <sql>
+            DROP VIEW IF EXISTS v_project_permissions;
+            DROP VIEW IF EXISTS v_indicative_1000;
+            DROP VIEW IF EXISTS v_indicative_units_1000;
+        </sql>
+
+        <addColumn tableName="project">
+            <column name="strategic_project" type="BOOLEAN" defaultValue="false"   remarks="is this a strategic project "/>
+        </addColumn>
+        <addColumn tableName="template">
+            <column name="strategic_template" type="BOOLEAN" defaultValue="false" remarks="is this a strategic project template"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="330" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="description_requirement" type="varchar(10)" defaultValue="optional">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="331" author="ybouhass">
+        <addColumn tableName="audit_activity">
+            <column name="entity_type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="entity_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="type" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="332" author="cmelville">
+        <modifyDataType tableName="answer" columnName="answer" newDataType="varchar(15000)"/>
+        <addColumn tableName="question" >
+            <column name="max_length" type="INT4"/>
+        </addColumn>
+        <sql>
+            update question set max_length=2000 where answer_type = 'FreeText'
+        </sql>
+    </changeSet>
+
+    <changeSet id="333" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="planning_permission_reference_requirement" type="varchar(10)" defaultValue="optional">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="334" author="ybouhass">
+        <sql>
+            update template set address_requirement = 'hidden' where address_requirement = 'blocked';
+            update template set borough_requirement = 'hidden' where borough_requirement = 'blocked';
+            update template set postcode_requirement = 'hidden' where postcode_requirement = 'blocked';
+            update template set coords_requirement = 'hidden' where coords_requirement = 'blocked';
+            update template set maincontact_requirement = 'hidden' where maincontact_requirement = 'blocked';
+            update template set maincontactemail_requirement = 'hidden' where maincontactemail_requirement = 'blocked';
+            update template set image_requirement = 'hidden' where image_requirement = 'blocked';
+            update template set contact_requirement = 'hidden' where contact_requirement = 'blocked';
+            update template set site_owner_requirement = 'hidden' where site_owner_requirement = 'blocked';
+            update template set interest_requirement = 'hidden' where interest_requirement = 'blocked';
+            update template set project_manager_requirement = 'hidden' where project_manager_requirement = 'blocked';
+            update template set site_status_requirement = 'hidden' where site_status_requirement = 'blocked';
+            update template set legacy_project_code_requirement = 'hidden' where legacy_project_code_requirement = 'blocked';
+            update template set description_requirement = 'hidden' where description_requirement = 'blocked';
+            update template set planning_permission_reference_requirement = 'hidden' where planning_permission_reference_requirement = 'blocked';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

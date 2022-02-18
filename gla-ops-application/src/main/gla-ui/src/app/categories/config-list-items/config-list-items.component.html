@@ -1,0 +1,59 @@
+<div class="gla-budget-categories-page">
+  <div class="col-xs-12 mtop15 no-padding">
+    <div *ngIf="!budgetCategories.length" class="no-config-message">
+      <span>0 results match your search. Check your search query and try again.</span>
+    </div>
+    <div class="table-responsive" *ngIf="budgetCategories.length">
+      <button class="pull-right btn btn-primary btn-md btn-md mbottom15" (click)="addRow()">
+          ADD BUDGET CATEGORY<span class="glyphicon glyphicon-plus"></span>
+        </button>
+      <div *ngIf="!budgetCategories.length" class="empty-table">Not provided</div>
+      <table *ngIf="budgetCategories.length" id="budget-externalIds-table" class="table table-bordered table-striped-groups">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>GROUP ID</th>
+          <th>CATEGORY NAME</th>
+          <th>DISPLAY ORDER</th>
+          <th>TEMPLATE USED</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let group of budgetCategories; let i = index">
+            <tr [ngClass]="{'odd-row': i % 2 === 1}" class="clickable-row" tabindex="0"  allow-enter >
+              <td colspan="3" class="group-row">
+                <toggle-icon [collapsed]="!group.expanded"
+                             (collapsedChange)="toggle(group)"
+                             [sessionStorage]="blockSessionStorage.toggleIcons"
+                             [sessionId]="'group-' + group.externalId">
+                </toggle-icon>
+                {{group.externalId}}
+              </td>
+              <td>
+                <div *ngFor="let template of group.usage; let last = last">
+                    <span>{{template.templateName}} : {{ template.templateStatus}}<span *ngIf="!last">,</span></span>
+                </div>
+              </td>
+              <td class="delete-btn-container">
+                <delete-button *ngIf ="canDeleteFromGroup(group.usage)" (click)="$event.stopPropagation();deleteGroup(group.externalId);"></delete-button>
+              </td>
+            </tr>
+            <ng-container *ngIf="group.expanded">
+              <tr *ngFor="let cat of group.categories; let first = first" tabindex="0"
+                  (keydown.enter)="canDeleteFromGroup(group.usage) && editRow(cat)"
+                  (click)="canDeleteFromGroup(group.usage) && editRow(cat)">
+                <td></td>
+                <td>{{cat.category }}</td>
+                <td>{{cat.displayOrder }}</td>
+                <td></td>
+                <td class="delete-btn-container">
+                  <delete-button *ngIf ="canDeleteFromGroup(group.usage)" (click)="$event.stopPropagation();deleteCategory(group.externalId, cat.id);"></delete-button>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

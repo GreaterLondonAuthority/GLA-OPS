@@ -1,0 +1,32 @@
+<table class="table table-hover table-bordered table-default table-with-inputs indicative-costs-and-contributions"
+       ng-class="{'edit-mode': !$ctrl.isReadonly}">
+  <thead class="thead-inverse uppercase">
+  <tr>
+    <th *ngIf="costs">COST TYPE</th>
+    <th *ngIf="contributions">CONTRIBUTION TYPE</th>
+    <th>AMOUNT(£)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let item of rows;trackBy:trackByKey">
+    <td>{{item.description}}</td>
+    <td >
+      <span *ngIf="readOnly">{{item.value | number}}</span>
+      <input *ngIf="!readOnly"
+           mask="separator.0"
+           numberType
+           [(ngModel)]="item.value"
+           maxlength="12"
+           thousandSeparator=","
+           (blur)="onChange.emit()"/>
+    </td>
+  </tr>
+  <tr class="bolder totals-row">
+    <td>TOTAL</td>
+    <td>{{total || 0  | number}}</td>
+  </tr>
+  </tbody>
+</table>
+<div class="error-wrapper" role="alert" *ngIf="costs && validationFailures && validationFailures.costs">
+  <span class="error" id="costs">{{validationFailures.costs[0].description}}</span>
+</div>

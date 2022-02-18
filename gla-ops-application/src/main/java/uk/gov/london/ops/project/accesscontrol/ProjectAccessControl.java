@@ -18,9 +18,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+
+import org.jetbrains.annotations.Nullable;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.project.Project;
 
 /**
@@ -44,11 +46,7 @@ public class ProjectAccessControl implements Serializable, ProjectAccessControlI
         targetColumn = "id", joinType = Join.JoinType.ManyToOne, comment = "part of compound primary key.")
     @MapsId("organisationId")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Organisation organisation;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "relationship_type")
-    private AccessControlRelationshipType relationshipType;
+    private OrganisationEntity organisation;
 
     @JsonIgnore
     @Enumerated(EnumType.STRING)
@@ -60,18 +58,16 @@ public class ProjectAccessControl implements Serializable, ProjectAccessControlI
 
     public ProjectAccessControl(Project project, Integer organisationId, AccessControlRelationshipType relationshipType,
         GrantAccessTrigger grantAccessTrigger) {
-        this.id = new ProjectAccessControlId(project.getId(), organisationId);
+        this.id = new ProjectAccessControlId(project.getId(), organisationId, relationshipType);
         this.project = project;
-        this.relationshipType = relationshipType;
         this.grantAccessTrigger = grantAccessTrigger;
     }
 
-    public ProjectAccessControl(Project project, Organisation organisation, AccessControlRelationshipType relationshipType,
-        GrantAccessTrigger grantAccessTrigger) {
-        this.id = new ProjectAccessControlId(project.getId(), organisation.getId());
+    public ProjectAccessControl(Project project, OrganisationEntity organisation, AccessControlRelationshipType relationshipType,
+                                GrantAccessTrigger grantAccessTrigger) {
+        this.id = new ProjectAccessControlId(project.getId(), organisation.getId(), relationshipType);
         this.project = project;
         this.organisation = organisation;
-        this.relationshipType = relationshipType;
         this.grantAccessTrigger = grantAccessTrigger;
     }
 
@@ -91,7 +87,7 @@ public class ProjectAccessControl implements Serializable, ProjectAccessControlI
         this.project = project;
     }
 
-    public Organisation getOrganisation() {
+    public OrganisationEntity getOrganisation() {
         return organisation;
     }
 
@@ -100,17 +96,8 @@ public class ProjectAccessControl implements Serializable, ProjectAccessControlI
         return organisation != null ? organisation.getId() : null;
     }
 
-    public void setOrganisation(Organisation organisation) {
+    public void setOrganisation(OrganisationEntity organisation) {
         this.organisation = organisation;
-    }
-
-    @Override
-    public AccessControlRelationshipType getRelationshipType() {
-        return relationshipType;
-    }
-
-    public void setRelationshipType(AccessControlRelationshipType relationshipType) {
-        this.relationshipType = relationshipType;
     }
 
     public GrantAccessTrigger getGrantAccessTrigger() {
@@ -120,6 +107,12 @@ public class ProjectAccessControl implements Serializable, ProjectAccessControlI
     public void setGrantAccessTrigger(
         GrantAccessTrigger grantAccessTrigger) {
         this.grantAccessTrigger = grantAccessTrigger;
+    }
+
+    @Nullable
+    @Override
+    public AccessControlRelationshipType getRelationshipType() {
+        return id != null ? id.getRelationshipType() : null;
     }
 
     @Override

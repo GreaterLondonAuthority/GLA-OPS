@@ -1,0 +1,349 @@
+{
+  "name": "Regen test",
+  "author": "TBC",
+  "status": "Draft",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "displayOrder": 2,
+      "autoCalculateMilestoneState": true,
+      "infoMessage": "Start on site, Practical/substantial completion and Evaluation & completion milestones must be completed",
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "externalId": 10099,
+          "name": "default",
+          "milestones": [
+            {
+              "externalId": 4012,
+              "summary": "Enter development agreement",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 10,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            },
+            {
+              "externalId": 4023,
+              "summary": "Phase 2 planning",
+              "requirement": "optional",
+              "monetarySplit": 0,
+              "displayOrder": 20,
+              "monetary": false,
+              "keyEvent": false,
+              "naSelectable": true
+            }
+          ]
+        }
+      ],
+      "descriptionEnabled": false,
+      "showMilestoneStatus": true,
+      "defaultProcessingRoute": {
+        "externalId": 10099,
+        "name": "default",
+        "milestones": [
+          {
+            "externalId": 4012,
+            "summary": "Enter development agreement",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 10,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          },
+          {
+            "externalId": 4023,
+            "summary": "Phase 2 planning",
+            "requirement": "optional",
+            "monetarySplit": 0,
+            "displayOrder": 20,
+            "monetary": false,
+            "keyEvent": false,
+            "naSelectable": true
+          }
+        ]
+      },
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "FundingTemplateBlock",
+      "blockDisplayName": "Budget",
+      "block": "Funding",
+      "displayOrder": 3,
+      "infoMessage": "Refer to the Stage 2 guidelines for relevant details on this section",
+      "paymentSourcesString": "Grant",
+      "startYear": 2018,
+      "yearAvailableTo": 5,
+      "maxEvidenceAttachments": 5,
+      "defaultActivityName": "Projected cost",
+      "activitiesRequired": false,
+      "fundingBalanceEnforced": true,
+      "fundingSpendType": "CAPITAL_ONLY",
+      "multipleBespokeActivitiesEnabled": true,
+      "budgetEvidenceAttachmentEnabled": false,
+      "showMilestones": true,
+      "showCategories": false,
+      "monetaryValueScale": 2,
+      "canClaimActivity": true,
+      "evidenceAttachmentsMandatory": false,
+      "paymentSources": [
+        "Grant"
+      ],
+      "grantTypes": [
+        "Grant"
+      ]
+    },
+    {
+      "type": "OutputsTemplateBlock",
+      "blockDisplayName": "Outputs",
+      "block": "Outputs",
+      "displayOrder": 4,
+      "infoMessage": "Output years are based on GLA financial years. Refer to the Stage 2 guidelines for relevant details on this section.",
+      "paymentSourcesString": "",
+      "outputConfigurationGroup": {
+        "id": 1003,
+        "periodType": "Quarterly",
+        "outputTypeName": "Output Type",
+        "categoryName": "Category",
+        "subcategoryName": "Sub Category",
+        "outputTypes": [
+          {
+            "key": "DIRECT",
+            "description": "Direct Output"
+          },
+          {
+            "key": "INDIRECT",
+            "description": "Indirect Output"
+          }
+        ],
+        "categories": [
+          {
+            "id": 36,
+            "category": "Additional learners supported",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 111,
+            "category": "New learners assisted (in courses leading to a full qualification)",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 40,
+            "category": "Additional apprenticeship starts",
+            "subcategory": "N/A",
+            "valueType": "POSITIONS",
+            "hidden": false
+          },
+          {
+            "id": 112,
+            "category": "Additional work placements started ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 113,
+            "category": "Area of new or improved learning/training floorspace (m2) ",
+            "subcategory": "N/A",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 102,
+            "category": "Cost savings",
+            "subcategory": "N/A",
+            "valueType": "MONETARY_VALUE",
+            "hidden": false
+          },
+          {
+            "id": 25,
+            "category": "Jobs Created (Potential)",
+            "subcategory": "N/A",
+            "valueType": "POSITIONS",
+            "hidden": false
+          },
+          {
+            "id": 114,
+            "category": "SEND learners supported ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 115,
+            "category": "LLDD learners supported",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 116,
+            "category": "NEETs into employment or training",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 44,
+            "category": "Additional students progressing to employment",
+            "subcategory": "Full Time",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 117,
+            "category": "New SMEs/businesses supported ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 118,
+            "category": "Employers engaged (direct result of the project)",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 119,
+            "category": "New businesses formed ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 120,
+            "category": "Improved attendance rates",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 121,
+            "category": "Amount of space with improved energy efficiency (m2) ",
+            "subcategory": "N/A",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 122,
+            "category": "Public realm improvements (m2)",
+            "subcategory": "N/A",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 123,
+            "category": "% Increase in water efficiency ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 124,
+            "category": "% Increase in materials recycling/reuse",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 125,
+            "category": "% reduction in waste production",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 126,
+            "category": "% Increase in green infrastructure",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 127,
+            "category": "% Reduction in carbon dioxide emissions ",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 128,
+            "category": "New or improved commercial space or business space (m2) ",
+            "subcategory": "N/A",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          }
+        ],
+        "categoryIDs": [],
+        "outputTypeKeys": []
+      },
+      "showBaselines": true,
+      "showAssumptions": true,
+      "showTotalProjectOutputsTable": true,
+      "showValueColumn": true,
+      "showOutputTypeColumn": true,
+      "outputGroupType": "ByCategory",
+      "showForecastTotalColumn": false,
+      "showClaimableAmountColumn": false,
+      "showActualTotalColumn": false,
+      "showAdvancedPaymentColumn": false,
+      "paymentSources": [],
+      "grantTypes": []
+    }
+  ],
+  "internalBlocks": [],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Stage 1",
+    "initialSubStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "MultiAssessment"
+  },
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "mandatory",
+    "wardIdRequirement": "hidden",
+    "postcodeRequirement": "mandatory",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "hidden",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": false,
+  "grantTypes": [
+    "Grant"
+  ],
+  "shouldMilestonesBlockShowStatus": true
+}

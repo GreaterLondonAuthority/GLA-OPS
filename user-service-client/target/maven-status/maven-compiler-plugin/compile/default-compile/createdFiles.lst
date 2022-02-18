@@ -1,0 +1,4 @@
+uk\gov\london\ops\user\User.class
+uk\gov\london\ops\user\UserUtils$MockAuthenticationWithPrincipal.class
+uk\gov\london\ops\user\UserService.class
+uk\gov\london\ops\user\UserUtils.class

@@ -1,0 +1,59 @@
+<div>
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{originalFundingSource?.fundingSource? 'UPDATE': 'ADD'}} FUNDING SOURCE</h1>
+  </div>
+
+  <div class="modal-body">
+    <form name="modalForm" #modalForm="ngForm">
+      <div class="form-group">
+        <label for="name">Funding source name</label>
+        <input [(ngModel)]="fundingSource.fundingSource"
+               class="form-control"
+               id="name"
+               name="funding-source"
+               placeholder="Funding source name"
+               required
+               #name="ngModel"
+               type="text"/>
+        <div *ngIf="(name.dirty || name.touched) && (name.invalid || !isNameUnique(fundingSource))" class="error-wrapper">
+          <div *ngIf="name?.errors?.required" class="error">Required</div>
+          <div *ngIf="!isNameUnique(fundingSource)" class="error">Duplicate funding source name</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="show-funder-name">Is funder name required?</label>
+        <gla-yes-no-input [(model)]="fundingSource.showFunderName"
+                          class="block"
+                          id="show-funder-name"
+                          mode="bool"
+                          name="show-funder-name"></gla-yes-no-input>
+      </div>
+
+      <div class="form-group">
+        <label for="show-description">Is funding source description required?</label>
+        <gla-yes-no-input [(model)]="fundingSource.showDescription"
+                          class="block"
+                          id="show-description"
+                          mode="bool"
+                          name="show-description"></gla-yes-no-input>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button (click)="activeModal.close(fundingSource)"
+                [disabled]="!isFormValid(modalForm, fundingSource)"
+                class="btn btn-primary">{{originalFundingSource?.fundingSource? 'UPDATE': 'ADD'}}
+        </button>
+        <button (click)="activeModal.dismiss()" class="btn btn-secondary">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

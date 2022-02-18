@@ -8,8 +8,6 @@
 package uk.gov.london.ops.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.london.ops.user.domain.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -47,19 +45,20 @@ public class DeliveryOverride {
     @Column(name = "comments")
     private String comments;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "overridden_by")
-    private User overriddenBy;
+    @Column(name = "overridden_by")
+    private String overriddenBy;
 
     @Column(name = "overridden_on")
     private OffsetDateTime overriddenOn;
+
+    @Transient
+    private String overriddenByName;
 
     public DeliveryOverride() {
     }
 
     public DeliveryOverride(Integer projectId, String overrideReason, String overrideType,
-        User overriddenBy, OffsetDateTime overriddenOn) {
+                            String overriddenBy, OffsetDateTime overriddenOn) {
         this.projectId = projectId;
         this.overrideReason = overrideReason;
         this.overrideType = overrideType;
@@ -68,8 +67,8 @@ public class DeliveryOverride {
     }
 
     public DeliveryOverride(Integer projectId, String overrideReason, String overrideType,
-        String tenure, Integer reportedValue, OffsetDateTime reportedDate, String comments,
-        User overriddenBy, OffsetDateTime overriddenOn) {
+                            String tenure, Integer reportedValue, OffsetDateTime reportedDate, String comments,
+                            String overriddenBy, OffsetDateTime overriddenOn) {
         this.projectId = projectId;
         this.overrideReason = overrideReason;
         this.overrideType = overrideType;
@@ -146,17 +145,20 @@ public class DeliveryOverride {
     }
 
     @JsonIgnore
-    public User getOverriddenBy() {
+    public String getOverriddenBy() {
         return overriddenBy;
     }
 
-    @JsonProperty(value = "overriddenBy", access = JsonProperty.Access.READ_ONLY)
-    public String getOverriddenByUsername() {
-        return overriddenBy.getFirstName() + " " + overriddenBy.getLastName();
+    public void setOverriddenBy(String overriddenBy) {
+        this.overriddenBy = overriddenBy;
     }
 
-    public void setOverriddenBy(User overriddenBy) {
-        this.overriddenBy = overriddenBy;
+    public String getOverriddenByName() {
+        return overriddenByName;
+    }
+
+    public void setOverriddenByName(String overriddenByName) {
+        this.overriddenByName = overriddenByName;
     }
 
     public OffsetDateTime getOverriddenOn() {

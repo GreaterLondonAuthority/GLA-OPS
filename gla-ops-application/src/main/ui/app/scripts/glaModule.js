@@ -20,12 +20,10 @@ angular.module('GLA', [
   'validation.match',
   'ngStorage',
   'angularMoment',
-  'toastr',
   'permission',
   'angular.vertilize',
   'ng.deviceDetector',
   'angular-clipboard',
-  'ngIdle',
   'ui.sortable',
   'angular-cache',
   'chart.js'

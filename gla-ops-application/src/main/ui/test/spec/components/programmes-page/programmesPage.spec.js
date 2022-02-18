@@ -29,7 +29,6 @@ describe('Component: Programmes Page', () => {
 
   it('should display programmes list', () => {
     let tableContent = TableHelper.getTableContent(element);
-    console.log('tableContent', tableContent)
     expect(tableContent).toEqual([
       ['1', 'P1', 'Y', 'T1T2', 'managingOrganisationName1', 'GLA', 'Active', 'Name1', 'Jan 1, 2017 00:00'],
       ['2', 'P2', 'N', 'T4T5', 'managingOrganisationName2', 'All', 'Abandoned', 'Name2', 'Feb 11, 2016 00:00']

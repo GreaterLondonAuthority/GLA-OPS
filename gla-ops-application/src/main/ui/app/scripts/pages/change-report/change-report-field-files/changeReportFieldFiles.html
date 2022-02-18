@@ -7,7 +7,7 @@
       <div
         class="left-column-value"
         ng-repeat="file in $ctrl.getValue($ctrl.data.left,$ctrl.field) | orderBy: 'createdOn'">
-        <a ng-href="/api/v1/file/{{file.fileId || file.id}}" target="_blank">
+        <a ng-href="/api/v1/project/{{$ctrl.$stateParams.projectId}}/file/{{file.fileId || file.id}}" target="_blank">
           <span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{file.fileName}}
         </a>
       </div>
@@ -27,7 +27,7 @@
         <div
           class="right-column-value"
           ng-repeat="file in $ctrl.getValue($ctrl.data.right,$ctrl.field) | orderBy: 'createdOn'">
-          <a ng-href="/api/v1/file/{{file.fileId || file.id}}" target="_blank">
+          <a ng-href="/api/v1/project/{{$ctrl.$stateParams.projectId}}/file/{{file.fileId || file.id}}" target="_blank">
             <span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{file.fileName}}
           </a>
         </div>

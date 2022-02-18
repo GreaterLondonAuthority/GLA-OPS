@@ -9,7 +9,7 @@ package uk.gov.london.ops.programme.implementation;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.programme.domain.Programme;
 import uk.gov.london.ops.programme.domain.QProgrammeSummary;
 
@@ -47,7 +47,7 @@ class ProgrammeSummaryQueryBuilder {
         return this;
     }
 
-    ProgrammeSummaryQueryBuilder withOrganisations(Collection<Organisation> organisations) {
+    ProgrammeSummaryQueryBuilder withOrganisations(Collection<OrganisationEntity> organisations) {
         if (isNotEmpty(organisations)) {
             predicateBuilder.and(QProgrammeSummary.programmeSummary.managingOrganisation.in(organisations));
         }

@@ -1,0 +1,51 @@
+{
+  "id": 21,
+  "name": "UNINCORPORATED_ASSOCIATION",
+  "description": "Unincorporated Association",
+  "displayOrder": "14",
+  "blocks": [
+    {
+      "blockName": "Organisation Details",
+      "displayOrder": 0,
+      "showBusinessDetails": false,
+      "showAddressDetails": true,
+      "showRegulatoryInformation": true,
+      "questions": [
+        {
+          "modelAttribute": "knownAs",
+          "requirement": "optional"
+        },
+        {
+          "modelAttribute": "isLearningProvider",
+          "requirement": "mandatory"
+        },
+        {
+          "modelAttribute": "ukprn",
+          "requirement": "optional",
+          "parentModel": "isLearningProvider",
+          "parentAnswerToMatch": true
+        }
+      ]
+    },
+    {
+      "blockName": "GLA Governance",
+      "displayOrder": 1,
+      "questions": []
+    },
+    {
+      "blockName": "Programmes",
+      "displayOrder": 2,
+      "questions": []
+    },
+    {
+      "blockName": "Contracts",
+      "displayOrder": 3,
+      "questions": []
+    },
+    {
+      "blockName": "Annual Returns",
+      "displayOrder": 4,
+      "questions": []
+    }
+  ]
+}

@@ -31,13 +31,11 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.block.ProjectDifference;
-import uk.gov.london.ops.project.block.ProjectDifferences;
+import uk.gov.london.ops.project.block.*;
 import uk.gov.london.ops.project.claim.Claim;
 import uk.gov.london.ops.project.claim.ClaimStatus;
 import uk.gov.london.ops.project.claim.ClaimType;
@@ -56,7 +54,7 @@ import uk.gov.london.ops.project.template.domain.TemplateBlock;
 @JoinData(sourceTable = "outputs", sourceColumn = "id", targetTable = "project_block",
         targetColumn = "id", joinType = Join.JoinType.OneToOne,
         comment = "the outputs block is a subclass of the project block and shares a common key")
-public class OutputsBlock extends NamedProjectBlock {
+public class OutputsBlock extends BaseFinanceBlock {
 
     @Column(name = "config_group_id")
     @JoinData(targetTable = "output_config_group", targetColumn = "id", joinType = Join.JoinType.OneToOne,
@@ -99,6 +97,12 @@ public class OutputsBlock extends NamedProjectBlock {
 
     @Transient
     Map<String, Object> yearlyTotals;
+
+    @Transient
+    private Integer startYear;
+
+    @Transient
+    private Integer endYear;
 
     public OutputsBlock() {
     }
@@ -209,12 +213,9 @@ public class OutputsBlock extends NamedProjectBlock {
         this.quarters = quarters;
     }
 
-    public Set<Integer> getPopulatedYears() {
-        return populatedYears;
-    }
-
-    public void setPopulatedYears(Set<Integer> populatedYears) {
-        this.populatedYears = populatedYears;
+    @Override
+    protected boolean canShowYear(Integer year) {
+        return true;
     }
 
     public Integer getConfigGroupId() {
@@ -367,7 +368,7 @@ public class OutputsBlock extends NamedProjectBlock {
         }
     }
 
-    protected void performPostApprovalActions(String username, OffsetDateTime approvalTime) {
+    public void performPostApprovalActions(String username, OffsetDateTime approvalTime) {
         Set<Claim> outputsClaims = this.getOutputsClaims();
         if (outputsClaims != null) {
             for (Claim outputsClaim : this.getOutputsClaims()) {
@@ -409,4 +410,19 @@ public class OutputsBlock extends NamedProjectBlock {
         return false;
     }
 
+    public Integer getStartYear() {
+        return startYear;
+    }
+
+    public void setStartYear(Integer startYear) {
+        this.startYear = startYear;
+    }
+
+    public Integer getEndYear() {
+        return endYear;
+    }
+
+    public void setEndYear(Integer endYear) {
+        this.endYear = endYear;
+    }
 }

@@ -1,0 +1,151 @@
+<div class="template-block-user-defined-outputs">
+
+  <gla-template-block-repeating-entity [block]="block"
+                                       [readOnly]="readOnly"
+                                       [template]="template"
+                                       [editable]="editable"
+                                       [blockEntity]="'outputs'"></gla-template-block-repeating-entity>
+
+
+  <div class="form-group">
+    <label for="output-text-singular">Entity name - singular</label>
+    <input class="form-control"
+           id="output-text-singular"
+           [maxLength]="50"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.definedOutputTextSingular"
+           number-mask="0"
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="output-text-plural">Entity name - plural</label>
+    <input class="form-control"
+           id="output-text-plural"
+           [maxLength]="50"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.definedOutputTextPlural"
+           number-mask="0"
+           type="text"/>
+  </div>
+
+  <hr/>
+  <div class="text-center bolder mtop5">User Defined Output labels and character limits</div>
+  <div class="text-center mbottom15">mandatory configuration, nonfunctional block if left blank</div>
+
+  <div class="form-group">
+    <label for="output-name-text">Entity name text</label>
+    <input class="form-control"
+           id="output-name-text"
+           [maxLength]="50"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.outputNameText"
+           [placeholder]="'Name the output your project will deliver'"
+           number-mask="0"
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="output-name-limit">Entity name character limit</label>
+    <input class="form-control"
+           id="output-name-limit"
+           [maxLength]="4"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.outputNameCharacterLimit"
+           [placeholder]="'Max size of answer, up to 2000 characters'"
+           type="number"
+           numbers-only/>
+    <span *ngIf="block.outputNameCharacterLimit > 2000" class="error mtop5"> Maximum size allowed is 2000 characters.</span>
+
+  </div>
+
+  <div class="form-group">
+    <label for="amount-to-deliver-text">Delivery amount text</label>
+    <input class="form-control"
+           id="amount-to-deliver-text"
+           [maxLength]="50"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.amountToDeliverText"
+           [placeholder]="'Specify the amount it will deliver'"
+           number-mask="0"
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="amount-to-deliver-text-limit">Maximum delivery amount answer</label>
+    <input class="form-control"
+           id="amount-to-deliver-text-limit"
+           [maxLength]="4"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.amountToDeliverCharacterLimit"
+           [placeholder]="'Max size of answer, up to 2000 characters'"
+           type="number"
+           numbers-only/>
+    <span *ngIf="block.amountToDeliverCharacterLimit > 2000" class="error mtop5"> Maximum size allowed is 2000 characters.</span>
+
+  </div>
+
+  <div class="form-group">
+    <label for="baseline-text">Baseline text</label>
+    <input class="form-control"
+           id="baseline-text"
+           [maxLength]="50"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.baselineText"
+           [placeholder]="'Specify a baseline where appropriate'"
+           number-mask="0"
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="baseline-limit">Maximum baseline answer</label>
+    <input class="form-control"
+           id="baseline-limit"
+           [maxLength]="4"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.baselineCharacterLimit"
+           [placeholder]="'Max size of answer, up to 2000 characters'"
+           type="number"
+           numbers-only/>
+    <span *ngIf="block.baselineCharacterLimit > 2000" class="error mtop5"> Maximum size allowed is 2000 characters.</span>
+  </div>
+
+  <div class="form-group">
+    <label for="baseline-requirement">Baseline requirement</label>
+    <select [(ngModel)]="block.baselineRequirement"
+            [disabled]="readOnly || !editable"
+            class="form-control"
+            id="baseline-requirement">
+      <option disabled value="undefined">Baseline requirement</option>
+      <option *ngFor="let requirement of requirementOptions" [ngValue]="requirement.id">{{requirement.label}}</option>
+    </select>
+  </div>
+
+
+  <div class="form-group">
+    <label for="monitor-question-text">Monitor question</label>
+    <input class="form-control"
+           id="monitor-question-text"
+           [maxLength]="50"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.monitorQuestion"
+           [placeholder]="'How will you monitor the delivery of this output?'"
+           number-mask="0"
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="monitor-question-limit">Maximum monitor question answer</label>
+    <input class="form-control"
+           id="monitor-question-limit"
+           [maxLength]="4"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.monitorQuestionCharacterLimit"
+           [placeholder]="'Max size of answer, up to 2000 characters'"
+           type="number"
+           numbers-only/>
+    <span *ngIf="block.monitorQuestionCharacterLimit > 2000" class="error mtop5"> Maximum size allowed is 2000 characters.</span>
+
+  </div>
+
+</div>

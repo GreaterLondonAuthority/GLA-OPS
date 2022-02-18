@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.project.block;
 
-import uk.gov.london.ops.project.grant.GrantType;
+import uk.gov.london.ops.framework.enums.GrantType;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -19,5 +19,15 @@ import java.util.Map;
 public interface FundingSourceProvider {
 
     Map<GrantType, BigDecimal> getFundingRequested();
+
+    default BigDecimal getTotalGrantRequested() {
+        return getFundingRequested().values().stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
+
+    default BigDecimal getGrantAdjustmentAmount(FundingSourceProvider previousVersion) {
+        BigDecimal currentGrant = this.getFundingRequested().getOrDefault(GrantType.Grant, BigDecimal.ZERO);
+        BigDecimal previousGrant = previousVersion.getFundingRequested().getOrDefault(GrantType.Grant, BigDecimal.ZERO);
+        return currentGrant.subtract(previousGrant);
+    }
 
 }

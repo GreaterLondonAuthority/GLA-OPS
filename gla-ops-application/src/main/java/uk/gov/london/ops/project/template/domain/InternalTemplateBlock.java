@@ -7,9 +7,14 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import uk.gov.london.ops.project.internalblock.InternalBlockType;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -22,7 +27,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
-import uk.gov.london.ops.project.internalblock.InternalBlockType;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity(name = "internal_template_block")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -34,11 +40,12 @@ import uk.gov.london.ops.project.internalblock.InternalBlockType;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = InternalAssessmentTemplateBlock.class),
         @JsonSubTypes.Type(value = InternalRiskTemplateBlock.class),
-        @JsonSubTypes.Type(value = InternalQuestionsTemplateBlock.class)
+        @JsonSubTypes.Type(value = InternalQuestionsTemplateBlock.class),
+        @JsonSubTypes.Type(value = InternalProjectAdminTemplateBlock.class)
 })
 
 @DiscriminatorValue("BASE")
-public class InternalTemplateBlock implements Serializable {
+public class InternalTemplateBlock implements Serializable, Commandable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "internal_template_block_seq_gen")
@@ -58,6 +65,13 @@ public class InternalTemplateBlock implements Serializable {
 
     @Column(name = "info_message")
     private String infoMessage;
+
+    @JsonIgnore
+    @Column(name = "block_data")
+    protected String blockData;
+
+    @Column(name = "detached_block_template_id")
+    protected Integer detachedTemplateId;
 
     public InternalTemplateBlock() {
     }
@@ -111,6 +125,22 @@ public class InternalTemplateBlock implements Serializable {
         this.infoMessage = infoMessage;
     }
 
+    public String getBlockData() {
+        return blockData;
+    }
+
+    public void setBlockData(String blockData) {
+        this.blockData = blockData;
+    }
+
+    public Integer getDetachedTemplateId() {
+        return detachedTemplateId;
+    }
+
+    public void setDetachedTemplateId(Integer detachedTemplateId) {
+        this.detachedTemplateId = detachedTemplateId;
+    }
+
     public InternalTemplateBlock clone() {
         InternalTemplateBlock clone;
         try {
@@ -123,7 +153,18 @@ public class InternalTemplateBlock implements Serializable {
         clone.setType(this.getType());
         clone.setBlockDisplayName(this.getBlockDisplayName());
         clone.setDisplayOrder(this.getDisplayOrder());
+        clone.setBlockData(this.getBlockData());
+        clone.setDetachedTemplateId(this.getDetachedTemplateId());
         return clone;
     }
 
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public List<TemplateBlockCommand> getTemplateBlockCommands() {
+        return TemplateBlockCommand.GLOBAL_COMMANDS;
+    }
+
+    @Override
+    public void performCommand(@NotNull TemplateBlockCommand command, @Nullable CommandPayload payload) {
+    }
 }

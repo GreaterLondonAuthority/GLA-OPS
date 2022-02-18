@@ -10,13 +10,15 @@ import CollapsibleReportCtr from '../../controllers/collapsibleReportCtrl.js';
 
 
 class SummaryReportsPageCtrl extends CollapsibleReportCtr{
-  constructor($injector, OutputsService) {
+  constructor($injector, OutputsService, GlaReportService) {
     super($injector);
     this.OutputsService = OutputsService;
+    this.GlaReportService = GlaReportService;
   }
 
   $onInit() {
     this.ReportService.setFullWidth();
+    this.GlaReportService.setFullWidth();
     this.showApprovedOnly = !this.$stateParams.showUnapproved;
     this.blocksToCompare = this.ReportService.getBlocksToCompareForSummaryReport(this.project, this.template, this.currentFinancialYear);
 
@@ -37,7 +39,8 @@ class SummaryReportsPageCtrl extends CollapsibleReportCtr{
       'LearningGrantBlock',
       'FundingClaimsBlock',
       'OutputsCostsBlock',
-      'DeliveryPartnersBlock'
+      'DeliveryPartnersBlock',
+      'AffordableHomesBlock'
     ];
 
     this.blocksToCompare = this.blocksToCompare.filter(block => supportedBlockType.indexOf(block.type) !== -1);
@@ -76,7 +79,7 @@ class SummaryReportsPageCtrl extends CollapsibleReportCtr{
   }
 }
 
-SummaryReportsPageCtrl.$inject = ['$injector', 'OutputsService'];
+SummaryReportsPageCtrl.$inject = ['$injector', 'OutputsService', 'GlaReportService'];
 
 
 angular.module('GLA')

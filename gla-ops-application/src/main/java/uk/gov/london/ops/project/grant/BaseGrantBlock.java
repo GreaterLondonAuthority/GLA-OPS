@@ -7,21 +7,17 @@
  */
 package uk.gov.london.ops.project.grant;
 
-import static uk.gov.london.common.GlaUtils.nullSafeAdd;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
+import uk.gov.london.ops.OpsEvent;
+import uk.gov.london.ops.project.block.NamedProjectBlock;
+import uk.gov.london.ops.project.block.ProjectDifference;
+import uk.gov.london.ops.project.block.ProjectDifferences;
+import uk.gov.london.ops.project.template.domain.TemplateBlock;
+import uk.gov.london.ops.project.template.domain.TemplateTenureType;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
@@ -29,16 +25,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-import org.apache.commons.lang3.StringUtils;
-import uk.gov.london.ops.EventType;
-import uk.gov.london.ops.OpsEvent;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportUtils;
-import uk.gov.london.ops.project.milestone.Milestone;
-import uk.gov.london.ops.project.template.domain.TemplateBlock;
-import uk.gov.london.ops.project.template.domain.TemplateTenureType;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
+import static uk.gov.london.ops.project.milestone.Milestone.COMPLETION_ID;
+import static uk.gov.london.ops.project.milestone.Milestone.START_ON_SITE_ID;
 
 @MappedSuperclass
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
@@ -52,10 +50,7 @@ import uk.gov.london.ops.project.template.domain.TemplateTenureType;
 })
 public abstract class BaseGrantBlock extends NamedProjectBlock {
 
-    private static final Set<Integer> START_ON_SITE_EXTERNAL_IDS = Stream.of(Milestone.START_ON_SITE_ID)
-            .collect(Collectors.toSet());
-    private static final Set<Integer> COMPLETION_MILESTONE_EXTERNAL_IDS = Stream.of(Milestone.COMPLETION_ID)
-            .collect(Collectors.toSet());
+
 
     public static final String TOTAL_UNITS = "total_units_";
     public static final String NIL_GRANT_UNITS = "nil_grant_units_";
@@ -69,6 +64,9 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
     @JoinColumn(name = "block_id")
     private Set<ProjectTenureDetails> tenureTypeAndUnitsEntries;
 
+    @Column(name = "other_affordable_tenure_type")
+    private String otherAffordableTenureType;
+
     @Column(name = "sos_milestone_authorised")
     protected OffsetDateTime startOnSiteMilestoneAuthorised;
 
@@ -79,6 +77,14 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
     public Set<ProjectTenureDetails> getTenureTypeAndUnitsEntries() {
         return tenureTypeAndUnitsEntries;
+    }
+
+    public String getOtherAffordableTenureType() {
+        return otherAffordableTenureType;
+    }
+
+    public void setOtherAffordableTenureTypes(String otherAffordableTenureType) {
+        this.otherAffordableTenureType = otherAffordableTenureType;
     }
 
     @JsonIgnore
@@ -92,31 +98,6 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
 
     public void setTenureTypeAndUnitsEntries(Set<ProjectTenureDetails> projectTenureDetailsEntries) {
         this.tenureTypeAndUnitsEntries = projectTenureDetailsEntries;
-    }
-
-
-    @Override
-    public Map<String, Object> simpleDataExtract(SimpleProjectExportConfig simpleProjectExportConfig) {
-        final Map<String, Object> map = new HashMap<>();
-        final SimpleProjectExportConstants.ReportPrefix prefix =
-                SimpleProjectExportConstants.ReportPrefix.eg_;
-        for (ProjectTenureDetails projectTenureDetails : getTenureTypeAndUnitsEntriesSorted()) {
-            String keySuffix = simpleProjectExportConfig.getReplacementProperty(TENURE_TYPE_PROPERTY_PREFIX + projectTenureDetails
-                    .getTenureType().getExternalId());
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + TOTAL_UNITS + keySuffix), this.calculateTotalUnits(
-                    projectTenureDetails));
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + NIL_GRANT_UNITS + keySuffix), this.calculateNilGrantUnits(
-                    projectTenureDetails));
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + S106_UNITS + keySuffix), this.calculateS106Units(
-                    projectTenureDetails));
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + DEV_COST + keySuffix), this.calculateDevCosts(
-                    projectTenureDetails));
-            map.put(SimpleProjectExportUtils.formatForExport(prefix + GRANT_PER_UNIT + keySuffix), this.calculateGrantPerUnitCost(
-                    projectTenureDetails));
-        }
-        map.put(prefix + TOTAL_GRANT_ELIGIBILITY, this.getTotalGrantEligibility());
-
-        return map;
     }
 
     @Transient
@@ -197,9 +178,20 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
         this.completionMilestoneAuthorised = completionMilestoneAuthorised;
     }
 
+    public void resetKeyEventFigures(int externalId) {
+        if (START_ON_SITE_ID == externalId) {
+            this.startOnSiteMilestoneAuthorised = null;
+            this.getTenureTypeAndUnitsEntries().forEach(e -> e.setTotalUnitsAtStartOnSite(null));
+        } else if (COMPLETION_ID == externalId) {
+            this.completionMilestoneAuthorised = null;
+            this.getTenureTypeAndUnitsEntries().forEach(e -> e.setTotalUnitsAtStartOnSite(null));
+        }
+    }
+
     @Transient
     public void merge(BaseGrantBlock newValue) {
         this.getTenureTypeAndUnitsEntries().clear();
+        this.setOtherAffordableTenureTypes(newValue.getOtherAffordableTenureType());
         if (hasTenureInfo(newValue)) {
             this.getTenureTypeAndUnitsEntries().addAll(newValue.getTenureTypeAndUnitsEntries());
             for (ProjectTenureDetails projectTenureDetailsEntry : this.getTenureTypeAndUnitsEntries()) {
@@ -291,14 +283,24 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
     @Override
     public void handleEvent(OpsEvent opsEvent) {
         super.handleEvent(opsEvent);
-        if (EventType.MilestoneApproval.equals(opsEvent.getEventType())) {
-            if (!(this instanceof IndicativeGrantBlock)) {
-                if (START_ON_SITE_EXTERNAL_IDS.contains(opsEvent.getExternalId())) {
-                    this.startOnSiteMilestoneApproved();
-                }
-                if (COMPLETION_MILESTONE_EXTERNAL_IDS.contains(opsEvent.getExternalId())) {
-                    this.completionMilestoneApproved();
-                }
+
+        switch (opsEvent.getEventType()) {
+            case MilestoneApproval:
+                handleMilestoneApproval(opsEvent.getExternalId());
+                break;
+            case MilestoneCancel:
+                resetKeyEventFigures(opsEvent.getExternalId());
+                break;
+        }
+    }
+
+    protected void handleMilestoneApproval(int externalId) {
+        if (!(this instanceof IndicativeGrantBlock)) {
+            if (START_ON_SITE_EXTERNAL_IDS.contains(externalId)) {
+                this.startOnSiteMilestoneApproved();
+            }
+            if (COMPLETION_MILESTONE_EXTERNAL_IDS.contains(externalId)) {
+                this.completionMilestoneApproved();
             }
         }
     }
@@ -323,6 +325,17 @@ public abstract class BaseGrantBlock extends NamedProjectBlock {
                 projectTenureDetailsEntries.add(tenureEntry);
                 tenureEntry.setTenureType(tenureType);
             }
+        }
+    }
+
+    @Override
+    protected void compareBlockSpecificContent(NamedProjectBlock otherBlock, ProjectDifferences differences) {
+        super.compareBlockSpecificContent(otherBlock, differences);
+
+        BaseGrantBlock baseGrantBlock = (BaseGrantBlock) otherBlock;
+
+        if (!Objects.equals(this.getOtherAffordableTenureType(), baseGrantBlock.getOtherAffordableTenureType())) {
+            differences.add(new ProjectDifference(this, "otherAffordableTenureType"));
         }
     }
 

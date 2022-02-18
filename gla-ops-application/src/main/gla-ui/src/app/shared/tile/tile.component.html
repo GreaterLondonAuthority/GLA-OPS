@@ -1,0 +1,21 @@
+<div class="tile">
+  <h3 class="grant-title" *ngIf="hlevel===3 || !hlevel"><ng-container *ngTemplateOutlet="tileHeader"></ng-container></h3>
+  <h4 class="grant-title" *ngIf="hlevel===4"><ng-container *ngTemplateOutlet="tileHeader"></ng-container></h4>
+  <dl class="tile-items">
+    <ng-container *ngFor="let item of items">
+      <dt class="grant-name property-name">
+        <span *ngIf="item.icon" class="glyphicon grant-prefix" aria-hidden="true" [class]="item.icon"></span>
+        <span class="glyphicon glyphicon-exclamation-sign" *ngIf="item.displayWarn"></span>
+        {{item.itemName}}
+      </dt>
+      <dd class="grant-value property-value">
+        <span *ngIf="item.type"><span *ngIf="item.type === 'CURRENCY'">&pound;</span>{{item.itemValue | number}}</span>
+        <span *ngIf="!item.type">{{item.itemValue == null ? '-' : item.itemValue}}</span>
+      </dd>
+    </ng-container>
+  </dl>
+</div>
+
+<ng-template #tileHeader>
+  <ng-content></ng-content>
+</ng-template>

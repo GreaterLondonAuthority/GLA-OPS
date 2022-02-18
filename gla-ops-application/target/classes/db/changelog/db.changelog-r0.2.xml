@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="4" author="ybouhass">
+        <addColumn tableName="users">
+            <column name="firstname" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="lastname" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="phone_number" type="varchar(16)">
+                <constraints nullable="true" />
+            </column>
+            <column name="approved" type="BOOLEAN">
+                <constraints nullable="true" />
+            </column>
+            <column name="organisation_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <createSequence sequenceName="organisation_seq" startValue="10001" incrementBy="1" />
+
+        <createSequence sequenceName="user_roles_seq" startValue="1000" incrementBy="1" />
+
+        <createTable tableName="organisation">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="organisation_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="ims_number" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="email" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
+            <column name="ceo_title" type="varchar(10)">
+                <constraints nullable="true" />
+            </column>
+            <column name="ceo_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="entity_type" type="INT4">
+                <constraints nullable="true" />
+            </column>
+            <column name="regulated" type="BOOLEAN">
+                <constraints nullable="true" />
+            </column>
+            <column name="viability" type="varchar(2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="governance" type="varchar(2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address1" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address2" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address3" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address4" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address5" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="postcode" type="varchar(10)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+        <createIndex indexName="organisation_ims_number_idx" tableName="organisation" unique="true">
+            <column name="ims_number" type="varchar(20)"/>
+            <column name="id" type="INT4"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="organisation_id"
+                                 baseTableName="users"
+                                 constraintName="fk_users_organisation"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="organisation"/>
+
+        <createIndex indexName="users_organisation_id_idx" tableName="users">
+            <column name="organisation_id" type="INT4" />
+        </createIndex>
+
+        <insert tableName="organisation">
+            <column name="id" value="10000" />
+            <column name="name" value="GLA" />
+        </insert>
+    </changeSet>
+
+    <changeSet id="5" author="ybouhass">
+        <addColumn tableName="users">
+            <column name="registered_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+            <column name="approved_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+            <column name="approved_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="6" author="ybouhass">
+        <addColumn tableName="users">
+            <column name="registration_ims_number" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="7" author="ybouhass">
+        <addColumn tableName="organisation">
+            <column name="user_reg_status" type="varchar(10)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

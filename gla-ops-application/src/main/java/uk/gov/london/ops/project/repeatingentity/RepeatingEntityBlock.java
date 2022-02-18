@@ -9,16 +9,24 @@ package uk.gov.london.ops.project.repeatingentity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.block.ProjectDifferences;
+import uk.gov.london.ops.project.template.domain.RepeatingEntityTemplateBlock;
+import uk.gov.london.ops.project.template.domain.TemplateBlock;
 
 /**
  * Created by chris on 04/11/2019.
  */
+@Entity
 public abstract class RepeatingEntityBlock<T extends RepeatingEntity> extends NamedProjectBlock implements EntityCollection<T> {
+
+    @Column
+    private boolean blockRequired = true;
 
     public RepeatingEntityBlock() {
         setBlockType(getProjectBlockType());
@@ -76,8 +84,11 @@ public abstract class RepeatingEntityBlock<T extends RepeatingEntity> extends Na
 
     @Override
     public void merge(NamedProjectBlock namedProjectBlock) {
-        // no op in this class as can't update entities this way, but subclasses coul
-        // override to store other specific block data
+        // override in subclasses to store other specific entity data
+        if (namedProjectBlock instanceof RepeatingEntityBlock) {
+            RepeatingEntityBlock block = (RepeatingEntityBlock) namedProjectBlock;
+            this.setBlockRequired(block.getBlockRequired());
+        }
     }
 
     @Override
@@ -89,12 +100,39 @@ public abstract class RepeatingEntityBlock<T extends RepeatingEntity> extends Na
         }
     }
 
+    @JsonIgnore
+    public boolean passesConditions() {
+        return isVisited()
+                && getRepeatingEntities() != null
+                && !getRepeatingEntities().isEmpty()
+                && getRepeatingEntities().stream().allMatch(RepeatingEntity::isComplete)
+                && getValidationFailures().size() == 0;
+    }
+
 
     @Transient
     @Override
     public boolean isComplete() {
-        return isVisited() && getRepeatingEntities() != null && !getRepeatingEntities().isEmpty() && getRepeatingEntities()
-                .stream().allMatch(RepeatingEntity::isComplete) && getValidationFailures().size() == 0;
+        return isNotRequired() || (
+                    isVisited()
+                    && getRepeatingEntities() != null
+                    && !getRepeatingEntities().isEmpty()
+                    && getRepeatingEntities().stream().allMatch(RepeatingEntity::isComplete)
+                    && getValidationFailures().size() == 0
+                );
+    }
+
+    @JsonIgnore
+    public boolean isNotRequired() {
+        if (project == null) {
+            return false;
+        }
+        TemplateBlock templateBlock = this.project.getTemplate().getSingleBlockByType(getProjectBlockType());
+        if (templateBlock instanceof RepeatingEntityTemplateBlock) {
+            RepeatingEntityTemplateBlock repeatingEntityTemplateBlock = (RepeatingEntityTemplateBlock) templateBlock;
+            return repeatingEntityTemplateBlock.getHasBlockRequiredOption() && !getBlockRequired();
+        }
+        return false;
     }
 
     @Override
@@ -120,6 +158,8 @@ public abstract class RepeatingEntityBlock<T extends RepeatingEntity> extends Na
         return true;
     }
 
+
+
     public void createChildEntity(T child) {
         this.getRepeatingEntities().add(child);
     }
@@ -127,5 +167,14 @@ public abstract class RepeatingEntityBlock<T extends RepeatingEntity> extends Na
     public boolean hasChildEntities() {
         return this.getRepeatingEntities() != null && !this.getRepeatingEntities().isEmpty();
     }
+
+    public boolean getBlockRequired() {
+        return blockRequired;
+    }
+
+    public void setBlockRequired(boolean blockRequired) {
+        this.blockRequired = blockRequired;
+    }
+
 
 }

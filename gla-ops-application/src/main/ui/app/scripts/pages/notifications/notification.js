@@ -21,7 +21,7 @@ class NotificationCtrl {
   }
 
   _deleteNotification() {
-    this.NotificationsService.updateNotificationStatus(this.content.id, 'Deleted').then(()=>{
+    this.NotificationsService.deleteNotification(this.content.id).then(()=>{
       this.notificationDeleted();
     });
   }
@@ -98,7 +98,7 @@ NotificationCtrl.$inject = ['$state','NotificationsService', 'UserService', 'Mod
 
 
 angular.module('GLA')
-  .component('notification', {
+  .component('glaNotification', {
     templateUrl: 'scripts/pages/notifications/notification.html',
     bindings: {
       content: '<',

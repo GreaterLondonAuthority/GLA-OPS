@@ -7,11 +7,12 @@
  */
 package uk.gov.london.ops.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.framework.OpsEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 
@@ -42,16 +43,17 @@ public class Message implements Serializable, OpsEntity<String> {
     @Column
     private OffsetDateTime createdOn;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "modified_by")
-    private User modifiedByUser;
+    @Column(name = "modified_by")
+    private String modifiedBy;
 
     @Column
     private OffsetDateTime modifiedOn;
 
     @Column
     private Boolean enabled;
+
+    @Transient
+    private String modifierName;
 
     public Message() {}
 
@@ -115,27 +117,14 @@ public class Message implements Serializable, OpsEntity<String> {
         this.createdOn = createdOn;
     }
 
-    public User getModifiedByUser() {
-        return modifiedByUser;
-    }
-
-    public void setModifiedByUser(User modifiedByUser) {
-        this.modifiedByUser = modifiedByUser;
-    }
-
     @Override
     public String getModifiedBy() {
-        return modifiedByUser == null ? null : modifiedByUser.getUsername();
+        return modifiedBy;
     }
 
     @Override
     public void setModifiedBy(String modifiedBy) {
-        this.modifiedByUser = new User(modifiedBy);
-    }
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public String getModifiedByName() {
-        return modifiedByUser != null ? modifiedByUser.getFullName() : null;
+        this.modifiedBy = modifiedBy;
     }
 
     @Override
@@ -154,6 +143,16 @@ public class Message implements Serializable, OpsEntity<String> {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public String getModifierName() {
+        return modifierName;
+    }
+
+    @Override
+    public void setModifierName(String modifierName) {
+        this.modifierName = modifierName;
     }
 
 }

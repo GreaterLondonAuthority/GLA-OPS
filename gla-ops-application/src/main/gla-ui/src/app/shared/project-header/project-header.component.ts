@@ -36,6 +36,6 @@ export class ProjectHeaderComponent implements OnInit {
   }
 
   goTo(stateName, stateParams){
-    this.navigationService.goToUiRouterState(stateName, stateParams);
+    this.navigationService.goToUiRouterState(stateName, stateParams, null);
   }
 }

@@ -11,13 +11,19 @@ package uk.gov.london.ops.project.template.domain;
 import uk.gov.london.ops.framework.JSONUtils;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @DiscriminatorValue("PROJECT_DETAILS")
 public class ProjectDetailsTemplateBlock  extends TemplateBlock {
 
     @Transient
-    private Integer maxBoroughs =1;
+    private Integer maxBoroughs = 1;
+
+    @Transient
+    private String allocationQuestion = "Do you want to use your allocation to fund this project?";
+
 
     @PostLoad
     @PostPersist
@@ -26,6 +32,7 @@ public class ProjectDetailsTemplateBlock  extends TemplateBlock {
         ProjectDetailsTemplateBlock data = JSONUtils.fromJSON(this.blockData, ProjectDetailsTemplateBlock.class);
         if (data != null) {
             this.maxBoroughs = data.maxBoroughs;
+            this.allocationQuestion = data.allocationQuestion;
         }
     }
 
@@ -37,6 +44,14 @@ public class ProjectDetailsTemplateBlock  extends TemplateBlock {
         this.maxBoroughs = maxBoroughs;
     }
 
+    public String getAllocationQuestion() {
+        return allocationQuestion;
+    }
+
+    public void setAllocationQuestion(String allocationQuestion) {
+        this.allocationQuestion = allocationQuestion;
+    }
+
     @Override
     public boolean shouldSaveBlockData() {
         return true;
@@ -46,5 +61,14 @@ public class ProjectDetailsTemplateBlock  extends TemplateBlock {
     public void updateCloneFromBlock(TemplateBlock clone) {
         ProjectDetailsTemplateBlock cloned = (ProjectDetailsTemplateBlock) clone;
         cloned.setMaxBoroughs(this.getMaxBoroughs());
+        cloned.setAllocationQuestion(this.getAllocationQuestion());
     }
+
+    @Override
+    public List<TemplateBlockCommand> getTemplateBlockCommands() {
+        return super.getTemplateBlockCommands().stream()
+                .filter(b -> b != TemplateBlockCommand.REMOVE_BLOCK && b != TemplateBlockCommand.UPDATE_DISPLAY_NAME)
+                .collect(Collectors.toList());
+    }
+
 }

@@ -15,6 +15,8 @@ class CalculateGrantSummaryReport {
 
   $onInit() {
     this.data = this.GrantService.sortTenureTypes(this.block);
+    this.otherAffordableTenureTypes = _.find(this.template.blocksEnabled, {block: 'CalculateGrant'}).otherAffordableTenureTypes;
+    this.showOtherAffordableQuestion = _.find(this.template.blocksEnabled, {block: 'CalculateGrant'}).showOtherAffordableQuestion;
   }
 }
 
@@ -24,6 +26,7 @@ angular.module('GLA')
   .component('calculateGrantSummaryReport', {
     bindings: {
       block: '<',
+      template: '<'
     },
     templateUrl: 'scripts/pages/summary-report/calculateGrantSummaryReport.html',
     controller: CalculateGrantSummaryReport

@@ -414,6 +414,10 @@ module.exports = (grunt) => {
 
       ngBuild: {
         command: 'cd ../gla-ui && ./ng-build.sh'
+      },
+
+      ngBuildWin: {
+        command: 'cd ..\\gla-ui && ng-build.sh'
       }
     }
   };
@@ -537,6 +541,16 @@ module.exports = (grunt) => {
     'clean:dist',
     'ngtemplates:dist',
     'exec:ngBuild',
+    'zip'
+  ]);
+
+  grunt.registerTask('ngBuildWin', [
+    'jscs',
+    'copyright',
+    // 'test',
+    'clean:dist',
+    'ngtemplates:dist',
+    'exec:ngBuildWin',
     'zip'
   ]);
 };

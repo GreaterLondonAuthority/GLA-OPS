@@ -20,7 +20,7 @@ public class ProjectBlockHistoryItem {
 
     private Integer blockId;
 
-    private NamedProjectBlock.BlockStatus status;
+    private ProjectBlockStatus status;
 
     private Integer blockVersion;
 
@@ -32,17 +32,17 @@ public class ProjectBlockHistoryItem {
 
     private Set<Label> labels;
 
-    public ProjectBlockHistoryItem(Integer projectId, Integer blockId, NamedProjectBlock.BlockStatus status, Integer blockVersion,
+    public ProjectBlockHistoryItem(Integer projectId, Integer blockId, ProjectBlockStatus status, Integer blockVersion,
             OffsetDateTime versionUpdated, String modifiedBy, String actionedBy, String approvedOnStatus) {
         this(projectId, blockId, status, blockVersion, versionUpdated, null, approvedOnStatus, (Set) null);
-        if (status.equals(NamedProjectBlock.BlockStatus.UNAPPROVED)) {
+        if (status.equals(ProjectBlockStatus.UNAPPROVED)) {
             this.actionedBy = modifiedBy;
         } else {
             this.actionedBy = actionedBy;
         }
     }
 
-    public ProjectBlockHistoryItem(Integer projectId, Integer blockId, NamedProjectBlock.BlockStatus status, Integer blockVersion,
+    public ProjectBlockHistoryItem(Integer projectId, Integer blockId, ProjectBlockStatus status, Integer blockVersion,
             OffsetDateTime versionUpdated, String actionedBy, String approvedOnStatus, Set<Label> labels) {
         this.projectId = projectId;
         this.blockId = blockId;
@@ -94,11 +94,11 @@ public class ProjectBlockHistoryItem {
         this.actionedBy = actionedBy;
     }
 
-    public NamedProjectBlock.BlockStatus getStatus() {
+    public ProjectBlockStatus getStatus() {
         return status;
     }
 
-    public void setStatus(NamedProjectBlock.BlockStatus status) {
+    public void setStatus(ProjectBlockStatus status) {
         this.status = status;
     }
 

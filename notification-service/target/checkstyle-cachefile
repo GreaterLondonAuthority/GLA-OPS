@@ -1,0 +1,15 @@
+#Mon Oct 18 16:03:02 BST 2021
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\UserNotificationEntity.java=1634559743896
+module-resource*?\:checkstyle-suppressions.xml=1110E5C0DB682A99A7622D25070778F667B78A87
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\NotificationEntity.java=1634559743888
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\EntitySubscriptionEntity.java=1634559743885
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\EmailServiceImpl.java=1634559743883
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\implementation\\NotificationTypesDataInitialiser.java=1634559743909
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\NotificationAPI.java=1634559743886
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\EmailSummary.java=1634559743884
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\implementation\\repository\\EmailSummaryPredicateBuilder.java=1634559743912
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\EmailEntity.java=1634559743881
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\implementation\\repository\\EntitySubscriptionRepository.java=1634559743915
+C\:\\Projects\\GLA\\GlaRefresh2021\\notification-service\\src\\main\\java\\uk\\gov\\london\\ops\\notification\\NotificationTypeEntity.java=1634559743891
+configuration*?=7A87660C954311D36D37769FA6A729E12EC1076B
+module-resource*?\:checkstyle-xpath-suppressions.xml=B5221F1DDBE676905D565E9E1AD9F0618BC192C9

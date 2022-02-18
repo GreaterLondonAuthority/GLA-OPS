@@ -18,7 +18,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
@@ -138,12 +138,7 @@ public class OtherFundingBlock extends RepeatingEntityBlock<OtherFunding> {
         OtherFundingTemplateBlock blockTemplate = (OtherFundingTemplateBlock) project.getTemplate()
                 .getSingleBlockByType(ProjectBlockType.OtherFunding);
 
-        if (hasFundingPartners == null && blockTemplate.isShowPartnersFundingQuestion()) {
-            this.addErrorMessage("question", "", "At least first question must be answered");
-            return;
-        }
-
-        if ((hasFundingPartners == null || hasFundingPartners) && otherFundings != null && otherFundings.isEmpty()) {
+        if (getBlockRequired() && otherFundings != null && otherFundings.isEmpty()) {
             this.addErrorMessage("table", "", "You must add at least one type of funding");
         }
     }
@@ -161,22 +156,22 @@ public class OtherFundingBlock extends RepeatingEntityBlock<OtherFunding> {
         OtherFundingTemplateBlock blockTemplate = (OtherFundingTemplateBlock) project.getTemplate()
                 .getSingleBlockByType(ProjectBlockType.OtherFunding);
 
-        if (hasFundingPartners == null || hasFundingPartners || !blockTemplate.isShowPartnersFundingQuestion()) {
+        if (getBlockRequired() || !blockTemplate.getHasBlockRequiredOption()) {
             hasMissingOtherFundings = (otherFundings == null || otherFundings.isEmpty());
         }
 
-        if ((hasFundingPartners == null || hasFundingPartners)
+        if (getBlockRequired()
                 && blockTemplate.getEvidenceRequirement() == Requirement.mandatory) {
             hasMissingAttachments = getOtherFundings().stream()
                     .anyMatch(of -> Boolean.TRUE.equals(of.isFundingSecured()) && of.attachments.size() == 0);
         }
 
-        return (super.isComplete() || hasFundingPartners == null || !hasFundingPartners)
-                && (!hasMissingOtherFundings) && (!hasMissingAttachments);
+        return isNotRequired() || (super.isComplete() && !hasMissingOtherFundings && !hasMissingAttachments);
     }
 
     @Override
     public void merge(NamedProjectBlock block) {
+        super.merge(block);
         OtherFundingBlock updated = (OtherFundingBlock) block;
         this.getOtherFundings().clear();
         this.getOtherFundings().addAll(updated.getOtherFundings());

@@ -16,7 +16,6 @@
       <td>
         <span ng-if="$ctrl.readOnly">{{entry.unitCost}}</span>
         <input
-          id="unit-cost-price"
           ng-if="!$ctrl.readOnly"
           type="text"
           maxlength="13"
@@ -26,10 +25,13 @@
       </td>
 
       <td ng-if="$ctrl.showRecoveryColumn">
-        <div class="radio">
+        <div class="radio" ng-if="!$ctrl.readOnly">
           <label><input name="recoveryOutputOption" ng-disabled="$ctrl.readOnly || !$ctrl.canEditAdvancePayment"
                         ng-model="entry.recoveryOutput"
                         type="checkbox"></label>
+        </div>
+        <div ng-if="$ctrl.readOnly && entry.recoveryOutput">
+          <span class="glyphicon glyphicon-ok" ></span>
         </div>
       </td>
 

@@ -1,0 +1,92 @@
+{
+  "name": "Early Intervention Youth Fund (EIYF)",
+  "author": "Data Initialiser",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Title & contact",
+      "block": "Details",
+      "displayOrder": 1,
+      "infoMessage": "Title must be unique to project or activity. Avoid using 'EIYF' or similar",
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "FundingTemplateBlock",
+      "blockDisplayName": "Budget",
+      "block": "Funding",
+      "displayOrder": 2,
+      "infoMessage": "Claiming for this quarter becomes available once this quarter has ended",
+      "paymentSourcesString": "MOPAC",
+      "startYear": 2019,
+      "yearAvailableTo": 4,
+      "maxEvidenceAttachments": 2,
+      "defaultActivityName": "Projected cost",
+      "activitiesRequired": true,
+      "fundingBalanceEnforced": true,
+      "fundingSpendType": "REVENUE_AND_CAPITAL",
+      "multipleBespokeActivitiesEnabled": true,
+      "budgetEvidenceAttachmentEnabled": true,
+      "totalCapAvailableFunding": "Total Capital funding awarded (£)",
+      "totalCapOtherFunding": "Total Capital funding - Other sources (£)",
+      "totalRevAvailableFunding": "Total Revenue funding awarded (£)",
+      "totalRevOtherFunding": "Total Revenue funding - Other sources (£)",
+      "wizardClaimLabel": "Funding claim (£)",
+      "wizardOtherLabel": "Other sources funding (£)",
+      "annualBudgetHelpText": "Enter the amount of capital and/or revenue you are requesting for the year and the amount of funding being provided from other sources.",
+      "capClaimedFunding": "CAPITAL FUNDING CLAIM £",
+      "capOtherFunding": "OTHER CAPITAL FUNDING £",
+      "revClaimedFunding": "REVENUE FUNDING CLAIM £",
+      "revOtherFunding": "OTHER REVENUE FUNDING £",
+      "categoriesExternalId": 1001,
+      "showMilestones": false,
+      "showCategories": true,
+      "monetaryValueScale": 0,
+      "canClaimActivity": false,
+      "evidenceAttachmentsMandatory": true,
+      "paymentSources": [
+        "MOPAC"
+      ],
+      "grantTypes": [
+        "Grant"
+      ]
+    }
+  ],
+  "internalBlocks": [],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "wardIdRequirement": "hidden",
+    "postcodeRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": "mandatory",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "allowMonetaryMilestones": false,
+  "grantTypes": [
+    "Grant"
+  ],
+  "shouldMilestonesBlockShowStatus": false
+}

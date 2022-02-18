@@ -54,7 +54,7 @@
       <gla-remaining-characters [text]="$ctrl.dataBlock.description" [max]="400"></gla-remaining-characters>
 
       <div ng-if="$ctrl.type ==='Risk'">
-        <label for="initialProbability">Initial Probability Rating</label>
+        <label for="initialProbability">{{$ctrl.risksBlockConfig.initialProbabilityRatingQuestionLabel || 'Initial Probability Rating'}}</label>
         <select aria-label="Initial Probability"
                 class="group-field status__dropdown form-control"
                 id="initialProbability"
@@ -65,12 +65,12 @@
                 ng-options="probability.value as probability.displayValue for probability in $ctrl.probabilities"
                 required
                 style-placeholder="">
-          <option disabled value="">Select a Initial Probability</option>
+          <option disabled value="">{{$ctrl.risksBlockConfig.initialProbabilityRatingQuestionHintText || 'Select a Initial Probability'}}</option>
         </select>
       </div>
 
       <div ng-if="$ctrl.type ==='Risk'">
-        <label for="initialImpact">Initial Impact Rating</label>
+        <label for="initialImpact">{{$ctrl.risksBlockConfig.initialImpactRatingQuestionLabel || 'Initial Impact Rating'}}</label>
         <select aria-label="Initial Impact"
                 class="group-field status__dropdown form-control"
                 id="initialImpact"
@@ -81,11 +81,11 @@
                 ng-options="impact.value as impact.displayValue for impact in $ctrl.impacts"
                 required
                 style-placeholder="">
-          <option disabled value="">Select a Initial Impact</option>
+          <option disabled value="">{{$ctrl.risksBlockConfig.initialImpactRatingQuestionHintText || 'Select a Initial Impact'}}</option>
         </select>
       </div>
 
-      <div ng-if="$ctrl.type ==='Risk'">
+      <div ng-if="$ctrl.type ==='Risk' && $ctrl.risksBlockConfig.showResidualRiskRatings">
         <label for="residualProbability">Residual Probability Rating After Mitigation</label>
         <select aria-label="Initial Probability"
                 class="group-field status__dropdown form-control"
@@ -100,7 +100,7 @@
         </select>
       </div>
 
-      <div ng-if="$ctrl.type ==='Risk'">
+      <div ng-if="$ctrl.type ==='Risk' && $ctrl.risksBlockConfig.showResidualRiskRatings">
         <label for="residualImpact">Residual Impact Rating</label>
         <select aria-label="Residual Impact"
                 class="group-field status__dropdown form-control"

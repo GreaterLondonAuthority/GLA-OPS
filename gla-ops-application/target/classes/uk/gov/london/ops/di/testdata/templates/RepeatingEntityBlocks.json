@@ -1,0 +1,69 @@
+{
+  "name": "Repeating Entity Blocks",
+  "author": "TBC",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1
+    },
+    {
+      "block": "OtherFunding",
+      "type": "OtherFundingTemplateBlock",
+      "questions": [],
+      "sections": [],
+      "blockDisplayName": "Other Funding",
+      "displayOrder": 2,
+      "hasBlockRequiredOption": true,
+      "blockRequiredOptionText": "Is block required?",
+      "partnersFundingQuestion": "Is block required?",
+      "showPartnersFundingQuestion": true,
+      "showAmount": false,
+      "showSecuredQuestion": false,
+      "evidenceRequirement": "hidden",
+      "maxEvidenceAttachments": "1",
+      "maxUploadSizeInMb": "5"
+    },
+    {
+      "block": "ProjectElements",
+      "type": "ProjectElementsTemplateBlock",
+      "questions": [],
+      "sections": [],
+      "blockDisplayName": "Elements",
+      "displayOrder": 3,
+      "hasBlockRequiredOption": true,
+      "blockRequiredOptionText": "Is block required?"
+    },
+    {
+      "block": "ProjectObjectives",
+      "type": "ProjectObjectivesTemplateBlock",
+      "questions": [],
+      "sections": [],
+      "blockDisplayName": "Objectives",
+      "displayOrder": 4,
+      "objectiveTextSingular": "Objective",
+      "objectiveTextPlural": "Objectives",
+      "hasBlockRequiredOption": true,
+      "blockRequiredOptionText": "Is block required?"
+    },
+    {
+      "block": "UserDefinedOutput",
+      "type": "UserDefinedOutputTemplateBlock",
+      "questions": [],
+      "sections": [],
+      "blockDisplayName": "DEFINED OUTPUTS",
+      "displayOrder": 5,
+      "hasBlockRequiredOption": true,
+      "blockRequiredOptionText": "Is block required?",
+      "outputNameText": "Name the output your project will deliver",
+      "amountToDeliverText": "The amount it will deliver",
+      "baselineText": "Baseline",
+      "monitorQuestion": "How will you monitor the delivery of this output?"
+    }
+  ],
+  "stateModel": {
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {}
+}

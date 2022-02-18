@@ -11,6 +11,27 @@ class FundingClaimsTableCtrl {
     this.ProjectSkillsService = ProjectSkillsService;
   }
 
+
+  $onChanges(changes) {
+    if (changes.fundingClaimsEntries) {
+      this.fundingClaimsEntries = _.sortBy(this.fundingClaimsEntries, 'categoryId')
+      this.fundingClaimsEntriesModel = [];
+      this.fundingClaimsEntries.forEach(category => {
+        if (!category.parentCategoryId) {
+          category.subCategories = []
+          this.fundingClaimsEntriesModel.push(category);
+        } else {
+          this.findParentCategory(this.fundingClaimsEntriesModel, category).subCategories.push(category)
+        }
+      });
+    }
+  }
+
+   findParentCategory(fundingClaimsEntriesModel, category) {
+     return _.find(fundingClaimsEntriesModel, {categoryId: category.parentCategoryId,
+                                               period: category.period, academicYear: category.academicYear})
+  }
+
 }
 
 FundingClaimsTableCtrl.$inject = ['ProjectSkillsService'];

@@ -1,8 +1,14 @@
 header-status{
   display: block;
 
-  hs-left, hs-right{
+  hs-right{
     display: block;
+    padding: 0 0 0 10px;
+  }
+
+  hs-left{
+    display: block;
+    padding: 0 10px 0 0;
   }
 
   .status-left, .status-right{

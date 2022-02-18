@@ -1,0 +1,89 @@
+{
+  "id": 9,
+  "name": "CHARITABLE_INCORPORATED_ORG",
+  "description": "Charitable Incorporated Organisation",
+  "displayOrder": "1",
+  "blocks": [
+    {
+      "blockName": "Organisation Details",
+      "displayOrder": 0,
+      "showBusinessDetails": false,
+      "showAddressDetails": true,
+      "showRegulatoryInformation": true,
+      "questions": [
+        {
+          "modelAttribute": "knownAs",
+          "requirement": "optional"
+        },
+        {
+          "modelAttribute": "charityNumber",
+          "requirement": "mandatory"
+        },
+        {
+          "modelAttribute": "regulated",
+          "requirement": "mandatory"
+        },
+        {
+          "modelAttribute": "providerNumber",
+          "requirement": "optional",
+          "parentModel": "regulated",
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "modelAttribute": "viability",
+          "requirement": "optional",
+          "parentModel": "regulated",
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "modelAttribute": "governance",
+          "requirement": "optional",
+          "parentModel": "regulated",
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "modelAttribute": "vatNumber",
+          "requirement": "hidden"
+        },
+        {
+          "modelAttribute": "bankAccount",
+          "requirement": "hidden"
+        },
+        {
+          "modelAttribute": "sortCode",
+          "requirement": "hidden"
+        },
+        {
+          "modelAttribute": "isLearningProvider",
+          "requirement": "mandatory"
+        },
+        {
+          "modelAttribute": "ukprn",
+          "requirement": "optional",
+          "parentModel": "isLearningProvider",
+          "parentAnswerToMatch": true
+        }
+      ]
+    },
+    {
+      "blockName": "GLA Governance",
+      "displayOrder": 1,
+      "questions": []
+    },
+    {
+      "blockName": "Programmes",
+      "displayOrder": 2,
+      "questions": []
+    },
+    {
+      "blockName": "Contracts",
+      "displayOrder": 3,
+      "questions": []
+    },
+    {
+      "blockName": "Annual Returns",
+      "displayOrder": 4,
+      "questions": []
+    }
+  ]
+}

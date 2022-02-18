@@ -1,0 +1,4706 @@
+{
+  "name": "Good Growth Fund Stage-2 Round 3",
+  "author": "TBC",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Organisation Details",
+      "block": "Questions",
+      "displayOrder": 2,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 50,
+          "question": {
+            "id": 1326,
+            "text": "Secondary Contact Name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 27,
+          "question": {
+            "id": 1526,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1522,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 44,
+          "question": {
+            "id": 1543,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1542,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 52,
+          "question": {
+            "id": 1328,
+            "text": "Secondary Contact Email Address",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 1522,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1518,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 42,
+          "question": {
+            "id": 1541,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1538,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 33,
+          "question": {
+            "id": 1532,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1530,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 1506,
+            "text": "Are multiple parties involved in delivering this project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 45,
+          "question": {
+            "id": 1544,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1542,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 1517,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1514,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 51,
+          "question": {
+            "id": 1327,
+            "text": "Secondary Contact Telephone Number",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 1509,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1506,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 1511,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1510,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 1513,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1510,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 43,
+          "question": {
+            "id": 1542,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1538,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 37,
+          "question": {
+            "id": 1536,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1534,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12141,
+            "text": "Limited Company Number",
+            "answerType": "Text",
+            "maxLength": 80,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1500,
+          "parentAnswerToMatch": "Limited company"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 1514,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1510,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 31,
+          "question": {
+            "id": 1530,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1526,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 1516,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1514,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 1523,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1522,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 49,
+          "question": {
+            "id": 1325,
+            "text": "Main Contact Email Address",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1500,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 1510,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1506,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 47,
+          "question": {
+            "id": 1323,
+            "text": "Main Contact Name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 25,
+          "question": {
+            "id": 1524,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1522,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 34,
+          "question": {
+            "id": 1533,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1530,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 35,
+          "question": {
+            "id": 1534,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1530,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 1518,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1514,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 1521,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1518,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 32,
+          "question": {
+            "id": 1531,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1530,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1502,
+            "text": "Charity Number",
+            "answerType": "Text",
+            "maxLength": 80,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1500,
+          "parentAnswerToMatch": "Charity"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 1515,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1514,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 28,
+          "question": {
+            "id": 1527,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1526,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 1520,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1518,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 30,
+          "question": {
+            "id": 1529,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1526,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 38,
+          "question": {
+            "id": 1537,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1534,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 1507,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1506,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 1504,
+            "text": "Is your organisation VAT registered?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 29,
+          "question": {
+            "id": 1528,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1526,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 39,
+          "question": {
+            "id": 1538,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1534,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 1508,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1506,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 26,
+          "question": {
+            "id": 1525,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1522,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1503,
+            "text": "Provide Details",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1500,
+          "parentAnswerToMatch": "Other"
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 1519,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1518,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 1512,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1510,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 40,
+          "question": {
+            "id": 1539,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1538,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 48,
+          "question": {
+            "id": 1324,
+            "text": "Main Contact Telephone Number",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 36,
+          "question": {
+            "id": 1535,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1534,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 46,
+          "question": {
+            "id": 1545,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1542,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 1505,
+            "text": "VAT Registration Number",
+            "answerType": "Text",
+            "maxLength": 20,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1504,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 41,
+          "question": {
+            "id": 1540,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "parentId": 1538,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 112,
+          "displayOrder": 1,
+          "text": "Contact Details"
+        },
+        {
+          "externalId": 100,
+          "displayOrder": 2,
+          "text": "Partner Details"
+        }
+      ],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Community Support and Engagement",
+      "block": "Questions",
+      "displayOrder": 5,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1557,
+            "text": "Describe any complementary projects or initiatives that already take place in the local area and how your project will relate to them",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10000
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12165,
+            "text": "How does your organisation’s work connect with London's diverse communities and ensure access and inclusion?",
+            "answerType": "FreeText",
+            "maxLength": 1500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10001,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12164,
+            "text": "How will your project work to improve social integration in the local community?",
+            "answerType": "FreeText",
+            "maxLength": 1500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10001,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 1558,
+            "text": "Have you undertaken any local engagement to date for your proposed project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10000
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1560,
+            "text": "Describe how your project has secured local support, setting out evidence that there is a demand for your project",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10000
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12163,
+            "text": "Which Londoners with protected characteristics or facing other disadvantages will benefit from this project, and how?",
+            "answerType": "FreeText",
+            "maxLength": 1500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10001,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1559,
+            "text": "Provide details of any existing or planned local engagement for your project",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1558,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 10000
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12166,
+            "text": "Currently how does your organisation involve Londoners with protected characteristics or facing other disadvantages?",
+            "answerType": "FreeText",
+            "maxLength": 1500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10001,
+          "appearsOnStatus": "Stage 2"
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 10000,
+          "displayOrder": 1,
+          "text": "Community Support"
+        },
+        {
+          "externalId": 10001,
+          "displayOrder": 2,
+          "text": "Equality, diversity and inclusion"
+        }
+      ],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "displayOrder": 6,
+      "autoCalculateMilestoneState": true,
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "externalId": 11783,
+          "name": "default",
+          "milestones": []
+        }
+      ],
+      "descriptionEnabled": true,
+      "defaultProcessingRoute": {
+        "externalId": 11783,
+        "name": "default",
+        "milestones": []
+      },
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "RisksTemplateBlock",
+      "blockDisplayName": "Risks and Issues",
+      "block": "Risks",
+      "displayOrder": 9,
+      "paymentSourcesString": "",
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Site Ownership and Permissions",
+      "block": "Questions",
+      "displayOrder": 10,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 1270,
+            "text": "Briefly describe the nature of these different ownerships",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "More than one site with different ownerships"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1564,
+            "text": "Does your organisation have a controlling interest over the proposed site(s) for your project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 5,
+                "option": "No"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Yes, we have a lease"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 4,
+                "option": "More than one site with different ownerships"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes, we own the freehold"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Yes, we have another controlling interest"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 1274,
+            "text": "Provide the planning permission reference number",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1272,
+          "parentAnswerToMatch": "Yes, planning permission achieved"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 1276,
+            "text": "Do you have permission from the organisations who own the sites for the proposed project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "More than one site with different ownerships"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1563,
+            "text": "Briefly describe the nature of any access arrangements",
+            "answerType": "FreeText",
+            "maxLength": 1000,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1561,
+          "parentAnswerToMatch": "More than one site"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1561,
+            "text": "Do you currently have access to the site(s) for your project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "More than one site"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 12150,
+            "text": "Briefly describe the nature of these different ownerships",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1276,
+          "parentAnswerToMatch": "Not applicable"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 1272,
+            "text": "Do you need planning permission for your proposed project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "No"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes, application submitted"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Don't know"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Multiple sites"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Yes, planning permission achieved"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12146,
+            "text": "Briefly describe the nature of the lease",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "Yes, we have a lease"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 1562,
+            "text": "Provide details of when and how you will get access",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1561,
+          "parentAnswerToMatch": "No"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 1269,
+            "text": "Provide justification",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1266,
+          "parentAnswerToMatch": "Not applicable"
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 1277,
+            "text": "Provide details of how and when you will seek permission from these organisations",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1276,
+          "parentAnswerToMatch": "No"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 1267,
+            "text": "Provide details of how and when you will seek permission",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1266,
+          "parentAnswerToMatch": "No"
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 1275,
+            "text": "Provide details of when you will apply for permission for the different sites",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1272,
+          "parentAnswerToMatch": "Multiple sites"
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 1273,
+            "text": "Provide more details",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1272,
+          "parentAnswerToMatch": "Yes, application submitted"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 1271,
+            "text": "Provide justification",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "Not applicable"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12147,
+            "text": "Briefly describe the nature of your controlling interest",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "Yes, we have another controlling interest"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12140,
+            "text": "Briefly describe the process for you to secure a controlling interest over the proposed site",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "No"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 1266,
+            "text": "Do you have permission from the organisation who owns the site(s) for the proposed project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "No"
+        }
+      ],
+      "sections": [],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "OutputsTemplateBlock",
+      "blockDisplayName": "Outputs",
+      "block": "Outputs",
+      "displayOrder": 12,
+      "paymentSourcesString": "",
+      "outputConfigurationGroup": {
+        "id": 1001,
+        "periodType": "Quarterly",
+        "outputTypeName": "Output Type",
+        "categoryName": "Category",
+        "outputTypes": [],
+        "categories": [
+          {
+            "id": 600,
+            "category": "Number of people who participate in a project",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 601,
+            "category": "Number of volunteering opportunities created",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 602,
+            "category": "Sense of belonging to an area",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 603,
+            "category": "Number of people progressing into work",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 604,
+            "category": "The amount of public realm being created or improved",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 605,
+            "category": "Number of vacant units being brought back into use",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 606,
+            "category": "Increase in visitor satisfaction",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 607,
+            "category": "Increase in footfall",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 608,
+            "category": "New jobs being created and existing jobs being safeguarded",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 609,
+            "category": "Number of businesses receiving support",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 610,
+            "category": "Commercial space being created/improved",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          },
+          {
+            "id": 611,
+            "category": "Increase in business turnover",
+            "subcategory": "N/A",
+            "valueType": "NUMBER_OF",
+            "hidden": false
+          }
+        ],
+        "categoryIDs": [],
+        "outputTypeKeys": []
+      },
+      "showBaselines": false,
+      "showAssumptions": false,
+      "showTotalProjectOutputsTable": true,
+      "showValueColumn": true,
+      "showOutputTypeColumn": true,
+      "showAdvancedPaymentColumn": false,
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Management, Design and Evaluation",
+      "block": "Questions",
+      "displayOrder": 11,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12006,
+            "text": "Provide details of the proposed arrangements",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 12005,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 10002,
+          "appearsOnStatus": "Stage 2",
+          "appearsOnSubStatus": "Draft"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 12171,
+            "text": "How was/will the design team procured? If already procured, also state the name of the appointed design team.",
+            "answerType": "FreeText",
+            "maxLength": 2500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 12167,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 10003,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 12174,
+            "text": "Does your organisation have experience of delivering evaluation of a capital build project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10004,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12168,
+            "text": "Briefly describe the focus of design work required for the project to progress",
+            "answerType": "FreeText",
+            "maxLength": 2500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 12167,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 10003,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 12175,
+            "text": "How will you measure performance against each of your output and outcome measures to understand project performance?",
+            "answerType": "FreeText",
+            "maxLength": 1500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10004,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12002,
+            "text": "Provide further details",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 12001,
+          "parentAnswerToMatch": "Other",
+          "sectionId": 10002
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12167,
+            "text": "Will you be using design services for this project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10003,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 12170,
+            "text": "How far progressed is the procurement of these design services?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Design team already appointed"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Design team not yet appointed"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 12167,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 10003,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 12176,
+            "text": "Does your organisation have capacity to capture and report project progress on a regular basis?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10004,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12001,
+            "text": "How will you be managing this project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "In-house staff yet to be appointed"
+              },
+              {
+                "displayOrder": 2,
+                "option": "In-house staff already appointed"
+              },
+              {
+                "displayOrder": 1,
+                "option": "External consultant"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10002
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 12172,
+            "text": "Up to what design stage is covered by this procurement?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Post-occupancy evaluation"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Construction"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Feasibility study"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Design Development Pre-Planning"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Detailed Design Post-Planning"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Technical Design"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 12167,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 10003,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 12178,
+            "text": "The project logic model provides a clear way to think about the essential components of your project, setting the foundations for your evaluation. Complete & upload your [project logic model](https://www.london.gov.uk/sites/default/files/logic_chain.docx)",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10004,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 12169,
+            "text": "Does your project require design work in any of the following areas?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 7,
+                "option": "Graphic design, modelling and visualisation"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Architecture: heritage and conversation"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Architecture: workspace & civic buildings"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Masterplanning and urban design"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public realm and/or landscape design"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and spatial policy"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Architecture: housing and mixed use"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Cultural strategies and public art"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Multiple of the above categories"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 12167,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 10003,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12005,
+            "text": "Do you need to procure design expertise to deliver the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Don't Know"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10002,
+          "appearsOnStatus": "Stage 2",
+          "appearsOnSubStatus": "Draft"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12000,
+            "text": "Does your organisation have experience of delivering capital projects more than £1m in value?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10002
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 12177,
+            "text": "How will you track the impact and legacy of your project in the longer term, after the Good Growth Fund delivery has finished?",
+            "answerType": "FreeText",
+            "maxLength": 1500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10004,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12003,
+            "text": "Provide details of the skills and expertise of the proposed project manager for this project",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "sectionId": 10002
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 12173,
+            "text": "Briefly describe how you will be securing high quality design post-planning consent",
+            "answerType": "FreeText",
+            "maxLength": 2500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 12167,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 10003,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12004,
+            "text": "If you need to appoint new staff or external consultants to manage the project, please provide details of the proposed arrangements",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "optional",
+          "sectionId": 10002,
+          "appearsOnStatus": "Stage 2",
+          "appearsOnSubStatus": "Draft"
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 10004,
+          "displayOrder": 3,
+          "text": "Evaluation"
+        },
+        {
+          "externalId": 10003,
+          "displayOrder": 2,
+          "text": "Design"
+        },
+        {
+          "externalId": 10002,
+          "displayOrder": 1,
+          "text": "Project Management"
+        }
+      ],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Supporting Information",
+      "block": "Questions",
+      "displayOrder": 14,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12162,
+            "text": "Option to submit a link to a video demonstrating community support for your project\n",
+            "answerType": "FreeText",
+            "maxLength": 2500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "optional",
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12161,
+            "text": "Other supporting information",
+            "answerType": "FreeText",
+            "maxLength": 2500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12160,
+            "text": "Letters of support",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 5,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12159,
+            "text": "Design documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxUploadSizeInMb": 5,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "optional"
+        }
+      ],
+      "sections": [],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Additional Project Elements",
+      "block": "Questions",
+      "displayOrder": 16,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12012,
+            "text": "Project element post code",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12100,
+            "text": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12154,
+            "text": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 12139,
+            "text": "Describe any remaining project elements in the text box below",
+            "answerType": "FreeText",
+            "maxLength": 7000,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12033,
+            "text": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12056,
+            "text": "Which of the following project types best describes this element?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 10,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Air quality enhancements"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Public realm and green spaces"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community centres and social infrastructure"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public events and engagement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Street markets and shops"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Cultural venues"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Employment, skills and training programmes"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and research"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Workspace"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12156,
+            "text": "Which of the following options best describes this part of the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Improvement of an existing facility/service"
+              },
+              {
+                "displayOrder": 2,
+                "option": "New facility/service"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Safeguarding of an existing facility/service"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12099,
+            "text": "Which of the following project types best describes this element?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 10,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Air quality enhancements"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Public realm and green spaces"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community centres and social infrastructure"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public events and engagement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Street markets and shops"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Cultural venues"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Employment, skills and training programmes"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and research"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Workspace"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12098,
+            "text": "Project element post code",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12119,
+            "text": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12152,
+            "text": "Project element post code",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12077,
+            "text": "Which of the following options best describes this part of the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Improvement of an existing facility/service"
+              },
+              {
+                "displayOrder": 2,
+                "option": "New facility/service"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Safeguarding of an existing facility/service"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12155,
+            "text": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12151,
+            "text": "Project element name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12034,
+            "text": "Which of the following options best describes this part of the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Improvement of an existing facility/service"
+              },
+              {
+                "displayOrder": 2,
+                "option": "New facility/service"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Safeguarding of an existing facility/service"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12095,
+            "text": "If your application to the Good Growth Fund is successful, how long will this element of the project be in operation?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Permanent: 10+ years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Meanwhile: 1-5 years"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Long term: 5-10 years"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Temporary: 0-1 years"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12055,
+            "text": "Project element post code",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12044,
+            "text": "What stage of development is this element of the project currently at?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Pre-feasibility"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Planning approved"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Ready to deliver"
+              },
+              {
+                "displayOrder": 13,
+                "option": "In delivery / under construction"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Detailed design"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Outline business case"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Early stage feasibility"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Planning submitted"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Technical design"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Initial feasibility"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Contractor procurement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Detailed delivery planning "
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12057,
+            "text": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12157,
+            "text": "What stage of development is this element of the project currently at?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Pre-feasibility"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Planning approved"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Ready to deliver"
+              },
+              {
+                "displayOrder": 13,
+                "option": "In delivery / under construction"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Detailed design"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Outline business case"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Early stage feasibility"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Planning submitted"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Technical design"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Initial feasibility"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Contractor procurement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Detailed delivery planning "
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12129,
+            "text": "What stage of development is this element of the project currently at?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Pre-feasibility"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Planning approved"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Ready to deliver"
+              },
+              {
+                "displayOrder": 13,
+                "option": "In delivery / under construction"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Detailed design"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Outline business case"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Early stage feasibility"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Planning submitted"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Technical design"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Initial feasibility"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Contractor procurement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Detailed delivery planning "
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12011,
+            "text": "Project element name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12013,
+            "text": "Which of the following project types best describes this element?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 10,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Air quality enhancements"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Public realm and green spaces"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community centres and social infrastructure"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public events and engagement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Street markets and shops"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Cultural venues"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Employment, skills and training programmes"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and research"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Workspace"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12120,
+            "text": "Which of the following options best describes this part of the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Improvement of an existing facility/service"
+              },
+              {
+                "displayOrder": 2,
+                "option": "New facility/service"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Safeguarding of an existing facility/service"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12097,
+            "text": "Project element name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12054,
+            "text": "Project element name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12138,
+            "text": "If your application to the Good Growth Fund is successful, how long will this element of the project be in operation?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Permanent: 10+ years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Meanwhile: 1-5 years"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Long term: 5-10 years"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Temporary: 0-1 years"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12076,
+            "text": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12014,
+            "text": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12052,
+            "text": "If your application to the Good Growth Fund is successful, how long will this element of the project be in operation?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Permanent: 10+ years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Meanwhile: 1-5 years"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Long term: 5-10 years"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Temporary: 0-1 years"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12153,
+            "text": "Which of the following project types best describes this element?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 10,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Air quality enhancements"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Public realm and green spaces"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community centres and social infrastructure"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public events and engagement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Street markets and shops"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Cultural venues"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Employment, skills and training programmes"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and research"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Workspace"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12089,
+            "text": "What stage of development is this element of the project currently at?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Pre-feasibility"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Planning approved"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Ready to deliver"
+              },
+              {
+                "displayOrder": 13,
+                "option": "In delivery / under construction"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Detailed design"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Outline business case"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Early stage feasibility"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Planning submitted"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Technical design"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Initial feasibility"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Contractor procurement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Detailed delivery planning "
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12158,
+            "text": "If your application to the Good Growth Fund is successful, how long will this element of the project be in operation?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Permanent: 10+ years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Meanwhile: 1-5 years"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Long term: 5-10 years"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Temporary: 0-1 years"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "hidden",
+          "sectionId": 120
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 117,
+          "displayOrder": 1,
+          "text": "Project Element 1"
+        },
+        {
+          "externalId": 119,
+          "displayOrder": 3,
+          "text": "Project Element 3"
+        },
+        {
+          "externalId": 118,
+          "displayOrder": 2,
+          "text": "Project Element 2"
+        },
+        {
+          "externalId": 120,
+          "displayOrder": 4,
+          "text": "Project Element 4"
+        }
+      ],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "FundingTemplateBlock",
+      "blockDisplayName": "Budget",
+      "block": "Funding",
+      "displayOrder": 7,
+      "paymentSourcesString": "",
+      "startYear": 2019,
+      "yearAvailableTo": 5,
+      "defaultActivityName": "Projected cost",
+      "activitiesRequired": true,
+      "fundingBalanceEnforced": true,
+      "fundingSpendType": "REVENUE_AND_CAPITAL",
+      "showCapitalGLAFunding": true,
+      "showRevenueGLAFunding": false,
+      "showCapitalOtherFunding": true,
+      "showRevenueOtherFunding": true,
+      "multipleBespokeActivitiesEnabled": true,
+      "budgetEvidenceAttachmentEnabled": true,
+      "showMilestones": true,
+      "showCategories": false,
+      "monetaryValueScale": 2,
+      "canClaimActivity": false,
+      "evidenceAttachmentsMandatory": true,
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "ProjectObjectivesTemplateBlock",
+      "blockDisplayName": "Project Aims",
+      "block": "ProjectObjectives",
+      "displayOrder": 3,
+      "paymentSourcesString": "",
+      "objectiveTextSingular": "Aim",
+      "objectiveTextPlural": "Aims",
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "ProjectElementsTemplateBlock",
+      "blockDisplayName": "Project Elements",
+      "block": "ProjectElements",
+      "displayOrder": 4,
+      "paymentSourcesString": "",
+      "minNumberOfEntities": 1,
+      "maxNumberOfEntities": 8,
+      "elementTextSingular": "Project Element",
+      "elementTextPlural": "Project Elements",
+      "projectTypesText": "Which of the following project types best describes this element?",
+      "projectTypes": [
+        {
+          "displayOrder": 10,
+          "option": "Other"
+        },
+        {
+          "displayOrder": 1,
+          "option": "Air quality enhancements"
+        },
+        {
+          "displayOrder": 6,
+          "option": "Public realm and green spaces"
+        },
+        {
+          "displayOrder": 2,
+          "option": "Community centres and social infrastructure"
+        },
+        {
+          "displayOrder": 5,
+          "option": "Public events and engagement"
+        },
+        {
+          "displayOrder": 7,
+          "option": "Street markets and shops"
+        },
+        {
+          "displayOrder": 3,
+          "option": "Cultural venues"
+        },
+        {
+          "displayOrder": 4,
+          "option": "Employment, skills and training programmes"
+        },
+        {
+          "displayOrder": 8,
+          "option": "Urban strategies and research"
+        },
+        {
+          "displayOrder": 9,
+          "option": "Workspace"
+        }
+      ],
+      "guidanceText": "Based on your Project Type choice, refer to your guidance notes and provide the sub-type that best describes this element",
+      "descriptionText": "Briefly describe this element of the project, including how it addresses your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+      "projectClassificationText": "Which of the following options best describes this part of the project?",
+      "projectClassifications": [
+        {
+          "displayOrder": 1,
+          "option": "Improvement of an existing facility/service"
+        },
+        {
+          "displayOrder": 2,
+          "option": "New facility/service"
+        },
+        {
+          "displayOrder": 3,
+          "option": "Safeguarding of an existing facility/service"
+        }
+      ],
+      "projectStagesText": "What stage of development is this element of the project currently at?",
+      "projectStages": [
+        {
+          "displayOrder": 2,
+          "option": "Pre-feasibility"
+        },
+        {
+          "displayOrder": 9,
+          "option": "Planning approved"
+        },
+        {
+          "displayOrder": 12,
+          "option": "Ready to deliver"
+        },
+        {
+          "displayOrder": 13,
+          "option": "In delivery / under construction"
+        },
+        {
+          "displayOrder": 6,
+          "option": "Detailed design"
+        },
+        {
+          "displayOrder": 4,
+          "option": "Outline business case"
+        },
+        {
+          "displayOrder": 5,
+          "option": "Concept design"
+        },
+        {
+          "displayOrder": 1,
+          "option": "Early stage feasibility"
+        },
+        {
+          "displayOrder": 8,
+          "option": "Planning submitted"
+        },
+        {
+          "displayOrder": 10,
+          "option": "Technical design"
+        },
+        {
+          "displayOrder": 3,
+          "option": "Initial feasibility"
+        },
+        {
+          "displayOrder": 11,
+          "option": "Contractor procurement"
+        },
+        {
+          "displayOrder": 7,
+          "option": "Detailed delivery planning "
+        }
+      ],
+      "operationalPeriodText": "How long will this element of the project be in operation?",
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "OtherFundingTemplateBlock",
+      "blockDisplayName": "Match Funding Details",
+      "block": "OtherFunding",
+      "displayOrder": 8,
+      "paymentSourcesString": "Grant",
+      "paymentSources": ["Grant"],
+      "grantTypes": ["Grant"],
+      "entityName": "funding",
+      "fundingSources": [
+        {
+          "fundingSource": "Other",
+          "showFunderName": false,
+          "showDescription": true
+        },
+        {
+          "fundingSource": "Bank Loan",
+          "showFunderName": false,
+          "showDescription": false
+        },
+        {
+          "fundingSource": "Own organisation’s cash reserves/savings",
+          "showFunderName": false,
+          "showDescription": false
+        },
+        {
+          "fundingSource": "Individual Donor",
+          "showFunderName": false,
+          "showDescription": false
+        },
+        {
+          "fundingSource": "Fundraising amount",
+          "showFunderName": false,
+          "showDescription": false
+        },
+        {
+          "fundingSource": "Grant from external organisation",
+          "showFunderName": true,
+          "showDescription": true
+        },
+        {
+          "fundingSource": "In-kind",
+          "showFunderName": false,
+          "showDescription": true
+        }
+      ],
+      "funderNameText": "Funder name",
+      "descriptionText": "Provide details",
+      "amountText": "Match funding amount (£)",
+      "showAmount": true,
+      "securedQuestion": "Is this match funding fully secured?",
+      "showSecuredQuestion": true,
+      "evidenceRequirement": "mandatory",
+      "maxEvidenceAttachments": 3,
+      "maxUploadSizeInMb": 5,
+      "partnersFundingQuestion": "Are you receiving funding from partners to support this project or activity (including in kind contributions)?",
+      "showPartnersFundingQuestion": false,
+      "showOtherFundingDetailsSection": true,
+      "otherFundingDetailQuestion": "Other match funding (update at Stage 2 only if you answered this at Stage 1: use the table above to add further types of funding)",
+      "otherFundingSecureDateQuestion": "Will all your match funding be secured by 31st March 2020?",
+      "otherFundingFinalDateQuestion": "What is the final date when it will all be secured by?",
+      "otherFundingStrategyQuestion": "What is your proposed fundraising strategy for your unsecured match funding? Include details of funding sources and associated dates in your response.",
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "UserDefinedOutputTemplateBlock",
+      "blockDisplayName": "Additional Outputs",
+      "block": "UserDefinedOutput",
+      "displayOrder": 13,
+      "blockAppearsOnStatus": "Stage 2",
+      "paymentSourcesString": "",
+      "definedOutputTextSingular": "User Defined Output",
+      "definedOutputTextPlural": "User Defined Outputs",
+      "minNumberOfEntities": 1,
+      "maxNumberOfEntities": 20,
+      "outputNameText": "Name the output your project will deliver",
+      "outputNameCharacterLimit": "50",
+      "amountToDeliverText": "Specify the amount it will deliver",
+      "amountToDeliverCharacterLimit": "50",
+      "baselineText": "Specify a baseline where appropriate",
+      "baselineCharacterLimit": "100",
+      "baselineRequirement": "optional",
+      "monitorQuestion": "How will you monitor the delivery of this output?",
+      "monitorQuestionCharacterLimit": "1000",
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "DeliveryPartnersTemplateBlock",
+      "blockDisplayName": "Partner Details",
+      "block": "DeliveryPartners",
+      "displayOrder": 15,
+      "paymentSourcesString": "",
+      "entityName": "Partner",
+      "hasDeliveryPartnersTitle": "Are multiple parties involved in delivering this project?",
+      "deliveryPartnerType": "Partner",
+      "retentionFeeThreshold": 10,
+      "availableDeliverableTypes": [
+        "OTHER"
+      ],
+      "deliverableName": "Deliverable",
+      "valueName": "Amount allocated",
+      "feeName": "Retention Fee",
+      "showDeliverables": false,
+      "availableDeliveryPartnerTypes": [
+        "Business Improvement District",
+        "Community interest company",
+        "Charity",
+        "Community benefit society",
+        "Cooperative society",
+        "Housing association",
+        "Limited company",
+        "Local Authority",
+        "Neighbourhood forum",
+        "Other public sector body",
+        "Other"
+      ],
+      "showOrganisationType": true,
+      "organisationTypeColumnName": "type of organisation",
+      "organisationNameColumnText": "name of organisation",
+      "roleColumnText": "their role in the project",
+      "showRoleColumn": true,
+      "ukprnColumnText": "UKPRN",
+      "showUkprnColumn": false,
+      "contractValueColumnText": "Contract Value",
+      "showContractValueColumn": false,
+      "grantTypes": [],
+      "paymentSources": []
+    }
+  ],
+  "internalBlocks": [
+    {
+      "json_type": "InternalAssessmentTemplateBlock",
+      "blockDisplayName": "ASSESSMENT",
+      "type": "Assessment",
+      "displayOrder": 100
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Stage 1",
+    "initialSubStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "MultiAssessment"
+  },
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "mandatory",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "grantTypes": [],
+  "shouldMilestonesBlockShowStatus": false,
+  "allowMonetaryMilestones": false
+}

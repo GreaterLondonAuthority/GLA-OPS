@@ -14,6 +14,13 @@ class IndicativeGrantChangeReport {
   $onInit() {
     let leftBlock = this.GrantService.enhanceIndicativeBlock(this.data.left);
     let rightBlock = this.GrantService.enhanceIndicativeBlock(this.data.right);
+
+    this.blockFields =
+       {
+        left: this.data.left,
+        right: this.data.right,
+        changes: this.data.changes
+      };
     this.reportData = this.GrantService.prepareReportData(leftBlock, rightBlock);
     this.tenuresFields = this.createTenureFields();
     this.totalsFields = this.createTotalsFields();
@@ -23,6 +30,11 @@ class IndicativeGrantChangeReport {
 
     this.addTitleToSummaries(this.reportData.summariesToCompare);
     this.summariesGroups = this.createSummariesGroups();
+  }
+
+  canShowOtherAffordableTenureType(){
+    return (this.blockFields.left && this.blockFields.left.otherAffordableTenureType)
+      || (this.blockFields.right && this.blockFields.right.otherAffordableTenureType);
   }
 
   /**

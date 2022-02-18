@@ -1,0 +1,10 @@
+<gla-overview-block
+  [ngClass]="{'draft': !projectIsActive, 'complete': complete }"
+  [name]="block.blockDisplayName"
+  [blockState]="blockState"
+  [newBlock]="block.newBlock || block.hasUpdates"
+  [banner]="banner"
+  [status]="status"
+  [number]="blockNumber"
+  [icon]="icon">
+</gla-overview-block>

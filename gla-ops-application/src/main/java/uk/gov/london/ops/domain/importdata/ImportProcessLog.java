@@ -7,8 +7,15 @@
  */
 package uk.gov.london.ops.domain.importdata;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  * Created by chris on 20/03/2017.
@@ -18,7 +25,8 @@ public class ImportProcessLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "import_process_log_seq_gen")
-    @SequenceGenerator(name = "import_process_log_seq_gen", sequenceName = "import_process_log_seq", initialValue = 10000, allocationSize = 1)
+    @SequenceGenerator(name = "import_process_log_seq_gen", sequenceName = "import_process_log_seq",
+            initialValue = 10000, allocationSize = 1)
     private Integer id;
 
     @Column(name = "type")

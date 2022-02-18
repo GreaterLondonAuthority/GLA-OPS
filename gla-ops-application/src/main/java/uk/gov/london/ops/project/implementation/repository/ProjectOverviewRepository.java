@@ -15,15 +15,12 @@ public interface ProjectOverviewRepository extends ReadOnlyRepository<ProjectOve
 
     /**
      * This method joins with the project permissions view, to check whether the give username is allowed to access the project.
-     * @param id
-     * @param username
-     * @return
      */
-    @Query(value = "select vpo.* " +
-            "       from v_project_overview vpo " +
-            "       inner join v_project_permissions vpp on vpo.project_id = vpp.project_id " +
-            "       where vpo.project_id = ?1 " +
-            "       and vpp.username = ?2", nativeQuery = true)
+    @Query(value = "select vpo.* "
+            + "       from v_project_overview vpo "
+            + "       inner join v_project_permissions vpp on vpo.project_id = vpp.project_id "
+            + "       where vpo.project_id = ?1 "
+            + "       and vpp.username = ?2", nativeQuery = true)
     ProjectOverview findByIdForUser(Integer id, String username);
 
 }

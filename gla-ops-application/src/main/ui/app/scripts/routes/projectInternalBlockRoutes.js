@@ -7,6 +7,8 @@
  */
 
 angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
+  const INTERNAL_RISK_ENTITY_TYPE  = 'internalRiskBlock';
+  const INTERNAL_QUESTION_ENTITY_TYPE  = 'internalQuestionBlock';
   $stateProvider
     .state('project.internal-risk', {
       url: '/project/:projectId/internal-risk/:blockId',
@@ -19,7 +21,7 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
         },
 
         comments(CommentsService, block) {
-          return CommentsService.getInternalRiskComments(block.id).then(rsp => rsp.data.content);
+          return CommentsService.getInternalComments(block.id, INTERNAL_RISK_ENTITY_TYPE).then(rsp => rsp.data.content);
         },
 
         pageTitle(block) {
@@ -36,6 +38,9 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       resolve: {
         block(AssessmentService, project) {
           return AssessmentService.getInternalAssessmentBlockFromProject(project);
+        },
+        assessments(AssessmentService, project) {
+          return AssessmentService.getAssessmentsPerPage(null, project.id, null, ['InProgress', 'Completed'], null, null, null).then(response => response.data.content);
         },
         assessmentTemplates (AssessmentService, project) {
           return AssessmentService.assessmentTemplatesForUser({programmeId: project.programmeId, templateId: project.templateId}).then(rsp => rsp.data);
@@ -54,12 +59,29 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       controllerAs: '$ctrl',
       resolve: {
         block($stateParams, project) {
-          return _.find(project.internalBlocksSorted, {id: $stateParams.blockId});
+          return _.find(project.internalBlocksSorted, {id: +$stateParams.blockId});
+        },
+        comments(CommentsService, block) {
+          return CommentsService.getInternalComments(block.id, INTERNAL_QUESTION_ENTITY_TYPE).then(rsp => rsp.data.content);
         },
         pageTitle(block) {
           return _.startCase(block.blockDisplayName)
         }
       }
     })
+
+    .state('project.internal-admin', {
+      url: '/project/:projectId/internal-admin/:blockId',
+      template: '<internal-project-admin-block [project]="$resolve.project" [block]="$resolve.block"></internal-project-admin-block>',
+      resolve: {
+        block($stateParams, project) {
+          return _.find(project.internalBlocksSorted, {id: +$stateParams.blockId});
+        },
+        pageTitle(block) {
+          return _.startCase(block.blockDisplayName)
+        }
+      }
+    })
+
 }]);
 

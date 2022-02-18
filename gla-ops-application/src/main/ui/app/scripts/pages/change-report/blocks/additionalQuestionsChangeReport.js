@@ -17,8 +17,8 @@ class AdditionalQuestionsChangeReport {
 
     let arrayData = [];
     let unionQuestions = _.unionBy(
-      this.data.left ? this.data.left.questions : [],
-      this.data.right ? this.data.right.questions : [],
+      this.data.left ? this.QuestionsService.getQuestionsFromBlock(this.data.left) : [],
+      this.data.right ? this.QuestionsService.getQuestionsFromBlock(this.data.right) : [],
       (item) => item.id
     ).sort(this.sortQuestions);
 
@@ -26,8 +26,6 @@ class AdditionalQuestionsChangeReport {
     _.forEach(unionQuestions, (item)=>{
       let leftAnswer = null;
       let rightAnswer = null;
-      let hasParentCondition = this.QuestionsService.hasParentCondition(item);
-      let parentAnswer = null;
 
       let conditionsMet = {
         left: false,
@@ -35,30 +33,12 @@ class AdditionalQuestionsChangeReport {
       };
 
       if(this.showingLeft && this.questionExist(this.data.left.questions, item)){
-        conditionsMet.left = true;
-        if(hasParentCondition) {
-          parentAnswer = _.find(this.data.left.answers, {questionId: item.parentId});
-          if(parentAnswer){
-            conditionsMet.left = (parentAnswer.answer === item.parentAnswerToMatch);
-          } else {
-            conditionsMet.left = false;
-          }
-        }
+        conditionsMet.left = this.QuestionsService.isParentConditionMet(item, this.data.left.questions);
         leftAnswer = _.find(this.data.left.answers, {questionId: item.id});
       }
 
-      parentAnswer =  null;
-
       if(this.showingRight && this.questionExist(this.data.right.questions, item)){
-        conditionsMet.right = true;
-        if(hasParentCondition) {
-          parentAnswer = _.find(this.data.right.answers, {questionId: item.parentId});
-          if(parentAnswer){
-            conditionsMet.right = (parentAnswer.answer === item.parentAnswerToMatch);
-          } else {
-            conditionsMet.right = false;
-          }
-        }
+        conditionsMet.right = this.QuestionsService.isParentConditionMet(item, this.data.right.questions);
         rightAnswer = conditionsMet.right && _.find(this.data.right.answers, {questionId: item.id});
       }
 
@@ -70,19 +50,16 @@ class AdditionalQuestionsChangeReport {
           conditionsMet
         ));
       }
-
     });
 
     this.questions = arrayData;
 
     let self = this;
     this.questionFilter = (value, index, array) => {
-      if(value && value.isHidden){
+      if (value && value.isHidden) {
         return false;
-      } else if(self.QuestionsService.hasParentCondition(value)){
-        return self.QuestionsService.isParentConditionMet(value, array);
-      }else{
-        return true;
+      } else {
+        return self.QuestionsService.isParentConditionMet(value, array)
       }
     }
   }
@@ -164,7 +141,7 @@ class AdditionalQuestionsChangeReport {
     };
   }
   sortQuestions(entity1, entity2) {
-    return entity1.displayOrder - entity2.displayOrder;
+    return entity1.sectionDisplayOrder - entity2.sectionDisplayOrder;
   }
 
   questionExist(questions, question){

@@ -1,0 +1,12 @@
+#Mon Oct 18 16:06:15 BST 2021
+module-resource*?\:checkstyle-suppressions.xml=1110E5C0DB682A99A7622D25070778F667B78A87
+C\:\\Projects\\GLA\\GlaRefresh2021\\refdata-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\refdata\\OutputCategoryConfiguration.java=1634559744359
+C\:\\Projects\\GLA\\GlaRefresh2021\\refdata-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\refdata\\FinanceCategoryStatus.java=1634559744357
+C\:\\Projects\\GLA\\GlaRefresh2021\\refdata-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\refdata\\RefDataService.java=1634559744365
+C\:\\Projects\\GLA\\GlaRefresh2021\\refdata-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\refdata\\OutputType.java=1634559744361
+C\:\\Projects\\GLA\\GlaRefresh2021\\refdata-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\refdata\\TenureType.java=1634559744366
+C\:\\Projects\\GLA\\GlaRefresh2021\\refdata-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\refdata\\MarketType.java=1634559744358
+C\:\\Projects\\GLA\\GlaRefresh2021\\refdata-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\refdata\\CategoryValue.java=1634559744356
+configuration*?=29F960609B4D0AEB40DC1F6A921813F2F2DD781C
+module-resource*?\:checkstyle-xpath-suppressions.xml=B5221F1DDBE676905D565E9E1AD9F0618BC192C9
+C\:\\Projects\\GLA\\GlaRefresh2021\\refdata-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\refdata\\OutputConfigurationGroup.java=1634559744360

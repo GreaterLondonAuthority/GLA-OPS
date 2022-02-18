@@ -1,18 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
 @import "./assets/scss/delete-button-container";
+@import "./assets/scss/loading-mask-container";
 @import "./assets/scss/modal";
 @import "./assets/scss/uib-accordian";
-@import "./assets/scss/tiles-list";
+@import "./assets/scss/tiles";
 @import "./assets/scss/json-editor";
+@import "./assets/scss/multi-panel";
+@import "./assets/scss/pagination";
+@import "./assets/scss/search-container";
+@import "./assets/scss/tooltip";
+@import "./assets/scss/ngx-toastr";
 
 /* Importing Bootstrap SCSS file. */
 //@import '~bootstrap/scss/bootstrap';
 
 @import "~bootstrap/scss/functions";
+//TODO, remove when all scss is bootstrap 4+. Setting $font-size-base to avoid px vs rem in Bootstrap 3 vs 4
+$font-size-base: 1rem; // Assumes the browser default, typically `16px`
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
 //@import "~bootstrap/scss/transitions";
 //@import "~bootstrap/scss/modal";
 @import "~bootstrap/scss/tooltip";
+@import "~bootstrap/scss/card";
 //@import "~bootstrap/scss/dropdown";
+//@import "~bootstrap/scss/nav";
+//@import "~bootstrap/scss/navbar";
+@import "~bootstrap/scss/utilities";
 
+
+@import '~ngx-toastr/toastr-bs4-alert';

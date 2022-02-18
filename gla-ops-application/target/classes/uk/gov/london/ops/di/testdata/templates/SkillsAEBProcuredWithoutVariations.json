@@ -1,0 +1,144 @@
+{
+  "name": "Skills - AEB Procured without funding variations",
+  "author": "Data Initialiser",
+  "blocksEnabled": [
+    {
+      "type": "DeliveryPartnersTemplateBlock",
+      "blockDisplayName": "Subcontracting",
+      "block": "DeliveryPartners",
+      "displayOrder": 2,
+      "entityName": "Subcontractor",
+      "hasDeliveryPartnersTitle": "Does this project have subcontractors?",
+      "question2": "When your subcontracting plan is approved, will you complete all relevant due diligence before delivery starts?",
+      "question3": "Do the subcontractors meet the GLA funding rules?",
+      "question4": "Is your subcontracting funding retention and charges policy up to date and visible on your website?",
+      "question5": "If your total subcontracting contract value is over £100k, do you have an external auditor report?",
+      "deliveryPartnerType": "LearningProvider",
+      "availableDeliverableTypes": ["ADULT_EDUCATION_BUDGET","COMMUNITY_LEARNERS"],
+      "retentionFeeThreshold": 20,
+      "deliverableName": "Provision",
+      "quantityName": "Number of Learners",
+      "valueName": "Amount allocated",
+      "feeName": "Retention Fee",
+      "showDeliverables" : true,
+      "organisationNameColumnText": "Subcontractor",
+      "organisationTypeColumnName": "Org Type",
+      "showOrganisationType": false,
+      "roleColumnText": "Role",
+      "showRoleColumn": false,
+      "ukprnColumnText": "UKPRN",
+      "showUkprnColumn": true,
+      "contractValueColumnText": "Contract Value",
+      "showContractValueColumn": true
+    },
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "block": "Details",
+      "displayOrder": 0
+    },
+    {
+      "type": "LearningGrantTemplateBlock",
+      "blockDisplayName": "Learning Contract",
+      "block": "LearningGrant",
+      "displayOrder": 1,
+      "paymentSourcesString": "Grant",
+      "startYear": 2018,
+      "numberOfYears": 4,
+      "profileTitle": "ALLOCATION PROFILE %",
+      "allocationTitle": "MONTHLY ALLOCATION £",
+      "cumulativeAllocationTitle": "CUMULATIVE ALLOCATION £",
+      "cumulativeEarningsTitle": "CUMULATIVE EARNINGS £",
+      "cumulativePaymentTitle": "CUMULATIVE PAYMENT £",
+      "paymentDueTitle": "PAYMENT DUE £",
+      "grantType": "AEB_PROCURED",
+      "paymentSources": ["Grant"],
+      "grantTypes": ["Grant"],
+      "allocationTypes": ["Delivery", "LearnerSupport"]
+    },
+    {
+      "type": "FundingClaimsTemplateBlock",
+      "blockDisplayName": "Funding Claims",
+      "infoMessage": "All Funding Claims must be completed in line with GLA AEB Procured Funding Rules and supporting evidence must be available",
+      "block": "FundingClaims",
+      "displayOrder": 3,
+      "blockAppearsOnStatus": "Active",
+      "contractTypes" : [
+        "LOT 1","LOT 2"
+      ],
+      "flexibleAllocationThreshold": 15,
+      "periods": [
+        {
+          "period": 6,
+          "text": "Mid Year Claim (R06 Feb)"
+        },
+        {
+          "period": 10,
+          "text": "Year End Claim (R10 Oct)"
+        },
+        {
+          "period": 14,
+          "text": "Final Funding Claim (R14 Oct)"
+        }
+      ],
+      "categories": [
+        {
+          "id": 3,
+          "name": "Learner Support - 19+ Hardship",
+          "displayOrder": 3
+        },
+        {
+          "id": 4,
+          "name": "Learner Support - 20+ Childcare",
+          "displayOrder": 4
+        },
+        {
+          "id": 5,
+          "name": "Learner Support - Residential Access Fund",
+          "displayOrder": 5
+        },
+        {
+          "id": 6,
+          "name": "Learner Support - Administration Expenditure",
+          "displayOrder": 6
+        }
+      ],
+      "newAllocationText" : "New total project allocation (£)",
+      "newAllocationRationaleText" : "Please provide a brief rationale for your request, including amounts for each Priority Axis and allocation type (Delivery or Learner Support).",
+      "newAllocationInfoMessage" : "Annual allocation variation amounts, whether increases or reductions, will only be considered up to a cumulative value of 10% of the lifetime Contract Value."
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Stage 1",
+    "initialSubStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "numberOfProjectAllowedPerOrg": 1,
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "mandatory",
+    "wardIdRequirement": "hidden",
+    "postcodeRequirement": "mandatory",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": "mandatory",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "optional",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "grantTypes": ["Grant"],
+  "allowMonetaryMilestones": false
+}

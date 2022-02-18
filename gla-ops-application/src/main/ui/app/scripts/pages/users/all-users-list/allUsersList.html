@@ -1,0 +1,167 @@
+<div class="all-users-list">
+    <gla-well class="row mbottom20 mtop20 search-container">
+
+      <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column" data-ng-if="$ctrl.filterOptionsAllowed.orgType">
+        <div class="status-box">
+          <label class="text-align-left" for="org-type-filter">Org type</label>
+          <gla-checkbox-filter id="org-type-filter"
+                               [filter-dropdown-items]="$ctrl.organisationTypeOptions"
+                               (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column" data-ng-if="$ctrl.filterOptionsAllowed.role">
+        <div class="status-box">
+          <label class="text-align-left" for="roles-filter">Role</label>
+          <gla-checkbox-filter id="roles-filter"
+                           [filter-dropdown-items]="$ctrl.userRoleOptions"
+                           (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column" data-ng-if="$ctrl.filterOptionsAllowed.userStatus">
+        <div class="status-box">
+          <label class="text-align-left" for="user-status-filter">User Status</label>
+          <gla-checkbox-filter id="user-status-filter"
+                           [filter-dropdown-items]="$ctrl.userStatusOptions"
+                           (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
+        </div>
+      </div>
+
+      <div  class="col-xs-12 col-sm-6 col-md-2 project-status search-column" data-ng-if="$ctrl.filterOptionsAllowed.spendAuthority">
+        <div class="status-box">
+          <label class="text-align-left" for="spend-authority-filter">Spend authority</label>
+          <gla-checkbox-filter id="spend-authority-filter"
+                           [filter-dropdown-items]="$ctrl.spendAuthorityOptions"
+                           (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
+        </div>
+      </div>
+
+      <div class="col-xs-12 col-sm-6 col-md-1 no-padding reset-column">
+        <div class="clear-filter-and-search-box pull-left">
+          <button
+            class="action-buttons action-buttons-reset"
+            data-ng-click="$ctrl.clearFiltersAndSearch()"
+            data-ng-if="$ctrl.searchText || !$ctrl.isDefaultFilterState"><span class="glyphicon glyphicon-remove"></span>Reset all</button>
+        </div>
+      </div>
+    </gla-well>
+
+    <div class="text-center" data-ng-if="!$ctrl.dataLoaded">Loading...</div>
+
+    <div data-ng-if="$ctrl.dataLoaded">
+      <div>
+        <div class="actions-panel pull-left">
+          <span class="bolder">Actions:</span>
+          <button id="add-to-team-button" class="action-buttons"
+                  data-ng-click="$ctrl.addToTeam()"
+                  ng-disabled="!$ctrl.showActions()"><span class="glyphicon glyphicon-user"></span> Add to Team
+          </button>
+        </div>
+
+      </div>
+      <gla-pagination class="top-pagination mtop10"
+                      [(current-page)]="$ctrl.currentPage"
+                      [(items-per-page)]="$ctrl.itemsPerPage"
+                      data-ng-if="$ctrl.users.length"
+                      [number-of-elements]="$ctrl.itemsPerPage"
+                      (on-change)="$ctrl.updateFilters()"
+                      [total-items]="$ctrl.totalItems"></gla-pagination>
+
+      <div class="row mtop20 no-results text-center" data-ng-if="!$ctrl.users.length">
+        0 results match your search. Check your search query and try again.
+      </div>
+
+      <div class="row mtop10" data-ng-if="$ctrl.users.length">
+
+
+
+        <div class="table-responsive">
+          <table class="table table-default table-hover table-bordered table-striped table-selectable-row users2" id="users">
+            <thead class="thead-inverse uppercase">
+            <tr>
+              <th>
+                <div class="checkbox focused checkbox-white-focus" data-ng-class="{checked: $ctrl.allSelected}" data-ng-if="$ctrl.canAddTeams && $ctrl.teams.length > 0">
+                  <input type="checkbox"
+                         aria-label="Select all users"
+                         name="selectInput"
+                         data-ng-model="$ctrl.allSelected"
+                         data-ng-change="$ctrl.onAllCheckboxChange($event)"
+                         data-ng-disabled="$ctrl.readOnly">
+                </div>
+              </th>
+              <th>NAME</th>
+              <th>EMAIL</th>
+              <th>STATUS</th>
+              <th>ORGANISATIONS</th>
+              <th>ORG TYPE</th>
+              <th data-ng-if="$ctrl.isGLASearch">SPEND THRESHOLD</th>
+              <th>ROLES</th>
+              <th ng-if="$ctrl.showAuthorisedSignatory">AUTHORISED SIGNATORY<gla-info-tooltip [help-text]="$ctrl.authorisedSignatoryTooltip"></gla-info-tooltip>
+              </th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody allow-enter class="user-row"
+                   data-ng-click="$ctrl.goToUserProfile(user.userOrgs[0].user.roles[0])"
+                   data-ng-repeat="user in $ctrl.users"
+                   tabindex="0">
+
+              <tr data-ng-repeat="userOrg in user.userOrgs">
+                <td data-ng-class="{'no-border': !userOrg.userRow}">
+                   <span class="checkbox focused no-margin select-user-checkbox"
+                         data-ng-if="userOrg.userRow && user.hasRoleInManagingOrg && $ctrl.canAddTeams && $ctrl.teams.length > 0"
+                         data-ng-class="{'no-border': !userOrg.userRow, checked: user.isSelected}">
+                      <input type="checkbox"
+                             aria-label="Select user"
+                             data-ng-model="user.isSelected"
+                             data-ng-change="$ctrl.onUserCheckboxClick($event)"
+                             data-ng-click="$event.stopPropagation()"
+                             data-ng-disabled="$ctrl.readOnly">
+                    </span>
+                </td>
+                <td data-ng-class="{'no-border': !userOrg.userRow}"><span data-ng-if="userOrg.userRow">{{ userOrg.user.firstName }} {{userOrg.user.lastName}}</span></td>
+                <td data-ng-class="{'no-border': !userOrg.userRow}"><span data-ng-if="userOrg.userRow">{{ userOrg.user.username }}</span></td>
+                <td data-ng-class="{'no-border': !userOrg.userRow}"><span data-ng-if="userOrg.userRow">{{ userOrg.user.enabled ? 'Active' : 'Inactive' }}</span></td>
+                <td>{{ userOrg.name }}</td>
+                <td>{{ userOrg.entityType }}</td>
+                <td data-ng-if="$ctrl.isGLASearch">
+                  <!-- roles[0] because thresholds are per organisation not role? -->
+                  {{ userOrg.roles[0].pending ? (userOrg.roles[0].pendingThreshold | currency:'£':0) : (userOrg.roles[0].approvedThreshold != null ? (userOrg.roles[0].approvedThreshold | currency:'£':0) : ($ctrl.canHaveThreshold(userOrg.roles)?'Not set':'N/A')) }}{{userOrg.roles[0].pending ? ' Pending':''}}
+                </td>
+
+                <td>
+                  <div data-ng-repeat="role in userOrg.roles">{{role.roleDescription}}
+                  </div>
+                </td>
+
+                <td ng-if="$ctrl.showAuthorisedSignatory">
+                  <div data-ng-repeat="role in userOrg.roles">
+                  <input type="checkbox" name="authorised-signatory"
+                         ng-model="role.authorisedSignatory"
+                         ng-disabled="true">
+                  </div>
+                </td>
+
+                <td class="delete-btn-container">
+                  <div data-ng-repeat="role in userOrg.roles">
+                     <delete-button data-ng-click="$ctrl.deleteFromTeam($event, role, userOrg.user)" data-ng-if="$ctrl.canAddTeams && userOrg.entityType === 'Team'">
+                     </delete-button>
+                  </div>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <gla-pagination class="bottom-pagination mtop10"
+                      [(current-page)]="$ctrl.currentPage"
+                      [(items-per-page)]="$ctrl.itemsPerPage"
+                      data-ng-if="$ctrl.users.length"
+                      [number-of-elements]="$ctrl.itemsPerPage"
+                      (on-change)="$ctrl.updateFilters()"
+                      [total-items]="$ctrl.totalItems"></gla-pagination>
+    </div>
+  </div>

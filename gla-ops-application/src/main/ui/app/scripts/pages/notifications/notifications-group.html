@@ -3,6 +3,6 @@
   <li class="notification-repeater"
     ng-repeat="content in $ctrl.notificationsGroup.notifications"
     ng-class="{'notification-read':content.timeRead}">
-      <notification  class="delete-btn-container" content="content" notification-deleted="$ctrl.notificationDeleted()"></notification>
+      <gla-notification  class="delete-btn-container" content="content" notification-deleted="$ctrl.notificationDeleted()"></gla-notification>
   </li>
 </ul>

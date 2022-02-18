@@ -7,6 +7,18 @@
  */
 
 class PermissionsPage {
+
+  $onInit() {
+    this.permissions = this.sortPermissions(this.permissions)
+  }
+
+  sortPermissions(permissions) {
+    return Object.keys(permissions).sort().reduce(function (result, key) {
+      result[key] = permissions[key];
+      return result;
+    }, {});
+  }
+
 }
 
 PermissionsPage.$inject = [];

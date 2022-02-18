@@ -1,0 +1,79 @@
+<div class="template-block-grant-source">
+
+  <div class="form-group radio-button">
+    <label for="nil-grant-hidden">Hide nil grant question (used when the project may eligible for a grant, but the Provider chooses to deliver it using no new grant) </label>
+    <div>
+      <gla-yes-no-input [(model)]="block.nilGrantHidden"
+                        id="nil-grant-hidden"
+                        [disabled]="readOnly || !editable"
+                        name="nilgranthidden"
+                        mode="bool">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group radio-button">
+    <label for="show-description">Show description text</label>
+    <div>
+      <gla-yes-no-input id="show-description"
+                        [disabled]="readOnly || !editable"
+                        name="showdescription"
+                        mode="bool"
+                        [(model)]="block.showDescription">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.showDescription">
+    <div class="form-group">
+      <label for="description">Enter description text</label>
+      <input class="form-control"
+             id="description"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.description"
+             number-mask="0"
+             placeholder="Description text"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group radio-button">
+    <label for="show-total-description">Show grant total description text</label>
+    <div>
+      <gla-yes-no-input id="show-total-description"
+                        [disabled]="readOnly || !editable"
+                        name="showtotaldescription"
+                        mode="bool"
+                        [(model)]="block.showTotalDescription">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.showTotalDescription">
+    <div class="form-group">
+      <label for="total-description">Enter grant total description text</label>
+      <input class="form-control"
+             id="total-description"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.grantTotalText"
+             number-mask="0"
+             placeholder="Grant total description text"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="mtop10 mbottom10" for="grant-types">
+      <gla-markdown [text]="'Grant type'"></gla-markdown>
+    </label>
+    <div *ngIf="!readOnly && editable">
+      <gla-multi-select id="grant-types"
+                        (onChange)="onMultiSelectChange($event, grantTypesOptions)"
+                        [filterDropdownItems]="grantTypesOptions"></gla-multi-select>
+    </div>
+    <div *ngIf="readOnly || !editable">{{block.grantTypes || 'Not provided'}}</div>
+  </div>
+
+</div>

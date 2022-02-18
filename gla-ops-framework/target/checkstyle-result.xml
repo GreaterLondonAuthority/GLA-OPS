@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.29">
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\annotations\LogMetrics.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\annotations\PermissionRequired.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\calendar\AcademicCalendar.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\calendar\CalendarYearType.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\calendar\FinancialCalendar.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\calendar\OPSCalendar.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\clusterlock\ClusterLock.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\clusterlock\ClusterLockRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\clusterlock\ClusterLockService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\ComparableItem.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\di\DataInitialiser.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\di\DataInitialiserModule.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\EntityType.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\enums\ContractWorkflowType.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\enums\GrantType.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\enums\OrganisationContractStatus.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\enums\Requirement.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\environment\DefaultEnvironment.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\environment\Environment.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\environment\EnvironmentUtils.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\exception\DefaultExceptionHandler.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\exception\ForbiddenAccessException.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\exception\NotFoundException.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\exception\ValidationException.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\feature\FeatureStatus.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\jpa\Join.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\jpa\JoinData.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\jpa\JPADateConverter.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\jpa\JPATimeStampConverter.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\jpa\NonJoin.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\jpa\ReadOnlyRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\locking\LockableEntity.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\locking\LockableEntityService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\locking\LockService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\OpsEntity.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\OPSUtils.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\portableentity\PortableEntityProvider.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\portableentity\SanitiseComponent.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\scheduledtask\ScheduledTask.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\scheduledtask\ScheduledTaskRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\scheduledtask\ScheduledTaskService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\scheduledtask\ScheduledTasksInfoContributor.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\framework\security\MockAuthentication.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\permission\PermissionService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\gla-ops-framework\src\main\java\uk\gov\london\ops\permission\PermissionType.java">
+</file>
+</checkstyle>

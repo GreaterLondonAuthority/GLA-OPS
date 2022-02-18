@@ -1,0 +1,131 @@
+<div class="indicative-starts-and-completions">
+
+  <gla-project-header (onBack)="back()" [editableBlock]="$ctrl">{{projectBlock.blockDisplayName}}</gla-project-header>
+
+  <div id="starts-section">
+    <gla-section-header [subheader]="templateBlock.startOnSiteSubheaderText">1. {{templateBlock.startOnSiteHeaderText}}</gla-section-header>
+
+    <div class="row" *ngIf="!readOnly && templateBlock.completionOnlyAvailable">
+        <div class="form-group" >
+          <input [(ngModel)]="projectBlock.completionOnly"
+                 id="completion-only"
+                 name="completion-only"
+                 (change)="updateCompletionOnly()"
+                 type="checkbox">
+          <label class="mleft5 item-label" for="completion-only">Completions Only</label>
+        </div>
+    </div>
+    <div *ngIf="readOnly && projectBlock.completionOnly">Completions Only</div>
+
+    <gla-affordable-homes-table *ngIf="!projectBlock.completionOnly"
+                              [tableSelector]="'indicative-starts-table'"
+                              [tenures]="tenureTypes"
+                              [ofWhichCategories]="templateBlock.ofWhichCategories"
+                              [yearsEnabled]="!templateBlock.yearsDisabled"
+                              [entries]="startOnSiteEntries"
+                              [totals]="startOnSiteTotals"
+                              [readOnly]="readOnly || startsOnSiteLocked"
+                              (onChange)="autoSave()">
+    </gla-affordable-homes-table>
+    <div *ngIf="startsOnSiteLocked" class="lighter">
+      Start on site claimed and authorised on {{projectBlock.startOnSiteMilestoneAuthorised | date: 'dd/MM/yyyy'}}
+    </div>
+
+    <div class="error-wrapper text-center">
+      <div class="error" *ngIf="startOnSiteValidationError">{{startOnSiteValidationError}}</div>
+      <div class="error" *ngIf="ofWhichTotalSosUnitsValidationError">{{ofWhichTotalSosUnitsValidationError}}</div>
+    </div>
+
+  </div>
+
+  <div id="completion-section">
+    <gla-section-header [subheader]="templateBlock.completionSubheaderText">2. {{templateBlock.completionHeaderText}}</gla-section-header>
+    <gla-affordable-homes-table [tableSelector]="'indicative-completion-table'"
+                                                 [tenures]="tenureTypes"
+                                                 [ofWhichCategories]="templateBlock.ofWhichCategories"
+                                                 [yearsEnabled]="!templateBlock.yearsDisabled"
+                                                 [entries]="completionEntries"
+                                                 [totals]="completionTotals"
+                                                 [readOnly]="readOnly || completionsLocked"
+                                                 (onChange)="autoSave()">
+    </gla-affordable-homes-table>
+    <div *ngIf="completionsLocked" class="lighter">
+      Completions claimed and authorised on {{projectBlock.completionMilestoneAuthorised | date: 'dd/MM/yyyy'}}
+    </div>
+    <div class="text-center error-wrapper">
+      <div class="error" *ngIf="completionValidationError">{{completionValidationError}}</div>
+      <div class="error" *ngIf="startOnSiteMatchingCompletionValidationError">{{startOnSiteMatchingCompletionValidationError}}</div>
+      <div class="error" *ngIf="ofWhichTotalCompletionUnitsValidationError">{{ofWhichTotalCompletionUnitsValidationError}}</div>
+    </div>
+  </div>
+
+  <div id="amount-requested-section">
+    <gla-section-header>3. Amount Requested and Total Scheme Costs by Tenure Type</gla-section-header>
+    <div class="mtop10 form-group" *ngIf="showNilGrantCheckbox()" >
+      <input [(ngModel)]="projectBlock.zeroGrantRequested"
+             id="zero-grant-requested"
+             aria-label="No Grant Requested"
+             name="zero-grant-requested"
+             [disabled]="readOnly"
+             (change)="updateGrantRequestedValue()"
+             type="checkbox">
+      <label class="mleft5 item-label" for="zero-grant-requested">£0 amount requested (nil grant)</label>
+    </div>
+
+    <gla-indicative-grant-requested-table [tenures]="tenureTypes"
+                                          [grantTypes]="templateBlock.grantTypes"
+                                          [entries]="projectBlock.grantRequestedEntries"
+                                          [totals]="projectBlock.grantRequestedTotals"
+                                          [zeroGrantRequested]="projectBlock.zeroGrantRequested"
+                                          [readOnly]="readOnly"
+                                          [completionOnly]="projectBlock.completionOnly"
+                                          (onChange)="autoSave()">
+    </gla-indicative-grant-requested-table>
+    <div *ngIf="templateBlock.grantRequestedQuestion">
+      <h4 class="mtop20">
+        {{templateBlock.grantRequestedQuestion}}
+      </h4>
+      <textarea id="reason" aria-label="Grant Requested Answer" rows="5" name="grantRequestedAnswer"
+                [disabled]="readOnly" class="form-control" [(ngModel)]="projectBlock.grantRequestedAnswer"
+                placeholder=""
+                *ngIf="!readOnly"
+                [maxLength]="templateBlock.grantRequestedQuestionMaxLength || 1000" (blur)="autoSave()"></textarea>
+      <span *ngIf="readOnly">{{projectBlock.grantRequestedAnswer}}</span>
+    </div>
+  </div>
+
+  <div id="scheme-costs-section">
+    <gla-section-header>4. Scheme Costs</gla-section-header>
+    <gla-indicative-costs-and-contributions-table
+      (onChange)="autoSave()"
+      [validationFailures]="projectBlock.validationFailures"
+      [readOnly]="readOnly"
+      [costs]="costs"
+      [total]="totalCosts">
+    </gla-indicative-costs-and-contributions-table>
+  </div>
+
+  <div id="scheme-contributions-section">
+    <gla-section-header>5. Scheme Contributions</gla-section-header>
+    <gla-indicative-costs-and-contributions-table
+      (onChange)="autoSave()"
+      [readOnly]="readOnly"
+      [contributions]="contributions"
+      [total]="totalContributions">
+    </gla-indicative-costs-and-contributions-table>
+
+  </div>
+
+  <div id="summary-section">
+    <gla-section-header>6. Summary</gla-section-header>
+    <gla-indicative-costs-and-contributions-summary
+      [summaryTotals]="summaryTotals"
+      [validationFailures]="projectBlock.validationFailures"
+      [grantTypes]="templateBlock.grantTypes"
+      [grantRequestedTotals]="grantRequestedTotals"
+      [totalCostsPercentage]="totalCostsPercentage"
+    ></gla-indicative-costs-and-contributions-summary>
+
+  </div>
+
+</div>

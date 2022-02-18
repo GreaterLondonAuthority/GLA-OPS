@@ -7,12 +7,12 @@
  */
 package uk.gov.london.ops.framework.feature;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import uk.gov.london.ops.user.domain.User;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.time.OffsetDateTime;
 
 @Entity(name = "feature")
@@ -32,13 +32,14 @@ public class FeatureEntity {
     @Column(name = "created_on", updatable = false)
     private OffsetDateTime createdOn;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "modified_by")
-    private User modifier;
+    @Column(name = "modified_by")
+    private String modifiedBy;
 
     @Column(name = "modified_on")
     private OffsetDateTime modifiedOn;
+
+    @Transient
+    private String modifiedByName;
 
     public FeatureEntity() {}
 
@@ -84,16 +85,11 @@ public class FeatureEntity {
     }
 
     public String getModifiedBy() {
-        return modifier != null ? modifier.getUsername() : null;
+        return modifiedBy;
     }
 
-    public void setModifiedBy(User modifier) {
-        this.modifier = modifier;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public String getModifiedByName() {
-        return modifier != null ? modifier.getFullName() : null;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public OffsetDateTime getModifiedOn() {
@@ -102,6 +98,14 @@ public class FeatureEntity {
 
     public void setModifiedOn(OffsetDateTime modifiedOn) {
         this.modifiedOn = modifiedOn;
+    }
+
+    public String getModifiedByName() {
+        return modifiedByName;
+    }
+
+    public void setModifiedByName(String modifiedByName) {
+        this.modifiedByName = modifiedByName;
     }
 
 }

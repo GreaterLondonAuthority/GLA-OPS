@@ -1,0 +1,16 @@
+uk\gov\london\ops\notification\EmailSummary.class
+uk\gov\london\ops\notification\NotificationServiceImpl$1.class
+uk\gov\london\ops\notification\implementation\repository\EntitySubscriptionRepository.class
+uk\gov\london\ops\notification\NotificationEntity.class
+uk\gov\london\ops\notification\implementation\repository\EmailSummaryPredicateBuilder.class
+uk\gov\london\ops\notification\EmailServiceImpl.class
+uk\gov\london\ops\notification\NotificationAPI.class
+uk\gov\london\ops\notification\EmailServiceImpl$EmailSendingResults.class
+uk\gov\london\ops\notification\EntitySubscriptionEntity.class
+uk\gov\london\ops\notification\QEmailSummary.class
+uk\gov\london\ops\notification\NotificationServiceImpl.class
+uk\gov\london\ops\notification\implementation\NotificationTypesDataInitialiser.class
+uk\gov\london\ops\notification\EmailEntity.class
+uk\gov\london\ops\notification\NotificationTypeEntity.class
+uk\gov\london\ops\notification\UserNotificationEntity.class
+uk\gov\london\ops\notification\implementation\repository\EmailSummaryRepository.class

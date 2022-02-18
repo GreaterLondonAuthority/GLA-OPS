@@ -7,19 +7,15 @@
  */
 package uk.gov.london.ops.project.block;
 
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.ReportPrefix;
+import org.springframework.util.StringUtils;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-import org.springframework.util.StringUtils;
-import uk.gov.london.ops.framework.jpa.Join;
-import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import java.util.Objects;
 
 /**
  * Created by chris on 10/11/2016.
@@ -30,10 +26,6 @@ import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
         joinType = Join.JoinType.OneToOne,
         comment = "the design standards block is a subclass of the project block and shares a common key")
 public class DesignStandardsBlock extends NamedProjectBlock {
-
-    public static final String MEETING_DESIGN_GUIDE_PARAM = ReportPrefix.ds_.name() + "meeting_design_guide";
-    public static final String REASON_NOT_MEETING_DESIGN_GUIDE_PARAM =
-            ReportPrefix.ds_.name() + "reason_not_meeting_design_guide";
 
     @Column(name = "meeting_design_guide")
     private Boolean meetingLondonHousingDesignGuide;
@@ -92,19 +84,6 @@ public class DesignStandardsBlock extends NamedProjectBlock {
     @Override
     public boolean isComplete() {
         return isVisited() && getValidationFailures().size() == 0;
-    }
-
-    public Map<String, Object> simpleDataExtract(SimpleProjectExportConfig simpleProjectExportConfig) {
-        HashMap<String, Object> data = new HashMap<>();
-        if (this.getMeetingLondonHousingDesignGuide() != null) {
-            data.put(MEETING_DESIGN_GUIDE_PARAM,
-                    this.getMeetingLondonHousingDesignGuide() ? "YES" : "NO");
-            if (!this.getMeetingLondonHousingDesignGuide()) {
-                data.put(REASON_NOT_MEETING_DESIGN_GUIDE_PARAM,
-                        this.getReasonForNotMeetingDesignGuide());
-            }
-        }
-        return data;
     }
 
     @Override

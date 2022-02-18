@@ -1,0 +1,59 @@
+<div class="page email-reports">
+  <div class="text-center">
+    <gla-page-header hideBackBtn="true" class="mbottom10">Email Status Reports</gla-page-header>
+  </div>
+
+  <gla-well class="row email-list-actions mbottom10 search-container">
+    <div class="col-md-5 search-column">
+      <gla-search-field [options]="searchOptions"
+                        [(selectedOption)]="selectedSearchOption"
+                        [(searchText)]="searchText"
+                        (onSelect)="select(selectedSearchOption)"
+                        (onSearch)="getEmails()"
+                        (onClear)="clearSearchText()"></gla-search-field>
+    </div>
+  </gla-well>
+
+  <gla-pagination class="bottom-pagination" *ngIf="emails.length"
+                  [(currentPage)]="currentPage"
+                  [(itemsPerPage)]="itemsPerPage"
+                  [totalItems]="totalItems"
+                  [numberOfElements]="itemsPerPage"
+                  [showItemsPerPageDropdown]="true"
+                  (onChange)="getEmails()"></gla-pagination>
+
+  <div *ngIf="!emails.length && searchText" class="no-emails-message">
+    <span>0 results match your search. Check your search query and try again.</span>
+  </div>
+
+  <div class="table-responsive mtop20 email-reports-table">
+    <div *ngIf="!emails.length && !searchText" class="empty-table">Not provided</div>
+
+    <table *ngIf="emails.length" class="table table-hover table-bordered">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>Recipient</th>
+        <th>Subject</th>
+        <th>Body</th>
+        <th>Date Sent</th>
+        <th>Status</th>
+        <th>Attempts</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr>
+        <td colspan="6" *ngIf="!emails.length && !searchText">No emails</td>
+      </tr>
+      <tr class="cursor-pointer" *ngFor="let email of emails">
+        <td>{{email.recipient}}</td>
+        <td>{{email.subject}}</td>
+        <td>{{email.body}}</td>
+        <td>{{email.date | date: 'dd/MM/yyyy HH:mm'}}</td>
+        <td>{{email.status}}</td>
+        <td>{{email.attempts}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

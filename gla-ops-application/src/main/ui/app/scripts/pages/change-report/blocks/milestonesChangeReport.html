@@ -12,10 +12,10 @@
   </change-report-field-lookup>
 
 
-  <change-report-table
-    show-no-element-message="!!$ctrl.data.right"
-    rows="$ctrl.milestonesToCompare"
-    fields="$ctrl.fields"
-    changes="$ctrl.data.changes">
-  </change-report-table>
+  <gla-change-report-table
+    [show-no-element-message]="!!$ctrl.data.right"
+    [rows]="$ctrl.milestonesToCompare"
+    [fields]="$ctrl.fields"
+    [changes]="$ctrl.data.changes">
+  </gla-change-report-table>
 </div>

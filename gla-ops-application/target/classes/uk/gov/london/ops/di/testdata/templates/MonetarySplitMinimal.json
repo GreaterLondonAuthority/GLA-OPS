@@ -1,0 +1,70 @@
+{
+  "name": "Minimal Monetary Value",
+  "author": "CM",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1
+    },
+    {
+      "block": "GrantSource",
+      "type": "GrantSourceTemplateBlock",
+      "questions": [],
+      "sections": [],
+      "blockDisplayName": "Grant Source",
+      "displayOrder": 2,
+      "nilGrantHidden": false,
+      "showDescription": false,
+      "showTotalDescription": false,
+      "grantTypes": [
+        "Grant"
+      ]
+    },
+    {
+      "block": "Milestones",
+      "type": "MilestonesTemplateBlock",
+      "questions": [],
+      "sections": [],
+      "blockDisplayName": "Milestones",
+      "displayOrder": 3,
+      "showMilestoneStatus": true,
+      "autoCalculateMilestoneState": true,
+      "processingRoutes": [
+        {
+          "name": "default",
+          "displayOrder": 1,
+          "milestones": [
+            {
+              "summary": "M1",
+              "displayOrder": 1,
+              "externalId" : 12001,
+              "requirement": "mandatory",
+              "keyEvent": false,
+              "monetary": true,
+              "monetarySplit": null,
+              "naSelectable": false
+            },
+            {
+              "summary": "M2",
+              "displayOrder": 2,
+              "requirement": "mandatory",
+              "keyEvent": false,
+              "monetary": true,
+              "monetarySplit": null,
+              "naSelectable": false
+            }
+          ],
+          "monetarySplitValid": false
+        }
+      ],
+      "evidenceApplicability": "NOT_APPLICABLE"
+    }
+  ],
+  "stateModel": {
+    "name": "ChangeControlled"
+  },
+  "milestoneType": "MonetaryValue",
+  "detailsConfig": {}
+}

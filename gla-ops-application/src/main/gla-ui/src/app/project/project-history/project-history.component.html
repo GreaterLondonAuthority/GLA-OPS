@@ -1,0 +1,28 @@
+<div class="projectHistory history-accordion">
+  <ngb-accordion #acc="ngbAccordion" (panelChange)="onPanelChange($event)" animation="true">
+    <ngb-panel id="p1">
+      <ng-template ngbPanelTitle>
+        Project History&nbsp;
+        <i id="accordion" class="glyphicon"
+           [ngClass]="{'glyphicon-triangle-top': isPanelOpen, 'glyphicon-triangle-bottom': !isPanelOpen}">
+        </i>
+      </ng-template>
+
+      <ng-template ngbPanelContent>
+        <div class="row content" id="content">
+          <div class="col-xs-12 history-comments">
+            <ng-container *ngFor="let item of items; index as i">
+              <div *ngIf="item.transition != 'Unconfirmed'">
+                <div class="text-left lighter" id="metadata-{{i}}">
+                  {{formatDate(item.createdOn)}} {{item.description || transitionMap[item.transition] || item.transition}} by {{ item.creatorName}}
+                </div>
+                <div class="text-left">{{item.comments}}</div>
+                <hr/>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+</div>

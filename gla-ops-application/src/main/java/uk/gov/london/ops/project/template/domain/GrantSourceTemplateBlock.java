@@ -7,17 +7,20 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
-import static uk.gov.london.ops.payment.PaymentSource.DPF;
-import static uk.gov.london.ops.payment.PaymentSource.GRANT;
-import static uk.gov.london.ops.payment.PaymentSource.RCGF;
+import java.util.stream.Collectors;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
+import uk.gov.london.ops.framework.JSONUtils;
+import uk.gov.london.ops.project.block.ProjectBlockType;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import uk.gov.london.ops.project.block.ProjectBlockType;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import static uk.gov.london.ops.refdata.PaymentSourceKt.*;
 
 @Entity
 @DiscriminatorValue("GRANT_SOURCE")
@@ -28,11 +31,17 @@ public class GrantSourceTemplateBlock extends TemplateBlock {
     @Column(name = "nil_grant_hidden")
     private boolean nilGrantHidden;
 
+    @Transient
+    private boolean showDescription = true;
+
     @Column(name = "grant_description")
-    private String description;
+    private String description = "Select and enter the amount from each grant source";
+
+    @Transient
+    private boolean showTotalDescription = true;
 
     @Column(name = "grant_total_text")
-    private String grantTotalText;
+    private String grantTotalText = "You can request any amount up to";
 
     public GrantSourceTemplateBlock() {
         super(ProjectBlockType.GrantSource);
@@ -50,15 +59,12 @@ public class GrantSourceTemplateBlock extends TemplateBlock {
         this.nilGrantHidden = nilGrantHidden;
     }
 
-
     public Set<String> getGrantTypes() {
         Set<String> grantTypes = super.getGrantTypes();
         if (grantTypes.isEmpty()) {
             grantTypes = all_grant_types;
         }
         return grantTypes;
-
-
     }
 
     public String getDescription() {
@@ -77,13 +83,44 @@ public class GrantSourceTemplateBlock extends TemplateBlock {
         this.grantTotalText = grantTotalText;
     }
 
+    public boolean isShowDescription() {
+        return showDescription;
+    }
+
+    public void setShowDescription(boolean showDescription) {
+        this.showDescription = showDescription;
+    }
+
+    public boolean isShowTotalDescription() {
+        return showTotalDescription;
+    }
+
+    public void setShowTotalDescription(boolean showTotalDescription) {
+        this.showTotalDescription = showTotalDescription;
+    }
+
+    @PostLoad
+    void loadBlockData() {
+        GrantSourceTemplateBlock data = JSONUtils.fromJSON(this.blockData, GrantSourceTemplateBlock.class);
+        if (data != null) {
+            this.setNilGrantHidden(data.isNilGrantHidden());
+            this.setShowDescription(data.isShowDescription());
+            this.setDescription(data.getDescription());
+            this.setShowTotalDescription(data.isShowTotalDescription());
+            this.setGrantTotalText(data.getGrantTotalText());
+            this.setGrantTypes(data.getGrantTypes().stream().collect(Collectors.toList()));
+        }
+    }
+
 
     @Override
     public void updateCloneFromBlock(TemplateBlock clone) {
         GrantSourceTemplateBlock gsb = (GrantSourceTemplateBlock) clone;
         gsb.setNilGrantHidden(this.isNilGrantHidden());
+        gsb.setShowDescription(this.isShowDescription());
         gsb.setDescription(this.getDescription());
+        gsb.setShowTotalDescription(this.isShowTotalDescription());
         gsb.setGrantTotalText(this.getGrantTotalText());
-
+        gsb.setGrantTypes(this.getGrantTypes().stream().collect(Collectors.toList()));
     }
 }

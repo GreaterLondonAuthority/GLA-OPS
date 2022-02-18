@@ -26,11 +26,10 @@ class OrganisationCtrl {
 
   $onInit(){
     this.readOnly = true;
-
     this.setData(this.organisation);
     this.isManagingOrganisation = this.org ? this.org.entityType === 1 : false;
     this.isTeamOrganisation = this.org ? this.org.entityType === 8 : false;
-    this.imsNumberLabel = this.OrganisationService.getImsLabel(this.org);
+    this.isDeprecatedOrgType = this.org ? (this.org.entityType === 3 || this.org.entityType === 6 || this.org.entityType === 7) : false;
     this.orgEntityName = this.isTeamOrganisation ? 'Team' : 'Organisation';
     this.initDisplayFieldsFlags();
 
@@ -43,7 +42,8 @@ class OrganisationCtrl {
       governance: false,
       programmes: false,
       contracts: false,
-      grant: false
+      grant: false,
+      teamMembers:false
     };
 
     if (this.$stateParams.backNavigation) {
@@ -63,8 +63,9 @@ class OrganisationCtrl {
     this.displaySapId = !this.isTeamOrganisation && this.UserService.hasPermission('org.view.vendor.sap.id', this.$state.params.orgId);
     this.displayTeam = !this.isManagingOrganisation && !this.isTeamOrganisation;
     this.displayGLAContact = !this.isTeamOrganisation;
-    this.displayAllowRegistrations = this.isManagingOrganisation || this.isTeamOrganisation;
-    this.displayAccessToSGW = this.isManagingOrganisation || this.isTeamOrganisation;
+    this.displayAllowRegistrations = this.isManagingOrganisation;
+    this.displayAccessToSGW = this.isManagingOrganisation;
+    this.displayRegistration = this.showUsers && !this.isTeamOrganisation;
   }
 
   onCollapseChange() {
@@ -105,12 +106,25 @@ class OrganisationCtrl {
     });
   }
 
+  canApprove() {
+    return this.org.status === 'Pending' || this.org.status === 'Inactive' || this.org.status === 'Rejected'
+  }
+
   approveOrg() {
     let isInactive = this.org.status === 'Inactive';
+    let isRejected = this.org.status === 'Rejected';
+    let title = 'Approve Organisation';
     let message;
+    let isInfo = true;
+    let userCommentRequired = false;
 
     if(isInactive){
       message = `Are you sure you want this organisation to be active?`;
+    } else if (isRejected) {
+      title = 'Approve a Previously Rejected Organisation';
+      message = `Add a comment explaining why the organisation is now being approved after previously being rejected`;
+      isInfo = false;
+      userCommentRequired = true;
     } else{
       let users = this.users.filter(u => u.currentOrgRole.name === 'ROLE_ORG_ADMIN').map(u => `${u.firstName} ${u.lastName} (${u.username})`).join()
       message = `<p>${users} has requested this organisation registration.</p>
@@ -118,19 +132,25 @@ class OrganisationCtrl {
     }
 
     let modal = this.ConfirmationDialog.show({
+      title: title,
       message: message,
       approveText: 'APPROVE',
-      showDismiss: false,
-      info: true
+      dismissText: 'CANCEL',
+      info: isInfo,
+      userCommentRequired: userCommentRequired
     });
 
     modal.result
-      .then(() => {
+      .then((userComment) => {
         this.$rootScope.showGlobalLoadingMask = true;
-        this.OrganisationService.approveOrganisation(this.org.id).then((resp) => {
+        this.OrganisationService.approveOrganisation(this.org.id, userComment).then((resp) => {
           this.refreshDetails().then(()=>{
-            this.ToastrUtil.success(isInactive? 'Organisation approved' : 'Organisation & Org Admin approved');
+            this.ToastrUtil.success((isInactive || isRejected)? 'Organisation approved' : 'Organisation & Org Admin approved');
           });
+        })
+        .catch(err => {
+          let errMessage = (err.data || {}).description || 'Failed to save';
+          this.ConfirmationDialog.warn(errMessage);
         });
       });
   }
@@ -190,6 +210,27 @@ class OrganisationCtrl {
     }
   }
 
+  isFieldVisible(fieldName) {
+    if (!this.org.entityType) {
+      return false;
+    }
+
+    let template = _.find(this.organisationTemplates, {id: this.org.entityType});
+    if (template) {
+      let orgDetailsBlock = _.find(template.blocks, {blockName: 'Organisation Details'});
+      this.orgDetailsQuestions = orgDetailsBlock.questions;
+    } else {
+      return false;
+    }
+
+    let fieldConfig = _.find(this.orgDetailsQuestions, {modelAttribute: fieldName}) || {};
+    if (fieldConfig.parentModel != null) {
+      return this.isParentAnswered(fieldConfig.parentModel, fieldConfig.parentAnswerToMatch);
+    } else if (fieldConfig.requirement === 'mandatory' || fieldConfig.requirement === 'optional') {
+      return true;
+    }
+  }
+
 }
 
 OrganisationCtrl.$inject = ['$rootScope', '$state', '$stateParams', '$log', 'OrganisationService', 'UserService', 'ConfirmationDialog', 'ToastrUtil', 'SessionService', 'OrganisationRejectModal', 'OrganisationInactiveModal'];
@@ -205,6 +246,7 @@ angular.module('GLA')
       remainingYears: '<',
       showDuplicateOrgAsLink: '<',
       legalStatuses: '<',
+      organisationTemplates: '<'
     },
     controller: OrganisationCtrl,
   });

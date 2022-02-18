@@ -7,12 +7,9 @@
  */
 package uk.gov.london.ops.project.state;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import org.apache.commons.lang3.EnumUtils;
+
+import javax.persistence.*;
 
 @Entity(name = "project_state")
 public class ProjectStateEntity {
@@ -89,7 +86,7 @@ public class ProjectStateEntity {
     }
 
     public static ProjectStatus getStatusType(String statusName, String subStatusName) {
-        ProjectStateEntity projectStateEntity = ProjectStateService.find(statusName, subStatusName);
+        ProjectStateEntity projectStateEntity = ProjectStateServiceImpl.find(statusName, subStatusName);
 
         if (projectStateEntity != null) {
             return projectStateEntity.getStatusType();
@@ -115,7 +112,7 @@ public class ProjectStateEntity {
     }
 
     public static ProjectSubStatus getSubStatusType(String statusName, String subStatusName) {
-        ProjectStateEntity projectStateEntity = ProjectStateService.find(statusName, subStatusName);
+        ProjectStateEntity projectStateEntity = ProjectStateServiceImpl.find(statusName, subStatusName);
 
         if (projectStateEntity != null) {
             return projectStateEntity.getSubStatusType();

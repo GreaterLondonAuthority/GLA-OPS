@@ -26,14 +26,19 @@ class PasteAssessmentTemplateCtrl {
   }
 
   onManagingOrganisation(selectedOrg) {
-    this.assessmentTemplate.managingOrganisation = selectedOrg;
+    this.assessmentTemplate.managingOrganisationId = selectedOrg.id;
+    this.assessmentTemplate.managingOrganisationName = selectedOrg.name;
   }
 
   paste() {
+    if (!navigator.clipboard) {
+      alert('Clipboard access is disabled');
+      return;
+    }
     navigator.clipboard.readText().then(json => {
       let jsonObj = JSON.parse(json);
-      jsonObj.managingOrganisationId = this.assessmentTemplate.managingOrganisation.id;
-      jsonObj.managingOrganisationName = this.assessmentTemplate.managingOrganisation.name;
+      jsonObj.managingOrganisationId = this.assessmentTemplate.managingOrganisationId;
+      jsonObj.managingOrganisationName = this.assessmentTemplate.managingOrganisationName;
       jsonObj.name = this.assessmentTemplate.name;
       jsonObj.status = jsonObj.status === 'Active' ? 'Draft' : jsonObj.status;
       json = JSON.stringify(jsonObj);

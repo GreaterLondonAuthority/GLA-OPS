@@ -83,6 +83,21 @@
       </div>
     </div>
 
+    <div class="row" ng-if="$ctrl.template.programmeAllocation">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="useallocation">{{$ctrl.allocationQuestion}}</label>
+          <gla-yes-no-input gla-read-only="$ctrl.readOnly"
+                            [(model)]="$ctrl.projectBlock.useAllocation"
+                            class="block"
+                            id="useallocation"
+                            mode="bool"
+                            [disabled]="$ctrl.readOnly"
+                            name="useallocation"></gla-yes-no-input>
+        </div>
+      </div>
+    </div>
+
     <div class="row" ng-if="$ctrl.organisations.length">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
         <div class="form-group">
@@ -100,7 +115,6 @@
       </div>
     </div>
 
-    <!-- Field is not controlled by template -->
     <div class="row" ng-if="$ctrl.organisations.length">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
         <div class="form-group">
@@ -153,6 +167,25 @@
       </div>
     </div>
 
+    <div class="row" ng-if="$ctrl.canShowSapId()">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <!--        <div class="form-group" ng-if="!$ctrl.fields.address.hidden">-->
+        <div class="form-group" >
+          <label for="project-sapId">{{$ctrl.fields.sapId.label}}</label>
+          <select class="form-control"
+                  id="project-sapId"
+                  name="sapId"
+                  ng-if="!$ctrl.readOnly"
+                  ng-model="$ctrl.projectBlock.sapId"
+                  ng-options="b.sapId as b.displayName for b in $ctrl.sapIds"
+                  style-placeholder>
+            <option disabled value="">{{$ctrl.fields.sapId.placeholder}}</option>
+          </select>
+          <div  default-value ng-if="$ctrl.readOnly" id="project-sapId">{{$ctrl.sapIdSelected}} </div>
+        </div>
+      </div>
+    </div>
+
     <div class="row" ng-if="$ctrl.projectBlock.showAddressRestrictedField">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
         <div class="form-group" >
@@ -171,7 +204,6 @@
 
     <div class="row">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-<!--        <div class="form-group" ng-if="!$ctrl.fields.address.hidden">-->
         <div class="form-group" ng-if="!$ctrl.fields.address.hidden ">
           <label for="project-addressLine">{{$ctrl.fields.address.label}}</label>
           <div ng-if="!$ctrl.projectBlock.addressRestricted">
@@ -222,6 +254,42 @@
 
           <div  default-value ng-if="$ctrl.readOnly" id="project-borough">
             {{$ctrl.projectBlock.borough}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" ng-if="!$ctrl.fields.address.hidden && !$ctrl.fields.borough.hidden && !$ctrl.fields.wardId.hidden  && !$ctrl.projectBlock.addressRestricted">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="ward">{{$ctrl.fields.wardId.label}}</label>
+          <select class="form-control"
+                  gla-read-only="$ctrl.readOnly"
+                  id="ward"
+                  name="ward"
+                  ng-disabled="$ctrl.readOnly || !$ctrl.projectBlock.borough"
+                  ng-model="$ctrl.projectBlock.wardId"
+                  ng-options="w.id as w.wardName for w in $ctrl.wards">
+            <option value="">Not provided</option>
+          </select>
+
+          <div class="error-wrapper" role="alert" ng-show="!$ctrl.readOnly && !$ctrl.projectBlock.borough">
+            <span class="error ward-error">A borough must be selected before a ward can be selected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group read-only-text"  ng-if="!$ctrl.fields.address.hidden && !$ctrl.fields.borough.hidden && !$ctrl.fields.wardId.hidden  && $ctrl.projectBlock.addressRestricted">
+          <div ng-if="$ctrl.projectBlock.addressRestricted">
+            <label for="ward">
+              {{$ctrl.fields.wardId.label}}
+            </label>
+            <div id="ward">
+              Restricted
+            </div>
           </div>
         </div>
       </div>
@@ -311,42 +379,6 @@
       </div>
     </div>
 
-    <div class="row" ng-if="!$ctrl.fields.address.hidden && !$ctrl.fields.borough.hidden && !$ctrl.fields.wardId.hidden  && !$ctrl.projectBlock.addressRestricted">
-      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-        <div class="form-group">
-          <label for="ward">{{$ctrl.fields.wardId.label}}</label>
-          <select class="form-control"
-                  gla-read-only="$ctrl.readOnly"
-                  id="ward"
-                  name="ward"
-                  ng-disabled="$ctrl.readOnly || !$ctrl.projectBlock.borough"
-                  ng-model="$ctrl.projectBlock.wardId"
-                  ng-options="w.id as w.wardName for w in $ctrl.wards">
-            <option value="">Not provided</option>
-          </select>
-
-          <div class="error-wrapper" role="alert" ng-show="!$ctrl.readOnly && !$ctrl.projectBlock.borough">
-            <span class="error ward-error">A borough must be selected before a ward can be selected</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-        <div class="form-group read-only-text"  ng-if="!$ctrl.fields.address.hidden && !$ctrl.fields.borough.hidden && !$ctrl.fields.wardId.hidden  && $ctrl.projectBlock.addressRestricted">
-          <div ng-if="$ctrl.projectBlock.addressRestricted">
-            <label for="ward">
-              {{$ctrl.fields.wardId.label}}
-            </label>
-            <div id="ward">
-              Restricted
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="row">
       <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
         <div class="form-group" ng-if="!$ctrl.fields.mainContact.hidden">
@@ -379,6 +411,49 @@
                  autofocus />
           <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.email.$touched">
             <span class="error" id="invalidEmail" ng-show="$ctrl.newProjForm.email.$error.pattern || $ctrl.newProjForm.email.$error.email">Enter a valid email address</span>
+          </div>
+          <div class="error-wrapper">
+            <span class="warning" ng-if="!$ctrl.readOnly">Ensure you have this person's consent to give their contact details.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.secondaryContact.hidden">
+          <label for="project-secondary-contact">{{$ctrl.fields.secondaryContact.label}}</label>
+          <input id="project-secondary-contact"
+                 type="text"
+                 gla-read-only="$ctrl.readOnly"
+                 class="form-control"
+                 name="secondaryContact"
+                 placeholder="{{$ctrl.fields.secondaryContact.placeholder}}"
+                 ng-model="$ctrl.projectBlock.secondaryContact"
+                 maxlength="80" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group" ng-if="!$ctrl.fields.secondaryContactEmail.hidden">
+          <label for="project-secondary-contact-email">{{$ctrl.fields.secondaryContactEmail.label}}</label>
+          <input id="project-secondary-contact-email"
+                 type="email"
+                 gla-read-only="$ctrl.readOnly"
+                 name="secondaryContactEmail"
+                 class="form-control"
+                 ng-model="$ctrl.projectBlock.secondaryContactEmail"
+                 ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
+                 placeholder="{{$ctrl.fields.secondaryContactEmail.placeholder}}"
+                 maxlength="100"
+                 autofocus />
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.newProjForm.$submitted || $ctrl.newProjForm.secondaryContactEmail.$touched">
+            <span class="error" id="invalidSecondaryContactEmail" ng-show="$ctrl.newProjForm.secondaryContactEmail.$error.pattern || $ctrl.newProjForm.secondaryContactEmail.$error.email">Enter a valid email address</span>
+          </div>
+          <div class="error-wrapper">
+            <span class="warning" ng-if="!$ctrl.readOnly">Ensure you have this person's consent to give their contact details.</span>
           </div>
         </div>
       </div>

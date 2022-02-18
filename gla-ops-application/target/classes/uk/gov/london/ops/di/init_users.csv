@@ -1,0 +1,8 @@
+username,firstname,lastname,org_id,role
+sam@gla.com,sam,test,10000,ROLE_GLA_SPM
+testuser@gla.com,test,user,10000,ROLE_GLA_PM
+test@orbit.com,test,orbit,10170,ROLE_PROJECT_EDITOR
+test@clarion.com,test,clarion,10010,ROLE_PROJECT_EDITOR
+test@octavia.com,test,octavia,10166,ROLE_PROJECT_EDITOR
+test@newham.com,test,newham,10114,ROLE_PROJECT_EDITOR
+test@nhg.com,test,nhg,10419,ROLE_ORG_ADMIN

@@ -148,6 +148,18 @@
           {{$ctrl.originalPayment.source}}
         </div>
       </div>
+
+     <div class="form-group row no-gutter" >
+      <div class="col-sm-offset-3 col-sm-3"><label for="payment-reclaim-evidences">Payment Block:</label></div>
+      <div id="payment-reclaim-evidences"
+           class="read-only-text col-sm-6">
+           <a href="" ui-sref="project-block({projectId: $ctrl.payment.projectId,
+                                           blockPosition:$ctrl.paymentBlockPosition,
+                                           version:$ctrl.paymentProjectBlock.versionNumber})">
+          {{$ctrl.paymentProjectBlock.blockDisplayName}}</a>
+      </div>
+    </div>
+
     </span>
 
     <div class="row no-gutter">
@@ -272,6 +284,17 @@
       <div id="payment-total"
            class="read-only-text col-sm-6">
         {{$ctrl.payment.totalIncludingInterest || 0 | currency:'£':2}}
+      </div>
+    </div>
+
+    <div class="form-group row no-gutter" ng-if="!$ctrl.payment.reclaim">
+      <div class="col-sm-offset-3 col-sm-3"><label for="payment-evidences">Payment Block:</label></div>
+      <div id="payment-evidences"
+           class="read-only-text col-sm-6">
+        <a href="" ui-sref="project-block({projectId: $ctrl.payment.projectId,
+                                           blockPosition:$ctrl.paymentBlockPosition,
+                                           version:$ctrl.paymentProjectBlock.versionNumber})">
+          {{$ctrl.paymentProjectBlock.blockDisplayName}}</a>
       </div>
     </div>
 

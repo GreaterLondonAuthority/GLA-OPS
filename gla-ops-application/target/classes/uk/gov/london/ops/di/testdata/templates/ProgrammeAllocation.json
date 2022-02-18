@@ -1,0 +1,127 @@
+{
+  "name": "Programme Allocation",
+  "author": "TBC",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1
+    },
+    {
+      "type": "AffordableHomesTemplateBlock",
+      "blockDisplayName": "Affordable Homes",
+      "block": "AffordableHomes",
+      "displayOrder": 2,
+      "grantTypes": [
+        "Grant",
+        "RCGF"
+      ],
+      "costCategories": [
+        {
+          "name" :  "Cost Code 1",
+          "displayOrder" :  1.0
+        },
+        {
+          "name" :  "Cost Code 2",
+          "displayOrder" :  2.0
+        },
+        {
+          "name" :  "Cost Code 3",
+          "displayOrder" :  3.0
+        }
+      ],
+      "contributionCategories": [
+        {
+          "name" :  "Contribution Code 1",
+          "displayOrder" :  1.0
+        },
+        {
+          "name" :  "Contribution Code 2",
+          "displayOrder" :  2.0
+        },
+        {
+          "name" :  "Contribution Code 3",
+          "displayOrder" :  3.0
+        }
+      ],
+      "ofWhichCategories": [
+        "Acquisitions",
+        "SpecialisedAndSupportedHousing"
+      ],
+      "additionalCompletionYears": 3,
+      "startOnSiteSubheaderText": "Units by tenure type that are expected to start on site in the years specified below",
+      "completionSubheaderText": "Units by tenure type that are expected to complete in the years specified below",
+      "grantRequestedQuestion": "Justify the grant requested for this project",
+      "grantRequestedQuestionMaxLength": 1000,
+      "completionOnlyAvailable": false
+    }
+  ],
+  "stateModel": {
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {},
+  "tenureTypes": [
+    {
+      "displayOrder": 4,
+      "templateTenureTypeMarketTypes": [],
+      "externalId": 4000,
+      "marketTypes": [
+        {
+          "id": 8,
+          "displayOrder": 8,
+          "name": "London Affordable Rent Above Benchmark",
+          "availableForRental": true,
+          "availableForSales": false
+        }
+      ],
+      "name": "Affordable Rent"
+    },
+    {
+      "displayOrder": 1,
+      "templateTenureTypeMarketTypes": [],
+      "externalId": 4001,
+      "marketTypes": [
+        {
+          "id": 1,
+          "displayOrder": 1,
+          "name": "2016 - 2021 Rent Product",
+          "availableForRental": true,
+          "availableForSales": false
+        }
+      ],
+      "name": "Shared Ownership"
+    },
+    {
+      "displayOrder": 2,
+      "templateTenureTypeMarketTypes": [],
+      "externalId": 4002,
+      "marketTypes": [
+        {
+          "id": 1,
+          "displayOrder": 1,
+          "name": "2016 - 2021 Rent Product",
+          "availableForRental": true,
+          "availableForSales": false
+        }
+      ],
+      "name": "London Living Rent"
+    },
+    {
+      "displayOrder": 0,
+      "templateTenureTypeMarketTypes": [],
+      "externalId": 4009,
+      "marketTypes": [
+        {
+          "id": 7,
+          "displayOrder": 7,
+          "name": "Social Rent",
+          "availableForRental": true,
+          "availableForSales": false
+        }
+      ],
+      "name": "LAR above Benchmark"
+    }
+  ],
+  "programmeAllocation": true
+}

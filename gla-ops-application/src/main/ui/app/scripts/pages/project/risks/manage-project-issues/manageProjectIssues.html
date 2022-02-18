@@ -1,12 +1,12 @@
 <div class="row no-gutter mbottom10">
   <div class="col-xs-12">
-    <div class="no-padding" ng-class="{'col-sm-9 col-md-10': $ctrl.issues.length, 'col-xs-12': !$ctrl.issues.length}">
+    <div class="no-padding" >
       <section-header
         subheader="{{$ctrl.subheader}}">
         {{$ctrl.header}}
       </section-header>
     </div>
-    <div class="col-sm-3 col-md-2 text-right no-padding section-control" ng-if="$ctrl.issues.length && !$ctrl.disableHideClosedFilter">
+    <div class="text-right no-padding section-control" ng-if="$ctrl.issues.length && !$ctrl.disableHideClosedFilter">
       <label for="hideIssues"><input type="checkbox" id="hideIssues" ng-model="$ctrl.hideClosed" ng-change="!$ctrl.disableHideClosedFilter && $ctrl.toggleFilter()"/> Hide closed issues</label>
     </div>
 
@@ -14,39 +14,31 @@
     <div class="col-xs-12 text-right mbottom10 no-padding" ng-if="!$ctrl.readOnly">
       <button type="button" class="btn btn-secondary" ng-click="$ctrl.createNewIssue()">CREATE NEW ISSUE +</button>
     </div>
-    <div class="table-responsive">
+    <div>
       <div ng-if="!$ctrl.issues.length" class="empty-table">Not provided</div>
-      <table ng-if="$ctrl.issues.length" id="issues-summary-table" class="table table-bordered">
+      <table ng-if="$ctrl.issues.length" id="issues-summary-table" class="table table-bordered table-hover table-default">
         <thead class="thead-inverse uppercase">
             <tr class="mainHeader">
-              <th style="width: 50px" class="no-print"></th>
               <th style="width: 200px;">TITLE</th>
-              <th style="width: 305px;">DESCRIPTION OF ISSUES AND IMPACT</th>
-              <th style="width: 220px;">IMPACT LEVEL</th>
-              <th style="width: 100px;">STATUS</th>
+              <th >DESCRIPTION OF ISSUES AND IMPACT</th>
+              <th >IMPACT LEVEL</th>
+              <th style="width: 200px;">STATUS</th>
               <th ng-if="$ctrl.projectMarkedCorporate" style="width: 100px;">CORPORATE REPORTING</th>
               <th style="width: 10px;"> </th>
             </tr>
         </thead>
         <tbody>
             <tr ng-if="$ctrl.issues.length == 0">
-              <td></td>
-              <td colspan="5" class="not-provided">Not provided</td>
+              <td ng-attr-colspan="{{$ctrl.columnCount}}" class="not-provided">Not provided</td>
             </tr>
-            <tr allow-enter ng-attr-tabindex="{{$ctrl.canEdit(issue)? 0: undefined}}" ng-class="{'primary-row':$ctrl.canEdit(issue)}"  ng-click="$ctrl.canEdit(issue) && $ctrl.editIssue({issue:issue})" ng-repeat-start="issue in $ctrl.issues | filter: $ctrl.filter | orderBy: 'sortOrder'">
-              <td allow-enter
-                  aria-expanded="{{!!$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id]}}"
-                  aria-label="{{!$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id]? 'Expand' : 'Collapse'}}"
-                  class="expandable no-print"
-                  ng-click="$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id] = !$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id]; $event.stopPropagation();"
-                  role="button"
-                  tabindex="0">
-                <span>
-                  <i class="glyphicon glyphicon-triangle-bottom" ng-if="!$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id]"></i>
-                  <i class="glyphicon glyphicon-triangle-top" ng-if="$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id]"></i>
-                </span>
+            <tr allow-enter ng-attr-tabindex="{{$ctrl.canEdit(issue)? 0: undefined}}"
+                ng-click="$ctrl.canEdit(issue) && $ctrl.editIssue({issue:issue})"
+                ng-repeat-start="issue in $ctrl.issues | filter: $ctrl.filter | orderBy: 'sortOrder'">
+              <td scope="row">
+                <toggle-icon (collapsed-change)="$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id] = !$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id]; $event.stopPropagation();"
+                             [collapsed]="!$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id]" >
+                </toggle-icon> <span>{{issue.title}}</span>
               </td>
-              <td>{{issue.title}}</td>
               <td class="issue-description-cell">{{issue.description}}</td>
               <td ng-class="'{{$ctrl.issueImpactLevelsDisplayMap[issue.initialImpactRating].css}}'">
                   <div>{{$ctrl.issueImpactLevelsDisplayMap[issue.initialImpactRating].displayValue}}</div>
@@ -55,7 +47,7 @@
                 <a href="JavaScript:void(0)" ng-click="$ctrl.closeIssue({issue:issue}); $event.stopPropagation();" ng-if="$ctrl.canEdit(issue)">{{issue.status}}</a>
                 <span ng-if="!$ctrl.canEdit(issue)">{{issue.status}}</span>
               </td>
-              <td ng-if="$ctrl.projectMarkedCorporate" class="delete-btn-container delete-risk-button-container" ng-click="$event.stopPropagation();" >
+              <td ng-if="$ctrl.projectMarkedCorporate" ng-click="$event.stopPropagation();" >
                 <input id="issueIsCorporate" ng-change="$ctrl.onIssueMarkCorporateChange(issue)" ng-if="$ctrl.canEdit(issue)" ng-model="issue.markedForCorporateReporting" type="checkbox"/>
                 <span ng-if="!$ctrl.canEdit(issue)">
                      {{issue.markedForCorporateReporting ? 'Yes' : 'No'}}
@@ -68,30 +60,34 @@
               </td>
             </tr>
             <tr class="secondaryRow" ng-if="$ctrl.blockSessionStorage.manageProjectIssuesTablesState[issue.id]" ng-repeat-end>
-              <td class="secondaryCell" colspan="7">
-                <table id="issues-action-table" class="table table-bordered table-responsive secondary-table">
+              <td class="secondaryCell" ng-attr-colspan="{{$ctrl.columnCount}}">
+                <table id="issues-action-table" class="table table-bordered">
                   <thead>
-                    <tr>
-                      <th style="width: 250px;"></th>
-                      <th style="width: 290px;">ACTIONS</th>
-                      <th style="width: 1px;"></th>
-                      <th style="width: 222px;">OWNER</th>
-                      <th style="width: 100px;"></th>
+                    <tr class="sub-heading">
+                      <th style="width: 200px;"></th>
+                      <th >ACTIONS</th>
+                      <th ></th>
+                      <th style="width: 200px;">OWNER</th>
                       <th ng-if="$ctrl.projectMarkedCorporate"  style="width: 100px;">
                         <!--CORPORATE REPORTING-->
                       </th>
-                      <th style="width: 0px;"></th>
+                      <th style="width: 10px;"></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr ng-if="issue.actions.length == 0">
-                      <td></td>
-                      <td colspan="3" class="not-provided">Not provided</td>
+                      <td ng-attr-colspan="{{$ctrl.columnCount}}" class="not-provided">Not provided</td>
                     </tr>
-                    <tr ng-repeat="action in issue.actions">
-                      <td></td>
-                      <td colspan="2">{{action.action}}</td>
-                      <td colspan="2">
+                    <tr ng-class="{'primary-row': $ctrl.canEdit(issue)}"
+                        ng-repeat="action in issue.actions">
+                      <td ng-click="$ctrl.canEdit(issue) && $ctrl.editAction({riskIssue:issue, action:action, type:'Action'})">
+                      </td>
+                      <td colspan="2"
+                          ng-click="$ctrl.canEdit(issue) && $ctrl.editAction({riskIssue:issue, action:action, type:'Action'})">
+                        {{action.action}}
+                      </td>
+                      <td colspan="1"
+                          ng-click="$ctrl.canEdit(issue) && $ctrl.editAction({riskIssue:issue, action:action, type:'Action'})">
                         {{action.owner}}
                       </td >
                       <td ng-if="$ctrl.projectMarkedCorporate" >

@@ -73,4 +73,47 @@
     margin-right: 5px;
     margin-top: -4px;
   }
+
+  .fixed-header {
+    width: 100%;
+    overflow-y: auto;
+    max-height: 238px;
+    position: relative;
+
+    .scroll-area-bottom{
+      border-top: 1px solid $table-border;
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+      margin: 0 0 0 -1px;
+    }
+
+    table {
+      border-top: none;
+      border-bottom: none;
+      box-shadow: none;
+      thead th {
+        position: sticky;
+        top: 0px;
+        margin-top: 1px;
+        z-index: 1001;
+      }
+
+      .delete-button{
+        right: 6px;
+      }
+    }
+
+    /* Overwrite the default to keep the scrollbar always visible */
+    &::-webkit-scrollbar {
+      -webkit-appearance: none;
+      width: 7px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background-color: rgba(0, 0, 0, .5);
+      box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+    }
+  }
 }

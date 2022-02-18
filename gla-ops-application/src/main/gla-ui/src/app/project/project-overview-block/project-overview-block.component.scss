@@ -1,0 +1,78 @@
+@import "variables";
+:host {
+
+  .project-block {
+    background-color: white;
+    cursor: pointer;
+    min-height: 145px;
+    padding: 10px;
+    width: 100%;
+    box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+    border: none;
+    position: relative;
+    border-radius: 2px;
+
+    &.active-block:hover,
+    &.active-block.block-unapproved:hover,
+    &:hover{
+      border: 2px solid $gla-black;
+      //padding: 9px;
+    }
+
+    &:focus{
+      border: 2px solid $gla-black;
+      //padding: 9px;
+    }
+
+    .project-block-step-number {
+      font-size: 24px;
+      padding-bottom: 5px;
+    }
+
+    .project-block-name {
+      font-family: $font-family-bolder;
+      text-transform: uppercase;
+      font-size: 14px;
+      padding-bottom: 20px;
+    }
+
+    .project-block-status {
+      font-size: 18px;
+      font-family: $font-family-light;
+      .glyphicon{
+        font-size: 1rem;
+      }
+      margin-bottom: 10px;
+    }
+
+    .project-block-status-complete, .project-block-status-approved {
+      color: $green;
+    }
+
+    .project-block-status-incomplete, .project-block-status-unapproved {
+      color: $amber;
+    }
+
+    &.active-block{
+      border: 1px solid $green;
+      color: $green;
+      &.block-unapproved, &.land-project-block.incomplete-block{
+        border-color: $amber;
+        color: $amber;
+      }
+    }
+
+    .active-project-block-status-incomplete{
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      padding: 0;
+      padding-top: 1px;
+      height: 26px;
+      line-height: 26px;
+      background: $red;
+      color: #ffffff;
+    }
+  }
+}

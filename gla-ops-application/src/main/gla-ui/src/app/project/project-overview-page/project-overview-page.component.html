@@ -1,0 +1,154 @@
+<div>
+  <div class="project-overview text-center" [ngClass]="{'loading': loading, 'blocks-loading': blocksLoading }">
+
+    <gla-project-header (onBack)="onBack()"
+                        [stopEditing]="false"
+                        [backBtnName]="'BACK'"
+                        [project]="project"
+                        [linkMenuItems]="linkMenuItems"
+                        [loading]="loading"
+                        [actionMenuItems]="actionMenuItems"
+                        (onActionClicked)="onActionClicked($event)"></gla-project-header>
+    <gla-header-status>
+      <hs-left class="project-status">
+        <span>Status: </span>
+        <span>{{ project.statusName }}</span>
+        <span class="text-nowrap"> {{subStatusText}}</span>
+      </hs-left>
+
+      <hs-center class="gla-alert project-status-message">
+
+        <div class="row" *ngIf="assess">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>This project is under assessment and cannot be edited</span>
+        </div>
+
+        <div class="row" *ngIf="returned">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>This project is under assessment and has been returned back for edits</span>
+        </div>
+
+        <div class="row green" *ngIf="draft && project.complete && transitionButtons.length && !hasReturnTransitionInHistory">
+          <span>This project is now ready to <a href="JavaScript:void(0)" class="jump-link" (click)="jumpTo('buttons')">submit</a></span>
+        </div>
+
+        <div class="row" *ngIf="programmeClosed && submitted">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>The programme is now closed for bidding and projects are awaiting assessment, projects cannot be edited at this stage</span>
+        </div>
+
+        <div class="row" *ngIf="closed && (project.subStatusType === 'Abandoned' || project.subStatusType === 'Completed' || project.subStatusType ==='Rejected')">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>This project is closed and cannot be updated.</span>
+        </div>
+
+        <div class="row" *ngIf="project.suspendPayments">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>All pending and future payments suspended</span>
+        </div>
+
+        <div class="row" *ngFor="let message of project.messages">
+          <span class="glyphicon glyphicon-exclamation-sign"></span>
+          <span>{{message.description}}</span>
+        </div>
+
+        <div class="row green" *ngIf="project.infoMessage">
+          <span>{{project.infoMessage}}</span>
+        </div>
+      </hs-center>
+
+      <hs-right class="project-id">
+        Project <span>ID: <strong>P{{ project.id }}</strong></span> <br/>
+
+        <!--permission permission-only="'corp.dash.proj.marked.msg'"-->
+        <strong class="marked-for-corp" *ngIf="project.markedForCorporate">Corporate Reporting</strong>
+      </hs-right>
+    </gla-header-status>
+
+    <div class="col-xs-12 please-complete-text" *ngIf="!submitted && !closed && !programmeClosed && !assess && !active">
+      <span>Please complete each section and then submit.</span>
+    </div>
+
+
+    <div class="project-overview__blocks row" >
+      <div attr.id="{{block.id}}"
+           *ngFor="let block of projectBlocks; index as i"
+           class="col-md-4 col-sm-6 col-xs-12 project-block-wrapper"
+           (click)="goToSection(block)">
+        <gla-project-overview-block
+          [blockNumber]="i + 1"
+          [block]="block"
+          [projectStatus]="project.statusType"
+          [isLandProject]="isLandProject">
+        </gla-project-overview-block>
+      </div>
+    </div>
+
+    <div class="mtop40 gla-governance" *ngIf="showInternalBlocks">
+      <hr>
+      <gla-section-header (click)="toggleGovernanceSection()" class="section-toggle gla-governance-activities-header">
+        <span (keydown.enter)="toggleGovernanceSection()"
+              [attr.aria-expanded]="!!internalBlocksSectionExpanded"
+              [attr.aria-label]="!internalBlocksSectionExpanded? 'Expand' : 'Collapse'"
+              class="glyphicon"
+              [ngClass]="{'glyphicon-triangle-bottom': !internalBlocksSectionExpanded, 'glyphicon-triangle-top': internalBlocksSectionExpanded}"
+              role="button"
+              tabindex="0"></span>
+        <span> GLA governance activities</span>
+      </gla-section-header>
+
+      <div class="internal-blocks row" *ngIf="internalBlocksSectionExpanded">
+        <div attr.id="{{block.id}}"
+             class="col-md-4 col-sm-6 col-xs-12 project-block-wrapper"
+             *ngFor="let block of internalBlocksSorted"
+             (click)="goToInternalBlock(block)">
+          <gla-overview-block
+            [color]="block?.rating?.color"
+            [name]="block.blockDisplayName + ' ' + (block?.rating?.name || '') | uppercase">
+          </gla-overview-block>
+        </div>
+      </div>
+    </div>
+
+    <gla-project-history class="mtop30"
+                     [items]="historyItems"
+                     *ngIf="historyItems?.length">
+    </gla-project-history>
+
+    <div class="row"><span *ngIf="transitionButtons.length > 1" class="project-approval-actions">Project approval actions</span>
+      <div class="row project-comment" [ngClass]="{'disabled': !commentBoxEditability}" id="comments">
+        <form name="mForm" style="margin: 30px 0px;"  *ngIf="commentBoxVisibility" >
+          <div class="form-group col-xs-12" style="padding: 0px;margin-bottom: 0">
+            <label for="project-comments">Comments</label>
+            <textarea id="project-comments" class="form-control"
+                      name="comments"
+                      placeholder="Add an explanatory comment"
+                      [(ngModel)]="comments"
+                      maxlength="1000"
+                      rows="5"
+                      (input)="onCommentKeyPress()"
+                      [disabled]="!commentBoxEditability">
+          </textarea>
+            <div class="error-wrapper comments-error">
+              <span class="error mbottom10" *ngIf="missingComment">You must add a comment</span>
+            </div>
+          </div>
+        </form>
+        <div class="text-left mbottom30" *ngIf="assess && canCreateConditionalMilestone && getMilestonesBlock()">
+          To add a conditional milestone, go to the <a href="JavaScript:void(0)" (click)="onOpenMilestones()">milestone</a> block before referring the project
+        </div>
+      </div>
+
+      <div class="row" id="buttons" *ngIf="!loading">
+        <div class="col-xs-12 no-gutter mtop5">
+          <div  *ngFor="let buttonCfg of transitionButtons; trackBy:identify" class="col-xs-12 col-sm-{{12/transitionButtons.length}} col-md-{{12/transitionButtons.length}} mbottom10">
+            <button class="btn btn-primary min-padding"
+                    [disabled]="ctrl[buttonCfg.disableState] || (ctrl[buttonCfg.disableStateFunction] && ctrl[buttonCfg.disableStateFunction]())"
+                    (click)="transitionButtonsCallback(buttonCfg)">{{buttonCfg.text}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

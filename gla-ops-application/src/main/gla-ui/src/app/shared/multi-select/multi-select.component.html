@@ -7,11 +7,11 @@
       </div>
     </li>-->
     <ng-container *ngFor="let item of dropdownItems; index as i">
-    <li [class]="{group: item.items?.length, 'group-item': item.groupId, 'filter-item': !item.items?.length}"
+    <li [ngClass]="{group: item.items?.length, 'group-item': item.groupId, 'filter-item': !item.items?.length}"
         *ngIf="item.items?.length || !item.groupId || !item.collapsed"
         role="menuitem">
 
-      <div class="checkbox" [class]="{checked: item.model, unchecked: !item.model, focused: item.focused}">
+      <div class="checkbox" [ngClass]="{checked: item.model, unchecked: !item.model, focused: item.focused}">
         <input #checkboxEl [attr.aria-label]="item.ariaLabel || item.label || item.option"
                name="{{item.name || 'ch-'+ i}}"
                [(ngModel)]="item.model"
@@ -23,10 +23,10 @@
         <span (click)="$event.stopPropagation();">{{item.label || item.option}}</span>
         <span class="glyphicon link"
               tabindex="0"
-              allow-enter
+              (keydown.enter)="toggle(item);$event.stopPropagation();"
               role="button"
               [attr.aria-label]="(item.collapsed? 'Expand ': 'Collapse ') + (item.label || item.option)"
-              [class]="{'glyphicon-plus': item.collapsed, 'glyphicon-minus': !item.collapsed}"
+              [ngClass]="{'glyphicon-plus': item.collapsed, 'glyphicon-minus': !item.collapsed}"
               (click)="toggle(item);$event.stopPropagation();"
               *ngIf="item.items?.length"></span>
       </div>

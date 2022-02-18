@@ -192,6 +192,16 @@ class DateUtil {
     return [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
 
   }
+
+  static getFormattedDateFromOffsetDatetime(datetime) {
+    const date = new Date(datetime)
+    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
+  }
+
+  static getHourFromOffsetDatetime(datetime) {
+    const date = new Date(datetime)
+    return date.getHours()
+  }
 }
 
 export default DateUtil;

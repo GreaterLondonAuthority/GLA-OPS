@@ -1,0 +1,5819 @@
+{
+  "name": "Good Growth Fund Round 3",
+  "author": "TBC",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Organisation Details",
+      "block": "Questions",
+      "displayOrder": 2,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 1514,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1510,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 1506,
+            "text": "Are multiple parties involved in delivering this project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 42,
+          "question": {
+            "id": 1541,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1538,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 1519,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1518,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 1504,
+            "text": "Is your organisation VAT registered?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 31,
+          "question": {
+            "id": 1530,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1526,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 51,
+          "question": {
+            "id": 1327,
+            "text": "Secondary Contact Telephone Number",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 1515,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1514,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1502,
+            "text": "Charity Number",
+            "answerType": "Text",
+            "maxLength": 80,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1500,
+          "parentAnswerToMatch": "Charity"
+        },
+        {
+          "displayOrder": 28,
+          "question": {
+            "id": 1527,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1526,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 45,
+          "question": {
+            "id": 1544,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1542,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 1520,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1518,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 48,
+          "question": {
+            "id": 1324,
+            "text": "Main Contact Telephone Number",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12141,
+            "text": "Limited Company Number",
+            "answerType": "Text",
+            "maxLength": 80,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1500,
+          "parentAnswerToMatch": "Limited company"
+        },
+        {
+          "displayOrder": 30,
+          "question": {
+            "id": 1529,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1526,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 1517,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1514,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 1508,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1506,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 35,
+          "question": {
+            "id": 1534,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1530,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 1510,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1506,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1503,
+            "text": "Provide Details",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1500,
+          "parentAnswerToMatch": "Other"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 1509,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1506,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 34,
+          "question": {
+            "id": 1533,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1530,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 49,
+          "question": {
+            "id": 1325,
+            "text": "Main Contact Email Address",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 40,
+          "question": {
+            "id": 1539,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1538,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 1522,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1518,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 1513,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1510,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 43,
+          "question": {
+            "id": 1542,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1538,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 52,
+          "question": {
+            "id": 1328,
+            "text": "Secondary Contact Email Address",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 47,
+          "question": {
+            "id": 1323,
+            "text": "Main Contact Name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 46,
+          "question": {
+            "id": 1545,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1542,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 32,
+          "question": {
+            "id": 1531,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1530,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1500,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 1511,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1510,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 1518,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1514,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 37,
+          "question": {
+            "id": 1536,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1534,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 26,
+          "question": {
+            "id": 1525,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1522,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 50,
+          "question": {
+            "id": 1326,
+            "text": "Secondary Contact Name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 112
+        },
+        {
+          "displayOrder": 39,
+          "question": {
+            "id": 1538,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1534,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 1505,
+            "text": "VAT Registration Number",
+            "answerType": "Text",
+            "maxLength": 20,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1504,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 27,
+          "question": {
+            "id": 1526,
+            "text": "Do you have other partners on the project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1522,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 1516,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1514,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 33,
+          "question": {
+            "id": 1532,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1530,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 1523,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1522,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 41,
+          "question": {
+            "id": 1540,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1538,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 1507,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1506,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 25,
+          "question": {
+            "id": 1524,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1522,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 29,
+          "question": {
+            "id": 1528,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1526,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 1521,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1518,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 44,
+          "question": {
+            "id": 1543,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1542,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 1512,
+            "text": "Type of Organisation",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 11,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Charity"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Limited company"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Other public sector body"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Cooperative society"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Local Authority"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Business Improvement District"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community interest company"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Housing association"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Community benefit society"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Neighbourhood forum"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1510,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 38,
+          "question": {
+            "id": 1537,
+            "text": "Their role in the project",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1534,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        },
+        {
+          "displayOrder": 36,
+          "question": {
+            "id": 1535,
+            "text": "Name of Organisation",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1534,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 100
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 112,
+          "displayOrder": 1,
+          "text": "Contact Details"
+        },
+        {
+          "externalId": 100,
+          "displayOrder": 2,
+          "text": "Partner Details"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Project Aims",
+      "block": "Questions",
+      "displayOrder": 3,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1550,
+            "text": "Aim details",
+            "answerType": "FreeText",
+            "maxLength": 1200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 102
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 1548,
+            "text": "Aim details",
+            "answerType": "FreeText",
+            "maxLength": 1200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 101
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 1556,
+            "text": "Aim details",
+            "answerType": "FreeText",
+            "maxLength": 1200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 104
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 1555,
+            "text": "Aim title",
+            "answerType": "FreeText",
+            "maxLength": 60,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 104
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 1554,
+            "text": "Aim details",
+            "answerType": "FreeText",
+            "maxLength": 1200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 103
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 1553,
+            "text": "Aim title",
+            "answerType": "FreeText",
+            "maxLength": 60,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 103
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1547,
+            "text": "Aim title",
+            "answerType": "FreeText",
+            "maxLength": 60,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 101
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1549,
+            "text": "Aim title",
+            "answerType": "FreeText",
+            "maxLength": 60,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 102
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 101,
+          "displayOrder": 1,
+          "text": "Project Aim 1"
+        },
+        {
+          "externalId": 102,
+          "displayOrder": 1,
+          "text": "Project Aim 2"
+        },
+        {
+          "externalId": 103,
+          "displayOrder": 1,
+          "text": "Project Aim 3"
+        },
+        {
+          "externalId": 104,
+          "displayOrder": 1,
+          "text": "Project Aim 4"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Project Elements",
+      "block": "Questions",
+      "displayOrder": 4,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 147,
+            "text": "When do you plan to spend the funding?",
+            "answerType": "Dropdown",
+            "maxAnswers": 3,
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "March - April"
+              },
+              {
+                "displayOrder": 2,
+                "option": "May - June"
+              },
+              {
+                "displayOrder": 4,
+                "option": "September - October"
+              },
+              {
+                "displayOrder": 3,
+                "option": "July - August"
+              },
+              {
+                "displayOrder": 0,
+                "option": "January - February"
+              },
+              {
+                "displayOrder": 6,
+                "option": "November - December"
+              }
+            ],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "createdBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 130,
+            "text": "List additional interest holders?",
+            "answerType": "FreeText",
+            "maxLength": 2000,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "templates": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "createdBy": "testdatainitialiser@gla.org",
+            "editable": true,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser"
+          },
+          "requirement": "optional",
+          "parentId": "147",
+          "parentAnswerToMatch": "March - April;May - June"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12157,
+            "text": "What stage of development is this element of the project currently at?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Pre-feasibility"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Planning approved"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Ready to deliver"
+              },
+              {
+                "displayOrder": 13,
+                "option": "In delivery / under construction"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Detailed design"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Outline business case"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Early stage feasibility"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Planning submitted"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Technical design"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Initial feasibility"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Contractor procurement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Detailed delivery planning "
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12056,
+            "text": "Which of the following project types best describes this element?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 10,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Air quality enhancements"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Public realm and green spaces"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community centres and social infrastructure"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public events and engagement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Street markets and shops"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Cultural venues"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Employment, skills and training programmes"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and research"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Workspace"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12097,
+            "text": "Project element name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12152,
+            "text": "Project element post code",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12156,
+            "text": "Which of the following options best describes this part of the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Improvement of an existing facility/service"
+              },
+              {
+                "displayOrder": 2,
+                "option": "New facility/service"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Safeguarding of an existing facility/service"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12077,
+            "text": "Which of the following options best describes this part of the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Improvement of an existing facility/service"
+              },
+              {
+                "displayOrder": 2,
+                "option": "New facility/service"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Safeguarding of an existing facility/service"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12158,
+            "text": "If your application to the Good Growth Fund is successful, how long will this element of the project be in operation?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Permanent: 10+ years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Meanwhile: 1-5 years"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Long term: 5-10 years"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Temporary: 0-1 years"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12100,
+            "text": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12011,
+            "text": "Project element name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12044,
+            "text": "What stage of development is this element of the project currently at?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Pre-feasibility"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Planning approved"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Ready to deliver"
+              },
+              {
+                "displayOrder": 13,
+                "option": "In delivery / under construction"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Detailed design"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Outline business case"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Early stage feasibility"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Planning submitted"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Technical design"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Initial feasibility"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Contractor procurement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Detailed delivery planning "
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12014,
+            "text": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12120,
+            "text": "Which of the following options best describes this part of the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Improvement of an existing facility/service"
+              },
+              {
+                "displayOrder": 2,
+                "option": "New facility/service"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Safeguarding of an existing facility/service"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12057,
+            "text": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12098,
+            "text": "Project element post code",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12055,
+            "text": "Project element post code",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12129,
+            "text": "What stage of development is this element of the project currently at?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Pre-feasibility"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Planning approved"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Ready to deliver"
+              },
+              {
+                "displayOrder": 13,
+                "option": "In delivery / under construction"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Detailed design"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Outline business case"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Early stage feasibility"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Planning submitted"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Technical design"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Initial feasibility"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Contractor procurement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Detailed delivery planning "
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12153,
+            "text": "Which of the following project types best describes this element?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 10,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Air quality enhancements"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Public realm and green spaces"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community centres and social infrastructure"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public events and engagement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Street markets and shops"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Cultural venues"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Employment, skills and training programmes"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and research"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Workspace"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12154,
+            "text": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+            "answerType": "FreeText",
+            "maxLength": 200,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 12089,
+            "text": "What stage of development is this element of the project currently at?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Pre-feasibility"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Planning approved"
+              },
+              {
+                "displayOrder": 12,
+                "option": "Ready to deliver"
+              },
+              {
+                "displayOrder": 13,
+                "option": "In delivery / under construction"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Detailed design"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Outline business case"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Concept design"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Early stage feasibility"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Planning submitted"
+              },
+              {
+                "displayOrder": 10,
+                "option": "Technical design"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Initial feasibility"
+              },
+              {
+                "displayOrder": 11,
+                "option": "Contractor procurement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Detailed delivery planning "
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12034,
+            "text": "Which of the following options best describes this part of the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Improvement of an existing facility/service"
+              },
+              {
+                "displayOrder": 2,
+                "option": "New facility/service"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Safeguarding of an existing facility/service"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12054,
+            "text": "Project element name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12151,
+            "text": "Project element name",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12013,
+            "text": "Which of the following project types best describes this element?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 10,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Air quality enhancements"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Public realm and green spaces"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community centres and social infrastructure"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public events and engagement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Street markets and shops"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Cultural venues"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Employment, skills and training programmes"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and research"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Workspace"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12052,
+            "text": "If your application to the Good Growth Fund is successful, how long will this element of the project be in operation?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Permanent: 10+ years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Meanwhile: 1-5 years"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Long term: 5-10 years"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Temporary: 0-1 years"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12095,
+            "text": "If your application to the Good Growth Fund is successful, how long will this element of the project be in operation?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Permanent: 10+ years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Meanwhile: 1-5 years"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Long term: 5-10 years"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Temporary: 0-1 years"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12076,
+            "text": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 118
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12033,
+            "text": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12012,
+            "text": "Project element post code",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 117
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 12139,
+            "text": "Describe any remaining project elements in the text box below",
+            "answerType": "FreeText",
+            "maxLength": 7000,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12099,
+            "text": "Which of the following project types best describes this element?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 10,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Air quality enhancements"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Public realm and green spaces"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Community centres and social infrastructure"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Public events and engagement"
+              },
+              {
+                "displayOrder": 7,
+                "option": "Street markets and shops"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Cultural venues"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Employment, skills and training programmes"
+              },
+              {
+                "displayOrder": 8,
+                "option": "Urban strategies and research"
+              },
+              {
+                "displayOrder": 9,
+                "option": "Workspace"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 12138,
+            "text": "If your application to the Good Growth Fund is successful, how long will this element of the project be in operation?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Permanent: 10+ years"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Meanwhile: 1-5 years"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Long term: 5-10 years"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Temporary: 0-1 years"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12119,
+            "text": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 119
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12155,
+            "text": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+            "answerType": "FreeText",
+            "maxLength": 800,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 120
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 120,
+          "displayOrder": 4,
+          "text": "Project Element 4"
+        },
+        {
+          "externalId": 117,
+          "displayOrder": 1,
+          "text": "Project Element 1"
+        },
+        {
+          "externalId": 119,
+          "displayOrder": 3,
+          "text": "Project Element 3"
+        },
+        {
+          "externalId": 118,
+          "displayOrder": 2,
+          "text": "Project Element 2"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Community Support and Engagement",
+      "block": "Questions",
+      "displayOrder": 5,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1559,
+            "text": "Provide details of any existing or planned local engagement for your project",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1558,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1557,
+            "text": "Describe any complementary projects or initiatives that already take place in the local area and how your project will relate to them",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1560,
+            "text": "Describe how your project has secured local support, setting out evidence that there is a demand for your project",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 1558,
+            "text": "Have you undertaken any local engagement to date for your proposed project?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "MilestonesTemplateBlock",
+      "blockDisplayName": "Milestones",
+      "block": "Milestones",
+      "displayOrder": 6,
+      "autoCalculateMilestoneState": true,
+      "paymentSourcesString": "",
+      "processingRoutes": [
+        {
+          "externalId": 11783,
+          "name": "default",
+          "milestones": []
+        }
+      ],
+      "descriptionEnabled": true,
+      "allMilestones": [],
+      "defaultProcessingRoute": {
+        "externalId": 11783,
+        "name": "default",
+        "milestones": []
+      },
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "FundingTemplateBlock",
+      "blockDisplayName": "Budget",
+      "block": "Funding",
+      "displayOrder": 7,
+      "paymentSourcesString": "Grant",
+      "startYear": 2019,
+      "yearAvailableTo": 5,
+      "defaultActivityName": "Projected cost",
+      "activitiesRequired": true,
+      "fundingBalanceEnforced": true,
+      "fundingSpendType": "REVENUE_AND_CAPITAL",
+      "showCapitalGLAFunding": true,
+      "showRevenueGLAFunding": false,
+      "showCapitalOtherFunding": true,
+      "showRevenueOtherFunding": true,
+      "multipleBespokeActivitiesEnabled": true,
+      "budgetEvidenceAttachmentEnabled": true,
+      "showMilestones": true,
+      "showCategories": false,
+      "canClaimActivity": true,
+      "monetaryValueScale": 2,
+      "paymentSources": ["Grant"],
+      "grantTypes": ["Grant"]
+
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Match Funding Details",
+      "block": "Questions",
+      "displayOrder": 8,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 24,
+          "question": {
+            "id": 1297,
+            "text": "Match funding amount (£)",
+            "answerType": "Number",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1296,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 107
+        },
+        {
+          "displayOrder": 28,
+          "question": {
+            "id": 12143,
+            "text": "In-kind match funding details",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1298,
+          "parentAnswerToMatch": "In-kind",
+          "sectionId": 107
+        },
+        {
+          "displayOrder": 20,
+          "question": {
+            "id": 1294,
+            "text": "Estimated date when match funding will be secured by",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1292,
+          "parentAnswerToMatch": "no",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 32,
+          "question": {
+            "id": 1304,
+            "text": "Evidence of match funding secured, for example; offer letter, bank statement or other documentation",
+            "answerType": "FileUpload",
+            "quantity": 3,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1296,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 107,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 1287,
+            "text": "Do you have other match funding?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 25,
+          "question": {
+            "id": 1299,
+            "text": "Name of organisation providing match funding",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1298,
+          "parentAnswerToMatch": "Grant from external organisation",
+          "sectionId": 107
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 1283,
+            "text": "Is this match funding fully secured?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 41,
+          "question": {
+            "id": 1311,
+            "text": "Date match funding was secured",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1310,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1282,
+            "text": "Provide details",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1280,
+          "parentAnswerToMatch": "Other",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 40,
+          "question": {
+            "id": 1310,
+            "text": "Is this match funding fully secured?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1305,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 44,
+          "question": {
+            "id": 1314,
+            "text": "Do you have other match funding?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1305,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 42,
+          "question": {
+            "id": 1312,
+            "text": "Estimated date when match funding will be secured by",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1310,
+          "parentAnswerToMatch": "no",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 29,
+          "question": {
+            "id": 1301,
+            "text": "Is this match funding fully secured?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1296,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 107
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 1279,
+            "text": "Match funding amount (£)",
+            "answerType": "Number",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1280,
+            "text": "Match funding type",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Bank loan"
+              },
+              {
+                "displayOrder": 7,
+                "option": "In-kind"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Own organisation’s cash reserves/savings"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Individual Donor"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Fundraising amount"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Grant from external organisation"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 23,
+          "question": {
+            "id": 1298,
+            "text": "Match funding type",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Bank loan"
+              },
+              {
+                "displayOrder": 7,
+                "option": "In-kind"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Own organisation’s cash reserves/savings"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Individual Donor"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Fundraising amount"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Grant from external organisation"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1296,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 107
+        },
+        {
+          "displayOrder": 43,
+          "question": {
+            "id": 1313,
+            "text": "Evidence of match funding secured, for example; offer letter, bank statement or other documentation",
+            "answerType": "FileUpload",
+            "quantity": 3,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1305,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 108,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 1289,
+            "text": "Match funding type",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Bank loan"
+              },
+              {
+                "displayOrder": 7,
+                "option": "In-kind"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Own organisation’s cash reserves/savings"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Individual Donor"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Fundraising amount"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Grant from external organisation"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1287,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 48,
+          "question": {
+            "id": 1321,
+            "text": "What is your proposed fundraising strategy for your unsecured match funding? Include details of funding sources and associated dates in your response",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1319,
+          "parentAnswerToMatch": "no",
+          "sectionId": 111
+        },
+        {
+          "displayOrder": 21,
+          "question": {
+            "id": 1295,
+            "text": "Evidence of match funding secured, for example; offer letter, bank statement or other documentation",
+            "answerType": "FileUpload",
+            "quantity": 3,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1287,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 106,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 39,
+          "question": {
+            "id": 12145,
+            "text": "In-kind match funding details",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1307,
+          "parentAnswerToMatch": "In-kind",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 49,
+          "question": {
+            "id": 1322,
+            "text": "Additional information regarding your match funding details",
+            "answerType": "FreeText",
+            "maxLength": 1000,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "sectionId": 112,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 45,
+          "question": {
+            "id": 1315,
+            "text": "Summarise details of other match funding being applied to this project",
+            "answerType": "FreeText",
+            "maxLength": 1000,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1314,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 109
+        },
+        {
+          "displayOrder": 37,
+          "question": {
+            "id": 1309,
+            "text": "Provide details",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1307,
+          "parentAnswerToMatch": "Other",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 1318,
+            "text": "In-kind match funding details",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1280,
+          "parentAnswerToMatch": "In-kind",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 36,
+          "question": {
+            "id": 1308,
+            "text": "Name of organisation providing match funding",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1307,
+          "parentAnswerToMatch": "Grant from external organisation",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 33,
+          "question": {
+            "id": 1305,
+            "text": "Do you have other match funding?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1296,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 107
+        },
+        {
+          "displayOrder": 46,
+          "question": {
+            "id": 1319,
+            "text": "Will all your match funding be secured by 31st March 2020?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 111
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 1290,
+            "text": "Name of organisation providing match funding",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1289,
+          "parentAnswerToMatch": "Grant from external organisation",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 31,
+          "question": {
+            "id": 1303,
+            "text": "Estimated date when match funding will be secured by",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1301,
+          "parentAnswerToMatch": "no",
+          "sectionId": 107
+        },
+        {
+          "displayOrder": 34,
+          "question": {
+            "id": 1307,
+            "text": "Match funding type",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 1,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Bank loan"
+              },
+              {
+                "displayOrder": 7,
+                "option": "In-kind"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Own organisation’s cash reserves/savings"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Individual Donor"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Fundraising amount"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Grant from external organisation"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1305,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 1285,
+            "text": "Estimated date when match funding will be secured by",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1283,
+          "parentAnswerToMatch": "no",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 1288,
+            "text": "Match funding amount (£)",
+            "answerType": "Number",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1287,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 47,
+          "question": {
+            "id": 1320,
+            "text": "What is the final date when it will all be secured by?",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1319,
+          "parentAnswerToMatch": "no",
+          "sectionId": 111
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 1284,
+            "text": "Date match funding was secured",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1283,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 1293,
+            "text": "Date match funding was secured",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1292,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 35,
+          "question": {
+            "id": 1306,
+            "text": "Match funding amount (£)",
+            "answerType": "Number",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1305,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 108
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 12148,
+            "text": "In-kind match funding details",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1289,
+          "parentAnswerToMatch": "In-kind",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1281,
+            "text": "Name of organisation providing match funding",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1280,
+          "parentAnswerToMatch": "Grant from external organisation",
+          "sectionId": 105
+        },
+        {
+          "displayOrder": 22,
+          "question": {
+            "id": 1296,
+            "text": "Do you have other match funding?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1287,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 1291,
+            "text": "Provide details",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1289,
+          "parentAnswerToMatch": "Other",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 30,
+          "question": {
+            "id": 1302,
+            "text": "Date match funding was secured",
+            "answerType": "Text",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1301,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 107
+        },
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 1292,
+            "text": "Is this match funding fully secured?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1287,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 106
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 1286,
+            "text": "Evidence of match funding secured, for example; offer letter, bank statement or other documentation",
+            "answerType": "FileUpload",
+            "quantity": 3,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "sectionId": 105,
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 26,
+          "question": {
+            "id": 1300,
+            "text": "Provide details",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1298,
+          "parentAnswerToMatch": "Other",
+          "sectionId": 107
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 109,
+          "displayOrder": 5,
+          "text": "Other match funding details"
+        },
+        {
+          "externalId": 107,
+          "displayOrder": 3,
+          "text": "Detailed match funding breakdown 3"
+        },
+        {
+          "externalId": 111,
+          "displayOrder": 7,
+          "text": "Funding Security"
+        },
+        {
+          "externalId": 106,
+          "displayOrder": 2,
+          "text": "Detailed match funding breakdown 2"
+        },
+        {
+          "externalId": 105,
+          "displayOrder": 1,
+          "text": "Detailed match funding breakdown 1"
+        },
+        {
+          "externalId": 108,
+          "displayOrder": 4,
+          "text": "Detailed match funding breakdown 4"
+        },
+        {
+          "externalId": 112,
+          "displayOrder": 8,
+          "text": "Additional information"
+        }
+      ],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "RisksTemplateBlock",
+      "blockDisplayName": "Risks and Issues",
+      "block": "Risks",
+      "displayOrder": 9,
+      "paymentSourcesString": "",
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Site Ownership and Permissions",
+      "block": "Questions",
+      "displayOrder": 10,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 18,
+          "question": {
+            "id": 1274,
+            "text": "Provide the planning permission reference number",
+            "answerType": "FreeText",
+            "maxLength": 100,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1272,
+          "parentAnswerToMatch": "Yes, planning permission achieved"
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 1270,
+            "text": "Briefly describe the nature of these different ownerships",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "More than one site with different ownerships"
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 1271,
+            "text": "Provide justification",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "Not applicable"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 1563,
+            "text": "Briefly describe the nature of any access arrangements",
+            "answerType": "FreeText",
+            "maxLength": 1000,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1561,
+          "parentAnswerToMatch": "More than one site"
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 12150,
+            "text": "Briefly describe the nature of these different ownerships",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1276,
+          "parentAnswerToMatch": "Not applicable"
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 1269,
+            "text": "Provide justification",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1266,
+          "parentAnswerToMatch": "Not applicable"
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 1277,
+            "text": "Provide details of how and when you will seek permission from these organisations",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1276,
+          "parentAnswerToMatch": "No"
+        },
+        {
+          "displayOrder": 16,
+          "question": {
+            "id": 1272,
+            "text": "Do you need planning permission for your proposed project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 3,
+                "option": "No"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes, application submitted"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Don't know"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Multiple sites"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Yes, planning permission achieved"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 1564,
+            "text": "Does your organisation have a controlling interest over the proposed site(s) for your project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 5,
+                "option": "No"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Yes, we have a lease"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 4,
+                "option": "More than one site with different ownerships"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes, we own the freehold"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Yes, we have another controlling interest"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 17,
+          "question": {
+            "id": 1273,
+            "text": "Provide more details",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1272,
+          "parentAnswerToMatch": "Yes, application submitted"
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 1267,
+            "text": "Provide details of how and when you will seek permission",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1266,
+          "parentAnswerToMatch": "No"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1561,
+            "text": "Do you currently have access to the site(s) for your project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "More than one site"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 1266,
+            "text": "Do you have permission from the organisation who owns the site(s) for the proposed project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "No"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12146,
+            "text": "Briefly describe the nature of the lease",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "Yes, we have a lease"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12140,
+            "text": "Briefly describe the process for you to secure a controlling interest over the proposed site",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "No"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12147,
+            "text": "Briefly describe the nature of your controlling interest",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "Yes, we have another controlling interest"
+        },
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 1276,
+            "text": "Do you have permission from the organisations who own the sites for the proposed project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Not applicable"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1564,
+          "parentAnswerToMatch": "More than one site with different ownerships"
+        },
+        {
+          "displayOrder": 19,
+          "question": {
+            "id": 1275,
+            "text": "Provide details of when you will apply for permission for the different sites",
+            "answerType": "FreeText",
+            "maxLength": 600,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1272,
+          "parentAnswerToMatch": "Multiple sites"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 1562,
+            "text": "Provide details of when and how you will get access",
+            "answerType": "FreeText",
+            "maxLength": 300,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1561,
+          "parentAnswerToMatch": "No"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Project Management",
+      "block": "Questions",
+      "displayOrder": 11,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 12004,
+            "text": "If you need to appoint new staff or external consultants to manage the project, please provide details of the proposed arrangements",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "appearsOnStatus": "Stage 2",
+          "appearsOnSubStatus": "Draft"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12002,
+            "text": "Provide further details",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12001,
+          "parentAnswerToMatch": "Other"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12000,
+            "text": "Does your organisation have experience of delivering capital projects more than £1m in value?",
+            "answerType": "YesNo",
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 12006,
+            "text": "Provide details of the proposed arrangements",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 12005,
+          "parentAnswerToMatch": "yes",
+          "appearsOnStatus": "Stage 2",
+          "appearsOnSubStatus": "Draft"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12001,
+            "text": "How will you be managing this project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 4,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "In-house staff yet to be appointed"
+              },
+              {
+                "displayOrder": 2,
+                "option": "In-house staff already appointed"
+              },
+              {
+                "displayOrder": 1,
+                "option": "External consultant"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 12005,
+            "text": "Do you need to procure design expertise to deliver the project?",
+            "answerType": "Dropdown",
+            
+            
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Don't Know"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "appearsOnStatus": "Stage 2",
+          "appearsOnSubStatus": "Draft"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12003,
+            "text": "Provide details of the skills and expertise of the proposed project manager for this project",
+            "answerType": "FreeText",
+            "maxLength": 400,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "OutputsTemplateBlock",
+      "blockDisplayName": "Outputs",
+      "block": "Outputs",
+      "displayOrder": 12,
+      "paymentSourcesString": "",
+      "outputConfigurationGroup": {
+        "id": 1000,
+        "periodType": "Monthly",
+        "outputTypeName": "Output Type",
+        "categoryName": "Category",
+        "subcategoryName": "Sub Category",
+        "outputTypes": [
+          {
+            "key": "DIRECT",
+            "description": "Direct Output"
+          },
+          {
+            "key": "IND_COUNTED_IN_ANOTHER",
+            "description": "Indirect: Counted in Another Housing Programme"
+          },
+          {
+            "key": "IND_MINORITY_STAKE",
+            "description": "Indirect: Minority Stake in Joint Venture"
+          },
+          {
+            "key": "IND_UNBLOCKS",
+            "description": "Indirect: Unlocks Other Parts of a Site"
+          },
+          {
+            "key": "IND_UNLOCKING",
+            "description": "Indirect: Unlocking Without Land Interest"
+          },
+          {
+            "key": "IND_OTHER",
+            "description": "Indirect: Other"
+          }
+        ],
+        "categories": [
+          {
+            "id": 1,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Social Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 2,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "London Affordable Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 3,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Intermediate Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 4,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "London Living Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 5,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Shared Ownership",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 6,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Shared Equity",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 7,
+            "category": "Housing Starts on Site (Affordable)",
+            "subcategory": "Affordable Housing Legacy",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 8,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Social Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 9,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "London Affordable Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 10,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Intermediate Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 11,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "London Living Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 12,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Shared Ownership",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 13,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Shared Equity",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 14,
+            "category": "Housing Completions (Affordable)",
+            "subcategory": "Legacy",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 15,
+            "category": "Housing Starts on Site (Open Market)",
+            "subcategory": "Legacy",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 16,
+            "category": "Housing Starts on Site (Open Market)",
+            "subcategory": "Private Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 17,
+            "category": "Housing Starts on Site (Open Market)",
+            "subcategory": "Private Sales",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 18,
+            "category": "Housing Completions (Open Market)",
+            "subcategory": "Legacy",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 19,
+            "category": "Housing Completions (Open Market)",
+            "subcategory": "Private Rent",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 20,
+            "category": "Housing Completions (Open Market)",
+            "subcategory": "Private Sales",
+            "valueType": "UNITS",
+            "hidden": false
+          },
+          {
+            "id": 21,
+            "category": "Land Brought into Beneficial Use (Ha)",
+            "subcategory": "Previously Developed/Brownfield",
+            "valueType": "HECTARES",
+            "hidden": false
+          },
+          {
+            "id": 22,
+            "category": "Land Brought into Beneficial Use (Ha)",
+            "subcategory": "Greenfield",
+            "valueType": "HECTARES",
+            "hidden": false
+          },
+          {
+            "id": 23,
+            "category": "Land Brought into Beneficial Use (Ha)",
+            "subcategory": "Public Land",
+            "valueType": "HECTARES",
+            "hidden": false
+          },
+          {
+            "id": 24,
+            "category": "Apprenticeship Positions",
+            "subcategory": "N/A",
+            "valueType": "POSITIONS",
+            "hidden": false
+          },
+          {
+            "id": 25,
+            "category": "Jobs Created (Potential)",
+            "subcategory": "N/A",
+            "valueType": "POSITIONS",
+            "hidden": false
+          },
+          {
+            "id": 26,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "A1",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 27,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "A2",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 28,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "A3",
+            "valueType": "SQUARE_METRES_NET",
+            "hidden": false
+          },
+          {
+            "id": 29,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "B1",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 30,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "B2",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 31,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "B8",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 32,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "C1",
+            "valueType": "BEDROOMS",
+            "hidden": false
+          },
+          {
+            "id": 33,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "D1",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 34,
+            "category": "Employment Floorspace (sqm)",
+            "subcategory": "D2",
+            "valueType": "SQUARE_METRES_GROSS",
+            "hidden": false
+          },
+          {
+            "id": 35,
+            "category": "Development Value (£)",
+            "subcategory": "N/A",
+            "valueType": "MONETARY_VALUE",
+            "hidden": false
+          }
+        ],
+        "categoryIDs": [],
+        "outputTypeKeys": []
+      },
+      "showBaselines": false,
+      "showAssumptions": false,
+      "showTotalProjectOutputsTable": true,
+      "showValueColumn": true,
+      "showOutputTypeColumn": true,
+      "showAdvancedPaymentColumn": false,
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Supporting Information",
+      "block": "Questions",
+      "displayOrder": 13,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 12160,
+            "text": "Letters of support",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 5,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 12161,
+            "text": "Other supporting information",
+            "answerType": "FreeText",
+            "maxLength": 2500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 12162,
+            "text": "Option to submit a link to a video demonstrating community support for your project\n",
+            "answerType": "FreeText",
+            "maxLength": 2500,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional",
+          "appearsOnStatus": "Stage 2"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 12159,
+            "text": "Design documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxUploadSizeInMb": 25,
+            
+            
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "creatorName": "Data Initialiser",
+            "modifierName": "Data Initialiser",
+            "createdBy": "testdatainitialiser@gla.org",
+            "modifiedBy": "testdatainitialiser@gla.org",
+            "editable": true
+          },
+          "requirement": "optional"
+        }
+      ],
+      "sections": [],
+      "paymentSources": [],
+      "grantTypes": []
+    },
+    {
+      "type": "DeliveryPartnersTemplateBlock",
+      "blockDisplayName": "Delivery Partner",
+      "block": "DeliveryPartners",
+      "displayOrder": 14,
+      "entityName": "Partner",
+      "hasDeliveryPartnersTitle": "Does this project have partners?",
+      "question2": "Do your due diligence and management processes for partners comply with the Mayor’s ESF 2019-23 Programme Delivery Handbook?",
+      "question3": "Is your partner funding retention and charges policy up to date and in accordance with the Mayor’s ESF 2019-23 Programme Delivery Handbook?",
+      "deliveryPartnerType": "LearningProvider",
+      "availableDeliveryPartnerTypes": ["GG1", "GGF2"],
+      "availableDeliverableTypes": ["OTHER"],
+      "retentionFeeThreshold": 10,
+      "deliverableName": "Deliverable",
+      "valueName": "Amount allocated",
+      "feeName": "Retention Fee",
+      "showDeliverables": false,
+      "organisationNameColumnText": "Org Name",
+      "organisationTypeColumnName": "Org Type",
+      "showOrganisationType": true,
+      "roleColumnText": "Role",
+      "showRoleColumn": true,
+      "ukprnColumnText": "UKPRN",
+      "showUkprnColumn": true,
+      "contractValueColumnText": "Contract Value",
+      "showContractValueColumn": true
+    },
+    {
+      "type": "ProjectObjectivesTemplateBlock",
+      "blockDisplayName": "Project Objectives",
+      "block": "ProjectObjectives",
+      "displayOrder": 15,
+      "objectiveTextSingular": "Project Objective",
+      "objectiveTextPlural": "Project Objectives"
+    },
+    {
+      "type": "OtherFundingTemplateBlock",
+      "blockDisplayName": "Other Funding",
+      "block": "OtherFunding",
+      "displayOrder": 17,
+      "paymentSourcesString": "Grant",
+      "paymentSources": ["Grant"],
+      "grantTypes": ["Grant"],
+      "entityName": "funding",
+      "fundingSources": [
+        {
+          "fundingSource": "Other",
+          "showDescription": true,
+          "showFunderName": true
+        },
+        {
+          "fundingSource": "Bank Loan",
+          "showDescription": false,
+          "showFunderName": false
+        },
+        {
+          "fundingSource": "Individual Donor",
+          "showDescription": true,
+          "showFunderName": false
+        },
+        {
+          "fundingSource":  "Grant from external organisation",
+          "showDescription": false,
+          "showFunderName": true
+        },
+        {
+          "fundingSource":  "Own org's cash reserves/savings",
+          "showDescription": false,
+          "showFunderName": false
+        }
+      ],
+      "funderNameText": "Funder Name",
+      "descriptionText": "Description",
+      "amountText": "Amount (£)",
+      "showAmount": true,
+      "securedQuestion": "Has this funding been secured?",
+      "showSecuredQuestion": true,
+      "evidenceRequirement": "mandatory",
+      "maxEvidenceAttachments": 2,
+      "maxUploadSizeInMb": 5,
+      "partnersFundingQuestion": "Are you receiving funding from partners to support this project or activity (including in kind contributions)?",
+      "showPartnersFundingQuestion": true,
+      "showOtherFundingDetailsSection":true,
+      "otherFundingDetailQuestion": "Summarise details of other match funding being applied to this project",
+      "otherFundingSecureDateQuestion": "Will all your match funding be secured by 31st March 2020?",
+      "otherFundingFinalDateQuestion": "What is the final date when it will all be secured by?",
+      "otherFundingStrategyQuestion":"What is your proposed fundraising strategy for your unsecured match funding? Include details of funding sources and associated dates in your response"
+    },
+    {
+      "type": "UserDefinedOutputTemplateBlock",
+      "blockDisplayName": "Defined Output",
+      "block": "UserDefinedOutput",
+      "displayOrder": 19,
+      "objectiveTextSingular": "Defined Output",
+      "objectiveTextPlural": "Defined Outputs",
+      "minNumberOfEntities": 2,
+      "maxNumberOfEntities": 4,
+      "outputNameText": "Name the output your project will deliver",
+      "outputNameCharacterLimit": "50",
+      "amountToDeliverText": "The amount it will deliver",
+      "amountToDeliverCharacterLimit": "50",
+      "baselineText": "Baseline",
+      "baselineCharacterLimit": "100",
+      "baselineRequirement": "optional",
+      "monitorQuestion": "How will you monitor the delivery of this output?",
+      "monitorQuestionCharacterLimit": "1000"
+    },
+    {
+      "type": "ProjectElementsTemplateBlock",
+      "blockDisplayName": "Project Elements 2",
+      "block": "ProjectElements",
+      "displayOrder": 20,
+      "elementTextSingular": "Project Element",
+      "elementTextPlural": "Project Elements",
+      "minNumberOfEntities": 2,
+      "maxNumberOfEntities": 4,
+      "projectTypesText": "Which of the following project types best describes this element?",
+      "projectTypes": [
+        {
+          "displayOrder": 10,
+          "option": "Other"
+        },
+        {
+          "displayOrder": 1,
+          "option": "Air quality enhancements"
+        },
+        {
+          "displayOrder": 6,
+          "option": "Public realm and green spaces"
+        },
+        {
+          "displayOrder": 2,
+          "option": "Community centres and social infrastructure"
+        },
+        {
+          "displayOrder": 5,
+          "option": "Public events and engagement"
+        },
+        {
+          "displayOrder": 7,
+          "option": "Street markets and shops"
+        },
+        {
+          "displayOrder": 3,
+          "option": "Cultural venues"
+        },
+        {
+          "displayOrder": 4,
+          "option": "Employment, skills and training programmes"
+        },
+        {
+          "displayOrder": 8,
+          "option": "Urban strategies and research"
+        },
+        {
+          "displayOrder": 9,
+          "option": "Workspace"
+        }
+      ],
+      "guidanceText": "Based on your Project Type choice, please refer to your guidance notes and provide the sub-type that best describes this element",
+      "descriptionText": "Briefly describe this element of the project, including how it address your overall project aims, who the key beneficiaries will be, and how they will benefit from this intervention",
+      "projectClassificationText": "Which of the following options best describes this part of the project?",
+      "projectClassifications": [
+        {
+          "displayOrder": 1,
+          "option": "Improvement of an existing facility/service"
+        },
+        {
+          "displayOrder": 2,
+          "option": "New facility/service"
+        },
+        {
+          "displayOrder": 3,
+          "option": "Safeguarding of an existing facility/service"
+        }
+      ],
+      "projectStagesText": "What stage of development is this element of the project currently at?",
+      "projectStages": [
+        {
+          "displayOrder": 2,
+          "option": "Pre-feasibility"
+        },
+        {
+          "displayOrder": 9,
+          "option": "Planning approved"
+        },
+        {
+          "displayOrder": 12,
+          "option": "Ready to deliver"
+        },
+        {
+          "displayOrder": 13,
+          "option": "In delivery / under construction"
+        },
+        {
+          "displayOrder": 6,
+          "option": "Detailed design"
+        },
+        {
+          "displayOrder": 4,
+          "option": "Outline business case"
+        },
+        {
+          "displayOrder": 5,
+          "option": "Concept design"
+        },
+        {
+          "displayOrder": 1,
+          "option": "Early stage feasibility"
+        },
+        {
+          "displayOrder": 8,
+          "option": "Planning submitted"
+        },
+        {
+          "displayOrder": 10,
+          "option": "Technical design"
+        },
+        {
+          "displayOrder": 3,
+          "option": "Initial feasibility"
+        },
+        {
+          "displayOrder": 11,
+          "option": "Contractor procurement"
+        },
+        {
+          "displayOrder": 7,
+          "option": "Detailed delivery planning "
+        }
+      ],
+      "operationalPeriodText": "How long will this element of the project be in operation?"
+    }
+  ],
+  "internalBlocks": [
+    {
+      "json_type": "InternalAssessmentTemplateBlock",
+      "blockDisplayName": "ASSESSMENT",
+      "type": "Assessment",
+      "displayOrder": 100
+    }
+  ],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Stage 1",
+    "initialSubStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "automaticallyCalculateMilestoneState": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "MultiAssessment"
+  },
+  "detailsConfig": {
+    "addressRequirement": "hidden",
+    "boroughRequirement": "hidden",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "hidden",
+    "maincontactemailRequirement": "hidden",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "mandatory",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "shouldMilestonesBlockShowStatus": false,
+  "allowMonetaryMilestones": false,
+  "grantTypes": []
+}

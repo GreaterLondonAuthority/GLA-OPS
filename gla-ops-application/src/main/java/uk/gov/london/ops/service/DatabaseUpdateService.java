@@ -14,21 +14,20 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import uk.gov.london.ops.framework.Environment;
 import uk.gov.london.ops.domain.DatabaseUpdate;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.feature.Feature;
 import uk.gov.london.ops.framework.feature.FeatureStatus;
 import uk.gov.london.ops.repository.DatabaseUpdateRepository;
-import uk.gov.london.ops.user.UserService;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static uk.gov.london.ops.domain.DatabaseUpdate.Status.*;
-
+import static uk.gov.london.ops.framework.OPSUtils.currentUsername;
 
 /**
  * Logic for approving, running and requesting updates to the database.
@@ -46,9 +45,6 @@ public class DatabaseUpdateService {
 
     @Autowired
     Environment environment;
-
-    @Autowired
-    UserService userService;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -73,12 +69,13 @@ public class DatabaseUpdateService {
     /**
      * Creates a new database update entity.
      */
-    public DatabaseUpdate createDatabaseUpdate(DatabaseUpdate update) throws ForbiddenAccessException  {
+    public DatabaseUpdate createDatabaseUpdate(DatabaseUpdate update) throws ForbiddenAccessException {
         checkSqlEditorEnabled();
 
-        String currentUserName = userService.currentUsername();
+        String currentUserName = currentUsername();
 
-        DatabaseUpdate databaseUpdate = new DatabaseUpdate(update.getSql(), currentUserName, environment.now(), false,update.getSummary(),update.getTrackingId());
+        DatabaseUpdate databaseUpdate = new DatabaseUpdate(update.getSql(), currentUserName, environment.now(), false,
+                update.getSummary(), update.getTrackingId());
         databaseUpdateRepository.save(databaseUpdate);
         log.debug("Update awaiting approval: " + update);
         return databaseUpdate;
@@ -87,10 +84,11 @@ public class DatabaseUpdateService {
     /**
      * Saves changes to an existing database update entity.
      */
-    public DatabaseUpdate saveDatabaseUpdate(DatabaseUpdate newVersion, Integer id) throws ForbiddenAccessException, ValidationException{
+    public DatabaseUpdate saveDatabaseUpdate(DatabaseUpdate newVersion, Integer id)
+            throws ForbiddenAccessException, ValidationException {
         checkSqlEditorEnabled();
 
-        validateUpdate(id,newVersion);
+        validateUpdate(id, newVersion);
 
         databaseUpdateRepository.save(newVersion);
 
@@ -102,35 +100,27 @@ public class DatabaseUpdateService {
     }
 
     void validateUpdate(Integer id, DatabaseUpdate newVersion) throws ValidationException {
-        String currentUserName = userService.currentUsername();
-
+        String currentUserName = currentUsername();
         DatabaseUpdate oldVersion = databaseUpdateRepository.findById(id).orElse(null);
-
         if (oldVersion == null) {
             throw new ValidationException("Cannot find database update with ID " + id);
         }
-
         if (!oldVersion.getId().equals(newVersion.getId())) {
             throw new ValidationException("ID incorrect.");
         }
-
-        if (isBeingApproved(newVersion,oldVersion)) {
+        if (isBeingApproved(newVersion, oldVersion)) {
             if (!currentUserCanApprove(currentUserName, oldVersion)) {
                 throw new ValidationException("User cannot action this update.");
             }
-
             if (!oldVersion.hasStatus(AwaitingApproval)) {
                 throw new ValidationException("Update cannot be approved if not awaiting approval.");
             }
-
             if (!oldVersion.getSql().equals(newVersion.getSql())) {
                 throw new ValidationException("SQL has changed.");
             }
-
             if (!newVersion.isPpd()) {
                 throw new ValidationException("Cannot approve if not run in PPD.");
             }
-
             newVersion.setApprovedOn(environment.now());
             newVersion.setApprovedBy(currentUserName);
         }
@@ -147,8 +137,7 @@ public class DatabaseUpdateService {
     /**
      * Executes an approved database update.
      *
-     * The status of the update is set to either Complete or Failed, and if Complete the
-     * number of rows affected is recorded.
+     * The status of the update is set to either Complete or Failed, and if Complete the number of rows affected is recorded.
      */
     public void executeDatabaseUpdate(DatabaseUpdate databaseUpdate) throws ValidationException {
         if (!databaseUpdate.hasStatus(Approved)) {
@@ -178,7 +167,9 @@ public class DatabaseUpdateService {
      */
     public List<DatabaseUpdate> findAll() throws ForbiddenAccessException {
         checkSqlEditorEnabled();
-        return databaseUpdateRepository.findAll().stream().sorted(Comparator.comparing(DatabaseUpdate::getCreatedOn, Comparator.naturalOrder())).collect(Collectors.toList());
+        return databaseUpdateRepository.findAll().stream()
+                .sorted(Comparator.comparing(DatabaseUpdate::getCreatedOn, Comparator.naturalOrder()))
+                .collect(Collectors.toList());
     }
 
 }

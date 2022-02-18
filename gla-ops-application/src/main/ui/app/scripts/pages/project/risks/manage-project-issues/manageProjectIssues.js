@@ -14,6 +14,8 @@ class ManageProjectIssueCtrl extends ManageRiskAndIssueCtrl{
   }
 
   $onInit(){
+    this.columnCount = 5 + (this.projectMarkedCorporate?1:0)
+
     this.blockSessionStorage = this.blockSessionStorage || {};
     this.blockSessionStorage.manageProjectIssuesTablesState = this.blockSessionStorage.manageProjectIssuesTablesState || [];
     this.issueImpactLevelsDisplayMap = this.RisksService.getIssueImpactLevelsDisplayMap();
@@ -45,6 +47,7 @@ angular.module('GLA')
       deleteAction: '&',
       blockSessionStorage: '<',
       editIssue: '&',
+      editAction:'&',
       deleteIssue: '&',
       closeIssue: '&',
       readOnly: '<',

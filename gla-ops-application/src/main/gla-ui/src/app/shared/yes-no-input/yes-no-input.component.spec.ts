@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {YesNoInputComponent} from './yes-no-input.component';
 
@@ -6,7 +6,7 @@ describe('YesNoInputComponent', () => {
   let component: YesNoInputComponent;
   let fixture: ComponentFixture<YesNoInputComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ YesNoInputComponent ]
     })

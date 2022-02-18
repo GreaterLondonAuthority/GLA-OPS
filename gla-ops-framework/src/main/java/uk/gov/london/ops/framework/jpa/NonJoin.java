@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  *
  * @author Steve Leach
  */
-@Target({ElementType.FIELD,ElementType.TYPE})
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NonJoin {
     String value(); // comment

@@ -1,0 +1,1815 @@
+{
+  "name": "AEB Good Work for All",
+  "author": "Alex Worrall",
+  "status": "Active",
+  "blocksEnabled": [
+    {
+      "type": "ProjectDetailsTemplateBlock",
+      "blockDisplayName": "Project Details",
+      "block": "Details",
+      "displayOrder": 1,
+      "infoMessage": "Refer to the Questionnaire Guidance for further details",
+      "paymentSourcesString": "",
+      "maxBoroughs": 1,
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "DeliveryPartnersTemplateBlock",
+      "blockDisplayName": "Subcontracting",
+      "block": "DeliveryPartners",
+      "displayOrder": 2,
+      "paymentSourcesString": "",
+      "entityName": "Subcontractor",
+      "hasDeliveryPartnersTitle": "Does this project have subcontractors?",
+      "question2": "Will you ensure that, if successful, your due diligence and management processes for subcontractors comply with the GLA funding rules?",
+      "deliveryPartnerType": "LearningProvider",
+      "retentionFeeThreshold": 20,
+      "availableDeliverableTypes": [
+        "ADULT_EDUCATION_BUDGET"
+      ],
+      "deliverableName": "Provision",
+      "quantityName": "",
+      "valueName": "Amount allocated",
+      "feeName": "Retention Fee",
+      "showDeliverables": true,
+      "availableDeliveryPartnerTypes": [
+        "LearningProvider"
+      ],
+      "showOrganisationType": false,
+      "organisationTypeColumnName": "ORG TYPE",
+      "organisationNameColumnText": "Organisation Name",
+      "roleColumnText": "ROLE",
+      "showRoleColumn": false,
+      "ukprnColumnText": "UKPRN",
+      "showUkprnColumn": true,
+      "contractValueColumnText": "Contract Value",
+      "showContractValueColumn": true,
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Qualifying Criteria",
+      "block": "Questions",
+      "displayOrder": 4,
+      "infoMessage": "Note that your responses to the questions below may result in your exclusion from the competition. Refer to the Questionnaire Guidance for further information.",
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 13319,
+            "text": "What actions have you taken to improve the quality of your provision? Please note that the GLA reserves the right to reject your application if the issues highlighted in your Ofsted report have not been addressed.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 1000,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.764Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13318,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 13316,
+            "text": "Can you confirm that your organisation will have appropriate management information systems in place to enable the collection and submission of accurate programme data in the required formats, e.g. Individualised Learner Record (ILR) data?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.819Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 13321,
+            "text": "Provide a clear and strong rationale for your choice of sector, inc. skills gaps, job creation; workforce profile, diversity; challenges, opportunities. GLA reserves the right to reject your application if the chosen sector is not considered a priority.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.778Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13320,
+          "parentAnswerToMatch": "Other"
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13317,
+            "text": "Has your organisation been assigned a Grade 4 Inadequate rating at your most recent Ofsted inspection?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.79Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 13320,
+            "text": "What sector(s) does your application cover?",
+            "answerType": "Dropdown",
+            "quantity": 2,
+            "maxAnswers": 5,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.723Z",
+            "answerOptions": [
+              {
+                "displayOrder": 5,
+                "option": "Other"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Green Economy"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Creative"
+              },
+              {
+                "displayOrder": 2,
+                "option": "Digital"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Health and Social Care"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13315,
+            "text": "Do you have a track record of delivering education and training services?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.81Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 13318,
+            "text": "Has your organisation been assigned a Grade 3 Requires Improvement rating at your most recent Ofsted inspection?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.802Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        }
+      ],
+      "sections": [],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Additional Qualifying Criteria",
+      "block": "Questions",
+      "displayOrder": 5,
+      "infoMessage": "Where you respond ‘Yes’ to the questions below the GLA may at their discretion, exclude you from the competition if sufficient assurance has not been provided that the issue has been addressed.",
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 12,
+          "question": {
+            "id": 13334,
+            "text": "You may upload any supporting documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxCombinedUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.923Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "optional",
+          "parentId": 13325,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 13338,
+            "text": "Provide further details. The GLA reserves the right to exclude your organisation if the information you provide is insufficient.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.964Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13337,
+          "parentAnswerToMatch": "Participation in a criminal organisation;Corruption;Fraud;Terrorist offences or offences linked to terrorist activities;Money laundering or terrorist financing;Child labour and other forms of trafficking in human beings",
+          "sectionId": 2
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 13324,
+            "text": "Has your organisation shown significant or persistent deficiencies in the performance of a substantive requirement under a prior public agreement which led to early termination of that prior agreement within the past three years?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.917Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 13327,
+            "text": "Provide further details. The GLA reserves the right to exclude your organisation if the information you provide is insufficient.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.957Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13322,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 13,
+          "question": {
+            "id": 13326,
+            "text": "Have there been any significant irregularities identified in your organisation’s award of qualifications or processing of learner documentation within the past three years?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.826Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 15,
+          "question": {
+            "id": 13336,
+            "text": "You may upload any supporting documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxCombinedUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.86Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "optional",
+          "parentId": 13326,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 10,
+          "question": {
+            "id": 13325,
+            "text": "Has your organisation failed to repay funding due to a funder or contracting organisation in excess of £50,000 in the last three years?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.898Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 13329,
+            "text": "Provide further details. The GLA reserves the right to exclude your organisation if the information you provide is insufficient.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.87Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13323,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13339,
+            "text": "You may upload any supporting documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxCombinedUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.97Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "optional",
+          "parentId": 13337,
+          "parentAnswerToMatch": "Participation in a criminal organisation;Corruption;Fraud;Terrorist offences or offences linked to terrorist activities;Money laundering or terrorist financing;Child labour and other forms of trafficking in human beings",
+          "sectionId": 2
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13342,
+            "text": "You may upload any supporting documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxCombinedUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.89Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "optional",
+          "parentId": 13340,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 3
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 13330,
+            "text": "Provide further details. The GLA reserves the right to exclude your organisation if the information you provide is insufficient.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.91Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13324,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13322,
+            "text": "Has your organisation been declared bankrupt or been the subject of insolvency proceedings within the past three years?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.977Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13328,
+            "text": "You may upload any supporting documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxCombinedUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.837Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "optional",
+          "parentId": 13322,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13340,
+            "text": "Indicate if, within the past three years, you have been in breach of health and safety or safeguarding legislation",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.844Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 3
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 13335,
+            "text": "You may upload any supporting documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxCombinedUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.851Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "optional",
+          "parentId": 13323,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 13323,
+            "text": "Has your organisation been established that the organisation was in breach of obligations relating to the payment of tax or social security contributions within the past three years?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.932Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 9,
+          "question": {
+            "id": 13333,
+            "text": "You may upload any supporting documentation",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxCombinedUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.938Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "optional",
+          "parentId": 13324,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 11,
+          "question": {
+            "id": 13331,
+            "text": "Provide further details. The GLA reserves the right to exclude your organisation if the information you provide is insufficient.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.904Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13325,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 13341,
+            "text": "Provide further details. The GLA reserves the right to exclude your organisation if the information you provide is insufficient.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.882Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13340,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 3
+        },
+        {
+          "displayOrder": 14,
+          "question": {
+            "id": 13332,
+            "text": "Provide further details. The GLA reserves the right to exclude your organisation if the information you provide is insufficient.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.876Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13326,
+          "parentAnswerToMatch": "yes",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13337,
+            "text": "Indicate if, within the past five years you, your organisation or any other person who has powers of representation, decision or control in the organisation been convicted anywhere in the world of any of the offences within the summary below",
+            "answerType": "Dropdown",
+            "quantity": 2,
+            "maxAnswers": 6,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.945Z",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "Corruption"
+              },
+              {
+                "displayOrder": 4,
+                "option": "Terrorist offences or offences linked to terrorist activities"
+              },
+              {
+                "displayOrder": 5,
+                "option": "Money laundering or terrorist financing"
+              },
+              {
+                "displayOrder": 6,
+                "option": "Child labour and other forms of trafficking in human beings"
+              },
+              {
+                "displayOrder": 7,
+                "option": "None of the above"
+              },
+              {
+                "displayOrder": 3,
+                "option": "Fraud"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Participation in a criminal organisation"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 2
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 2,
+          "displayOrder": 3,
+          "text": "Convictions"
+        },
+        {
+          "externalId": 3,
+          "displayOrder": 4,
+          "text": "Conduct"
+        },
+        {
+          "externalId": 1,
+          "displayOrder": 2,
+          "text": "Financial and past contractual performance"
+        }
+      ],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Meeting the needs of Londoners",
+      "block": "Questions",
+      "displayOrder": 6,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13300,
+            "text": "Demonstrate how your delivery of education/training services will address the local skills needs for each of the sectors you intend to deliver.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 10000,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.983Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 13302,
+            "text": "Demonstrate how you will identify participant skills needs and support them to achieve their learning aims and outcomes.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.997Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13301,
+            "text": "Demonstrate how you will provide support to disadvantaged Londoners hardest hit by the pandemic to enable them to overcome barriers to learning.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 7500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:18.989Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        }
+      ],
+      "sections": [],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Expected outputs and outcomes",
+      "block": "Questions",
+      "displayOrder": 7,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13343,
+            "text": "The total £ value of the application (min £100,000, max £1,250,000). This should match the figure in your Delivery Values Template.",
+            "answerType": "Number",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.01Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 13303,
+            "text": "Upload a completed version of the [Delivery Values Template](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) which sets out your expected delivery volumes and financial values",
+            "answerType": "FileUpload",
+            "quantity": 1,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-03-01T13:58:59.044Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "reny.oommen@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "reny oommen"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 13352,
+            "text": "Are you applying for a ringfenced allocation (min £100,000, max £500,000) to deliver provision eligible through the National Skills Fund Level 3 Adult Offer?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.03Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 13304,
+            "text": "Explain how you expect these volumes to be achievable.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.037Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13353,
+            "text": "What is the total value of this provision in your bid? This should match the figure in your Delivery Values Template.",
+            "answerType": "Number",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.022Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13352,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Contract management and quality processes",
+      "block": "Questions",
+      "displayOrder": 8,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13307,
+            "text": "Explain the processes your organisation will use to report and evidence your management information and ensure audit compliance.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 5500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.058Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13305,
+            "text": "Describe your contract management and resourcing approach to ensure the quality of provision is consistently high.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 7000,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.064Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 13308,
+            "text": "Provide evidence of how you have previously used quality process(es) and/or tools to ensure you successfully delivered high quality services.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.044Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 13306,
+            "text": "You may upload a table setting out your delivery timelines in support of your response.",
+            "answerType": "FileUpload",
+            "quantity": 2,
+            "maxCombinedUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.051Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "optional"
+        }
+      ],
+      "sections": [],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Responsible Delivery",
+      "block": "Questions",
+      "displayOrder": 9,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13311,
+            "text": "Explain how you will ensure the safeguarding of participants in particular vulnerable adults.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 2500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.081Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 3,
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13310,
+            "text": "Please explain how you adhere to the Mayor’s Good Work Standard focused on embedding fair employment practices.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 2500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.07Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 2,
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13309,
+            "text": "Explain how you will positively promote and encourage diversity and equality at all levels within your organisation and eliminate unlawful discrimination, harassment and victimisation as outlined in the Equality Act 2010.",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 4000,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.076Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1,
+          "helpText": "Refer to [Questionnaire Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details on minimum requirements. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 3,
+          "displayOrder": 3,
+          "text": "Safeguarding"
+        },
+        {
+          "externalId": 1,
+          "displayOrder": 1,
+          "text": "Diversity & Equality"
+        },
+        {
+          "externalId": 2,
+          "displayOrder": 2,
+          "text": "Fair Employment Practices"
+        }
+      ],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Financial due diligence",
+      "block": "Questions",
+      "displayOrder": 10,
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 13350,
+            "text": "Full accounts of your organisation’s ultimate parent company if you are part of a wider group of companies and are reliant on them to demonstrate your financial health",
+            "answerType": "Dropdown",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.106Z",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              },
+              {
+                "displayOrder": 3,
+                "option": "N/A"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13346,
+            "text": "A Certificate of Incorporation",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.143Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 13348,
+            "text": "Accounts for the past 2 years signed by an Independent qualified accountant (if your organisation is exempt from audit)",
+            "answerType": "Dropdown",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.117Z",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              },
+              {
+                "displayOrder": 3,
+                "option": "N/A"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 8,
+          "question": {
+            "id": 13351,
+            "text": "Management accounts to date, showing activity, along with forecast figures for the remaining period of at least one year",
+            "answerType": "Dropdown",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.089Z",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              },
+              {
+                "displayOrder": 3,
+                "option": "N/A"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 13349,
+            "text": "A statement of the turnover, Profit and Loss Account/Income Statement, Balance Sheet/Statement of Financial Position and Statement of Cash Flow for the most recent year of trading for this organisation",
+            "answerType": "Dropdown",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.098Z",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              },
+              {
+                "displayOrder": 3,
+                "option": "N/A"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 13344,
+            "text": "Upload the documents required to facilitate a financial health assessment of your organisation as per requirements set out in the Financial Health Requirements and Guidance ",
+            "answerType": "FileUpload",
+            "quantity": 5,
+            "maxUploadSizeInMb": 5,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.136Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 2,
+          "helpText": "Refer to [Financial Health Requirements and Guidance](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further information. Ensure that you have also read the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) in full."
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 13347,
+            "text": "Audited accounts for the past 2 years",
+            "answerType": "Dropdown",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.126Z",
+            "answerOptions": [
+              {
+                "displayOrder": 2,
+                "option": "No"
+              },
+              {
+                "displayOrder": 1,
+                "option": "Yes"
+              },
+              {
+                "displayOrder": 3,
+                "option": "N/A"
+              }
+            ],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "sectionId": 1
+        }
+      ],
+      "sections": [
+        {
+          "externalId": 2,
+          "displayOrder": 1,
+          "text": "Documents"
+        },
+        {
+          "externalId": 1,
+          "displayOrder": 2,
+          "text": "Depending on your organisational status and whatever is applicable from the list below, please confirm whether you have submitted the mandatory financial information to demonstrate your Economic & financial standing"
+        }
+      ],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "type": "QuestionsTemplateBlock",
+      "blockDisplayName": "Declaration",
+      "block": "Questions",
+      "displayOrder": 11,
+      "infoMessage": "Refer to the Questionnaire Guidance for further details",
+      "paymentSourcesString": "",
+      "questions": [
+        {
+          "displayOrder": 3,
+          "question": {
+            "id": 13355,
+            "text": "Have you read the Freedom of Information (FoIA) statement in the Prospectus and GLA policies and accept how we generally plan to treat your application and other related information if someone asks to see it under the FoIA 2000?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.15Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1,
+          "question": {
+            "id": 1077,
+            "text": "Has anyone involved in the project been in contact with any elected Greater London Authority officials or members of our staff in relation to your project either at an engagement workshop or at any other stage?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 5.1,
+          "question": {
+            "id": 885,
+            "text": "Provide details on the information you consider to be sensitive or not suitable for publication, and the reasons why you believe this to be the case",
+            "answerType": "FreeText",
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2019-07-15T00:00:00Z",
+            "modifiedOn": "2019-07-15T12:45:30.76Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory",
+          "parentId": 884,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 0,
+          "question": {
+            "id": 1075,
+            "text": "Are you related to any elected GLA officials or members of GLA staff?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 0.1,
+          "question": {
+            "id": 1076,
+            "text": "Please state their names and team(s) they work in",
+            "answerType": "FreeText",
+            "quantity": 1300,
+            "maxLength": 2000,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1075,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 4,
+          "question": {
+            "id": 13356,
+            "text": "Should we treat any financial information provided by you as commercially sensitive information for the purposes of FoIA?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.175Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 6,
+          "question": {
+            "id": 13313,
+            "text": "Do you understand that, at its discretion, the GLA may exclude your organisation from participation in this competition if you do not fulfil the qualifying criteria set out in Blocks 3 and 4?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.159Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 7,
+          "question": {
+            "id": 13314,
+            "text": "Do you understand that the GLA will evaluate applications in accordance with the process set out in the Prospectus and Questionnaire Guidance, and that the GLA will not consider appeals regarding the final award decisions made?",
+            "answerType": "YesNo",
+            "quantity": 2,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.184Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "helpText": "Refer to the [Prospectus](https://www.london.gov.uk/what-we-do/skills-and-employment/skills-londoners/adult-education-budget/aeb-competition) for further details"
+        },
+        {
+          "displayOrder": 5,
+          "question": {
+            "id": 884,
+            "text": "Are there other specific pieces of information in your application which you consider to be exempt information for the purposes of FoIA?",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "createdOn": "2019-07-15T00:00:00Z",
+            "modifiedOn": "2019-07-15T12:45:30.75Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "aleksandra.sersniova@london.gov.uk",
+            "modifiedBy": "aleksandra.sersniova@london.gov.uk",
+            "editable": true,
+            "creatorName": "Aleksandra Sersniova",
+            "modifierName": "Aleksandra Sersniova"
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 4.1,
+          "question": {
+            "id": 13312,
+            "text": "Provide details on the information you consider to be sensitive or not suitable for publication, and the reasons why you believe this to be the case",
+            "answerType": "FreeText",
+            "quantity": 2,
+            "maxLength": 3500,
+            "maxAnswers": 1,
+            "createdOn": "2021-02-05T00:00:00Z",
+            "modifiedOn": "2021-02-05T15:20:19.167Z",
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "createdBy": "javaher.sondh@london.gov.uk",
+            "modifiedBy": "javaher.sondh@london.gov.uk",
+            "editable": true,
+            "creatorName": "Javaher Sondh",
+            "modifierName": "Javaher Sondh"
+          },
+          "requirement": "mandatory",
+          "parentId": 13356,
+          "parentAnswerToMatch": "yes"
+        },
+        {
+          "displayOrder": 2,
+          "question": {
+            "id": 1079,
+            "text": "Confirm that the information provided is complete and correct",
+            "answerType": "YesNo",
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory"
+        },
+        {
+          "displayOrder": 1.1,
+          "question": {
+            "id": 1078,
+            "text": "Please state their names and team(s) they work in and the nature of support ",
+            "answerType": "FreeText",
+            "quantity": 1000,
+            "maxLength": 2000,
+            "maxAnswers": 1,
+            "answerOptions": [],
+            "nbProjectsUsedIn": 0,
+            "nbTemplatesUsedIn": 0,
+            "delimiter": ";",
+            "editable": true
+          },
+          "requirement": "mandatory",
+          "parentId": 1077,
+          "parentAnswerToMatch": "yes"
+        }
+      ],
+      "sections": [],
+      "grantTypes": [],
+      "paymentSources": []
+    },
+    {
+      "block": "LearningGrant",
+      "type": "LearningGrantTemplateBlock",
+      "questions": [],
+      "sections": [],
+      "blockDisplayName": "Learning Grant",
+      "displayOrder": 3,
+      "profileAllocationType": "AEB_PROCURED",
+      "paymentSourcesString": "Grant",
+      "startYear": 2018,
+      "numberOfYears": 4,
+      "profileTitle": "ALLOCATION PROFILE %",
+      "allocationTitle": "MONTHLY ALLOCATION £",
+      "cumulativeAllocationTitle": "CUMULATIVE ALLOCATION £",
+      "cumulativeEarningsTitle": "CUMULATIVE EARNINGS £",
+      "cumulativePaymentTitle": "CUMULATIVE PAYMENT £",
+      "paymentDueTitle": "PAYMENT DUE £",
+      "grantType": "AEB_NSCT",
+      "paymentSources": ["Grant"],
+      "grantTypes": ["Grant"],
+      "allocationTypes": ["Delivery", "LearnerSupport"]
+    }
+  ],
+  "internalBlocks": [],
+  "cloneModified": false,
+  "strategicTemplate": false,
+  "associatedProjectsEnabled": false,
+  "milestoneType": "NonMonetary",
+  "stateModel": {
+    "initialStatus": "Draft",
+    "approvalRequired": true,
+    "reportOnLastApproved": true,
+    "allowClosureWithUnapprovedBlocks": false,
+    "allowClosureWithUnapprovedMandatoryMilestones": false,
+    "name": "ChangeControlled"
+  },
+  "detailsConfig": {
+    "addressRequirement": "mandatory",
+    "boroughRequirement": "optional",
+    "wardIdRequirement": "hidden",
+    "postcodeRequirement": "mandatory",
+    "coordsRequirement": "hidden",
+    "maincontactRequirement": "mandatory",
+    "maincontactemailRequirement": "mandatory",
+    "secondaryContactRequirement": "mandatory",
+    "secondaryContactEmailRequirement": "mandatory",
+    "siteOwnerRequirement": "hidden",
+    "interestRequirement": "hidden",
+    "projectManagerRequirement": "hidden",
+    "siteStatusRequirement": "hidden",
+    "legacyProjectCodeRequirement": "hidden",
+    "descriptionRequirement": "mandatory",
+    "planningPermissionReferenceRequirement": "hidden"
+  },
+  "tenureTypes": [],
+  "projectSubmissionReminder": false,
+  "projectsCount": 120,
+  "grantTypes": [],
+  "allowMonetaryMilestones": false,
+  "shouldMilestonesBlockShowStatus": false
+}

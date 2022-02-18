@@ -1,0 +1,16 @@
+<gla-change-report-static-text [text]="'Units & Tenures'" [data]="data" class="next-to-tables"></gla-change-report-static-text>
+
+<gla-change-report-table
+  [rows]="comparableTenureTypeRows"
+  [fields]="tenuresFields"
+  [changes]="data.changes">
+</gla-change-report-table>
+
+<gla-change-report-static-text [text]="'Affordable Homes Summary'" [data]="data" class="next-to-tables"></gla-change-report-static-text>
+
+<gla-change-report-table
+  [heading]="['SUMMARY ITEM', 'AMOUNT (£)']"
+  [rows]="comparableSummaryRows"
+  [fields]="summaryFields"
+  [changes]="data.changes">
+</gla-change-report-table>

@@ -17,7 +17,6 @@ class FundingClaimsChangeReport {
 
 
   $onInit() {
-    // console.log('my data', this.data)
     let block = this.data.right || this.data.left;
     const template = this.data.context.template;
     let templateConfig = this.TemplateService.getBlockConfig(template, block);

@@ -20,8 +20,6 @@ class ProgrammesCarousel {
     if(this.programmesGroup.programmes.length) {
       this.selectedProgramme = this.programmesGroup.programmes[this.index];
     }
-
-    console.log('this.selectedProgramme', this.selectedProgramme)
   }
 
   previous() {

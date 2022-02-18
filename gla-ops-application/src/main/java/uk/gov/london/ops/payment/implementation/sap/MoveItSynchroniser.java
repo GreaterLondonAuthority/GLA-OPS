@@ -17,9 +17,9 @@ import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.sftp.filters.SftpSimplePatternFileListFilter;
 import org.springframework.integration.sftp.inbound.SftpInboundFileSynchronizer;
-import uk.gov.london.ops.framework.Environment;
-import uk.gov.london.ops.domain.ScheduledTask;
-import uk.gov.london.ops.service.ScheduledTaskService;
+import uk.gov.london.ops.framework.environment.Environment;
+import uk.gov.london.ops.framework.scheduledtask.ScheduledTask;
+import uk.gov.london.ops.framework.scheduledtask.ScheduledTaskService;
 
 import java.io.File;
 import java.time.temporal.ChronoUnit;
@@ -60,7 +60,8 @@ public class MoveItSynchroniser extends SftpInboundFileSynchronizer {
     @Value("${sap.ftp.error-logging-interval}")
     private final Integer errorLoggingInterval = 30;
 
-    public MoveItSynchroniser(SessionFactory<ChannelSftp.LsEntry> sessionFactory, JdbcLockRegistry lockRegistry, String scheduledTaskName, String lockName) {
+    public MoveItSynchroniser(SessionFactory<ChannelSftp.LsEntry> sessionFactory, JdbcLockRegistry lockRegistry,
+                              String scheduledTaskName, String lockName) {
         super(sessionFactory);
         this.sessionFactory = sessionFactory;
         this.lockRegistry = lockRegistry;
@@ -117,11 +118,10 @@ public class MoveItSynchroniser extends SftpInboundFileSynchronizer {
 
     void logError(String message) {
         ScheduledTask scheduledTask = scheduledTaskService.findOne(scheduledTaskName);
-        if (scheduledTask != null && scheduledTask.getLastSuccess() != null &&
-                ChronoUnit.MINUTES.between(scheduledTask.getLastSuccess(), environment.now()) >= errorLoggingInterval) {
+        if (scheduledTask != null && scheduledTask.getLastSuccess() != null
+                && ChronoUnit.MINUTES.between(scheduledTask.getLastSuccess(), environment.now()) >= errorLoggingInterval) {
             log.error(message);
-        }
-        else {
+        }  else {
             log.info(message);
         }
     }
@@ -149,20 +149,16 @@ public class MoveItSynchroniser extends SftpInboundFileSynchronizer {
         }
 
         List<String> remoteFiles = new LinkedList<>();
-
         long start = System.currentTimeMillis();
-
         Session<ChannelSftp.LsEntry> session = null;
-
-        try  {
+        try {
             session = sessionFactory.getSession();
-            boolean open = session.isOpen();
             ChannelSftp.LsEntry[] files = session.list(remoteDirectory);
             for (ChannelSftp.LsEntry entry : files) {
                 remoteFiles.add(entry.getFilename());
             }
             if (files.length == 0) {
-                log.info(String.format("No files found in : %s " , remoteDirectory));
+                log.info(String.format("No files found in : %s ", remoteDirectory));
             }
             log.info("Connection took: " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
@@ -180,7 +176,7 @@ public class MoveItSynchroniser extends SftpInboundFileSynchronizer {
      * Initiates an immediate sync, as long as the synchronizer is not paused.
      */
     public void sync() {
-        this.synchronizeToLocalDirectory( new File(localDirectory) );
+        this.synchronizeToLocalDirectory(new File(localDirectory));
     }
 
     public void setLocalDirectory(String localDirectory) {

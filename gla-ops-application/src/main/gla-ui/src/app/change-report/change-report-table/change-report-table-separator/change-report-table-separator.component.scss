@@ -1,0 +1,16 @@
+@import "variables";
+@import "mixins";
+
+.space-placeholder{
+  display: flex;
+  .left-placeholder, .right-placeholder{
+    height: 10px;
+    width: 50%;
+  }
+
+  @include when-sm {
+    .right-placeholder {
+      background: $report-right-side-background;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 package uk.gov.london.ops.project
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import uk.gov.london.ops.organisation.model.Organisation
+import uk.gov.london.ops.organisation.model.OrganisationEntity
 import uk.gov.london.ops.programme.domain.Programme
 import uk.gov.london.ops.project.state.StateModel
 import javax.persistence.*
@@ -11,7 +11,7 @@ class ProjectOverview(
 
         @Id
         @Column(name = "project_id")
-        var projectId: Int,
+        override var id: Int? = null,
 
         @Column(name = "title")
         var title: String,
@@ -21,12 +21,12 @@ class ProjectOverview(
 
         @ManyToOne(cascade = [])
         @JoinColumn(name = "org_id", nullable = false)
-        override var organisation: Organisation,
+        override var organisation: OrganisationEntity,
 
         @JsonIgnore
         @ManyToOne(cascade = [])
         @JoinColumn(name = "managing_organisation_id")
-        override var managingOrganisation: Organisation,
+        override var managingOrganisation: OrganisationEntity,
 
         @Column(name = "status")
         override var statusName: String,
@@ -70,6 +70,9 @@ class ProjectOverview(
         var approvalWillGeneratePaymentPersisted: Boolean ? = null,
 
         @Column(name = "total_grant_eligibility")
-        override var totalGrantEligibility: Long? = null
+        override var totalGrantEligibility: Long? = null,
+
+        @Column(name = "suspend_payments")
+        var suspendPayments: Boolean = false
 
 ) : ProjectInterface

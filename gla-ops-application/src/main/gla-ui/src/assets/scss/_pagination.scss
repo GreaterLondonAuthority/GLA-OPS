@@ -1,0 +1,38 @@
+@import "variables";
+
+gla-pagination {
+  .pagination {
+    margin: 0;
+    font-family: $font-family-bold;
+    li {
+      a {
+        font-size: 14px;
+        background-color: transparent;
+        letter-spacing: 0.5px;
+        border: 0;
+        color: $accent-color;
+        font-weight: bold;
+        margin-left: 0;
+      }
+      a:hover {
+        color: $accent-color;
+      }
+    }
+    .active {
+      a{
+        &,
+        &:hover,
+        &:focus{
+          background-color: $accent-color;
+          z-index: 0;
+        }
+      }
+    }
+    .disabled {
+      a {
+        background-color: transparent !important;
+        color: $gray;
+      }
+    }
+  }
+}

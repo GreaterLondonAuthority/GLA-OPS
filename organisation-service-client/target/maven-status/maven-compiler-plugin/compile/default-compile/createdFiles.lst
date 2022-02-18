@@ -1,0 +1,7 @@
+uk\gov\london\ops\organisation\dto\OrganisationModel.class
+uk\gov\london\ops\organisation\OrganisationStatus.class
+uk\gov\london\ops\organisation\OrganisationGroupType.class
+uk\gov\london\ops\organisation\OrganisationService.class
+uk\gov\london\ops\organisation\OrganisationChangeStatusReason.class
+uk\gov\london\ops\organisation\OrganisationType.class
+uk\gov\london\ops\organisation\Organisation.class

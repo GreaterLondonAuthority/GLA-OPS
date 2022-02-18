@@ -7,23 +7,6 @@
  */
 package uk.gov.london.ops.project.block;
 
-import static uk.gov.london.ops.project.accesscontrol.AccessControlRelationshipType.ASSOCIATED;
-import static uk.gov.london.ops.project.accesscontrol.AccessControlRelationshipType.OWNER;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.Action.DELETE;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.Action.EDIT;
-import static uk.gov.london.ops.project.state.ProjectStateEntity.getStatusType;
-import static uk.gov.london.ops.project.state.ProjectStateEntity.getSubStatusType;
-import static uk.gov.london.ops.project.state.ProjectStatus.Active;
-import static uk.gov.london.ops.project.state.ProjectSubStatus.PaymentAuthorisationPending;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +18,20 @@ import uk.gov.london.ops.project.ProjectOverview;
 import uk.gov.london.ops.project.accesscontrol.ProjectAccessControlInterface;
 import uk.gov.london.ops.project.state.ProjectStatus;
 import uk.gov.london.ops.project.state.ProjectSubStatus;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.User;
+
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.ops.project.accesscontrol.AccessControlRelationshipType.OWNER;
+import static uk.gov.london.ops.project.block.ProjectBlockAction.DELETE;
+import static uk.gov.london.ops.project.block.ProjectBlockAction.EDIT;
+import static uk.gov.london.ops.project.state.ProjectStateEntity.getStatusType;
+import static uk.gov.london.ops.project.state.ProjectStateEntity.getSubStatusType;
+import static uk.gov.london.ops.project.state.ProjectStatus.Active;
+import static uk.gov.london.ops.project.state.ProjectSubStatus.PaymentAuthorisationPending;
 
 @Component
 public class ProjectBlockActivityMap {
@@ -49,12 +45,13 @@ public class ProjectBlockActivityMap {
      * Maps rows from the CSV file into StateTransition objects.
      */
     final CSVFile.CSVMapper<BlockActionRule> csvMapper = csvRow -> new BlockActionRule(
-            NamedProjectBlock.Action.valueOf(csvRow.getString("BLOCK_ACTION")),
+            ProjectBlockAction.valueOf(csvRow.getString("BLOCK_ACTION")),
             ProjectStatus.valueOf(csvRow.getString("PROJECT_STATUS")),
             csvRow.getString("PROJECT_SUB_STATUS"),
             csvRow.getString("BLOCK_TYPE"),
             csvRow.getString("BLOCK_STATUS"),
             csvRow.getString("BLOCK_COMPLETION"),
+            csvRow.getString("PAYMENTS_ONLY_CYCLE"),
             Arrays.asList(csvRow.getString("USER_ROLES").split(ROLE_DELIMITER)),
             csvRow.getString("PERMISSIONS")
     );
@@ -70,13 +67,13 @@ public class ProjectBlockActivityMap {
     @Autowired
     PermissionService permissionService;
 
-    public List<NamedProjectBlock.Action> getAllowedActionsFor(Project project, NamedProjectBlock block, User user) {
+    public List<ProjectBlockAction> getAllowedActionsFor(Project project, NamedProjectBlock block, User user) {
         Collection<Integer> orgIds = getUsersOrgsForProject(user, project.getAccessControlList());
         return getAllowedActionsFor(block, orgIds, user, project.getStatusType(), project.getSubStatusType(),
                 project.getSubStatusName());
     }
 
-    public List<NamedProjectBlock.Action> getAllowedActionsFor(ProjectOverview project,
+    public List<ProjectBlockAction> getAllowedActionsFor(ProjectOverview project,
             NamedProjectBlock block,
             User user,
             Collection<? extends ProjectAccessControlInterface> projectAccessControlList) {
@@ -86,13 +83,14 @@ public class ProjectBlockActivityMap {
         return getAllowedActionsFor(block, orgIds, user, statusType, subStatusType, project.getSubStatusName());
     }
 
-    private List<NamedProjectBlock.Action> getAllowedActionsFor(NamedProjectBlock block,
+    private List<ProjectBlockAction> getAllowedActionsFor(NamedProjectBlock block,
             Collection<Integer> orgIds,
             User user,
             ProjectStatus statusType,
             ProjectSubStatus subStatusType,
             String subStatusName) {
-        List<NamedProjectBlock.Action> allowedActions = new ArrayList<>();
+        List<ProjectBlockAction> allowedActions = new ArrayList<>();
+
         for (BlockActionRule rule : rules) {
             if (matches(rule, block, orgIds, user, statusType, subStatusType, subStatusName)) {
                 allowedActions.add(rule.getAction());
@@ -101,10 +99,10 @@ public class ProjectBlockActivityMap {
         return allowedActions;
     }
 
-    private Collection<Integer> getUsersOrgsForProject(User user,
-            Collection<? extends ProjectAccessControlInterface> projectAccessControlList) {
+    private Collection<Integer> getUsersOrgsForProject(User user, Collection<? extends ProjectAccessControlInterface>
+            projectAccessControlList) {
         Set<Integer> aclOrgIds = projectAccessControlList.stream()
-                .filter(pac -> OWNER.equals(pac.getRelationshipType()) || ASSOCIATED.equals(pac.getRelationshipType()))
+                .filter(pac -> OWNER.equals(pac.getRelationshipType()))
                 .map(ProjectAccessControlInterface::getOrganisationId)
                 .collect(Collectors.toSet());
         return CollectionUtils.intersection(user.getOrganisationIds(), aclOrgIds);
@@ -125,6 +123,7 @@ public class ProjectBlockActivityMap {
                 && matchesBlockType(rule, block)
                 && matchesBlockStatus(rule, block)
                 && matchesBlockCompletion(rule, block)
+                && matchesPaymentsOnlyLifecycle(rule, block)
                 && matchesUserRoles(rule, orgIds, user)
                 && matchesPermissions(rule, user, orgIds)
                 && activeBlockCanBeEdited(statusType, block);
@@ -163,12 +162,17 @@ public class ProjectBlockActivityMap {
     }
 
     private boolean matchesBlockStatus(BlockActionRule rule, NamedProjectBlock block) {
-        return block.isLatestVersion() && (ANY_MATCH.equals(rule.getBlockStatus()) || NamedProjectBlock.BlockStatus
+        return block.isLatestVersion() && (ANY_MATCH.equals(rule.getBlockStatus()) || ProjectBlockStatus
                 .valueOf(rule.getBlockStatus()).equals(block.getBlockStatus()));
     }
 
     private boolean matchesBlockCompletion(BlockActionRule rule, NamedProjectBlock block) {
         return ANY_MATCH.equals(rule.getBlockCompletion()) || block.isComplete();
+    }
+
+    private boolean matchesPaymentsOnlyLifecycle(BlockActionRule rule, NamedProjectBlock block) {
+        return ANY_MATCH.equals(rule.getPaymentsOnlyLifecycle()) ||
+                !block.isHasBeenThroughPaymentsOnlyCycle();
     }
 
     private boolean matchesUserRoles(BlockActionRule rule, Collection<Integer> orgIds, User user) {
@@ -208,7 +212,7 @@ public class ProjectBlockActivityMap {
         return !Active.equals(statusType) || block.allowMultipleVersions();
     }
 
-    public boolean isActionAllowed(Project project, NamedProjectBlock block, User currentUser, NamedProjectBlock.Action action) {
+    public boolean isActionAllowed(Project project, NamedProjectBlock block, User currentUser, ProjectBlockAction action) {
         return getAllowedActionsFor(project, block, currentUser).contains(action);
     }
 

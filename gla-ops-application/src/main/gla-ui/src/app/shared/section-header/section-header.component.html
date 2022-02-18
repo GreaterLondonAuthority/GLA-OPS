@@ -1,0 +1,36 @@
+<ng-template #transclude><ng-content></ng-content></ng-template>
+
+<ng-container *ngIf="level != 4">
+  <h3 class="section-header"
+      [ngClass]="{'with-subheader': subheader, 'cursor-pointer': collapsible}"
+      (click)="onSectionClick()">
+  <span allow-enter
+        [attr.aria-expanded]="!collapsed"
+        [attr.aria-label]="collapsed? 'Expand' : 'Collapse'"
+        class="glyphicon"
+        [ngClass]="{'glyphicon-triangle-bottom': collapsed, 'glyphicon-triangle-top': !collapsed}"
+        *ngIf="collapsible"
+        role="button"
+        tabindex="0"></span>
+    <span class="section-title"><ng-container *ngTemplateOutlet="transclude"></ng-container></span>
+  </h3>
+</ng-container>
+
+
+<!-- Exactly as above just h4 -->
+<ng-container *ngIf="level == 4">
+  <h4 class="section-header"
+      [ngClass]="{'with-subheader': subheader, 'cursor-pointer': collapsible}"
+      (click)="onSectionClick()">
+   <span allow-enter
+         [attr.aria-expanded]="!collapsed"
+         [attr.aria-label]="collapsed? 'Expand' : 'Collapse'"
+         class="glyphicon"
+         [ngClass]="{'glyphicon-triangle-bottom': collapsed, 'glyphicon-triangle-top': !collapsed}"
+         *ngIf="collapsible"
+         role="button"
+         tabindex="0"></span>
+    <span class="section-title"><ng-container *ngTemplateOutlet="transclude"></ng-container></span>
+  </h4>
+</ng-container>
+<div *ngIf="subheader" class="section-subheader">{{subheader}}</div>

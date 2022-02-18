@@ -1,0 +1,69 @@
+@import "variables";
+
+:host {
+  display: inline-block;
+}
+
+.filter-dropdown-button {
+  background-color: white;
+  color: black;
+  border: 1px solid #cccccc;
+
+  &:focus {
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+    outline: 2px solid $gla-black;
+    outline-offset: 2px;
+  }
+}
+
+.filter-dropdown {
+    ul {
+        padding-top:0px;
+        padding-bottom:0px;
+    }
+}
+
+.dropdown-menu.dropdown-menu {
+  width: 250px;
+  background-color: #f7f7f7;
+  color: #000;
+  padding-left: 0px;
+
+  li {
+    &.group-item {
+      padding-left: 30px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+
+    a {
+        padding: 0px;
+        margin: 0px;
+        background-color: inherit;
+        color: inherit;
+        font-size: 12px;
+    }
+
+    line-height: 25px;
+    clear: both;
+  }
+}
+
+li:hover {
+  background-color: #eeeeee;
+}
+
+.filter-dropdown-button {
+  min-width: 150px;
+  background-color: #1D6F42;
+  color: #ffffff
+}
+
+.filter-dropdown-button:hover {
+  background-color: #004600
+}
+
+.show {
+  display: inline-block !important; //!important used to override ngb styling and prevent table row expanding
+}

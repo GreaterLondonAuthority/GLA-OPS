@@ -16,12 +16,14 @@
     <tr class="primary-row expandable"
         ng-click="categoryRow.collapsed = !categoryRow.collapsed; $ctrl.onCollapseChange(categoryRow)"
         ng-repeat-start="categoryRow in $ctrl.tableData track by categoryRow[0].config.id">
-      <th ng-attr-colspan="{{$ctrl.columnCount}}">
-        <toggle-icon (collapsed-change)="$ctrl.onCollapseChange(categoryRow)" [(collapsed)]="categoryRow.collapsed"></toggle-icon><span class="category">{{categoryRow[0].config.category}}</span>
+      <th ng-if="$ctrl.isParentRowNeeded(categoryRow)"
+          ng-attr-colspan="{{$ctrl.columnCount}}">
+        <toggle-icon (collapsed-change)="$ctrl.onCollapseChange(categoryRow)" [(collapsed)]="categoryRow.collapsed"></toggle-icon>
+        <span class="category">{{categoryRow[0].config.category}}</span>
       </th>
     </tr>
 
-    <tr class="sub-heading assumption-row" ng-if="$ctrl.showAssumptions && !categoryRow.collapsed">
+    <tr class="sub-heading assumption-row" ng-if="$ctrl.showAssumptions && (!$ctrl.isParentRowNeeded(categoryRow) || !categoryRow.collapsed)">
       <th colspan="2">Assumption</th>
       <td ng-attr-colspan="{{$ctrl.columnCount - 4}}">
         <div class="assumption-cell" default-value>{{$ctrl.getAssumption(categoryRow).assumption}}</div>
@@ -36,8 +38,8 @@
       </td>
     </tr>
 
-    <tr class="subcategory sub-row" ng-if="!categoryRow.collapsed" ng-repeat="subCategoryRow in categoryRow track by subCategoryRow.id" ng-repeat-end>
-      <td>{{subCategoryRow.config.subcategory}}</td>
+    <tr class="subcategory sub-row" ng-if="!$ctrl.isParentRowNeeded(categoryRow) || !categoryRow.collapsed" ng-repeat="subCategoryRow in categoryRow track by subCategoryRow.id" ng-repeat-end>
+      <td ng-class="{'singleLevelOutput': !$ctrl.isParentRowNeeded(categoryRow) && !$ctrl.showAssumptions}">{{subCategoryRow.config.subcategory}}</td>
       <td ng-if="$ctrl.displayOutputType">{{$ctrl.getOutputTypeDesc(subCategoryRow.outputType)}}</td>
       <td ng-if="$ctrl.blockConfig.showValueColumn">{{$ctrl.OutputsService.getUnitConfig()[subCategoryRow.config.valueType].label}}</td>
       <td>{{$ctrl.getPeriodName(subCategoryRow.month)}}</td>

@@ -12,6 +12,8 @@ public enum EventType {
     PaymentAuthorised,
     PaymentDeclined,
     MilestoneApproval,
-    QuarterApproval
+    MilestoneCancel,
+    QuarterApproval,
+    CancelApprovedClaim
 
 }

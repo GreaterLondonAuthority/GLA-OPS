@@ -10,10 +10,10 @@ package uk.gov.london.ops.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.london.ops.organisation.dto.OrganisationDTOMapper;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.role.model.Role;
 import uk.gov.london.ops.role.model.RoleModel;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.domain.UserEntity;
 import uk.gov.london.ops.user.domain.UserModel;
 import uk.gov.london.ops.user.domain.UserRegistration;
 
@@ -31,7 +31,7 @@ public class UserMapper {
     @Autowired
     OrganisationDTOMapper mapper;
 
-    public UserModel toModel(User user) {
+    public UserModel toModel(UserEntity user) {
         UserModel model = new UserModel();
         model.setUsername(user.getUsername());
         model.setFirstName(user.getFirstName());
@@ -41,9 +41,8 @@ public class UserMapper {
         model.setApproved(user.isApproved());
         model.setFullName(user.getFirstName() + " " + user.getLastName());
 
-        for (Organisation organisation: user.getOrganisations()) {
+        for (OrganisationEntity organisation: user.getOrganisations()) {
             model.getOrganisations().add(mapper.getOrganisationModelFromOrg(organisation));
-
         }
 
         String primaryRole = null;
@@ -66,15 +65,6 @@ public class UserMapper {
         return model;
     }
 
-    public List<UserModel> mapToModel(Collection<User> users) {
-        if (users == null) {
-            return null;
-        }
-        else {
-            return users.stream().map(this::toModel).collect(Collectors.toCollection(LinkedList::new));
-        }
-    }
-
     public RoleModel toModel(Role role) {
         RoleModel model = new RoleModel();
         model.setName(role.getName());
@@ -85,11 +75,20 @@ public class UserMapper {
         model.setApprovedOn(role.getApprovedOn());
         model.setManagingOrganisationId(role.getOrganisation().getManagingOrganisationId());
         model.setOrgStatus(role.getOrganisation().getStatus());
+        model.setAuthorisedSignatory(role.getAuthorisedSignatory());
         return model;
     }
 
-    public User toEntity(UserRegistration registration, Organisation organisation) {
-        User user = new User(registration.getEmail().toLowerCase(), registration.getPassword());
+    public List<UserModel> mapToModel(Collection<UserEntity> users) {
+        if (users == null) {
+            return null;
+        } else {
+            return users.stream().map(this::toModel).collect(Collectors.toCollection(LinkedList::new));
+        }
+    }
+
+    public UserEntity toEntity(UserRegistration registration, OrganisationEntity organisation) {
+        UserEntity user = new UserEntity(registration.getEmail().toLowerCase(), registration.getPassword());
         user.setFirstName(registration.getFirstName());
         user.setLastName(registration.getLastName());
         user.setPhoneNumber(registration.getPhoneNumber());

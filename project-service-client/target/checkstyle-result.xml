@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.29">
+<file name="C:\Projects\GLA\GlaRefresh2021\project-service-client\src\main\java\uk\gov\london\ops\project\label\LabelService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\project-service-client\src\main\java\uk\gov\london\ops\project\ProjectFacade.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\project-service-client\src\main\java\uk\gov\london\ops\project\state\ProjectStateService.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\project-service-client\src\main\java\uk\gov\london\ops\project\state\StateModel.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\project-service-client\src\main\java\uk\gov\london\ops\project\template\TemplateService.java">
+</file>
+</checkstyle>

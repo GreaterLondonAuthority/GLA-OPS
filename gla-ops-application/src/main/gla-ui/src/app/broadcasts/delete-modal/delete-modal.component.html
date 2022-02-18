@@ -1,0 +1,34 @@
+<div class="confirmation-dialog">
+  <div class="modal-body text-center">
+    <button (keydown.enter)="activeModal.dismiss('cancel')" (mousedown)="activeModal.dismiss('cancel')"
+            aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1 class="title mbottom10"  >
+      <label>Delete Broadcast</label>
+    </h1>
+    <div class="text-left confirm-message mbottom10" >
+      To delete this Broadcast, click on 'Delete'. Note the Broadcast cannot be retrieved once deleted. To keep the
+      Broadcast, click on 'Keep'.
+    </div>
+    <div class="text-left mbottom10" >
+      <span class="bolder">ID : </span> {{broadcast.id}}
+    </div>
+    <div class="text-left mbottom10" >
+    <span class="bolder">Subject : </span> {{broadcast.subject}}
+    </div>
+    <div class="text-left mbottom10" >
+      <span class="bolder">Author : </span> {{broadcast.createdByName}}, {{broadcast.managingOrganisationName}}
+    </div>
+  </div>
+  <div class="modal-footer">
+
+    <button (click)="activeModal.dismiss()"
+            class="btn btn-default btn-secondary btn-center dismiss-btn min-padding"
+            type="button">KEEP</button>
+    <button (click)="activeModal.close()"
+            class="btn btn-default btn-primary btn-center approve-btn min-padding"
+            type="button">DELETE</button>
+
+  </div>
+</div>

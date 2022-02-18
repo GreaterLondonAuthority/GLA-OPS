@@ -146,6 +146,9 @@ class MilestonesChangeReport {
             if (milestone.notApplicable) {
               return 'N/A';
             } else {
+              if (milestone.claimStatus === 'Withdrawn') {
+                return 'Cancel Requested';
+              }
               return milestone.claimStatus;
             }
           }

@@ -7,17 +7,16 @@
  */
 package uk.gov.london.ops;
 
+import java.sql.Timestamp;
+import java.util.Map;
+import java.util.TreeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import uk.gov.london.ops.framework.Environment;
-
-import java.sql.Timestamp;
-import java.util.Map;
-import java.util.TreeMap;
+import uk.gov.london.ops.framework.environment.Environment;
 
 @Component
 public class ApplicationInfoContributor implements InfoContributor {
@@ -30,7 +29,7 @@ public class ApplicationInfoContributor implements InfoContributor {
     String cloudConsoleLogonUrl = null;
 
     public void contribute(Info.Builder builder) {
-        Map<String,Object> data = new TreeMap<>();
+        Map<String, Object> data = new TreeMap<>();
 
         data.put("release", environment.releaseNumber());
         data.put("build", environment.buildNumber());

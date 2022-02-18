@@ -10,7 +10,7 @@ package uk.gov.london.ops.project.block;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.domain.UserEntity;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -50,7 +50,7 @@ public class LockDetails {
     public LockDetails() {
     }
 
-    public LockDetails(User user, int timeoutInMinutes) {
+    public LockDetails(UserEntity user, int timeoutInMinutes) {
         this.username = user.getUsername();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();

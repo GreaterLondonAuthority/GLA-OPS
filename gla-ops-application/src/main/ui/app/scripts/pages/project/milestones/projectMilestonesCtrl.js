@@ -8,6 +8,7 @@
 
 import ProjectBlockCtrl from '../ProjectBlockCtrl';
 import './reclaimInfoModal/reclaimInfoModal.js';
+import './withdrawMilestoneModal/withdrawMilestoneModal.js';
 
 /**
  * This class handles processing route and api calls triggered by milestones-table actions.
@@ -154,6 +155,15 @@ class ProjectMilestonesCtrl extends ProjectBlockCtrl {
       this.$state.go(this.$state.current.name, this.$stateParams, {reload: true});
     });
     return this.addToRequestsQueue(p);
+  }
+
+  onWithdrawMilestoneModalAction($event) {
+    let data = $event.data;
+    let milestone = $event.milestone;
+    milestone.withdrawalReason = data.withdrawalReason;
+    return this.MilestonesService.withdrawMilestone(this.project.id, milestone.id, milestone).then(() => {
+      this.$state.go(this.$state.current.name, this.$stateParams, {reload: true});
+    });
   }
 
   onClaimMilestoneModalAction($event) {

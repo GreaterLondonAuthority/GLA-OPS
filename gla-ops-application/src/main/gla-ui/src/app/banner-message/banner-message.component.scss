@@ -1,0 +1,46 @@
+@import "variables";
+
+.gla-banner-message {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  z-index: 1001;
+  font-size: 13px;
+  background-color: white;
+
+  a,
+  a:hover,
+  a:focus,
+  a:active:hover,
+  a:active:focus {
+    color: $accent-color;
+    text-decoration: none;
+    font-family: $font-family-bold;
+  }
+
+  a:focus,
+  a:active:focus {
+    outline: 2px solid $gla-black;
+    outline-offset: 2px;
+  }
+
+  .close-button{
+    cursor: pointer;
+    font-size: 18px;
+    color: $gla-black;
+    &:focus,
+    &:active:focus {
+      outline: 2px solid $gla-black;
+      outline-offset: 2px;
+    }
+  }
+
+  .banner-message-text{
+    text-align: left;
+    flex-grow: 1;
+    i {
+      color: $red;
+    }
+  }
+}

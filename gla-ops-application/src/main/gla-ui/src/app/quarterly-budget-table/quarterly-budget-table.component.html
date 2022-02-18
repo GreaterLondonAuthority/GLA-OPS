@@ -1,0 +1,337 @@
+<div class="text-right mbottom10">
+
+  <span class="view-mode">
+    <label for="view-mode">View mode</label>
+    <select [(ngModel)]="selectedViewMode"
+            (change)="onViewModeChange()"
+            class="form-control"
+            id="view-mode">
+      <option *ngFor="let viewMode of viewModes" [ngValue]="viewMode.name">{{viewMode.label}}</option>
+    </select>
+  </span>
+
+  <button class="btn btn-secondary pull-right add-btn"
+          (click)="onAddEntry.emit()"
+          *ngIf="!readOnly && (hasMilestones || hasCategories)">
+    ADD <b>+</b>
+  </button>
+</div>
+
+<div class="table-responsive quarterly-budget-container" class="{{selectedViewMode}}">
+  <table class="table table-hover table-bordered table-default table-with-inputs quarterly-budget-table" id="quarterly-budget-table">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th class="profiles-and-activity-header">PROFILES AND ACTIVITY</th>
+      <th class="number" *ngIf="showCapitalGla">{{capClaimedLabel}}</th>
+      <th class="number" *ngIf="showCapitalOther">{{capOtherLabel}}</th>
+      <th class="number" *ngIf="showRevenueGla">{{revClaimedLabel}}</th>
+      <th class="number" *ngIf="showRevenueOther">{{revOtherLabel}}</th>
+      <th>{{allowEvidenceUpload ? 'EVIDENCE' : ''}}</th>
+      <th *ngIf="canClaimActivity">STATUS </th>
+      <th *ngIf="canClaimActivity && (!readOnly || hasReadOnlyPaymentActions)">PAYMENT ACTIONS</th>
+      <th></th>
+    </tr>
+    </thead>
+
+    <ng-container *ngIf="hasMilestones || hasCategories">
+      <!--  Project Total    -->
+      <tbody>
+        <tr class="project-total-row">
+          <td>
+            <table>
+              <tr>
+                <td class="last-approved-total">Project Total:&nbsp;</td>
+                <td class="last-approved-total" *ngIf="allProjectFunding.previousFundingTotals">Latest Approved</td>
+              </tr>
+              <tr *ngIf="allProjectFunding.previousFundingTotals">
+                <td>&nbsp;</td>
+                <td>Current</td>
+              </tr>
+            </table>
+          </td>
+          <td class="number" *ngIf="showCapitalGla">
+            <span *ngIf="allProjectFunding.previousFundingTotals" class="last-approved-total" >{{allProjectFunding.previousFundingTotals.totalCapitalValue | number: digitInfo}}</span>
+            <br *ngIf="allProjectFunding.previousFundingTotals" >
+            <span class="monospaced">{{allProjectFunding.totalProjectFunding.totalCapitalValue | number: digitInfo}}</span>
+          </td>
+          <td class="number" *ngIf="showCapitalOther">
+            <span *ngIf="allProjectFunding.previousFundingTotals" class="last-approved-total">{{allProjectFunding.previousFundingTotals.totalCapitalMatchFund | number: digitInfo}}</span>
+            <br *ngIf="allProjectFunding.previousFundingTotals">
+            <span>{{allProjectFunding.totalProjectFunding.totalCapitalMatchFund | number: digitInfo}}</span>
+          </td>
+          <td class="number" *ngIf="showRevenueGla">
+            <span *ngIf="allProjectFunding.previousFundingTotals" class="last-approved-total">{{allProjectFunding.previousFundingTotals.totalRevenueValue | number: digitInfo}}</span>
+            <br *ngIf="allProjectFunding.previousFundingTotals">
+            <span>{{allProjectFunding.totalProjectFunding.totalRevenueValue | number: digitInfo}}</span>
+          </td>
+          <td class="number" *ngIf="showRevenueOther">
+            <span *ngIf="allProjectFunding.previousFundingTotals" class="last-approved-total">{{allProjectFunding.previousFundingTotals.totalRevenueMatchFund | number: digitInfo}}</span>
+            <br *ngIf="allProjectFunding.previousFundingTotals">
+            <span>{{allProjectFunding.totalProjectFunding.totalRevenueMatchFund | number: digitInfo}}</span>
+          </td>
+          <td></td>
+          <td *ngIf="canClaimActivity"></td>
+          <td *ngIf="canClaimActivity && (!readOnly || hasReadOnlyPaymentActions)"></td>
+          <td></td>
+        </tr>
+      </tbody>
+
+
+      <!--  Years    -->
+      <tbody *ngFor="let yearBreakdown of allProjectFunding.processedFundingByYear;trackBy:trackByYear">
+        <tr class="year-row" *ngIf="(hasMilestones || hasCategories)">
+          <td>
+            <tr>
+              <td>
+                <toggle-icon [(collapsed)]="yearBreakdown.collapsed"
+                             [sessionStorage]="blockSessionStorage.toggleIcons"
+                             [sessionId]="'year-' + yearBreakdown.year"></toggle-icon>
+                <span class="year-label" >{{yearBreakdown.year | fYear}} Total:&nbsp;</span>
+              </td>
+              <td>
+                <span class="year-label"  class="last-approved-total">{{allProjectFunding.previousFundingTotals? 'Latest Approved' : ''}}</span>
+              </td>
+            </tr>
+            <tr *ngIf="allProjectFunding.previousFundingTotals">
+              <td >&nbsp;</td>
+              <td>Current</td>
+            </tr>
+          </td>
+          <td class="number" *ngIf="showCapitalGla">
+            <span *ngIf="allProjectFunding.previousFundingTotals" class="last-approved-total">{{getPreviousYearItem(yearBreakdown, 'totalCapitalValue')}}</span>
+            <br *ngIf="allProjectFunding.previousFundingTotals">
+            <span>{{yearBreakdown.totalCapitalValue | number: digitInfo}}</span>
+          </td>
+          <td class="number" *ngIf="showCapitalOther">
+            <span *ngIf="allProjectFunding.previousFundingTotals" class="last-approved-total">{{getPreviousYearItem(yearBreakdown, 'totalCapitalMatchFund')}}</span>
+            <br *ngIf="allProjectFunding.previousFundingTotals">
+            <span>{{yearBreakdown.totalCapitalMatchFund | number: digitInfo}}</span>
+          </td>
+          <td class="number" *ngIf="showRevenueGla">
+            <span *ngIf="allProjectFunding.previousFundingTotals" class="last-approved-total">{{getPreviousYearItem(yearBreakdown, 'totalRevenueValue')}}</span>
+            <br *ngIf="allProjectFunding.previousFundingTotals">
+            <span>{{yearBreakdown.totalRevenueValue | number: digitInfo}}</span>
+          </td>
+          <td class="number" *ngIf="showRevenueOther">
+            <span *ngIf="allProjectFunding.previousFundingTotals" class="last-approved-total">{{getPreviousYearItem(yearBreakdown, 'totalRevenueMatchFund')}}</span>
+            <br *ngIf="allProjectFunding.previousFundingTotals">
+            <span>{{yearBreakdown.totalRevenueMatchFund | number: digitInfo}}</span>
+          </td>
+          <td></td>
+          <td *ngIf ="canClaimActivity"></td>
+          <td *ngIf ="canClaimActivity && (!readOnly || hasReadOnlyPaymentActions)"></td>
+          <td></td>
+        </tr>
+
+        <!-- Quarter -->
+        <ng-container *ngIf="!yearBreakdown.collapsed">
+          <ng-container *ngFor="let section of yearBreakdown.mappedSections;trackBy:trackBySection" class="expandableRow">
+            <tr class="quarter-row expandable"
+                [ngClass]="{expandable:section.hasMilestones}">
+              <td>
+                <toggle-icon *ngIf="section.hasMilestones"
+                             [(collapsed)]="section.collapsed"
+                             [sessionStorage]="blockSessionStorage.toggleIcons"
+                             [sessionId]="'year-' + yearBreakdown.year + '-Q' + section.quarter"></toggle-icon>
+                <span>{{section.label}}</span>
+                <div *ngIf="canClaimActivity" class="text-nowrap" style="max-width: 205px">
+                  <div *ngIf="section?.sectionClaimsSummary?.nbActivitiesClaimed == 0 && section?.claim?.claimType !== 'QUARTER'">
+                    <span class="secondary-text">No activities are currently Claimed</span>
+                  </div>
+                  <div *ngIf="section?.sectionClaimsSummary?.nbActivitiesClaimed > 0">
+                   <span class="secondary-text">{{buildSectionClaimSummary(section)}}</span>
+                  </div>
+                </div>
+                <div *ngIf="paymentsEnabled && section.notClaimableReason && !readOnly && !canClaimActivity">
+                  <span class="bolder error">{{section.notClaimableReason}}</span>
+                </div>
+                <div class="pull-right" *ngIf="paymentsEnabled">
+                  <a class="claim-link"  href="JavaScript:void(0)" (click)="showClaimModal(section);$event.stopPropagation();" *ngIf="paymentsEnabled && (section.status === 'Claimable' || section.claim) && (section?.claim?.claimType === 'QUARTER' || !canClaimActivity) && !readOnly">{{section.claim && section.claim.claimStatus !== 'Withdrawn'? section.status : 'Claim'}} Q{{section.quarter}}</a>
+                  <a class="claim-link" href="JavaScript:void(0)" (click)="showClaimModal(section);$event.stopPropagation();"  *ngIf="(section.status === 'Claimed' || section.status === 'Paid') && !canClaimActivity && readOnly">{{section.status}} Q{{section.quarter}}</a>
+                </div>
+              </td>
+              <td class="number" *ngIf="showCapitalGla">{{section.totalCapitalValue | number: digitInfo}}</td>
+              <td class="number" *ngIf="showCapitalOther">{{section.totalCapitalMatchFund | number: digitInfo}}</td>
+              <td class="number" *ngIf="showRevenueGla">{{section.totalRevenueValue | number: digitInfo}}</td>
+              <td class="number" *ngIf="showRevenueOther">{{section.totalRevenueMatchFund | number: digitInfo}}</td>
+              <!-- Hide if payment actions are shown to have more space -->
+              <td *ngIf="!(canClaimActivity && (!readOnly))"></td>
+              <!-- Hide if payment actions are shown to have more space -->
+              <td *ngIf="canClaimActivity && readOnly"></td>
+              <td colspan="3" *ngIf ="canClaimActivity && (!readOnly)">
+                <div *ngIf="canClaimActivity">
+                  <div *ngIf="canClaimActivity && section?.sectionClaimsSummary?.nbActivitiesClaimed == 0 && section?.claim?.claimType !== 'QUARTER'">
+<!--                    No activities are currently Claimed-->
+                    <span class="pull-right" *ngIf="paymentsEnabled">
+                      <button id="claim-all-button"
+                              class="btn btn-primary btn-sm"
+                              *ngIf="paymentsEnabled && canClaimActivity && canClaimActivities(section) && section?.activities?.length >= 2 && !moreThanOneUnclaimed(section) && !readOnly"
+                              (click)="showClaimAllActivitiesModal(section);$event.stopPropagation();"
+                              [disabled]="readOnly">
+                      CLAIM ALL
+                      </button>
+                    </span>
+                  </div>
+                  <div *ngIf="canClaimActivity && section?.sectionClaimsSummary?.nbActivitiesClaimed > 0">
+<!--                    {{buildSectionClaimSummary(section)}}-->
+                    <span class="pull-right" *ngIf="paymentsEnabled">
+                      <button id="cancel-claim-all-button"
+                              class="btn btn-secondary btn-sm"
+                              *ngIf="canClaimActivity && !canClaimActivities(section) && section?.activities?.length >= 2 && moreThanOneClaimed(section) && !readOnly"
+                              (click)="cancelAllActivitiesClaims(section);$event.stopPropagation();"
+                              [disabled]="readOnly">
+                        CANCEL ALL
+                      </button>
+                    </span>
+                  </div>
+                </div>
+                <span class="pull-right claim-link" *ngIf="paymentsEnabled">
+                  <a href="JavaScript:void(0)" (click)="showClaimModal(section);$event.stopPropagation();" *ngIf="paymentsEnabled && (section.status === 'Claimable' || section.claim) && (section?.claim?.claimType === 'QUARTER' || !canClaimActivity) && !readOnly">{{section.claim ? section.status : 'Claim'}} Q{{section.quarter}}</a>
+                  <span class="bolder error" *ngIf="section.notClaimableReason && !readOnly">{{section.notClaimableReason}}</span>
+                  <a href="JavaScript:void(0)" (click)="showClaimModal(section);$event.stopPropagation();"  *ngIf="(section.status === 'Claimed' || section.status === 'Paid') && !canClaimActivity && readOnly">{{section.status}} Q{{section.quarter}}</a>
+                </span>
+              </td>
+              <td colspan="2"></td>
+            </tr>
+
+            <ng-container *ngIf="!section.collapsed">
+              <ng-container *ngFor="let milestone of section.milestones;trackBy:trackByKey">
+                <tr class="milestone-row">
+                  <th>{{milestone.name}}</th>
+                  <td class="number" *ngIf="showCapitalGla"><!--{{milestone.totalCapitalValue | number}}--></td>
+                  <td class="number" *ngIf="showCapitalOther"><!--{{milestone.totalCapitalMatchFund | number}}--></td>
+                  <td class="number" *ngIf="showRevenueGla"><!--{{milestone.totalRevenueValue | number}}--></td>
+                  <td class="number" *ngIf="showRevenueOther"><!--{{milestone.totalRevenueMatchFund | number}}--></td>
+                  <td></td>
+                  <td *ngIf ="canClaimActivity"></td>
+                  <td *ngIf ="canClaimActivity && (!isReadOnly(section) || hasReadOnlyPaymentActions)"> </td>
+                  <td></td>
+                  <td *ngIf="canClaimActivity && section?.claim?.claimType === 'QUARTER' && !readOnly"></td>
+                </tr>
+
+                <tr class="activity-row" *ngFor="let activity of milestone.activities;trackBy:trackByKey">
+                  <th *ngIf="readOnly || (section.claim && section.claim.claimStatus !== 'Withdrawn') || (activity.claim && activity.claim.claimStatus !== 'Withdrawn' )">
+                    {{activity.name}}
+                  </th>
+                  <th *ngIf="!readOnly && (!section.claim || section.claim.claimStatus === 'Withdrawn') && (!activity.claim || activity.claim.claimStatus === 'Withdrawn')">
+                    <a href="JavaScript:void(0)" (click)="onEditEntry(activity)">{{activity.name}}</a>
+                  </th>
+
+                  <td class="number" *ngIf="showCapitalGla && isReadOnly(section, activity)">
+                    <div>{{activity.capitalValue | number: digitInfo}}</div>
+                  </td>
+                  <td class="number-input" *ngIf="showCapitalGla && !isReadOnly(section, activity)">
+                    <input
+                      type="text"
+                      [(ngModel)]="activity.capitalValue"
+                      (blur)="onBlurActivityInput(activity)"
+                      mask="separator.{{monetaryValueScale}}"
+                      numberType
+                      thousandSeparator=","
+                      [ngClass]="{'invalid-input': activity.emptyBudgetsWarning}"
+                      maxlength="13"/>
+                    <span *ngIf="activity.emptyBudgetsWarning" class="error">
+                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                      <span>Fill in at least 1 budget</span>
+                    </span>
+                  </td>
+
+                  <td class="number" *ngIf="showCapitalOther && isReadOnly(section, activity)">
+                    <div >{{activity.capitalMatchFundValue | number: digitInfo}}</div>
+                  </td>
+                  <td class="number-input" *ngIf="showCapitalOther && !isReadOnly(section, activity)">
+                    <input
+                      type="text"
+                      [(ngModel)]="activity.capitalMatchFundValue"
+                      (blur)="onBlurActivityInput(activity)"
+                      mask="separator.{{monetaryValueScale}}"
+                      numberType
+                      thousandSeparator=","
+                      [ngClass]="{'invalid-input': activity.emptyBudgetsWarning}"
+                      maxlength="13"/>
+                  </td>
+
+                  <td class="number" *ngIf="showRevenueGla && isReadOnly(section, activity)">
+                    <div >{{activity.revenueValue | number: digitInfo}}</div>
+                  </td>
+                  <td class="number-input" *ngIf="showRevenueGla && !isReadOnly(section, activity)">
+                    <input
+                      type="text"
+                      [(ngModel)]="activity.revenueValue"
+                      (blur)="onBlurActivityInput(activity)"
+                      mask="separator.{{monetaryValueScale}}"
+                      numberType
+                      thousandSeparator=","
+                      [ngClass]="{'invalid-input': activity.emptyBudgetsWarning}"
+                      maxlength="13"/>
+                  </td>
+
+                  <td class="number" *ngIf="showRevenueOther && isReadOnly(section, activity)">
+                    <div >{{activity.revenueMatchFundValue | number: digitInfo}}</div>
+                  </td>
+                  <td class="number-input" *ngIf="showRevenueOther && !isReadOnly(section, activity)">
+                    <input
+                      type="text"
+                      [(ngModel)]="activity.revenueMatchFundValue"
+                      (blur)="onBlurActivityInput(activity)"
+                      mask="separator.{{monetaryValueScale}}"
+                      numberType
+                      thousandSeparator=","
+                      [ngClass]="{'invalid-input': activity.emptyBudgetsWarning}"
+                      maxlength="13"/>
+                  </td>
+                  <td>
+                    <div style="min-width: 80px" *ngIf="allowEvidenceUpload">
+                      <a href="JavaScript:void(0)" (click)="onShowEvidenceModal.emit(activity)"  *ngIf="evidenceLinkText(activity)">{{evidenceLinkText(activity)}}</a>
+                      <span *ngIf="!evidenceLinkText(activity)">None added</span>
+                    </div>
+                  </td>
+                  <td class="claim-status" *ngIf ="canClaimActivity">
+                    <div *ngIf="section?.claim?.claimType !== 'QUARTER'">
+                      <div *ngIf="(!activity.claim || activity.claim.claimStatus === 'Withdrawn') && (activity.revenueValue >0 || activity.capitalValue >0)">Unclaimed</div>
+                      <span *ngIf="activity.claim && activity.claim.claimStatus !== 'Withdrawn' && (activity.revenueValue >0 || activity.capitalValue >0)">{{activity.status}}</span>
+                    </div>
+                  </td>
+                  <td class="payment-actions" *ngIf ="canClaimActivity && (!readOnly || hasReadOnlyPaymentActions)">
+                    <button id="claim-button"
+                            class="btn btn-primary btn-sm"
+                            *ngIf="activity.status === 'Claimable' && section?.claim?.claimType != 'QUARTER' && !readOnly"
+                            (click)="showClaimModal(section, activity);$event.stopPropagation();"
+                            [disabled]="readOnly">
+                      CLAIM
+                    </button>
+
+                    <button id="cancel-claim-button"
+                            class="btn btn-secondary btn-sm"
+                            *ngIf="activity.status === 'Claimed' && !readOnly"
+                            (click)="showCancelClaimModal(section, activity);$event.stopPropagation();"
+                            [disabled]="readOnly">
+                      CANCEL
+                    </button>
+
+                    <button id="cancel-approved-claim-button"
+                            class="btn btn-primary btn-sm"
+                            *ngIf="cancelApprovedActivitiesFeature && activity.status === 'Paid' && canCancelApprovedActivities"
+                            (click)="showCancelPaymentModal(section, activity);$event.stopPropagation();">
+                      CANCEL CLAIM
+                    </button>
+
+                  </td>
+
+                  <td class="delete-btn-container">
+                    <delete-button *ngIf ="activityCanBeDeleted(section, activity)"
+                                   (click)="onDeleteActivity.emit({section: section, milestone: milestone, activity:activity}); $event.stopPropagation();">
+                    </delete-button>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </ng-container>
+    <tbody *ngIf="!hasMilestones && !hasCategories">
+    <tr><td [attr.colspan]="canClaimActivity? readOnly? 8: 9 : 8">Add milestones in the <a href="JavaScript:void(0)" *ngIf="milestoneBlock"  ui-sref="project-block.milestones({projectId: milestoneBlock.projectId, blockPosition: milestoneBlock.displayOrder, blockId: milestoneBlock.id})">milestone page</a> before you can profile expenditure</td></tr>
+    </tbody>
+  </table>
+</div>

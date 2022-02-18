@@ -7,16 +7,6 @@
  */
 package uk.gov.london.ops.project.template;
 
-import static org.apache.commons.io.FileUtils.ONE_MB;
-import static uk.gov.london.common.GlaUtils.parseInt;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,11 +16,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.london.ops.audit.AuditService;
-import uk.gov.london.ops.domain.Requirement;
 import uk.gov.london.ops.file.AttachmentFile;
 import uk.gov.london.ops.file.FileCategory;
 import uk.gov.london.ops.file.FileService;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.enums.Requirement;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.NotFoundException;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.feature.Feature;
@@ -43,12 +33,16 @@ import uk.gov.london.ops.project.question.Answer;
 import uk.gov.london.ops.project.question.ProjectQuestionsBlock;
 import uk.gov.london.ops.project.question.ProjectQuestionsService;
 import uk.gov.london.ops.project.state.ProjectStatus;
-import uk.gov.london.ops.project.template.domain.AnswerOption;
-import uk.gov.london.ops.project.template.domain.AnswerType;
-import uk.gov.london.ops.project.template.domain.Question;
-import uk.gov.london.ops.project.template.domain.Template;
-import uk.gov.london.ops.project.template.domain.TemplateSummary;
+import uk.gov.london.ops.project.template.domain.*;
 import uk.gov.london.ops.user.UserService;
+
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.util.*;
+
+import static org.apache.commons.io.FileUtils.ONE_MB;
+import static uk.gov.london.common.GlaUtils.parseInt;
+import static uk.gov.london.ops.framework.OPSUtils.currentUsername;
 
 /**
  * Service interface for managing the questions library.
@@ -58,8 +52,9 @@ public class QuestionService {
 
     private static final int MIN_OPTIONS = 2;
     private static final int MAX_OPTIONS = 35;
-    private static final int OPTION_MAX_LENGTH = 45;
+    private static final int OPTION_MAX_LENGTH = 100;
     private static final int TEXT_MAX_LENGTH = 2000;
+    private static final int MAX_FILE_QUANTITY = 2;
 
     @Autowired
     AuditService auditService;
@@ -69,9 +64,6 @@ public class QuestionService {
 
     @Autowired
     ProjectQuestionsService projectQuestionsService;
-
-    @Autowired
-    UserService userService;
 
     @Autowired
     QuestionRepository repository;
@@ -90,6 +82,9 @@ public class QuestionService {
 
     @Autowired
     FileService fileService;
+
+    @Autowired
+    UserService userService;
 
     @Value("${max.file.size}")
     int maxFileSize;
@@ -149,6 +144,8 @@ public class QuestionService {
     }
 
     private void enrich(Question question) {
+        userService.enrich(question);
+
         List<Template> templates = templateRepository.findAllForQuestion(question.getId());
         question.setTemplates(TemplateSummary.createFrom(templates));
         question.setNbProjectsUsedIn(projectQuestionsService.countByQuestion(question.getId()));
@@ -208,6 +205,7 @@ public class QuestionService {
 
         }
 
+        question.setModifiedOn(OffsetDateTime.now());
         save(question);
     }
 
@@ -261,10 +259,11 @@ public class QuestionService {
             Integer maxAnswers,
             String answersDelimiter) {
         validateQuestion(id, text, answerType, options, maxAnswers, answersDelimiter);
-
+        quantity = (quantity == null) ? MAX_FILE_QUANTITY : quantity;
         maxLength = getTextMaxLength(maxLength, answerType);
         jdbcTemplate.update(
-                "insert into QUESTION (id, text, answer_type, external_key, max_length, quantity, created_on, max_upload_size, max_combined_upload_size, max_answers) "
+                "insert into QUESTION (id, text, answer_type, external_key, max_length, quantity, created_on, max_upload_size, "
+                        + "max_combined_upload_size, max_answers) "
                         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 id, text, answerType.name(), externalKey, maxLength, quantity,
                 new java.sql.Date(Date.from(environment.now().toInstant()).getTime()), sizeInMb, combinedFileSizeInMb,
@@ -273,7 +272,7 @@ public class QuestionService {
         // but otherwise get transient instance save exception (GLA-26241)
         Question created = findById(id);
         try {
-            created.setCreatedBy(userService.currentUsername());
+            created.setCreatedBy(currentUsername());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -295,7 +294,7 @@ public class QuestionService {
                 question.getMaxAnswers(), question.getDelimiter());
     }
 
-    private void validateQuestion(Integer id, String text, AnswerType answerType, Set<AnswerOption> options, Integer maxAnswers,
+    public void validateQuestion(Integer id, String text, AnswerType answerType, Set<AnswerOption> options, Integer maxAnswers,
             String delimiter) {
         if (id == null) {
             throw new ValidationException("Question ID cannot be null!");

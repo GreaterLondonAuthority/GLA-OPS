@@ -1,0 +1,7 @@
+<div *ngIf="!isCookieAccepted" class="gla-cookie-warning">
+  <div class="cookie-warning-text">
+    We  use cookies to ensure we give you the best experience on our website. Find out more about cookies in our
+    <a href="{{privacyUrl}}" class="policy-link" target="_blank">privacy policy</a>
+  </div>
+  <span class="glyphicon glyphicon-remove close-button pull-right" (click)="close()" (keydown.enter)="close()" tabindex="0" role="button" aria-label="Close"></span>
+</div>

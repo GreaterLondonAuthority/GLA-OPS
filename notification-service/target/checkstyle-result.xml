@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.29">
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\EmailEntity.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\EmailServiceImpl.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\EmailSummary.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\EntitySubscriptionEntity.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\implementation\NotificationTypesDataInitialiser.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\implementation\repository\EmailSummaryPredicateBuilder.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\implementation\repository\EmailSummaryRepository.java">
+<error line="27" column="9" severity="warning" message="&apos;if&apos; is not followed by whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAfterCheck"/>
+<error line="27" column="9" severity="warning" message="WhitespaceAround: &apos;if&apos; is not followed by whitespace. Empty blocks may only be represented as {} when not part of a multi-block statement (4.1.3)" source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck"/>
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\implementation\repository\EntitySubscriptionRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\NotificationAPI.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\NotificationEntity.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\NotificationServiceImpl.java">
+<error line="154" severity="warning" message="Line is longer than 132 characters (found 136)." source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+<error line="196" severity="warning" message="Overload methods should not be split. Previous overloaded method located at line &apos;161&apos;." source="com.puppycrawl.tools.checkstyle.checks.coding.OverloadMethodsDeclarationOrderCheck"/>
+<error line="322" severity="warning" message="Line is longer than 132 characters (found 141)." source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+<error line="323" severity="warning" message="Line is longer than 132 characters (found 139)." source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\NotificationTypeEntity.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\notification-service\src\main\java\uk\gov\london\ops\notification\UserNotificationEntity.java">
+</file>
+</checkstyle>

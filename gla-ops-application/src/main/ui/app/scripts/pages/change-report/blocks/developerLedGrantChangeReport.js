@@ -14,7 +14,12 @@ class DeveloperLedGrantChangeReport {
   $onInit() {
     this.reportData = this.GrantService.prepareReportData(this.data.left, this.data.right);
 
-
+    this.blockFields =
+      {
+        left: this.data.left,
+        right: this.data.right,
+        changes: this.data.changes
+      };
     this.tenuresFields = [
       {
         field: 'tenureType.name',
@@ -75,6 +80,10 @@ class DeveloperLedGrantChangeReport {
 
   }
 
+  canShowOtherAffordableTenureType(){
+    return (this.blockFields.left && this.blockFields.left.otherAffordableTenureType)
+      || (this.blockFields.right && this.blockFields.right.otherAffordableTenureType);
+  }
 }
 
 DeveloperLedGrantChangeReport.$inject = ['GrantService'];

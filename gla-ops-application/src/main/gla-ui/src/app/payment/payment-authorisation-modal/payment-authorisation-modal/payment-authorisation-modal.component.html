@@ -1,0 +1,64 @@
+<div class="authorise-payment-dialog">
+
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Authorise Payment</h1>
+  </div>
+
+  <div class="modal-body">
+
+    <div class="gla-banner-message" *ngIf="paymentGroup.comments">
+      <div class="banner-message-text">
+        <i class="glyphicon glyphicon-exclamation-sign red"></i>
+        <span *ngIf="paymentGroup.paymentsOnlyApproval"> Payment(s) requested without approving project changes:</span>
+        <span *ngIf="!paymentGroup.paymentsOnlyApproval"> Payment(s) requested and changes approved with the following authority:</span>
+      </div>
+    </div>
+    <div class="mtop10 mbottom10 text-center" *ngIf="paymentGroup.comments">{{paymentGroup.comments}}</div>
+
+    <div class="table-responsive">
+      <table id="pending-payments-table" class="table table-bordered">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>Project ID</th>
+          <th>Project Name</th>
+          <th>Payee</th>
+          <th>Programme</th>
+          <th>Payment Type</th>
+          <th>Sub-type</th>
+          <th>Source</th>
+          <th>Payment £</th>
+        </tr>
+        </thead>
+        <tbody class="payment-group">
+        <tr class="clickable-row" *ngFor="let item of paymentGroup.payments"
+            allow-enter tabindex="0">
+          <td>P{{item.projectId}}</td>
+          <td>{{item.projectName}}</td>
+          <td>{{item.vendorName}}</td>
+          <td>{{item.programmeName}}</td>
+          <td>{{item.category}}</td>
+          <td>{{item.subCategory}}</td>
+          <!--UI property-->
+          <td>{{item.source}}</td>
+          <td>{{item.totalIncludingInterest | number: '.2'}}</td>
+        </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button (click)="activeModal.close()" class="btn btn-primary btn-confirm-authorise">AUTHORISE</button>
+        <button (click)="activeModal.dismiss()" class="btn btn-secondary">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -18,7 +18,7 @@ import uk.gov.london.ops.organisation.dto.OrganisationDTOMapper;
 import uk.gov.london.ops.organisation.dto.OrganisationGroupMapper;
 import uk.gov.london.ops.organisation.dto.OrganisationGroupModel;
 import uk.gov.london.ops.organisation.dto.OrganisationModel;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.organisation.model.OrganisationGroup;
 
 import javax.validation.Valid;
@@ -36,7 +36,7 @@ public class OrganisationGroupAPI {
     OrganisationGroupService organisationGroupService;
 
     @Autowired
-    OrganisationService organisationService;
+    OrganisationServiceImpl organisationService;
 
     @Autowired
     OrganisationGroupMapper organisationGroupMapper;
@@ -63,12 +63,12 @@ public class OrganisationGroupAPI {
     @Secured({OPS_ADMIN, ORG_ADMIN})
     @RequestMapping(value = "/organisationGroups/organisation", method = RequestMethod.GET)
     @ApiOperation(
-            value = "lookup organisation by ID or IMS number and validate for consortium or partnership creation",
-            notes = "lookup organisation by ID or IMS number and validate for consortium or partnership creation"
+            value = "lookup organisation by ID or provider number and validate for consortium or partnership creation",
+            notes = "lookup organisation by ID or provider number and validate for consortium or partnership creation"
     )
     public @ResponseBody
     OrganisationModel lookupOrganisation(@RequestParam String orgCode) {
-        Organisation organisation = organisationService.findByOrgCode(orgCode, true);
+        OrganisationEntity organisation = organisationService.findByOrgCode(orgCode, true);
         organisationGroupService.validateForConsortiumCreation(organisation);
         return organisationDTOMapper.getOrganisationModelFromOrg(organisation);
     }
@@ -81,7 +81,8 @@ public class OrganisationGroupAPI {
         return organisationDTOMapper.getOrganisationModelsFromOrgs(organisationGroupService.getGroupOrganisationsInProjects(id));
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_PROGRAMME_ADMIN, GLA_READ_ONLY, ORG_ADMIN,
+            PROJECT_EDITOR, PROJECT_READER,
             TECH_ADMIN})
     @RequestMapping(value = "/organisationGroupsForOrg/{orgId}/programme/{programmeId}", method = RequestMethod.GET)
     @ApiOperation(

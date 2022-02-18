@@ -16,7 +16,8 @@ export class AuthInterceptor implements HttpInterceptor {
         (event: HttpEvent<any>) => {
         },
         (err: any) => {
-          if (err instanceof HttpErrorResponse) {
+          if (err instanceof HttpErrorResponse && !(err.status === 403 && request.params.get('ignore403') === 'true')) {
+            console.log('intercept', request, err)
             this.authService.triggerResponseError(err);
           }
         })

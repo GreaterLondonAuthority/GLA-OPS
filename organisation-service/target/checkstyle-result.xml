@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.29">
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\dto\OrganisationGroupModel.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\AssociatedProjectRequestedAndSOSRecordRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\AssociatedProjectsRecordRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\OrganisationBudgetEntryRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\OrganisationContractRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\OrganisationProgrammeRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\OrganisationProgrammeSummaryRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\OrganisationSummaryPredicateBuilder.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\OrganisationSummaryRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\RequestedAndPaidRecordRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\implementation\repository\TeamRepository.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\Address.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\AssociatedProjectRequestedAndSOSRecord.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\AssociatedProjectsRecord.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\BulkUploadSummary.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\OrganisationAction.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\OrganisationBudgetEntry.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\OrganisationContract.java">
+<error line="79" column="49" severity="warning" message="WhitespaceAround: &apos;=&apos; is not followed by whitespace. Empty blocks may only be represented as {} when not part of a multi-block statement (4.1.3)" source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck"/>
+<error line="79" column="49" severity="warning" message="WhitespaceAround: &apos;=&apos; is not preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck"/>
+<error line="79" column="66" severity="warning" message="WhitespaceAround: &apos;=&apos; is not followed by whitespace. Empty blocks may only be represented as {} when not part of a multi-block statement (4.1.3)" source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck"/>
+<error line="79" column="66" severity="warning" message="WhitespaceAround: &apos;=&apos; is not preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck"/>
+<error line="95" column="95" severity="warning" message="WhitespaceAround: &apos;:&apos; is not preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck"/>
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\OrganisationProgramme.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\OrganisationProgrammeSummary.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\OrganisationSummary.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\OrganisationTeam.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\ProgrammeOrganisationID.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\ProgrammeRequestedAndPaidRecord.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\RequestedAndPaidRecord.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\RequestedAndPaidRecordID.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\StrategicPartnershipUnitSummary.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\StrategicPlannedUnitsForTenure.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\TeamEntity.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\model\UpdateOrganisationStatusRequest.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\template\OrganisationBlockQuestionTemplate.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\template\OrganisationBlockTemplate.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\template\OrganisationTemplate.java">
+</file>
+<file name="C:\Projects\GLA\GlaRefresh2021\organisation-service\src\main\java\uk\gov\london\ops\organisation\template\OrganisationTemplateService.java">
+</file>
+</checkstyle>

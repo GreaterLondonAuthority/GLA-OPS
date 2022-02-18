@@ -1,0 +1,37 @@
+<table class="table indicative-table table-hover table-bordered table-default table-with-inputs"
+       ng-class="{'edit-mode': !$ctrl.isReadonly}">
+  <thead class="thead-inverse uppercase">
+  <tr>
+    <th scope="col" style="width: 25%">TENURE TYPE</th>
+    <th scope="col" class="number" ng-repeat="data in $ctrl.data.tenureTypeAndUnitsEntries[0].indicativeTenureValuesSorted">
+      <div >
+        <span>{{data.year}}/{{data.year + 1 | limitTo:2:2}}</span>
+      </div>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="t in $ctrl.data.tenureTypeAndUnitsEntries track by t.id">
+    <th scope="row">{{ t.tenureType.name }}</th>
+
+    <td class="number" ng-class="{'read-only': $ctrl.isReadonly || m.disabled, 'cell-with-input': !$ctrl.isReadonly }" ng-repeat="m in t.indicativeTenureValuesSorted track by m.id">
+      <input ng-if="!$ctrl.isReadonly && !m.disabled"
+             number-mask="0"
+             type="text"
+             ng-model="m.units"
+             maxlength="6"
+             change-on-blur="$ctrl.tenureChange(m)"
+             aria-label="{{t.tenureType.name}}-{{m.year}}-units-input">
+      <span ng-if="$ctrl.isReadonly || m.disabled">{{m.units | number}}</span>
+    </td>
+  </tr>
+  </tbody>
+  <tfoot>
+  <tr>
+    <td>TOTAL</td>
+    <td class="read-only number" ng-repeat="data in $ctrl.data.tenureTypeAndUnitsEntries[0].indicativeTenureValuesSorted track by $index">
+      <span role="status" class="sr-only">Total value for the column is </span>{{$ctrl.data.totals[data.year] | number}}
+    </td>
+  </tr>
+  </tfoot>
+</table>

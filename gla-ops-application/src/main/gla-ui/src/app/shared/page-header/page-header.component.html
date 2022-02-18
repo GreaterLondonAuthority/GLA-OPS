@@ -1,4 +1,4 @@
-<div  [class]="{'with-buttons': hasButtons}">
+<div  [ngClass]="{'with-buttons': hasButtons}">
   <div class="title-row">
     <div class="back-btn-col">
       <button *ngIf="!hideBackBtn && !(stopEditing && !editableBlock?.readOnly)"
@@ -14,6 +14,7 @@
         <ng-content></ng-content>
         {{header}}
       </h2>
+      <span *ngIf="warning?.length > 0" class="error">{{warning}}</span>
     </div>
     <!-- TODO consider using parent scope instead -->
     <div #editCol class="edit-col text-right" *ngIf="editableBlock || header">
@@ -28,7 +29,7 @@
           <span>EDIT</span><i class="glyphicon glyphicon-edit"></i>
         </button>
         <button
-          class="btn btn-edit btn-md"
+          class="btn btn-edit btn-md done-button"
           id="stop-editing-button"
           (click)="editableBlock?.stopEditing()"
           *ngIf="stopEditing && editableBlock?.editable && !editableBlock?.readOnly"

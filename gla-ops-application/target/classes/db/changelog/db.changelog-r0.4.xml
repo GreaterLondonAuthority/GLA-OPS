@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <changeSet id="24" author="cmelville">
+
+
+        <createSequence sequenceName="tenure_typ_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="tenure_type">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="tenure_typ_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="template_id" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="name" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="tariff_cap" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="tariff_pct_cap" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="display_order" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="template_id"
+                                 baseTableName="tenure_type"
+                                 constraintName="fk_tenure_type_template"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="template"/>
+    </changeSet>
+
+
+    <changeSet id="25" author="ybouhass">
+        <addColumn tableName="users">
+            <column name="registration_org_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="26" author="ybouhass">
+        <createSequence sequenceName="password_reset_token_seq" startValue="100" incrementBy="1"/>
+
+        <createTable tableName="password_reset_token">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="password_reset_token_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="token" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="expiry_date" type="TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="used" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="27" author="cmelville">
+
+
+        <createSequence sequenceName="tenure_and_units_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="tenure_and_units">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="tenure_and_units_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="total_units" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="s106_units" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="total_cost" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="tenure_type_id" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="budget_id" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="tenure_type_id"
+                                 baseTableName="tenure_and_units"
+                                 constraintName="fk_tenure_and_units_tenure_type"
+                                 onDelete="RESTRICT"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="tenure_type"/>
+
+        <createSequence sequenceName="budget_and_tenure_seq" startValue="10000" incrementBy="1"/>
+
+        <createTable tableName="budget_and_tenure">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="budget_and_tenure_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="affordable_housing_grand_selected" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="recycled_capital_grant_fund_selected" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="disposal_proceeds_fund_selected" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="affordable_housing_grant_value" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="recycled_capital_grant_fund_value" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="disposal_proceeds_fund_value" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="meeting_design_guide" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="reason_not_meeting_design_guide" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+
+        </createTable>
+        <addColumn tableName="project">
+            <column name="tenure_and_budget" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="tenure_and_budget"
+                                 baseTableName="project"
+                                 constraintName="fk_project_budget_and_tenure"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="budget_and_tenure"/>
+
+        <addForeignKeyConstraint baseColumnNames="budget_id"
+                                 baseTableName="tenure_and_units"
+                                 constraintName="fk_tenure_and_units_budget_and_tenure"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="budget_and_tenure"/>
+
+    </changeSet>
+
+    <changeSet id="28" author="ybouhass">
+        <createSequence sequenceName="email_seq" startValue="1000" incrementBy="1"/>
+
+        <createTable tableName="email">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="email_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="recipient" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="subject" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="body" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="date_sent" type="TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="29" author="ybouhass">
+        <dropSequence sequenceName="project_status_seq" />
+        <dropTable tableName="project_status" />
+
+        <createSequence sequenceName="project_history_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="project_history">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="project_history_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="project_id" type="INT4">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="transition" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="comments" type="varchar(1000)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+            <column name="created_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="30" author="sleach">
+        <!--
+            Table to support Spring Integration's "JdbcLockRegistry" for distributed locking
+            across a cluster.
+
+            http://docs.spring.io/spring-integration/docs/4.3.4.RELEASE/reference/html/jdbc.html#jdbc-lock-registry
+        -->
+        <createTable tableName="int_lock">
+            <column name="lock_key" type="char(36)">
+                <constraints nullable="false" />
+            </column>
+            <column name="region" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="client_id" type="char(36)" />
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey constraintName="lock_pk" tableName="int_lock" columnNames="LOCK_KEY, REGION" />
+    </changeSet>
+
+    <changeSet id="31" author="ybouhass">
+        <addColumn tableName="milestone">
+            <column name="created_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="32" author="sleach">
+        <addColumn tableName="template">
+            <column name="allow_monetary_milestones" type="BOOLEAN">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="33" author="ybouhass">
+        <sql>update user_roles set name = 'ROLE_GLA_ADMIN' where name = 'ROLE_ADMIN'</sql>
+        <sql>update user_roles set name = 'ROLE_PROJECT_EDITOR' where name = 'ROLE_USER'</sql>
+    </changeSet>
+
+    <changeSet id="34" author="cmelville">
+        <addColumn tableName="milestone">
+            <column name="manually_created" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="35" author="cmelville">
+        <sql>update milestone set milestone_status = 'FORECAST' where milestone_status = 'NEW'</sql>
+        <sql>update milestone set milestone_status = 'ACTUAL' where milestone_status = 'COMPLETE'</sql>
+    </changeSet>
+
+    <changeSet id="36" author="ybouhass">
+        <addColumn tableName="organisation">
+            <column name="website" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="contact_number" type="varchar(16)">
+                <constraints nullable="true" />
+            </column>
+            <column name="primary_contact_first_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="primary_contact_last_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="primary_contact_email" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="primary_contact_number" type="varchar(16)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="37" author="sleach">
+        <createSequence sequenceName="audit_activity_seq" startValue="100001" incrementBy="1" />
+        <createTable tableName="audit_activity">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="audit_activity_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="activity_time" type="timestamp">
+                <constraints nullable="false" />
+            </column>
+            <column name="summary" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="38" author="cmelville">
+        <dropNotNullConstraint columnName="USERNAME" columnDataType="varchar(255)"
+                               tableName="user_roles"/>
+    </changeSet>
+    <changeSet id="39" author="cmelville">
+        <addColumn tableName="milestone">
+            <column name="created_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="40" author="ybouhass">
+        <addColumn tableName="project">
+            <column name="planning_permission_reference" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="41" author="cmelville">
+        <createSequence sequenceName="design_standards_seq" startValue="100001" incrementBy="1" />
+        <createTable tableName="design_standards">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="design_standards_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="meeting_design_guide" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="reason_not_meeting_design_guide" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="42" author="cmelville">
+        <addColumn tableName="project">
+            <column name="design_standards" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="43" author="cmelville">
+        <createSequence sequenceName="subsidy_source_seq" startValue="100001" incrementBy="1" />
+        <createTable tableName="subsidy_source">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="subsidy_source_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="zero_subsidy_requested" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="affordable_housing_grant_selected" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="recycled_capital_grant_fund_selected" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="disposal_proceeds_fund_selected" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="affordable_housing_grant_value" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+            <column name="recycled_capital_grant_fund_value" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+            <column name="disposal_proceeds_fund_value" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="44" author="cmelville">
+        <addColumn tableName="project">
+            <column name="subsidy_source" type="INT4">
+                <constraints nullable="true" />
+            </column>
+            <column name="total_subsidy_requested" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="45" author="cmelville">
+        <dropColumn tableName="budget_and_tenure" columnName="affordable_housing_grand_selected"/>
+        <dropColumn tableName="budget_and_tenure" columnName="recycled_capital_grant_fund_selected"/>
+        <dropColumn tableName="budget_and_tenure" columnName="disposal_proceeds_fund_selected"/>
+        <dropColumn tableName="budget_and_tenure" columnName="affordable_housing_grant_value"/>
+        <dropColumn tableName="budget_and_tenure" columnName="recycled_capital_grant_fund_value"/>
+        <dropColumn tableName="budget_and_tenure" columnName="disposal_proceeds_fund_value"/>
+        <dropColumn tableName="budget_and_tenure" columnName="meeting_design_guide"/>
+        <dropColumn tableName="budget_and_tenure" columnName="reason_not_meeting_design_guide"/>
+    </changeSet>
+    <changeSet id="46" author="cmelville">
+     <dropColumn tableName="tenure_type" columnName="tariff_pct_cap"/>
+    </changeSet>
+    <changeSet id="47" author="cmelville">
+        <sql>update template_blocks_enabled set blocks_enabled = 'CalculateSubsidy' where blocks_enabled = 'TenureAndUnits'</sql>
+    </changeSet>
+
+    <changeSet id="41" author="ybouhass">
+        <addColumn tableName="user_roles">
+            <column name="organisation_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="approved" type="BOOLEAN">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="approved_on" type="TIMESTAMP">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="approved_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <sql>update user_roles set organisation_id = (select users.organisation_id from users where users.username = user_roles.username)</sql>
+        <sql>update user_roles set approved = (select users.approved from users where users.username = user_roles.username)</sql>
+        <sql>update user_roles set approved_on = (select users.approved_on from users where users.username = user_roles.username)</sql>
+        <sql>update user_roles set approved_by = (select users.approved_by from users where users.username = user_roles.username)</sql>
+        <sql>delete from user_roles where organisation_id is null</sql>
+
+    </changeSet>
+
+    <changeSet id="48" author="cmelville">
+            <modifyDataType tableName="tenure_and_units" columnName="total_cost" newDataType="bigint"/>
+            <modifyDataType tableName="project" columnName="total_subsidy_requested" newDataType="bigint"/>
+            <modifyDataType tableName="subsidy_source" columnName="affordable_housing_grant_value" newDataType="bigint"/>
+            <modifyDataType tableName="subsidy_source" columnName="recycled_capital_grant_fund_value" newDataType="bigint"/>
+            <modifyDataType tableName="subsidy_source" columnName="disposal_proceeds_fund_value" newDataType="bigint"/>
+    </changeSet>
+    <changeSet id="49" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="warning_message" type="varchar(1000)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet id="50" author="cmelville">
+        <addColumn tableName="budget_and_tenure">
+            <column name="SUBSIDY_TYPE" type="VARCHAR(40)">
+                <constraints nullable="true" />
+            </column>
+            <column name="justification" type="VARCHAR(10000)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="tenure_and_units">
+            <column name="supported_units" type="INT4">
+                <constraints nullable="true" />
+            </column>
+            <column name="subsidy_requested" type="BIGINT">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <sql>update budget_and_tenure set SUBSIDY_TYPE = 'DEFAULT'</sql>
+    </changeSet>
+
+    <changeSet id="50" author="ybouhass">
+        <createSequence sequenceName="total_spend_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="total_spend">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="total_spend_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="from_date" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="to_date" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="revenue" type="BIGINT">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="wbs_revenue_code" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="capital" type="BIGINT">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="wbs_capital_code" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+
+        <addColumn tableName="project">
+            <column name="total_spend" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint baseColumnNames="total_spend"
+                                 baseTableName="project"
+                                 constraintName="fk_project_total_spend"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="total_spend"/>
+
+    </changeSet>
+
+    <changeSet id="51" author="ybouhass">
+        <createIndex indexName="tenure_type_template_id_idx" tableName="tenure_type">
+            <column name="template_id" type="INT4" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="52" author="sleach">
+        <createSequence sequenceName="sap_payment_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="sap_payment">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="sap_payment_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+            <column name="pcs_project_code" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="pcs_phase_number" type="varchar(2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="order_number" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="order_line_number" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="order_status" type="INT4">
+                <constraints nullable="true" />
+            </column>
+            <column name="supplier_name" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="order_date" type="date">
+                <constraints nullable="true" />
+            </column>
+            <column name="account_code" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="account_description" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="cost_centre_code" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="order_line_amount" type="numeric(20,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="order_line_outstanding_balance" type="numeric(20,2)">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="53" author="ybouhass">
+        <createIndex indexName="tenure_and_units_budget_id_idx" tableName="tenure_and_units">
+            <column name="budget_id" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="project_tenure_and_budget_idx" tableName="project">
+            <column name="tenure_and_budget" type="INT4" />
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="design_standards"
+                                 baseTableName="project"
+                                 constraintName="fk_project_design_standards"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="design_standards"/>
+
+        <createIndex indexName="project_design_standards_idx" tableName="project">
+            <column name="design_standards" type="INT4" />
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="subsidy_source"
+                                 baseTableName="project"
+                                 constraintName="fk_project_subsidy_source"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+                                 referencedColumnNames="id"
+                                 referencedTableName="subsidy_source"/>
+
+        <createIndex indexName="project_subsidy_source_idx" tableName="project">
+            <column name="subsidy_source" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="project_total_spend_idx" tableName="project">
+            <column name="total_spend" type="INT4" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="54" author="ybouhass">
+        <createIndex indexName="milestone_project_id_idx" tableName="milestone">
+            <column name="project_id" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="answer_project_id_idx" tableName="answer">
+            <column name="project_id" type="INT4" />
+        </createIndex>
+
+        <createIndex indexName="answer_question_id_idx" tableName="answer">
+            <column name="question_id" type="INT4" />
+        </createIndex>
+    </changeSet>
+    <changeSet id="55" author="cmelville">
+        <sql>update template_blocks_enabled set blocks_enabled = 'RequestSubsidy' where blocks_enabled = 'CalculateSubsidyException'</sql>
+    </changeSet>
+
+    <changeSet id="56" author="cmelville">
+        <modifyDataType tableName="budget_and_tenure" columnName="justification" newDataType="VARCHAR(1000)"/>
+    </changeSet>
+
+    <changeSet id="57" author="ybouhass">
+        <addColumn tableName="template">
+            <column name="programme_id" type="INT4">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <dropColumn tableName="programme" columnName="default_template_id" />
+    </changeSet>
+
+    <changeSet id="58" author="ybouhass">
+        <createTable tableName="programme_template">
+            <column name="programme_id" type="INT4">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="template_id" type="INT4">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <dropColumn tableName="template" columnName="programme_id" />
+    </changeSet>
+
+    <changeSet id="59" author="ybouhass" dbms="h2">
+        <sqlFile path="db/changelog/logback-init-h2.sql" />
+    </changeSet>
+    <changeSet id="59" author="ybouhass" dbms="postgresql">
+        <sqlFile path="db/changelog/logback-init-postgres.sql" />
+    </changeSet>
+
+    <changeSet id="60" author="ybouhass">
+        <createIndex indexName="logging_event_property_mapped_value_idx" tableName="logging_event_property">
+            <column name="mapped_value" type="varchar(1024)" />
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

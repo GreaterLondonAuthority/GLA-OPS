@@ -18,4 +18,16 @@
   .multi-select {
     height: 160px;
   }
+
+  .warning {
+    color: $secondary-text;
+    font-size: 12px;
+    line-height: 12px;
+    font-family: $font-family-light;
+    font-weight: 100;
+    a {
+      //color: $error;
+      font-family: $font-family-bolder;
+    }
+  }
 }

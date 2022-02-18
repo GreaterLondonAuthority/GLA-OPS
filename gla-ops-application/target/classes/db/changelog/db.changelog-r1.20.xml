@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="442" author="ybouhass">
+        <addColumn tableName="template_block">
+            <column name="year_available_from" type="INT4" remarks="start year (current year - this value)" />
+            <column name="year_available_to" type="INT4" remarks="max year (current year + this value)" />
+        </addColumn>
+
+        <createTable tableName="funding_block">
+            <column name="id" type="INT4">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="year_available_from" type="INT4" remarks="start year (current year - this value)" />
+            <column name="year_available_to" type="INT4" remarks="max year (current year + this value)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="443" author="ybouhass">
+        <addColumn tableName="feature">
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="444" author="ybouhass">
+        <addColumn tableName="project_ledger_entry">
+            <column name="quarter" type="INT4" remarks="some payments are not against a specific month but a quarter (1-4)" />
+        </addColumn>
+
+        <createSequence sequenceName="funding_activity_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="funding_activity">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="funding_activity_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="original_id" type="INT4" />
+            <column name="block_id" type="INT4" />
+            <column name="name" type="varchar(255)" />
+        </createTable>
+
+        <createTable tableName="funding_activity_project_ledger_entry">
+            <column name="funding_activity_id" type="INT4" />
+            <column name="project_ledger_entry_id" type="INT4" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="445" author="cmelville">
+        <createTable tableName="template_tenure_type_market_type">
+            <column name="template_tenure_type_id" type="INT4" >
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="market_type_id" type="INT4">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="market_type_name" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="446" author="ybouhass">
+        <addColumn tableName="funding_activity">
+            <column name="year" type="INT4" />
+            <column name="quarter" type="INT4" />
+            <column name="milestone_id" type="INT4" remarks="milestone external id" />
+            <column name="milestone_name" type="varchar(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="447" author="cmelville">
+        <addColumn tableName="programme_template">
+            <column name="template_revenue_wbs_code" type="varchar(50)"/>
+        </addColumn>
+        <addColumn tableName="programme_template">
+            <column name="default_wbs_code" type="varchar(50)"/>
+        </addColumn>
+        <renameColumn tableName="programme_template" oldColumnName="template_wbs_code" newColumnName="template_capital_wbs_code"/>
+    </changeSet>
+
+    <changeSet id="448" author="ybouhass">
+        <createSequence sequenceName="funding_activity_group_seq" startValue="10000" incrementBy="1" />
+
+        <createTable tableName="funding_activity_group">
+            <column name="id" type="INT4" autoIncrement="true" defaultValueSequenceNext="funding_activity_group_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="original_id" type="INT4" />
+            <column name="block_id" type="INT4" />
+            <column name="year" type="INT4" />
+            <column name="quarter" type="INT4" />
+        </createTable>
+
+        <addColumn tableName="funding_activity">
+            <column name="funding_activity_group_id" type="INT4" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="449" author="cmelville">
+        <addColumn tableName="payment_group">
+            <column name="interest_assessed" type="BOOLEAN" defaultValue="false" remarks="whether the interest for this payment group has been considered "/>
+        </addColumn>
+        <addColumn tableName="project_ledger_entry">
+            <column name="interest_for_payment_id" type="INT4" remarks="the interest this payment is for" />
+        </addColumn>
+        <addColumn tableName="project_ledger_entry">
+            <column name="interest_payment" type="BOOLEAN" defaultValue="false" remarks="is this payment an interest payment" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="450" author="ybouhass">
+        <addColumn tableName="attachment">
+            <column name="funding_activity_id" type="INT4" remarks="funding activity this attachment is for" />
+        </addColumn>
+
+        <addColumn tableName="funding_block">
+            <column name="max_evidence_attachments" type="INT4" remarks="The maximum number of attachments that can be added to a funding activity" />
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

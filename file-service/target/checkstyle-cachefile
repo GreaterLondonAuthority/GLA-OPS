@@ -1,0 +1,13 @@
+#Mon Oct 18 16:02:17 BST 2021
+module-resource*?\:checkstyle-suppressions.xml=1110E5C0DB682A99A7622D25070778F667B78A87
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\store\\OwnCloudFileStore.java=1634559738210
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\implementation\\FileRepository.java=1634559738201
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\store\\AbstractFileStore.java=1634559738207
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\implementation\\FileRepositoryHelper.java=1634559738202
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\package-info.java=1634559738205
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\FileAPI.java=1634559738197
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\store\\S3FileStore.java=1634559738211
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\implementation\\FilesTestDataInitialiser.java=1634562851295
+C\:\\Projects\\GLA\\GlaRefresh2021\\file-service\\src\\main\\java\\uk\\gov\\london\\ops\\file\\store\\DBFileStore.java=1634559738208
+configuration*?=21808BA5C25B75C81C86694564F9E5E393AF8DD1
+module-resource*?\:checkstyle-xpath-suppressions.xml=B5221F1DDBE676905D565E9E1AD9F0618BC192C9

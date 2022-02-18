@@ -150,4 +150,11 @@ public class FundingClaimsTemplateBlock extends TemplateBlock {
     public void setContractTypes(List<String> contractTypes) {
         this.contractTypes = contractTypes;
     }
+
+    public FundingClaimCategory getCategory(Integer categoryId) {
+        return categories.stream()
+                .filter(c -> categoryId.equals(c.getId()))
+                .findFirst()
+                .orElse(null);
+    }
 }

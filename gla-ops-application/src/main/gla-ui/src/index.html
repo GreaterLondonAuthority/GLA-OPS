@@ -35,7 +35,8 @@
 <div class="gla-wrapper">
   <a class="keyboard-only" href="JavaScript:void(0)" id="skip-to-main-content" ng-click="$root.jumpTo('main-content')">Skip to main content</a>
   <gla-header></gla-header>
-  <top-menu></top-menu>
+<!--  <top-menu></top-menu>-->
+  <gla-top-bar class="sticky-top"></gla-top-bar>
 
   <section class="gla-main-section">
     <a href="JavaScript:void(0)" id="main-content" tabindex="-1"></a>
@@ -44,7 +45,8 @@
 
   <gla-footer></gla-footer>
 </div>
-<loading-mask class="is-full-screen" ng-if="$root.showGlobalLoadingMask" text=""></loading-mask>
+<gla-app-root></gla-app-root>
+<gla-loading-mask class="is-full-screen" ng-if="$root.showGlobalLoadingMask" text=""></gla-loading-mask>
 
 <!-- Google Tag Manager (noscript) -->
 

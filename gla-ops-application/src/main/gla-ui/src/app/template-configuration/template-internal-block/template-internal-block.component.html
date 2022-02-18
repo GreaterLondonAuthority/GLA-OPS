@@ -1,0 +1,93 @@
+<div class="template-block">
+  <form class="form-gla" name="modalForm" role="form">
+    <div class="row">
+      <div class="col-xs-12 col-sm-10 center-col">
+        <gla-page-header header="Internal Block details" (onBack)="onSave.emit(block)" class="mbottom20">
+          <ph-right>
+            <button class="btn btn-primary btn-md" (click)="copyBlock()">
+              COPY<span class="glyphicon glyphicon-copy"></span>
+            </button>
+          </ph-right>
+        </gla-page-header>
+
+        <div class="form-group">
+          <label for="block-type">Block type</label>
+          <select class="form-control"
+                  id="block-type"
+                  #blockType="ngModel"
+                  name="block-type"
+                  (change)="onBlockTypeSelect(block.type)"
+                  [disabled]="!isNew || readOnly || !editable"
+                  [(ngModel)]="block.type"
+                  required
+                  style-placeholder="">
+            <option disabled value="undefined">Block type</option>
+            <option *ngFor="let blockType of blockTypes" [ngValue]="blockType.blockType">{{startCase(blockType.displayName)}}</option>
+          </select>
+
+          <div *ngIf="(blockType.dirty || blockType.touched) && (blockType.invalid)" class="error-wrapper" role="alert">
+            <div class="error">Required</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="display-name">Display name</label>
+          <input class="form-control"
+                 id="display-name"
+                 maxlength="100"
+                 name="display-name"
+                 [(ngModel)]="block.blockDisplayName"
+                 [disabled]="readOnly || !editable"
+                 #displayName="ngModel"
+                 placeholder="Display name"
+                 required
+                 type="text"/>
+          <div *ngIf="(displayName.dirty || displayName.touched) && (displayName.invalid)" class="error-wrapper" role="alert">
+            <div class="error">Required</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="display-order">Display order</label>
+          <input class="form-control"
+                 id="display-order"
+                 maxlength="5"
+                 name="display-order"
+                 #displayOrder="ngModel"
+                 [(ngModel)]="block.displayOrder"
+                 [disabled]="readOnly || !editable"
+                 mask="separator.0"
+                 maxlength="2"
+                 numberType
+                 placeholder="Display order"
+                 required
+                 type="text"/>
+          <div *ngIf="(displayOrder.dirty || displayOrder.touched) && (displayOrder.invalid)" class="error-wrapper" role="alert">
+            <div class="error">Required</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="info-text">Block info text (Optional)</label>
+          <input class="form-control"
+                 id="info-text"
+                 name="info-text"
+                 maxlength="255"
+                 [(ngModel)]="block.infoMessage"
+                 [disabled]="readOnly || !editable"
+                 type="text"/>
+        </div>
+
+      </div>
+    </div>
+
+
+    <gla-template-internal-block-questions-comments *ngIf="block.type === 'Questions'"
+                                                    [readOnly]="readOnly"
+                                                    [editable]="editable"
+                                                    [block]=block
+                                                    [draft]="isDraft">
+    </gla-template-internal-block-questions-comments>
+
+  </form>
+</div>

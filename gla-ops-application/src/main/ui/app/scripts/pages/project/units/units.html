@@ -9,9 +9,9 @@
       <div class="grant">
         <ul class="tiles-list">
           <li class="col-xs-3 grant-column" ng-repeat="grant in $ctrl.summaryTiles track by grant.name">
-            <tile class="centered" hlevel="4" items="grant.items">
-              <div vertilize>{{ grant.name }}</div>
-            </tile>
+            <gla-tile class="centered" [hlevel]="4" [items]="grant.items">
+              <span vertilize>{{ grant.name }}</span>
+            </gla-tile>
           </li>
         </ul>
       </div>
@@ -27,12 +27,11 @@
 
     <div ng-if="$ctrl.showRentUnits" class="row mTop30 rent-units" vertilize-container>
       <section-header subheader="Add profiled unit information for all rent products">Enter Details of Rental Units</section-header>
-      <profiled-unit-wizard
-        ng-if="!$ctrl.readOnly"
-        class="mtop15"
-        config="$ctrl.unitsMetadata"
-        show-market-types="$ctrl.showRentMarketTypes"
-        on-add="$ctrl.addUnit($event)"></profiled-unit-wizard>
+
+      <div class="text-right" ng-if="!$ctrl.readOnly">
+        <button class="btn btn-secondary" ng-click="$ctrl.showProfiledUnitsModal('Rent')">ADD <b>+</b></button>
+      </div>
+
       <profiled-unit-table
         units="$ctrl.filteredRentUnits"
         show-market-types="$ctrl.showRentMarketTypes"
@@ -40,46 +39,53 @@
         read-only="$ctrl.readOnly"
         on-edit="$ctrl.editUnit(event)"
         on-delete="$ctrl.deleteUnit(event)"
-        class="mtop15"></profiled-unit-table>
+        class="mtop10"></profiled-unit-table>
       <hr class="mtop40 mbottom0">
     </div>
+
     <div ng-if="$ctrl.showSalesUnits" class="row mTop30 sales-units" vertilize-container>
       <section-header subheader="Add profiled unit information for all sales products">Enter Details of Sales Units</section-header>
-      <profiled-unit-wizard
-        ng-if="!$ctrl.readOnly"
-        class="mtop15"
-        show-market-types="$ctrl.showSalesMarketTypes"
-        config="$ctrl.unitsMetadata"
-        on-add="$ctrl.addUnit($event)"
-        wizard-type="Sales"></profiled-unit-wizard>
+
+      <div class="text-right" ng-if="!$ctrl.readOnly">
+        <button class="btn btn-secondary" ng-click="$ctrl.showProfiledUnitsModal('Sales')">ADD <b>+</b></button>
+      </div>
+
       <profiled-unit-table
         units="$ctrl.filteredSalesUnits"
         show-market-types="$ctrl.showSalesMarketTypes"
         has-discounted-rate="!$ctrl.hiddenSalesColumns.discountOffMarketValue"
         has-legacy-sales="!$ctrl.hiddenSalesColumns.netWeeklyRent"
-        class="mtop15"
+        class="mtop10"
         read-only="$ctrl.readOnly"
         on-edit="$ctrl.editUnit(event)"
         on-delete="$ctrl.deleteUnit(event)"
         wizard-type="Sales"></profiled-unit-table>
+      <div class="row percentages-error">
+        <div class="col-xs-12 mtop15 text-center">
+          <div class="error-wrapper error" >
+            {{$ctrl.blockData.validationFailures.Percentages[0].description}}
+          </div>
+        </div>
+      </div>
       <hr class="mtop40 mbottom0">
     </div>
     <div class="row mTop30 build-type-block" vertilize-container>
       <section-header subheader="">Project Unit Details</section-header>
-      <section-header subheader="The total build type split must match the total of {{$ctrl.blockData.totalUnits}} units in the project">Build Type</section-header>
-      <table id="unit-build-type-table" class="table table-hover table-bordered table-with-inputs">
+      <section-header subheader="The total build type split must match the total of {{$ctrl.blockData.totalUnits}} units in the project. Total column is updated every time you change a value in the table.">Build Type</section-header>
+      <table id="unit-build-type-table" class="table table-hover table-bordered table-with-inputs unit-build-type-table">
         <thead class="thead-inverse uppercase">
         <tr>
-          <th>BUILD TYPE</th>
-          <th>NEW BUILD</th>
-          <th>REFURBISHED</th>
-          <th>TOTAL</th>
+          <th scope="col">BUILD TYPE</th>
+          <th scope="col">NEW BUILD</th>
+          <th scope="col">REFURBISHED</th>
+          <th scope="col">TOTAL</th>
         </tr>
         </thead>
         <tbody>
-          <td style="width:25%" class="display-cell">
+        <tr>
+          <th scope="row" style="width:25%" class="display-cell">
             UNITS
-          </td>
+          </th>
           <td style="width:25%" ng-if="!$ctrl.readOnly">
             <input
                    id="new-build-units"
@@ -114,11 +120,58 @@
             <div>{{$ctrl.blockData.refurbishedUnits}}</div>
           </td>
           <td style="width:25%" class="display-cell">
-            {{(($ctrl.blockData.newBuildUnits || 0) * 1) + (($ctrl.blockData.refurbishedUnits || 0)  * 1)}}
+            <span role="status" class="sr-only">Total value for the row is</span>{{(($ctrl.blockData.newBuildUnits || 0) * 1) + (($ctrl.blockData.refurbishedUnits || 0)  * 1)}}
           </td>
+        </tr>
+
+        <tr class="text-center" ng-if="$ctrl.blockData.buildTypeEntries && $ctrl.blockData.buildTypeEntries.length > 0">
+          <td colspan="4" class="display-cell">
+            Of Which
+          </td>
+        </tr>
+
+        <tr ng-repeat="buildTypeOfWhichEntry in $ctrl.blockData.buildTypeEntries | orderBy:'category'">
+          <th scope="row" style="width:25%" class="display-cell">
+            {{buildTypeOfWhichEntry.category}}
+          </th>
+
+          <td style="width:25%" ng-if="!$ctrl.readOnly">
+            <input
+              id="{{buildTypeOfWhichEntry.category}}-new-build-units"
+              class="form-control"
+              type="text"
+              ng-model="buildTypeOfWhichEntry.newBuildUnits"
+              ng-disabled="!$ctrl.blockData.newBuildUnits"
+              numbers-only
+              maxlength="9"
+              change-on-blur="$ctrl.autoSave()">
+          </td>
+          <td style="width:25%" ng-if="$ctrl.readOnly" class="display-cell">
+            <div>{{buildTypeOfWhichEntry.newBuildUnits}}</div>
+          </td>
+
+          <td style="width:25%" ng-if="!$ctrl.readOnly">
+            <input
+              id="{buildTypeOfWhichEntry.category}}-refurbished-units"
+              class="form-control"
+              type="text"
+              ng-model="buildTypeOfWhichEntry.refurbishedUnits"
+              ng-disabled="!$ctrl.blockData.refurbishedUnits"
+              numbers-only
+              maxlength="9"
+              change-on-blur="$ctrl.autoSave()">
+          </td>
+          <td style="width:25%" ng-if="$ctrl.readOnly" class="display-cell">
+            <div>{{buildTypeOfWhichEntry.refurbishedUnits}}</div>
+          </td>
+
+          <td style="width:25%" class="display-cell">
+            {{buildTypeOfWhichEntry.total}}
+          </td>
+        </tr>
+
         </tbody>
       </table>
-      <hr class="mtop40 mbottom0">
 
       <div class="row build-type-error">
         <div class="col-xs-12 mtop15 text-center" ng-if="$ctrl.blockData.validationFailures && $ctrl.blockData.validationFailures.BuildType">
@@ -128,26 +181,36 @@
         </div>
       </div>
 
-      <section-header subheader="Detail how many people each unit is designed to accommodate, total must match the {{$ctrl.blockData.totalUnits}} units in the project.">Units by Number of People</section-header>
+      <div class="row of-which-build-type-units-error">
+        <div class="col-xs-12 mtop15 text-center" ng-if="$ctrl.blockData.validationFailures && $ctrl.blockData.validationFailures.OfWhichWheelChairUnits">
+          <div class="error-wrapper error">
+            {{$ctrl.blockData.validationFailures.OfWhichWheelChairUnits[0].description}}
+          </div>
+        </div>
+      </div>
+
+      <hr class="mtop40 mbottom0">
+
+      <section-header subheader="Detail how many people each unit is designed to accommodate, total must match the {{$ctrl.blockData.totalUnits}} units in the project. Total column is updated every time you change a value in the table.">Units by Number of People</section-header>
       <table class="table table-hover table-bordered table-with-inputs units-by-nb-people">
         <thead class="thead-inverse uppercase">
         <tr>
-          <th>PEOPLE</th>
-          <th>1</th>
-          <th>2</th>
-          <th>3</th>
-          <th>4</th>
-          <th>5</th>
-          <th>6</th>
-          <th>7</th>
-          <th>8+</th>
-          <th>TOTAL</th>
+          <th scope="col">PEOPLE</th>
+          <th scope="col">1</th>
+          <th scope="col">2</th>
+          <th scope="col">3</th>
+          <th scope="col">4</th>
+          <th scope="col">5</th>
+          <th scope="col">6</th>
+          <th scope="col">7</th>
+          <th scope="col">8+</th>
+          <th scope="col">TOTAL</th>
         </tr>
         </thead>
         <tbody>
-          <td class="display-cell">
+          <th scope="row" class="display-cell">
             UNITS
-          </td>
+          </th>
           <td ng-if="!$ctrl.readOnly">
             <input class="" type="text" name="type1Units" ng-model="$ctrl.blockData.type1Units" numbers-only maxlength="9" aria-label="Units for 1 person" change-on-blur="$ctrl.autoSave()">
           </td>
@@ -205,7 +268,7 @@
           </td>
 
           <td class="display-cell">
-            {{ $ctrl.sumUnitsByNumberOfPeople() }}
+            <span role="status" class="sr-only">Total value for the row is</span> {{ $ctrl.sumUnitsByNumberOfPeople() }}
           </td>
         </tbody>
       </table>
@@ -221,19 +284,21 @@
       </div>
       <hr class="mtop40 mbottom0">
 
-      <section-header subheader="In total (including any specialised units) how many units are either wheelchair accessible or wheelchair adaptable?"><label for="wheelchair-units">Number of Wheelchair Units</label></section-header>
-      <div class="no-padding col-xs-3">
-        <input class="form-control" id="wheelchair-units" name="nbWheelchairUnits" ng-model="$ctrl.blockData.nbWheelchairUnits" numbers-only type="text"
-               maxlength="9" aria-label="Number of wheelchair units" change-on-blur="$ctrl.autoSave()" ng-disabled="$ctrl.readOnly">
-      </div>
-      <div class="row wheel-chair-units-error">
-        <div class="col-xs-12 mtop15 text-center" ng-if="$ctrl.blockData.validationFailures && $ctrl.blockData.validationFailures.WheelChairUnits">
-          <div class="error-wrapper error">
-            {{$ctrl.blockData.validationFailures.WheelChairUnits[0].description}}
+      <div ng-if="!$ctrl.blockConfig.hideWheelChairSection">
+        <section-header subheader="In total (including any specialised units) how many units are either wheelchair accessible or wheelchair adaptable?"><label for="wheelchair-units">Number of Wheelchair Units</label></section-header>
+        <div class="no-padding col-xs-3">
+          <input class="form-control" id="wheelchair-units" name="nbWheelchairUnits" ng-model="$ctrl.blockData.nbWheelchairUnits" numbers-only type="text"
+                 maxlength="9" aria-label="Number of wheelchair units" change-on-blur="$ctrl.autoSave()" ng-disabled="$ctrl.readOnly">
+        </div>
+        <div class="row wheel-chair-units-error">
+          <div class="col-xs-12 mtop15 text-center" ng-if="$ctrl.blockData.validationFailures && $ctrl.blockData.validationFailures.WheelChairUnits">
+            <div class="error-wrapper error">
+              {{$ctrl.blockData.validationFailures.WheelChairUnits[0].description}}
+            </div>
           </div>
         </div>
+        <hr class="mtop40 mbottom0">
       </div>
-      <hr class="mtop40 mbottom0">
 
       <section-header subheader="Input the total gross internal area in sqm for all units in the project, excluding communal areas e.g. lifts."><label for="gross-iternal-area">Gross Internal Area</label></section-header>
       <div class="no-padding col-xs-3">

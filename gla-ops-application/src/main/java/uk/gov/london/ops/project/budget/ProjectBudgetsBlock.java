@@ -7,36 +7,19 @@
  */
 package uk.gov.london.ops.project.budget;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.payment.SpendType;
 import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.WbsCode;
-import uk.gov.london.ops.project.block.BaseFinanceBlock;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.block.ProjectDifference;
-import uk.gov.london.ops.project.block.ProjectDifferences;
+import uk.gov.london.ops.project.WbsCodeEntity;
+import uk.gov.london.ops.project.block.*;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Entity(name = "project_budgets")
 @DiscriminatorValue("PROJECT_BUDGETS")
@@ -60,9 +43,9 @@ public class ProjectBudgetsBlock extends BaseFinanceBlock {
     @Transient
     private Totals totals;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, targetEntity = WbsCode.class)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, targetEntity = WbsCodeEntity.class)
     @JoinColumn(name = "block_id")
-    private Set<WbsCode> wbsCodes = new HashSet<>();
+    private Set<WbsCodeEntity> wbsCodes = new HashSet<>();
 
     @JoinData(joinType = Join.JoinType.OneToMany, sourceColumn = "id", targetColumn = "project_budgets_id",
             targetTable = "attachment", comment = "")
@@ -141,15 +124,15 @@ public class ProjectBudgetsBlock extends BaseFinanceBlock {
         this.capital = capital;
     }
 
-    public Set<WbsCode> getWbsCodes() {
+    public Set<WbsCodeEntity> getWbsCodes() {
         return wbsCodes;
     }
 
-    public Set<WbsCode> getWbsCodes(SpendType spendType) {
+    public Set<WbsCodeEntity> getWbsCodes(SpendType spendType) {
         return wbsCodes.stream().filter(wbsCode -> spendType.name().equals(wbsCode.getType())).collect(Collectors.toSet());
     }
 
-    public void setWbsCodes(Set<WbsCode> wbsCodes) {
+    public void setWbsCodes(Set<WbsCodeEntity> wbsCodes) {
         this.wbsCodes = wbsCodes;
     }
 
@@ -211,7 +194,7 @@ public class ProjectBudgetsBlock extends BaseFinanceBlock {
         t.setCapital(this.getCapital());
 
         if (this.getWbsCodes() != null) {
-            for (final WbsCode code : getWbsCodes()) {
+            for (final WbsCodeEntity code : getWbsCodes()) {
                 t.getWbsCodes().add(code.copy());
             }
         }
@@ -543,4 +526,9 @@ public class ProjectBudgetsBlock extends BaseFinanceBlock {
         return false;
     }
 
+    @Override
+    protected boolean canShowYear(Integer year) {
+        // adjust this when updating this block to follow programme years
+        return true;
+    }
 }

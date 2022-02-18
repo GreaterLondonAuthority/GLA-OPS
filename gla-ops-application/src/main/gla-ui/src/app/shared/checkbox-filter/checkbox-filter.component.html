@@ -1,0 +1,43 @@
+<div class="btn-group filter-dropdown" ngbDropdown>
+  <button class="btn filter-dropdown-button" [disabled]="isDisabled" role="button" ngbDropdownToggle>
+    {{title}} <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu filter-dropdown" ngbDropdownMenu role="menu" aria-labelledby="filter-dropdown">
+    <ng-container>
+    <li>
+      <div class="select-all-filter-toggle">
+        <a href="JavaScript: void(0);" (click)="toggleAllFilters($event, !hasFilterSelections);">
+          {{hasFilterSelections? 'Deselect All' : 'Select All'}}</a>
+      </div>
+    </li>
+    </ng-container>
+
+    <ng-container *ngFor="let item of dropdownItems; index as i">
+    <li *ngIf="item.items?.length || !item.groupId || !item.collapsed"
+        [ngClass]="{group: item.items?.length, 'group-item': item.groupId, 'filter-item': !item.items?.length}">
+
+      <div class="checkbox"
+           [ngClass]="{checked: item.model, unchecked: !item.model, focused: item.focused}">
+        <input #checkboxEl [attr.aria-label]="item.ariaLabel || item.label"
+               type="checkbox"
+               name="{{item.name || 'ch-'+ i}}"
+               [(ngModel)]="item.model"
+               (keydown.enter)="$event.stopPropagation();"
+               (click)="$event.stopPropagation();"
+               (ngModelChange)="onCheckboxesChange(item, checkboxEl)">
+      </div>
+      <div class="li-item-label">
+        <span (click)="$event.stopPropagation();">{{item.label}}</span>
+        <span class="glyphicon link"
+              tabindex="0"
+              (keydown.enter)="toggle(item);$event.stopPropagation();"
+              role="button"
+              *ngIf="item.items?.length"
+              [attr.aria-label]="(item.collapsed? 'Expand ' : 'Collapse ') + (item.label)"
+              [ngClass]="{'glyphicon-plus': item.collapsed, 'glyphicon-minus': !item.collapsed}"
+              (click)="toggle(item);$event.stopPropagation();"></span>
+      </div>
+    </li>
+    </ng-container>
+  </ul>
+</div>

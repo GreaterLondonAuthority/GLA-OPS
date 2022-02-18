@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 import uk.gov.london.ops.framework.exception.NotFoundException
 import uk.gov.london.ops.framework.feature.Feature
 import uk.gov.london.ops.framework.feature.FeatureStatus
-import uk.gov.london.ops.user.UserService
+import uk.gov.london.ops.user.UserUtils.currentUser
 import java.io.File
 import java.util.*
 
@@ -25,7 +25,6 @@ import java.util.*
  */
 @Service
 class DashboardService @Autowired constructor(val jdbc: JdbcTemplate,
-                                              val userService: UserService,
                                               val featureStatus: FeatureStatus,
                                               @Value("\${gc.log.file}") val gcLogFile: String) {
 
@@ -33,14 +32,13 @@ class DashboardService @Autowired constructor(val jdbc: JdbcTemplate,
      * Return the dashboard metrics for the currently logged-in user.
      */
     fun getMetricsForCurrentUser(): Map<String, Int> {
-        if (userService.currentUser() == null) {
-            throw AccessDeniedException("session not found")
-        }
+        val currentUser = currentUser() ?: throw AccessDeniedException("session not found")
+
         if (!featureStatus.isEnabled(Feature.Dashboard)) {
             throw NotFoundException()
         }
 
-        val username = userService.currentUser()!!.username
+        val username = currentUser.username
 
         val metrics = TreeMap<String, Int>()
 

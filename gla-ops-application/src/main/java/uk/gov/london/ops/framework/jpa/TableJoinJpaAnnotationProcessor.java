@@ -116,25 +116,25 @@ public class TableJoinJpaAnnotationProcessor {
 
         } else if (joinData != null) {
 
-            joins.add( defineNonJpaJoin(columnName, joinData) );
+            joins.add(defineNonJpaJoin(columnName, joinData));
 
         } else if (manyToMany != null) {
 
-            joins.addAll( defineManyToManyJoin(field, joinTable) );
+            joins.addAll(defineManyToManyJoin(field, joinTable));
 
         } else if (manyToOne != null) {
 
-            joins.add( defineManyToOneJoin(field, joinColumn, joinColumns) );
+            joins.add(defineManyToOneJoin(field, joinColumn, joinColumns));
 
         } else if (oneToMany != null) {
 
-            joins.add( defineOneToManyJoin(beanClass, fieldType, oneToMany, joinColumn, joinTable) );
+            joins.add(defineOneToManyJoin(beanClass, fieldType, oneToMany, joinColumn, joinTable));
 
         } else if (oneToOne != null) {
 
-            joins.add( defineOneToOneJoin(fieldType, columnName, joinColumn) );
+            joins.add(defineOneToOneJoin(fieldType, columnName, joinColumn));
 
-        }  else if (joinColumn != null || joinTable != null) {
+        } else if (joinColumn != null || joinTable != null) {
 
             log.warn("JoinColumn or JoinTable on field with no join type: {}.{}", beanClass.getSimpleName(), field.getName());
 
@@ -164,8 +164,7 @@ public class TableJoinJpaAnnotationProcessor {
         JoinData annotation = beanClass.getAnnotation(JoinData.class);
         if (annotation != null) {
             return defineNonJpaJoin(annotation.sourceColumn(), annotation);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -192,17 +191,16 @@ public class TableJoinJpaAnnotationProcessor {
 
         if (joinColumn != null) {
             join.setFromColumn(joinColumn.name());
-            join.setToTable(getTableNameForEntity(fieldType));
-            join.setToColumn(getPrimaryKey(fieldType));
         } else {
             join.setFromColumn(columnName);
-            join.setToTable(getTableNameForEntity(fieldType));
-            join.setToColumn(getPrimaryKey(fieldType));
         }
+        join.setToTable(getTableNameForEntity(fieldType));
+        join.setToColumn(getPrimaryKey(fieldType));
         return join;
     }
 
-    private Join defineOneToManyJoin(Class<?> beanClass, Class fieldType, OneToMany oneToMany, JoinColumn joinColumn, JoinTable joinTable) {
+    private Join defineOneToManyJoin(Class<?> beanClass, Class fieldType, OneToMany oneToMany, JoinColumn joinColumn,
+            JoinTable joinTable) {
         Join join = new Join(Join.JoinType.OneToMany);
 
         if (oneToMany.targetEntity() != null) {
@@ -313,7 +311,7 @@ public class TableJoinJpaAnnotationProcessor {
     }
 
     private String getTableNameForEntity(Class entityClass) {
-        Entity  entityAnnotation = (Entity) entityClass.getAnnotation(Entity.class);
+        Entity entityAnnotation = (Entity) entityClass.getAnnotation(Entity.class);
         if (entityAnnotation != null && entityAnnotation.name() != null && entityAnnotation.name().trim().length() > 0) {
             return entityAnnotation.name().toLowerCase();
         }
@@ -337,7 +335,7 @@ public class TableJoinJpaAnnotationProcessor {
 
         List<Class> entityClasses = new LinkedList<>();
         for (BeanDefinition bean : scanner.findCandidateComponents(basePackage)) {
-            entityClasses.add( getJavaClass(bean.getBeanClassName()) );
+            entityClasses.add(getJavaClass(bean.getBeanClassName()));
         }
 
         entityClasses.add(NamedProjectBlock.class);

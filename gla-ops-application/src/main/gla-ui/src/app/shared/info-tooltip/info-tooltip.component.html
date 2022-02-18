@@ -1,14 +1,20 @@
-<ng-template #tipContent><gla-markdown [text]="helpText"></gla-markdown></ng-template>
-<span id="helpText"
-      tabindex="0"
-      role="button"
-      aria-label="Show more information"
-      class="glyphicon glyphicon-info-sign cursor-pointer"
-      placement="right"
-      triggers="manual"
-      #t="ngbTooltip"
-      (mouseenter)="t.open()"
-      (mouseleave)="closeDelay(t)"
-      (keyup.enter)="t.open()"
-      (blur)="t.close()"
-      [ngbTooltip]="tipContent"></span>
+<ng-template #tipContent>
+  <gla-markdown [text]="helpText"></gla-markdown>
+</ng-template>
+
+<div class="gla-tooltip"
+     (mouseenter)="mouseEnter(t)"
+     (mouseleave)="mouseLeave(t)"
+     (focusin)="focusin(t)"
+     (focusout)="focusout(t)">
+
+  <span tabindex="0"
+        role="button"
+        aria-label="Show more information"
+        class="glyphicon glyphicon-info-sign cursor-pointer"
+        placement="right"
+        container="body"
+        triggers="manual"
+        #t="ngbTooltip"
+        [ngbTooltip]="tipContent"></span>
+</div>

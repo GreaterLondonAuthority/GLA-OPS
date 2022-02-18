@@ -14,8 +14,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.PostLoad;
 import javax.persistence.Transient;
-import uk.gov.london.ops.domain.Requirement;
 import uk.gov.london.ops.framework.JSONUtils;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.repeatingentity.OtherFundingSource;
 
@@ -25,7 +25,7 @@ import uk.gov.london.ops.project.repeatingentity.OtherFundingSource;
 
 @Entity
 @DiscriminatorValue("OTHER_FUNDING")
-public class OtherFundingTemplateBlock extends TemplateBlock {
+public class OtherFundingTemplateBlock extends RepeatingEntityTemplateBlock {
 
     @Column(name = "entity_name")
     private String entityName = "Funding";
@@ -34,19 +34,19 @@ public class OtherFundingTemplateBlock extends TemplateBlock {
     private List<OtherFundingSource> fundingSources = new ArrayList<>();
 
     @Transient
-    private String funderNameText;
+    private String funderNameText = "Funder name";
 
     @Transient
-    private String descriptionText;
+    private String descriptionText = "Provide details";
 
     @Transient
-    private String amountText;
+    private String amountText = "Funding amount (£)";
 
     @Transient
     private boolean showAmount = false;
 
     @Transient
-    private String securedQuestion;
+    private String securedQuestion = "Is this funding secured?";
 
     @Transient
     private boolean showSecuredQuestion = false;
@@ -61,7 +61,7 @@ public class OtherFundingTemplateBlock extends TemplateBlock {
     private Integer maxUploadSizeInMb;
 
     @Transient
-    private String partnersFundingQuestion;
+    private String partnersFundingQuestion = "Are you receiving funding from any partner organisations for this project?";
 
     @Transient
     private boolean showPartnersFundingQuestion;
@@ -234,8 +234,10 @@ public class OtherFundingTemplateBlock extends TemplateBlock {
         this.otherFundingStrategyQuestion = otherFundingStrategyQuestion;
     }
 
+    @Override
     @PostLoad
-    void loadBlockData() {
+    public void loadBlockData() {
+        super.loadBlockData();
         OtherFundingTemplateBlock data = JSONUtils.fromJSON(this.blockData, OtherFundingTemplateBlock.class);
         if (data != null) {
             this.setEntityName(data.getEntityName());
@@ -266,6 +268,7 @@ public class OtherFundingTemplateBlock extends TemplateBlock {
 
     @Override
     public void updateCloneFromBlock(TemplateBlock clone) {
+        super.updateCloneFromBlock(clone);
         OtherFundingTemplateBlock ofb = (OtherFundingTemplateBlock) clone;
         ofb.setEntityName(this.getEntityName());
         ofb.setFundingSources(this.getFundingSources());

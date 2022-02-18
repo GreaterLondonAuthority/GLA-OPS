@@ -1,0 +1,4 @@
+#Mon Oct 18 15:52:30 BST 2021
+module-resource*?\:checkstyle-suppressions.xml=1110E5C0DB682A99A7622D25070778F667B78A87
+module-resource*?\:checkstyle-xpath-suppressions.xml=B5221F1DDBE676905D565E9E1AD9F0618BC192C9
+configuration*?=F1E0368C1D958E9B6C45BE04A603FCF7C4FB8E0F

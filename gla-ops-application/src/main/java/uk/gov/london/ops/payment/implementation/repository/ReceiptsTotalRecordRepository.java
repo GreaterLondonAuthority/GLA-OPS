@@ -17,6 +17,8 @@ import java.util.List;
  */
 public interface ReceiptsTotalRecordRepository extends ReadOnlyRepository<ReceiptsTotalRecord, Integer> {
 
-    List<ReceiptsTotalRecord> findByProjectIdAndBlockIdAndFinancialYearOrderByLedgerStatus(Integer projectId, Integer blockId, Integer financialYear);
+    List<ReceiptsTotalRecord> findByProjectIdAndBlockIdAndFinancialYearOrderByLedgerStatus(Integer projectId,
+                                                                                           Integer blockId,
+                                                                                           Integer financialYear);
 
 }

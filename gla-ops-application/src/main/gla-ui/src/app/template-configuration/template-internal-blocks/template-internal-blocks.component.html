@@ -1,0 +1,45 @@
+<div class="table-responsive template-internal-blocks">
+  <div *ngIf="!blocks?.length" class="empty-table">Not provided</div>
+  <table *ngIf="blocks?.length" class="table table-default table-hover table-bordered internal-blocks">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>DISPLAY ORDER</th>
+      <th>BLOCK TYPE</th>
+      <th>DISPLAY NAME</th>
+      <th *ngIf="inUse">ACTIONS</th>
+      <th *ngIf="!readOnly"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr class="cursor-pointer"
+        (keydown.enter)="onSelectBlock.emit(block)"
+        tabindex="0"
+        (click)="onSelectBlock.emit(block)"
+        *ngFor="let block of blocks">
+      <td class="display-order">{{block.displayOrder}}</td>
+      <td class="type">{{blockTypesToDisplayName[block.type]}}</td>
+      <td class="name">{{block.blockDisplayName}}</td>
+      <td *ngIf="inUse">
+        <!-- <div *ngFor="let command of block.templateBlockCommands">
+          <a (click)="performAction(block, command);$event.stopPropagation();" class="command" id="command">{{command.displayName}}</a>
+        </div> -->
+        <gla-action-dropdown  *ngIf="hasPermissionToEdit && block.templateBlockCommands.length > 0"
+            (actionClick)="performAction($event, block)"
+            [toggleButtonText]="'Select action'"
+            [actionsList]="getBlockCommands(block.templateBlockCommands, true)"></gla-action-dropdown>
+      <td class="delete-btn-container up-down-arrows" *ngIf="hasPermissionToEdit && !readOnly">
+        <gla-show-up-down-arrow-buttons *ngIf="hasPermissionToEdit"
+                                        [currentItem]="block"
+                                        [sortedCollectionItems]="blocks"
+                                        [titleUp]="'Move block up'"
+                                        [titleDown]="'Move block Down'"
+                                        (click)="$event.stopPropagation()">
+        </gla-show-up-down-arrow-buttons>
+        <delete-button (click)="$event.stopPropagation();deleteBlock(block);"
+                       *ngIf="hasPermissionToEdit && !readOnly"></delete-button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

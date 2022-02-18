@@ -21,7 +21,7 @@ public class JSONUtils {
             try {
                 return new ObjectMapper().writeValueAsString(o);
             } catch (Exception e) {
-                log.error("could not serialise object to JSON: "+o, e);
+                log.error("could not serialise object to JSON: " + o, e);
             }
         }
         return null;
@@ -32,7 +32,7 @@ public class JSONUtils {
             try {
                 return new ObjectMapper().readValue(json, type);
             } catch (Exception e) {
-                log.error("could not deserialise JSON: "+json, e);
+                log.error("could not deserialise JSON: " + json, e);
             }
         }
         return null;

@@ -21,6 +21,7 @@ class MultiStepOrganisationForm extends NewOrganisationProfileCtrl {
     this.org = this.organisation || this.initOrganisation();
     this.org.managingOrganisationId = this.managingOrganisationId;
     this.orgWithUser = true;
+    this.canEditName = this.UserService.hasPermission('org.edit.name', (this.organisation || {}).id);
 
     this.$scope.$watch('$ctrl.isFormInvalid()', invalid => {
       this.isFormValid = !invalid;
@@ -35,13 +36,7 @@ class MultiStepOrganisationForm extends NewOrganisationProfileCtrl {
   }
 
   isFormInvalid() {
-    return !this.isValidRegKey ||
-      !this.isUniqueOrgName ||
-      this.$scope.orgForm.$invalid ||
-      !(this.org.regulated != null ||
-        (!this.techSupportSelected() && this.isGlaHNL() == (this.org.regulated != null)) ||
-        (this.techSupportSelected() && this.org.regulated === null) ||
-        this.isLearningProvider() || this.isSmallBusinessSelected())
+    return !this.isValidRegKey || !this.isUniqueOrgName || this.$scope.orgForm.$invalid
   }
 }
 
@@ -59,6 +54,7 @@ angular.module('GLA')
       managingOrganisationId: '<',
       legalStatuses: '<',
       isLegalStatusEnabled : '<',
+      organisationTemplates: '<',
       onSave: '&',
       onFormValidityChange: '&?'
     },

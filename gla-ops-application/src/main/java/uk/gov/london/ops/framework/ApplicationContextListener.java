@@ -20,7 +20,7 @@ public class ApplicationContextListener implements ApplicationListener {
             System.out.println("======================================================================================");
             System.out.println("======================================================================================");
             System.out.println("====                                                                               ===");
-            System.out.println("====                              GLA OPS Started                                  ===");
+            System.out.println("====                             GLA OPS Started                                   ===");
             System.out.println("====                                                                               ===");
             System.out.println("======================================================================================");
             System.out.println("======================================================================================");

@@ -155,13 +155,12 @@ function AssessmentService($http, config) {
       }
     },
 
-    saveAssessment(projectId, assessment) {
-      if (assessment.id) {
-        return $http.put(`${config.basePath}/assessments/${assessment.id}`, assessment)
-      }
-      else {
-        return $http.post(`${config.basePath}/projects/${projectId}/assessments`, assessment)
-      }
+    createAssessment(projectId, blockId, assessment) {
+      return $http.post(`${config.basePath}/projects/${projectId}/blocks/${blockId}/assessments`, assessment)
+    },
+
+    updateAssessment(projectId, assessment) {
+      return $http.put(`${config.basePath}/assessments/${assessment.id}`, assessment)
     },
 
     changeStatus(id, status){

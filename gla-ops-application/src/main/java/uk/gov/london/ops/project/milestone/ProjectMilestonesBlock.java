@@ -12,39 +12,62 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.util.StringUtils;
 import uk.gov.london.ops.EventType;
 import uk.gov.london.ops.OpsEvent;
-import uk.gov.london.ops.domain.Requirement;
 import uk.gov.london.ops.framework.ComparableItem;
 import uk.gov.london.ops.framework.MilestoneComparator;
+import uk.gov.london.ops.framework.enums.GrantType;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.StandardAttachment;
-import uk.gov.london.ops.project.block.*;
-import uk.gov.london.ops.project.grant.GrantSourceBlock;
-import uk.gov.london.ops.project.grant.GrantType;
+import uk.gov.london.ops.project.block.NamedProjectBlock;
+import uk.gov.london.ops.project.block.ProjectBlockType;
+import uk.gov.london.ops.project.block.ProjectDifference;
+import uk.gov.london.ops.project.block.ProjectDifferences;
 import uk.gov.london.ops.project.implementation.mapper.MilestoneMapper;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportUtils;
-import uk.gov.london.ops.project.template.domain.*;
+import uk.gov.london.ops.project.template.domain.MilestoneTemplate;
+import uk.gov.london.ops.project.template.domain.MilestonesTemplateBlock;
+import uk.gov.london.ops.project.template.domain.ProcessingRoute;
+import uk.gov.london.ops.project.template.domain.Template;
+import uk.gov.london.ops.project.template.domain.TemplateBlock;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static uk.gov.london.common.GlaUtils.nullSafeAdd;
-import static uk.gov.london.ops.payment.PaymentSource.GRANT;
-import static uk.gov.london.ops.project.claim.ClaimStatus.*;
-import static uk.gov.london.ops.project.grant.GrantType.*;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.ReportPrefix;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.ReportSuffix;
+import static uk.gov.london.ops.framework.enums.GrantType.DPF;
+import static uk.gov.london.ops.framework.enums.GrantType.Grant;
+import static uk.gov.london.ops.framework.enums.GrantType.RCGF;
+import static uk.gov.london.ops.project.claim.ClaimStatus.Approved;
+import static uk.gov.london.ops.project.claim.ClaimStatus.Claimed;
+import static uk.gov.london.ops.project.claim.ClaimStatus.Pending;
+import static uk.gov.london.ops.project.claim.ClaimStatus.Withdrawn;
 import static uk.gov.london.ops.project.template.domain.Template.MilestoneType.MonetarySplit;
 import static uk.gov.london.ops.project.template.domain.Template.MilestoneType.MonetaryValue;
+import static uk.gov.london.ops.refdata.PaymentSourceKt.GRANT;
 
 /**
  * The Milestones block in a Project.
@@ -175,17 +198,14 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
     }
 
     private boolean isMonetaryMilestoneTotalGreaterThanGrantSource() {
-        GrantSourceBlock grantSource = (GrantSourceBlock) project.getSingleLatestBlockOfType(ProjectBlockType.GrantSource);
-        if (grantSource == null) {
-            return false;
-        }
-        Long grantSourceTotal = grantSource.getTotalGrantRequested();
+
+        Long grantSourceTotal = this.getProject().getTotalGrantRequested().longValue();
 
         Long milestonesTotal = 0L;
         for (Milestone milestone : milestones) {
             Long claims = milestone.calculateTotalValueClaimed();
-            if (claims == 0 && milestone.getMonetaryValue()
-                    != null) { // if first time claimed and therefore no claim values stored we can use the initial monetary value
+            if (claims == 0 && milestone.getMonetaryValue() != null) {
+                // if first time claimed and therefore no claim values stored we can use the initial monetary value
                 claims = milestone.getMonetaryValue().longValue();
             }
             Long reclaims = milestone.calculateTotalValueReclaimed();
@@ -254,19 +274,16 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
         if (isExceeded) {
             for (Milestone milestone : milestones) {
                 if (milestone.getClaimStatus() != null) {
-                    switch (milestone.getClaimStatus()) {
-                        case Approved:
-                            if (milestone.getReclaimedRcgf() != null || milestone.getReclaimedDpf() != null
-                                    || milestone.getReclaimedGrant() != null) {
-                                milestone.setClaimedExceeded(true);
-                            }
-                            break;
-                        case Claimed:
-                            if (milestone.getClaimedRcgf() != null || milestone.getClaimedDpf() != null
-                                    || milestone.getClaimedGrant() != null) {
-                                milestone.setClaimedExceeded(true);
-                            }
-                            break;
+                    if (Approved.equals(milestone.getClaimStatus())) {
+                        if (milestone.getReclaimedRcgf() != null || milestone.getReclaimedDpf() != null
+                                || milestone.getReclaimedGrant() != null) {
+                            milestone.setClaimedExceeded(true);
+                        }
+                    } else if (Claimed.equals(milestone.getClaimStatus())) {
+                        if (milestone.getClaimedRcgf() != null || milestone.getClaimedDpf() != null
+                                || milestone.getClaimedGrant() != null) {
+                            milestone.setClaimedExceeded(true);
+                        }
                     }
                 }
             }
@@ -382,10 +399,14 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
     }
 
     public Map<GrantType, Long> getAvailableToReclaimByType() {
-        Map<GrantType, Long> current = project.getCurrentGrantSourceValuesByType();
+        Map<GrantType, BigDecimal> current = project.getGrantsRequested();
         if (current == null) {
             return null;
         }
+        if (!getMilestoneType().equals(MonetaryValue)) {
+            current.remove(GrantType.Grant);
+        }
+
         Map<GrantType, Long> map = new HashMap<>();
         Map<GrantType, Long> existingClaims = new HashMap<>();
         existingClaims.put(Grant, 0L);
@@ -411,9 +432,9 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
                 }
             }
             Long grant = existingClaims.get(grantType);
-            Long currentValue = current.get(grantType);
+            Long currentValue = current.get(grantType) == null ? 0L : current.get(grantType).longValue();
 
-            map.put(grantType, Math.max(0, (grant == null ? 0 : grant) - (currentValue == null ? 0 : currentValue)));
+            map.put(grantType, Math.max(0, (grant == null ? 0 : grant) - currentValue));
         }
         return map;
     }
@@ -450,33 +471,6 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
     public void setDescriptionEnabled(boolean descriptionEnabled) {
         this.descriptionEnabled = descriptionEnabled;
     }
-
-    @Override
-    public Map<String, Object> simpleDataExtract(final SimpleProjectExportConfig simpleProjectExportConfig) {
-        Map<String, Object> map = new HashMap<>();
-        for (Milestone milestone : getMilestones()) {
-            if (!milestone.isManuallyCreated()) {
-                final String msPrefix = milestone.getSummary() != null ? milestone.getSummary() : "id_" + milestone.getId();
-                String exportString = ReportPrefix.ms_.name() + SimpleProjectExportUtils.formatForExport(msPrefix);
-                map.put(exportString + ReportSuffix._date, milestone.getMilestoneDate());
-                map.put(exportString + ReportSuffix._status, milestone.getMilestoneStatus());
-                map.put(exportString + ReportSuffix._percentage, milestone.getMonetarySplit());
-            }
-        }
-        if (processingRouteId != null) {
-            MilestonesTemplateBlock milestonesTemplateBlock = (MilestonesTemplateBlock) project.getTemplate()
-                    .getSingleBlockByType(ProjectBlockType.Milestones);
-            ProcessingRoute pr = milestonesTemplateBlock.getProcessingRoute(processingRouteId);
-            if (pr != null) {
-                map.put(ReportPrefix.ms_.name() + ReportSuffix.processing_route.name(), pr.getName());
-            }
-        }
-        if (!map.containsKey(ReportPrefix.ms_.name() + ReportSuffix.processing_route.name())) {
-            map.put(ReportPrefix.ms_.name() + ReportSuffix.processing_route.name(), "");
-        }
-        return map;
-    }
-
 
     @Override
     public void copyBlockContentInto(NamedProjectBlock target) {
@@ -548,7 +542,8 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
                 if (milestone.getReclaimedGrant() != null && milestone.getReclaimedGrant() > 0) {
                     reclaimed = true;
                     if (!project.getTemplate().getMilestoneType().equals(MonetarySplit)) {
-                        milestone.setClaimedGrant(milestone.getClaimedGrant() - milestone.getReclaimedGrant());
+                        Long claimedGrant = milestone.getClaimedGrant() != null ? milestone.getClaimedGrant() : 0;
+                        milestone.setClaimedGrant(claimedGrant - milestone.getReclaimedGrant());
                         milestone.setMonetaryValue(new BigDecimal(milestone.calculateTotalValueClaimed()));
                     }
                 }
@@ -563,13 +558,22 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
     }
 
     @Override
-    protected void performPostApprovalActions(String username, OffsetDateTime approvalTime) {
+    public void performPostApprovalActions(String username, OffsetDateTime approvalTime) {
         updateClaimAmounts();
         for (Milestone milestone : milestones) {
             // for approved milestones handle reclaims
             if (milestone.getClaimStatus() == null) {
-                milestone.setClaimStatus(
-                        Pending);
+                milestone.setClaimStatus(Pending);
+            }
+            if (milestone.getClaimStatus().equals(Withdrawn)) {
+                milestone.setClaimStatus(Pending);
+                milestone.setWithdrawReason(null);
+                if (milestone.isKeyEvent()) {
+                        project.handleEvent(
+                                new OpsEvent(EventType.MilestoneCancel, milestone.getSummary() + " milestone cancelled",
+                                        milestone.getExternalId()));
+                }
+
             }
             if (milestone.getClaimStatus().equals(Claimed)) {
                 milestone.setClaimStatus(Approved);
@@ -629,7 +633,10 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
             }
         }
 
-        return getApprovalWillCreatePendingAdjustmentGrantPayment();
+        return getProject().getGrantSourceAdjustmentAmount() != null
+                && getProject().getGrantSourceAdjustmentAmount().signum() == 1
+                && MonetarySplit.equals(getProject().getTemplate().getMilestoneType())
+                && hasApprovedMonetaryMilestones();
     }
 
     /**
@@ -637,18 +644,14 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
      */
     @Override
     public Set<String> getPaymentsSourcesCreatedViaApproval() {
+        Set<String> grantTypes = project.getGrantsRequested().keySet().stream().map(Enum::name).collect(Collectors.toSet());
+
         for (Milestone m : milestones) {
             Long milestoneClaimedAmount = getMilestoneGrantClaimed(m.getId());
             if (Claimed.equals(m.getClaimStatus())
                     && (milestoneClaimedAmount != null && milestoneClaimedAmount > 0)) {
-                TemplateBlock singleBlockByType = this.getProject().getTemplate()
-                        .getSingleBlockByType(ProjectBlockType.GrantSource);
-                if (singleBlockByType instanceof GrantSourceTemplateBlock) {
-                    GrantSourceTemplateBlock grantSourceTemplateBlock = (GrantSourceTemplateBlock) singleBlockByType;
-                    Set<String> paymentSources = grantSourceTemplateBlock.getPaymentSources();
-                    return paymentSources.isEmpty() ? Collections.singleton(GRANT) : paymentSources;
-                }
-                return Collections.singleton(GRANT);
+
+                return grantTypes.isEmpty() ? Collections.singleton(GRANT) : grantTypes;
             }
         }
 
@@ -711,8 +714,10 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
     @JsonIgnore
     public boolean areAllMonetaryMilestonesClaimedOrApproved() {
         for (Milestone m : milestones) {
-            if (m.getMonetary() && m.getMonetarySplit() > 0 && (m.getClaimStatus() == null || Pending
-                    .equals(m.getClaimStatus()))) {
+            if (m.getMonetary() && (m.getMonetarySplit() != null && m.getMonetarySplit() > 0)
+                    && (m.getClaimStatus() == null
+                            || Pending.equals(m.getClaimStatus())
+                            || Withdrawn.equals(m.getClaimStatus()))) {
                 return false;
             }
         }
@@ -731,20 +736,21 @@ public class ProjectMilestonesBlock extends NamedProjectBlock {
         if (Approved.equals(existingMilestone.getClaimStatus()) && BigDecimal.ZERO
                 .equals(project.getGrantSourceAdjustmentAmount())) {
             return existingMilestone.getClaimedGrant();
-        } else if ((Approved.equals(existingMilestone.getClaimStatus()) || Claimed.equals(existingMilestone.getClaimStatus()))
-                && getProject().getGrantSourceBlock() != null) {
-            Long grantValue = getProject()
-                    .getGrantSourceBlock()
-                    .getGrantValue();
+        } else if ((Approved.equals(existingMilestone.getClaimStatus()) || Claimed.equals(existingMilestone.getClaimStatus()))) {
+            Long grantValue = project.getTotalGrantRequested().longValue();
             if (Boolean.TRUE.equals(existingMilestone.getMonetary()) && grantValue != null) {
                 if (MonetarySplit.equals(getProject().getTemplate().getMilestoneType())) {
                     return getValueForMonetarySplitForMilestone(existingMilestone);
-                } else if (MonetaryValue.equals(getProject().getTemplate().getMilestoneType())) {
+                } else if (MonetaryValue.equals(getMilestoneType())) {
                     return existingMilestone.getClaimedGrant();
                 }
             }
         }
         return null;
+    }
+
+    private Template.MilestoneType getMilestoneType() {
+        return getProject().getTemplate().getMilestoneType();
     }
 
     private void compareMilestoneAttachments(ProjectDifferences differences, Milestone thisMilestone, Milestone otherMilestone) {

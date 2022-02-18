@@ -78,7 +78,7 @@
       .btn-default {
         &:focus, &active {
           background-color: white !important;
-          color: #5ca9c4 !important;
+          color: $moonstone !important;
           box-shadow: none !important;
         }
       }

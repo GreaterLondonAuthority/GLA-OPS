@@ -38,6 +38,10 @@
     padding-right: 0 !important;
   }
 
+  toggle-icon .glyphicon{
+      color: $gla-black;
+  }
+
   outputs-summary-report{
     .row-toggle{
       display: none;

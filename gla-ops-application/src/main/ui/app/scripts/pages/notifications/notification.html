@@ -1,5 +1,14 @@
-<div allow-enter aria-label="Go to notification" class="notification" ng-click="$ctrl.notificationClicked()" role="button" tabindex="0">
-  <div class="notification-time">{{$ctrl.content.mDate.format('[at] HH:mm')}}</div>
-  <div class="notification-text">{{$ctrl.notification.text}}</div>
+<div class="checkbox select-notification-checkbox" ng-class="{checked: $ctrl.notification.isSelected}">
+  <input type="checkbox"
+         aria-label="{{$ctrl.notification.text}}"
+         name="selectInput"
+         ng-model="$ctrl.notification.isSelected"
+         ng-click="$event.stopPropagation()">
+</div>
+<div class="row">
+  <div allow-enter aria-label="Go to notification" class="notification" ng-click="$ctrl.notificationClicked()" role="button" tabindex="0">
+    <div class="notification-time">{{$ctrl.content.mDate.format('[at] HH:mm')}}</div>
+    <div class="notification-text">{{$ctrl.notification.text}}</div>
+  </div>
 </div>
 <delete-button ng-click="$ctrl.deleteNotificationClicked($event)">X</delete-button>

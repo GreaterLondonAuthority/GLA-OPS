@@ -23,7 +23,7 @@ function CreateOverrideModal($uibModal, ProjectService) {
           this.override.reportedDate = new Date(this.override.reportedDate);
           this.metadata = metadata;
           if(this.override.id){
-           this.readOnly = true;
+           this.contractReadOnly = true;
           }
 
           this.dateOptions = {

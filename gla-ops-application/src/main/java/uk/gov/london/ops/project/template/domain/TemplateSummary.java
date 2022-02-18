@@ -7,20 +7,15 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
+import uk.gov.london.ops.programme.ProgrammeDetailsSummary;
+import uk.gov.london.ops.programme.domain.ProgrammeTemplate;
+import uk.gov.london.ops.project.state.StateModel;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import uk.gov.london.ops.programme.domain.Programme;
-import uk.gov.london.ops.programme.domain.ProgrammeTemplate;
-import uk.gov.london.ops.project.state.StateModel;
 
 @Entity
 @Table(name = "template")
@@ -51,7 +46,7 @@ public class TemplateSummary implements Serializable {
     private Integer numberOfProjectAllowedPerOrg;
 
     @Transient
-    List<Programme> programmes;
+    List<ProgrammeDetailsSummary> programmes;
 
     @Transient
     private ProgrammeTemplate.Status status;
@@ -96,11 +91,11 @@ public class TemplateSummary implements Serializable {
         this.status = status;
     }
 
-    public List<Programme> getProgrammes() {
+    public List<ProgrammeDetailsSummary> getProgrammes() {
         return programmes;
     }
 
-    public void setProgrammes(List<Programme> programmes) {
+    public void setProgrammes(List<ProgrammeDetailsSummary> programmes) {
         this.programmes = programmes;
     }
 

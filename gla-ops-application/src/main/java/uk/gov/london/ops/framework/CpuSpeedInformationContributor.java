@@ -7,14 +7,15 @@
  */
 package uk.gov.london.ops.framework;
 
-import org.springframework.boot.actuate.info.Info;
-import org.springframework.boot.actuate.info.InfoContributor;
-import org.springframework.stereotype.Component;
+import static java.lang.Math.atan;
+import static java.lang.Math.cbrt;
+import static java.lang.Math.tan;
 
 import java.util.Map;
 import java.util.TreeMap;
-
-import static java.lang.Math.*;
+import org.springframework.boot.actuate.info.Info;
+import org.springframework.boot.actuate.info.InfoContributor;
+import org.springframework.stereotype.Component;
 
 @Component
 public class CpuSpeedInformationContributor implements InfoContributor {
@@ -22,7 +23,7 @@ public class CpuSpeedInformationContributor implements InfoContributor {
     public static final int TEST_TIME_IN_MS = 200;
 
     public void contribute(Info.Builder builder) {
-        Map<String,Object> data = new TreeMap<>();
+        Map<String, Object> data = new TreeMap<>();
         data.put("iterations", measureCpuPerformance(TEST_TIME_IN_MS));
         data.put("elapsed_ms", 200);
         builder.withDetail("cpu_performance", data);
@@ -33,7 +34,7 @@ public class CpuSpeedInformationContributor implements InfoContributor {
         long elapsed = 0;
         int iterations;
 
-        for (iterations=0; elapsed < testTimeInMs; iterations++) {
+        for (iterations = 0; elapsed < testTimeInMs; iterations++) {
             // Lots of heavy maths
             double d = tan(atan(tan(atan(tan(atan(tan(atan(tan(atan(123456789.123456789))))))))));
             cbrt(d);

@@ -15,6 +15,8 @@ class NegotiatedGrantSummaryReport {
 
   $onInit() {
     this.data = this.GrantService.sortTenureTypes(this.block);
+    this.otherAffordableTenureTypes = _.find(this.template.blocksEnabled, {block: 'NegotiatedGrant'}).otherAffordableTenureTypes;
+    this.showOtherAffordableQuestion = _.find(this.template.blocksEnabled, {block: 'NegotiatedGrant'}).showOtherAffordableQuestion;
   }
 }
 
@@ -24,6 +26,7 @@ angular.module('GLA')
   .component('negotiatedGrantSummaryReport', {
     bindings: {
       block: '<',
+      template: '<'
     },
     templateUrl: 'scripts/pages/summary-report/negotiatedGrantSummaryReport.html',
     controller: NegotiatedGrantSummaryReport

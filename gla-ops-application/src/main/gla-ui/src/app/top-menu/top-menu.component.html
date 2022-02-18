@@ -1,0 +1,51 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header visible-xs">
+      <button aria-label="menu"
+              type="button"
+              class="navbar-toggle collapsed"
+              (click)="mobileMenuExpanded = !mobileMenuExpanded; mobileMenuExpandedChange.emit(mobileMenuExpanded)"
+              data-toggle="collapse"
+              data-target="#navbar-collapse-1">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="visible-xs navbar-menu-text">MENU</span>
+      </button>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <ng-container *ngFor="let topMenuItem of menu">
+          <li [ngClass]="{'dropdown': topMenuItem?.items?.length, 'active': isMenuItemActive(topMenuItem)}"
+              *ngxPermissionsOnly="topMenuItem.permissions">
+            <a data-toggle="dropdown"
+               href="JavaScript:void(0)"
+               [ngClass]="{'dropdown-toggle': topMenuItem?.items?.length}"
+               (click)="goToState(topMenuItem.state)"
+               role="button"
+               tabindex="0">{{topMenuItem.title}}<span class="caret" *ngIf="topMenuItem?.items?.length"></span></a>
+
+            <ul class="dropdown-menu" *ngIf="topMenuItem?.items?.length">
+              <ng-container *ngFor="let item of topMenuItem.items">
+                <ng-container *ngIf="item.featureEnabled">
+                  <li *ngxPermissionsOnly="item.permissions"
+                      [ngClass]="{'active': isMenuItemActive(item)}">
+                    <a href="JavaScript:void(0)" tabindex="0" (click)="goToState(item.state)">
+                      <span *ngIf="item.icon" class="glyphicon glyphicon-{{item.icon}}"></span>
+                      {{item.title}}
+                    </a>
+                  </li>
+                </ng-container>
+              </ng-container>
+            </ul>
+          </li>
+        </ng-container>
+      </ul>
+      <ul class="nav navbar-nav navbar-right scroll-to-top-link">
+        <li><a aria-label="Move up to top of the page" href="JavaScript:void(0);" (click)="scrollToTop()" role="button" tabindex="0"><span class="glyphicon glyphicon-chevron-up"></span></a></li>
+      </ul>
+    </div>
+  </div>
+</nav>

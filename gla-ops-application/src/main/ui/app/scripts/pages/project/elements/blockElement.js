@@ -16,6 +16,15 @@ class BlockElement extends RepeatingEntityCtrl{
 
   $onInit() {
     super.$onInit();
+    this.nameId = this.generateId();
+    this.postcodeId = this.generateId();
+    this.projectTypeId = this.generateId();
+    this.guidanceId = this.generateId();
+    this.descriptionId = this.generateId();
+    this.projectStageId = this.generateId();
+    this.projectClassificationId = this.generateId();
+    this.operationalPeriodId = this.generateId();
+
     this.labels = {
       name: this.label('Name'),
       postcode: this.label('Postcode'),
@@ -26,6 +35,10 @@ class BlockElement extends RepeatingEntityCtrl{
       projectClassification : this.blockTemplate.projectClassificationText,
       operationalPeriod: this.blockTemplate.operationalPeriodText
     }
+  }
+
+  generateId(){
+    return Math.floor(Math.random() * Date.now());
   }
 
   label(labelText){

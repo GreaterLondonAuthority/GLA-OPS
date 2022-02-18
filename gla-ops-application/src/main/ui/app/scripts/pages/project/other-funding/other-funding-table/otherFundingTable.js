@@ -41,6 +41,9 @@ class OtherFundingTableCtrl {
   showEvidenceModal(entry) {
     let modalConfig = {
       orgId: this.orgId,
+      projectId: this.block.projectId,
+      programmeId: this.programmeId,
+      blockId: this.block.id,
       readOnly: this.readOnly,
       attachments: entry.attachments,
       title: 'Upload evidence for other funding',
@@ -80,6 +83,7 @@ angular.module('GLA')
   bindings: {
     block: '<',
     orgId: '<',
+    programmeId: '<',
     template:'<',
     fundingEntries: '<',
     onEntryChange: '&',

@@ -11,11 +11,35 @@
 
     <artifactId>notification-service-client</artifactId>
 
+    <properties>
+        <jacoco.coverage.ratio>0.7</jacoco.coverage.ratio>
+        <jacoco.missed.class.count>3</jacoco.missed.class.count>
+    </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>uk.gov.london</groupId>
+            <artifactId>organisation-service-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.london</groupId>
+            <artifactId>user-service-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>uk.gov.london</groupId>
             <artifactId>gla-ops-framework</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.london</groupId>
+            <artifactId>gla-ops-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

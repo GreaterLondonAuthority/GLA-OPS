@@ -1,0 +1,48 @@
+<div class="medium-page internal-project-admin">
+
+  <gla-project-header (onBack)="back()" [editableBlock]="$ctrl">{{title}}</gla-project-header>
+
+  <div class="text-center">This block is only visible to GLA staff</div>
+
+  <div class="row form-group mtop40">
+    <div class="col-md-3">
+      <label for="projectShortName" class="normal-text">
+        <span>Project short name:</span>
+      </label>
+    </div>
+    <div class="col-md-4">
+      <span *ngIf="readOnly">{{block.projectShortName}}</span>
+      <input class="form-control"
+             id="projectShortName"
+             *ngIf="!readOnly"
+             [(ngModel)]="block.projectShortName"
+             [disabled]="readOnly"
+             maxlength="34"
+             placeholder="Project short name" />
+    </div>
+  </div>
+
+  <div class="row form-group mtop20">
+    <div class="col-md-3">
+      <label for="organisationShortName" class="normal-text">
+        <span>Organisation short name:</span>
+      </label>
+    </div>
+    <div class="col-md-4">
+      <span *ngIf="readOnly">{{block.organisationShortName}}</span>
+      <input class="form-control"
+             id="organisationShortName"
+             *ngIf="!readOnly"
+             [(ngModel)]="block.organisationShortName"
+             [disabled]="readOnly"
+             maxlength="34"
+             placeholder="Organisation short name" />
+    </div>
+  </div>
+
+  <div class="row" *ngIf="combinedLengthExceeded()">
+    <div class="col-xs-12 mtop15 text-center">
+      <span class="error">Organisation Short Name and Project Short Name too long. Total characters for Organisation Short Name and Project Short Name should be less than 35 characters.</span>
+    </div>
+  </div>
+</div>

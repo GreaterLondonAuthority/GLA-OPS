@@ -38,7 +38,11 @@ function ProjectSkillsService($http, config) {
         contractType: 'Contract Type',
         academicYear: 'Academic Year',
         deliverAllocation: 'Delivery Allocation (£)',
-        communityAllocation: 'Of which, Community Learning (£)',
+        ofWhich: 'Of which,',
+        communityAllocation: 'Community Learning (£)',
+        innovationFund: 'Innovation Fund (£)',
+        responseFundStrand1: 'Response Fund Strand 1 (£)',
+        nationalSkillsFund: 'National Skills Fund (£)',
         learnerSupportAllocation: 'Learner Support Allocation (£)',
         tableColumns: {
           monthTitle: 'MONTH',
@@ -59,8 +63,23 @@ function ProjectSkillsService($http, config) {
       return (block || {}).grantType === 'AEB_PROCURED';
     },
 
+    isAebNsct(block){
+      return (block || {}).grantType === 'AEB_NSCT';
+    },
+
     isAebGrant(block){
       return (block || {}).grantType === 'AEB_GRANT';
+    },
+    
+    showSupportAllocation(block){
+      if (block) {
+        if (block.profileAllocationType) {
+          return block.profileAllocationType === 'AEB_PROCURED' || block.profileAllocationType === 'AEB_NSCT'
+        } else {
+          return block.grantType === 'AEB_PROCURED' || block.grantType === 'AEB_NSCT'
+        }
+      } 
+      return false
     },
 
     /**
@@ -124,6 +143,16 @@ function ProjectSkillsService($http, config) {
       let periodsMap = {};
       (periods || {}).forEach(p => periodsMap[p.period] = p.text);
       return periodsMap;
+    },
+
+    getAllocationTypesConfig(template) {
+      let learningGrantConfig = _.find(template.blocksEnabled, {block: 'LearningGrant'});
+      return {
+        showCommunity: learningGrantConfig.allocationTypes.indexOf('Community') !== -1,
+        showInnovationFund: learningGrantConfig.allocationTypes.indexOf('InnovationFund') !== -1,
+        showResponseFund1: learningGrantConfig.allocationTypes.indexOf('ResponseFundStrand1') !== -1,
+        showNationalSkillsFund: learningGrantConfig.allocationTypes.indexOf('NationalSkillsFund') !== -1
+      };
     }
   };
 }

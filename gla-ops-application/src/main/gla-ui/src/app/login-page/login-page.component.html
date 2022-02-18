@@ -1,0 +1,112 @@
+<div class="row login">
+  <div class="col-xs-12">
+    <h2>Welcome to GLA-OPS</h2>
+  </div>
+</div>
+
+<div class="row login">
+  <div class="col-xs-12"><hr></div>
+</div>
+
+<div class="row login">
+  <div class="col-xs-12 col-ms-10 col-sm-6 center-col">
+    <div class="gla-welcome-message" [innerHTML]="message"></div>
+  </div>
+</div>
+
+<div class="row login">
+  <div class="col-xs-12">
+    <h2>Login</h2>
+  </div>
+</div>
+
+<div class="col-xs-12 mtop15 text-center" *ngIf="reasonSuccess || reasonError">
+  <span *ngIf="reasonSuccess">
+    <span class="glyphicon glyphicon-ok"></span>&nbsp;&nbsp;{{reasonSuccess}}
+  </span>
+  <span class="error" *ngIf="reasonError">{{reasonError}}</span>
+</div>
+
+<div class="row login">
+  <div class="col-xs-12 form-top-error">
+    <p id="login-error" class="error" *ngIf="error">{{errorMessage}}</p>
+  </div>
+  <div class="col-xs-1"></div>
+</div>
+<form class="form-gla" role="form" name="logonForm" #logonForm="ngForm">
+  <div class="row login">
+    <div class="col-xs-12 col-ms-8 col-sm-6 col-md-4 center-col">
+      <div class="form-group">
+        <label for="login-email">Email address</label>
+        <input id = "login-email"
+               type="email"
+               name="email"
+               class="form-control"
+               [(ngModel)]="uname"
+               #email="ngModel"
+               [pattern]="unamePattern"
+               (keyup)="clearErrors()"
+               placeholder="Organisation email"
+               required />
+        <div class="login-email-error" role="alert">
+            <span *ngIf="logonForm.submitted || email.touched">
+              <span class="error" *ngIf="email.errors?.required">Enter your email</span>
+              <span class="error" *ngIf="email.errors?.pattern">Check your email</span>
+            </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row login">
+    <div class="col-xs-12 col-ms-8 col-sm-6 col-md-4 center-col">
+      <div class="form-group">
+        <label for="login-pass">Password</label>
+        <input id="login-pass"
+               type="password"
+               name="pass"
+               class="form-control"
+               [(ngModel)]="pass"
+               placeholder="GLA OPS password"
+               (keyup)="clearErrors()"
+               #password="ngModel"
+               required>
+        <div class="login-email-error" role="alert">
+            <span *ngIf="logonForm.submitted || password.touched">
+              <span class="error" *ngIf="password.errors?.required">Enter your password</span>
+            </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row login">
+    <div class="col-xs-12">
+      <div class="text-center mtop30">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          [disabled]="!uname || email.errors?.required || email.errors?.pattern || password.errors?.required"
+          (click)="submit()">LOGIN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row login">
+    <div class="col-xs-12">
+      <div class="mtop15 text-center">
+        <a href="JavaScript:void(0)" class="pageLink" id="resetPasswordLink" (click)="goTo('request-password-reset')">Forgotten your password?</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row login">
+    <div class="col-xs-12">
+      <div class="mtop15 mbottom30 text-center">
+        <a href="JavaScript:void(0)" class="pageLink" id="registrationLink" (click)="goTo('registration-type')">New to GLA-OPS? Register here.</a>
+      </div>
+    </div>
+  </div>
+</form>
+

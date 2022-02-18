@@ -1,0 +1,10 @@
+outputs-configuration-page {
+  display: block;
+
+  .table > tbody > tr > td{
+    vertical-align: top;
+    &.delete-btn-container{
+      padding-right: 15px;
+    }
+  }
+}

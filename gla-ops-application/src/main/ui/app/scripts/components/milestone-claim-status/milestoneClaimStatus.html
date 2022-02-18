@@ -8,7 +8,18 @@
      ng-click="$ctrl.openReclaimInfoModal($ctrl.milestone)">{{$ctrl.milestone.displayText}}
   </a>
 
-  <span ng-if="$ctrl.milestone.claimStatus !== 'Claimed' && $ctrl.milestone.displayText !== 'Reclaimed'">{{$ctrl.milestone.displayText}}</span>
+  <div ng-if="$ctrl.milestone.claimStatus === 'Withdrawn'">
+    <a  href="JavaScript:void(0)"
+       ng-click="$ctrl.openWithdrawInfoModal({$event:$ctrl.milestone})">Cancel Requested
+    </a>
+  </div>
+
+
+
+  <span
+    ng-if="$ctrl.milestone.claimStatus !== 'Claimed' && $ctrl.milestone.displayText !== 'Reclaimed' && $ctrl.milestone.claimStatus !== 'Withdrawn'">{{$ctrl.milestone
+    .displayText}}</span>
+
 
   <span ng-if="$ctrl.showReclaimInfoIcon($ctrl.milestone)"
         allow-enter

@@ -28,10 +28,11 @@ import java.util.Set;
 @Component
 public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
 
-    public List<AnnualSpendSummary> getAnnualSpendSummary(List<ProjectLedgerEntry> ledgerEntriesByBlockAndYear, Integer fromYear, Integer toYear, Set<Integer> populatedYears) {
+    public List<AnnualSpendSummary> getAnnualSpendSummary(List<ProjectLedgerEntry> ledgerEntriesByBlockAndYear,
+                                                          Integer fromYear, Integer toYear, Set<Integer> populatedYears) {
         List<AnnualSpendSummary> response = new ArrayList<>();
 
-        for (int i = fromYear; i <=toYear; i++) {
+        for (int i = fromYear; i <= toYear; i++) {
             if (populatedYears.contains(i)) {
                 response.add(getAnnualSpendSummary(ledgerEntriesByBlockAndYear, i));
             }
@@ -55,7 +56,7 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
             return annualSpendSummary;
         }
 
-        OffsetDateTime lastModified =null;
+        OffsetDateTime lastModified = null;
         for (ProjectLedgerEntry entry : entries) {
             if (entry.getYearMonth() >= currentYearStart && entry.getYearMonth() <=  currentYearEnd) {
                 if (LedgerType.BUDGET.equals(entry.getLedgerType())) {
@@ -72,7 +73,7 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
         annualSpendSummary.setLastModified(lastModified);
 
         calculateMonthlyTotals(annualSpendSummary);
-        calculateYearlyTotals(annualSpendSummary,currentYearMonth);
+        calculateYearlyTotals(annualSpendSummary, currentYearMonth);
 
         calculateLeftToSpendBoxValues(annualSpendSummary);
         calculateAvailableForecast(annualSpendSummary);
@@ -84,7 +85,6 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
 
     /**
      * Sort by SAP Cat Code (should be in this order DB) but if identical then sort by expenditure / credit
-     * @param results
      */
     private void sortResults(List<AnnualSpendMonthlyTotal> results) {
         for (AnnualSpendMonthlyTotal result : results) {
@@ -106,21 +106,21 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
      * Revenue:  Revenue  Budget - all revenue actuals .
      */
     private void calculateLeftToSpendBoxValues(AnnualSpendSummary summary) {
-
         AnnualSpendLineItem totalForPastMonths = summary.getTotalForPastMonths();
 
         if (summary.getAnnualBudgetCapital() != null) {
-            summary.getTotals().setLeftToSpendCapitalInclCurrentMonth(summary.getAnnualBudgetCapital().add(totalForPastMonths.getCapitalActual()));
+            summary.getTotals().setLeftToSpendCapitalInclCurrentMonth(summary.getAnnualBudgetCapital()
+                    .add(totalForPastMonths.getCapitalActual()));
         } else {
             summary.getTotals().setLeftToSpendCapitalInclCurrentMonth(BigDecimal.ZERO);
         }
 
         if (summary.getAnnualBudgetRevenue() != null) {
-            summary.getTotals().setLeftToSpendRevenueInclCurrentMonth(summary.getAnnualBudgetRevenue().add(totalForPastMonths.getRevenueActual()));
+            summary.getTotals().setLeftToSpendRevenueInclCurrentMonth(summary.getAnnualBudgetRevenue()
+                    .add(totalForPastMonths.getRevenueActual()));
         } else {
             summary.getTotals().setLeftToSpendRevenueInclCurrentMonth(BigDecimal.ZERO);
         }
-
     }
 
     /**
@@ -135,7 +135,8 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
 
         if (summary.getAnnualBudgetCapital() != null) {
             BigDecimal capitalActual =  actualSpend.getCapitalActual() == null ? BigDecimal.ZERO : actualSpend.getCapitalActual();
-            BigDecimal capitalForecast = remainingForecast.getCapitalForecast() == null ? BigDecimal.ZERO : remainingForecast.getCapitalForecast();
+            BigDecimal capitalForecast = remainingForecast.getCapitalForecast() == null ? BigDecimal.ZERO
+                    : remainingForecast.getCapitalForecast();
             BigDecimal actualSpendCapital = summary.getAnnualBudgetCapital().add(capitalActual).add(capitalForecast);
             actualSpendCapital = actualSpendCapital.signum() == -1 ? BigDecimal.ZERO : actualSpendCapital;
             summary.getTotals().setAvailableToForecastCapital(actualSpendCapital);
@@ -145,19 +146,17 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
 
         if (summary.getAnnualBudgetRevenue() != null) {
             BigDecimal revenueActual = actualSpend.getRevenueActual() == null ? BigDecimal.ZERO : actualSpend.getRevenueActual();
-            BigDecimal revenueForecast = remainingForecast.getRevenueForecast() == null ? BigDecimal.ZERO : remainingForecast.getRevenueForecast();
+            BigDecimal revenueForecast = remainingForecast.getRevenueForecast() == null ? BigDecimal.ZERO
+                    : remainingForecast.getRevenueForecast();
             BigDecimal actualSpendRevenue = summary.getAnnualBudgetRevenue().add(revenueActual).add(revenueForecast);
             actualSpendRevenue = actualSpendRevenue.signum() == -1 ? BigDecimal.ZERO : actualSpendRevenue;
             summary.getTotals().setAvailableToForecastRevenue(actualSpendRevenue);
         } else {
             summary.getTotals().setLeftToSpendRevenueInclCurrentMonth(BigDecimal.ZERO);
         }
-
     }
 
-
-
-    private void calculateYearlyTotals(AnnualSpendSummary summary,int currentYearMonth) {
+    private void calculateYearlyTotals(AnnualSpendSummary summary, int currentYearMonth) {
         AnnualSpendLineItem totalForPastMonths = summary.getTotalForPastMonths();
         AnnualSpendLineItem currentAndFutureMonths = summary.getTotalForCurrentAndFutureMonths();
 
@@ -219,9 +218,11 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
     private void handleOtherEntries(AnnualSpendSummary annualSpendSummary, ProjectLedgerEntry entry) {
         BigDecimal value = entry.getValue();
 
-        AnnualSpendMonthlyTotal annualSpendMonthlyTotal = annualSpendSummary.getAnnualSpendMonthlyTotals().get(getArrayPositionByMonth(entry.getMonth()));
+        AnnualSpendMonthlyTotal annualSpendMonthlyTotal = annualSpendSummary.getAnnualSpendMonthlyTotals()
+                .get(getArrayPositionByMonth(entry.getMonth()));
 
-        List<AnnualSpendLineItem> relevantLineItems = annualSpendMonthlyTotal.getSpendBreakdownBySpendCategory(entry.getCategoryId());
+        List<AnnualSpendLineItem> relevantLineItems = annualSpendMonthlyTotal
+                .getSpendBreakdownBySpendCategory(entry.getCategoryId());
         AnnualSpendLineItem relevantLineItem = null;
 
         for (AnnualSpendLineItem lineItem : relevantLineItems) {
@@ -254,8 +255,6 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
                 relevantLineItem.addCapitalActual(value);
             }
         }
-
-
     }
 
     private void handleBudgetEntries(AnnualSpendSummary annualSpendSummary, ProjectLedgerEntry entry) {
@@ -282,7 +281,7 @@ public class AnnualSpendSummaryMapper extends BaseAnnualSummaryMapper {
         annualSpendMonthlyTotals.add(new AnnualSpendMonthlyTotal("OCT", yearMonth++));
         annualSpendMonthlyTotals.add(new AnnualSpendMonthlyTotal("NOV", yearMonth++));
         annualSpendMonthlyTotals.add(new AnnualSpendMonthlyTotal("DEC", yearMonth++));
-        yearMonth =  ((year+1) * 100) + 1;
+        yearMonth =  ((year + 1) * 100) + 1;
         annualSpendMonthlyTotals.add(new AnnualSpendMonthlyTotal("JAN", yearMonth++));
         annualSpendMonthlyTotals.add(new AnnualSpendMonthlyTotal("FEB", yearMonth++));
         annualSpendMonthlyTotals.add(new AnnualSpendMonthlyTotal("MAR", yearMonth));

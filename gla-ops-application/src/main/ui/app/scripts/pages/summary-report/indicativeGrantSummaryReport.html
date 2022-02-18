@@ -1,7 +1,11 @@
 <div class="includes-tables">
   <div>
     <div class="report-label mtop10">Units & Tenure</div>
-    <grant-table data="$ctrl.data" is-readonly="true"> </grant-table>
+    <grant-table data="$ctrl.data"
+                 other-affordable-tenure-types="$ctrl.otherAffordableTenureTypes"
+                 show-other-affordable-question="$ctrl.showOtherAffordableQuestion"
+                 is-readonly="true">
+    </grant-table>
   </div>
   <total-grant total="$ctrl.data.totalGrantEligibility"></total-grant>
 </div>

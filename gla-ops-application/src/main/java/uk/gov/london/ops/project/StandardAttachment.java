@@ -9,24 +9,13 @@ package uk.gov.london.ops.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.OffsetDateTime;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import uk.gov.london.ops.file.AttachmentFile;
+import uk.gov.london.ops.framework.ComparableItem;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.framework.ComparableItem;
-import uk.gov.london.ops.user.domain.User;
+
+import javax.persistence.*;
+import java.time.OffsetDateTime;
 
 @Entity(name = "attachment")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -47,9 +36,8 @@ public class StandardAttachment implements ComparableItem {
     private OffsetDateTime createdOn;
 
     @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "created_by")
-    private User creator;
+    @Column(name = "created_by")
+    private String creator;
 
     @Column(name = "file_id")
     @JoinData(targetTable = "file", targetColumn = "id", joinType = Join.JoinType.OneToOne,
@@ -107,11 +95,11 @@ public class StandardAttachment implements ComparableItem {
         this.createdOn = createdOn;
     }
 
-    public User getCreator() {
+    public String getCreator() {
         return creator;
     }
 
-    public void setCreator(User creator) {
+    public void setCreator(String creator) {
         this.creator = creator;
     }
 
@@ -125,7 +113,8 @@ public class StandardAttachment implements ComparableItem {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getCreatorName() {
-        return creator != null ? creator.getFullName() : null;
+        return creator;
+        // return creator != null ? creator.getFullName() : null;
     }
 
     @Override

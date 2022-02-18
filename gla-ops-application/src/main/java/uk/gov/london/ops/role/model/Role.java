@@ -7,28 +7,20 @@
  */
 package uk.gov.london.ops.role.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import uk.gov.london.common.user.BaseRole;
+import uk.gov.london.ops.framework.OpsEntity;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import uk.gov.london.common.user.BaseRole;
-import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.framework.exception.ValidationException;
-import uk.gov.london.ops.organisation.model.Organisation;
 
 @Entity(name = "user_roles")
 public class Role extends BaseRole implements GrantedAuthority, Serializable, OpsEntity<Integer> {
@@ -53,13 +45,19 @@ public class Role extends BaseRole implements GrantedAuthority, Serializable, Op
 
     @ManyToOne(cascade = {})
     @JoinColumn(name = "organisation_id", nullable = false)
-    private Organisation organisation;
+    private OrganisationEntity organisation;
 
     @Column(name = "approved")
     private Boolean approved;
 
+    @Column(name = "org_admin_requested")
+    private Boolean orgAdminRequested;
+
     @Column(name = "primary_org_for_user")
     private Boolean primaryOrganisationForUser;
+
+    @Column(name = "authorised_signatory")
+    private Boolean authorisedSignatory;
 
     @Column(name = "approved_on")
     @Temporal(TemporalType.TIMESTAMP)
@@ -82,7 +80,7 @@ public class Role extends BaseRole implements GrantedAuthority, Serializable, Op
 
     public Role() {}
 
-    public Role(String name, String username, Organisation organisation) {
+    public Role(String name, String username, OrganisationEntity organisation) {
         this.name = name;
         this.username = username;
         this.organisation = organisation;
@@ -111,11 +109,11 @@ public class Role extends BaseRole implements GrantedAuthority, Serializable, Op
         return username;
     }
 
-    public Organisation getOrganisation() {
+    public OrganisationEntity getOrganisation() {
         return organisation;
     }
 
-    public void setOrganisation(Organisation organisation) {
+    public void setOrganisation(OrganisationEntity organisation) {
         this.organisation = organisation;
     }
 
@@ -195,6 +193,22 @@ public class Role extends BaseRole implements GrantedAuthority, Serializable, Op
         this.primaryOrganisationForUser = primaryOrganisationForUser;
     }
 
+    public Boolean getOrgAdminRequested() {
+        return orgAdminRequested;
+    }
+
+    public void setOrgAdminRequested(Boolean orgAdminRequested) {
+        this.orgAdminRequested = orgAdminRequested;
+    }
+
+    public Boolean getAuthorisedSignatory() {
+        return authorisedSignatory;
+    }
+
+    public void setAuthorisedSignatory(Boolean authorisedSignatory) {
+        this.authorisedSignatory = authorisedSignatory;
+    }
+
     public void approve() {
         this.approved = true;
         this.approvedOn = new Date();
@@ -232,8 +246,8 @@ public class Role extends BaseRole implements GrantedAuthority, Serializable, Op
         return Objects.hash(name, username, organisation);
     }
 
-    public static String getDefaultForOrganisation(Organisation organisation) {
-        if (organisation.isManagingOrganisation()) {
+    public static String getDefaultForOrganisation(OrganisationEntity organisation) {
+        if (organisation.isManaging() || organisation.isTeamOrganisation()) {
             return GLA_PM;
         } else {
             // if no users on this org then must be first reg
@@ -245,10 +259,6 @@ public class Role extends BaseRole implements GrantedAuthority, Serializable, Op
             }
             return PROJECT_EDITOR;
         }
-    }
-
-    public String getSimpleName() {
-        return name.replace("ROLE_", "");
     }
 
     public boolean isThresholdRole() {

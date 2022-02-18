@@ -1,0 +1,321 @@
+<div class="template-block-funding">
+
+  <hr/>
+  <div class="text-center bolder mtop5 mbottom10">Spend Profiles</div>
+  <div class="text-center mbottom15">where required, default details will be used if not amended</div>
+
+  <div class="form-group">
+    <label for="funding-spend-type">Allow Revenue and/or Capital</label>
+    <select [(ngModel)]="block.fundingSpendType"
+            [ngClass]="{placeholder: !block.fundingSpendType}"
+            [disabled]="readOnly || !editable"
+            class="form-control"
+            id="funding-spend-type">
+      <option disabled value="undefined">Funding Spend Type</option>
+      <option *ngFor="let fundingSpendType of fundingSpendTypeOptions" [ngValue]="fundingSpendType.id">{{fundingSpendType.label}}</option>
+    </select>
+  </div>
+
+  <div class="form-group radio-button" *ngIf="block.fundingSpendType !== 'REVENUE_ONLY'">
+    <label for="show-capital-gla-funding">Show 'Capital - Claim' column? &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="show-capital-gla-funding"
+                        [disabled]="readOnly || !editable"
+                        name="show-capital-gla-funding"
+                        mode="bool"
+                        [(model)]="block.showCapitalGLAFunding">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.showCapitalGLAFunding">
+    <div class="form-group">
+      <label for="capital-gla-funding-text">'Capital - Claim' column text </label>
+      <input class="form-control"
+             id="capital-gla-funding-text"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.capClaimedFunding"
+             number-mask="0"
+             placeholder="GLA CAPITAL CONTRIBUTION £"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group radio-button" *ngIf="block.fundingSpendType !== 'REVENUE_ONLY'">
+    <label for="show-capital-other-funding">Show 'Capital - Other' column? &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="show-capital-other-funding"
+                        [disabled]="readOnly || !editable"
+                        name="show-capital-other-funding"
+                        mode="bool"
+                        [(model)]="block.showCapitalOtherFunding">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.showCapitalOtherFunding">
+    <div class="form-group">
+      <label for="capital-other-funding-text">'Capital - Other' column text </label>
+      <input class="form-control"
+             id="capital-other-funding-text"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.capOtherFunding"
+             number-mask="0"
+             placeholder="APPLICANT CAPITAL CONTRIBUTION £"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group radio-button" *ngIf="block.fundingSpendType !== 'CAPITAL_ONLY'">
+    <label for="show-revenue-gla-funding">Show 'Revenue - Claim' column? &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="show-revenue-gla-funding"
+                        [disabled]="readOnly || !editable"
+                        name="show-revenue-gla-funding"
+                        mode="bool"
+                        [(model)]="block.showRevenueGLAFunding">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.showRevenueGLAFunding">
+    <div class="form-group">
+      <label for="revenue-gla-funding-text">'Revenue - Claim' column text </label>
+      <input class="form-control"
+             id="revenue-gla-funding-text"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.revClaimedFunding"
+             number-mask="0"
+             placeholder="GLA REVENUE CONTRIBUTION £"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group radio-button" *ngIf="block.fundingSpendType !== 'CAPITAL_ONLY'">
+    <label for="show-revenue-other-funding">Show 'Revenue - Other' column? &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="show-revenue-other-funding"
+                        [disabled]="readOnly || !editable"
+                        name="show-revenue-other-funding"
+                        mode="bool"
+                        [(model)]="block.showRevenueOtherFunding">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.showRevenueOtherFunding">
+    <div class="form-group">
+      <label for="revenue-other-funding-text">'Revenue - Other' column text </label>
+      <input class="form-control"
+             id="revenue-other-funding-text"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.revOtherFunding"
+             number-mask="0"
+             placeholder="APPLICANT REVENUE CONTRIBUTION £"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="modal-claim-label">Modal 'Claim' label</label>
+    <input class="form-control"
+           id="modal-claim-label"
+           maxlength="80"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.wizardClaimLabel"
+           number-mask="0"
+           placeholder="GLA Contribution (£)"
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="modal-other-label">Modal 'Other-Sources' label</label>
+    <input class="form-control"
+           id="modal-other-label"
+           maxlength="80"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.wizardOtherLabel"
+           number-mask="0"
+           placeholder="Applicant Contribution (£)"
+           type="text"/>
+  </div>
+
+  <div class="form-group radio-button">
+    <label for="show-decimal-places">Show decimal places? &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="show-decimal-places"
+                        [disabled]="readOnly || !editable"
+                        name="show-decimal-places"
+                        mode="bool"
+                        (modelChange)="onShowDecimalChange($event)"
+                        [(model)]="showDecimalPlaces">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+
+  <div class="form-group radio-button">
+    <div><label for="categorise-based-on">Categorise activities based on &nbsp;</label></div>
+
+    <div class="yesNoInput" *ngIf="!readOnly">
+      <input (ngModelChange)="onBasedOnValueChange('showMilestones')"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.showMilestones"
+             name="categorise-based-on"
+             [name]="'categorise-based-on'"
+             [value]="true"
+             id="categorise-based-on-milestones"
+             tabindex="0"
+             type="radio">
+      <label class="yesNoInput__label" for="{{'showMilestones'}}"> Milestones</label>
+      &nbsp;
+      <input (ngModelChange)="onBasedOnValueChange('showCategories')"
+             [disabled]="readOnly || !editable"
+             name="categorise-based-on"
+             [name]="'categorise-based-on'"
+             [value]="false"
+             id="categorise-based-on-categories"
+             [(ngModel)]="block.showMilestones"
+             tabindex="0"
+             type="radio">
+      <label class="yesNoInput__label" for="{{'showCategories'}}"> Budget Categories Group</label>
+
+    </div>
+    <div *ngIf="readOnly || !editable" class="readonly-form-el read-only-text multiline-text">{{getReadOnlyBasedOnText(block.showMilestones)}}</div>
+  </div>
+
+  <div class="conditional-question">
+    <div class="form-group" *ngIf="block.showCategories">
+      <label for="category-external-id">Select group id (add Groups via settings)</label>
+      <select [(ngModel)]="block.categoriesExternalId"
+              [ngClass]="{placeholder: !block.categoriesExternalId}"
+              [disabled]="readOnly || !editable"
+              class="form-control"
+              id="category-external-id">
+        <option disabled value="undefined">External Group Id</option>
+        <option *ngFor="let item of configItemsGroups" [ngValue]="item">{{item}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group radio-button">
+    <label for="activities-required">Activities required &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="activities-required"
+                        [disabled]="readOnly || !editable"
+                        name="activities-required"
+                        mode="bool"
+                        [(model)]="block.activitiesRequired">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="!block.activitiesRequired">
+    <div class="form-group">
+      <label for="default-activity-name">Default project activity name </label>
+      <input class="form-control"
+             id="default-activity-name"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.defaultActivityName"
+             number-mask="0"
+             placeholder="Projected cost"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group radio-button">
+    <label for="multiple-bespoke-activities-enabled">Multiple bespoke activities enabled &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="multiple-bespoke-activities-enabled"
+                        [disabled]="readOnly || !editable"
+                        name="multiple-bespoke-activities-enabled"
+                        mode="bool"
+                        [(model)]="block.multipleBespokeActivitiesEnabled">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="form-group radio-button">
+    <div><label for="claim-level">Claim level &nbsp;</label></div>
+
+    <div class="yesNoInput" *ngIf="!readOnly && editable">
+      <input
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.canClaimActivity"
+             name="claim-level"
+             [name]="'claim-level'"
+             [value]="true"
+             id="claim-level-activities"
+             tabindex="0"
+             type="radio">
+      <label class="yesNoInput__label" for="{{'activities'}}"> Activities and/or Quarters </label>
+      &nbsp;
+      <input
+             [disabled]="readOnly || !editable"
+             name="claim-level"
+             [name]="'claim-level'"
+             [value]="false"
+             id="claim-level-quarters"
+             [(ngModel)]="block.canClaimActivity"
+             tabindex="0"
+             type="radio">
+      <label class="yesNoInput__label" for="{{'quarters'}}"> Quarters only</label>
+
+    </div>
+    <div *ngIf="readOnly || !editable" class="readonly-form-el read-only-text multiline-text">{{getReadOnlyClaimLevelText(block.canClaimActivity)}}</div>
+  </div>
+
+  <hr/>
+  <div class="text-center bolder mtop5 mbottom10">Evidence configuration</div>
+
+  <div class="form-group radio-button">
+    <label for="evidence-required">Evidence required &nbsp;</label>
+    <div>
+      <gla-yes-no-input id="evidence-required"
+                        [disabled]="readOnly || !editable"
+                        name="evidence-required"
+                        mode="bool"
+                        [(model)]="block.budgetEvidenceAttachmentEnabled">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.budgetEvidenceAttachmentEnabled">
+    <div class="form-group">
+      <label for="max-amount-of-attachments">Max number of evidence attachments</label>
+      <input class="form-control"
+             id="max-amount-of-attachments"
+             maxlength="2"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.maxEvidenceAttachments"
+             number-mask="0"
+             placeholder="Max number of attachments"
+             type="text"/>
+      <div *ngIf="block.maxEvidenceAttachments" class="error-wrapper">
+        <div *ngIf="block.maxEvidenceAttachments == 0" class="error">Zero is not a valid number.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.budgetEvidenceAttachmentEnabled">
+    <div class="form-group radio-button">
+      <label for="evidence-mandatory">Evidence attachment mandatory &nbsp;</label>
+      <div>
+        <gla-yes-no-input id="evidence-mandatory"
+                          [disabled]="readOnly || !editable"
+                          name="evidence-mandatory"
+                          mode="bool"
+                          [(model)]="block.evidenceAttachmentsMandatory">
+        </gla-yes-no-input>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+

@@ -34,7 +34,6 @@
               ]
             },
             "styles": [
-              "./node_modules/angular-toastr/dist/angular-toastr.css",
               "./node_modules/jquery-ui-dist/jquery-ui.css",
               "./node_modules/jsoneditor/dist/jsoneditor.css",
               "../ui/app/styles/main.scss",
@@ -60,7 +59,6 @@
               "./node_modules/ngstorage/ngStorage.js",
               "./node_modules/moment/moment.js",
               "./node_modules/angular-moment/angular-moment.js",
-              "./node_modules/angular-toastr/dist/angular-toastr.tpls.js",
               "./node_modules/angular-permission/dist/angular-permission.js",
               "./node_modules/angular-permission/dist/angular-permission-ui.js",
               "./node_modules/angular-permission/dist/angular-permission-ng.js",
@@ -69,7 +67,6 @@
               "./node_modules/ng-device-detector/ng-device-detector.js",
               "./node_modules/jquery-ui-dist/jquery-ui.js",
               "./node_modules/angular-clipboard/angular-clipboard.js",
-              "./node_modules/ng-idle/angular-idle.js",
               "./node_modules/angular-ui-sortable/dist/sortable.js",
               "./node_modules/angular-cache/dist/angular-cache.js",
               "./node_modules/chart.js/dist/Chart.js",
@@ -87,7 +84,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -95,8 +91,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "6mb"
+                  "maximumWarning": "6mb",
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",

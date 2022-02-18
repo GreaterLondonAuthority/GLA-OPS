@@ -1,6 +1,6 @@
 <div class="report-tables">
   <div ng-repeat="row in $ctrl.rows">
-    <change-report-table-separator has-right-values="$ctrl.hasRightValues"></change-report-table-separator>
+    <gla-change-report-table-separator [has-right-values]="$ctrl.hasRightValues"></gla-change-report-table-separator>
     <change-report-tile-row
       heading-field="$ctrl.headingField"
       description-field="$ctrl.descriptionField"
@@ -8,5 +8,5 @@
       fields="$ctrl.fields"
       changes="$ctrl.changes"></change-report-tile-row>
   </div>
-  <change-report-table-separator has-right-values="$ctrl.hasRightValues"></change-report-table-separator>
+  <gla-change-report-table-separator [has-right-values]="$ctrl.hasRightValues"></gla-change-report-table-separator>
 </div>

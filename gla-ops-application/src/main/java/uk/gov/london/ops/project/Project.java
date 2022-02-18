@@ -7,77 +7,33 @@
  */
 package uk.gov.london.ops.project;
 
-import static uk.gov.london.common.GlaUtils.nullSafeAdd;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.APPROVED;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.LAST_APPROVED;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.org_id;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.org_name;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.programme_id;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.programme_name;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.project_id;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.template_id;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.template_name;
-import static uk.gov.london.ops.project.template.domain.Template.MilestoneType.MonetaryValue;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import org.apache.commons.lang3.StringUtils;
+import uk.gov.london.common.GlaUtils;
 import uk.gov.london.common.error.ApiErrorItem;
 import uk.gov.london.ops.EventType;
 import uk.gov.london.ops.OpsEvent;
+import uk.gov.london.ops.framework.enums.GrantType;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.notification.NotificationTargetEntity;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.organisation.model.OrganisationGroup;
 import uk.gov.london.ops.programme.domain.ProgrammeTemplate;
-import uk.gov.london.ops.project.ProjectHistory.Transition;
 import uk.gov.london.ops.project.accesscontrol.AccessControlRelationshipType;
 import uk.gov.london.ops.project.accesscontrol.GrantAccessTrigger;
 import uk.gov.london.ops.project.accesscontrol.ProjectAccessControl;
-import uk.gov.london.ops.project.block.DesignStandardsBlock;
-import uk.gov.london.ops.project.block.FundingSourceProvider;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus;
-import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.block.ProjectDetailsBlock;
+import uk.gov.london.ops.project.block.*;
 import uk.gov.london.ops.project.budget.ProjectBudgetsBlock;
+import uk.gov.london.ops.project.claim.ClaimStatus;
 import uk.gov.london.ops.project.funding.FundingBlock;
-import uk.gov.london.ops.project.grant.BaseGrantBlock;
-import uk.gov.london.ops.project.grant.CalculateGrantBlock;
-import uk.gov.london.ops.project.grant.DeveloperLedGrantBlock;
-import uk.gov.london.ops.project.grant.GrantSourceBlock;
-import uk.gov.london.ops.project.grant.GrantType;
-import uk.gov.london.ops.project.grant.IndicativeGrantBlock;
-import uk.gov.london.ops.project.grant.NegotiatedGrantBlock;
-import uk.gov.london.ops.project.grant.ProjectTenureDetails;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.project.grant.*;
 import uk.gov.london.ops.project.internalblock.InternalAssessmentBlock;
 import uk.gov.london.ops.project.internalblock.InternalBlockType;
+import uk.gov.london.ops.project.internalblock.InternalProjectAdminBlock;
 import uk.gov.london.ops.project.internalblock.InternalProjectBlock;
 import uk.gov.london.ops.project.label.Label;
 import uk.gov.london.ops.project.label.LabelType;
@@ -90,23 +46,37 @@ import uk.gov.london.ops.project.risk.ProjectRisksBlock;
 import uk.gov.london.ops.project.skills.FundingClaimsBlock;
 import uk.gov.london.ops.project.skills.LearningGrantBlock;
 import uk.gov.london.ops.project.state.ProjectState;
+import uk.gov.london.ops.project.state.ProjectStateEntity;
 import uk.gov.london.ops.project.state.ProjectStatus;
 import uk.gov.london.ops.project.state.StateModel;
+import uk.gov.london.ops.project.template.domain.LearningGrantTemplateBlock;
 import uk.gov.london.ops.project.template.domain.Template;
 import uk.gov.london.ops.project.unit.UnitDetailsBlock;
 import uk.gov.london.ops.service.ManagedEntityInterface;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
+import static uk.gov.london.ops.project.block.ProjectBlockStatus.*;
+import static uk.gov.london.ops.project.template.domain.Template.MilestoneType.MonetaryValue;
 
 @Entity
 @JsonFilter("roleBasedFilter")
 public class Project extends BaseProject implements ProjectInterface, Serializable, ManagedEntityInterface,
     NotificationTargetEntity {
 
+
     public enum Recommendation {
         RecommendApproval, RecommendRejection
     }
 
     public enum Action {
-        ViewChangeReport, Transfer, ViewSummaryReport, Reinstate, Share
+        ViewChangeReport, Transfer, ViewSummaryReport, Reinstate, Share, Delete
     }
 
     @Column(name = "organisation_group_id")
@@ -156,9 +126,9 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
     private boolean associatedProjectsEnabled;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = ProjectHistory.class)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = ProjectHistoryEntity.class)
     @JoinColumn(name = "project_id")
-    private List<ProjectHistory> history = new ArrayList<>();
+    private List<ProjectHistoryEntity> history = new ArrayList<>();
 
     @JsonIgnore
     @JoinData(joinType = Join.JoinType.OneToMany, sourceColumn = "id", targetColumn = "project_id",
@@ -166,6 +136,10 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = CascadeType.ALL,
         targetEntity = ProjectAccessControl.class, orphanRemoval = true)
     private Set<ProjectAccessControl> accessControlList = new HashSet<>();
+
+    @Column(name = "payments_only")
+    private boolean paymentsOnly;
+
 
     @Transient
     private List<ApiErrorItem> messages = new ArrayList<>();
@@ -197,8 +171,7 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
     @Transient
     private boolean isReclaimEnabled;
 
-    public Project() {
-    }
+    public Project() {}
 
     public Project(Integer id, String title) {
         this.id = id;
@@ -226,7 +199,7 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         }
     }
 
-    public void setOrganisation(Organisation organisation) {
+    public void setOrganisation(OrganisationEntity organisation) {
         if (this.organisation != null) {
             removeFromAccessControlList(this.organisation, GrantAccessTrigger.PROJECT);
         }
@@ -234,7 +207,7 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         addToAccessControlList(organisation, AccessControlRelationshipType.OWNER, GrantAccessTrigger.PROJECT);
     }
 
-    public void setManagingOrganisation(Organisation managingOrganisation) {
+    public void setManagingOrganisation(OrganisationEntity managingOrganisation) {
         if (this.managingOrganisation != null) {
             removeFromAccessControlList(this.managingOrganisation, GrantAccessTrigger.PROJECT);
         }
@@ -361,7 +334,8 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
     /**
      * Finds a block with the given type, display order and status. Returns null if not found.
      */
-    public NamedProjectBlock getBlockByTypeDisplayOrderAndStatus(ProjectBlockType blockType, Integer order, BlockStatus status) {
+    public NamedProjectBlock getBlockByTypeDisplayOrderAndStatus(ProjectBlockType blockType, Integer order,
+                                                                 ProjectBlockStatus status) {
         return getBlocksByTypeAndDisplayOrder(blockType, order).stream()
             .filter(b -> b.getBlockStatus().equals(status))
             .findFirst()
@@ -485,6 +459,11 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
     }
 
     @JsonIgnore
+    public AffordableHomesBlock getAffordableHomesBlock() {
+        return (AffordableHomesBlock) getSingleLatestBlockOfType(ProjectBlockType.AffordableHomes);
+    }
+
+    @JsonIgnore
     public BaseGrantBlock getBaseGrantBlock() {
         if (getCalculateGrantBlock() != null) {
             return getCalculateGrantBlock();
@@ -555,16 +534,16 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         this.associatedProjectsEnabled = associatedProjectsEnabled;
     }
 
-    public List<ProjectHistory> getHistory() {
+    public List<ProjectHistoryEntity> getHistory() {
         return history;
     }
 
-    public void setHistory(List<ProjectHistory> history) {
+    public void setHistory(List<ProjectHistoryEntity> history) {
         this.history = history;
     }
 
-    public ProjectHistory getLastHistoryEntry() {
-        return history.stream().max(Comparator.comparing(ProjectHistory::getCreatedOn)).orElse(null);
+    public ProjectHistoryEntity getLastHistoryEntry() {
+        return history.stream().max(Comparator.comparing(ProjectHistoryEntity::getCreatedOn)).orElse(null);
     }
 
     public Set<ProjectAccessControl> getAccessControlList() {
@@ -575,11 +554,12 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         this.accessControlList = accessControlList;
     }
 
-    public void addToAccessControlList(Organisation organisation, AccessControlRelationshipType type, GrantAccessTrigger trigger) {
+    public void addToAccessControlList(OrganisationEntity organisation, AccessControlRelationshipType type,
+                                       GrantAccessTrigger trigger) {
         this.getAccessControlList().add(new ProjectAccessControl(this, organisation, type, trigger));
     }
 
-    public void removeFromAccessControlList(Organisation organisation, GrantAccessTrigger trigger) {
+    public void removeFromAccessControlList(OrganisationEntity organisation, GrantAccessTrigger trigger) {
         removeFromAccessControlList(organisation.getId(), trigger);
     }
 
@@ -608,7 +588,7 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
      */
     public boolean hasUnapprovedBlocks() {
         for (NamedProjectBlock projectBlock : getProjectBlocks()) {
-            if (!projectBlock.isNew() && NamedProjectBlock.BlockStatus.UNAPPROVED.equals(projectBlock.getBlockStatus())) {
+            if (!projectBlock.isNew() && ProjectBlockStatus.UNAPPROVED.equals(projectBlock.getBlockStatus())) {
                 return true;
             }
         }
@@ -646,12 +626,12 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
     public NamedProjectBlock getLatestApprovedBlock(ProjectBlockType type) {
         List<NamedProjectBlock> blocks = this.getBlocksByType(type);
         return blocks.stream()
-            .filter(b -> NamedProjectBlock.BlockStatus.LAST_APPROVED.equals(b.getBlockStatus())).findFirst().orElse(null);
+                .filter(b -> ProjectBlockStatus.LAST_APPROVED.equals(b.getBlockStatus())).findFirst().orElse(null);
     }
 
     @JsonIgnore
     public List<NamedProjectBlock> getLatestApprovedBlocks() {
-        return projectBlocks.stream().filter(b -> NamedProjectBlock.BlockStatus.LAST_APPROVED.equals(b.getBlockStatus()))
+        return projectBlocks.stream().filter(b -> ProjectBlockStatus.LAST_APPROVED.equals(b.getBlockStatus()))
             .sorted().collect(Collectors.toList());
     }
 
@@ -679,33 +659,6 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         return String.format("Project{id=%d, title=%s}", id, title);
     }
 
-    public Map<String, Object> simpleDataExtract(SimpleProjectExportConfig config) {
-        Map<String, Object> projectValues = new HashMap<>();
-        projectValues.put(project_id.name(), this.getId());
-
-        if (this.getProgramme() != null) {
-            projectValues.put(programme_id.name(), this.getProgrammeId());
-            projectValues.put(programme_name.name(), this.getProgramme().getName());
-        }
-
-        if (this.getTemplate() != null) {
-            projectValues.put(template_id.name(), this.getTemplateId());
-            projectValues.put(template_name.name(), this.getTemplate().getName());
-        }
-
-        if (this.getOrganisation() != null) {
-            projectValues.put(org_id.name(), this.getOrganisation().getId());
-            projectValues.put(org_name.name(), this.getOrganisation().getName());
-        }
-
-        for (NamedProjectBlock namedProjectBlock : this.getReportingVersionBlocks()) {
-            projectValues.putAll(namedProjectBlock.simpleDataExtract(config));
-        }
-
-        return projectValues;
-
-    }
-
     // todo this will hopefully be redundant eventually
     public NamedProjectBlock getSingleLatestBlockOfType(ProjectBlockType type) {
         return getLatestBlockOfType(type, null);
@@ -714,19 +667,16 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
     public List<NamedProjectBlock> getLastApprovedAndUnapproved(ProjectBlockType type, Integer displayOrder) {
         return this.getBlocksByTypeAndDisplayOrder(type, displayOrder).stream()
             .filter(b -> !b.getBlockStatus().equals(APPROVED)).collect(Collectors.toList());
-
     }
 
     public NamedProjectBlock getLatestBlockOfType(ProjectBlockType type, Integer displayOrder) {
         Set<NamedProjectBlock> blocksByType = getLatestProjectBlocks();
         NamedProjectBlock latest = null;
-
         for (NamedProjectBlock next : blocksByType) {
             if (type.equals(next.getBlockType()) && (displayOrder == null || displayOrder.equals(next.getDisplayOrder()))) {
                 latest = next;
             }
         }
-
         return latest;
     }
 
@@ -735,9 +685,7 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         return costs == null ? null : costs.getAdvancePayment();
     }
 
-    public void approveBlock(final NamedProjectBlock block,
-        final String username,
-        final OffsetDateTime approvalTime) {
+    public void approveBlock(NamedProjectBlock block, String username, OffsetDateTime approvalTime) {
         final List<NamedProjectBlock> previousApprovedBlocks = getBlocksByTypeAndDisplayOrder(
             block.getBlockType(), block.getDisplayOrder());
 
@@ -763,21 +711,31 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
 
     public void handleEvent(OpsEvent opsEvent) {
         if (EventType.MilestoneApproval.equals(opsEvent.getEventType())) {
-            ProjectHistory history = new ProjectHistory(
-                ProjectHistory.HistoryEventType.MilestoneClaimApproved, opsEvent.getMessage());
+            ProjectHistoryEntity history = new ProjectHistoryEntity(
+                ProjectHistoryEventType.MilestoneClaimApproved, opsEvent.getMessage());
             history.setExternalId(opsEvent.getExternalId());
-            for (NamedProjectBlock namedProjectBlock : this.getLatestProjectBlocks()) {
-                namedProjectBlock.handleEvent(opsEvent);
-            }
             this.getHistory().add(history);
         } else if (EventType.QuarterApproval.equals(opsEvent.getEventType())) {
-            ProjectHistory history = new ProjectHistory(
-                ProjectHistory.HistoryEventType.QuarterlyClaimApproved, opsEvent.getMessage());
+            ProjectHistoryEntity history = new ProjectHistoryEntity(
+                    ProjectHistoryEventType.QuarterlyClaimApproved, opsEvent.getMessage());
+            if (StringUtils.isNotEmpty(opsEvent.getComments())) {
+                history.setComments(opsEvent.getComments());
+            }
+            this.getHistory().add(history);
+        } else if (EventType.CancelApprovedClaim.equals(opsEvent.getEventType())) {
+            ProjectHistoryEntity history = new ProjectHistoryEntity(ProjectHistoryEventType.ApprovedClaimCancelled, opsEvent.getMessage());
+            if (StringUtils.isNotEmpty(opsEvent.getComments())) {
+                history.setComments(opsEvent.getComments());
+            }
+            history.setCreatedBy(opsEvent.getUser().getFullName());
             this.getHistory().add(history);
         }
+        for (NamedProjectBlock namedProjectBlock : this.getLatestProjectBlocks()) {
+            namedProjectBlock.handleEvent(opsEvent);
+        }
+
     }
 
-    @JsonIgnore
     public Map<GrantType, BigDecimal> getGrantsRequested() {
         Map<GrantType, BigDecimal> existingRequests = new HashMap<>();
         existingRequests.put(GrantType.Grant, BigDecimal.ZERO);
@@ -793,32 +751,62 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         return existingRequests;
     }
 
+    public BigDecimal getTotalGrantRequested() {
+
+        return this.getLatestProjectBlocks().stream()
+                .filter(pb -> pb instanceof FundingSourceProvider)
+                .map(fsp -> ((FundingSourceProvider) fsp).getTotalGrantRequested() == null
+                        ? BigDecimal.ZERO : ((FundingSourceProvider) fsp).getTotalGrantRequested())
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
+
     @JsonIgnore
     /**
      * Returns a map of tenure type ext iD to total number of units for each tenure type
      */
     public Map<Integer, Integer> getTotalUnitsByExternalId() {
         Map<Integer, Integer> response = new HashMap<>();
-        for (NamedProjectBlock namedProjectBlock : this.getProjectBlocks()) {
-            if (namedProjectBlock instanceof BaseGrantBlock && namedProjectBlock.isLatestVersion()) {
-                BaseGrantBlock block = (BaseGrantBlock) namedProjectBlock;
-                Set<ProjectTenureDetails> projectTenureDetailsEntries = block.getTenureTypeAndUnitsEntries();
-                for (ProjectTenureDetails projectTenureDetailsEntry : projectTenureDetailsEntries) {
-                    Integer calculatedTotalUnits = block.calculateTotalUnits(
-                        projectTenureDetailsEntry);
-                    Integer totalUnits = calculatedTotalUnits == null ? 0 : calculatedTotalUnits;
-                    Integer externalId = projectTenureDetailsEntry.getTenureType().getExternalId();
-                    Integer existingValue = response.get(externalId);
+        this.getTemplate().getTenureTypes().forEach(t -> response.put(t.getExternalId(), 0));
 
-                    if (existingValue == null) {
-                        response.put(externalId, totalUnits);
-                    } else {
-                        response.replace(externalId, totalUnits + existingValue);
-                    }
-                }
+        for (NamedProjectBlock block : this.getProjectBlocks()) {
+            if (block instanceof AffordableHomesBlock && block.isLatestVersion()) {
+                getDataFromGrantBlock(response, (AffordableHomesBlock) block);
+            } else if (block instanceof BaseGrantBlock  && block.isLatestVersion()) {
+                getDataFromGrantBlock(response, (BaseGrantBlock) block);
             }
         }
         return response;
+    }
+
+    private void getDataFromGrantBlock(Map<Integer, Integer> response, AffordableHomesBlock block) {
+        block.getEntries().stream()
+                .filter(e -> e.getType().equals(AffordableHomesType.Completion))
+                .filter(e -> e.getOfWhichCategory() == null)
+                .forEach(e -> updateMap(response, e));
+    }
+
+    private void getDataFromGrantBlock(Map<Integer, Integer> response, BaseGrantBlock namedProjectBlock) {
+        BaseGrantBlock block = namedProjectBlock;
+        Set<ProjectTenureDetails> projectTenureDetailsEntries = block.getTenureTypeAndUnitsEntries();
+        for (ProjectTenureDetails projectTenureDetailsEntry : projectTenureDetailsEntries) {
+            Integer calculatedTotalUnits = block.calculateTotalUnits(projectTenureDetailsEntry);
+            Integer totalUnits = calculatedTotalUnits == null ? 0 : calculatedTotalUnits;
+            Integer externalId = projectTenureDetailsEntry.getTenureType().getExternalId();
+            Integer existingValue = response.get(externalId);
+
+            if (existingValue == null) {
+                response.put(externalId, totalUnits);
+            } else {
+                response.replace(externalId, totalUnits + existingValue);
+            }
+        }
+    }
+
+    private void updateMap(Map<Integer, Integer> response, AffordableHomesEntry entry) {
+        if (entry.getUnits() != null) {
+            Integer existingUnits = response.get(entry.getTenureTypeId());
+            response.replace(entry.getTenureTypeId(), existingUnits + entry.getUnits());
+        }
     }
 
     /**
@@ -833,7 +821,6 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
                 }
             }
         }
-
         return false;
     }
 
@@ -867,25 +854,42 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         return template.getMilestoneType().equals(MonetaryValue) && getGrantSourceAdjustmentAmount().signum() < 0;
     }
 
+    @JsonIgnore
+    public boolean ignoreReconcilliationAmountValidation() {
+        if (template.isBlockPresent(ProjectBlockType.LearningGrant)) {
+            return ((LearningGrantTemplateBlock) template.getSingleBlockByType(ProjectBlockType.LearningGrant))
+                    .getCanManuallyClaimP14();
+        }
+        return false;
+    }
+
     @Transient
     public Boolean getApprovalWillCreatePendingReclaim() {
-        GrantSourceBlock grantSourceBlock = getGrantSourceBlock();
-        // pending reclaims can only happen on unapproved grant source
-        if (grantSourceBlock != null && grantSourceBlock.isApproved()) {
-            return false;
-        }
-
+        //TODO create similar check for the funding block
         ProjectMilestonesBlock milestonesBlock = getMilestonesBlock();
+
+        Set<NamedProjectBlock> blocksNeedingReclaim = this.getLatestProjectBlocks().stream()
+                .filter(b -> b.getBlockStatus().equals(UNAPPROVED) && b.getApprovalWillCreatePendingReclaim())
+                .collect(Collectors.toSet());
+
+        boolean milestoneReclaim = false;
         if (milestonesBlock != null) {
-            return milestonesBlock.getApprovalWillCreatePendingReclaim();
+            milestoneReclaim = milestonesBlock.getMilestones().stream()
+                            .filter(m -> m.getClaimStatus() != null)
+                            .anyMatch(m -> m.getClaimStatus().equals(ClaimStatus.Withdrawn)
+                                && m.calculateTotalValueReclaimed() != 0L);
+
+            if (milestonesBlock.getApprovalWillCreatePendingReclaim()) {
+                milestoneReclaim = true;
+            }
         }
 
-        LearningGrantBlock learningGrantBlock = getLearningGrantBlock();
-        if (learningGrantBlock != null) {
-            return learningGrantBlock.getApprovalWillCreatePendingReclaim();
+        if (milestoneReclaim) {
+            return true;
         }
 
-        return false;
+        return !blocksNeedingReclaim.isEmpty() && blocksNeedingReclaim.stream()
+                .anyMatch(NamedProjectBlock::getApprovalWillCreatePendingReclaim);
     }
 
     public Map<GrantType, Long> getCurrentGrantSourceValuesByType() {
@@ -906,10 +910,26 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         if (!ProjectStatus.Active.equals(this.getStatusType())) {
             return BigDecimal.ZERO;
         }
+
+        BigDecimal adjustmentAmount = this.getLatestProjectBlocks().stream()
+                .filter(b -> b instanceof FundingSourceProvider && ProjectBlockStatus.UNAPPROVED.equals(b.getBlockStatus()))
+                .map(b -> ((FundingSourceProvider) b).getGrantAdjustmentAmount((FundingSourceProvider)
+                        this.getLatestApprovedBlock(b.getBlockType())))
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+
+        return adjustmentAmount;
+
+
+    }
+
+    public BigDecimal getGrantSourceAdjustmentAmountOld() {
+        if (!ProjectStatus.Active.equals(this.getStatusType())) {
+            return BigDecimal.ZERO;
+        }
         ProjectMilestonesBlock milestonesBlock = getMilestonesBlock();
         if (milestonesBlock != null) {
             GrantSourceBlock grantSourceBlock = getGrantSourceBlock();
-            if (grantSourceBlock != null && NamedProjectBlock.BlockStatus.UNAPPROVED.equals(grantSourceBlock.getBlockStatus())) {
+            if (grantSourceBlock != null && ProjectBlockStatus.UNAPPROVED.equals(grantSourceBlock.getBlockStatus())) {
                 GrantSourceBlock approvedBlock = (GrantSourceBlock) getLatestApprovedBlock(ProjectBlockType.GrantSource);
                 // approved block should never be null
                 if (approvedBlock == null || (grantSourceBlock.isAssociatedProject() && !approvedBlock.isAssociatedProject())) {
@@ -925,7 +945,7 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         LearningGrantBlock oldLearningGrantBlock = (LearningGrantBlock) getLatestApprovedBlock(ProjectBlockType.LearningGrant);
         LearningGrantBlock newLearningGrantBlock = getLearningGrantBlock();
         if (oldLearningGrantBlock != null
-            && NamedProjectBlock.BlockStatus.UNAPPROVED.equals(newLearningGrantBlock.getBlockStatus())) {
+            && ProjectBlockStatus.UNAPPROVED.equals(newLearningGrantBlock.getBlockStatus())) {
             BigDecimal oldAlloc = Optional.ofNullable(oldLearningGrantBlock.getTotalYearlyAllocation()).orElse(BigDecimal.ZERO);
             BigDecimal newAlloc = Optional.ofNullable(newLearningGrantBlock.getTotalYearlyAllocation()).orElse(BigDecimal.ZERO);
             return newAlloc.subtract(oldAlloc);
@@ -972,7 +992,6 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
             this.getLatestProjectBlocks().add(block);
         }
         this.getProjectBlocks().add(block);
-
     }
 
     public void addLabel(Label label) {
@@ -1016,6 +1035,14 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
     }
 
     @JsonIgnore
+    public InternalProjectBlock getSingleInternalBlockByDisplayOrder(Integer displayOrder) {
+        return getInternalBlocks().stream()
+                .filter(b -> displayOrder.equals(b.getDisplayOrder()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @JsonIgnore
     public InternalAssessmentBlock getInternalAssessmentBlock() {
         return (InternalAssessmentBlock) getInternalBlockByType(InternalBlockType.Assessment);
     }
@@ -1029,6 +1056,7 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
         return projectBlocks.stream().filter(b -> displayOrder.equals(b.getDisplayOrder()))
             .findFirst().orElse(null);
     }
+
 
     public List<String> getLabelNamesByType(String type) {
         List<String> labelsName = new ArrayList<>();
@@ -1057,12 +1085,56 @@ public class Project extends BaseProject implements ProjectInterface, Serializab
 
     public boolean isPreviouslySubmitted() {
         return this.getHistory().stream()
-            .anyMatch(history -> Objects.equals(history.getProjectState().getStatusType(), ProjectStatus.Submitted));
+            .anyMatch(history -> Objects.equals(ProjectStateEntity.getStatusType(history.getStatusName(),
+                    history.getSubStatusName()), ProjectStatus.Submitted));
     }
 
     public boolean isPreviouslyReturned() {
         return this.getHistory().stream()
-            .anyMatch(history -> Transition.Returned.equals(this.getLastHistoryEntry().getTransition()));
+            .anyMatch(history -> ProjectTransition.Returned.equals(this.getLastHistoryEntry().getTransition()));
+    }
+
+    @JsonIgnore
+    public String getSupplierProductCode() {
+        InternalProjectAdminBlock internalProjectAdminBlock =
+                (InternalProjectAdminBlock) getInternalBlockByType(InternalBlockType.ProjectAdmin);
+
+        if (internalProjectAdminBlock == null) {
+            return null;
+        }
+
+        if (GlaUtils.isNullOrEmpty(internalProjectAdminBlock.getOrganisationShortName())
+                && GlaUtils.isNullOrEmpty(internalProjectAdminBlock.getProjectShortName())) {
+            return null;
+        }
+        return getSupplierCodeFromAdminBlock(internalProjectAdminBlock);
+    }
+
+    private String getSupplierCodeFromAdminBlock(InternalProjectAdminBlock adminBlock) {
+        String returnSupplerCode;
+
+        if (GlaUtils.isNullOrEmpty(adminBlock.getOrganisationShortName())) {
+            returnSupplerCode = adminBlock.getProjectShortName();
+        } else if (GlaUtils.isNullOrEmpty(adminBlock.getProjectShortName())) {
+            returnSupplerCode =  adminBlock.getOrganisationShortName();
+        } else {
+            returnSupplerCode = adminBlock.getOrganisationShortName() + "/" + adminBlock.getProjectShortName();
+        }
+
+        return returnSupplerCode.length() > 35 ? returnSupplerCode.substring(0, 35)
+                : returnSupplerCode;
+    }
+
+    public boolean isPaymentOnlyApprovalPossible() {
+        return this.getLatestProjectBlocks().stream().anyMatch(NamedProjectBlock::isPaymentsOnlyApprovalPossible);
+    }
+
+    public boolean isPaymentsOnly() {
+        return paymentsOnly;
+    }
+
+    public void setPaymentsOnly(boolean paymentsOnly) {
+        this.paymentsOnly = paymentsOnly;
     }
 
 }

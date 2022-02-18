@@ -11,23 +11,13 @@
   <div class="modal-body text-center">
     <div class="row">
       <div class="col-xs-12">
-        {{$ctrl.errorMsg.copy}}
+        {{$ctrl.errorMsg.description || $ctrl.errorMsg.copy}}
       </div>
     </div>
   </div>
 
   <div class="modal-footer">
     <div class="row">
-      <!-- <div class="col-xs-6">
-        <file-upload class="confirm-button pull-right"
-                     label="ADD DOCUMENT +"
-                     upload-params="$ctrl.uploadParams"
-                     on-progress="$ctrl.onFileUploadProgress(event)"
-                     on-complete="$ctrl.onFileUploadComplete(event)"
-                     on-error="$ctrl.onFileUploadError(event)">
-        </file-upload>
-      </div> -->
-
       <div class=" col-xs-offset-3 col-xs-6 cancel">
         <button class="btn btn-default btn-primary pull-left" type="button" ng-click="$dismiss()">OK</button>
       </div>

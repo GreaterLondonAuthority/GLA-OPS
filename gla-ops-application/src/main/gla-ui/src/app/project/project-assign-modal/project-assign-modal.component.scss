@@ -1,0 +1,11 @@
+@import "variables";
+
+.warning-msg {
+    color:$red;
+    padding: 5px 45px;
+}
+
+.info-msg {
+    font-weight: bold;
+    padding: 5px 45px;
+}

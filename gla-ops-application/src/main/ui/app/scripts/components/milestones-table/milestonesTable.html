@@ -16,17 +16,17 @@
   <table ng-if="$ctrl.milestones.length" class="table table-hover table-bordered table-default table-with-inputs" ng-class="{multiline: $ctrl.isMonetaryValueType, 'edit-mode': !$ctrl.readOnly}">
     <thead class="thead-inverse uppercase">
     <tr>
-      <th>Milestone</th>
-      <th ng-if="$ctrl.showNaColumn">N/A</th>
-      <th>Date</th>
-      <th ng-if="$ctrl.showDescription">Description</th>
-      <th class="number" ng-if="$ctrl.isMonetaryValueType">Value £</th>
-      <th class="number" ng-if="$ctrl.showGrantColumn" style="width: 25%">{{ $ctrl.monetarySplitTitle || 'GRANT %' }}</th>
-      <th ng-if="$ctrl.showEvidenceColumn">Evidence</th>
-      <th ng-if="$ctrl.showStatusColumn">Status</th>
-      <th permission permission-only="'corp.dash.proj.mark'" ng-if="$ctrl.projectMarkedCorporate">Corporate Reporting</th>
-      <th ng-if="$ctrl.showClaimStatus">Claim Status</th>
-      <th ng-if="!$ctrl.readOnly">Actions</th>
+      <th scope="col">Milestone</th>
+      <th scope="col" ng-if="$ctrl.showNaColumn">N/A</th>
+      <th scope="col">Date</th>
+      <th scope="col" ng-if="$ctrl.showDescription">Description</th>
+      <th scope="col" class="number" ng-if="$ctrl.isMonetaryValueType">Value £</th>
+      <th scope="col" class="number" ng-if="$ctrl.showGrantColumn" style="width: 25%">{{ $ctrl.monetarySplitTitle || 'GRANT %' }}</th>
+      <th scope="col" ng-if="$ctrl.showEvidenceColumn">Evidence</th>
+      <th scope="col" ng-if="$ctrl.showStatusColumn">Status</th>
+      <th scope="col" permission permission-only="'corp.dash.proj.mark'" ng-if="$ctrl.projectMarkedCorporate">Corporate Reporting</th>
+      <th scope="col" ng-if="$ctrl.showClaimStatus">Claim Status</th>
+      <th scope="col" ng-if="!$ctrl.readOnly">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -35,11 +35,11 @@
     </tr>
     <tr ng-repeat-start="m in $ctrl.milestones"
         ng-class="{'with-manual-indicator': m.manuallyCreated,'with-conditional-indicator': m.conditional, 'recently-added': m.id == $ctrl.addedMilestone.id}">
-      <td ng-class="{'with-manual-indicator': m.manuallyCreated, 'cursor-pointer': $ctrl.showPaymentsToggle(m)}"
+      <th scope="row" ng-class="{'with-manual-indicator': m.manuallyCreated, 'cursor-pointer': $ctrl.showPaymentsToggle(m)}"
           ng-click="$ctrl.showPayments(m)">
         <span class="manual-indicator" ng-class="{'conditional-indicator': m.conditional}" ng-if="m.manuallyCreated"></span>
         <toggle-icon (collapsed-change)="m.expanded = !m.expanded" [collapsed]="!m.expanded" ng-if="$ctrl.showPaymentsToggle(m)"></toggle-icon><span>{{ m.summary }}</span>
-      </td>
+      </th>
 
       <td ng-if="$ctrl.showNaColumn" ng-class="{'read-only': $ctrl.isNaFieldReadonly(m), 'cell-with-input': !$ctrl.isNaFieldReadonly(m)}">
         <input type="checkbox"
@@ -141,7 +141,7 @@
                   ng-change="$ctrl.autoSave()"
                   ng-disabled="!m.isDateInPast"
                   ng-model="m.milestoneStatus"
-                  ng-options="status.key as status.label for status in $ctrl.milstoneStatuses"
+                  ng-options="status.key as status.label for status in $ctrl.milestoneStatuses"
                   style="width: 200px;">
                 <option disabled value="">Select a status</option>
           </select>
@@ -162,7 +162,9 @@
         <milestone-claim-status milestone="m"
                       milestone-type="$ctrl.template.milestoneType"
                       read-only="$ctrl.readOnly"
-                      open-claim-milestone-modal="$ctrl.openClaimMilestoneModal($event, false)"></milestone-claim-status>
+                      open-claim-milestone-modal="$ctrl.openClaimMilestoneModal($event, false)"
+                      open-withdraw-info-modal="$ctrl.openWithdrawInfoModal($event, false)"
+        ></milestone-claim-status>
       </td>
 
       <td ng-if="!$ctrl.readOnly" class="delete-btn-container">
@@ -170,6 +172,8 @@
                            ng-if="$ctrl.showClaimStatus"
                            on-claim="$ctrl.openClaimMilestoneModal($event, true)"
                            on-repay="$ctrl.openClaimMilestoneModal($event, true)"
+                           on-withdraw="$ctrl.openWithdrawMilestoneModal($event, true)"
+                           on-cancel-withdraw="$ctrl.openWithdrawInfoModal($event, true)"
                            on-claim-cancel="$ctrl.openClaimMilestoneModal($event, true)"></milestone-actions>
         <delete-button ng-click="$ctrl.delete(m)" ng-if="m.manuallyCreated && !($ctrl.isMilestoneReadonly(m) || (m.conditional && !$ctrl.canDeleteConditionalMilestone))"></delete-button>
       </td>

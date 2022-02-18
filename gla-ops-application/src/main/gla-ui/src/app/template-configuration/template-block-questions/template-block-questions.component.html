@@ -1,0 +1,230 @@
+<div class="expandableTable form-group">
+  <label for="questions">Questions</label>
+
+<div class="text-right center-col" style="padding-bottom: 10px">
+  <button class="btn btn-secondary mtop10 mright10" (click)="showSectionModal()"
+          *ngIf="!readOnly && editable">
+    ADD SECTION <b>+</b>
+  </button>
+  <button class="btn btn-secondary mtop10" (click)="showQuestionModal()"
+          *ngIf="!readOnly && editable">
+    ADD QUESTION <b>+</b>
+  </button>
+</div>
+
+<div id="questions" class="template-block-questions expandableTable form-group center-col">
+  <div *ngIf="!questions.length && !sortedSections.length" class="empty-table">Not provided</div>
+  <div class="table-responsive" *ngIf="questions.length || sortedSections.length">
+
+    <div class="row">
+      <div class="no-padding">
+        <div>
+          <div class="actions-panel pull-left mbottom10">
+            <span class="bolder">Actions:</span>
+            <button class="action-buttons" [disabled]="!isParentQuestionActionEnabled()"
+                    (click)="parentQuestionAction()"><span class="icon-follow icon"></span>Parent Question
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <table class="table table-bordered" id="template-block-question-table">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th></th>
+        <th>DISPLAY ORDER</th>
+        <th>QUESTION ID</th>
+        <th>QUESTION TEXT</th>
+        <th>ANSWER TYPE</th>
+        <th style="width:15%">REQUIREMENT</th>
+        <th>PARENT</th>
+        <th>ACTIONS</th>
+        <th></th>
+        <th></th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <ng-container>
+        <tr *ngFor="let question of questionsWithoutSection" class="secondaryRow"
+            (click)="!readOnly && editable && showQuestionModal(question)" allow-enter [tabindex]="0"
+            (keydown.enter)="showQuestionModal(question)">
+          <td>
+            <div class="checkbox" [ngClass]="{checked: question.isSelected}" *ngIf="!readOnly && editable">
+              <input type="checkbox"
+                     aria-label="Select question"
+                     name="selectInput"
+                     [(ngModel)]="question.isSelected"
+                     (ngModelChange)="onQuestionCheckboxClick()"
+                     (click)="$event.stopPropagation()">
+            </div>
+          </td>
+          <td class="display-order">{{question.displayOrder}}</td>
+          <td class="id">{{question.question.id}}</td>
+          <td class="text" astyle="min-width: 200px">{{question.question.text}}</td>
+          <td class="answer-type">{{question.question.answerType}}
+            <span *ngIf="(question.question.answerType == 'FreeText' || question.question.answerType == 'Text') && question.question.maxLength">{{question.question.maxLength}} char. max.</span>
+            <span *ngIf="question.question.answerType == 'Text' && !question.question.maxLength">255 char. max.</span>
+            <div *ngIf="question.question.answerType == 'Dropdown'">Max. answers: {{question.question.maxAnswers}}</div>
+            <div *ngIf="question.question.answerType == 'FileUpload'">
+              <div *ngIf="question.question.maxCombinedUploadSizeInMb">Max. file size: {{question.question.maxCombinedUploadSizeInMb | number}}MB</div>
+              <div *ngIf="!question.question.maxCombinedUploadSizeInMb && question.question.maxUploadSizeInMb">Max. file size: {{question.question.maxUploadSizeInMb | number}}MB</div>
+              <div *ngIf="!question.question.maxCombinedUploadSizeInMb && question.question.quantity">Max. no.: {{question.question.quantity}}</div>
+            </div>
+          </td>
+
+          <td class="requirement">
+            <div *ngIf="readOnly" class="requirement m-title">{{question.requirement}}</div>
+            <div *ngIf="!readOnly && editable" (click)="$event.stopPropagation()" class="form-group">
+              <select class="form-control"
+                      id="requirement"
+                      name="requirement"
+                      #requirement="ngModel"
+                      [(ngModel)]="question.requirement"
+                      style-placeholder>
+                <option *ngFor="let requirement of requirements" [ngValue]="requirement.id">
+                  {{ requirement.label }}
+                </option>
+              </select>
+            </div>
+          </td>
+
+          <td>
+            <span *ngIf="question.parentId && question.parentAnswerToMatch"> {{question.parentId}} : {{question.parentAnswerToMatch}}</span>
+          </td>
+          <td></td>
+          <td>
+            <button *ngIf="!draft && editable && !isParentQuestion(question.question.id)" role="button" id="command-remove-question-{{question.question.id}}"
+                    (click)="performAction(removeQuestionCommand, {questionId:question.question.id})"
+                    class="btn btn-primary btn-edit">REMOVE</button>
+          </td>
+          <td class="delete-btn-container parent up-down-button text-nowrap" (click)="$event.stopPropagation()">
+            <gla-show-up-down-arrow-buttons id="move-up-down-questions-without-sections"
+              [currentItem]=question
+              [sortedCollectionItems]="questionsWithoutSection"
+              [titleUp]="'Move Question Up'"
+              [titleDown]="'Move Question Down'"
+              (onDisplayOrderChange)="updateQuestions();$event.stopPropagation()"
+              *ngIf="!readOnly && editable">
+            </gla-show-up-down-arrow-buttons>
+            <delete-button class="medium" (click)="$event.stopPropagation(); deleteQuestion(question);"
+                           *ngIf="!readOnly && editable && !isParentQuestion(question.question.id)"
+                           [tabindex]="0" (keydown.enter)="$event.stopPropagation(); deleteQuestion(question);"></delete-button>
+          </td>
+        </tr>
+      </ng-container>
+
+      <ng-container *ngFor="let section of sortedSections; let i = index">
+        <tr class="primaryRow expandable">
+          <td>
+            <div class="checkbox" ng-class="{checked: section.isSelected}" *ngIf="!readOnly && editable">
+              <input type="checkbox"
+                     aria-label="Select section"
+                     name="selectInput"
+                     [(ngModel)]="section.isSelected"
+                     (ngModelChange)="onSectionCheckboxClick()"
+                     (click)="$event.stopPropagation()">
+            </div>
+          </td>
+          <td *ngIf="sections.length != 0 && section.id != 'undefined'" [attr.colspan]="5" [tabindex]="0"
+              (keydown.enter)="showSectionModal(question)"
+              (click)="!readOnly && editable && showSectionModal(section)">
+            <toggle-icon class="mright5" [collapsed]="section.collapsed"
+                         (collapsedChange)="toggle(section)"></toggle-icon>
+            <span class="section-text">{{section.text}}
+              <span class="section-id">(Section ID {{section.externalId}})</span>
+            </span>
+          </td>
+          <td>
+            <span class="parent-question" *ngIf="section.parentId && section.parentAnswerToMatch">{{section.parentId}} : {{section.parentAnswerToMatch}}</span>
+          </td>
+          <td></td>
+          <td></td>
+          <td class="delete-btn-container parent up-down-button text-nowrap" (click)="$event.stopPropagation()">
+            <gla-show-up-down-arrow-buttons id="move-up-down-sections" *ngIf="!readOnly && editable"
+                                            [currentItem]=section
+                                            [sortedCollectionItems]="sortedSections"
+                                            [titleUp]="'Move Section Up'"
+                                            [titleDown]="'Move Section Down'"
+                                            (onDisplayOrderChange)="updateSections();$event.stopPropagation()">
+            </gla-show-up-down-arrow-buttons>
+            <delete-button class="medium" (click)=" deleteSection(section);$event.stopPropagation();"
+                           *ngIf="!readOnly && editable && isSectionEmpty(section)"
+                           [tabindex]="0" (keydown.enter)="$event.stopPropagation(); deleteSection(section);"></delete-button>
+          </td>
+        </tr>
+
+        <ng-container *ngIf="!section.collapsed">
+          <tr *ngFor="let question of sortedQuestions[section.externalId]" class="secondaryRow" allow-enter [tabindex]="0"
+              (keydown.enter)="showQuestionModal(question)"
+              (click)="!readOnly && editable && showQuestionModal(question)">
+            <td>
+              <div class="checkbox" [ngClass]="{checked: question.isSelected}" *ngIf="!readOnly && editable">
+                <input type="checkbox"
+                       aria-label="Select question"
+                       name="selectInput"
+                       [(ngModel)]="question.isSelected"
+                       (ngModelChange)="onQuestionCheckboxClick()"
+                       (click)="$event.stopPropagation()">
+              </div>
+            </td>
+            <td class="display-order">{{question.displayOrder}}</td>
+            <td class="id">{{question.question.id}}</td>
+            <td class="text" astyle="min-width: 200px">{{question.question.text}}</td>
+            <td class="answer-type">{{question.question.answerType}}
+              <span *ngIf="(question.question.answerType == 'FreeText' || question.question.answerType == 'Text') && question.question.maxLength">{{question.question.maxLength}} char. max.</span>
+              <span *ngIf="question.question.answerType == 'Text' && !question.question.maxLength">255 char. max.</span>
+              <div *ngIf="question.question.answerType == 'Dropdown'">Max. answers: {{question.question.maxAnswers}}</div>
+              <div *ngIf="question.question.answerType == 'FileUpload'">
+                <div *ngIf="question.question.maxCombinedUploadSizeInMb">Max. file size: {{question.question.maxCombinedUploadSizeInMb | number}}MB</div>
+                <div *ngIf="!question.question.maxCombinedUploadSizeInMb && question.question.maxUploadSizeInMb">Max. file size: {{question.question.maxUploadSizeInMb | number}}MB</div>
+                <div *ngIf="!question.question.maxCombinedUploadSizeInMb && question.question.quantity">Max. no.: {{question.question.quantity}}</div>
+              </div>
+            </td>
+            <td class="requirement">
+              <div *ngIf="readOnly" class="requirement m-title">{{question.requirement}}</div>
+              <div *ngIf="!readOnly && editable" (click)="$event.stopPropagation()" class="form-group">
+                <select class="form-control"
+                        id="section-requirement"
+                        name="section-requirement"
+                        #requirement="ngModel"
+                        [(ngModel)]="question.requirement"
+                        style-placeholder>
+                  <option *ngFor="let requirement of requirements" [ngValue]="requirement.id">
+                    {{ requirement.label }}
+                  </option>
+                </select>
+              </div>
+            </td>
+            <td>
+              <span *ngIf="question.parentId && question.parentAnswerToMatch"> {{question.parentId}} : {{question.parentAnswerToMatch}}</span>
+            </td>
+            <td>
+              <button *ngIf="!draft && editable && !isParentQuestion(question.question.id)" role="button" id="command-section-remove-question-{{question.question.id}}"
+                      (click)="performAction(removeQuestionCommand, {questionId:question.question.id})"
+                      class="btn btn-primary btn-edit">REMOVE</button>
+            </td>
+            <td></td>
+            <td class="delete-btn-container parent up-down-button text-nowrap" (click)="$event.stopPropagation()">
+              <gla-show-up-down-arrow-buttons id="move-up-down-questions" *ngIf="!readOnly && editable"
+                                              [currentItem]=question
+                                              [sortedCollectionItems]="sortedQuestions[section.externalId]"
+                                              [titleUp]="'Move Question Up'"
+                                              [titleDown]="'Move Question Down'"
+                                              (onDisplayOrderChange)="updateQuestions();$event.stopPropagation()">
+              </gla-show-up-down-arrow-buttons>
+
+              <delete-button class="medium" (click)="$event.stopPropagation(); deleteQuestion(question);"
+                             *ngIf="!readOnly && editable && !isParentQuestion(question.question.id)"></delete-button>
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>

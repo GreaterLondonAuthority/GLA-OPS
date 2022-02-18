@@ -48,8 +48,8 @@ class ProgrammeProjectTypeCtrl {
     let templateName = this.projectType.templateName;
     let modal = this.RemoveOrganisationAccessModal.show(orgId, name, templateName);
     modal.result.then(() => {
-      this.ProgrammeService.removeOrganisationAccess(this.projectType.id.programmeId, this.projectType.id.templateId, orgId);
-      this.organisationsWithAccess = this.organisationsWithAccess.filter(access => access.organisationId !== orgId)
+      this.ProgrammeService.removeOrganisationAccess(this.projectType.id.programmeId, this.projectType.id.templateId, orgId).then(resp => this.refreshOrgAccess());
+      this.organisationsWithAccess = this.organisationsWithAccess.remove(access => access.organisationId !== orgId)
     });
   }
 
@@ -91,7 +91,6 @@ class ProgrammeProjectTypeCtrl {
 
     let msgActive = `Changing the status to active means the template will be available for new projects. <div class="mtop20">Change to active?</div>`;
     let msgInactive = `Changing the status to inactive means the template will not be available for new projects.<p class="mtop20">Change to inactive?</p>`;
-    console.log('template', template);
     let isApproved = false;
     const modal = this.ConfirmationDialog.show({
       message: `<div class="text-left">${template.status === 'Active' ? msgActive : msgInactive}</div>`,
@@ -170,11 +169,11 @@ class ProgrammeProjectTypeCtrl {
 
   getTeams(templateId) {
     let teamsIds = (this.teams || []).map(q => + q.id);
-    let teamsAccess = _.filter(this.templateAccessList, (access)=>{ return teamsIds.includes(access.organisationId)});
-    let teamsAccessIds = teamsAccess.map(a => + a.organisationId).filter(id => teamsIds.includes(id));
+    let teamsAccess = _.filter(this.templateAccessList, (access)=>{ return teamsIds.indexOf(access.organisationId) !== -1});
+    let teamsAccessIds = teamsAccess.map(a => + a.organisationId).filter(id => teamsIds.indexOf(id) !== -1);
 
     (this.teams || []).forEach(team => {
-      if(teamsAccessIds.includes(team.id)) {
+      if(teamsAccessIds.indexOf(team.id) !== -1) {
         team.hasDefaultAccess = true
       } else {
         team.hasDefaultAccess = false
@@ -205,6 +204,7 @@ class ProgrammeProjectTypeCtrl {
     modal.result.then((organisation) => {
       this.ProgrammeService.grantOrganisationAccess(this.projectType.id.programmeId, this.projectType.id.templateId, organisation.id);
       this.addOrganisationDefaultAccess(organisation)
+      this.templateAccessList = this.getTemplateDefaultAccess(this.projectType.id.templateId);
       this.getOtherOrganisationsDefaultAccess(this.projectType.id.templateId);
     });
   }
@@ -235,7 +235,7 @@ class ProgrammeProjectTypeCtrl {
 
   getOtherOrganisationsDefaultAccess(templateId) {
     let teamsIds = (this.teams || []).map(q => + q.id);
-    return _.filter(this.templateAccessList, (access)=>{ return !teamsIds.includes(access.organisationId)});
+    return _.filter(this.templateAccessList, (access)=>{ return teamsIds.indexOf(access.organisationId) === -1});
   }
 
 }

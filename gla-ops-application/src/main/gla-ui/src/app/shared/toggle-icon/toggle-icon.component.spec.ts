@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {ToggleIconComponent} from './toggle-icon.component';
 
@@ -6,7 +6,7 @@ describe('ToggleIconComponent', () => {
   let component: ToggleIconComponent;
   let fixture: ComponentFixture<ToggleIconComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ToggleIconComponent ]
     })

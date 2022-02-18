@@ -65,3 +65,4 @@ import 'focus-visible'
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+import 'core-js/es/array';

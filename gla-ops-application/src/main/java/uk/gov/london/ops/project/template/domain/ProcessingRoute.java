@@ -87,9 +87,22 @@ public class ProcessingRoute {
     }
 
     public MilestoneTemplate getMilestoneByExternalId(Integer milestoneId) {
-        for (MilestoneTemplate milestoneTemplate : milestones) {
-            if (milestoneId.equals(milestoneTemplate.getExternalId())) {
-                return milestoneTemplate;
+        if(milestoneId != null) {
+            for (MilestoneTemplate milestoneTemplate : milestones) {
+                if (milestoneId.equals(milestoneTemplate.getExternalId())) {
+                    return milestoneTemplate;
+                }
+            }
+        }
+        return null;
+    }
+
+    public MilestoneTemplate getMilestoneBySummary(String summary) {
+        if(summary != null && !summary.isEmpty()) {
+            for (MilestoneTemplate milestoneTemplate : milestones) {
+                if (summary.equals(milestoneTemplate.getSummary())) {
+                    return milestoneTemplate;
+                }
             }
         }
         return null;

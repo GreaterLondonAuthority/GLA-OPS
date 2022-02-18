@@ -1,0 +1,25 @@
+<div class="overview-block"
+     tabindex="0"
+     allow-enter
+     [ngClass]="{'overview-block-green':blockState == 'valid','overview-block-amber':blockState == 'invalid', 'with-border': color}"
+     [ngStyle]="{'border': color}">
+
+  <gla-icon-new *ngIf="newBlock"></gla-icon-new>
+
+  <div class="block-overview-step-number" [ngStyle]="{color: color}">{{number}}</div>
+  <header class="block-overview-name project-block-name" >{{name}}</header>
+
+
+  <div>
+    <div class="block-overview-status" *ngIf="status || icon">
+      <span class="status">{{status}} </span>
+      <span class="glyphicon" [ngClass]="icon" *ngIf="icon"></span>
+    </div>
+  </div>
+
+  <div *ngIf="banner">
+    <div>
+      <div class="block-overview-banner">{{banner}}</div>
+    </div>
+  </div>
+</div>

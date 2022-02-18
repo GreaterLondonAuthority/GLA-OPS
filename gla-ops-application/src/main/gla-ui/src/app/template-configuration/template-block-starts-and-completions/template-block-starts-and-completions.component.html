@@ -1,0 +1,17 @@
+<div class="template-block-starts-and-completions">
+  <div class="bolder ">Select applicable Of Which categories:</div>
+  <div *ngFor="let item of items">
+    <div class="form-group">
+      <input
+        class="checkboxpadding"
+        (click)="toggleSelected(item)"
+        [id]="item"
+        aria-label="Show Item"
+        name="show-item"
+        [disabled]="readOnly || !editable"
+        [checked]="isItemSelected(item)"
+        type="checkbox">
+      <label [for]="item">{{getOfWhichCategoryDisplayName(item)}}</label>
+    </div>
+  </div>
+</div>

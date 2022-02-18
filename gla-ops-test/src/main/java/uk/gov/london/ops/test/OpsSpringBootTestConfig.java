@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
-@ComponentScan(basePackages = "uk.gov.london.ops")
 @PropertySource("classpath:test.properties")
 @SpringBootConfiguration
 @EnableAutoConfiguration

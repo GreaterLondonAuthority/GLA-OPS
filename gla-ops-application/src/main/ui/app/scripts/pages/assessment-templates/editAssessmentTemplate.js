@@ -51,7 +51,8 @@ class EditAssessmentTemplateCtrl {
   }
 
   onManagingOrganisation(selectedOrg) {
-    this.assessmentTemplate.managingOrganisation = selectedOrg;
+    this.assessmentTemplate.managingOrganisationId = selectedOrg.id;
+    this.assessmentTemplate.managingOrganisationName = selectedOrg.name;
     this.outcomeAssessment = null;
     this.assessmentTemplate.outcomeOfAssessmentTemplateId = null;
     this.filterAssessmentTemplatesByManagingOrg();

@@ -8,6 +8,7 @@
 package uk.gov.london.ops.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import uk.gov.london.ops.domain.DeliveryOverride;
 
 import java.util.List;
@@ -17,7 +18,9 @@ import java.util.List;
  *
  * @author Carmina Matias
  */
+@Repository
 public interface OverrideRepository extends JpaRepository<DeliveryOverride, Integer> {
 
     List<DeliveryOverride> findAllByProjectId(Integer projectId);
+
 }

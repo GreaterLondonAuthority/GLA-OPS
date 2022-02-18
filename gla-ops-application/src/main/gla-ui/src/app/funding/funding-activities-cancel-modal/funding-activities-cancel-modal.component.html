@@ -1,0 +1,75 @@
+<div class="funding-claim-modal">
+    <div class="modal-header text-center">
+      <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h1>Cancel claim for {{activity.name}}?</h1>
+      <div>Activity details</div>
+    </div>
+    <div class="modal-body text-left">
+        
+        <div class="clearfix">
+            <span class="label">Claimed by:</span>
+            <span class="pull-right">{{activity.claim.claimedBy}}</span>
+        </div>
+        <div class="clearfix">
+            <span class="label">Claimed on:</span>
+            <span class="pull-right">{{activity.claim.claimedOn | date: 'dd/MM/yyyy HH:mm'}}</span>
+        </div>
+        <div class="clearfix">
+            <span class="label">Authorised by:</span>
+            <span class="pull-right">{{activity.authorisedBy}}</span>
+        </div>
+        <div class="clearfix">
+            <span class="label">Authorised on:</span>
+            <span class="pull-right">{{activity.authorisedOn | date: 'dd/MM/yyyy HH:mm'}}</span>
+        </div>
+
+      <br/>
+
+      <div>
+        <div class="clearfix">
+          <span class="label">Total Funding</span>
+          <span class="pull-right"> {{activity.capitalValue + activity.revenueValue | currency:'£'}}</span>
+        </div>
+        <div class="payment-group">
+          <div *ngIf="activity.capitalValue && (showCapitalGla || showCapitalOther)">Capital Funding <span class="pull-right">{{activity.capitalValue | currency:'£'}}</span></div>
+          <div *ngIf="activity.revenueValue && (showRevenueGla || showRevenueOther)">Revenue Funding <span class="pull-right">{{activity.revenueValue | currency:'£'}}</span></div>
+        </div>
+
+        <br/>
+        
+      </div>
+      <div class="form-group">
+        <label for="reason" class="pull-left">Reason for cancelling claim</label>
+        <textarea #reason="ngModel"
+                  [(ngModel)]="reasonComments"
+                  id="reason"
+                  name="reason"
+                  rows="5"
+                  class="form-control"
+                  required
+                  maxlength="200">
+        </textarea>
+      </div>
+    </div>
+
+  
+    <div class="modal-footer">
+      <div class="row">
+        <div class="col-xs-12 text-center">
+          <button
+            id="claim-btn"
+            class="btn btn-default btn-primary btn-center"
+            type="button"
+            [disabled]="!reasonComments"
+            (click)="onConfirm()">CANCEL CLAIM</button>
+  
+          <div class="mtop20 mbottom10">
+            <a href="JavaScript:void(0)" class="form-cancel dismiss-btn" (click)="activeModal.dismiss()">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="741" author="ybouhass">
+        <createTable tableName="sap_id">
+            <column name="id" type="varchar(255)">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="organisation_id" type="INT4" />
+            <column name="description" type="varchar(255)" />
+            <column name="created_on" type="TIMESTAMP" />
+        </createTable>
+
+        <createIndex tableName="sap_id" indexName="sap_id_organisation_id_idx">
+            <column name="organisation_id" type="INT4" />
+        </createIndex>
+
+        <renameColumn tableName="organisation" oldColumnName="sap_vendor_id" newColumnName="sap_vendor_id_tbd" />
+    </changeSet>
+
+    <changeSet id="742" author="cmelville">
+        <addColumn tableName="users">
+            <column name="password_expiry" type="TIMESTAMP" remarks="next password expiry date"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="743" author="cmatias">
+        <addColumn tableName="learning_grant_allocation">
+            <column name="type" type="varchar(50)" remarks="the type of allocation: delivery, community, learner support, fund etc"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="747" author="ybouhass">
+        <dropTable tableName="sap_id"/>
+
+        <createSequence sequenceName="sap_id_seq" startValue="10000" incrementBy="1" />
+        <createTable tableName="sap_id">
+            <column name="id" type="INT4" defaultValueSequenceNext="sap_id_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sap_id" type="varchar(255)" />
+            <column name="organisation_id" type="INT4" />
+            <column name="description" type="varchar(255)" />
+            <column name="created_on" type="TIMESTAMP" />
+        </createTable>
+
+        <createIndex tableName="sap_id" indexName="sap_id_organisation_id_idx">
+            <column name="organisation_id" type="INT4" />
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="744" author="cmatias">
+        <addColumn tableName="learning_grant_allocation">
+            <column name="original_id" type="INT4" remarks="the original id of learning grant allocation before migration"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="748" author="ybouhass">
+        <addColumn tableName="project_ledger_entry">
+            <column name="threshold_organisation" type="INT4" remarks="org ID of the threshold used at the moment of authorising" />
+            <column name="threshold_value" type="INT4" remarks="threshold value at the moment of authorising" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="745" author="cmatias">
+        <modifyDataType tableName="question_answer_options" columnName="answer_options" newDataType="varchar(100)" />
+    </changeSet>
+
+
+    <changeSet id="745" author="cmelville">
+        <addColumn tableName="questions_block_section">
+            <column name="internal_questions_block_id" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="questions_block_section">
+            <column name="internal_template_block_id" type="INT4">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

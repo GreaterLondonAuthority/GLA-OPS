@@ -83,11 +83,12 @@ public class ProjectElementsBlock extends RepeatingEntityBlock<ProjectElement> {
                         || getProjectElements().size() > blockTemplate.getMaxNumberOfEntities();
             }
         }
-        return super.isComplete() && !incorrectNumberOfEntities;
+        return isNotRequired() || (super.isComplete() && !incorrectNumberOfEntities);
     }
 
     @Override
     public void merge(NamedProjectBlock block) {
+        super.merge(block);
         ProjectElementsBlock updated = (ProjectElementsBlock) block;
         this.getProjectElements().clear();
         this.getProjectElements().addAll(updated.getProjectElements());

@@ -27,9 +27,12 @@ class LearningGrantCtrl extends ProjectBlockCtrl {
   $onInit(){
     super.$onInit();
     let templateConfig = this.TemplateService.getBlockConfig(this.template, this.learningGrant);
+    this.allocationTypesConfig = this.ProjectSkillsService.getAllocationTypesConfig(this.template);
     this.labels = this.ProjectSkillsService.getLabels(templateConfig);
     this.isAebProcured = this.ProjectSkillsService.isAebProcured(this.projectBlock);
     this.isAebGrant = this.ProjectSkillsService.isAebGrant(this.projectBlock);
+    this.isAebNsct = this.ProjectSkillsService.isAebNsct(this.projectBlock);
+    this.showSupportAllocation = this.ProjectSkillsService.showSupportAllocation(this.projectBlock);
 
     this.showTotalAllocation = this.learningGrant.numberOfYears > 1;
     this.academicYearFrom = this.learningGrant.startYear;
@@ -37,18 +40,7 @@ class LearningGrantCtrl extends ProjectBlockCtrl {
     this.showYearDropDown = this.academicYearFrom !== this.academicYearTo;
     this.updateSelectedYear(this.getSelectedYear());
     this.transformData(this.learningGrant);
-    this.allowEditingOnlyOneAllocationForActiveAebProcuredProjects();
-  }
-
-  // temporally, only allow one allocation change per approval
-  allowEditingOnlyOneAllocationForActiveAebProcuredProjects(){
-    if(this.project.statusName === 'Active') {
-      this.editableDeliveryAllocation = this.currentAllocation.deliveryAllocationEditingInProgress || (!this.currentAllocation.deliveryAllocationEditingInProgress && !this.currentAllocation.supportAllocationEditingInProgress);
-      this.editableSupportAllocaton = this.currentAllocation.supportAllocationEditingInProgress || (!this.currentAllocation.deliveryAllocationEditingInProgress && !this.currentAllocation.supportAllocationEditingInProgress);
-    } else {
-      this.editableDeliveryAllocation = true;
-      this.editableSupportAllocaton = true;
-    }
+    this.ofWhich = {collapsed: this.readOnly};
   }
 
   back() {
@@ -61,25 +53,12 @@ class LearningGrantCtrl extends ProjectBlockCtrl {
   }
 
   canEditDeliveryAllocation() {
-    return !this.readOnly && this.learningGrant.isDeliveryAllocationEditable && this.editableDeliveryAllocation;
-  }
-
-  hasPendingDeliveryClaims() {
-    let hasPendingClaims = _.some(this.deliveryEntries, e => e.claim && e.claim.claimStatus !== 'Approved');
-    return !this.readOnly && !hasPendingClaims;
+    return !this.readOnly && this.learningGrant.isDeliveryAllocationEditable;
   }
 
   canEditSupportAllocation() {
     let hasPendingClaims = _.some(this.supportEntries, e => e.claim && e.claim.claimStatus !== 'Approved');
-    return !this.readOnly && !hasPendingClaims && this.editableSupportAllocaton;
-  }
-
-  //Only one allocation (first picked) can be edited per approval for active projects
-  changeAllocation(isDeliveryAllocationEditedFirst) {
-    if(this.project.statusName === 'Active') {
-      this.editableDeliveryAllocation = isDeliveryAllocationEditedFirst;
-      this.editableSupportAllocaton = !isDeliveryAllocationEditedFirst;
-    }
+    return !this.readOnly && !hasPendingClaims;
   }
 
   refreshData(){
@@ -112,10 +91,12 @@ class LearningGrantCtrl extends ProjectBlockCtrl {
     this.deliveryEntries = _.filter(block.learningGrantEntries, {type: EntryType.DELIVERY, academicYear: selectedYear});
     this.supportEntries = _.filter(block.learningGrantEntries, (s) => s.type === EntryType.SUPPORT && !!s.percentage && s.academicYear === selectedYear);
 
-    this.hasDeliveryClaims = this.hasClaims(this.deliveryEntries);
-    this.hasSupportClaims = this.hasClaims(this.supportEntries);
-
-    this.currentAllocation = _.find(block.allocations || [], {year: selectedYear});
+    this.currentDelivery = _.find(block.allocations || [], {year: selectedYear, type: 'Delivery'}) || {};
+    this.currentCommunity = _.find(block.allocations || [], {year: selectedYear, type: 'Community'}) || {};
+    this.currentInnovationFund = _.find(block.allocations || [], {year: selectedYear, type: 'InnovationFund'}) || {};
+    this.currentResponseFundStrand1 = _.find(block.allocations || [], {year: selectedYear, type: 'ResponseFundStrand1'}) || {};
+    this.currentNationalSkillsFund = _.find(block.allocations || [], {year: selectedYear, type: 'NationalSkillsFund'}) || {};
+    this.currentLearningSupport = _.find(block.allocations || [], {year: selectedYear, type: 'LearnerSupport'}) || {};
   }
 
   getSelectedYear(){
@@ -130,12 +111,8 @@ class LearningGrantCtrl extends ProjectBlockCtrl {
     let yearDeliveryAllocations = _.filter(this.learningGrant.learningGrantEntries, (s) => s.academicYear === year && s.type === 'DELIVERY' && s.percentage);
     let yearSupportAllocations = _.filter(this.learningGrant.learningGrantEntries, (s) => s.academicYear === year && s.type === 'SUPPORT' && s.percentage);
     let yearGrantAllocations = _.filter(this.learningGrant.learningGrantEntries, (s) => s.academicYear === year && s.percentage);
-    this.isSelectedYearPercentageMissing = this.learningGrant.grantType === 'AEB_GRANT' ? (yearGrantAllocations === undefined || yearGrantAllocations.length == 0)
+    this.isSelectedYearPercentageMissing = (this.learningGrant.grantType === 'AEB_GRANT' || this.learningGrant.profileAllocationType && this.learningGrant.profileAllocationType === 'AEB_GRANT') ? (yearGrantAllocations === undefined || yearGrantAllocations.length == 0)
       : (yearDeliveryAllocations === undefined  || yearSupportAllocations === undefined || yearDeliveryAllocations.length == 0 || yearSupportAllocations == 0);
-  }
-
-  hasClaims(entries){
-    return _.some(entries, e => !!e.claim);
   }
 
   submit() {

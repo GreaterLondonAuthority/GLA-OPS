@@ -7,7 +7,6 @@
  */
 package uk.gov.london.ops.payment;
 
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -21,7 +20,8 @@ import org.springframework.validation.FieldError;
 import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.EventType;
 import uk.gov.london.ops.audit.AuditService;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.enums.GrantType;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.framework.exception.NotFoundException;
 import uk.gov.london.ops.framework.exception.ValidationException;
@@ -29,15 +29,14 @@ import uk.gov.london.ops.framework.feature.FeatureStatus;
 import uk.gov.london.ops.notification.EmailService;
 import uk.gov.london.ops.notification.NotificationService;
 import uk.gov.london.ops.organisation.OrganisationGroupService;
-import uk.gov.london.ops.organisation.OrganisationService;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.OrganisationServiceImpl;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.organisation.model.OrganisationGroup;
 import uk.gov.london.ops.payment.implementation.ProjectLedgerEntryMapper;
 import uk.gov.london.ops.payment.implementation.repository.PaymentGroupRepository;
 import uk.gov.london.ops.payment.implementation.repository.PaymentSummaryRepository;
 import uk.gov.london.ops.payment.implementation.repository.ProjectLedgerRepository;
 import uk.gov.london.ops.permission.PermissionService;
-import uk.gov.london.ops.programme.ProgrammeService;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.ProjectService;
 import uk.gov.london.ops.project.accesscontrol.DefaultAccessControlSummary;
@@ -49,32 +48,55 @@ import uk.gov.london.ops.project.claim.ClaimType;
 import uk.gov.london.ops.project.funding.FundingActivity;
 import uk.gov.london.ops.project.funding.FundingBlock;
 import uk.gov.london.ops.project.funding.ProjectFundingService;
-import uk.gov.london.ops.project.grant.GrantType;
 import uk.gov.london.ops.project.milestone.Milestone;
 import uk.gov.london.ops.project.skills.SkillsPaymentScheduler;
 import uk.gov.london.ops.project.state.ProjectStatus;
 import uk.gov.london.ops.project.template.domain.Template;
 import uk.gov.london.ops.refdata.CategoryValue;
-import uk.gov.london.ops.refdata.RefDataService;
+import uk.gov.london.ops.refdata.PaymentSource;
+import uk.gov.london.ops.refdata.RefDataServiceImpl;
 import uk.gov.london.ops.service.DataAccessControlService;
+import uk.gov.london.ops.user.User;
 import uk.gov.london.ops.user.UserFinanceThresholdService;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.UserServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
 import uk.gov.london.ops.user.domain.UserOrgFinanceThreshold;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static uk.gov.london.ops.framework.OPSUtils.toMonetaryString;
 import static uk.gov.london.ops.notification.NotificationType.PaymentAuthorisation;
-import static uk.gov.london.ops.payment.LedgerStatus.*;
-import static uk.gov.london.ops.payment.LedgerType.*;
+import static uk.gov.london.ops.payment.LedgerStatus.Acknowledged;
+import static uk.gov.london.ops.payment.LedgerStatus.Authorised;
+import static uk.gov.london.ops.payment.LedgerStatus.Cleared;
+import static uk.gov.london.ops.payment.LedgerStatus.Declined;
+import static uk.gov.london.ops.payment.LedgerStatus.FORECAST;
+import static uk.gov.london.ops.payment.LedgerStatus.Pending;
+import static uk.gov.london.ops.payment.LedgerStatus.Sent;
+import static uk.gov.london.ops.payment.LedgerStatus.SupplierError;
+import static uk.gov.london.ops.payment.LedgerStatus.UnderReview;
+import static uk.gov.london.ops.payment.LedgerType.DPF;
+import static uk.gov.london.ops.payment.LedgerType.PAYMENT;
+import static uk.gov.london.ops.payment.LedgerType.RCGF;
 import static uk.gov.london.ops.payment.PaymentFilterOption.ALL_PAYMENTS;
 import static uk.gov.london.ops.payment.ProjectLedgerEntry.SUPPLEMENTARY_PAYMENT;
 import static uk.gov.london.ops.permission.PermissionType.AUTHORISE_PAYMENT;
@@ -89,8 +111,11 @@ public class PaymentService {
     private static final String IMS_CLAIMED_MILESTONE = "IMS Claimed Milestone";
     Logger log = LoggerFactory.getLogger(getClass());
 
-    private static final Set<LedgerStatus> states_that_can_be_changed_from = Stream.of(Sent, UnderReview, SupplierError, Acknowledged).collect(Collectors.toSet());
-    private static final Set<LedgerStatus> states_that_can_be_changed_to = Stream.of(Sent, UnderReview, SupplierError, Acknowledged, Cleared).collect(Collectors.toSet());
+    private static final Set<LedgerStatus> states_that_can_be_changed_from = Stream.of(
+            Sent, UnderReview, SupplierError, Acknowledged).collect(Collectors.toSet());
+
+    private static final Set<LedgerStatus> states_that_can_be_changed_to = Stream.of(
+            Sent, UnderReview, SupplierError, Acknowledged, Cleared).collect(Collectors.toSet());
 
     @Autowired
     ProjectLedgerEntryMapper projectLedgerEntryMapper;
@@ -114,7 +139,7 @@ public class PaymentService {
     NotificationService notificationService;
 
     @Autowired
-    OrganisationService organisationService;
+    OrganisationServiceImpl organisationService;
 
     @Autowired
     ProjectService projectService;
@@ -123,10 +148,10 @@ public class PaymentService {
     Environment environment;
 
     @Autowired
-    RefDataService refDataService;
+    RefDataServiceImpl refDataService;
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
 
     @Autowired
     UserFinanceThresholdService userFinanceThresholdService;
@@ -147,9 +172,6 @@ public class PaymentService {
     AuthorisedPaymentsProcessor processor;
 
     @Autowired
-    ProgrammeService programmeService;
-
-    @Autowired
     OrganisationGroupService organisationGroupService;
 
     @Autowired
@@ -167,10 +189,12 @@ public class PaymentService {
     public Page<PaymentSummary> findAll(String projectIdOrName,
                                         String organisationName,
                                         String programmeName,
+                                        String sapVendorId,
                                         List<String> paymentSources,
                                         List<LedgerStatus> relevantStatuses,
                                         List<String> categories,
                                         List<String> relevantProgrammes,
+                                        List<Integer> managingOrganisations,
                                         OffsetDateTime fromDate,
                                         OffsetDateTime toDate,
                                         List<String> paymentDirection,
@@ -181,12 +205,13 @@ public class PaymentService {
             paymentSources = paymentSourceMap.values().stream().map(PaymentSource::getName).collect(Collectors.toList());
         }
 
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
         List<DefaultAccessControlSummary> dac = dataAccessControlService.getDefaultAccessForOrgs(currentUser.getOrganisationIds());
 
         Page<PaymentSummary> payments = paymentSummaryRepository.findAll(projectIdOrName,
                 organisationName,
                 programmeName,
+                sapVendorId,
                 paymentSources,
                 relevantStatuses,
                 categories,
@@ -194,6 +219,7 @@ public class PaymentService {
                 fromDate,
                 toDate,
                 currentUser.getOrganisationIds(),
+                managingOrganisations,
                 dac,
                 paymentDirection,
                 pageable);
@@ -204,64 +230,92 @@ public class PaymentService {
     }
 
     private void enrichPaymentSummary(PaymentSummary summary, Map<String, PaymentSource> paymentSourceMap) {
+        summary.setCreatorName(userService.getUserFullName(summary.getCreatedBy()));
+        summary.setLastModifierName(userService.getUserFullName(summary.getModifiedBy()));
+        summary.setResenderName(userService.getUserFullName(summary.getResender()));
         summary.setPaymentSourceDetails(paymentSourceMap.get(summary.getPaymentSource()));
     }
 
-    public List<PaymentGroup> findAllPaymentGroups() {
+    public List<PaymentGroupEntity> findAllPaymentGroups() {
         return paymentGroupRepository.findAll();
     }
 
-    public Set<PaymentGroup> findAllByBlockId(Integer blockId) {
+    public Set<PaymentGroupEntity> findAllByBlockId(Integer blockId) {
         return paymentGroupRepository.findAllByBlockId(blockId);
     }
 
-    public List<PaymentGroup> findAllPaymentGroupsByStatus(PaymentFilterOption status) {
-        List<PaymentGroup> paymentGroups;
+    @Transactional
+    public List<PaymentGroupEntity> findAllPaymentGroupsByStatusFast(PaymentFilterOption status) {
+
+        User user = userService.currentUser();
+        List<String> statusList = status == null ? ALL_PAYMENTS.getRelevantStatusesAsString(): status.getRelevantStatusesAsString();
+        List<PaymentGroupPayment> allWithPayments = paymentGroupRepository.findAllWithPayments(user.getUsername(), user.isOpsAdmin(), user.getAccessibleOrganisationIds(), statusList);
+        Map<String, PaymentSource> paymentSourceMap = refDataService.getPaymentSourceMap();
+        Map<Integer, UserOrgFinanceThreshold> thresholds = getThresholds();
+
+        Map<Integer, PaymentGroupEntity> paymentGroupMap = new LinkedHashMap<>();
+        for (PaymentGroupPayment allWithPayment : allWithPayments) {
+            PaymentGroupEntity group = paymentGroupMap.computeIfAbsent(allWithPayment.getPaymentGroupId(),
+                            k -> allWithPayment.createPaymentGroup());
+            ProjectLedgerEntry projectLedgerEntry = allWithPayment.createProjectLedgerEntry();
+            group.getLedgerEntries().add(projectLedgerEntry);
+            // update ple vendor ID if required
+            if (allWithPayment.getOrgSapId() != null && allWithPayment.getSapVendorId() == null) {
+                projectLedgerEntry.setSapVendorId(allWithPayment.getOrgSapId());
+                projectLedgerRepository.updateSapVendorId(allWithPayment.getOrgSapId(), allWithPayment.getPaymentId());
+            }
+            group.getPayments().add(PaymentSummary.createFrom(projectLedgerEntry));
+            group.getPayments().forEach(p -> p.setPaymentSourceDetails(paymentSourceMap.get(p.getPaymentSource())));
+            setProjectPaymentSuspendFlag(group);
+
+        }
+
+        paymentGroupMap.values().forEach(g -> setPaymentGroupThresholdExceededFlag(g, thresholds, g.getMaxRequestedPayment() ));
+
+        return new ArrayList<>(paymentGroupMap.values());
+    }
+
+
+
+    public List<PaymentGroupEntity> findAllPaymentGroupsByStatus(PaymentFilterOption status) {
+        List<PaymentGroupEntity> paymentGroups;
         if (status != null) {
             paymentGroups = paymentGroupRepository.findAllByStatusIn(Arrays.stream(status.getRelevantStatuses())
                     .map(LedgerStatus::name).toArray(String[]::new));
         } else {
             paymentGroups = paymentGroupRepository.findAll();
         }
-        List<PaymentGroup> filtered = restrictAndEnrichPaymentGroups(paymentGroups);
+        List<PaymentGroupEntity> filtered = restrictAndEnrichPaymentGroups(paymentGroups);
 
         // should not be any payment groups without payments but remove them just in case
         // sort rules are dependant on the payment status
-        List<PaymentGroup> response;
+        List<PaymentGroupEntity> response;
         if (!(PaymentFilterOption.AUTHORISED.equals(status) || PaymentFilterOption.DECLINED.equals(status))) {
             response = filtered.stream().filter(a -> a.getLedgerEntries().size() > 0).sorted(
-                    (a, b) -> b.getLedgerEntries().get(0).getCreatedOn().compareTo(a.getLedgerEntries().get(0).getCreatedOn())).collect(Collectors.toList());
+                    (a, b) -> b.getLedgerEntries().get(0).getCreatedOn().compareTo(a.getLedgerEntries().get(0).getCreatedOn()))
+                    .collect(Collectors.toList());
         } else if (PaymentFilterOption.AUTHORISED.equals(status)) {
             response = filtered.stream().filter(a -> a.getLedgerEntries().size() > 0).sorted(
-                    (a, b) -> b.getLedgerEntries().get(0).getAuthorisedOn().compareTo(a.getLedgerEntries().get(0).getAuthorisedOn())).collect(Collectors.toList());
+                    (a, b) -> b.getLedgerEntries().get(0).getAuthorisedOn()
+                            .compareTo(a.getLedgerEntries().get(0).getAuthorisedOn()))
+                    .collect(Collectors.toList());
         } else { // declined
             response = filtered.stream().filter(a -> a.getLedgerEntries().size() > 0).sorted(
-                    (a, b) -> b.getLedgerEntries().get(0).getModifiedOn().compareTo(a.getLedgerEntries().get(0).getModifiedOn())).collect(Collectors.toList());
+                    (a, b) -> b.getLedgerEntries().get(0).getModifiedOn().compareTo(a.getLedgerEntries().get(0).getModifiedOn()))
+                    .collect(Collectors.toList());
         }
         return response;
     }
 
-    List<PaymentGroup> restrictAndEnrichPaymentGroup(PaymentGroup paymentGroup) {
-        List<PaymentGroup> paymentGroups = new ArrayList<>();
-        paymentGroups.add(paymentGroup);
-        return restrictAndEnrichPaymentGroups(paymentGroups);
-
-    }
-
-    List<PaymentGroup> restrictAndEnrichPaymentGroups(List<PaymentGroup> paymentGroups) {
+    List<PaymentGroupEntity> restrictAndEnrichPaymentGroups(List<PaymentGroupEntity> paymentGroups) {
         Map<String, PaymentSource> paymentSourceMap = refDataService.getPaymentSourceMap();
-        User user = userService.currentUser();
-        Set<UserOrgFinanceThreshold> financeThresholds = userFinanceThresholdService.getFinanceThresholds(user.getUsername());
-        Map<Integer, UserOrgFinanceThreshold> thresholds = financeThresholds.stream()
-            .collect(Collectors.toMap(u -> u.getId().getOrganisationId(), Function.identity()));
 
-        final List<Organisation> filteredOrgList = getFilteredOrganisationsByPaymentGroups(paymentGroups);
-        final List<PaymentGroup> filtered = filterAuthPaymentGroups(paymentGroups);
+        Map<Integer, UserOrgFinanceThreshold> thresholds = getThresholds();
 
-        final Map<Integer, Organisation> organisationMap = filteredOrgList
-                .stream().collect(Collectors.toMap(Organisation::getId, Function.identity()));
+        Map<Integer, OrganisationEntity> organisationMap = getFilteredOrganisationsByPaymentGroups(paymentGroups);
 
-        for (PaymentGroup paymentGroup : paymentGroups) {
+        List<PaymentGroupEntity> filtered = filterAuthPaymentGroups(paymentGroups);
+        for (PaymentGroupEntity paymentGroup : filtered) {
             long max = 0L;
             for (ProjectLedgerEntry payment : paymentGroup.getLedgerEntries()) {
                 if (!payment.isReclaim() && payment.getValue().negate().compareTo(BigDecimal.valueOf(max)) > 0) {
@@ -275,36 +329,53 @@ public class PaymentService {
             }
             paymentGroup.getPayments().forEach(p -> p.setPaymentSourceDetails(paymentSourceMap.get(p.getPaymentSource())));
 
-            if (thresholds.size() > 0) {
-                UserOrgFinanceThreshold orgThreshold = thresholds.get(paymentGroup.getManagingOrganisation());
-                if (orgThreshold != null) {
-                    if (paymentGroup.isOnlyReclaimPayments()) {
-                        paymentGroup.setThresholdExceeded(false);
-                    } else if (orgThreshold.isPending()) {
-                        paymentGroup.setThresholdExceeded(true);
-                    } else {
-                        if (max > orgThreshold.getApprovedThreshold()) {
-                            paymentGroup.setThresholdExceeded(true);
-                        }
-                    }
-                }
-
-            }
+            setPaymentGroupThresholdExceededFlag(paymentGroup, thresholds, max);
+            setProjectPaymentSuspendFlag(paymentGroup);
         }
         return filtered;
     }
 
-    private ProjectLedgerEntry setSapVendorId(final ProjectLedgerEntry payment,
-                                              final Map<Integer, Organisation> organisationMap) {
-        if (LedgerStatus.Pending.equals(payment.getLedgerStatus())) {
-            final Organisation org = organisationMap.get(payment.getOrganisationId());
+    private void setProjectPaymentSuspendFlag(PaymentGroupEntity paymentGroup) {
+        paymentGroup.setSuspendPayments(projectService.isPaymentsSuspended(paymentGroup.getProjectId()));
+    }
+
+    private Map<Integer, UserOrgFinanceThreshold> getThresholds() {
+        return userFinanceThresholdService.getFinanceThresholds(userService.currentUsername()).stream()
+                .collect(Collectors.toMap(u -> u.getId().getOrganisationId(), Function.identity()));
+    }
+
+    private void setPaymentGroupThresholdExceededFlag(PaymentGroupEntity paymentGroup,
+                                                      Map<Integer, UserOrgFinanceThreshold> thresholds,
+                                                      long max) {
+        Integer projectId = paymentGroup.getProjectId();
+        UserOrgFinanceThreshold orgThreshold = userFinanceThresholdService.getFinanceThresholdForProject(thresholds, projectId);
+        if (orgThreshold != null) {
+            paymentGroup.updateLedgerEntriesThresholdDataFrom(orgThreshold);
+            if (paymentGroup.isOnlyReclaimPayments()) {
+                paymentGroup.setThresholdExceeded(false);
+            } else if (orgThreshold.isPending()) {
+                paymentGroup.setThresholdExceeded(true);
+            } else {
+                if (max > orgThreshold.getApprovedThreshold()) {
+                    paymentGroup.setThresholdExceeded(true);
+                }
+            }
+        }
+    }
+
+    void setSapVendorId(ProjectLedgerEntry payment, Map<Integer, OrganisationEntity> organisationMap) {
+        if (LedgerStatus.Pending.equals(payment.getLedgerStatus()) && GlaUtils.isNullOrEmpty(payment.getSapVendorId())) {
+            final OrganisationEntity org = organisationMap.get(payment.getOrganisationId());
             if (org != null) {
-                payment.setSapVendorId(org.getsapVendorId());
+                payment.setSapVendorId(getProjectSapVendorId(payment.getProjectId(), org));
             } else {
                 log.warn(payment.getId() + " doesn't have organisation");
             }
         }
-        return payment;
+    }
+
+    String getProjectSapVendorId(Integer projectId, OrganisationEntity org) {
+        return projectService.getProjectSapId(projectId, org);
     }
 
     /***
@@ -319,7 +390,7 @@ public class PaymentService {
      * @param paymentGroups list of payment groups
      * @return filtered paymentGroups
      */
-    private List<PaymentGroup> filterAuthPaymentGroups(List<PaymentGroup> paymentGroups) {
+    List<PaymentGroupEntity> filterAuthPaymentGroups(List<PaymentGroupEntity> paymentGroups) {
         if (paymentGroups != null) {
             List<Integer> currentUserOrganisations = userService.currentUser().getOrganisationIds();
             List<DefaultAccessControlSummary> dac = dataAccessControlService.getDefaultAccessForOrgs(currentUserOrganisations);
@@ -327,15 +398,16 @@ public class PaymentService {
             return paymentGroups.stream()
                 .filter(p -> {
                     boolean hasAccess = !p.getPayments().isEmpty();
-                    if(hasAccess) {
+                    if (hasAccess) {
                         PaymentSummary payment = p.getPayments().get(0);
                         hasAccess = currentUserOrganisations.contains(payment.getOrganisationId())
                             || currentUserOrganisations.contains(payment.getManagingOrganisationId());
 
                         for (DefaultAccessControlSummary accessControl : dac) {
-                            hasAccess = hasAccess || (payment.getManagingOrganisationId().equals(accessControl.getManagingOrganisationId())
-                                && payment.getProgrammeId().equals(accessControl.getProgrammeId())
-                                && payment.getTemplateId().equals(accessControl.getTemplateId()));
+                            hasAccess = hasAccess
+                                    || (payment.getManagingOrganisationId().equals(accessControl.getManagingOrganisationId())
+                                    && payment.getProgrammeId().equals(accessControl.getProgrammeId())
+                                    && payment.getTemplateId().equals(accessControl.getTemplateId()));
                         }
                     }
                     return hasAccess;
@@ -344,10 +416,10 @@ public class PaymentService {
         return Collections.emptyList();
     }
 
-    private List<Organisation> getFilteredOrganisationsByPaymentGroups(List<PaymentGroup> paymentGroups) {
+    private Map<Integer, OrganisationEntity> getFilteredOrganisationsByPaymentGroups(List<PaymentGroupEntity> paymentGroups) {
         ///Gets the list of id for the given list of payments
         Set<Integer> orgIdList = new HashSet<>();
-        for (PaymentGroup paymentGroup : paymentGroups) {
+        for (PaymentGroupEntity paymentGroup : paymentGroups) {
             if (!paymentGroup.getLedgerEntries().isEmpty()) {
                 orgIdList.add(paymentGroup.getLedgerEntries().get(0).getOrganisationId());
             }
@@ -355,29 +427,40 @@ public class PaymentService {
 
         // Return a list of organisation filtered by user's accessibility
         //based on id list
-        return organisationService.find(orgIdList);
+        List<OrganisationEntity> orgList = organisationService.find(orgIdList);
+
+        return orgList.stream().collect(Collectors.toMap(OrganisationEntity::getId, Function.identity()));
     }
 
 
-    ProjectLedgerEntry setAuthorisor(ProjectLedgerEntry payment) {
+    void setAuthorisor(ProjectLedgerEntry payment) {
         if (payment.getAuthorisedBy() != null) {
             payment.setAuthorisor(userService.find(payment.getAuthorisedBy()).getFullName());
         }
-        return payment;
     }
 
-    ProjectLedgerEntry setLastModifier(ProjectLedgerEntry payment) {
+    void setLastModifier(ProjectLedgerEntry payment) {
         if (payment.getModifiedBy() != null) {
-            payment.setModifiedByUser(userService.find(payment.getModifiedBy()));
+            payment.setModifiedBy(userService.find(payment.getModifiedBy()).getUsername());
+            payment.setLastModifierName(userService.getUserFullName(payment.getModifiedBy()));
         }
-        return payment;
     }
 
-    ProjectLedgerEntry setCreator(ProjectLedgerEntry payment) {
+    void setCreator(ProjectLedgerEntry payment) {
         if (payment.getCreatedBy() != null) {
             payment.setCreator(userService.find(payment.getCreatedBy()).getFullName());
         }
-        return payment;
+    }
+
+    public ProjectLedgerEntry createReclaim(final Set<ProjectLedgerEntry> previousPayments, final BigDecimal amount,
+                                            final Integer claimId, final Integer blockId, final SpendType spendType) {
+        ProjectLedgerEntry payment = previousPayments.stream().findFirst().orElse(null);
+
+        validateBudgetBlockReclaim(amount, payment, previousPayments);
+        ProjectLedgerEntry reclaim = createReclaimPayment(amount, payment, claimId, blockId, spendType);
+        ProjectLedgerEntry saved = financeService.save(reclaim);
+        paymentAuditService.recordPaymentAuditItem(saved, PaymentAuditItemType.Created);
+        return saved;
     }
 
     public ProjectLedgerEntry createReclaim(final Integer paymentId, final BigDecimal amount) {
@@ -385,9 +468,9 @@ public class PaymentService {
         ProjectLedgerEntry payment = projectLedgerRepository.findById(paymentId).orElse(null);
 
         validateManualReclaim(amount, payment);
-        ProjectLedgerEntry reclaim = createReclaimPayment(amount, payment);
+        ProjectLedgerEntry reclaim = createReclaimPayment(amount, payment, null, null, null);
         ProjectLedgerEntry saved = financeService.save(reclaim);
-        PaymentGroup pg = new PaymentGroup();
+        PaymentGroupEntity pg = new PaymentGroupEntity();
         pg.getLedgerEntries().add(saved);
         pg.setApprovalRequestedBy(userService.currentUser().getUsername());
         paymentGroupRepository.save(pg);
@@ -438,8 +521,8 @@ public class PaymentService {
         Integer month,
         Integer externalId,
         LedgerSource source) {
-        final User user = userService.currentUser();
-        Organisation orgForRepayment = getOrganisationForRepayment(originalPayment);
+        final UserEntity user = userService.currentUser();
+        OrganisationEntity orgForRepayment = getOrganisationForRepayment(originalPayment);
         ProjectLedgerEntry newReclaim = initialisePayment(project, blockId, type, paymentSource, status, category, subCategory,
             value, year, month, externalId, source, user, orgForRepayment);
         newReclaim.setReclaimOfPaymentId(originalPayment.getId());
@@ -447,12 +530,13 @@ public class PaymentService {
         return newReclaim;
     }
 
-    private ProjectLedgerEntry createReclaimPayment(BigDecimal amount, ProjectLedgerEntry payment) {
+    private ProjectLedgerEntry createReclaimPayment(BigDecimal amount, ProjectLedgerEntry payment, Integer reclaimId,
+                                                    Integer blockId, SpendType spendType) {
         OffsetDateTime now = environment.now();
         ProjectLedgerEntry reclaim = new ProjectLedgerEntry(
                 payment.getProjectId(), now.getYear(), now.getMonthValue(),
                 payment.getCategory(), "Reclaimed " + payment.getSubCategory(), amount, Pending);
-        reclaim.setBlockId(payment.getBlockId());
+        reclaim.setBlockId(blockId != null ? blockId : payment.getBlockId());
         reclaim.setLedgerSource(LedgerSource.WebUI);
         reclaim.setManagingOrganisation(payment.getManagingOrganisation());
         reclaim.setProgrammeName(payment.getProgrammeName());
@@ -467,20 +551,22 @@ public class PaymentService {
         reclaim.setPcsProjectNumber(payment.getPcsProjectNumber());
         reclaim.setTransactionDate(new SimpleDateFormat("dd/MM/yyyy").format(Date.from(now.toInstant())));
         reclaim.setReclaimOfPaymentId(payment.getId());
-        Organisation orgForRepayment = getOrganisationForRepayment(payment);
+        OrganisationEntity orgForRepayment = getOrganisationForRepayment(payment);
         reclaim.setOrganisationId(orgForRepayment.getId());
         reclaim.setVendorName(orgForRepayment.getName());
-        reclaim.setSapVendorId(orgForRepayment.getsapVendorId());
+        reclaim.setSapVendorId(getProjectSapVendorId(payment.getProjectId(), orgForRepayment));
         reclaim.setProjectName(payment.getProjectName());
         reclaim.setWbsCode(payment.getWbsCode());
         reclaim.setCompanyName(payment.getCompanyName());
+        reclaim.setSpendType(spendType);
         reclaim.updateValue(amount);
+        reclaim.setClaimId(reclaimId != null ? reclaimId : payment.getClaimId());
         return reclaim;
     }
 
-    private Organisation getOrganisationForRepayment(ProjectLedgerEntry payment) {
+    private OrganisationEntity getOrganisationForRepayment(ProjectLedgerEntry payment) {
         Project project = projectService.get(payment.getProjectId());
-        Organisation repaymentOrg = null;
+        OrganisationEntity repaymentOrg;
         if (project != null) {
             OrganisationGroup organisationGroup = project.getOrganisationGroup();
 
@@ -495,6 +581,30 @@ public class PaymentService {
         }
         return repaymentOrg;
 
+    }
+
+    private void validateBudgetBlockReclaim(BigDecimal amount, ProjectLedgerEntry payment,
+                                            Set<ProjectLedgerEntry> previousPayments) {
+        if (payment == null) {
+            throw new ValidationException("Unable to find matching original payment");
+        }
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ValidationException("Reclaim amounts must be positive");
+        }
+
+        if (!LedgerStatus.getApprovedPaymentStatuses().contains(payment.getLedgerStatus())) {
+            throw new ValidationException("Unable to perform reclaim on an unauthorised payment");
+        }
+
+        BigDecimal totalReclaims = payment.getValue(); // should be negative
+        List<ProjectLedgerEntry> existingReclaims = projectLedgerRepository.findAllByReclaimOfPaymentId(payment.getId());
+
+        for (ProjectLedgerEntry existingReclaim : existingReclaims) {
+            if (!Declined.equals(existingReclaim.getLedgerStatus()) && !existingReclaim.isInterestPayment()) {
+                totalReclaims = totalReclaims.add(existingReclaim.getValue());
+            }
+        }
     }
 
     private void validateManualReclaim(BigDecimal amount, ProjectLedgerEntry payment) {
@@ -528,7 +638,7 @@ public class PaymentService {
         }
     }
 
-    public PaymentGroup save(PaymentGroup paymentGroup) {
+    public PaymentGroupEntity save(PaymentGroupEntity paymentGroup) {
         return paymentGroupRepository.save(paymentGroup);
 
     }
@@ -538,11 +648,11 @@ public class PaymentService {
             (year * 100) + month) > 0;
     }
 
-    public void createAndAuthorisePaymentGroup(PaymentGroup paymentGroup) {
+    public void createAndAuthorisePaymentGroup(PaymentGroupEntity paymentGroup) {
         for (ProjectLedgerEntry ledgerEntry : paymentGroup.getLedgerEntries()) {
             projectLedgerRepository.saveAndFlush(ledgerEntry);
         }
-        PaymentGroup updated = paymentGroupRepository.saveAndFlush(paymentGroup);
+        PaymentGroupEntity updated = paymentGroupRepository.saveAndFlush(paymentGroup);
 
         this.authoriseGroup(updated, false);
     }
@@ -614,14 +724,14 @@ public class PaymentService {
                                             Integer quarter,
                                             Integer externalId,
                                             LedgerSource ledgerSource) {
-        final User user = userService.currentUser();
-        final Organisation organisation = getValidatedOrganisationForPayment(project);
+        final UserEntity user = userService.currentUser();
+        final OrganisationEntity organisation = getValidatedOrganisationForPayment(project);
         return initialisePayment(project, blockId, type, paymentSource, status, spendType, category, subCategory, value,
             year, month, quarter, externalId, ledgerSource, user, organisation);
     }
 
-    public PaymentGroup createPaymentGroup(String approvalRequestedBy, List<ProjectLedgerEntry> ledgerEntries) {
-        PaymentGroup paymentGroup = new PaymentGroup();
+    public PaymentGroupEntity createPaymentGroup(String approvalRequestedBy, List<ProjectLedgerEntry> ledgerEntries) {
+        PaymentGroupEntity paymentGroup = new PaymentGroupEntity();
         paymentGroup.setApprovalRequestedBy(approvalRequestedBy);
         paymentGroup.getLedgerEntries().addAll(ledgerEntries);
         projectLedgerRepository.saveAll(ledgerEntries);
@@ -640,8 +750,8 @@ public class PaymentService {
                                                  Integer month,
                                                  Integer externalId,
                                                  LedgerSource source,
-                                                 User user,
-                                                 Organisation organisation) {
+                                                 UserEntity user,
+                                                 OrganisationEntity organisation) {
         return initialisePayment(project, blockId, type, paymentSource, status, null, category, subCategory, value,
             year, month, null, externalId, source, user, organisation);
     }
@@ -660,8 +770,8 @@ public class PaymentService {
                                                  Integer quarter,
                                                  Integer externalId,
                                                  LedgerSource ledgerSource,
-                                                 User user,
-                                                 Organisation organisation) {
+                                                 UserEntity user,
+                                                 OrganisationEntity organisation) {
         final ProjectLedgerEntry payment = new ProjectLedgerEntry();
         payment.setManagingOrganisation(project.getManagingOrganisation());
         payment.setOrganisationId(organisation.getId());
@@ -679,13 +789,14 @@ public class PaymentService {
         payment.updateValue(value);
         payment.setLedgerSource(ledgerSource != null ? ledgerSource : LedgerSource.WebUI);
         payment.setVendorName(organisation.getName());
-        payment.setSapVendorId(organisation.getsapVendorId());
+        payment.setSapVendorId(getProjectSapVendorId(project.getId(), organisation));
         payment.setExternalId(externalId);
         payment.setCreatedBy(user != null ? user.getUsername() : null);
         payment.setCreatedOn(environment.now());
         payment.setProgrammeName(project.getProgramme().getName());
         payment.setProjectName(project.getTitle());
         payment.setCompanyName(project.getProgramme().getCompanyName());
+        payment.setSupplierProductCode(project.getSupplierProductCode());
         if (spendType != null) {
             payment.setWbsCode(project.getProgramme().getWbsCodeForTemplate(project.getTemplateId(), spendType));
         } else {
@@ -722,8 +833,8 @@ public class PaymentService {
         }
     }
 
-    private Organisation getValidatedOrganisationForPayment(final Project project) {
-        final Organisation organisation = organisationService.getOrganisationForProject(project);
+    private OrganisationEntity getValidatedOrganisationForPayment(final Project project) {
+        final OrganisationEntity organisation = organisationService.getOrganisationForProject(project);
 
         if (organisation == null) {
             throw new ValidationException("payment must have a valid organisation ID!");
@@ -749,22 +860,22 @@ public class PaymentService {
      */
     @Transactional
     public List<ProjectLedgerEntry> authoriseByGroupId(final int groupId) throws ForbiddenAccessException {
-        PaymentGroup group = getPaymentGroupOnlyPending(groupId);
-        List<PaymentGroup> groups = new ArrayList<>();
+        PaymentGroupEntity group = getPaymentGroupOnlyPending(groupId);
+        List<PaymentGroupEntity> groups = new ArrayList<>();
         groups.add(group);
         restrictAndEnrichPaymentGroups(groups);
         return authoriseByGroup(group);
     }
 
     @Transactional
-    public List<ProjectLedgerEntry> authoriseByGroup(PaymentGroup paymentGroup) throws ForbiddenAccessException {
+    public List<ProjectLedgerEntry> authoriseByGroup(PaymentGroupEntity paymentGroup) throws ForbiddenAccessException {
         checkAuthorisePermission(paymentGroup);
 
         return authoriseGroup(paymentGroup, true);
 
     }
 
-    private List<ProjectLedgerEntry> authoriseGroup(PaymentGroup paymentGroup, boolean updatePaymentToAuthorised) {
+    private List<ProjectLedgerEntry> authoriseGroup(PaymentGroupEntity paymentGroup, boolean updatePaymentToAuthorised) {
         paymentGroup = authorisePaymentGroup(paymentGroup, updatePaymentToAuthorised);
         final List<ProjectLedgerEntry> authorisedPayments = paymentGroup.getLedgerEntries();
 
@@ -783,7 +894,7 @@ public class PaymentService {
         projectService.refreshProjectStatus(projectIdSet, EventType.PaymentAuthorised);
 
         ProjectLedgerEntry projectLedgerEntry = paymentGroup.getLedgerEntries().get(0);
-        Organisation organisation = organisationService.findOne(projectLedgerEntry.getOrganisationId());
+        OrganisationEntity organisation = organisationService.findOne(projectLedgerEntry.getOrganisationId());
 
         Map<String, Object> model = new HashMap<String, Object>() {{
             put("projectId", projectLedgerEntry.getProjectId());
@@ -791,11 +902,15 @@ public class PaymentService {
         }};
 
         notificationService.createNotification(PaymentAuthorisation, paymentGroup, model);
-        auditService.auditCurrentUserActivity("Authorised payments for payment group: " + paymentGroup.getId());
         return authorisedPayments;
     }
 
-    void checkAuthorisePermission(PaymentGroup group) {
+    void checkAuthorisePermission(PaymentGroupEntity group) {
+
+        if (group.isSuspendPayments()) {
+            throw new ValidationException("You can't authorise this payment as project payments have been suspended");
+        }
+
         if (!permissionService.currentUserHasPermissionForOrganisation(AUTHORISE_PAYMENT,
             group.getLedgerEntries().get(0).getManagingOrganisationId())) {
             throw new ForbiddenAccessException("User does not have permission to authorise payments for organisation "
@@ -806,7 +921,8 @@ public class PaymentService {
             String modifiedBy = (group.getPayments().get(0).getModifiedBy() != null)
                 ? group.getPayments().get(0).getModifiedBy() : group.getPayments().get(0).getCreatedBy();
             if (modifiedBy.equalsIgnoreCase(userService.currentUser().getUsername())) {
-                throw new ValidationException("You can't authorise this payment because you are the user who requested the payment: " + group.getId());
+                throw new ValidationException(
+                        "You can't authorise this payment because you are the user who requested the payment: " + group.getId());
             }
         }
 
@@ -815,8 +931,8 @@ public class PaymentService {
         }
     }
 
-    private PaymentGroup getPaymentGroupOnlyPending(int groupId) {
-        final PaymentGroup paymentGroup = paymentGroupRepository.findById(groupId).orElse(null);
+    private PaymentGroupEntity getPaymentGroupOnlyPending(int groupId) {
+        final PaymentGroupEntity paymentGroup = paymentGroupRepository.findById(groupId).orElse(null);
         if (paymentGroup == null) {
             throw new ValidationException("Unable to retrieve payment group with id: " + groupId);
         }
@@ -833,11 +949,11 @@ public class PaymentService {
     }
 
 
-    PaymentGroup authorisePaymentGroup(PaymentGroup paymentGroup) {
+    PaymentGroupEntity authorisePaymentGroup(PaymentGroupEntity paymentGroup) {
         return authorisePaymentGroup(paymentGroup, true);
     }
 
-    PaymentGroup authorisePaymentGroup(PaymentGroup paymentGroup, boolean updatePaymentToAuthorised) {
+    PaymentGroupEntity authorisePaymentGroup(PaymentGroupEntity paymentGroup, boolean updatePaymentToAuthorised) {
         List<ProjectLedgerEntry> list = paymentGroup.getLedgerEntries();
         if (CollectionUtils.isEmpty(list)) {
             throw new ValidationException("There are no payments");
@@ -845,7 +961,7 @@ public class PaymentService {
 
         final Project project = projectService.get(list.get(0).getProjectId());
 
-        if (list.get(0).isReclaim()) {
+        if (paymentGroup.hasReclaim()) {
             if (!paymentGroup.getInterestAssessed()) {
                 throw new ValidationException("Interest must be considered for payment reclaims");
             }
@@ -855,7 +971,7 @@ public class PaymentService {
         }
 
         if (updatePaymentToAuthorised) {
-            final User user = userService.currentUser();
+            final UserEntity user = userService.currentUser();
             list.forEach(e -> setStatus(e, Authorised, user));
             financeService.save(list);
         }
@@ -874,15 +990,22 @@ public class PaymentService {
                     ArrayList<FieldError> fieldErrors = new ArrayList<>();
                     fieldErrors.add(new FieldError("programme", String.valueOf(project.getProgrammeId()), "programme id"));
                     fieldErrors.add(new FieldError("code", "REVENUE_WBS_CODE_MISSING", "error code"));
-                    throw new ValidationException("Unable to authorise payments for this group as the revenue WBS code is not set.", fieldErrors);
+                    throw new ValidationException(
+                            "Unable to authorise payments for this group as the revenue WBS code is not set.", fieldErrors);
                 }
                 thisReclaim.setWbsCode(wbsRevenueForInterestPayments);
             }
+            /*
+            As part of GLA-37698 we have decided with the business team to remove this validation as its logic is not correct
+            anyways when there are more than 1 payments for a milestones (check initial payment and supplementary for P10731)
+
             if (thisReclaim.getReclaimOfPaymentId() != null) {
-                List<ProjectLedgerEntry> allApprovedReclaims = projectLedgerRepository.findAllByReclaimOfPaymentId(thisReclaim.getReclaimOfPaymentId());
+                List<ProjectLedgerEntry> allApprovedReclaims = projectLedgerRepository
+                        .findAllByReclaimOfPaymentId(thisReclaim.getReclaimOfPaymentId());
                 ProjectLedgerEntry originalPayment = projectLedgerRepository.getOne(thisReclaim.getReclaimOfPaymentId());
                 Set<LedgerStatus> approvedPaymentStatuses = LedgerStatus.getApprovedPaymentStatuses();
-                BigDecimal totalExistingApprovedReclaims = allApprovedReclaims.stream().filter(p -> approvedPaymentStatuses.contains(p.getLedgerStatus()))
+                BigDecimal totalExistingApprovedReclaims = allApprovedReclaims.stream()
+                        .filter(p -> approvedPaymentStatuses.contains(p.getLedgerStatus()))
                     .map(ProjectLedgerEntry::getValue).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                 // original payment is negative, add all existing reclaims and this reclaim to ensure is not greater than 0
                 if (originalPayment.getValue().add(totalExistingApprovedReclaims)
@@ -890,6 +1013,7 @@ public class PaymentService {
                     throw new ValidationException("Unable to approve this reclaim as it would exceed the original payment amount");
                 }
             }
+             */
         }
     }
 
@@ -901,8 +1025,13 @@ public class PaymentService {
         }};
         boolean fundingBalanceRequired = false;
         boolean sapVendorKeyRequired = false;
-        for (final ProjectLedgerEntry e: projectLedgerRepository.findAllByProjectIdAndLedgerStatusIn(project.getId(), LedgerStatus.getPaymentStatuses())) {
+        for (final ProjectLedgerEntry e: projectLedgerRepository
+                .findAllByProjectIdAndLedgerStatusIn(project.getId(), LedgerStatus.getPaymentStatuses())) {
             checkCompanyNameIsPopulated(e);
+
+            if (e.isReconcilliationPayment() && project.ignoreReconcilliationAmountValidation()) {
+                continue;
+            }
 
             if (!LedgerStatus.Declined.equals(e.getLedgerStatus())) {
                 fundingBalanceRequired = fundingBalanceRequired || project.getProjectBlockById(e.getBlockId())
@@ -910,7 +1039,8 @@ public class PaymentService {
                 switch (e.getLedgerType()) {
                     case PAYMENT:
                         amounts.put(GrantType.Grant, amounts.get(GrantType.Grant).add(e.getValue()));
-                        sapVendorKeyRequired = sapVendorKeyRequired || refDataService.getPaymentSourceMap().get(e.getPaymentSource()).shouldPaymentSourceBeSentToSAP();
+                        sapVendorKeyRequired = sapVendorKeyRequired
+                                || refDataService.getPaymentSourceMap().get(e.getPaymentSource()).shouldPaymentSourceBeSentToSAP();
                         break;
                     case DPF:
                         amounts.put(GrantType.DPF, amounts.get(GrantType.DPF).add(e.getValue()));
@@ -942,8 +1072,8 @@ public class PaymentService {
     }
 
     private void checkSAPVendorId(Project project) {
-        final Organisation organisation = organisationService.getOrganisationForProject(project);
-        if (GlaUtils.isNullOrEmpty(organisation.getsapVendorId())) {
+        final OrganisationEntity organisation = organisationService.getOrganisationForProject(project);
+        if (GlaUtils.isNullOrEmpty(organisation.getDefaultSapVendorId())) {
             throw new ValidationException("There is no SAP vendor id");
         }
     }
@@ -979,12 +1109,12 @@ public class PaymentService {
     /**
      * Set the status of a payment request, including authorisations.
      */
-    public ProjectLedgerEntry setStatus(ProjectLedgerEntry projectLedgerEntry, LedgerStatus newStatus, User authorisingUser) {
+    public ProjectLedgerEntry setStatus(ProjectLedgerEntry projectLedgerEntry, LedgerStatus newStatus, UserEntity authorisingUser) {
         return setStatus(projectLedgerEntry, newStatus, authorisingUser, null);
     }
 
-    public ProjectLedgerEntry setStatus(ProjectLedgerEntry projectLedgerEntry, LedgerStatus newStatus, User authorisingUser, String xmlContent) {
-
+    public ProjectLedgerEntry setStatus(ProjectLedgerEntry projectLedgerEntry, LedgerStatus newStatus, UserEntity authorisingUser,
+                                        String xmlContent) {
         PaymentAuditItemType auditType = null;
         if (newStatus.equals(Authorised)) {
 
@@ -1034,7 +1164,7 @@ public class PaymentService {
 
     public void sendPaymentAcknowledgement(ProjectLedgerEntry projectLedgerEntry) {
         if (projectLedgerEntry.getLedgerStatus().equals(LedgerStatus.Acknowledged)) {
-            Organisation org = organisationService.findOne(projectLedgerEntry.getOrganisationId());
+            OrganisationEntity org = organisationService.findOne(projectLedgerEntry.getOrganisationId());
 
             if (org != null) {
                 if (org.getFinanceContactEmail() != null) {
@@ -1047,15 +1177,18 @@ public class PaymentService {
                     model.put("paymentSubCategory", projectLedgerEntry.getSubCategory());
                     model.put("paymentAmount", projectLedgerEntry.getTotalIncludingInterest() == null
                         ? null : projectLedgerEntry.getTotalIncludingInterest().negate());
-                    model.put("managingOrganisationName", projectLedgerEntry.getManagingOrganisation() == null ? "" : projectLedgerEntry.getManagingOrganisation().getName());
+                    model.put("managingOrganisationName", projectLedgerEntry.getManagingOrganisation() == null
+                            ? "" : projectLedgerEntry.getManagingOrganisation().getName());
                     model.put("invoiceNumber", projectLedgerEntry.getOpsInvoiceNumber());
-                    model.put("recipient", org.getFinanceContactEmail());
-                    emailService.sendPaymentAcknowledgementEmail(model);
+                    for (String email: org.getFinanceContactEmail().split(",")) {
+                        model.put("recipient", email.trim());
+                        emailService.sendPaymentAcknowledgementEmail(model);
+                    }
                 } else {
-                    log.info("sendPaymentAcknowledgement: no finance contact email defined for organisationId:" + org.getId() + " name: " + org.getName());
+                    log.info("sendPaymentAcknowledgement: no finance contact email defined for organisationId:" + org.getId()
+                            + " name: " + org.getName());
                 }
             }
-
         }
     }
 
@@ -1075,17 +1208,20 @@ public class PaymentService {
         return projectLedgerRepository.countByProjectIdAndLedgerStatusIn(projectId, ALL_PAYMENTS.getRelevantStatusesAsList()) > 0;
     }
 
-    public PaymentGroup declinePaymentsByGroupId(int groupToUpdateId, PaymentGroup group) {
+    public PaymentGroupEntity declinePaymentsByGroupId(int groupToUpdateId, PaymentGroupEntity group) {
 
-        PaymentGroup groupToUpdate = getPaymentGroupOnlyPending(groupToUpdateId);
+        PaymentGroupEntity groupToUpdate = getPaymentGroupOnlyPending(groupToUpdateId);
         return declinePaymentsByGroup(groupToUpdate, group);
 
     }
 
 
-    public PaymentGroup declinePaymentsByGroup(PaymentGroup groupToUpdate, final PaymentGroup group) throws ForbiddenAccessException {
-        if (!permissionService.currentUserHasPermissionForOrganisation(AUTHORISE_PAYMENT, groupToUpdate.getLedgerEntries().get(0).getManagingOrganisationId())) {
-            throw new ForbiddenAccessException("User does not have permission to decline payments for organisation " + groupToUpdate.getId());
+    public PaymentGroupEntity declinePaymentsByGroup(PaymentGroupEntity groupToUpdate, final PaymentGroupEntity group)
+            throws ForbiddenAccessException {
+        if (!permissionService.currentUserHasPermissionForOrganisation(AUTHORISE_PAYMENT,
+                groupToUpdate.getLedgerEntries().get(0).getManagingOrganisationId())) {
+            throw new ForbiddenAccessException("User does not have permission to decline payments for organisation "
+                    + groupToUpdate.getId());
         }
 
         if (group.getDeclineReason() == null || group.getDeclineReason().getCategory() == null
@@ -1115,8 +1251,8 @@ public class PaymentService {
     }
 
     // TODO / TechDebt to be fixed as part of GLA-23993
-    public PaymentGroup generatePaymentsForClaimedMilestones(final Project project, String approvalRequestedBy) {
-        PaymentGroup paymentGroup = new PaymentGroup();
+    public PaymentGroupEntity generatePaymentsForClaimedMilestones(final Project project, String approvalRequestedBy) {
+        PaymentGroupEntity paymentGroup = new PaymentGroupEntity();
         paymentGroup.setApprovalRequestedBy(approvalRequestedBy);
 
         boolean approvalWillCreatePendingReclaim = project.getApprovalWillCreatePendingReclaim();
@@ -1126,44 +1262,56 @@ public class PaymentService {
         List<ProjectLedgerEntry> adjustments = new ArrayList<>();
         List<Milestone> milestones = project.getMilestonesBlock().getMilestones().stream()
                 .filter(m -> !ClaimStatus.Pending.equals(m.getClaimStatus()))
-                .sorted(Comparator.comparing(Milestone::getMilestoneDate).thenComparing(Milestone::getMonetarySplit))
                 .collect(Collectors.toList());
 
         for (Milestone milestone : milestones) {
             if (ClaimStatus.Claimed.equals(milestone.getClaimStatus())) {
                 Long milestoneGrantClaimed = project.getMilestonesBlock().getMilestoneGrantClaimed(milestone.getId());
                 milestone.setClaimedGrant(milestoneGrantClaimed);
-                List<ProjectLedgerEntry> entries = projectLedgerEntryMapper.map(project, project.getMilestonesBlock(), milestone.getId());
+                List<ProjectLedgerEntry> entries = projectLedgerEntryMapper.map(project, project.getMilestonesBlock(),
+                        milestone.getId());
                 paymentGroup.getLedgerEntries().addAll(entries);
             }
 
-            List<ProjectLedgerEntry> approvedPayments = projectLedgerRepository.findByProjectIdAndSubCategoryAndLedgerStatusIn(project.getId(), milestone.getPaymentSubType(), LedgerStatus.getApprovedPaymentStatuses());
-            if (approvalWillCreatePendingReclaim || monetaryValueReclaimRequired) { // safety check for creating incorrect reclaims
-                if (milestone.getReclaimedDpf() != null) {
+            List<ProjectLedgerEntry> approvedPayments = projectLedgerRepository.findByProjectIdAndSubCategoryAndLedgerStatusIn(
+                    project.getId(), milestone.getPaymentSubType(), LedgerStatus.getApprovedPaymentStatuses());
+
+            boolean milestoneWithdrawn = ClaimStatus.Withdrawn.equals(milestone.getClaimStatus());
+
+
+            //rdgf/dpf reclaims and monetary value reclaims or withdrawn milestones
+            if (!approvedPayments.isEmpty()
+                    && ((approvalWillCreatePendingReclaim || monetaryValueReclaimRequired)
+                            || milestoneWithdrawn)) {
+                if (milestone.getReclaimedDpf() != null && milestone.getReclaimedDpf() != 0) {
                     createReclaimForType(project, adjustments, milestone, approvedPayments, DPF);
                 }
 
-                if (milestone.getReclaimedRcgf() != null) {
+                if (milestone.getReclaimedRcgf() != null && milestone.getReclaimedRcgf() != 0) {
                     createReclaimForType(project, adjustments, milestone, approvedPayments, RCGF);
                 }
 
-                if (milestone.getMonetaryValue() != null && milestone.getReclaimedGrant() != null) {
+                if (milestoneWithdrawn || (milestone.getReclaimedGrant() != null
+                        && milestone.getMonetaryValue() != null && milestone.getReclaimedGrant() != 0)) {
                     createReclaimForType(project, adjustments, milestone, approvedPayments, PAYMENT);
                 }
             }
 
+            // grant reclaims for monetary split
             if (isPaymentAdjustmentRequired(grantSourceAdjustmentAmount, milestone)) {
-                Long currentValue = milestone.getClaimedGrant();
+                Long currentValue = milestone.getClaimedGrant() != null ? milestone.getClaimedGrant() : 0;
                 Long newValue = project.getMilestonesBlock().getValueForMonetarySplitForMilestone(milestone);
 
                 long adjustmentValue = currentValue - newValue;
                 ProjectLedgerEntry projectLedgerEntry = null;
 
                 if (adjustmentValue < 0) {
-                    projectLedgerEntry = projectLedgerEntryMapper.generateSupplementalPaymentForMilestone(project, milestone, adjustmentValue);
+                    projectLedgerEntry = projectLedgerEntryMapper
+                            .generateSupplementalPaymentForMilestone(project, milestone, adjustmentValue);
                 } else {
                     ProjectLedgerEntry originalPaymentForReclaim = getOriginalPaymentForReclaim(approvedPayments, PAYMENT);
-                    projectLedgerEntry = projectLedgerEntryMapper.generateReclaimPaymentForMilestone(project, milestone, milestone.getReclaimedGrant(), originalPaymentForReclaim, PAYMENT);
+                    projectLedgerEntry = projectLedgerEntryMapper.generateReclaimPaymentForMilestone(
+                            project, milestone, milestone.getReclaimedGrant(), originalPaymentForReclaim, PAYMENT);
                 }
 
                 if (projectLedgerEntry != null) {
@@ -1175,10 +1323,14 @@ public class PaymentService {
 
         // supplemental payments are added after all milestone payments
         paymentGroup.getLedgerEntries().addAll(adjustments);
+        if (paymentGroup.getLedgerEntries().isEmpty()) {
+            throw new ValidationException("Unable to create payments for this transition, please contact the OPS team.");
+        }
+
         if (paymentGroup.getLedgerEntries().size() > 0
                 && Template.MilestoneType.MonetarySplit.equals(project.getTemplate().getMilestoneType())
                 && project.getMilestonesBlock().areAllMonetaryMilestonesClaimedOrApproved()
-                && project.getGrantSourceBlock().getGrantValue() != null) {
+                && project.getGrantsRequested().get(GrantType.Grant) != null) {
             adjustPaymentGroupForRoundingErrors(project, paymentGroup);
         }
 
@@ -1190,9 +1342,9 @@ public class PaymentService {
     }
 
     @NotNull
-    private PaymentGroup getRefreshedPaymentGroup(PaymentGroup paymentGroup) {
+    private PaymentGroupEntity getRefreshedPaymentGroup(PaymentGroupEntity paymentGroup) {
         // retrieve detached group so payment summaries are populated
-        PaymentGroup updated = paymentGroupRepository.saveAndFlush(paymentGroup);
+        PaymentGroupEntity updated = paymentGroupRepository.saveAndFlush(paymentGroup);
         entityManager.detach(updated);
         return paymentGroupRepository.getOne(updated.getId());
     }
@@ -1201,7 +1353,7 @@ public class PaymentService {
      * Examine the provided payment group and instead of using calc'd
      * percentage of grant source, use remainder of grant source.
      */
-    protected void adjustPaymentGroupForRoundingErrors(Project project, PaymentGroup group) {
+    protected void adjustPaymentGroupForRoundingErrors(Project project, PaymentGroupEntity group) {
         BigDecimal totalToClaim = BigDecimal.ZERO;
         for (ProjectLedgerEntry ple : group.getLedgerEntries()) {
             if (PAYMENT.equals(ple.getLedgerType())) {
@@ -1212,18 +1364,22 @@ public class PaymentService {
         List<ProjectLedgerEntry> allByProjectId = projectLedgerRepository.findAllByProjectId(project.getId());
         BigDecimal totalPayments = BigDecimal.ZERO;
         for (ProjectLedgerEntry ple : allByProjectId) {
-            if (PAYMENT.equals(ple.getLedgerType()) && !Declined.equals(ple.getLedgerStatus()) && ple.getInterestForPaymentId() == null) {
+            if (PAYMENT.equals(ple.getLedgerType()) && !Declined.equals(ple.getLedgerStatus())
+                    && ple.getInterestForPaymentId() == null) {
                 totalPayments = totalPayments.add(ple.getValue());
             }
         }
 
-        long difference = totalToClaim.add(totalPayments).add(BigDecimal.valueOf(project.getGrantSourceBlock().getGrantValue())).longValue();
+        long difference = totalToClaim.add(totalPayments).add(project.getGrantsRequested().get(GrantType.Grant))
+                .longValue();
         if (difference != 0) {
 
             List<ProjectLedgerEntry> supplementaryPayments = group.getLedgerEntries().stream().filter(
-                    ple -> PAYMENT.equals(ple.getLedgerType()) && ple.getCategory().equals(SUPPLEMENTARY_PAYMENT)).collect(Collectors.toList());
+                    ple -> PAYMENT.equals(ple.getLedgerType()) && ple.getCategory().equals(SUPPLEMENTARY_PAYMENT))
+                    .collect(Collectors.toList());
             List<ProjectLedgerEntry> normalPayments = group.getLedgerEntries().stream().filter(
-                    ple -> PAYMENT.equals(ple.getLedgerType()) && !ple.getCategory().equals(SUPPLEMENTARY_PAYMENT)).collect(Collectors.toList());
+                    ple -> PAYMENT.equals(ple.getLedgerType()) && !ple.getCategory().equals(SUPPLEMENTARY_PAYMENT))
+                    .collect(Collectors.toList());
             boolean isSupplemental = false;
             Optional<ProjectLedgerEntry> first;
             if (!supplementaryPayments.isEmpty()) {
@@ -1240,32 +1396,37 @@ public class PaymentService {
                 for (Milestone milestone : project.getMilestonesBlock().getMilestones()) {
                     if (milestone.getSummary().equals(ledgerEntry.getSubCategory())) {
                         if (isSupplemental) {
-                            milestone.setClaimedGrant(milestone.getClaimedGrant() + ledgerEntry.getValue().negate().longValue());
+                            Long claimedGrant = milestone.getClaimedGrant() != null ? milestone.getClaimedGrant() : 0;
+                            milestone.setClaimedGrant(claimedGrant + ledgerEntry.getValue().negate().longValue());
                         } else {
                             milestone.setClaimedGrant(ledgerEntry.getValue().negate().longValue());
                         }
                     }
                 }
             } else {
-                throw new ValueException("Unable to calculate payment info correctly, unable to find relevant payment");
+                throw new ValidationException("Unable to calculate payment info correctly, unable to find relevant payment");
             }
         }
 
     }
 
-    private void createReclaimForType(Project project, List<ProjectLedgerEntry> adjustments, Milestone milestone, List<ProjectLedgerEntry> approvedPayments, LedgerType type) {
+    private void createReclaimForType(Project project, List<ProjectLedgerEntry> adjustments, Milestone milestone,
+                                      List<ProjectLedgerEntry> approvedPayments, LedgerType type) {
         ProjectLedgerEntry originalPaymentForReclaim = getOriginalPaymentForReclaim(approvedPayments, type);
 
         ProjectLedgerEntry projectLedgerEntry = null;
         switch (type) {
             case DPF:
-                projectLedgerEntry = projectLedgerEntryMapper.generateReclaimPaymentForMilestone(project, milestone, milestone.getReclaimedDpf(), originalPaymentForReclaim, type);
+                projectLedgerEntry = projectLedgerEntryMapper.generateReclaimPaymentForMilestone(project, milestone,
+                        milestone.getReclaimedDpf(), originalPaymentForReclaim, type);
                 break;
             case RCGF:
-                projectLedgerEntry = projectLedgerEntryMapper.generateReclaimPaymentForMilestone(project, milestone, milestone.getReclaimedRcgf(), originalPaymentForReclaim, type);
+                projectLedgerEntry = projectLedgerEntryMapper.generateReclaimPaymentForMilestone(project, milestone,
+                        milestone.getReclaimedRcgf(), originalPaymentForReclaim, type);
                 break;
             case PAYMENT:
-                projectLedgerEntry = projectLedgerEntryMapper.generateReclaimPaymentForMilestone(project, milestone, milestone.getReclaimedGrant(), originalPaymentForReclaim, type);
+                projectLedgerEntry = projectLedgerEntryMapper.generateReclaimPaymentForMilestone(project, milestone,
+                        milestone.getReclaimedGrant(), originalPaymentForReclaim, type);
                 break;
             default:
                 throw new RuntimeException("Unrecognised project ledger entry: " + type);
@@ -1294,15 +1455,15 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public PaymentGroup getGroupById(Integer id) {
-        final PaymentGroup paymentGroup = paymentGroupRepository.findById(id).orElse(null);
+    public PaymentGroupEntity getGroupById(Integer id) {
+        final PaymentGroupEntity paymentGroup = paymentGroupRepository.findById(id).orElse(null);
         if (paymentGroup == null) {
             throw new ValidationException("Payment group not found for id " + id);
         }
 
-        List<PaymentGroup> list = new ArrayList<>();
+        List<PaymentGroupEntity> list = new ArrayList<>();
         list.add(paymentGroup);
-        List<PaymentGroup> paymentGroups = restrictAndEnrichPaymentGroups(list);
+        List<PaymentGroupEntity> paymentGroups = restrictAndEnrichPaymentGroups(list);
 
         if (paymentGroups.size() == 0) {
             throw new ValidationException("Payment group not found for id " + id);
@@ -1311,10 +1472,10 @@ public class PaymentService {
         return paymentGroups.get(0);
     }
 
-    public PaymentGroup getGroupByPaymentId(Integer paymentId) {
+    public PaymentGroupEntity getGroupByPaymentId(Integer paymentId) {
 
-        PaymentGroup group = paymentGroupRepository.findPaymentGroupByPaymentId(paymentId);
-        List<PaymentGroup> response = new ArrayList<>();
+        PaymentGroupEntity group = paymentGroupRepository.findPaymentGroupByPaymentId(paymentId);
+        List<PaymentGroupEntity> response = new ArrayList<>();
         response.add(group);
         response = restrictAndEnrichPaymentGroups(response);
 
@@ -1334,7 +1495,6 @@ public class PaymentService {
         for (Integer paymentId : map.keySet()) {
             this.setReclaimInterest(paymentId, map.get(paymentId));
         }
-
     }
 
     public ProjectLedgerEntry setReclaimInterest(Integer reclaimPaymentId, BigDecimal value) {
@@ -1364,7 +1524,7 @@ public class PaymentService {
             interest.createInterestRecordFrom(reclaim);
         }
 
-        PaymentGroup groupByPaymentId = paymentGroupRepository.findPaymentGroupByPaymentId(reclaim.getId());
+        PaymentGroupEntity groupByPaymentId = paymentGroupRepository.findPaymentGroupByPaymentId(reclaim.getId());
         groupByPaymentId.setInterestAssessed(true);
         if (value.compareTo(BigDecimal.ZERO) == 0) {
             if (interestPaymentExists) {
@@ -1372,7 +1532,8 @@ public class PaymentService {
                 paymentGroupRepository.save(groupByPaymentId);
                 projectLedgerRepository.delete(interest);
 
-                auditService.auditCurrentUserActivity(String.format("deleted interest project ledger entry %d for project %d reclaim payment %d",
+                auditService.auditCurrentUserActivity(String.format(
+                        "deleted interest project ledger entry %d for project %d reclaim payment %d",
                         interest.getId(), interest.getProjectId(), reclaimPaymentId));
                 interest = null;
             }
@@ -1390,15 +1551,15 @@ public class PaymentService {
     }
 
     public void clonePaymentGroupsForBlock(Integer originalBlockId, Integer newProjectId, Integer newBlockId) {
-        Set<PaymentGroup> paymentGroups = paymentGroupRepository.findAllByBlockId(originalBlockId);
-        for (PaymentGroup originalPaymentGroup: paymentGroups) {
+        Set<PaymentGroupEntity> paymentGroups = paymentGroupRepository.findAllByBlockId(originalBlockId);
+        for (PaymentGroupEntity originalPaymentGroup: paymentGroups) {
             List<ProjectLedgerEntry> entries = new ArrayList<>();
             for (ProjectLedgerEntry entry: originalPaymentGroup.getLedgerEntries()) {
                 entries.add(entry.clone(newProjectId, newBlockId));
             }
             projectLedgerRepository.saveAll(entries);
 
-            PaymentGroup clonePaymentGroup = new PaymentGroup();
+            PaymentGroupEntity clonePaymentGroup = new PaymentGroupEntity();
             clonePaymentGroup.setDeclineReason(originalPaymentGroup.getDeclineReason());
             clonePaymentGroup.setDeclineComments(originalPaymentGroup.getDeclineComments());
             clonePaymentGroup.setApprovalRequestedBy(originalPaymentGroup.getApprovalRequestedBy());
@@ -1407,8 +1568,8 @@ public class PaymentService {
         }
     }
 
-    public PaymentGroup recordInterestAssessed(int groupId) {
-        PaymentGroup paymentGroup = paymentGroupRepository.getOne(groupId);
+    public PaymentGroupEntity recordInterestAssessed(int groupId) {
+        PaymentGroupEntity paymentGroup = paymentGroupRepository.getOne(groupId);
         paymentGroup.setInterestAssessed(true);
         return paymentGroupRepository.save(paymentGroup);
     }

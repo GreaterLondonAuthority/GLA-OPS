@@ -28,26 +28,26 @@ milestones-table {
     }
   }
 
-  tbody tr:first-child td .manual-indicator {
+  tbody tr:first-child th .manual-indicator {
     top: 1px;
   }
 
   table.table-with-inputs {
     tr.with-manual-indicator.recently-added {
       background-color: lighten($green-pearl, 5%);
-      td, input, .dateInput, date-input, textarea {
+      td, th, input, .dateInput, date-input, textarea {
         background-color: lighten($green-pearl, 5%);
       }
     }
 
     tr.with-manual-indicator.with-conditional-indicator.recently-added {
       background-color: lighten(#BEDDE7, 5%);
-      td, input, .dateInput, date-input, textarea {
+      td, th, input, .dateInput, date-input, textarea {
         background-color: lighten(#BEDDE7, 5%);
       }
     }
 
-    td.with-manual-indicator {
+    th.with-manual-indicator {
       position: relative;
       background-clip:padding-box;
     }
@@ -77,7 +77,7 @@ milestones-table {
   .glyphicon-exclamation-sign{
     color: $red;
     &.info{
-      color: darken($peppermint, 20%);
+      color: darken($green-spring, 20%);
     }
   }
 

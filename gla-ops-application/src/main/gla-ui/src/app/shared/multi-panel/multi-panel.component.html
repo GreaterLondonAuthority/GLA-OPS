@@ -1,0 +1,10 @@
+<gla-well class="multipanel-container" [ngClass]="{editable: editable}">
+  <div class="multi-panel"><ng-content></ng-content></div>
+  <button
+    *ngIf="editable"
+    class="btn btn-secondary btn-edit btn-md pull-right"
+    (click)="onEdit.emit()"
+    title="Edit">
+    EDIT<i class="glyphicon glyphicon-edit"></i>
+  </button>
+</gla-well>

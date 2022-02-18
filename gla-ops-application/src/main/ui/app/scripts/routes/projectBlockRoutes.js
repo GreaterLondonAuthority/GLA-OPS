@@ -80,7 +80,7 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       resolve: blockResolves({
         payments: ['$stateParams', 'PaymentService', ($stateParams, PaymentService) => {
           let paymentStatuses = PaymentService.authorisedStatuses();
-          return PaymentService.getPayments($stateParams.projectId, null, null, paymentStatuses);
+          return PaymentService.getPayments($stateParams.projectId, null, null, null, paymentStatuses);
         }],
         claimFeatureEnabled: ['FeatureToggleService', 'Downgrade', (FeatureToggleService, Downgrade) => {
           return Downgrade.toPromise(FeatureToggleService.isFeatureEnabled('payments'));
@@ -98,11 +98,21 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       resolve: blockResolves()
     })
 
+    // .state('project-block.questions', {
+    //   templateUrl: 'scripts/pages/project/questions/questionsPage.html',
+    //   controller: 'QuestionsPageCtrl',
+    //   controllerAs: '$ctrl',
+    //   resolve: blockResolves()
+    // })
+
     .state('project-block.questions', {
-      templateUrl: 'scripts/pages/project/questions/questionsPage.html',
-      controller: 'QuestionsPageCtrl',
-      controllerAs: '$ctrl',
-      resolve: blockResolves()
+      template: `<gla-questions-page [project]="$resolve.project"
+                  [project-block]="$resolve.block"
+                  [template]="$resolve.template"
+                  [history]="$resolve.history"
+                  [is-block-revert-enabled]="$resolve.isBlockRevertEnabled"
+                  [$state-params]="$resolve.$stateParams">`,
+      resolve: blockResolves({}, true)
     })
 
     .state('project-block.calculate-grant', {
@@ -133,10 +143,30 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       resolve: blockResolves()
     })
 
+    .state('project-block.affordable-homes', {
+      template: `<gla-indicative-starts-and-completions-block [project]="$resolve.project"
+                                                              [project-block]="$resolve.block"
+                                                              [template]="$resolve.template"
+                                                              [history]="$resolve.history"
+                                                              [is-block-revert-enabled]="$resolve.isBlockRevertEnabled"
+                                                              [$state-params]="$resolve.$stateParams"></gla-indicative-starts-and-completions-block>`,
+      resolve: blockResolves()
+    })
+
+    // .state('project-block.design-standards', {
+    //   templateUrl: 'scripts/pages/project/design-standards/designStandards.html',
+    //   controller: 'DesignStandardsCtrl',
+    //   controllerAs: '$ctrl',
+    //   resolve: blockResolves()
+    // })
+
+  // TODO: rename $stateParams input something more meaningful once we use ng10 routing
     .state('project-block.design-standards', {
-      templateUrl: 'scripts/pages/project/design-standards/designStandards.html',
-      controller: 'DesignStandardsCtrl',
-      controllerAs: '$ctrl',
+      template: `<gla-design-standards-block [project]="$resolve.project"
+                                             [project-block]="$resolve.block"
+                                             [history]="$resolve.history"
+                                             [is-block-revert-enabled]="$resolve.isBlockRevertEnabled"
+                                             [$state-params]="$resolve.$stateParams"></gla-design-standards-block>`,
       resolve: blockResolves()
     })
 
@@ -152,8 +182,8 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       controller: 'OutputsCtrl',
       controllerAs: '$ctrl',
       resolve: blockResolves({
-          outputsMessage: ['ConfigurationService', (ConfigurationService) => {
-            return ConfigurationService.getMessage('outputs-baseline-message-key').then(rsp => rsp.data);
+          outputsMessage: ['Downgrade', 'ConfigurationService', (Downgrade, ConfigurationService) => {
+            return Downgrade.toPromise(ConfigurationService.getMessage('outputs-baseline-message-key'));
           }],
 
           currentFinancialYear: ['ProjectService', (ProjectService) => {
@@ -209,7 +239,7 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
       })
     })
     .state('project-block.funding', {
-      template: '<project-funding-page project="$resolve.project" project-funding="$resolve.projectFunding" current-financial-year="$resolve.currentFinancialYear" template="$resolve.template"></project-funding-page>',
+      template: '<project-funding-page project="$resolve.project" project-funding="$resolve.projectFunding" project-milestones-block="$resolve.projectMilestones" current-financial-year="$resolve.currentFinancialYear" template="$resolve.template"></project-funding-page>',
       resolve: blockResolves({
         projectFunding: ['$sessionStorage', '$stateParams', 'ProjectFundingService', 'currentFinancialYear', 'block', ($sessionStorage, $stateParams, ProjectFundingService, currentFinancialYear, block) => {
           // this.$sessionStorage[this.blockId]
@@ -224,13 +254,19 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
             return resp.data;
           });
         }],
+        projectMilestones: ['$sessionStorage', '$stateParams', 'MilestonesService', ($sessionStorage, $stateParams, MilestonesService) => {
+          return MilestonesService.getMilestoneBlockByProject($stateParams.projectId).then((resp) => {
+            return resp.data;
+          });
+        }],
         currentFinancialYear: ['ProjectService', (ProjectService) => {
           return ProjectService.getCurrentFinancialYear()
             .then(resp => {
               return resp.data;
             });
         }]
-      }, true),
+
+      }),
       params: {
         selectedYear: undefined
       }
@@ -263,8 +299,8 @@ angular.module('GLA').config(['$stateProvider', function ($stateProvider) {
                                  template="$resolve.template",
                                  deliverable-types="$resolve.deliverableTypes"></delivery-partners>`,
       resolve: blockResolves({
-        deliverableTypes: ['TemplateService', 'template', (TemplateService, template) => {
-          return TemplateService.getAvailableDeliverableTypes(template.id).then(rsp => rsp.data);
+        deliverableTypes: ['TemplateService', 'template', 'Downgrade', (TemplateService, template, Downgrade) => {
+          return Downgrade.toPromise(TemplateService.getAvailableDeliverableTypes(template.id));
         }]
       })
     })
@@ -328,8 +364,8 @@ function blockResolves(customResolves, requiresSlowApi) {
       return $stateParams.project;
     }],
 
-    template: ['TemplateService', 'project', (TemplateService, project) => {
-      return TemplateService.getTemplate(project.templateId, false, true).then(resp => resp.data);
+    template: ['TemplateService', 'project', 'Downgrade', (TemplateService, project, Downgrade) => {
+      return Downgrade.toPromise(TemplateService.getTemplate(project.templateId, false, true));
     }],
 
     history: ['$stateParams', 'ProjectBlockService', 'project', ($stateParams, ProjectBlockService, project) => {
@@ -358,6 +394,10 @@ function blockResolves(customResolves, requiresSlowApi) {
 
     pageTitle: ['block', (block) => {
       return _.startCase(block.blockDisplayName);
+    }],
+
+    $stateParams: ['$stateParams', ($stateParams) => {
+      return $stateParams;
     }],
   };
 

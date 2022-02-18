@@ -7,11 +7,15 @@
  */
 package uk.gov.london.ops;
 
+import uk.gov.london.ops.user.User;
+
 public class OpsEvent {
 
     private EventType eventType;
     private String message;
     private Integer externalId;
+    private String comments;
+    private User user;
 
     public OpsEvent() {}
 
@@ -24,6 +28,21 @@ public class OpsEvent {
         this.eventType = eventType;
         this.message = message;
         this.externalId = externalId;
+    }
+
+    public OpsEvent(EventType eventType, String message, Integer externalId, String comments) {
+        this.eventType = eventType;
+        this.message = message;
+        this.externalId = externalId;
+        this.comments = comments;
+    }
+
+    public OpsEvent(EventType eventType, String message, Integer externalId, String comments, User user) {
+        this.eventType = eventType;
+        this.message = message;
+        this.externalId = externalId;
+        this.comments = comments;
+        this.user = user;
     }
 
     public EventType getEventType() {
@@ -48,5 +67,21 @@ public class OpsEvent {
 
     public void setExternalId(Integer externalId) {
         this.externalId = externalId;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

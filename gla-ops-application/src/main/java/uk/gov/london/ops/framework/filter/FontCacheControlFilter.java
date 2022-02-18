@@ -7,10 +7,15 @@
  */
 package uk.gov.london.ops.framework.filter;
 
-import javax.servlet.*;
+import java.io.IOException;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Filter to allow caching of font files to work around a bug in IE11, when using https. See GLA-2598.
@@ -19,15 +24,17 @@ import java.io.IOException;
  */
 @WebFilter(filterName = "FontCacheFilter", urlPatterns = {"*.woff", "*.woff2", "*.eot", "*.ttf", "*.svg"})
 public class FontCacheControlFilter implements Filter {
+
     @Override
     public void init(FilterConfig filterConfig) {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-        httpServletResponse.setHeader("Cache-Control","public, immutable");
-        httpServletResponse.setHeader("Pragma","cache"); // is probably redundant.
+        httpServletResponse.setHeader("Cache-Control", "public, immutable");
+        httpServletResponse.setHeader("Pragma", "cache"); // is probably redundant.
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

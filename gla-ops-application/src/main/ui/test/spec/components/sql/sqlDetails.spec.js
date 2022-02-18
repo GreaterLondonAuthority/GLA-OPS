@@ -27,7 +27,7 @@ describe('Component: System Page', () => {
       approved: false,
       approvedBy: null,
       approvedOn: null,
-      createdBy: 'test.admin@gla.com',
+      createdBy: 'test.admin',
       createdOn: '2018-04-17T14:36:32.371Z',
       id: 10000,
       ppd: false,

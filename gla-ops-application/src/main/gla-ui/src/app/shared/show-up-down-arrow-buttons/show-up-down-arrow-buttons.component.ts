@@ -27,6 +27,7 @@ export class ShowUpDownArrowButtonsComponent implements OnInit {
     let displayOrder = this.currentItem.displayOrder;
     this.sortedCollectionItems[currentIndex].displayOrder = this.sortedCollectionItems[currentIndex+moveRowBy].displayOrder;
     this.sortedCollectionItems[currentIndex+moveRowBy].displayOrder = displayOrder;
+    this.sortedCollectionItems.sort((item1, item2) =>  item1.displayOrder - item2.displayOrder);
     this.returnModifiedCollection();
   }
 

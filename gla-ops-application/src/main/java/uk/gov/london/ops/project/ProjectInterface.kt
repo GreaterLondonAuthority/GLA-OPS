@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.project
 
-import uk.gov.london.ops.organisation.model.Organisation
+import uk.gov.london.ops.organisation.model.OrganisationEntity
 import uk.gov.london.ops.project.state.StateModel
 
 /**
@@ -15,9 +15,11 @@ import uk.gov.london.ops.project.state.StateModel
  */
 interface ProjectInterface {
 
-    var organisation: Organisation
+    var id: Int?
 
-    var managingOrganisation: Organisation
+    var organisation: OrganisationEntity
+
+    var managingOrganisation: OrganisationEntity
 
     var stateModel: StateModel
 

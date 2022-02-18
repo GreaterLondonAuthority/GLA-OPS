@@ -1,0 +1,27 @@
+@import "variables";
+
+.modal-header{
+  padding-bottom: 0;
+}
+
+.version-history {
+  .version-text {
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  .block-label {
+    display: inline-block;
+    background-color: lighten($secondary-grey, 10%);
+    color: $white;
+    padding: 0 6px;
+    margin: 2px 5px 2px 0;
+    border-radius: 0.25em;
+    font-weight: 700;
+    white-space: nowrap;
+
+    &.preset-label{
+      background-color: lighten($danube-blue, 10%);
+    }
+  }
+}

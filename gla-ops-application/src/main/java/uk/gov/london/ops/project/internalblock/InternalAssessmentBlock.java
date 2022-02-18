@@ -7,24 +7,16 @@
  */
 package uk.gov.london.ops.project.internalblock;
 
-import static javax.persistence.CascadeType.ALL;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import uk.gov.london.ops.assessment.Assessment;
-import uk.gov.london.ops.assessment.AssessmentStatus;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
 
 @Entity(name = "internal_assessment_block")
 @DiscriminatorValue("ASSESSMENT")
@@ -41,7 +33,8 @@ public class InternalAssessmentBlock extends InternalProjectBlock {
 
     @JoinData(joinType = Join.JoinType.OneToMany, sourceColumn = "id", targetColumn = "block_id",
             targetTable = "assessment", comment = "")
-    @OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true, mappedBy = "block", targetEntity = Assessment.class)
+    @OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true, targetEntity = Assessment.class)
+    @JoinColumn(name = "block_id")
     @JsonIgnore
     private final List<Assessment> assessments = new ArrayList<>();
 
@@ -54,12 +47,8 @@ public class InternalAssessmentBlock extends InternalProjectBlock {
         return assessments;
     }
 
-    public List<Assessment> getAssessmentsForDisplay() {
-        return assessments.stream().filter(a -> !a.getStatus().equals(AssessmentStatus.Abandoned)).collect(Collectors.toList());
-    }
-
     public void addAssessment(Assessment assessment) {
-        assessment.setBlock(this);
+        assessment.setBlockId(id);
         assessments.add(assessment);
     }
 

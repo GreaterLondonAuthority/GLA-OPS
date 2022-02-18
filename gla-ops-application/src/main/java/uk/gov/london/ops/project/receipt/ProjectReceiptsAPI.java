@@ -10,6 +10,7 @@ package uk.gov.london.ops.project.receipt;
 import static uk.gov.london.common.user.BaseRole.GLA_FINANCE;
 import static uk.gov.london.common.user.BaseRole.GLA_ORG_ADMIN;
 import static uk.gov.london.common.user.BaseRole.GLA_PM;
+import static uk.gov.london.common.user.BaseRole.GLA_PROGRAMME_ADMIN;
 import static uk.gov.london.common.user.BaseRole.GLA_READ_ONLY;
 import static uk.gov.london.common.user.BaseRole.GLA_SPM;
 import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
@@ -46,7 +47,7 @@ public class ProjectReceiptsAPI {
     @Autowired
     ProjectReceiptsService projectReceiptsService;
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/receipts/{blockId}", method = RequestMethod.GET)
     @ApiOperation(value = "get receipts block details for the given year ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -55,7 +56,7 @@ public class ProjectReceiptsAPI {
         return projectReceiptsService.getProjectReceiptsBlock(id, blockId, year);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/receipts", method = RequestMethod.PUT)
     @ApiOperation(value = "set a project's receipts block", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -67,7 +68,7 @@ public class ProjectReceiptsAPI {
         return projectReceiptsService.updateProjectReceiptsBlock(id, receiptsBlock, autosave);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/receipts", method = RequestMethod.POST)
     @ApiOperation(value = "create receipt entry")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -79,7 +80,7 @@ public class ProjectReceiptsAPI {
         return projectReceiptsService.addReceiptEntry(id, year, itemRequest);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{projectId}/receipts/{forecastId}", method = RequestMethod.PUT)
     @ApiOperation(value = "edit a receipt forecast value", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -88,7 +89,7 @@ public class ProjectReceiptsAPI {
         projectReceiptsService.editReceiptForecast(projectId, forecastId, value);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_FINANCE, GLA_READ_ONLY})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_FINANCE, GLA_READ_ONLY, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{projectId}/receiptsMetaData/{blockId}/categoryCode/{categoryId}/yearMonth/{yearMonth}",
             method = RequestMethod.GET)
     @ApiOperation(value = "get meta data for a receipt", notes = "")

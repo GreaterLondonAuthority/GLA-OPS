@@ -14,6 +14,13 @@
       </div>
     </hs-left>
 
+    <hs-center class="gla-alert">
+      <div class="row" ng-if="$ctrl.isDeprecatedOrgType">
+        <span class="glyphicon glyphicon-exclamation-sign"></span>
+        <span>Help GLA OPS to prevent duplicate organisation records: edit your Organisation Details and change your Organisation Type to one of the new options (you may also be prompted to add a few further details). Note that 'Registered Provider' or 'Learning Provider' status, if applicable, is now confirmed in separate questions.</span>
+      </div>
+    </hs-center>
+
     <hs-right ng-if="$ctrl.isTeamOrganisation">
       <div ng-if="$ctrl.org.createdOn && $ctrl.org.createdByName">
         Created on {{$ctrl.org.createdOn | date: "dd/MM/yyyy"}} by {{$ctrl.org.createdByName}}
@@ -25,12 +32,12 @@
         Registration requested on {{$ctrl.org.createdOn | date: "dd/MM/yyyy"}} by {{$ctrl.org.createdByName}}
       </div>
 
-      <div ng-if="$ctrl.org.approvedOn && $ctrl.org.approvedByName">
-        Organisation approved on {{$ctrl.org.approvedOn | date: "dd/MM/yyyy"}} by {{$ctrl.org.approvedByName}}
-      </div>
-
       <div ng-if="$ctrl.org.rejectedOn && $ctrl.org.rejectedByName">
         Organisation rejected on {{$ctrl.org.rejectedOn | date: "dd/MM/yyyy"}} by {{$ctrl.org.rejectedByName}}
+      </div>
+
+      <div ng-if="$ctrl.org.approvedOn && $ctrl.org.approvedByName">
+        Organisation approved on {{$ctrl.org.approvedOn | date: "dd/MM/yyyy"}} by {{$ctrl.org.approvedByName}}
       </div>
 
       <div ng-if="!$ctrl.isApproved() && $ctrl.org.inactivatedOn && $ctrl.org.inactivatedByName">
@@ -39,57 +46,62 @@
     </hs-right>
   </header-status>
 
+  <div class="mtop20">Content inside a section can be expanded or collapsed by selecting the chevron icon next to it</div>
   <div class="org-details">
     <section-header2 collapsed="$ctrl.collapsedSections.details" on-collapse-change="$ctrl.onCollapseChange()">Details</section-header2>
     <div id="duplicate-ukprn-warning" ng-if="$ctrl.occuranceOfUkprn > 1 && $ctrl.org.status === 'Pending'" class="error mbottom10">This organisation has a duplicate UKPRN with another organisation</div>
-    <multi-panel ng-if="!$ctrl.collapsedSections.details" editable="$ctrl.editable" on-edit="$ctrl.edit('details')" class="details-section">
-      <div class="column organisation-details">
+    <gla-multi-panel ng-if="!$ctrl.collapsedSections.details" [editable]="$ctrl.editable" (on-edit)="$ctrl.edit('details')" class="details-section">
+      <div class="one-column-section organisation-details">
         <div class="section">
           <h4 class="section-header">{{$ctrl.orgEntityName}} details</h4>
           <mp-field label="$ctrl.orgEntityName+' name'">{{$ctrl.org.name}}</mp-field>
-          <mp-field label="'Legal status'" id="legal-status">{{$ctrl.legalStatuses[$ctrl.org.legalStatus]}}</mp-field>
-          <mp-field label="'Icon'" mp-default="' '" ng-if="$ctrl.isManagingOrganisation">
-            <img alt="{{$ctrl.org.name}}" class="org-icon" ng-if="$ctrl.org.iconAttachmentId" ng-src="/api/v1/file/{{$ctrl.org.iconAttachmentId}}"/>
-            <span ng-if="!$ctrl.org.iconAttachmentId">Not provided</span>
+          <mp-field ng-if="!$ctrl.isTeamOrganisation" label="'Also known as'">{{$ctrl.org.knownAs}}</mp-field>
+          <mp-field label="'Address'" ng-if="$ctrl.displayAddress" id="address">
+            <div>{{$ctrl.org.address.address1}}</div>
+            <div>{{$ctrl.org.address.address2}}</div>
+            <div>{{$ctrl.org.address.address5}}</div>
+            <div>{{$ctrl.org.address.postcode}}</div>
           </mp-field>
-          <mp-field label="'GLA OPS ID'">{{$ctrl.org.id}}</mp-field>
-          <mp-field label="'Registration key'">{{$ctrl.org.registrationKey}}</mp-field>
-          <mp-field label="'Finance contact email'">{{$ctrl.org.financeContactEmail}}</mp-field>
-          <mp-field label="'Website'">
+          <mp-field ng-if="!$ctrl.isTeamOrganisation" label="'Website'" >
             <a ng-href="{{$ctrl.org.website}}" target="_blank" class="text-nowrap" ng-attr-title="{{$ctrl.org.website}}">{{$ctrl.org.website}}</a>
           </mp-field>
-          <mp-field label="'Address'" ng-if="$ctrl.displayAddress" id="address">
-              <div>{{$ctrl.org.address.address1}}</div>
-              <div>{{$ctrl.org.address.address2}}</div>
-              <div>{{$ctrl.org.address.address5}}</div>
-              <div>{{$ctrl.org.address.postcode}}</div>
+          <mp-field ng-if="!$ctrl.isTeamOrganisation" label="'Finance contact email address(es)'" id="finance-contact-email">{{$ctrl.org.financeContactEmail}}</mp-field>
+          <mp-field label="'GLA OPS ID'">{{$ctrl.org.id}}</mp-field>
+          <mp-field label="'Registration key'">{{$ctrl.org.registrationKey}}</mp-field>
+
+          <mp-field ng-if="!$ctrl.isTeamOrganisation" label="'Organisation type'" id="organisation-type">{{$ctrl.organisationTypes[$ctrl.org.entityType].summary}}</mp-field>
+          <mp-field ng-if="$ctrl.isManagingOrganisation" label="'Icon'" mp-default="' '">
+            <img alt="" class="org-icon" ng-if="$ctrl.org.iconAttachmentId" ng-src="/api/v1/file/{{$ctrl.org.iconAttachmentId}}"/>
+            <span ng-if="!$ctrl.org.iconAttachmentId">Not provided</span>
           </mp-field>
+
+          <mp-field ng-if="$ctrl.isFieldVisible('companyCode') || $ctrl.org.entityType === 7" label="'Companies House registration number'">{{$ctrl.org.companyCode}}</mp-field>
+          <mp-field ng-if="$ctrl.isFieldVisible('societyNumber')" label="'Society number'">{{$ctrl.org.societyNumber}}</mp-field>
+          <mp-field ng-if="$ctrl.isFieldVisible('isCharityCommission')" label="'Registered with the Charity Commission'">{{$ctrl.org.isCharityCommission ? 'Yes' : 'No'}}</mp-field>
+          <mp-field ng-if="$ctrl.org.isCharityCommission" label="'Registered charity number'">{{$ctrl.org.charityNumber}}</mp-field>
+
+          <mp-field ng-if="$ctrl.isFieldVisible('vatNumber') || $ctrl.org.entityType === 7" label="'VAT number'">{{$ctrl.org.vatNumber}}</mp-field>
+          <mp-field ng-if="$ctrl.isFieldVisible('bankAccount') || $ctrl.org.entityType === 7" label="'Bank Account'">{{$ctrl.org.bankAccount}}</mp-field>
+          <mp-field ng-if="$ctrl.isFieldVisible('sortCode') || $ctrl.org.entityType === 7" label="'Sort Code'">{{$ctrl.formatSortCode}}</mp-field>
+
+          <mp-field ng-if="$ctrl.isFieldVisible('regulated') || $ctrl.org.entityType === 2 || $ctrl.org.entityType === 3" label="'Registered with the housing regulator'">{{$ctrl.org.regulated ? 'Yes' : 'No'}}</mp-field>
+          <mp-field ng-if=" $ctrl.org.regulated || $ctrl.org.entityType === 2 || $ctrl.org.entityType === 3" label="'Registered Provider of Social Housing number'">{{$ctrl.org.providerNumber}}</mp-field>
+          <mp-field ng-if=" $ctrl.org.regulated" label="'Viability score'">{{$ctrl.org.viability}}</mp-field>
+          <mp-field ng-if=" $ctrl.org.regulated" label="'Governance score'">{{$ctrl.org.governance}}</mp-field>
+
+          <mp-field ng-if="($ctrl.isFieldVisible('isLearningProvider') && $ctrl.org.entityType != 1 && $ctrl.org.entityType != 5 ) || $ctrl.org.entityType === 6"
+                    label="'Registered Learning Provider'">{{$ctrl.org.isLearningProvider ? 'Yes' : 'No'}}</mp-field>
+          <mp-field ng-if="$ctrl.isLearningProvider" label="'UKPRN'">{{$ctrl.org.ukprn}}</mp-field>
+
         </div>
       </div>
 
-      <div class="column" ng-if="$ctrl.displayRegulatoryInformation">
-        <div class="section regulatory-information" ng-if="!$ctrl.org.techSupportOrganisation && !($ctrl.org.entityType === 7)">
-          <h4 class="section-header">Regulatory information</h4>
-          <mp-field label="'Registered with the housing regulator'">{{$ctrl.org.regulated ? 'Yes' : 'No'}}</mp-field>
-          <mp-field label="'Viability score'">{{$ctrl.org.viability}}</mp-field>
-          <mp-field label="'Governance score'">{{$ctrl.org.governance}}</mp-field>
-        </div>
-
-        <div class="section business-details" ng-if="$ctrl.org.entityType === 7">
-          <div class="section-header">Business details</div>
-          <mp-field label="'Company code'">{{$ctrl.org.companyCode}}</mp-field>
-          <mp-field label="'VAT number'">{{$ctrl.org.vatNumber}}</mp-field>
-          <mp-field label="'Sort Code'">{{$ctrl.formatSortCode}}</mp-field>
-          <mp-field label="'Bank Account'">{{$ctrl.org.bankAccount}}</mp-field>
-        </div>
-      </div>
-
-    </multi-panel>
+    </gla-multi-panel>
 
     <div class="row text-center" ng-if="!$ctrl.collapsedSections.details" permission permission-only="'org.manage.approve'">
       <div class="no-padding"
            ng-class="{'col-sm-6 text-sm-right': $ctrl.org.status === 'Pending', 'col-sm-12': $ctrl.org.status === 'Inactive'}"
-           ng-if="$ctrl.org.status === 'Pending' || $ctrl.org.status === 'Inactive'">
+           ng-if="$ctrl.canApprove()">
         <button class="btn btn-primary mtop15 approve-organisation" ng-click="$ctrl.approveOrg()">APPROVE</button>
       </div>
       <div class="col-sm-6 text-sm-left no-padding" ng-if="$ctrl.org.status === 'Pending'">
@@ -103,31 +115,46 @@
 
 
     <section-header2 collapsed="$ctrl.collapsedSections.governance" on-collapse-change="$ctrl.onCollapseChange()">GLA governance</section-header2>
-    <multi-panel editable="$ctrl.editableGovernance" on-edit="$ctrl.edit('governance')" ng-if="!$ctrl.collapsedSections.governance" id="governance-section">
-      <div class="governance-section">
+    <gla-multi-panel [editable]="$ctrl.editableGovernance" (on-edit)="$ctrl.edit('governance')" ng-if="!$ctrl.collapsedSections.governance" id="governance-section">
+      <div class="one-column-section governance-section">
         <div class="section">
-          <mp-field label="'Organisation type'" id="organisation-type">{{$ctrl.organisationTypes[$ctrl.org.entityType]}}</mp-field>
-          <mp-field label="'UKPRN'" ng-if="$ctrl.isLearningProvider">{{$ctrl.org.ukprn}}</mp-field>
-          <mp-field ng-if="$ctrl.imsNumberLabel" label="$ctrl.imsNumberLabel">{{$ctrl.org.imsNumber}}</mp-field>
           <mp-field id="managing-organisation" label="'Managing organisation'">
             {{$ctrl.org.managingOrganisationName}}
-            <img alt="{{$ctrl.org.managingOrganisationName}}" class="selected-org-icon managing-org-icon" ng-if="$ctrl.org.managingOrganisationIconAttachmentId" ng-src="/api/v1/file/{{$ctrl.org.managingOrganisationIconAttachmentId}}"/>
+            <img alt="" class="selected-org-icon managing-org-icon" ng-if="$ctrl.org.managingOrganisationIconAttachmentId" ng-src="/api/v1/file/{{$ctrl.org.managingOrganisationIconAttachmentId}}"/>
           </mp-field>
           <mp-field label="'Parent organisation ID for reporting purposes (optional)'" id="parent-organisation"
                     ng-if="$ctrl.displayParentOrganisation">
             {{$ctrl.org.parentOrganisationName}}
           </mp-field>
-          <mp-field label="'SAP ID'" ng-if="$ctrl.displaySapId" id="sap-id">{{$ctrl.org.sapVendorId}}</mp-field>
+          <mp-field label="'SAP ID'" ng-if="$ctrl.displaySapId" id="sap-id">
+            <div ng-repeat="sapIdModel in $ctrl.org.sapIds | orderBy:createdOn">
+              {{sapIdModel.sapId}}{{sapIdModel.description ? ' - ' : ''}}{{sapIdModel.description}}{{sapIdModel.defaultSapId ? ' (Default)' : ''}}
+            </div>
+          </mp-field>
           <mp-field label="'Team'" ng-if="$ctrl.displayTeam" id="team">{{$ctrl.org.team.name}}</mp-field>
           <mp-field label="'GLA Contact'" ng-if="$ctrl.displayGLAContact" id="gla-contact">{{$ctrl.org.glaContactFullName}}</mp-field>
           <mp-field label="'Allow new organisation registrations'" ng-if="$ctrl.displayAllowRegistrations" id="allow-registrations">{{$ctrl.org.registrationAllowed ? 'Allowed' : 'Not allowed'}}</mp-field>
           <mp-field label="'Access to Skills gateway'" ng-if="$ctrl.displayAccessToSGW" id="allow-skills-gateway-access">{{$ctrl.org.skillsGatewayAccessAllowed ? 'Allowed' : 'Not allowed'}}</mp-field>
         </div>
       </div>
-    </multi-panel>
+    </gla-multi-panel>
   </div>
 
-  <div class="org-programmes">
+  <div class="team-members" ng-if="$ctrl.isTeamOrganisation">
+    <div>
+    <section-header2 collapsed="$ctrl.collapsedSections.teamMembers"
+                     on-collapse-change="$ctrl.onCollapseChange()">Team members ({{$ctrl.org.users.length}})
+
+    </section-header2>
+
+    </div>
+    <gla-team-members ng-if="!$ctrl.collapsedSections.teamMembers"
+                      [org]="$ctrl.org"
+                      refresh-details="$ctrl.refreshDetails()">
+    </gla-team-members>
+  </div>
+
+  <div class="org-programmes" ng-if="!$ctrl.isTeamOrganisation">
     <section-header2 subheader="Displaying programmes where the organisation has projects"
                      collapsed="$ctrl.collapsedSections.programmes"
                      on-collapse-change="$ctrl.onCollapseChange()">Programmes ({{$ctrl.org.programmes.length}})</section-header2>
@@ -136,9 +163,10 @@
     </programmes-list>
   </div>
 
-  <div class="org-contracts">
-    <section-header2 subheader="Payments cannot be authorised for projects unless the relevant contract has been signed"
+  <div class="org-contracts" ng-if="!$ctrl.isTeamOrganisation">
+    <section-header2 subheader="Some types of project may require confirmation in OPS that an agreed contract is in place before they are able to proceed to approval and/or payment authorisation. This excludes variations."
                      collapsed="$ctrl.collapsedSections.contracts"
+                     id="org-contracts-section-header"
                      on-collapse-change="$ctrl.onCollapseChange()">Contracts ({{$ctrl.org.contracts.length}})</section-header2>
 
     <contracts-list ng-if="!$ctrl.collapsedSections.contracts" org="$ctrl.org" refresh-details="$ctrl.refreshDetails()">
@@ -152,7 +180,7 @@
     </recoverable-grant>
   </div>
 
-  <div class="org-users" ng-if="$ctrl.showUsers">
+  <div class="org-registrations" ng-if="$ctrl.displayRegistration">
     <section-header2>Registrations</section-header2>
     <div class="section-subheader">
       Access registration details via the <a href ui-sref="users">All users</a> page

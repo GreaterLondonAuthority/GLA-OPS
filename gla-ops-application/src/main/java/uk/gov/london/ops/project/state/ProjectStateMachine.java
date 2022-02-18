@@ -7,31 +7,20 @@
  */
 package uk.gov.london.ops.project.state;
 
-import static uk.gov.london.ops.project.ProjectHistory.Transition.AbandonRejected;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.AbandonRequested;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Abandoned;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.ApprovalRequested;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Approved;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Assess;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Closed;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Completed;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.PaymentAuthorisationRequested;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Resubmitted;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Returned;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Submitted;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Withdrawn;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.UNAPPROVED;
-import static uk.gov.london.ops.project.state.ProjectStatus.Active;
+import uk.gov.london.common.CSVFile;
+import uk.gov.london.ops.project.Project;
+import uk.gov.london.ops.project.ProjectTransition;
+import uk.gov.london.ops.project.block.NamedProjectBlock;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import uk.gov.london.common.CSVFile;
-import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.ProjectHistory;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
+
+import static uk.gov.london.ops.project.ProjectTransition.*;
+import static uk.gov.london.ops.project.block.ProjectBlockStatus.UNAPPROVED;
+import static uk.gov.london.ops.project.state.ProjectStatus.Active;
 
 /**
  * State machine for GLA OPS projects.
@@ -123,7 +112,7 @@ public abstract class ProjectStateMachine {
                 .findFirst().orElse(null);
     }
 
-    public ProjectHistory.Transition getProjectHistoryTransition(ProjectState current, ProjectState target) {
+    public ProjectTransition getProjectHistoryTransition(ProjectState current, ProjectState target) {
         if (ProjectStatus.Draft.equals(target.getStatusType()) && ProjectStatus.Submitted.equals(current.getStatusType())) {
             return Withdrawn;
         }
@@ -187,15 +176,15 @@ public abstract class ProjectStateMachine {
         return null;
     }
 
-    public String getProjectHistoryDescription(Project project, ProjectHistory.Transition historyTransition) {
+    public String getProjectHistoryDescription(Project project, ProjectTransition historyTransition) {
         String historyDescription = null;
-        if (ProjectHistory.Transition.ApprovalRequested.equals(historyTransition)) {
+        if (ProjectTransition.ApprovalRequested.equals(historyTransition)) {
             historyDescription = "Approval requested for unapproved blocks " + unapprovedBlockDisplayNames(project);
         }
-        if (ProjectHistory.Transition.Returned.equals(historyTransition) && project.getStatusType().equals(Active)) {
+        if (ProjectTransition.Returned.equals(historyTransition) && project.getStatusType().equals(Active)) {
             historyDescription = "Returned to organisation";
         }
-        if (ProjectHistory.Transition.Approved.equals(historyTransition) && !project.getStateModel().isApprovalRequired()) {
+        if (ProjectTransition.Approved.equals(historyTransition) && !project.getStateModel().isApprovalRequired()) {
             historyDescription = "Project saved to active";
         }
         return historyDescription;

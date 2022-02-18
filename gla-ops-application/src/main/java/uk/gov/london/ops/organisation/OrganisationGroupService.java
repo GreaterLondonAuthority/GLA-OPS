@@ -7,39 +7,26 @@
  */
 package uk.gov.london.ops.organisation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import uk.gov.london.common.CSVFile;
-import uk.gov.london.ops.domain.importdata.ImportJobType;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.framework.exception.NotFoundException;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.organisation.implementation.repository.OrganisationGroupRepository;
-import uk.gov.london.ops.organisation.implementation.repository.OrganisationRepository;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.organisation.model.OrganisationGroup;
+import uk.gov.london.ops.programme.ProgrammeDetailsSummary;
 import uk.gov.london.ops.programme.ProgrammeService;
-import uk.gov.london.ops.programme.domain.Programme;
 import uk.gov.london.ops.project.ProjectService;
-import uk.gov.london.ops.service.ImportLogService;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.UserServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class OrganisationGroupService {
-
-    public static final String ORG_NAME = "Name for consortium or partnership";
-    public static final String PROGRAMME = "Programme";
-    public static final String ORG_GROUP_TYPE = "Agreement type";
-    public static final String LEAD_ORG = "Lead organisation OPS code";
-    public static final String DEV_ORGS = "Developing organisation OPS code";
 
     @Autowired
     OrganisationGroupRepository organisationGroupRepository;
@@ -48,33 +35,37 @@ public class OrganisationGroupService {
     ProjectService projectService;
 
     @Autowired
-    OrganisationRepository organisationRepository;
-
-    @Autowired
-    OrganisationService organisationService;
+    OrganisationServiceImpl organisationService;
 
     @Autowired
     ProgrammeService programmeService;
 
     @Autowired
-    UserService userService;
-
-    @Autowired
-    ImportLogService importLogService;
-
-    Logger log = LoggerFactory.getLogger(getClass());
-
-    public List<OrganisationGroup> getAllOrganisationGroups() {
-       return organisationGroupRepository.findAll();
-    }
+    UserServiceImpl userService;
 
     public List<OrganisationGroup> findAll() {
-        User currentUser = userService.currentUser();
+        List<OrganisationGroup> groups;
+        UserEntity currentUser = userService.currentUser();
         if (currentUser.isGla()) {
-            return filterGroupsThatGLAUserCanAccess(currentUser);
+            groups = filterGroupsThatGLAUserCanAccess(currentUser);
         } else {
             List<OrganisationGroup> allGroups = organisationGroupRepository.findAll();
-            return filterGroupsThatUserCanAccess(currentUser, allGroups);
+            groups = filterGroupsThatUserCanAccess(currentUser, allGroups);
+        }
+        enrich(groups);
+        return groups;
+    }
+
+    private void enrich(List<OrganisationGroup> groups) {
+        for (OrganisationGroup group: groups) {
+            enrich(group);
+        }
+    }
+
+    private void enrich(OrganisationGroup group) {
+        if (group.getProgrammeId() != null) {
+            ProgrammeDetailsSummary programme = programmeService.getProgrammeDetailsSummary(group.getProgrammeId());
+            group.setProgramme(programme);
         }
     }
 
@@ -87,26 +78,26 @@ public class OrganisationGroupService {
     }
 
     public List<OrganisationGroup> findAllByName(String name) {
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
         List<OrganisationGroup> allGroups = organisationGroupRepository.findAllByName(name).stream().collect(Collectors.toList());
         return filterGroupsThatUserCanAccess(currentUser, allGroups);
     }
 
-    private List<OrganisationGroup> filterGroupsThatGLAUserCanAccess(User user) {
-        List<Organisation> manOrganisations = user.getOrganisations()
+    private List<OrganisationGroup> filterGroupsThatGLAUserCanAccess(UserEntity user) {
+        List<OrganisationEntity> manOrganisations = user.getOrganisations()
                 .stream()
-                .filter(organisation -> organisation.isManagingOrganisation())
+                .filter(organisation -> organisation.isManaging())
                 .collect(Collectors.toList());
 
         List<OrganisationGroup> orgGroups = new ArrayList<>();
-        for (Organisation org : manOrganisations) {
+        for (OrganisationEntity org : manOrganisations) {
             orgGroups.addAll(organisationGroupRepository.findAllByManagingOrganisation(org));
         }
 
         return orgGroups;
     }
 
-    private List<OrganisationGroup> filterGroupsThatUserCanAccess(User user, List<OrganisationGroup> groups) {
+    private List<OrganisationGroup> filterGroupsThatUserCanAccess(UserEntity user, List<OrganisationGroup> groups) {
         return groups.stream().filter(organisationGroup -> userHasAccess(user, organisationGroup)).collect(Collectors.toList());
     }
 
@@ -117,23 +108,25 @@ public class OrganisationGroupService {
             throw new NotFoundException();
         }
 
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
         if (!userHasAccess(currentUser, organisationGroup)) {
             throw new ForbiddenAccessException();
         }
 
+        enrich(organisationGroup);
+
         return organisationGroup;
     }
 
-    private boolean userHasAccess(User user, OrganisationGroup group) {
+    private boolean userHasAccess(UserEntity user, OrganisationGroup group) {
         return user.isGla() || CollectionUtils.containsAny(user.getOrganisations(), group.getOrganisations());
     }
 
     public Set<OrganisationGroup> getOrganisationGroupsByProgrammeAndOrganisation(Integer programmeId, Integer organisationId) {
         Set<OrganisationGroup> groups = new HashSet<>();
         groups.addAll(organisationGroupRepository.findAllByTypeAndProgrammeIdAndLeadOrganisationId(
-                                                  OrganisationGroup.Type.Consortium, programmeId, organisationId));
-        groups.addAll(organisationGroupRepository.findAllByTypeAndProgrammeIdAndOrganisations(OrganisationGroup.Type.Partnership,
+                                                  OrganisationGroupType.Consortium, programmeId, organisationId));
+        groups.addAll(organisationGroupRepository.findAllByTypeAndProgrammeIdAndOrganisations(OrganisationGroupType.Partnership,
                                                   programmeId, organisationService.findOne(organisationId)));
         return groups;
     }
@@ -153,10 +146,10 @@ public class OrganisationGroupService {
         }
 
         // set managing org to programme managing org
-        if (group.getProgramme() != null) {
+        if (group.getProgrammeId() != null) {
             // get real programme as Programme from project may be skeleton from UI
-            Programme programme = programmeService.find(group.getProgramme().getId());
-            Organisation managingOrganisation = programme.getManagingOrganisation();
+            ProgrammeDetailsSummary programme = programmeService.getProgrammeDetailsSummary(group.getProgrammeId());
+            OrganisationEntity managingOrganisation = organisationService.findOne(programme.getManagingOrganisationId());
             group.setManagingOrganisation(managingOrganisation);
         }
         group.getAllOrganisationIds().forEach(this::validateForConsortiumCreation);
@@ -167,12 +160,12 @@ public class OrganisationGroupService {
     public OrganisationGroup update(Integer id, OrganisationGroup updated) {
         OrganisationGroup existing = find(id);
 
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
         if (!currentUser.isOrgAdmin(existing.getLeadOrganisation())) {
             throw new ValidationException("current user is not org admin of the lead organisation!");
         }
 
-        if (!Objects.equals(existing.getProgramme(), updated.getProgramme())) {
+        if (!Objects.equals(existing.getProgrammeId(), updated.getProgrammeId())) {
             throw new ValidationException("cannot change organisation group programme!");
         }
 
@@ -180,9 +173,9 @@ public class OrganisationGroupService {
             throw new ValidationException("cannot change organisation group lead!");
         }
 
-        Set<Organisation> deletedMembers = new HashSet<>(existing.getOrganisations());
+        Set<OrganisationEntity> deletedMembers = new HashSet<>(existing.getOrganisations());
         deletedMembers.removeAll(updated.getOrganisations());
-        for (Organisation org: getGroupOrganisationsInProjects(id)) {
+        for (OrganisationEntity org: getGroupOrganisationsInProjects(id)) {
             if (deletedMembers.contains(org)) {
                 throw new ValidationException("cannot delete member used in project!");
             }
@@ -195,8 +188,8 @@ public class OrganisationGroupService {
         validateForConsortiumCreation(organisationService.findOne(organisationId));
     }
 
-    public void validateForConsortiumCreation(Organisation organisation) {
-        if (organisation.isManagingOrganisation()) {
+    public void validateForConsortiumCreation(OrganisationEntity organisation) {
+        if (organisation.isManaging()) {
             throw new ValidationException("GLA cannot be part of a consortium or partnership");
         }
 
@@ -212,115 +205,11 @@ public class OrganisationGroupService {
     /**
      * @return a list of organisations which have created or are developers of projects within the given organisation group.
      */
-    public List<Organisation> getGroupOrganisationsInProjects(Integer groupId) {
+    public List<OrganisationEntity> getGroupOrganisationsInProjects(Integer groupId) {
         OrganisationGroup group = find(groupId);
         return group.getOrganisations().stream()
                 .filter(org -> !CollectionUtils.isEmpty(projectService.findAllByGroupAndOrganisation(groupId, org.getId())))
                 .collect(Collectors.toList());
     }
 
-    public int importOrganisationGroups(CSVFile csvFile, int maxRows) {
-        int importCount = 0;
-
-        while (csvFile.nextRow()) {
-            if (++importCount > maxRows) {
-                log.warn("Aborting import after {} rows", (importCount - 1));
-                break;
-            }
-
-            try {
-                String programmeName = csvFile.getString(PROGRAMME);
-                Programme programme = programmeService.findByName(programmeName);
-                if (programme == null) {
-                    importLogService.recordError(ImportJobType.ORGANISATION_GROUP_IMPORT,
-                            "Unable to find programme with name: " + programmeName, csvFile.getRowIndex(),
-                            csvFile.getCurrentRowSource());
-                    continue;
-                }
-
-                String orgName = csvFile.getString(ORG_NAME);
-
-                Set<OrganisationGroup> allOrgs = organisationGroupRepository.findAllByName(orgName);
-
-
-
-                boolean failed = false;
-                for (OrganisationGroup allOrg : allOrgs) {
-                    if (allOrg.getProgramme().equals(programme)) {
-                        importLogService.recordError(ImportJobType.ORGANISATION_GROUP_IMPORT,
-                                "Consortium " + orgName + " already exists for this programme " + programmeName,
-                                csvFile.getRowIndex(), csvFile.getCurrentRowSource());
-                        failed  = true;
-                    }
-                }
-                if (failed) {
-                    continue;
-                }
-
-                OrganisationGroup group = new OrganisationGroup();
-                group.setName(csvFile.getString(ORG_NAME));
-                group.setProgramme(programme);
-                group.setManagingOrganisation(programme.getManagingOrganisation());
-                String leadOrdId = csvFile.getString(LEAD_ORG);
-                Organisation leadOrg = findSingleByImsNumber(leadOrdId, csvFile);
-
-                if (leadOrg == null) {
-                    importLogService.recordError(ImportJobType.ORGANISATION_GROUP_IMPORT,
-                            "Consortium Lead Org not found" + leadOrdId, csvFile.getRowIndex(),
-                            csvFile.getCurrentRowSource());
-                    continue;
-                }
-
-                group.setLeadOrganisationId(leadOrg.getId());
-
-                group.setType(OrganisationGroup.Type.valueOf(csvFile.getString(ORG_GROUP_TYPE)));
-
-                String devOrgs = csvFile.getString(DEV_ORGS);
-                String[] split = devOrgs.split("\\,");
-                group.setOrganisations(new HashSet<>());
-                group.getOrganisations().add(leadOrg);
-                for (String devOrg : split) {
-                    Organisation devOrganisation = this.findSingleByImsNumber(devOrg, csvFile);
-                    if (devOrganisation != null) {
-                        group.getOrganisations().add(devOrganisation);
-                    }
-                }
-
-                if ((split.length + 1) == group.getOrganisations().size()) {
-                    organisationGroupRepository.save(group);
-                } else {
-                    importLogService.recordError(ImportJobType.ORGANISATION_GROUP_IMPORT,
-                            "Not all dev orgs were found for consortium: " + group.getName(), csvFile.getRowIndex(),
-                            csvFile.getCurrentRowSource());
-                }
-            } catch (Exception e) {
-                log.error("Error in import Consortium import:  " + e.getMessage(), e);
-                try {
-                    importLogService.recordError(ImportJobType.ORGANISATION_GROUP_IMPORT, "Error: " + e.getMessage(),
-                            csvFile.getRowIndex(), csvFile.getCurrentRowSource());
-                } catch (IOException e1) {
-                    log.error("Error with writing CSV details during error logging:  " + e.getMessage());
-                }
-            }
-        }
-        return importCount;
-    }
-
-    private Organisation findSingleByImsNumber(String imsNumber, CSVFile csvFile) throws IOException {
-        Set<Organisation> allByImsNumber = organisationRepository.findAllByImsNumber(imsNumber.trim());
-
-        if (allByImsNumber == null || allByImsNumber.isEmpty()) {
-            importLogService.recordError(ImportJobType.ORGANISATION_GROUP_IMPORT,
-                    "Organisation with code: "  +  imsNumber + " not found ", csvFile.getRowIndex(),
-                    csvFile.getCurrentRowSource());
-        } else if (allByImsNumber.size() > 1) {
-            importLogService.recordError(ImportJobType.ORGANISATION_GROUP_IMPORT,
-                    "More than one organisation with code: "  +  imsNumber + " found ", csvFile.getRowIndex(),
-                    csvFile.getCurrentRowSource());
-        } else {
-            return allByImsNumber.iterator().next();
-        }
-        return null;
-    }
 }
-

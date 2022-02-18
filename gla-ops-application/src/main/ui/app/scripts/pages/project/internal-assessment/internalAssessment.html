@@ -10,11 +10,11 @@
 
 
   <div class="row no-gutter">
-    <div class="col-xs-12" ng-show="$ctrl.block.assessmentsForDisplay.length == 0">
+    <div class="col-xs-12" ng-show="$ctrl.assessments.length == 0">
       No assessments have been created
     </div>
 
-    <div class="col-xs-12 table-responsive" ng-show="$ctrl.block.assessmentsForDisplay.length > 0">
+    <div class="col-xs-12 table-responsive" ng-show="$ctrl.assessments.length > 0">
       <table class="table table-hover table-bordered table-striped table-selectable-row assessments-table">
         <thead class="thead-inverse uppercase">
         <tr>
@@ -31,10 +31,10 @@
 
         <tr allow-enter ng-click="$ctrl.goToAssessmentPage(assessment)"
             tabindex="0"
-            ng-repeat="assessment in $ctrl.block.assessmentsForDisplay">
-          <td>{{assessment.creatorName}}</td>
-          <td>{{assessment.usersPrimaryOrganisationName}}</td>
-          <td>{{assessment.assessmentTemplateName}}</td>
+            ng-repeat="assessment in $ctrl.assessments">
+          <td>{{assessment.creator}}</td>
+          <td>{{assessment.usersPrimaryOrganisation}}</td>
+          <td>{{assessment.assessmentTemplate}}</td>
           <td>{{assessment.createdOn | date: 'dd/MM/yyyy'}}</td>
           <td>{{assessment.modifiedOn | date: 'dd/MM/yyyy'}}</td>
           <td>{{$ctrl.getProjectStatus(assessment)}}</td>

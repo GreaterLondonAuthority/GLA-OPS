@@ -18,26 +18,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.london.ops.domain.metadata.MetaDataSummary;
 import uk.gov.london.ops.service.MetaDataService;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.User;
+
+import static uk.gov.london.ops.user.UserUtils.currentUser;
 
 @RestController
 @RequestMapping("/api/v1")
-@Api(description="meta data that is user specific and changes over time")
+@Api("meta data that is user specific and changes over time")
 public class MetaDataAPI {
 
     @Autowired
     MetaDataService metaDataService;
 
-    @Autowired
-    UserService userService;
-
     @RequestMapping(value = "/metadata/", method = RequestMethod.GET)
     @ApiOperation(value = "get user meta data", notes = "currently only returns unread notification count")
     public @ResponseBody
     ResponseEntity<MetaDataSummary>  getMetaDataSummary() {
-
-        User currentUser = userService.currentUser();
+        User currentUser = currentUser();
         if (currentUser == null) {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }

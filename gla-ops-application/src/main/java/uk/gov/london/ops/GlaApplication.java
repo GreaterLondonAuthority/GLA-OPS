@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -20,7 +19,6 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.integration.jdbc.lock.DefaultLockRepository;
@@ -69,30 +67,6 @@ public class GlaApplication extends SpringBootServletInitializer {
         DefaultLockRepository repo = new DefaultLockRepository(ds);
         repo.afterPropertiesSet();
         return new JdbcLockRegistry(repo);
-    }
-
-    @Bean(name = "mappingProperties")
-    public static PropertiesFactoryBean mapper() {
-        PropertiesFactoryBean bean = new PropertiesFactoryBean();
-        bean.setLocation(new ClassPathResource(
-                "uk/gov/london/ops/report/simple_data_export_mappings.properties"));
-        return bean;
-    }
-
-    @Bean(name = "boroughReportMappingProperties")
-    public static PropertiesFactoryBean boroughHeaderMapper() {
-        PropertiesFactoryBean bean = new PropertiesFactoryBean();
-        bean.setLocation(new ClassPathResource(
-                "uk/gov/london/ops/report/borough_report_header_mappings.properties"));
-        return bean;
-    }
-
-    @Bean(name = "milestoneSummaryReport")
-    public static PropertiesFactoryBean milestoneReportMapper() {
-        PropertiesFactoryBean bean = new PropertiesFactoryBean();
-        bean.setLocation(new ClassPathResource(
-                "uk/gov/london/ops/report/milestone_summary_report.properties"));
-        return bean;
     }
 
     @Bean

@@ -1,0 +1,42 @@
+<div class="template-block-funding-source expandableTable form-group">
+  <label for="funding-sources">Funding sources</label>
+
+  <div class="text-right" style="padding-bottom: 10px">
+    <button class="btn btn-secondary" (click)="showFundingSourceModal()" *ngIf="!readOnly && editable">
+      ADD FUNDING SOURCE <b>+</b>
+    </button>
+  </div>
+
+  <div id="funding-sources" class="table-responsive">
+    <div class="table-responsive">
+      <div *ngIf="!fundingSources.length" class="empty-table">Not provided</div>
+      <table *ngIf="fundingSources.length" class="table table-hover table-bordered table-default table-with-inputs" id="template-block-funding-source-table">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>Funding source name</th>
+          <th>Funder name required</th>
+          <th>Funding description required</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr class="bolder" *ngIf="!fundingSources.length">
+          <td colspan="4">Not provided</td>
+        </tr>
+        <ng-container *ngFor="let source of fundingSources">
+        <tr (click)="!readOnly && editable && showFundingSourceModal(source)" [ngClass]="{'cursor-pointer': !readOnly && editable}" >
+          <td class="funding-source">{{source.fundingSource}}</td>
+          <td class="funder-name">{{source.showFunderName}}</td>
+          <td class="description">{{source.showDescription}}</td>
+          <td class="delete-btn-container" >
+            <delete-button (click)="deleteFundingSource(source); $event.stopPropagation()"  *ngIf="!readOnly && editable"></delete-button>
+          </td>
+        </tr>
+        </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

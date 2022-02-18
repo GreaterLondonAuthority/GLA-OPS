@@ -10,9 +10,11 @@ package uk.gov.london.ops.web.api
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.london.common.user.BaseRole.*;
 import uk.gov.london.ops.service.DashboardService
 import uk.gov.london.ops.service.GCData
 
@@ -25,6 +27,7 @@ class DashboardAPI @Autowired constructor(val service: DashboardService) {
     @ApiOperation(value = "returns a map of dashboard metrics")
     fun getMetrics(): Map<String, Int> = service.getMetricsForCurrentUser()
 
+    @Secured(OPS_ADMIN, TECH_ADMIN)
     @RequestMapping(value = ["/dashboard/gc"], method = [RequestMethod.GET])
     fun getGCData(): GCData = service.getGCData()
 

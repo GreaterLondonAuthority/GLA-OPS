@@ -1,0 +1,157 @@
+<div class="template-block-learning-grant">
+
+  <div class="form-group">
+    <label for="evidence-requirement">Allocation Profile</label>
+    <select [(ngModel)]="block.profileAllocationType"
+            [ngClass]="{placeholder: !block.evidenceRequirement}"
+            [disabled]="readOnly || !editable"
+            class="form-control"
+            id="evidence-requirement">
+      <option disabled value="undefined">Allocation Profile</option>
+      <option *ngFor="let allocationProfile of allocationProfileOptions" [ngValue]="allocationProfile.id">{{allocationProfile.label}}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="start-year">Start year</label>
+    <input [(ngModel)]="block.startYear"
+           id="start-year"
+           aria-label="Start year"
+           name="startYear"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="text"
+           maxlength="4">
+  </div>
+
+  <div class="form-group">
+    <label for="number-of-years">Number of years</label>
+    <input [(ngModel)]="block.numberOfYears"
+           id="number-of-years"
+           aria-label="Number of years"
+           name="numberOfYears"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="text"
+           maxlength="2">
+  </div>
+
+  <div class="form-group">
+    <label for="can-manually-claim-P14">P14 can be claimed manually for year-end reconciliation (AEB Grant)&nbsp;</label>
+    <gla-yes-no-input id="can-manually-claim-P14"
+                      [disabled]="readOnly || !editable"
+                      name="canManuallyClaimP14"
+                      mode="bool"
+                      [(model)]="block.canManuallyClaimP14">
+    </gla-yes-no-input>
+  </div>
+
+  <div class="form-group">
+    <label for="grant-type">Skills project type</label>
+    <select class="form-control"
+            id="grant-type"
+            name="grantType"
+            [(ngModel)]="block.grantType"
+            [disabled]="readOnly || !editable"
+            required
+            style-placeholder="">
+      <option disabled value="undefined">Grant type</option>
+      <option *ngFor="let grantType of ['AEB_GRANT', 'AEB_PROCURED', 'AEB_LEARNER_SUPPORT', 'AEB_NSCT']" [ngValue]="grantType">{{grantType}}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label class="mtop10 mbottom10" for="allocation-types">'Of which' categories</label>
+    <div *ngIf="!readOnly && editable">
+      <gla-multi-select id="allocation-types"
+                        (onChange)="onAllocationTypeMultiSelectChange($event, allocationTypesOptions)"
+                        [filterDropdownItems]="allocationTypesOptions"></gla-multi-select>
+    </div>
+    <div *ngIf="readOnly || !editable">{{block.allocationTypes || 'Not provided'}}</div>
+  </div>
+
+  <hr/>
+  <div class="text-center bolder mtop5">Learning Grant table columns</div>
+  <div class="text-center mbottom15">default column names will be used if not amended</div>
+
+  <div class="form-group" *ngIf="!draft && editable">
+    <p align="right">
+      <button role="button" id="command-edit-labels" (click)="showLearningGrantLabelsModal()"
+              class="btn btn-primary btn-edit">EDIT COLUMN LABELS
+      </button>
+    </p>
+  </div>
+
+  <div class="form-group">
+    <label for="profile-title">Profile column label</label>
+    <input [(ngModel)]="block.profileTitle"
+           id="profile-title"
+           aria-label="Profile column label"
+           name="profileTitle"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="text"
+           maxlength="50">
+  </div>
+
+  <div class="form-group">
+    <label for="allocation-title">Allocation column label</label>
+    <input [(ngModel)]="block.allocationTitle"
+           id="allocation-title"
+           aria-label="Allocation column label"
+           name="allocationTitle"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="text"
+           maxlength="50">
+  </div>
+
+  <div class="form-group">
+    <label for="cumulative-allocation-title">Cumulative allocation column label</label>
+    <input [(ngModel)]="block.cumulativeAllocationTitle"
+           id="cumulative-allocation-title"
+           aria-label="Cumulative allocation column label"
+           name="cumulativeAllocationTitle"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="text"
+           maxlength="50">
+  </div>
+
+  <div class="form-group">
+    <label for="cumulative-earnings-title">Cumulative earnings column label</label>
+    <input [(ngModel)]="block.cumulativeEarningsTitle"
+           id="cumulative-earnings-title"
+           aria-label="Cumulative earnings column label"
+           name="cumulativeEarningsTitle"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="text"
+           maxlength="50">
+  </div>
+
+  <div class="form-group">
+    <label for="cumulative-payment-title">Cumulative payment column label</label>
+    <input [(ngModel)]="block.cumulativePaymentTitle"
+           id="cumulative-payment-title"
+           aria-label="Cumulative payment column label"
+           name="cumulativePaymentTitle"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="text"
+           maxlength="50">
+  </div>
+
+  <div class="form-group">
+    <label for="payment-due-title">Payment due column label</label>
+    <input [(ngModel)]="block.paymentDueTitle"
+           id="payment-due-title"
+           aria-label="Payment due column label"
+           name="paymentDueTitle"
+           [disabled]="readOnly || !editable"
+           class="form-control"
+           type="text"
+           maxlength="50">
+  </div>
+
+</div>

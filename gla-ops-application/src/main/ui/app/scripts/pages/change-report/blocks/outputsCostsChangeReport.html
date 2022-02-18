@@ -12,11 +12,11 @@
                        formats="'currency'"
                        class="next-to-tables"></change-report-field>
 
-  <change-report-table
-    rows="$ctrl.outputsCostsToCompare"
-    fields="$ctrl.outputsCostsFields"
-    changes="$ctrl.data.changes"
-    show-table-separators="$ctrl.data.right">
-  </change-report-table>
+  <gla-change-report-table
+    [rows]="$ctrl.outputsCostsToCompare"
+    [fields]="$ctrl.outputsCostsFields"
+    [changes]="$ctrl.data.changes"
+    [show-table-separators]="$ctrl.data.right">
+  </gla-change-report-table>
 
 </div>

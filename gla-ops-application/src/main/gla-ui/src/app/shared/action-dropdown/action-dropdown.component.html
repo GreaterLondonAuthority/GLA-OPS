@@ -1,0 +1,10 @@
+<div id="command" class="btn-group filter-dropdown" ngbDropdown>
+    <button class="btn btn-primary btn-edit filter-dropdown-button" role="button" (click)="$event.stopPropagation()" ngbDropdownToggle>{{toggleButtonText}}</button>
+    <ul class="dropdown-menu filter-dropdown" ngbDropdownMenu role="menu" aria-labelledby="filter-dropdown">
+        <li class="group-item"
+            *ngFor="let action of actionsList"
+            (click)="handleActionClick($event, action);$event.stopPropagation()">
+            <a href="JavaScript:void(0)">{{action.title}}</a>
+        </li>
+    </ul>
+</div>

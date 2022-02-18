@@ -1,0 +1,43 @@
+<label class="search-label" for="search-option">Search</label>
+<div class="input-group">
+  <div class="input-group-btn">
+    <select aria-label="Search option"
+            class="search-dropdown form-control allow-in-readonly"
+            id="search-option"
+            name="search-option"
+            [disabled]="options.length == 1 && selectedOption"
+            [(ngModel)]="selectedOption"
+            (ngModelChange)="select()"
+            required>
+      <option *ngFor="let searchOption of options" [ngValue]="searchOption">{{searchOption.description}}</option>
+    </select>
+  </div>
+  <div>
+    <label class="search-label search-input-label sr-only" for="search-input">Search Input</label>
+    <input [attr.type]="selectedOption.name == 'organisationId'? 'number' : 'text'"
+           id="search-input"
+           class="form-control search-input allow-in-readonly"
+           placeholder="{{selectedOption?.hint}}"
+           [(ngModel)]="searchText"
+           (keydown.enter)="search()"
+           (ngModelChange)="onChange()"
+           maxlength="{{selectedOption?.maxLength}}">
+  </div>
+  <span class="input-group-btn">
+    <button class="btn btn-primary search-button"
+            *ngIf="!showClearButton"
+            type="button"
+            aria-label="Search button"
+            (click)="search()"
+            [disabled]="!isSearchEnabled()">
+      <span class="glyphicon glyphicon-search"></span>
+    </button>
+    <button class="btn btn-primary clear-search-button"
+            *ngIf="showClearButton"
+            type="button"
+            aria-label="Search button"
+            (click)="clear()">
+      <span class="glyphicon glyphicon-remove"></span>
+    </button>
+  </span>
+</div>

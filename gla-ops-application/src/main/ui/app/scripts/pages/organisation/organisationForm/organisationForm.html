@@ -6,6 +6,13 @@
 
       <header-status ng-if="!$ctrl.isNew">
         <hs-left>Status: {{$ctrl.org.status}}</hs-left>
+
+        <hs-center class="gla-alert">
+          <div class="row" ng-if="$ctrl.isDeprecatedOrgType">
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+            <span>Help GLA OPS to prevent duplicate organisation records: edit your Organisation Details and change your Organisation Type to one of the new options (you may also be prompted to add a few further details). Note that 'Registered Provider' or 'Learning Provider' status, if applicable, is now confirmed in separate questions.</span>
+          </div>
+        </hs-center>
       </header-status>
     </div>
   </div>
@@ -25,188 +32,7 @@
       <section-header>Enter organisation information</section-header>
     </div>
 
-    <div class="col-xs-10 col-xs-offset-1 mtop20 mbottom15" ng-if="$ctrl.visibleSections.governance">
-      <h4 class="form-section-header">GLA Governance</h4>
-    </div>
-
-    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3" ng-if="$ctrl.visibleSections.governance">
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label for="orgType">{{$ctrl.labels.orgType}}</label>
-          <select class="form-control"
-                  id="orgType"
-                  name="orgType"
-                  ng-change="$ctrl.onEntityTypeChange()"
-                  ng-disabled="!$ctrl.canEditOrgType"
-                  ng-model="$ctrl.org.entityType"
-                  ng-options="id*1 as orgType for (id, orgType) in $ctrl.organisationTypes"
-                  required
-                  style-placeholder="">
-            <option disabled value="">Select organisation type</option>
-          </select>
-          <div class="error-wrapper" role="alert"
-               ng-show="(orgForm.$submitted || orgForm.orgType.$touched) && orgForm.orgType.$error.required">
-            <span class="error">Select organisation type</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-6 form-group" ng-if="$ctrl.isLearningProvider()">
-          <label for="ukprn">UKPRN (optional)</label>
-          <input id="ukprn" class="form-control"
-                 type="text"
-                 numbers-only
-                 name="ukprn"
-                 maxlength="8"
-                 ng-model="$ctrl.org.ukprn"
-                 ng-blur="$ctrl.countOccuranceOfUkprn($ctrl.org.ukprn)"/>
-        </div>
-        <span id="duplicate-ukprn" ng-if="$ctrl.org.ukprn.length && $ctrl.isUkprnNotValid()">UKPRN already in use by another provider. Please amend or contact GLA</span>
-      </div>
-
-      <div class="col-xs-12 form-group" ng-if="$ctrl.imsNumberLabel">
-        <label for="org-ims-number">{{$ctrl.imsNumberLabel}} (optional)</label>
-        <input id="org-ims-number" class="form-control"
-               type="text"
-               name="imsNumber"
-               maxlength="20"
-               ng-model="$ctrl.org.imsNumber"
-               ng-disabled="!$ctrl.user.isAdmin"/>
-      </div>
-
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label for="managingOrg">{{$ctrl.labels.managingOrg}}</label>
-          <select class="form-select-button form-control"
-                  id="managingOrg"
-                  name="managingOrg"
-                  ng-change="$ctrl.onManagingOrgSelect()"
-                  ng-disabled="!$ctrl.canEditManagingOrg"
-                  ng-model="$ctrl.org.managingOrganisationId"
-                  ng-options="item.id as item.name for item in $ctrl.managingOrganisations | filter:{registrationAllowed:true}"
-                  required
-                  style-placeholder="">
-            <option disabled value="">Select managing organisation</option>
-          </select>
-          <div class="error-wrapper" role="alert"
-               ng-show="(orgForm.$submitted || orgForm.managingOrg.$touched) && orgForm.managingOrg.$error.required">
-            <span class="error">Select managing organisation</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xs-12" ng-if="!$ctrl.isProfile">
-        <div class="form-group has-feedback">
-          <label for="parentOrgCode">Parent organisation ID for reporting purposes (optional)</label>
-          <div class="row">
-            <div class="col-sm-6 org-code-input">
-              <input id="parentOrgCode"
-                     type="text"
-                     name="parentOrgCode"
-                     aria-label="Parent Organisation Id"
-                     class="form-control"
-                     ng-minlength="3"
-                     ng-model="$ctrl.org.parentOrganisationId"
-                     placeholder="Parent organisation id"
-                     ng-change="$ctrl.checkOrgCode()"
-                     org-lookup="$ctrl.org.parentOrganisationName"
-                     autocomplete="off"
-                     ng-disabled="!$ctrl.canEditParentOrg"/>
-              <span ng-if="$ctrl.org.parentOrganisationName" class="glyphicon glyphicon-ok form-control-feedback"
-                    aria-hidden="true"></span>
-            </div>
-
-            <div class="col-sm-6 no-padding">
-              <div ng-if="$ctrl.org.parentOrganisationName" class="organisation-name mtop10">
-                {{$ctrl.org.parentOrganisationName}}
-              </div>
-            </div>
-          </div>
-          <div class="error-wrapper row" role="alert">
-            <span class="error" ng-if="$ctrl.org.parentOrganisationId.length > 2 && !$ctrl.org.parentOrganisationName">Organisation number not recognised</span>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-6" ng-if="!$ctrl.isProfile">
-          <div class="form-group">
-            <label for="org-sapVendorId">SAP ID (optional)</label>
-            <input id="org-sapVendorId" class="form-control"
-                   ng-disabled="!$ctrl.canEditSapId"
-                   type="text"
-                   name="sapVendorId"
-                   maxlength="20"
-                   ng-model="$ctrl.org.sapVendorId"/>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="col-xs-12 team-field" ng-if="!$ctrl.isProfile && !$ctrl.isManagingOrganisation">
-        <div class="form-group">
-          <label for="team">Team (optional)</label>
-          <select class="form-control"
-                  id="team"
-                  name="team"
-                  ng-disabled="!$ctrl.canEditTeam || !$ctrl.teams.length || $ctrl.loadingTeams"
-                  ng-model="$ctrl.org.team"
-                  ng-options="team as team.name for team in $ctrl.teams track by team.id">
-            <option value="">Select team</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row" ng-if="!$ctrl.isProfile">
-        <div class="col-xs-12">
-          <div class="form-group">
-            <label for="contact">GLA Contact (optional)</label>
-            <select class="form-control"
-                    id="contact"
-                    name="contact"
-                    ng-disabled="!$ctrl.contacts.length || $ctrl.loadingContacts || !$ctrl.canEditGlaContact"
-                    ng-model="$ctrl.org.contactEmail"
-                    ng-options="contact.username as contact.fullName for contact in $ctrl.contacts"
-                    style-placeholder="">
-              <option disabled value="">Select</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xs-12" ng-if="$ctrl.isManagingOrganisation">
-        <div class="form-group">
-          <div class="registration-allowed">
-            <label for="registration-allowed" class="pull-left">Allow new organisation registrations</label>
-            <input
-              id="registration-allowed"
-              ng-disabled="!$ctrl.canEditManagingOrg"
-              class="form-control pull-left"
-              type="checkbox"
-              name="enabled"
-              ng-model="$ctrl.org.registrationAllowed"/>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xs-12" ng-if="$ctrl.isManagingOrganisation">
-        <div class="form-group">
-          <div class="skills-gateway-access-allowed">
-            <label for="skills-gateway-access-allowed" class="pull-left">Access to Skills gateway</label>
-            <input
-              id="skills-gateway-access-allowed"
-              ng-disabled="!$ctrl.canEditManagingOrg"
-              class="form-control pull-left"
-              type="checkbox"
-              name="enabled"
-              ng-model="$ctrl.org.skillsGatewayAccessAllowed"/>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-
+<!--    ORGANISATION DETAILS-->
     <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15" ng-if="$ctrl.visibleSections.details">
       <hr ng-if="$ctrl.visibleSections.governance"/>
       <h4 class="form-section-header">Organisation Details</h4>
@@ -240,7 +66,7 @@
                  ng-model="$ctrl.org.name"
                  required
                  ng-blur="$ctrl.validateName($ctrl.org.name)"
-                 ng-disabled="!$ctrl.isProfile && !$ctrl.user.isAdmin || !$ctrl.org.managingOrganisationId "/>
+                 ng-disabled="!$ctrl.isProfile && !$ctrl.isGlaOrOpsAdmin && !$ctrl.canEditName"/>
           <div class="error-wrapper" role="alert"
                ng-show="(orgForm.$submitted || orgForm.name.$touched) && orgForm.name.$error.required">
             <span class="error">Enter the organisation name</span>
@@ -253,101 +79,18 @@
       </div>
 
       <div class="col-xs-12">
-        <div class="form-group" ng-if="$ctrl.isLegalStatusEnabled">
-          <label for="legalStatus">Legal status</label>
-          <select class="form-control"
-                  id="legalStatus"
-                  name="legalStatus"
-                  ng-change="$ctrl.onEntityTypeChange()"
-                  ng-model="$ctrl.org.legalStatus"
-                  ng-options="id as legalStatus for (id, legalStatus) in $ctrl.legalStatuses"
-                  required
-                  style-placeholder="">
-            <option disabled value="">Select legal status</option>
-          </select>
-          <div class="error-wrapper" role="alert"
-               ng-show="(orgForm.$submitted || orgForm.legalStatus.$touched) && orgForm.legalStatus.$error.required">
-            <span class="error">Select legal status</span>
+        <div>
+          <div class="form-group">
+            <label for="org-known-as">{{$ctrl.labels.knownAs}}</label>
+            <input id="org-known-as" class="form-control"
+                   type="text"
+                   name="knownAs"
+                   ng-model="$ctrl.org.knownAs"/>
           </div>
         </div>
       </div>
 
-      <div class="col-xs-12" ng-if="$ctrl.isManagingOrganisation && $ctrl.canEditManagingOrg">
-        <div class="form-group">
-          <label for="icon">Icon</label>
-          <select class="form-control"
-                  id="icon"
-                  name="icon"
-                  ng-model="$ctrl.org.iconAttachmentId"
-                  ng-options="icon.id as icon.fileName for icon in $ctrl.icons">
-            <option value="">Not provided</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="col-xs-12" ng-if="!$ctrl.isNew">
-        <div class="form-group">
-          <label for="org-registration-key">Registration key</label>
-          <input id="org-registration-key" class="form-control"
-                 type="text"
-                 name="regKey"
-                 ng-model="$ctrl.org.registrationKey"
-                 maxlength="30"
-                 required
-                 ng-pattern="'^[^\\s]{5,}$'"
-                 ng-blur="$ctrl.validateRegistrationKey($ctrl.org.registrationKey, orgForm)"
-                 ng-model-options="{ debounce: 300 }"
-                 ng-disabled="!$ctrl.canEditRegistrationKey"
-          />
-          <div class="error-wrapper" role="alert"
-               ng-show="(orgForm.$submitted || orgForm.regKey.$touched) && orgForm.regKey.$error.required">
-            <span class="error">Enter a registration key</span>
-          </div>
-          <div class="error-wrapper" role="alert"
-               ng-show="(orgForm.$submitted || orgForm.regKey.$touched) && orgForm.regKey.$error.pattern">
-            <span class="error">The registration key must be at least 5 characters with no space allowed</span>
-          </div>
-
-          <div class="error-wrapper" role="alert" ng-show="$ctrl.org.registrationKey && !$ctrl.isValidRegKey">
-            <span class="error">You have entered a registration key that already exists. Please enter a new key.</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xs-12" ng-if="!$ctrl.isNew">
-        <div class="form-group">
-          <label for="org-finance-contact-email">Finance contact email</label>
-          <input id="org-finance-contact-email" class="form-control"
-                 type="text"
-                 name="financeContactEmail"
-                 maxlength="255"
-                 placeholder="We will use this address to send details of payments"
-                 ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"
-                 ng-model="$ctrl.org.financeContactEmail"/>
-          <div class="error-wrapper" role="alert"
-               ng-show="(orgForm.$submitted || orgForm.financeContactEmail.$touched) && orgForm.financeContactEmail.$invalid">
-            <span class="error" ng-if="orgForm.financeContactEmail.$error.pattern">Email must be in a standard format</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xs-12">
-        <div class="form-group">
-          <label for="org-website">Website (optional)</label>
-          <input id="org-website" class="form-control"
-                 type="text"
-                 name="website"
-                 ng-model="$ctrl.org.website"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15" ng-if="$ctrl.visibleSections.details">
-      <hr/>
-      <h4 class="form-section-header">Organisation Address</h4>
-    </div>
-
-    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3" ng-if="$ctrl.visibleSections.details">
+      <!--  ORGANISATION ADDRESS    -->
       <div class="col-xs-12">
         <div class="form-group">
           <label for="org-address1">Address line 1</label>
@@ -406,113 +149,459 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15" ng-if="$ctrl.visibleSections.details && $ctrl.org.entityType === 7">
-      <hr/>
-      <div class="form-section-header">Business Details</div>
-    </div>
-
-    <div class="col-xs-12 col-md-6 center-col" id="business-details"
-         ng-if="$ctrl.visibleSections.details && $ctrl.org.entityType === 7">
-
+      <!-- OTHER ORG DETAILS FIELDS - Website, org type, icon, template fields  -->
       <div class="col-xs-12">
         <div class="form-group">
-          <label for="company-code">Company Code (Optional)</label>
-          <input class="form-control" id="company-code"
-                 name="companyCode"
-                 ng-model="$ctrl.org.companyCode"
-                 maxlength="8"
-                 type="text"/>
+          <label for="org-website">Website (optional)</label>
+          <input id="org-website" class="form-control"
+                 type="text"
+                 name="website"
+                 ng-model="$ctrl.org.website"/>
         </div>
       </div>
 
-
-      <div class="col-xs-12">
+      <div class="col-xs-12" ng-if="!$ctrl.isNew">
         <div class="form-group">
-          <label for="vat-number">VAT Number (Optional)</label>
-          <input class="form-control" id="vat-number"
-                 name="vatNumber"
-                 ng-model="$ctrl.org.vatNumber"
-                 maxlength="12"
-                 type="text"/>
+          <label for="org-finance-contact-email">Finance contact email address(es)</label>
+          <gla-info-tooltip  id="org-finance-contact-email-tooltip" [help-text]="$ctrl.financeContactTooltipText"></gla-info-tooltip>
+          <input id="org-finance-contact-email" class="form-control"
+                 type="text"
+                 name="financeContactEmail"
+                 ng-pattern="/^([\w+-.%]+@[\w.-]+\.[A-Za-z]{2,4})(,(\s)*[\w+-.%]+@[\w.-]+\.[A-Za-z]{2,4})*$/"
+                 maxlength="255"
+                 placeholder="We will use this address to send details of payments"
+                 ng-model="$ctrl.org.financeContactEmail"/>
+          <div class="error-wrapper" role="alert"
+               ng-show="(orgForm.$submitted || orgForm.financeContactEmail.$touched) && orgForm.financeContactEmail.$invalid">
+            <span class="error" ng-if="orgForm.financeContactEmail.$error.pattern">Email must be in a standard format</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12" ng-if="!$ctrl.isNew">
+        <div class="form-group">
+          <label for="org-registration-key">Registration key</label>
+          <input id="org-registration-key" class="form-control"
+                 type="text"
+                 name="regKey"
+                 ng-model="$ctrl.org.registrationKey"
+                 maxlength="30"
+                 required
+                 ng-pattern="'^[^\\s]{5,}$'"
+                 ng-blur="$ctrl.validateRegistrationKey($ctrl.org.registrationKey, orgForm)"
+                 ng-model-options="{ debounce: 300 }"
+                 ng-disabled="!$ctrl.canEditRegistrationKey"
+          />
+          <div class="error-wrapper" role="alert"
+               ng-show="(orgForm.$submitted || orgForm.regKey.$touched) && orgForm.regKey.$error.required">
+            <span class="error">Enter a registration key</span>
+          </div>
+          <div class="error-wrapper" role="alert"
+               ng-show="(orgForm.$submitted || orgForm.regKey.$touched) && orgForm.regKey.$error.pattern">
+            <span class="error">The registration key must be at least 5 characters with no space allowed</span>
+          </div>
+
+          <div class="error-wrapper" role="alert" ng-show="$ctrl.org.registrationKey && !$ctrl.isValidRegKey">
+            <span class="error">You have entered a registration key that already exists. Please enter a new key.</span>
+          </div>
         </div>
       </div>
 
       <div class="col-xs-12">
         <div class="form-group">
-          <label for="sort-code">Sort Code (Optional)</label>
-          <input class="form-control" id="sort-code"
-                 name="sortCode"
-                 ng-model="$ctrl.org.sortCode"
-                 type="text" numbers-only
-                 maxlength="6"/>
+          <label for="org-type">{{$ctrl.labels.orgType}}</label>
+          <select class="form-control"
+                  id="org-type"
+                  name="org-type"
+                  ng-change="$ctrl.onEntityTypeChange()"
+                  ng-disabled="!$ctrl.canEditOrgType"
+                  ng-model="$ctrl.org.entityType"
+                  ng-options="orgType.id as orgType.summary disable when orgType.deprecated for orgType in $ctrl.organisationTypesList | orderBy:'displayOrder'"
+                  required
+                  style-placeholder="">
+            <option disabled value="">Select organisation type</option>
+          </select>
+          <div class="error-wrapper" role="alert"
+               ng-show="(orgForm.$submitted || orgForm.orgType.$touched) && orgForm.orgType.$error.required">
+            <span class="error">Select organisation type</span>
+          </div>
         </div>
       </div>
 
-      <div class="col-xs-12">
+      <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('icon') && $ctrl.canEditManagingOrg">
         <div class="form-group">
-          <label for="bank-account">Bank Account (Optional)</label>
-          <input class="form-control" id="bank-account"
-                 name="bankAccount"
-                 ng-model="$ctrl.org.bankAccount"
-                 maxlength="8" numbers-only
-                 type="text"/>
+          <label for="icon">Icon</label>
+          <select class="form-control"
+                  id="icon"
+                  name="icon"
+                  ng-model="$ctrl.org.iconAttachmentId"
+                  ng-options="icon.id as icon.fileName for icon in $ctrl.icons">
+            <option value="">Not provided</option>
+          </select>
         </div>
       </div>
 
-    </div>
+      <!-- conditional  fields from organisation template based on org type -->
+      <div>
+        <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('companyCode')">
+          <div class="form-group">
+            <label for="org-registration-number">{{$ctrl.labels.companyCode}}</label>
+            <input class="form-control" id="org-registration-number"
+                   name="companyCode"
+                   ng-model="$ctrl.org.companyCode"
+                   ng-required="$ctrl.isFieldRequired('companyCode')"
+                   maxlength="8"
+                   type="text"/>
+            <div class="error-wrapper" ng-if="orgForm.companyCode.$touched && orgForm.companyCode.$error.required" role="alert">
+              <span class="error">Field is mandatory.</span>
+            </div>
+          </div>
+        </div>
 
+        <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('societyNumber')">
+          <div class="form-group">
+            <label for="society-number">{{$ctrl.labels.societyNumber}}</label>
+            <input class="form-control" id="society-number"
+                   name="societyNumber"
+                   ng-model="$ctrl.org.societyNumber"
+                   ng-required="$ctrl.isFieldRequired('societyNumber')"
+                   type="text"/>
+            <div class="error-wrapper" ng-if="orgForm.societyNumber.$touched && orgForm.societyNumber.$error.required" role="alert">
+              <span class="error">Field is mandatory.</span>
+            </div>
+          </div>
+        </div>
 
-    <div ng-if="$ctrl.visibleSections.details && $ctrl.isGlaHNL() && (!($ctrl.isTechSupportOrganisation() || $ctrl.techSupportSelected() || $ctrl.isLearningProvider()))">
-      <div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15">
-        <hr/>
-        <div class="form-section-header">Regulatory information</div>
-      </div>
+        <div class="col-xs-12 form-group" ng-if="$ctrl.isFieldVisible('isCharityCommission')">
+          <label for="org-charity-commission">{{$ctrl.labels.isCharityCommission}}</label>
+          <gla-yes-no-input id="org-charity-commission"
+                            mode="bool"
+                            name="ischaritycommission"
+                            [(required)]="$ctrl.isFieldRequired('isCharityCommission')"
+                            [(model)]="$ctrl.org.isCharityCommission">
+          </gla-yes-no-input>
+        </div>
 
-      <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
-        <div class="col-xs-12 form-group">
-          <label for="org-regulated">Is the organisation registered with the social housing regulator?</label>
+        <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('charityNumber')">
+          <div class="form-group">
+            <label for="charity-number">{{$ctrl.labels.charityNumber}}</label>
+            <input class="form-control" id="charity-number"
+                   name="charityNumber"
+                   ng-model="$ctrl.org.charityNumber"
+                   ng-required="$ctrl.isFieldRequired('charityNumber')"
+                   type="text"/>
+            <div class="error-wrapper" ng-if="orgForm.charityNumber.$touched && orgForm.charityNumber.$error.required" role="alert">
+              <span class="error">Field is mandatory.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('vatNumber')">
+          <div class="form-group">
+            <label for="vat-number">VAT Number (Optional)</label>
+            <input class="form-control" id="vat-number"
+                   name="vatNumber"
+                   ng-model="$ctrl.org.vatNumber"
+                   ng-required="$ctrl.isFieldRequired('vatNumber')"
+                   maxlength="12"
+                   type="text"/>
+            <div class="error-wrapper" ng-if="orgForm.vatNumber.$touched && orgForm.vatNumber.$error.required" role="alert">
+              <span class="error">Field is mandatory.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('bankAccount')">
+          <div class="form-group">
+            <label for="bank-account">Bank Account (Optional)</label>
+            <input class="form-control" id="bank-account"
+                   name="bankAccount"
+                   ng-model="$ctrl.org.bankAccount"
+                   ng-required="$ctrl.isFieldRequired('bankAccount')"
+                   maxlength="8" numbers-only
+                   type="text"/>
+            <div class="error-wrapper" ng-if="orgForm.bankAccount.$touched && orgForm.bankAccount.$error.required" role="alert">
+              <span class="error">Field is mandatory.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('sortCode')">
+          <div class="form-group">
+            <label for="sort-code">Sort Code (Optional)</label>
+            <input class="form-control" id="sort-code"
+                   name="sortCode"
+                   ng-model="$ctrl.org.sortCode"
+                   ng-required="$ctrl.isFieldRequired('sortCode')"
+                   type="text" numbers-only
+                   maxlength="6"/>
+            <div class="error-wrapper" ng-if="orgForm.sortCode.$touched && orgForm.sortCode.$error.required" role="alert">
+              <span class="error">Field is mandatory.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-12 form-group" ng-if="$ctrl.isFieldVisible('regulated') || $ctrl.org.entityType === 3">
+          <label for="org-regulated">{{$ctrl.labels.isRegulator}}</label>
           <gla-yes-no-input id="org-regulated"
-                            name="org-regulated"
+                            name="regulated"
+                            [(required)]="$ctrl.isFieldRequired('regulated')"
                             [(model)]="$ctrl.org.regulated">
           </gla-yes-no-input>
         </div>
 
-        <div class="row no-gutter" ng-show="$ctrl.org.regulated === 'yes'">
-          <div class="col-xs-12">
+        <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('providerNumber')">
+          <div class="form-group">
+            <label for="register-provider-number">{{$ctrl.labels.providerNumber}} <span ng-if="!$ctrl.isFieldRequired('providerNumber')"> (Optional)</span></label>
+            <input class="form-control" id="register-provider-number"
+                   name="providerNumber"
+                   ng-model="$ctrl.org.providerNumber"
+                   ng-required="$ctrl.isFieldRequired('providerNumber')"
+                   type="text"/>
+            <div class="error-wrapper" ng-if="orgForm.providerNumber.$touched && orgForm.providerNumber.$error.required" role="alert">
+              <span class="error">Field is mandatory.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row no-gutter">
+          <div class="col-xs-12" ng-if="$ctrl.isFieldVisible('viability') || $ctrl.org.regulated === 'yes'">
             <div class="col-xs-6 form-group">
               <label for="org-viability">Viability score (optional)</label>
-              <input id="org-viability"
-                     class="form-control"
-                     type="text"
+              <input class="form-control"
+                     id="org-viability"
+                     maxlength="2"
                      name="viability"
-                     maxlength="2"
-                     ng-model="$ctrl.org.viability"/>
+                     ng-model="$ctrl.org.viability"
+                     ng-required="$ctrl.isFieldRequired('viability')"
+                     type="text"/>
+              <div class="error-wrapper" ng-if="orgForm.viability.$touched && orgForm.viability.$error.required" role="alert">
+                <span class="error">Field is mandatory.</span>
+              </div>
             </div>
-            <div class="col-xs-6 form-group">
-              <label for="org-governance">Governance score (optional)</label>
-              <input id="org-governance"
-                     class="form-control"
-                     type="text"
-                     name="governance"
+            <div class="col-xs-6 form-group" ng-if="$ctrl.isFieldVisible('governance') || $ctrl.org.regulated === 'yes'">
+              <label class="text-nowrap" for="org-governance">Governance score (optional)</label>
+              <input class="form-control"
+                     id="org-governance"
                      maxlength="2"
-                     ng-model="$ctrl.org.governance"/>
+                     name="governance"
+                     ng-model="$ctrl.org.governance"
+                     ng-required="$ctrl.isFieldRequired('governance')"
+                     type="text"/>
+              <div class="error-wrapper" ng-if="orgForm.governance.$touched && orgForm.governance.$error.required" role="alert">
+                <span class="error">Field is mandatory.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-12 form-group" ng-if="$ctrl.isFieldVisible('isLearningProvider') && $ctrl.org.entityType != 1 && $ctrl.org.entityType != 5">
+          <label for="org-learning-provider">{{$ctrl.labels.isLearningProvider}}</label>
+          <gla-yes-no-input id="org-learning-provider"
+                            name="islearningprovider"
+                            mode="bool"
+                            [(required)]="$ctrl.isFieldRequired('isLearningProvider') || $ctrl.org.entityType === 1 || $ctrl.org.entityType === 5"
+                            [(model)]="$ctrl.org.isLearningProvider">
+          </gla-yes-no-input>
+        </div>
+
+        <div class="col-xs-12 form-group" ng-if="$ctrl.isLearningProvider() || $ctrl.isFieldVisible('ukprn')">
+          <div>
+            <label for="ukprn">UKPRN (optional)</label>
+            <input class="form-control" id="ukprn"
+                   maxlength="8"
+                   name="ukprn"
+                   ng-blur="$ctrl.countOccuranceOfUkprn($ctrl.org.ukprn)"
+                   ng-model="$ctrl.org.ukprn"
+                   ng-required="$ctrl.isFieldRequired('ukprn')"
+                   numbers-only
+                   type="text"/>
+            <div class="error-wrapper" role="alert">
+              <span class="error" ng-if="orgForm.ukprn.$touched && orgForm.ukprn.$error.required">Field is mandatory.</span>
+              <span class="error" id="duplicate-ukprn-warning" ng-if="$ctrl.org.ukprn.length && $ctrl.isUkprnNotValid()">UKPRN already in use by another provider. Please amend or contact GLA</span>
             </div>
           </div>
         </div>
       </div>
+
+    </div>
+
+<!--    GOVERNANCE-->
+    <div class="col-xs-10 col-xs-offset-1 mtop20 mbottom15" ng-if="$ctrl.visibleSections.governance">
+      <h4 class="form-section-header">GLA Governance</h4>
+    </div>
+
+    <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3" ng-if="$ctrl.visibleSections.governance">
+
+      <div class="col-xs-12">
+        <div class="form-group">
+          <label for="managingOrg">{{$ctrl.labels.managingOrg}}</label>
+          <select class="form-select-button form-control"
+                  id="managingOrg"
+                  name="managingOrg"
+                  ng-change="$ctrl.onManagingOrgSelect()"
+                  ng-disabled="!$ctrl.canEditManagingOrg || $ctrl.isGlaOrgAdminOfEditedOrg"
+                  ng-model="$ctrl.org.managingOrganisationId"
+                  ng-options="item.id as item.name for item in $ctrl.managingOrganisations | filter:{registrationAllowed:true}"
+                  required
+                  style-placeholder="">
+            <option disabled value="">Select managing organisation</option>
+          </select>
+          <div class="error-wrapper" role="alert"
+               ng-show="(orgForm.$submitted || orgForm.managingOrg.$touched) && orgForm.managingOrg.$error.required">
+            <span class="error">Select managing organisation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12" ng-if="!$ctrl.isProfile">
+        <div class="form-group has-feedback">
+          <label for="parentOrgCode">Parent organisation ID for reporting purposes (optional)</label>
+          <div class="row">
+            <div class="col-sm-6 org-code-input">
+              <input id="parentOrgCode"
+                     type="text"
+                     name="parentOrgCode"
+                     aria-label="Parent Organisation Id"
+                     class="form-control"
+                     ng-minlength="3"
+                     ng-model="$ctrl.org.parentOrganisationId"
+                     placeholder="Parent organisation id"
+                     ng-change="$ctrl.checkOrgCode()"
+                     org-lookup="$ctrl.org.parentOrganisationName"
+                     autocomplete="off"
+                     ng-disabled="!$ctrl.canEditParentOrg"/>
+              <span ng-if="$ctrl.org.parentOrganisationName" class="glyphicon glyphicon-ok form-control-feedback"
+                    aria-hidden="true"></span>
+            </div>
+
+            <div class="col-sm-6 no-padding">
+              <div ng-if="$ctrl.org.parentOrganisationName" class="organisation-name mtop10">
+                {{$ctrl.org.parentOrganisationName}}
+              </div>
+            </div>
+          </div>
+          <div class="error-wrapper row" role="alert">
+            <span class="error" ng-if="$ctrl.org.parentOrganisationId.length > 2 && !$ctrl.org.parentOrganisationName">Organisation number not recognised</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12" ng-if="!$ctrl.isProfile">
+          <div class="form-group">
+            <label for="add-sap-id">SAP ID (optional)</label>
+            <button id="add-sap-id" class="btn btn-secondary mbottom10 pull-right" ng-click="$ctrl.showAddSapIdModal()"
+                    ng-disabled="!$ctrl.canEditSapId || ($ctrl.org.sapIds.length >= $ctrl.envVars['max-sap-ids-per-org'])">
+              ADD <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div ng-if="$ctrl.org.sapIds.length == 0">
+              No SAP IDs
+            </div>
+            <div ng-class="{'fixed-header': $ctrl.org.sapIds.length > 6}">
+              <table id="sap-id-table" class="table table-default table-hover table-bordered" ng-if="$ctrl.org.sapIds.length > 0">
+                <thead class="thead-inverse uppercase">
+                <tr>
+                  <th>SAP ID</th>
+                  <th>SAP ID Nickname</th>
+                  <th>Default</th>
+                  <th ng-if="!$ctrl.readOnly"></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="sapIdModel in $ctrl.org.sapIds | orderBy:createdOn"
+                    ng-click="$ctrl.showEditSapIdModal(sapIdModel)"
+                    allow-enter
+                    tabindex="0">
+                  <td>{{sapIdModel.sapId}}</td>
+                  <td>{{sapIdModel.description}}</td>
+                  <td>{{sapIdModel.defaultSapId?'Yes':''}}</td>
+                  <td ng-if="!$ctrl.readOnly" ng-class="{'delete-btn-container': $ctrl.canEditSapId && !sapIdModel.usedInProject && !sapIdModel.defaultSapId}">
+                    <delete-button ng-if="$ctrl.canEditSapId && !sapIdModel.usedInProject && !sapIdModel.defaultSapId" ng-click="$ctrl.deleteSapId(sapIdModel);$event.stopPropagation()"></delete-button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+              <hr class="scroll-area-bottom" ng-if="$ctrl.org.sapIds.length > 6">
+            </div>
+          </div>
+          <div class="row" >
+            <div id="sap-id-validations" ng-if="$ctrl.org.sapIds && $ctrl.org.sapIds.length >0 && $ctrl.defaultSapIdCount==0" class="col-xs-12 mtop0 mbottom5 text-center">
+              <span class="error">Please select default SAP ID before saving record</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12 team-field" ng-if="!$ctrl.isProfile && !$ctrl.isManagingOrganisation">
+        <div class="form-group">
+          <label for="team">Team (optional)</label>
+          <select class="form-control"
+                  id="team"
+                  name="team"
+                  ng-disabled="!$ctrl.canEditTeam || !$ctrl.teams.length || $ctrl.loadingTeams"
+                  ng-model="$ctrl.org.team"
+                  ng-options="team as team.name for team in $ctrl.teams track by team.id">
+            <option value="">Select team</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row" ng-if="!$ctrl.isProfile">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="contact">GLA Contact (optional)</label>
+            <select class="form-control"
+                    id="contact"
+                    name="contact"
+                    ng-disabled="!$ctrl.contacts.length || $ctrl.loadingContacts || !$ctrl.canEditGlaContact"
+                    ng-model="$ctrl.org.contactEmail"
+                    ng-options="contact.username as contact.fullName for contact in $ctrl.contacts"
+                    style-placeholder="">
+              <option disabled value="">Select</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12" ng-if="$ctrl.isManagingOrganisation">
+        <div class="form-group">
+          <div class="registration-allowed">
+            <label for="registration-allowed" class="pull-left">Allow new organisation registrations</label>
+            <input
+              id="registration-allowed"
+              ng-disabled="!$ctrl.canEditManagingOrg || $ctrl.isGlaOrgAdminOfEditedOrg"
+              class="form-control pull-left"
+              type="checkbox"
+              name="enabled"
+              ng-model="$ctrl.org.registrationAllowed"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xs-12" ng-if="$ctrl.isManagingOrganisation">
+        <div class="form-group">
+          <div class="skills-gateway-access-allowed">
+            <label for="skills-gateway-access-allowed" class="pull-left">Access to Skills gateway</label>
+            <input
+              id="skills-gateway-access-allowed"
+              ng-disabled="!$ctrl.canEditManagingOrg || $ctrl.isGlaOrgAdmin"
+              class="form-control pull-left"
+              type="checkbox"
+              name="enabled"
+              ng-model="$ctrl.org.skillsGatewayAccessAllowed"/>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <div ng-if="$ctrl.orgWithUser" class="user-form">
       <div class="col-xs-10 col-xs-offset-1 mtop20 mbottom30">
         <section-header>Enter Organisation Admin information</section-header>
       </div>
-
-      <!--<div class="col-xs-10 col-xs-offset-1 mtop30 mbottom15">
-        &lt;!&ndash;<hr/>&ndash;&gt;
-        <div class="form-section-header">Enter your information</div>
-      </div>-->
 
       <div class="col-xs-10 col-xs-offset-1 col-md-6 col-md-offset-3">
         <div class="section-description">
@@ -534,11 +623,8 @@
               !$ctrl.isValidRegKey ||
               !$ctrl.isUniqueOrgName ||
               orgForm.$invalid ||
-              !($ctrl.org.regulated != null ||
-              (!$ctrl.techSupportSelected() && $ctrl.isGlaHNL() == ($ctrl.org.regulated != null)) ||
-              ($ctrl.techSupportSelected() && $ctrl.org.regulated === null) ||
-               $ctrl.isLearningProvider()) ||
-              $ctrl.showUserForm && !$ctrl.isUserFormValid"
+              ($ctrl.showUserForm && !$ctrl.isUserFormValid ) ||
+              ($ctrl.canEditSapId && $ctrl.org.sapIds && $ctrl.org.sapIds.length >0 && $ctrl.defaultSapIdCount==0)"
               ng-click="$ctrl.submit()">
         {{$ctrl.btnText || 'SAVE'}}
       </button>

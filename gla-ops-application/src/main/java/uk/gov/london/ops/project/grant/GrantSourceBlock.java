@@ -7,27 +7,23 @@
  */
 package uk.gov.london.ops.project.grant;
 
-import static uk.gov.london.ops.framework.OPSUtils.toBigDecimal;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.ReportPrefix;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import uk.gov.london.ops.framework.enums.GrantType;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.ProjectInterface;
-import uk.gov.london.ops.project.block.FundingSourceProvider;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.block.ProjectDifference;
-import uk.gov.london.ops.project.block.ProjectDifferences;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.project.block.*;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import static uk.gov.london.ops.framework.OPSUtils.toBigDecimal;
 
 /**
  * Created by chris on 10/11/2016.
@@ -38,13 +34,6 @@ import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
         targetColumn = "id", joinType = Join.JoinType.OneToOne,
         comment = "the grant source block is a subclass of the project block and shares a common key")
 public class GrantSourceBlock extends NamedProjectBlock implements FundingSourceProvider {
-
-    public static final String ZERO_GRANT_REQUESTED = ReportPrefix.gs_.name() + "zero_grant_requested";
-    public static final String ASSOCIATED_PROJECT = ReportPrefix.gs_.name() + "associated_project";
-    public static final String AFF_HOUSING_RENT = ReportPrefix.gs_.name() + "aff_housing_rent";
-    public static final String RCGF = ReportPrefix.gs_.name() + "rcgf";
-    public static final String DPF = ReportPrefix.gs_.name() + "dpf";
-    public static final String STRATEGIC_FUNDING = ReportPrefix.gs_.name() + "strategic_funding";
 
     @Column(name = "zero_grant_requested")
     private Boolean zeroGrantRequested;
@@ -117,7 +106,7 @@ public class GrantSourceBlock extends NamedProjectBlock implements FundingSource
             this.addErrorMessage("Block1", "", "At least one grant source must be entered.");
         }
 
-        Long totalFundRequested = getTotalGrantRequested();
+        Long totalFundRequested = getTotalGrantRequested().longValue();
 
         if (this.getTotalGrantEligibility() != null) {
             if ((this.isAssociatedProject() && this.getStrategicFunding() > getTotalGrantEligibility()) || (totalFundRequested
@@ -199,9 +188,9 @@ public class GrantSourceBlock extends NamedProjectBlock implements FundingSource
         }
     }
 
-    public Long getTotalGrantRequested() {
+    public BigDecimal getTotalGrantRequested() {
         if (isZeroGrantRequested() || isAssociatedProject()) {
-            return 0L;
+            return BigDecimal.ZERO;
         }
         Long total = 0L;
         if (getGrantValue() != null) {
@@ -214,24 +203,20 @@ public class GrantSourceBlock extends NamedProjectBlock implements FundingSource
             total += getDisposalProceedsFundValue();
         }
 
-        return total;
+        return new BigDecimal(total);
     }
 
-    public Map<String, Object> simpleDataExtract(SimpleProjectExportConfig spec) {
-        Map<String, Object> data = new HashMap<>();
-        if (isZeroGrantRequested()) {
-            data.put(ZERO_GRANT_REQUESTED, "YES");
-        } else if (isAssociatedProject()) {
-            data.put(ASSOCIATED_PROJECT, "YES");
-            data.put(STRATEGIC_FUNDING, this.getStrategicFunding());
-            data.put(ZERO_GRANT_REQUESTED, "NO");
+    @Override
+    public BigDecimal getGrantAdjustmentAmount(FundingSourceProvider previousVersion) {
+        GrantSourceBlock approvedBlock = (GrantSourceBlock) previousVersion;
+        // approved block should never be null
+        if (approvedBlock == null || (this.isAssociatedProject() && !approvedBlock.isAssociatedProject())) {
+            return BigDecimal.ZERO;
         } else {
-            data.put(RCGF, this.getRecycledCapitalGrantFundValue());
-            data.put(DPF, this.getDisposalProceedsFundValue());
-            data.put(AFF_HOUSING_RENT, this.getGrantValue());
-            data.put(ZERO_GRANT_REQUESTED, "NO");
+            Long newGrant = this.getGrantValue() == null ? 0L : this.getGrantValue();
+            Long oldGrant = approvedBlock.getGrantValue() == null ? 0L : approvedBlock.getGrantValue();
+            return new BigDecimal(newGrant - oldGrant);
         }
-        return data;
     }
 
     @Override

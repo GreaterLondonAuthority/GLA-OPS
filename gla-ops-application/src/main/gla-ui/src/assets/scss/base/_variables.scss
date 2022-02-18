@@ -12,7 +12,8 @@ $navy: #3e4e5c;
 $grey: #f7f7f7;
 $white: #ffffff;
 $peppermint: #7fbeab;
-$moonstone: #5ca9c4;
+$green-spring: #1D6F42;
+$moonstone: #2F6D83;
 $green-pearl: #e4e6c3;
 $ice-blue: #f7f7f9;
 
@@ -20,7 +21,7 @@ $ice-blue: #f7f7f9;
 
 $primary-black: #1f1f1f;
 $primary-white: #f9f9f9;
-$secondary-grey: #777777;
+$secondary-grey: #6E6E6E;
 $silver: #cccccc;
 $silver-dark: #bcbcbc;
 $abbey: #545656;
@@ -29,7 +30,7 @@ $alto: #cecece;
 $grey-light: #eeeeee;
 $alto-light: #dddddd;
 $acapulco: #77af9c;
-$patina: #689989;
+$patina: #005500;
 $table-sub-header: rgb(205, 228, 236);
 $table-sub-header-grey: #E0E0E0;
 $danube-blue:#6699CC;
@@ -42,6 +43,7 @@ $gla-black: #000105;
 $gla-red: #c33737;
 $gla-dark-grey: #2d3335;
 $gla-blue: #01577D;
+$gla-disabled-grey: #737373; // AA compliant color for disabled text / link with background #F9F9F9
 
 //$report-right-side-background: #E0E0E0;
 $report-right-side-background: #e5e5e5;
@@ -54,8 +56,8 @@ $report-right-side-background: #e5e5e5;
 //$secondary-grey Defined above
 
 $links: $moonstone;
-$form-field-inactive: $silver;
-$form-field-active: $abbey;
+$form-field-inactive: $secondary-grey;
+$form-field-active: $primary-black;
 $top-navigation-default-state: $heather;
 
 //--- Style guide RAG colours ---
@@ -108,7 +110,7 @@ $btn-border-radius-large:       2px !default;
 $btn-border-radius-small:       2px !default;
 
 $btn-primary-color:             $white !default;
-$btn-primary-bg:                $peppermint !default;
+$btn-primary-bg:                $green-spring !default;
 $btn-primary-border:            transparent !default;
 $btn-primary-hover:             $patina;
 
@@ -116,9 +118,11 @@ $btn-secondary-color:           $btn-primary-bg !default;
 $btn-secondary-bg:              $btn-primary-color !default;
 $btn-secondary-border:          $gla-grey !default;
 $btn-secondary-border-active:   $silver-dark !default;
-$btn-secondary-hover:           $grey;
+$btn-secondary-hover:           lighten($grey, 2%);
 
-$btn-disabled-bg:               $silver !default;
+$btn-disabled-bg:               #E6E6E6 !default;
+
+$read-only-cell: $ice-blue;
 
 //Has to be at the end for overridden variables above to take precedence
 @import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";

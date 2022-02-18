@@ -11,15 +11,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uk.gov.london.common.CSVFile;
-import uk.gov.london.ops.framework.Environment;
 import uk.gov.london.ops.audit.AuditService;
 import uk.gov.london.ops.framework.calendar.FinancialCalendar;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.framework.exception.ValidationException;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.payment.implementation.repository.ProjectLedgerRepository;
 import uk.gov.london.ops.payment.implementation.repository.ReceiptsTotalRecordRepository;
 import uk.gov.london.ops.permission.PermissionService;
@@ -52,6 +53,7 @@ import static uk.gov.london.ops.audit.ActivityType.Add;
 import static uk.gov.london.ops.framework.EntityType.ledger;
 import static uk.gov.london.ops.payment.LedgerStatus.ACTUAL;
 import static uk.gov.london.ops.payment.LedgerStatus.FORECAST;
+import static uk.gov.london.ops.permission.PermissionType.PROJ_DELETE;
 import static uk.gov.london.ops.permission.PermissionType.PROJ_LEDGER_ACTUAL_CREATE;
 
 /**
@@ -93,23 +95,29 @@ public class FinanceService {
     @Autowired
     ReceiptsTotalRecordRepository receiptsTotalRecordRepository;
 
+    @Value("${project.deletion.enabled}")
+    Boolean projectDeletionEnabled = false;
+
     DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     public void deleteProjectLedgerEntry(Project project, ProjectLedgerItemRequest lineItem) {
         NamedProjectBlock namedBlock = project.getProjectBlockById(lineItem.getBlockId());
         if (namedBlock == null) {
-            throw new ValidationException(String.format("Unable to delete entry for category %d as an invalid block id was passed", lineItem.getCategoryId()));
+            throw new ValidationException(String.format("Unable to delete entry for category %d as an invalid block id was passed",
+                    lineItem.getCategoryId()));
         }
 
         int yearMonth = financialCalendar.asInt(lineItem.getYear(), lineItem.getMonth());
 
-        List<ProjectLedgerEntry> allByBlockIdAndYearMonthAndCategory = projectLedgerRepository.findAllByBlockIdAndYearMonthAndCategoryId(lineItem.getBlockId(), yearMonth, lineItem.getCategoryId());
+        List<ProjectLedgerEntry> allByBlockIdAndYearMonthAndCategory = projectLedgerRepository
+                .findAllByBlockIdAndYearMonthAndCategoryId(lineItem.getBlockId(), yearMonth, lineItem.getCategoryId());
         List<ProjectLedgerEntry> toDelete = new ArrayList<>();
 
         for (ProjectLedgerEntry projectLedgerEntry : allByBlockIdAndYearMonthAndCategory) {
             // actuals can't be deleted ,
             if (ACTUAL.equals(projectLedgerEntry.getLedgerStatus())) {
-                throw new ValidationException(String.format("Unable to delete entry for category %d as it contains actual data ", lineItem.getCategoryId()));
+                throw new ValidationException(String.format("Unable to delete entry for category %d as it contains actual data ",
+                        lineItem.getCategoryId()));
             }
             // if credit then delete positive values , else negative.
             if (ProjectLedgerItemRequest.LedgerEntryType.CAPITAL_CREDIT.equals(lineItem.getEntryType())
@@ -127,7 +135,8 @@ public class FinanceService {
 
         projectLedgerRepository.deleteAll(toDelete);
 
-        auditService.auditCurrentUserActivity(String.format("deleted ledger entry category %d %d/%d", lineItem.getCategoryId(), lineItem.getYear(), lineItem.getMonth()));
+        auditService.auditCurrentUserActivity(String.format("deleted ledger entry category %d %d/%d", lineItem.getCategoryId(),
+                lineItem.getYear(), lineItem.getMonth()));
 
         projectService.updateProject(project);
     }
@@ -141,7 +150,8 @@ public class FinanceService {
 
         projectLedgerRepository.delete(entry);
 
-        auditService.auditCurrentUserActivity(String.format("deleted ledger entry with category id %d value %s project %d for period %d/%d",
+        auditService.auditCurrentUserActivity(String.format(
+                "deleted ledger entry with category id %d value %s project %d for period %d/%d",
                 entry.getCategoryId(), entry.getValue().toString(), entry.getProjectId(), entry.getYear(), entry.getMonth()));
     }
 
@@ -183,7 +193,9 @@ public class FinanceService {
 
         if (entry != null) {
             if (itemRequest.getValue() == null || itemRequest.getValue().compareTo(BigDecimal.ZERO) == 0) { // zero or null delete
-                auditService.auditCurrentUserActivity(String.format("deleted ledger entry category %d %d/%d for type %s", itemRequest.getCategoryId(), itemRequest.getYear(), itemRequest.getMonth(), itemRequest.getSpendType().name()));
+                auditService.auditCurrentUserActivity(String.format("deleted ledger entry category %d %d/%d for type %s",
+                        itemRequest.getCategoryId(), itemRequest.getYear(), itemRequest.getMonth(),
+                        itemRequest.getSpendType().name()));
                 projectLedgerRepository.delete(entry);
             } else {
                 entry.updateValue(itemRequest.getValue());
@@ -201,9 +213,9 @@ public class FinanceService {
     }
 
     private ProjectLedgerEntry createFrom(ProjectLedgerItemRequest itemRequest) {
-        ProjectLedgerEntry entry = new ProjectLedgerEntry(itemRequest.getProjectId(), itemRequest.getBlockId(), itemRequest.getYear(),
-                itemRequest.getMonth(), itemRequest.getLedgerStatus(), itemRequest.getLedgerType(), itemRequest.getSpendType(),
-                itemRequest.getCategoryId(), itemRequest.getValue());
+        ProjectLedgerEntry entry = new ProjectLedgerEntry(itemRequest.getProjectId(), itemRequest.getBlockId(),
+                itemRequest.getYear(), itemRequest.getMonth(), itemRequest.getLedgerStatus(), itemRequest.getLedgerType(),
+                itemRequest.getSpendType(), itemRequest.getCategoryId(), itemRequest.getValue());
         entry.setCategory(itemRequest.getCategory());
         entry.setSubCategory(itemRequest.getSubCategory());
         entry.setExternalId(itemRequest.getExternalId());
@@ -219,14 +231,16 @@ public class FinanceService {
 
         int yearMonth = financialCalendar.asInt(itemRequest.getYear(), itemRequest.getMonth());
 
-        List<ProjectLedgerEntry> entries = projectLedgerRepository.findAllByBlockIdAndYearMonthAndCategoryIdAndSpendTypeAndLedgerStatus(
-                        itemRequest.getBlockId(), yearMonth, itemRequest.getCategoryId(), itemRequest.getSpendType(), LedgerStatus.FORECAST);
+        List<ProjectLedgerEntry> entries = projectLedgerRepository
+                .findAllByBlockIdAndYearMonthAndCategoryIdAndSpendTypeAndLedgerStatus(itemRequest.getBlockId(), yearMonth,
+                        itemRequest.getCategoryId(), itemRequest.getSpendType(), LedgerStatus.FORECAST);
 
         return extractRelevantRow(entries, itemRequest.getEntryType());
     }
 
     // works out which row in the list of entries matches the request type, null if none do
-    private ProjectLedgerEntry extractRelevantRow(List<ProjectLedgerEntry> entries, ProjectLedgerItemRequest.LedgerEntryType requestType) {
+    private ProjectLedgerEntry extractRelevantRow(List<ProjectLedgerEntry> entries,
+                                                  ProjectLedgerItemRequest.LedgerEntryType requestType) {
         if (ProjectLedgerItemRequest.LedgerEntryType.CAPITAL_CREDIT.equals(requestType)
             || ProjectLedgerItemRequest.LedgerEntryType.REVENUE_CREDIT.equals(requestType)) {
             for (ProjectLedgerEntry entry : entries) {
@@ -318,15 +332,20 @@ public class FinanceService {
         Integer fromYear = Collections.min(populatedYears);
         Integer toYear = Collections.max(populatedYears);
 
-        List<ProjectLedgerEntry> ledgerEntriesByBlockAndYear = projectLedgerRepository.findAllByBlockIdBetweenFinancialYears(blockId, fromYear, toYear);
+        List<ProjectLedgerEntry> ledgerEntriesByBlockAndYear = projectLedgerRepository
+                .findAllByBlockIdBetweenFinancialYears(blockId, fromYear, toYear);
         return annualSpendSummaryMapper.getAnnualSpendSummary(ledgerEntriesByBlockAndYear, fromYear, toYear, populatedYears);
     }
 
     public AnnualReceiptsSummary getAnnualReceiptSummaryForYear(ReceiptsBlock receiptsBlock, Integer year) {
-        List<ProjectLedgerEntry> ledgerEntriesByBlockAndYear = projectLedgerRepository.findAllByBlockIdAndFinancialYear(receiptsBlock.getId(), year);
-        AnnualReceiptsSummary annualReceiptsSummary = annualReceiptSummaryMapper.toAnnualReceiptSummary(ledgerEntriesByBlockAndYear, year);
+        List<ProjectLedgerEntry> ledgerEntriesByBlockAndYear = projectLedgerRepository
+                .findAllByBlockIdAndFinancialYear(receiptsBlock.getId(), year);
+        AnnualReceiptsSummary annualReceiptsSummary = annualReceiptSummaryMapper
+                .toAnnualReceiptSummary(ledgerEntriesByBlockAndYear, year);
 
-        List<ReceiptsTotalRecord> receiptsTotal = receiptsTotalRecordRepository.findByProjectIdAndBlockIdAndFinancialYearOrderByLedgerStatus(receiptsBlock.getProjectId(), receiptsBlock.getId(), year);
+        List<ReceiptsTotalRecord> receiptsTotal = receiptsTotalRecordRepository
+                .findByProjectIdAndBlockIdAndFinancialYearOrderByLedgerStatus(
+                        receiptsBlock.getProjectId(), receiptsBlock.getId(), year);
         for (ReceiptsTotalRecord receiptsTotalRecord : receiptsTotal) {
             if (FORECAST.equals(receiptsTotalRecord.getLedgerStatus()) && receiptsTotalRecord.getTotal() != null) {
                 annualReceiptsSummary.getTotalForCurrentAndFutureMonths().setForecast(receiptsTotalRecord.getTotal());
@@ -378,7 +397,8 @@ public class FinanceService {
      */
     public void updateAnnualSpendAndBudgetLedgerEntries(Project project, Integer year, BigDecimal revenue, BigDecimal capital) {
         ProjectBudgetsBlock block = (ProjectBudgetsBlock) project.getSingleLatestBlockOfType(ProjectBlockType.ProjectBudgets);
-        List<ProjectLedgerEntry> allByBlockIdAndFinancialYear = projectLedgerRepository.findAllByBlockIdAndFinancialYearAndLedgerType(block.getId(), year, LedgerType.BUDGET);
+        List<ProjectLedgerEntry> allByBlockIdAndFinancialYear = projectLedgerRepository
+                .findAllByBlockIdAndFinancialYearAndLedgerType(block.getId(), year, LedgerType.BUDGET);
 
         ProjectLedgerEntry revenueEntry = null;
         ProjectLedgerEntry capitalEntry = null;
@@ -393,7 +413,8 @@ public class FinanceService {
         if (revenueEntry != null) {
             if (revenue == null) {
                 allByBlockIdAndFinancialYear.remove(revenueEntry);
-                auditService.auditCurrentUserActivity(String.format("deleted annual spend revenue budget entry for project %s year %d ", project.getId(), year));
+                auditService.auditCurrentUserActivity(String.format(
+                        "deleted annual spend revenue budget entry for project %s year %d ", project.getId(), year));
                 projectLedgerRepository.delete(revenueEntry);
             } else {
                 revenueEntry.updateValue(revenue);
@@ -403,7 +424,8 @@ public class FinanceService {
         if (capitalEntry != null) {
             if (capital == null) {
                 allByBlockIdAndFinancialYear.remove(capitalEntry);
-                auditService.auditCurrentUserActivity(String.format("deleted annual spend capital budget entry for project %s year %d ", project.getId(), year));
+                auditService.auditCurrentUserActivity(String.format(
+                        "deleted annual spend capital budget entry for project %s year %d ", project.getId(), year));
                 projectLedgerRepository.delete(capitalEntry);
             } else {
                 capitalEntry.updateValue(capital);
@@ -444,8 +466,12 @@ public class FinanceService {
         return projectLedgerRepository.findById(id).orElse(null);
     }
 
-    public ProjectLedgerEntry findFirstByBlockIdAndYearMonthAndCategoryIdAndLedgerStatus(int blockId, int yearMonth, Integer categoryId, LedgerStatus ledgerStatus) {
-        return projectLedgerRepository.findFirstByBlockIdAndYearMonthAndCategoryIdAndLedgerStatus(blockId, yearMonth, categoryId, ledgerStatus);
+    public ProjectLedgerEntry findFirstByBlockIdAndYearMonthAndCategoryIdAndLedgerStatus(int blockId,
+                                                                                         int yearMonth,
+                                                                                         Integer categoryId,
+                                                                                         LedgerStatus ledgerStatus) {
+        return projectLedgerRepository.findFirstByBlockIdAndYearMonthAndCategoryIdAndLedgerStatus(blockId, yearMonth, categoryId,
+                ledgerStatus);
     }
 
     public List<ProjectLedgerEntry> findByStatus(final LedgerStatus status) {
@@ -485,12 +511,18 @@ public class FinanceService {
         return projectLedgerRepository.findAllByProjectIdAndCategoryAndExternalId(projectId, category, extId);
     }
 
-    public List<ProjectLedgerEntry> findAllByBlockIdAndFinancialYearAndLedgerType(Integer blockId, Integer year, LedgerType ledgerType) {
+    public List<ProjectLedgerEntry> findAllByBlockIdAndFinancialYearAndLedgerType(Integer blockId, Integer year,
+                                                                                  LedgerType ledgerType) {
         return projectLedgerRepository.findAllByBlockIdAndFinancialYearAndLedgerType(blockId, year, ledgerType);
     }
 
-    public List<ProjectLedgerEntry> findAllByBlockIdAndYearMonthAndCategoryIdAndSpendTypeAndLedgerStatus(int blockId, int yearMonth, Integer categoryId, SpendType spendType, LedgerStatus ledgerStatus) {
-        return projectLedgerRepository.findAllByBlockIdAndYearMonthAndCategoryIdAndSpendTypeAndLedgerStatus(blockId, yearMonth, categoryId, spendType, ledgerStatus);
+    public List<ProjectLedgerEntry> findAllByBlockIdAndYearMonthAndCategoryIdAndSpendTypeAndLedgerStatus(int blockId,
+                                                                                                         int yearMonth,
+                                                                                                         Integer categoryId,
+                                                                                                         SpendType spendType,
+                                                                                                         LedgerStatus status) {
+        return projectLedgerRepository.findAllByBlockIdAndYearMonthAndCategoryIdAndSpendTypeAndLedgerStatus(blockId, yearMonth,
+                categoryId, spendType, status);
     }
 
     public List<ProjectLedgerEntry> findByIdIn(List<Integer> paymentIdList) {
@@ -503,15 +535,18 @@ public class FinanceService {
         return projectLedgerRepository.findAllByLedgerTypeAndSentOnBetween(type, dayStart, dayEnd);
     }
 
-    public List<ProjectLedgerEntry> findHistoricActualsAndFutureForecasts(Integer blockId, Integer yearMonthFrom, Integer yearMonthCurrent, Integer yearMonthTo) {
-        return projectLedgerRepository.findHistoricActualsAndFutureForecasts(blockId, yearMonthFrom, yearMonthCurrent, yearMonthTo);
+    public List<ProjectLedgerEntry> findHistoricActualsAndFutureForecasts(Integer blockId, Integer yearMonthFrom,
+                                                                          Integer yearMonthCurrent, Integer yearMonthTo) {
+        return projectLedgerRepository
+                .findHistoricActualsAndFutureForecasts(blockId, yearMonthFrom, yearMonthCurrent, yearMonthTo);
     }
 
     public List<ProjectLedgerEntry> findAll() {
         return projectLedgerRepository.findAll();
     }
 
-    public List<SAPMetaData> getSapMetaData(Integer projectId, Integer blockId, Integer yearMonth, LedgerType ledgerType, LedgerStatus ledgerStatus, Integer categoryId) {
+    public List<SAPMetaData> getSapMetaData(Integer projectId, Integer blockId, Integer yearMonth, LedgerType ledgerType,
+                                            LedgerStatus ledgerStatus, Integer categoryId) {
         return projectLedgerRepository.getSapMetaData(projectId, blockId, yearMonth, ledgerType, ledgerStatus, categoryId);
     }
 
@@ -524,7 +559,8 @@ public class FinanceService {
         ProjectLedgerEntry copy = projectLedgerRepository.getOne(copyId);
 
         if (!copy.matchesOriginal(original)) {
-            throw new ValidationException(String.format("original (%d) and copy (%d) ledger entries to not match!", originalId, copyId));
+            throw new ValidationException(
+                    String.format("original (%d) and copy (%d) ledger entries to not match!", originalId, copyId));
         }
 
         copy.updateDetailsFrom(original);
@@ -532,7 +568,8 @@ public class FinanceService {
 
     public void updateLedgerEntriesFromOriginal() {
         List<ProjectLedgerEntry> entries = projectLedgerRepository.findAll();
-        Map<Integer, List<ProjectLedgerEntry>> groupByProject = entries.stream().collect(Collectors.groupingBy(ProjectLedgerEntry::getProjectId));
+        Map<Integer, List<ProjectLedgerEntry>> groupByProject = entries.stream()
+                .collect(Collectors.groupingBy(ProjectLedgerEntry::getProjectId));
         for (Integer projectId: groupByProject.keySet()) {
             updateLedgerEntriesFromOriginalForProject(projectId, groupByProject.get(projectId));
         }
@@ -572,10 +609,11 @@ public class FinanceService {
             entry.setMonth(csv.getInteger("month"));
             entry.setYearMonth(csv.getInteger("year_month"));
             entry.setLedgerStatus(LedgerStatus.valueOf(csv.getString("ledger_status")));
-            entry.setLedgerType(StringUtils.isNotEmpty(csv.getString("ledger_type")) ? LedgerType.valueOf(csv.getString("ledger_type")) : null);
-            entry.setSpendType(StringUtils.isNotEmpty(csv.getString("spend_type")) ? SpendType.valueOf(csv.getString("spend_type")) : null);
+            entry.setLedgerType(StringUtils.isNotEmpty(csv.getString("ledger_type"))
+                    ? LedgerType.valueOf(csv.getString("ledger_type")) : null);
+            entry.setSpendType(StringUtils.isNotEmpty(csv.getString("spend_type"))
+                    ? SpendType.valueOf(csv.getString("spend_type")) : null);
             entry.setCategory(csv.getString("category"));
-            // "value"
             entry.setModifiedOn(parseDateString(csv.getString("modified_on"), "yyyy-MM-dd HH:mm:ss"));
             entry.setReference(csv.getString("reference"));
             entry.setPcsPhaseNumber(csv.getString("pcs_phase_number"));
@@ -591,7 +629,8 @@ public class FinanceService {
             entry.setInvoiceDate(csv.getString("invoice_date"));
             entry.setPcsProjectNumber(parseInt(csv.getString("pcs_project_number")));
             entry.setCategoryId(parseInt(csv.getString("category_id")));
-            entry.setLedgerSource(StringUtils.isNotEmpty(csv.getString("ledger_source")) ? LedgerSource.valueOf(csv.getString("ledger_source")) : null);
+            entry.setLedgerSource(StringUtils.isNotEmpty(csv.getString("ledger_source"))
+                    ? LedgerSource.valueOf(csv.getString("ledger_source")) : null);
             entry.setWbsCode(csv.getString("wbs_code"));
             entry.setAuthorisedOn(parseDateString(csv.getString("authorised_on"), "yyyy-MM-dd HH:mm:ss"));
             entry.setAuthorisedBy(csv.getString("authorised_by"));
@@ -605,9 +644,8 @@ public class FinanceService {
             entry.setOrganisationId(parseInt(csv.getString("organisation_id")));
             entry.setProjectName(csv.getString("project_name"));
             entry.setProgrammeName(csv.getString("programme_name"));
-            // "previous_block_id"
             if (StringUtils.isNotEmpty(csv.getString("managing_organisation_id"))) {
-                entry.setManagingOrganisation(new Organisation(csv.getInteger("managing_organisation_id"), ""));
+                entry.setManagingOrganisation(new OrganisationEntity(csv.getInteger("managing_organisation_id"), ""));
             }
             entry.setOriginalId(parseInt(csv.getString("original_id")));
             return entry;
@@ -620,20 +658,12 @@ public class FinanceService {
         projectLedgerRepository.saveAll(ledgerEntries);
     }
 
-    public void deleteAllTestData() {
-        if (environment.isTestEnvironment()) {
-            projectLedgerRepository.deleteAll();
-        } else {
-            log.error("attempting to delete test data in a non test environment!");
-        }
-    }
-
-    public void deleteAllTestDataByProjectId(Integer projectId) {
-        if (environment.isTestEnvironment()) {
+    public void deleteAllByProjectId(Integer projectId) {
+        if (projectDeletionEnabled && permissionService.currentUserHasPermission(PROJ_DELETE)) {
             projectLedgerRepository.deleteAllByProjectId(projectId);
             projectLedgerRepository.flush();
         } else {
-            log.error("attempting to delete test data in a non test environment!");
+            log.error("Project deletion failed. Insufficient user permissions or wrong environment!");
         }
     }
 

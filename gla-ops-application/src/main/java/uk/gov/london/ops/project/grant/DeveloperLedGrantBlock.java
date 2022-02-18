@@ -8,16 +8,6 @@
 package uk.gov.london.ops.project.grant;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
@@ -26,8 +16,12 @@ import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.block.ProjectDifference;
 import uk.gov.london.ops.project.block.ProjectDifferences;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by chris on 13/10/2016.
@@ -267,21 +261,6 @@ public class DeveloperLedGrantBlock extends BaseGrantBlock {
     public void setAffordableCriteriaMet(Boolean affordableCriteriaMet) {
         this.affordableCriteriaMet = affordableCriteriaMet;
     }
-
-
-    @Override
-    public Map<String, Object> simpleDataExtract(
-            final SimpleProjectExportConfig simpleProjectExportConfig) {
-        final Map<String, Object> map = super
-                .simpleDataExtract(simpleProjectExportConfig);
-        final SimpleProjectExportConstants.ReportPrefix prefix =
-                SimpleProjectExportConstants.ReportPrefix.eg_;
-        map.put(prefix + "aff_criteria_met",
-                affordableCriteriaMet != null && affordableCriteriaMet
-                        ? "YES" : "NO");
-        return map;
-    }
-
 
     @Override
     protected void copyBlockContentInto(final NamedProjectBlock target) {

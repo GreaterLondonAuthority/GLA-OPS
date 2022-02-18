@@ -1,4 +1,4 @@
-<multi-panel class="mbottom20 programme-template-config" ng-class="{'delete-btn-container':!$ctrl.readOnly}">
+<gla-multi-panel class="mbottom20 programme-template-config" ng-class="{'delete-btn-container':!$ctrl.readOnly}">
   <div class="column">
     <div class="section">
       <mp-field label="$ctrl.labels.wbsCapital">
@@ -115,9 +115,9 @@
                      ng-click="$ctrl.onDelete({$event:$ctrl.projectType})"></delete-button>
     </div>
   </div>
-</multi-panel>
+</gla-multi-panel>
 
-<multi-panel class="organisation-access" ng-if="!$ctrl.projectType.isNew">
+<gla-multi-panel class="organisation-access" ng-if="!$ctrl.projectType.isNew">
   <div class="section full-page-section">
     <div class="section-header">Organisation access for {{$ctrl.projectType.templateName}}</div>
     <gla-teams-default-access-list ng-if="$ctrl.teams.length"
@@ -171,4 +171,4 @@
       </table>
     </div>
   </div>
-</multi-panel>
+</gla-multi-panel>

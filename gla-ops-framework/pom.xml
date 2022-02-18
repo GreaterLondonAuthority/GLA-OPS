@@ -13,7 +13,32 @@
 
 	<properties>
 		<jacoco.coverage.ratio>0.51</jacoco.coverage.ratio>
-		<jacoco.missed.class.count>5</jacoco.missed.class.count>
+		<jacoco.missed.class.count>13</jacoco.missed.class.count>
 	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.integration</groupId>
+			<artifactId>spring-integration-jdbc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.10</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.3</version>
+		</dependency>
+	</dependencies>
 
 </project>

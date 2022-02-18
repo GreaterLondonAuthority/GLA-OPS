@@ -18,12 +18,12 @@
   </form>
 
   <section-header class="mtop15">Receipt WBS codes</section-header>
-  <well class="row wbs-codes-block">
+  <gla-well class="row wbs-codes-block">
     <div class="not-provided" ng-if="!$ctrl.data.wbsCodes.length && $ctrl.readOnly">Not provided</div>
     <wbs-codes class="wbs-capital col-xs-8 col-sm-6 col-md-4 center-col"
                read-only="$ctrl.readOnly"
                codes="$ctrl.data.wbsCodes"></wbs-codes>
-  </well>
+  </gla-well>
   <div class="row approval-needed-message text-right">
     <span class="text-right float-right approval-needed-message-date" ng-if="$ctrl.data.lastModified">Last updated {{$ctrl.data.lastModified | date: "dd/MM/yyyy 'at' HH:mm"}}</span>
   </div>

@@ -16,8 +16,8 @@ class DeliveryPartnersSummaryReport {
     this.templateConfig = _.find(this.template.blocksEnabled, {block: 'DeliveryPartners'});
 
     this.deliverableTypes =  [];
-    this.TemplateService.getAvailableDeliverableTypes(this.template.id).then(rsp => {
-      this.deliverableTypes = rsp.data;
+    this.TemplateService.getAvailableDeliverableTypes(this.template.id).toPromise().then(rsp => {
+      this.deliverableTypes = rsp;
     });
 
     this.block.deliveryPartners.forEach(s => {

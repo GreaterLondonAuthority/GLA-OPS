@@ -1,0 +1,68 @@
+<div class="question-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Parent Question</h1>
+  </div>
+
+  <div class="modal-body">
+    <form id="parentQuestionForm" #parentQuestionForm="ngForm" role="form">
+      <div class="form-group">
+        <label for="parentId">Parent Question</label>
+        <select id="parentId"
+                name="parent-question-dropdown"
+                [(ngModel)]="selectedParentQuestionId"
+                class="form-control" (change)="selectedParentQuestion()">
+          <option [value]="">No Parent Question</option>
+          <option *ngFor="let question of availableParentQuestions" [ngValue]="question.question.id">
+            {{question.question.id }} {{question.question.text}}
+          </option>
+        </select>
+        <div class="error-wrapper"  role="alert">
+          <span *ngIf="!isParentQuestionLevelValid"  class="error" id="parent-question-valid-level"> Maximum parent levels exceeded</span>
+        </div>
+      </div>
+
+      <div class="form-group" >
+        <div *ngIf="dropdownParent">
+          <label for="multianswerToMatch">Depends on answer</label>
+          <div class="mtop10 mbottom10">
+            <gla-multi-select id="multianswerToMatch"
+                              (onChange)="onMultiSelectChange($event, parentQuestion)"
+                              [filterDropdownItems]="answerOptions"></gla-multi-select>
+          </div>
+        </div>
+
+        <div *ngIf="yesNoParent">
+          <label for="yes-no-input">Parent option(s)</label>
+          <div>
+            <gla-yes-no-input id="yes-no-input"
+                              name="yes-no-input"
+                              [(model)]="parentAnswerToMatch"></gla-yes-no-input>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          class="btn confirm-button btn-default btn-primary"
+          [disabled]="!isParentQuestionLevelValid
+          || ((dropdownParent && !parentAnswerToMatch) || (yesNoParent && !parentAnswerToMatch))"
+          (click)="saveParentQuestion()"
+          type="button">SAVE</button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          (click)="activeModal.dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

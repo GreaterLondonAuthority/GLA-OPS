@@ -92,9 +92,9 @@ function OrganisationGroupService($http, config) {
     },
 
     /**
-     * Looks up an organisation name by ID or IMS code, return a 404 if not found.
+     * Looks up an organisation name by ID or provider number, return a 404 if not found.
      * Also Validates if org can be associated with programme
-     * @param  {String} orgCode organisation ID or IMS code
+     * @param  {String} orgCode organisation ID or provider number
      * @return {Object} promise
      */
     lookupOrgNameByCodeForConsortium: function(orgCode) {

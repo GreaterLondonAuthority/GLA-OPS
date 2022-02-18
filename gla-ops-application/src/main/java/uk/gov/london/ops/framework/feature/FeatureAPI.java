@@ -9,7 +9,6 @@ package uk.gov.london.ops.framework.feature;
 
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.london.ops.framework.annotations.PermissionRequired;
@@ -21,11 +20,14 @@ import static uk.gov.london.ops.permission.PermissionType.SYS_FEATURES_EDIT;
 
 @RestController
 @RequestMapping("/api/v1")
-@Api(description="feature toggle api")
+@Api("feature toggle api")
 public class FeatureAPI {
 
-    @Autowired
-    FeatureStatus featureStatus;
+    final FeatureStatusImpl featureStatus;
+
+    public FeatureAPI(FeatureStatusImpl featureStatus) {
+        this.featureStatus = featureStatus;
+    }
 
     @RequestMapping(value = "/features", method = RequestMethod.GET)
     public List<FeatureEntity> getFeatures() {

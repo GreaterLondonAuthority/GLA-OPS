@@ -16,13 +16,14 @@ function OrganisationService($http, config) {
      * Retrieve list of all organisations
      * @return {Object} promise
      */
-    retrieveAll(page, size, sort, userRegStatuses, searchText, entityTypes, orgStatuses, teamStatuses) {
+    retrieveAll(page, size, sort, userRegStatuses, searchBy, searchText, entityTypes, orgStatuses, teamStatuses) {
       const params = {
         page: page,
         size: size,
         sort: sort,
         userRegStatuses: userRegStatuses.join(','),
-        searchText: searchText,
+        organisation: searchBy == 'organisation' ? searchText:null,
+        sapVendorId: searchBy == 'sapVendorId' ? searchText:null,
         entityTypes: entityTypes.join(','),
         orgStatuses: orgStatuses.join(','),
         teams: _.join(_.map(teamStatuses, s=>{return s.organisationId+'|'+(s.teamId||'')}),',')
@@ -69,8 +70,8 @@ function OrganisationService($http, config) {
     },
 
     /**
-     * Looks up an organisation name by ID or IMS code, return a 404 if not found.
-     * @param  {String} orgCode organisation ID or IMS code
+     * Looks up an organisation name by ID or provider number, return a 404 if not found.
+     * @param  {String} orgCode organisation ID or provider number
      * @return {Object} promise
      */
     lookupOrgNameByCode(orgCode) {
@@ -90,15 +91,16 @@ function OrganisationService($http, config) {
      * Approve a user
      * @param  {String} organisationId
      * @param  {String} userEmail
+     * @param  {boolean} signatory
      * @return {Object} promise
      */
-    approveUser(organisationId, userEmail, role) {
-      return $http.put(`${config.basePath}/organisations/${organisationId}/users/${userEmail}/approved`, null, {params: {approved: true, role: role}});
+    approveUser(organisationId, userEmail, role,  signatory) {
+      return $http.put(`${config.basePath}/organisations/${organisationId}/users/${userEmail}/approved`, null, {params: {approved: true, role: role, signatory: signatory}});
     },
 
     /**
      * Request a user to be linked to an organisation
-     * @param  {String} orgCode organisation ID or IMS code
+     * @param  {String} orgCode organisation ID or provider number
      * @param  {String} userEmail
      * @return {Object} promise
      */
@@ -165,7 +167,8 @@ function OrganisationService($http, config) {
       data.regulated = data.regulated === 'yes' ? true : false;
       data.managingOrganisation = {id: data.managingOrganisationId};
       data.parentOrganisation = data.parentOrganisationId ? {id: data.parentOrganisationId} : null;
-      data.ukprn = this.isLearningProvider(orgForm) ? orgForm.ukprn : null;
+      // data.ukprn = this.isLearningProvider(orgForm) ? orgForm.ukprn : null;
+      data.ukprn = orgForm.ukprn;
 
       return data;
     },
@@ -245,6 +248,13 @@ function OrganisationService($http, config) {
       return this.getAssignableRoles(8000);
     },
 
+    getContract(organisationId, contractId) {
+      return $http({
+        url: `${config.basePath}/organisations/${organisationId}/contracts/${contractId}`,
+        method: 'GET'
+      })
+    },
+
     updateContractStatus(organisationId, contractId, contract) {
       if (contractId) {
         return $http({
@@ -259,6 +269,21 @@ function OrganisationService($http, config) {
           data: contract
         });
       }
+    },
+
+    createContractVariation(organisationId, contract) {
+        return $http({
+          url: `${config.basePath}/organisations/${organisationId}/variations`,
+          method: 'POST',
+          data: contract
+        });
+    },
+
+    deleteContractStatus(organisationId, contractId) {
+      return $http({
+        url: `${config.basePath}/organisations/${organisationId}/contracts/${contractId}`,
+        method: 'DELETE'
+      });
     },
 
     getOrganisationProgramme(organisationId, programmeId) {
@@ -328,18 +353,6 @@ function OrganisationService($http, config) {
       return $http.get(`${config.basePath}/organisations/types`).then(resp => resp.data);
     },
 
-    getImsLabel(org) {
-      if (org.entityType === 2) {
-        //BOROUGH (2, "Borough"),
-        return 'Local authority housing code';
-      } else if (org.entityType === 3) {
-        //PROVIDER (3, "Registered Provider"),
-        return 'Regulator code';
-      } else {
-        return false;
-      }
-    },
-
     isOrganisationNameUnique(orgName, managingOrganisationId) {
       return $http.get(`${config.basePath}/checkOrganisationNameNotUsed?name=${orgName}&managingOrganisationId=${managingOrganisationId}`)
         .then(resp => resp.status === 200)
@@ -376,9 +389,10 @@ function OrganisationService($http, config) {
       });
     },
 
-    approveOrganisation(orgId){
+    approveOrganisation(orgId, reasonText){
       let requestBody = {
-        status: 'Approved'
+        status: 'Approved',
+        details: reasonText,
       };
       return this.changeStatus(orgId, requestBody);
     },
@@ -419,7 +433,7 @@ function OrganisationService($http, config) {
     },
 
     isLearningProvider(org){
-      return (org || {}).entityType === 6
+      return (org || {}).isLearningProvider || (org || {}).entityType === 6
     },
 
     getNavigationCircles(){
@@ -432,6 +446,9 @@ function OrganisationService($http, config) {
 
     legalStatuses() {
       return $http.get(`${config.basePath}/organisations/legalStatuses`).then(resp => resp.data);
+    },
+    organisationTemplates() {
+      return $http.get(`${config.basePath}/organisations/organisationTemplates`).then(resp => resp.data);
     }
   };
 }

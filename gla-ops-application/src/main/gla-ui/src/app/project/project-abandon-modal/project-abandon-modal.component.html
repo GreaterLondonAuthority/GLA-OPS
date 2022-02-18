@@ -1,0 +1,51 @@
+<div class="abandon-modal" [ngClass]="{hide: loading}">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <h1>{{modal?.title}}</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="abandonForm"
+      role="form"
+      name="abandonForm"
+      class="form-group"
+      *ngIf="modal?.actionBtnName">
+      <label for="reason">{{modal?.label}}</label>
+      <div *ngIf="modal?.warning" class="error mbottom5">{{modal?.warning}}</div>
+      <textarea id="reason"
+                rows="5"
+                attr.placeholder="{{modal?.placeholder}}"
+                name="action"
+                class="form-control"
+                [(ngModel)]="dataBlock.reason"
+                required
+                maxlength="200">
+        </textarea>
+    </form>
+    <div *ngIf="modal?.hintMessage" class="text-center">{{modal?.hintMessage}}</div>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="abandon-btn"
+          *ngIf="modal?.actionBtnName"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          (click)="action()"
+          [disabled]="!dataBlock.reason && modal?.commentRequired">{{modal?.actionBtnName}}</button>
+
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          (click)="activeModal.dismiss()">{{modal?.actionBtnName ? 'CANCEL' : 'CLOSE'}}</button>
+      </div>
+    </div>
+  </div>
+</div>

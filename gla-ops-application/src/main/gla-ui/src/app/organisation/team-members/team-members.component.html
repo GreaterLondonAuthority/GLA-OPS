@@ -1,0 +1,42 @@
+<div class="team-members-section">
+
+  <div class="row"  >
+
+    <div class="col-xs-12 list">
+      <div class="section-header">Members
+        <gla-info-tooltip class="mleft5" [helpText]=tooltipText></gla-info-tooltip>
+      </div>
+      <div *ngIf ="org.users.length">
+          <div class="row section-header">
+            <div class="contract-text col-xs-3">
+              Name
+            </div>
+            <div class="contract-text col-xs-3">
+              Email
+            </div>
+            <div class="contract-text col-xs-3">
+              Spend Threshold (£)
+            </div>
+            <div class="contract-text col-xs-3">
+              Role
+            </div>
+          </div>
+
+          <div class="row"  *ngFor="let user of org.users" >
+
+            <div class="org-contract list-item">
+              <div class="row">
+                <div class="contract-title col-sm-3 contract-text" id="name"> {{user.fullName}} </div>
+                <div class="col-sm-3 contract-text" id="email">{{user.username}}</div>
+                <div class="col-sm-3 contract-text" id="spend-threshold">{{findUserSpendThreshold(user.username) | number}}</div>
+                <div class="col-sm-3 contract-text" id="roles">
+                  <span *ngFor="let role of findUserRoles(user.username)"> {{role.description}} </span>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+

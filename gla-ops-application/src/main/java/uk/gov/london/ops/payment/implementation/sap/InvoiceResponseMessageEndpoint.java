@@ -15,13 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.payment.*;
 import uk.gov.london.ops.payment.implementation.sap.model.InvoiceDetails;
 import uk.gov.london.ops.payment.implementation.sap.model.InvoiceResponse;
 
 import java.io.File;
-import java.io.IOException;
 
 import static uk.gov.london.common.GlaUtils.getFileContent;
 
@@ -43,7 +42,7 @@ public class InvoiceResponseMessageEndpoint {
     private boolean deleteLocalFiles;
 
     @ServiceActivator(inputChannel = "invoiceResponsesSftpChannel")
-    public String process(File file) throws Exception {
+    public String process(File file) {
 
         if (!file.getName().toLowerCase().endsWith(".xml")) {
             log.warn("Ignoring non-XML invoice response file: " + file.getName());
@@ -64,8 +63,7 @@ public class InvoiceResponseMessageEndpoint {
         if (processed) {
             if (deleteLocalFiles && file.delete()) {
                 log.debug("Successfully deleted file {}", file.getName());
-            }
-            else {
+            } else {
                 log.warn("Failed to delete file {} after being processed!", file.getName());
             }
         }
@@ -76,7 +74,7 @@ public class InvoiceResponseMessageEndpoint {
     /**
      * @return true if the file content has been processed successfully
      */
-    boolean processFileContent(String fileName, String content) throws IOException {
+    boolean processFileContent(String fileName, String content) {
         if (content == null) {
             recordFileProcessingError(fileName, "Unable to read file contents", "{null}");
             return false;
@@ -95,7 +93,8 @@ public class InvoiceResponseMessageEndpoint {
             try {
                 processSegment(fileName, ++segment, details, content);
             } catch (Exception e) {
-                recordSegmentProcessingError(fileName, segment, "Error processing invoice response entry: " + e.getMessage(), content);
+                recordSegmentProcessingError(fileName, segment, "Error processing invoice response entry: "
+                        + e.getMessage(), content);
             }
         }
 
@@ -147,27 +146,27 @@ public class InvoiceResponseMessageEndpoint {
     }
 
     void recordSapData(String fileName, Integer segment, boolean processed, String error, String content) {
-        SapData sap_data = new SapData();
-        sap_data.setInterfaceType(SapData.TYPE_INV_RESP);
-        sap_data.setFileName(fileName);
-        sap_data.setProcessedOn(environment.now());
-        sap_data.setCreatedOn(environment.now());
-        sap_data.setContent(content);
-        sap_data.setProcessed(processed);
-        sap_data.setErrorDescription(error);
+        SapData sapData = new SapData();
+        sapData.setInterfaceType(SapData.TYPE_INV_RESP);
+        sapData.setFileName(fileName);
+        sapData.setProcessedOn(environment.now());
+        sapData.setCreatedOn(environment.now());
+        sapData.setContent(content);
+        sapData.setProcessed(processed);
+        sapData.setErrorDescription(error);
 
         if (segment != null) {
-            sap_data.setSegmentNumber(segment);
+            sapData.setSegmentNumber(segment);
         }
 
         try {
-            sapDataService.save(sap_data);
+            sapDataService.save(sapData);
         } catch (Exception e) {
             log.error("Error saving sap_data", e);
         }
     }
 
-    InvoiceResponse toInvoiceResponse(String content, String fileName) throws IOException {
+    InvoiceResponse toInvoiceResponse(String content, String fileName) {
         try {
             XmlMapper mapper = new XmlMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -177,6 +176,5 @@ public class InvoiceResponseMessageEndpoint {
             return null;
         }
     }
-
 
 }

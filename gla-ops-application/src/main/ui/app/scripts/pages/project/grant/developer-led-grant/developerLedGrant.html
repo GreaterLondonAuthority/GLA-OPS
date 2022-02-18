@@ -33,18 +33,19 @@
 
     </div>
 
-    <div class="row grant-block-title">
-      2. Enter the units and tenure
-    </div>
-    <grant-table data="$ctrl.data" is-readonly="$ctrl.readOnly" on-tenure-change="$ctrl.saveTenure(true, true)">
+    <section-header class="grant-block-title" subheader="Column totals are updated every time you change a value in the table">2. Enter the units and tenure</section-header>
+    <grant-table data="$ctrl.data"
+                 other-affordable-tenure-types="$ctrl.otherAffordableTenureTypes"
+                 show-other-affordable-question ="$ctrl.showOtherAffordableQuestion"
+                 is-readonly="$ctrl.readOnly"
+                 on-tenure-change="$ctrl.saveTenure(true, true)">
     </grant-table>
-
     <div>
       <tenure-tiles
         tenures="$ctrl.tenureSummaryDetails"
       ></tenure-tiles>
       <total-grant total="$ctrl.data.totalGrantEligibility"></total-grant>
-      <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
+      <gla-loading-mask ng-if="$ctrl.loading" text=""></gla-loading-mask>
     </div>
 
     <claimed-units ng-if="$ctrl.data.startOnSiteMilestoneAuthorised || $ctrl.data.completionMilestoneAuthorised"
@@ -56,7 +57,7 @@
                    title="TOTAL UNITS CLAIMED"
                    total="$ctrl.data.totalCompletionApprovedUnits || $ctrl.data.totalStartOnSiteApprovedUnits"
                    is-unit="true">
-      <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
+      <gla-loading-mask ng-if="$ctrl.loading" text=""></gla-loading-mask>
     </claimed-units>
 
     <project-block-footer editable-block="$ctrl"></project-block-footer>

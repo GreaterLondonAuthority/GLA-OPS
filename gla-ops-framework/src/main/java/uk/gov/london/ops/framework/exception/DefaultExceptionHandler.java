@@ -44,7 +44,6 @@ public class DefaultExceptionHandler {
 
     /**
      * We dont want to catch instances of these spring exceptions but let them be handled by the framework.
-     * @param e
      */
     @ExceptionHandler(value = {AuthenticationException.class, AccessDeniedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -66,7 +65,7 @@ public class DefaultExceptionHandler {
     public ApiError handleException(HttpServletRequest request, Exception e) {
         String message = "Sorry, an unexpected error occurred";
         if (e.getMessage() != null && !e.getMessage().isEmpty()) {
-            message += " : "+e.getMessage();
+            message += " : " + e.getMessage();
         }
         ApiError apiError = new ApiError(message);
         logError(request, apiError.getId(), e);
@@ -83,9 +82,10 @@ public class DefaultExceptionHandler {
         String user = authContext == null ? "anonymous" : authContext.getName();
         String endpoint = "unknown";
         if (request != null) {
-            endpoint = request.getMethod()+" "+request.getRequestURI();
+            endpoint = request.getMethod() + " " + request.getRequestURI();
         }
-        String message = String.format("error id: %s, user: %s, endpoint: %s, message: %s", errorId, user, endpoint, e.getMessage());
+        String message = String.format("error id: %s, user: %s, endpoint: %s, message: %s",
+                errorId, user, endpoint, e.getMessage());
         MDC.put("errorId", errorId);
         if (e instanceof ValidationException) {
             log.debug(message, e);

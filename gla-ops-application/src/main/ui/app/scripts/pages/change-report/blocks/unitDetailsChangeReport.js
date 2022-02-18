@@ -54,7 +54,7 @@ class UnitDetailsChangeReport {
         field: 'marketType.name',
         format: ''
       }, {
-        label: 'BED(S)',
+        label: 'BEDROOM(S)',
         field: 'nbBeds.displayValue',
         format: ''
       }, {
@@ -98,7 +98,7 @@ class UnitDetailsChangeReport {
         field: 'marketType.name',
         format: ''
       }, {
-        label: 'BED(S)',
+        label: 'BEDROOM(S)',
         field: 'nbBeds.displayValue',
         format: ''
       }, {
@@ -131,6 +131,10 @@ class UnitDetailsChangeReport {
       }, {
         label: 'WEEKLY SC £',
         field: 'weeklyServiceCharge',
+        format: 'number'
+      },{
+        label: '% RENT ON UNSOLD EQUITY',
+        field: 'rentChargedOnUnsoldEquity',
         format: 'number'
       }];
 

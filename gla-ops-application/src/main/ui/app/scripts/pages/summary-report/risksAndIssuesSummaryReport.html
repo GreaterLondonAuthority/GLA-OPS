@@ -6,8 +6,7 @@
     read-only="true"
   ></risk-rating>
 
-  <div ng-if="$ctrl.showRisksAndIssues">
-    <!--<hr class="mtop30">-->
+  <div>
     <section-header
       ng-if="!$ctrl.hasRisks"
       subheader="Not provided">
@@ -19,7 +18,8 @@
                          risks="$ctrl.risks"
                          block-session-storage="$ctrl.blockSessionStorage"
                          disable-hide-closed-filter="true"
-                         header="'Project Risks'">
+                         header="'Project Risks'"
+                         risks-block-config="$ctrl.risksBlockConfig">
 
     </manage-project-risk>
 

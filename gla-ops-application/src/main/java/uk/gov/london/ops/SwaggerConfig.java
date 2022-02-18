@@ -7,6 +7,7 @@
  */
 package uk.gov.london.ops;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -18,13 +19,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
 public class SwaggerConfig {
+
+    @Value("${swagger.api.allowed:true}")
+    private  boolean  swaggerApiEnabled;
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("uk.gov.london.ops"))
-                .paths(PathSelectors.ant("/api/**"))
+                .apis(RequestHandlerSelectors.basePackage(""))
+                .paths(PathSelectors.ant(""))
                 .build()
+                .enable(swaggerApiEnabled)
                 .apiInfo(apiInfo());
     }
 
@@ -34,7 +40,7 @@ public class SwaggerConfig {
                 "This is the API for GLA Open Project System.",
                 "API TOS",
                 "Terms of service",
-                new Contact("Steve Leach","","steve.leach@keytree.co.uk"),
+                new Contact("", "", ""),
                 "License of API",
                 "API license URL");
         return apiInfo;

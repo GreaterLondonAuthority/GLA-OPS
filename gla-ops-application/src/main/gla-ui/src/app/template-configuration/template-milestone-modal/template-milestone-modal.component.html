@@ -4,6 +4,7 @@
       <span aria-hidden="true">&times;</span>
     </button>
     <h1>{{originalMilestone?.summary? 'UPDATE': 'ADD'}} PRESET MILESTONE</h1>
+    <div *ngIf="!draft" style="text-align: left" class="error">Any changes you save will apply almost instantly on all projects using this template. Changing a milestone from optional to mandatory will render the block incomplete the next time it is edited.</div>
   </div>
 
   <div class="modal-body">
@@ -17,10 +18,11 @@
                name="summary"
                placeholder="Milestone name"
                required
+               disabled= {{!draft}}
                type="text"/>
         <div *ngIf="(summary.dirty || summary.touched) && (summary.invalid || !isNameUnique(milestone))" class="error-wrapper">
           <div *ngIf="summary?.errors?.required" class="error">Required</div>
-          <div *ngIf="!isNameUnique(milestone)" class="error">Duplicate milestone</div>
+          <div *ngIf="!isNameUnique(milestone)" class="error">Name already in use</div>
         </div>
       </div>
 
@@ -38,7 +40,7 @@
                required/>
         <div *ngIf="(displayOrder.dirty || displayOrder.touched) && (displayOrder.invalid || !isDisplayOrderUnique(milestone))" class="error-wrapper">
           <div *ngIf="displayOrder?.errors?.required" class="error">Required</div>
-          <div *ngIf="!isDisplayOrderUnique(milestone)" class="error">Duplicate display order</div>
+          <div *ngIf="!isDisplayOrderUnique(milestone)" class="error">Display order already in use</div>
         </div>
       </div>
 
@@ -51,16 +53,20 @@
                mask="separator.0"
                maxlength="6"
                name="externalId"
+               disabled={{!draft}}
                numberType
                placeholder="External id"
                thousandSeparator=""/>
+        <div *ngIf="(externalId.dirty || externalId.touched) && ( !isExternalIdUnique(milestone))" class="error-wrapper">
+          <div class="error">External id already in use</div>
+        </div>
       </div>
 
       <div class="form-group">
         <label for="requirement">Requirement type</label>
 
         <select [(ngModel)]="milestone.requirement"
-                [class]="{placeholder: !milestone.requirement}"
+                [ngClass]="{placeholder: !milestone.requirement}"
                 #requirement="ngModel"
                 class="form-control"
                 id="requirement"
@@ -79,6 +85,7 @@
         <gla-yes-no-input [(model)]="milestone.keyEvent"
                           class="block"
                           id="key-event"
+                          disabled={{!draft}}
                           mode="bool"
                           name="key-event"></gla-yes-no-input>
       </div>
@@ -89,23 +96,30 @@
                           (modelChange)="onMonetaryChange($event)"
                           class="block"
                           id="monetary"
+                          disabled={{!draft}}
                           mode="bool"
                           name="monetary"></gla-yes-no-input>
       </div>
 
       <div *ngIf="isBlockMonetarySplit && milestone.monetary" class="form-group">
         <label for="monetarySplit">Monetary split %</label>
-        <input [(ngModel)]="milestone.monetarySplit"
-               #monetarySplit="ngModel"
-               class="form-control"
-               id="monetarySplit"
-               mask="separator.0"
-               maxlength="2"
-               name="monetarySplit"
-               numberType
-               placeholder="Monetary split %"
-               required/>
-        <div *ngIf="(monetarySplit.dirty || monetarySplit.touched) && (monetarySplit.invalid)" class="error-wrapper">
+          <input [(ngModel)]="milestone.monetarySplit"
+                 #monetarySplit="ngModel"
+                 class="form-control"
+                 id="monetarySplit"
+                 mask="separator.0"
+                 maxlength="3"
+                 name="monetarySplit"
+                 disabled={{!draft}}
+                 numberType
+                 placeholder="Monetary split %"
+                 required/>
+        <div *ngIf="monetarySplit.value > 100" class="error-wrapper">
+          <div class="error">Max monetary split is 100</div>
+        </div>
+
+        <div *ngIf="(monetarySplit.dirty || monetarySplit.touched) && (monetarySplit.invalid)"
+             class="error-wrapper">
           <div *ngIf="monetarySplit?.errors?.required" class="error">Required</div>
         </div>
       </div>

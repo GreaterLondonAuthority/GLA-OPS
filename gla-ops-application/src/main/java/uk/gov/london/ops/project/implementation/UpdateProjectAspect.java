@@ -10,13 +10,10 @@ package uk.gov.london.ops.project.implementation;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.london.ops.framework.Environment;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.state.ProjectStatus;
-import uk.gov.london.ops.user.UserService;
 
 @Aspect
 @Component
@@ -24,12 +21,6 @@ import uk.gov.london.ops.user.UserService;
  * AOP Component to persist project completeness recalculations on save/all
  */
 public class UpdateProjectAspect {
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    Environment environment;
 
     @Before("execution(* uk.gov.london.ops.project.implementation.repository.ProjectRepository+.save(..))")
     public void updateEntityChangeOnSave(JoinPoint joinPoint) {
@@ -52,6 +43,7 @@ public class UpdateProjectAspect {
             updateEntityChange(project);
         }
     }
+
     void updateEntityChange(Project  project)  {
         project.recalculateProjectGrantEligibility();
         for (NamedProjectBlock projectBlock : project.getLatestProjectBlocks()) {

@@ -11,7 +11,7 @@ const gla = angular.module('GLA');
 
 class MilestonesTable {
 
-  constructor(MilestonesService, ProjectMilestoneModal, ConfirmationDialog, ClaimMilestoneModal, ReclaimMilestoneModal, UserService, FileUploadModal, ReclaimInfoModal) {
+  constructor($state, MilestonesService, ProjectMilestoneModal, ConfirmationDialog, ClaimMilestoneModal, ReclaimMilestoneModal, UserService, FileUploadModal, ReclaimInfoModal, WithdrawMilestoneModal) {
     this.MilestonesService = MilestonesService;
     this.ProjectMilestoneModal = ProjectMilestoneModal;
     this.ConfirmationDialog = ConfirmationDialog;
@@ -20,6 +20,8 @@ class MilestonesTable {
     this.UserService = UserService;
     this.FileUploadModal = FileUploadModal;
     this.ReclaimInfoModal = ReclaimInfoModal;
+    this.WithdrawMilestoneModal = WithdrawMilestoneModal;
+    this.$state = $state;
   }
 
   $onInit(){
@@ -29,8 +31,7 @@ class MilestonesTable {
     this.indexOfGrantSourceBlock = (project.projectBlocksSorted || []).indexOf(this.grantSourceBlock) + 1;
     this.zeroGrantRequested = this.grantSourceBlock && this.grantSourceBlock.zeroGrantRequested;
     this.associatedProject = this.grantSourceBlock && this.grantSourceBlock.associatedProject;
-    this.grantValue = this.grantSourceBlock && this.grantSourceBlock.grantValue;
-
+    this.grantValue = project.grantsRequested['Grant'] || 0;
     this.milestonesConfig = _.find(this.template.blocksEnabled, {block: 'Milestones'});
     this.maxEvidenceAttachments = this.milestonesConfig.maxEvidenceAttachments;
 
@@ -41,11 +42,12 @@ class MilestonesTable {
     this.maxEvidenceAttachments = this.projectBlock.maxEvidenceAttachments;
     this.isEvidenceAllowedForAll = this.projectBlock.evidenceApplicability === 'ALL_MILESTONES';
     this.isEvidenceAllowedForNew = this.projectBlock.evidenceApplicability === 'NEW_MILESTONES_ONLY';
+    this.isEvidenceAllowedForPastDateOnly = this.milestonesConfig.showEvidences === 'PAST_MILESTONE_DATE';
 
     this.isAutoApproval = !this.template.stateModel.approvalRequired;
     this.showStatusColumn = this.template.shouldMilestonesBlockShowStatus;
     this.autoCalculateMilestoneState = this.milestonesConfig.autoCalculateMilestoneState;
-    this.milstoneStatuses = [{
+    this.milestoneStatuses = [{
       key: 'ACTUAL',
       label: 'Actual'
     }, {
@@ -54,7 +56,6 @@ class MilestonesTable {
     }];
     this.showGrantColumn = false;
     this.showNaColumn = false;
-    this.showEvidenceColumn = this.isEvidenceAllowedForAll || this.isEvidenceAllowedForNew;
     this.monetarySplitTitle = this.template.monetarySplitTitle;
     this.milestoneType = this.template.milestoneType;
     this.isMonetaryValueType = this.template.milestoneType === 'MonetaryValue';
@@ -65,7 +66,6 @@ class MilestonesTable {
     this.descriptionHintText = this.template.milestoneDescriptionHintText == null ? 'Enter milestone description' : this.template.milestoneDescriptionHintText;
 
     this.loading = true;
-
 
     this.refreshData(true);
 
@@ -107,19 +107,36 @@ class MilestonesTable {
       res[grant] = true;
       return res;
     }, {});
+    this.initialised = true;
   }
 
   //TO refresh recently added
   $onChanges(changes) {
-    console.log('changes', changes);
-    if (changes.processingRoute) {
+    if (this.initialised && changes.processingRoute) {
       // console.log('refreshing.....');
       this.milestones = this.projectBlock.milestones;
       this.refreshData(null);
     }
   }
 
+  canShowEvidenceColumn(){
+    let isEvidenceAllowed = this.isEvidenceAllowedForAll || this.isEvidenceAllowedForNew
+    let showEvidencesAlways = this.milestonesConfig.showEvidences === 'ALWAYS'
+    return isEvidenceAllowed && (showEvidencesAlways || (this.isEvidenceAllowedForPastDateOnly && this.hasMilestoneDateInPast())) ;
+  }
+
+  hasMilestoneDateInPast(){
+    return this.milestones.some(m => this.isMilestoneInThePast(m));
+  }
+
+  isMilestoneInThePast(milestone){
+   return moment().isAfter(milestone.milestoneDate )
+  }
+
   isEvidenceAllowed(milestone) {
+    if(this.isEvidenceAllowedForPastDateOnly && !this.isMilestoneInThePast(milestone)){
+      return false;
+    }
     return this.isEvidenceAllowedForAll || (this.isEvidenceAllowedForNew && milestone.manuallyCreated);
   }
 
@@ -158,6 +175,7 @@ class MilestonesTable {
     this.loading = false;
     this.hasConditionalMilestones = false;
     this.isSplit100 = this.splitTotal() === 100;
+    this.showEvidenceColumn = this.canShowEvidenceColumn()
 
     let availableToReclaimByType = this.projectBlock.availableToReclaimByType;
     if (availableToReclaimByType && (availableToReclaimByType.RCGF || availableToReclaimByType.DPF || (availableToReclaimByType.Grant && this.isMonetaryValueType)   )) {
@@ -233,6 +251,7 @@ class MilestonesTable {
       this.onDeleteMilestone({$event: milestone}).then((isDeleted) => {
         if (isDeleted === true) {
           _.remove(this.milestones, milestone);
+          this.refreshData(milestone);
         }
       });
     });
@@ -256,6 +275,27 @@ class MilestonesTable {
 
         this.refreshData(false);
       });
+  }
+
+  openWithdrawMilestoneModal(milestone, isActionColumn) {
+    const modalInstance = this.WithdrawMilestoneModal.show(milestone);
+    modalInstance.result.then((data) => {
+      this.onWithdrawMilestoneModalAction({
+        $event: {
+          milestone: milestone,
+          data: data
+        }
+      });
+    });
+  }
+
+  openWithdrawInfoModal(milestone, isActionColumn) {
+    const modalInstance = this.WithdrawMilestoneModal.show(milestone, true, isActionColumn);
+    modalInstance.result.then(data => {
+      return this.MilestonesService.cancelWithdrawMilestone(this.project.id, milestone.id).then(() => {
+        this.$state.go(this.$state.current.name, this.$stateParams, {reload: true});
+      });
+    });
   }
 
   openClaimMilestoneModal(milestone, isActionColumn) {
@@ -326,6 +366,9 @@ class MilestonesTable {
         orgId: this.project.organisation.id,
         readOnly: this.readOnly,
         fileIdColumn: 'fileId',
+        programmeId: this.project.programmeId,
+        projectId: this.project.id,
+        blockId: this.projectBlock.id,
         attachments: milestone.attachments,
         title: `Upload evidence for ${milestone.summary} milestone`,
         maxEvidenceAttachments: this.maxEvidenceAttachments,
@@ -359,7 +402,7 @@ class MilestonesTable {
   }
 
   showPaymentsToggle(m) {
-    return m.approved && (m.payments || []).length && this.projectBlock.latestVersion
+    return (m.payments || []).length && this.projectBlock.latestVersion
   }
 
   onNaChange(m) {
@@ -395,7 +438,7 @@ class MilestonesTable {
 }
 
 
-MilestonesTable.$inject = ['MilestonesService', 'ProjectMilestoneModal', 'ConfirmationDialog', 'ClaimMilestoneModal', 'ReclaimMilestoneModal', 'UserService', 'FileUploadModal', 'ReclaimInfoModal'];
+MilestonesTable.$inject = ['$state', 'MilestonesService', 'ProjectMilestoneModal', 'ConfirmationDialog', 'ClaimMilestoneModal', 'ReclaimMilestoneModal', 'UserService', 'FileUploadModal', 'ReclaimInfoModal', 'WithdrawMilestoneModal'];
 
 gla.component('milestonesTable', {
   templateUrl: 'scripts/components/milestones-table/milestonesTable.html',
@@ -412,6 +455,8 @@ gla.component('milestonesTable', {
     onAutoSave: '&',
     onReclaimMilestoneModalAction: '&',
     onClaimMilestoneModalAction: '&',
+    onWithdrawMilestoneModalAction: '&',
+    onCancelWithdrawMilestoneModalActionPass: '&',
     onAddMilestone: '&',
     onDeleteMilestone: '&',
     showExtraInfo: '<',

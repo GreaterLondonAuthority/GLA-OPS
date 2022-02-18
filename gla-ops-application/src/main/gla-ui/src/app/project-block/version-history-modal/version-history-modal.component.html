@@ -1,0 +1,45 @@
+<div class="milestone-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped version-history" id="version-history">
+        <thead class="thead-inverse uppercase">
+
+        <tr>
+          <th>Version</th>
+          <th>Date</th>
+          <th>{{actionedByTitle}}</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of versionHistory; let first = first">
+          <td>
+            <span class="version-text">{{versionText(item, first)}}</span>
+            <span class="block-label"
+                  [ngClass]="{'preset-label' : label.preSetLabel?.labelName}"
+                  *ngFor="let label of item.labels"> {{label.preSetLabel?.labelName || label?.text}}
+            </span>
+          </td>
+          <td>{{item.versionUpdated | date: "dd/MM/yyyy"}}</td>
+          <td>{{item.actionedBy}}</td>
+          <td>
+            <a href="JavaScript:void(0)" (click)="activeModal.close(item)">View</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <a class="form-cancel" href="JavaScript:void(0)" (click)="activeModal.dismiss()">Cancel</a>
+      </div>
+    </div>
+  </div>
+</div>

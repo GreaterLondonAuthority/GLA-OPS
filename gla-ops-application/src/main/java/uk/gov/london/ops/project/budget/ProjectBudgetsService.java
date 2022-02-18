@@ -7,12 +7,6 @@
  */
 package uk.gov.london.ops.project.budget;
 
-import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.london.ops.framework.exception.ValidationException;
@@ -21,12 +15,19 @@ import uk.gov.london.ops.payment.SpendType;
 import uk.gov.london.ops.project.BaseProjectFinanceService;
 import uk.gov.london.ops.project.EnrichmentRequiredListener;
 import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.WbsCode;
+import uk.gov.london.ops.project.WbsCodeEntity;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.implementation.mapper.AnnualSpendSummaryMapper;
 import uk.gov.london.ops.project.implementation.mapper.ProjectBudgetsSummaryMapper;
 import uk.gov.london.ops.project.implementation.repository.AnnualSpendSummaryRecordRepository;
+
+import javax.transaction.Transactional;
+import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -101,7 +102,7 @@ public class ProjectBudgetsService extends BaseProjectFinanceService implements 
         // init data for new attachments
         projectBudgetsBlock.getAttachments().stream().filter(attachment -> attachment.getId() == null).forEach(attachment -> {
             attachment.setCreatedOn(environment.now());
-            attachment.setCreator(userService.currentUser());
+            attachment.setCreator(userService.currentUsername());
             auditService.auditCurrentUserActivity(
                     String.format("document %s with ID %d of type %s attached with total revenue %d and total capital %d",
                             attachment.getFileName(), attachment.getFileId(), attachment.getDocumentType(),
@@ -116,8 +117,8 @@ public class ProjectBudgetsService extends BaseProjectFinanceService implements 
     }
 
     private void validateWbsCodes(ProjectBudgetsBlock projectBudgetsBlock, Integer projectId) {
-        Set<WbsCode> capitalWbsCodes = projectBudgetsBlock.getWbsCodes(SpendType.CAPITAL);
-        Set<WbsCode> revenueWbsCodes = projectBudgetsBlock.getWbsCodes(SpendType.REVENUE);
+        Set<WbsCodeEntity> capitalWbsCodes = projectBudgetsBlock.getWbsCodes(SpendType.CAPITAL);
+        Set<WbsCodeEntity> revenueWbsCodes = projectBudgetsBlock.getWbsCodes(SpendType.REVENUE);
 
         if (capitalWbsCodes.size() > MAX_WBS_CODES) {
             throw new ValidationException("cannot enter more than " + MAX_WBS_CODES + " capital wbs codes");
@@ -127,7 +128,7 @@ public class ProjectBudgetsService extends BaseProjectFinanceService implements 
             throw new ValidationException("cannot enter more than " + MAX_WBS_CODES + " revenue wbs codes");
         }
 
-        for (WbsCode wbsCode : projectBudgetsBlock.getWbsCodes()) {
+        for (WbsCodeEntity wbsCode : projectBudgetsBlock.getWbsCodes()) {
             if (wbsCode.getId() == null && isWbsCodeUsedInProjectsOtherThan(wbsCode.getCode(), projectId)) {
                 throw new ValidationException("WBS code " + wbsCode.getCode() + " already used in a different project");
             }
@@ -169,4 +170,5 @@ public class ProjectBudgetsService extends BaseProjectFinanceService implements 
             }
         }
     }
+
 }

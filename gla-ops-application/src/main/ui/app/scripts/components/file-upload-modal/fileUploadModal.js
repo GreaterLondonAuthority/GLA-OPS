@@ -25,7 +25,10 @@ function FileUploadModal($uibModal, $rootScope, FileUploadErrorModal) {
           this.attachments = config.attachments;
 
           this.uploadParams = {
-            orgId: config.orgId
+            orgId: config.orgId,
+            programmeId: config.programmeId,
+            projectId: config.projectId,
+            blockId: config.blockId
           };
 
           this.onFileUploadProgress = (data) => {

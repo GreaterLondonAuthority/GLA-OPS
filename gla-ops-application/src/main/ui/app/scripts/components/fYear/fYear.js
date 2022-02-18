@@ -11,7 +11,7 @@ const gla = angular.module('GLA');
 
 function FYear() {
   return function (year) {
-    return `${year}/${year % 100 + 1 }`;
+    return year + '/' + (++year).toString().substr(2,2)
   }
 }
 

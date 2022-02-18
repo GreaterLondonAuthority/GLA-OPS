@@ -10,7 +10,7 @@
     formats="'number'"
     data="$ctrl.data"
     fields="'allocation'">
-  </change-report-field>
+</change-report-field>
 
 <change-report-field
   ng-if="$ctrl.isAebGrant"
@@ -18,6 +18,22 @@
   formats="'number'"
   data="$ctrl.data"
   fields="'communityAllocation'">
+</change-report-field>
+
+<change-report-field
+  ng-if="$ctrl.isAebGrant"
+  label="$ctrl.labels.innovationFund"
+  formats="'number'"
+  data="$ctrl.data"
+  fields="'innovationFundAllocation'">
+</change-report-field>
+
+<change-report-field
+  ng-if="$ctrl.isAebGrant"
+  label="$ctrl.labels.responseFundStrand1"
+  formats="'number'"
+  data="$ctrl.data"
+  fields="'responseFundStrand1Allocation'">
 </change-report-field>
 
 <change-report-field

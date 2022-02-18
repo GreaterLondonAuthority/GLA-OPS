@@ -9,6 +9,7 @@ package uk.gov.london.ops.project.grant;
 
 import static uk.gov.london.common.user.BaseRole.GLA_ORG_ADMIN;
 import static uk.gov.london.common.user.BaseRole.GLA_PM;
+import static uk.gov.london.common.user.BaseRole.GLA_PROGRAMME_ADMIN;
 import static uk.gov.london.common.user.BaseRole.GLA_SPM;
 import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
 import static uk.gov.london.common.user.BaseRole.ORG_ADMIN;
@@ -117,6 +118,20 @@ public class ProjectGrantAPI {
                 }
             }
         }
+    }
+
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_PROGRAMME_ADMIN, ORG_ADMIN, PROJECT_EDITOR})
+    @RequestMapping(value = "/projects/{id}/affordableHomes", method = RequestMethod.PUT)
+    @ApiOperation(value = "set a project's tenure details", notes = "")
+    @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
+    public AffordableHomesBlock updateProjectAffordableHomesBlock(@PathVariable Integer id,
+            @RequestParam(name = "autosave", defaultValue = "false", required = false) boolean autosave,
+            @Valid @RequestBody AffordableHomesBlock tenure, BindingResult bindingResult) {
+        verifyBinding("Invalid tenure details!", bindingResult);
+        Project fromDB = service.get(id);
+        projectGrantService.updateProjectAffordableHomesBlock(fromDB, tenure, autosave);
+        return fromDB.getAffordableHomesBlock();
     }
 
 }

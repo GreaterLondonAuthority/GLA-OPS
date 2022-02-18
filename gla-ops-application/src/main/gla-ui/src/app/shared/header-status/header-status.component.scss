@@ -1,0 +1,25 @@
+gla-header-status {
+  display: block;
+
+  hs-right {
+    display: block;
+    padding: 0 0 0 10px;
+  }
+
+  hs-left {
+    display: block;
+    padding: 0 10px 0 0;
+  }
+
+  .status-left, .status-right {
+    font-weight: bold;
+  }
+
+  .status-center {
+    padding: 0 5px;
+  }
+
+  .status-left, .status-center, .status-right {
+    margin-top: 10px;
+  }
+}

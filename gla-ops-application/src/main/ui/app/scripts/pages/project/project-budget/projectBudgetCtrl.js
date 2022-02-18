@@ -10,9 +10,10 @@ import ProjectBlockCtrl from '../ProjectBlockCtrl';
 import './wbs-codes/wbsCodes'
 import ForecastDataUtil from '../../../util/ForecastDataUtil';
 import DateUtil from '../../../util/DateUtil';
+import {ActualsMetadataModalComponent} from '../../../../../../gla-ui/src/app/actuals-metadata-modal/actuals-metadata-modal.component'
 
 class ProjectBudgetCtrl extends ProjectBlockCtrl {
-  constructor(project, $injector, $scope, $log, FileUploadErrorModal, FileDeleteConfirmationModal, ToastrUtil, BudgetService, FinanceService, ActualsMetadataModal, fYearFilter) {
+  constructor(project, $injector, $scope, $log, FileUploadErrorModal, FileDeleteConfirmationModal, ToastrUtil, BudgetService, FinanceService, fYearFilter, NgbModal) {
     super($injector);
     this.$scope = $scope;
     this.$log = $log;
@@ -20,9 +21,9 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
     this.FileUploadErrorModal = FileUploadErrorModal;
     this.FileDeleteConfirmationModal = FileDeleteConfirmationModal;
     this.BudgetService = BudgetService;
-    this.ActualsMetadataModal = ActualsMetadataModal;
     this.FinanceService = FinanceService;
     this.fYearFilter = fYearFilter;
+    this.NgbModal = NgbModal
   }
 
   $onInit(){
@@ -31,7 +32,10 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
     this.originalData = angular.copy(this.data);
 
     this.uploadParams = {
-      orgId: this.project.organisation.id
+      orgId: this.project.organisation.id,
+      programmeId: this.project.programmeId,
+      projectId: this.project.id,
+      blockId: this.projectBlock.id
     };
     this.selectedDocumentType = null;
     this.documentTypes = ['DAR', 'ADD', 'DD', 'MD', 'Other'];
@@ -361,7 +365,7 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
     this.forecastLedgerTypes = ForecastDataUtil.getLedgerTypes();
     this.forecastSpendRecurrence = ForecastDataUtil.getSpendRecurrence();
     return this.FinanceService.getSpendCategories()
-      .then(categories => {
+      .subscribe(categories => {
         this.forecastSpendCategories = categories;
       });
   }
@@ -464,11 +468,18 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
   }
 
   showMetadataModal(event){
+    this.$rootScope.showGlobalLoadingMask = true;
     let actualKey = event.spendType === 'REVENUE'? 'revenueActual' : 'capitalActual';
     let actual = event.spend[actualKey];
     let isCR = actual < 0;
-    let modalDataPromise = this.BudgetService.getBudgetsMetadata(this.project.id, this.blockId, event.spend.categoryId, event.data.yearMonth);
-    this.ActualsMetadataModal.show(modalDataPromise.then(rsp => rsp.data), event.spend.spendCategory, event.spendType, isCR);
+    this.BudgetService.getBudgetsMetadata(this.project.id, this.blockId, event.spend.categoryId, event.data.yearMonth).then((rsp) => {
+      this.$rootScope.showGlobalLoadingMask = false;
+      let modal = this.NgbModal.open(ActualsMetadataModalComponent, {size: 'lg'})
+      modal.componentInstance.data = rsp.data
+      modal.componentInstance.title = event.spend.spendCategory
+      modal.componentInstance.spendType = event.spendType
+      modal.componentInstance.isCR = isCR
+    });
   }
 
   /**
@@ -501,7 +512,7 @@ class ProjectBudgetCtrl extends ProjectBlockCtrl {
   }
 }
 
-ProjectBudgetCtrl.$inject = ['project', '$injector', '$scope', '$log', 'FileUploadErrorModal', 'FileDeleteConfirmationModal', 'ToastrUtil', 'BudgetService', 'FinanceService', 'ActualsMetadataModal', 'fYearFilter'];
+ProjectBudgetCtrl.$inject = ['project', '$injector', '$scope', '$log', 'FileUploadErrorModal', 'FileDeleteConfirmationModal', 'ToastrUtil', 'BudgetService', 'FinanceService', 'fYearFilter', 'NgbModal'];
 
 angular.module('GLA')
   .controller('ProjectBudgetCtrl', ProjectBudgetCtrl);

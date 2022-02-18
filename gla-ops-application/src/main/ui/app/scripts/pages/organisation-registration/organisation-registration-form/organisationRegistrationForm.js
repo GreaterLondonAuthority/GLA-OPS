@@ -51,6 +51,7 @@ angular.module('GLA')
       organisationTypes: '<',
       managingOrganisations: '<',
       legalStatuses: '<',
+      organisationTemplates: '<'
     },
     templateUrl: 'scripts/pages/organisation-registration/organisation-registration-form/organisationRegistrationForm.html'
   });

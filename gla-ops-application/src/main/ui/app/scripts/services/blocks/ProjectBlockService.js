@@ -6,9 +6,9 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-ProjectBlockService.$inject = ['$http', 'config'];
+ProjectBlockService.$inject = ['$http', 'config', 'GlaProjectBlockService'];
 
-function ProjectBlockService($http, config) {
+function ProjectBlockService($http, config, GlaProjectBlockService) {
 
   return {
     /**
@@ -37,7 +37,7 @@ function ProjectBlockService($http, config) {
     },
 
     updateInternalBlock(projectId, block){
-      return $http.put(`${config.basePath}/projects/${projectId}/internalBlocks/${block.id}`, block);
+      return GlaProjectBlockService.updateInternalBlock(projectId, block).toPromise();
     }
   };
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="803" author="cmelville">
+        <addColumn tableName="project">
+            <column name="payments_only" type="BOOLEAN" defaultValue="false" remarks="whether this payment group is for payments only or authorise project as well"/>
+        </addColumn>
+        <addColumn tableName="project_block">
+            <column name="has_been_payments_only_cycle" type="BOOLEAN" defaultValue="false" remarks="whether this block has been payments_only in the past, hence can't be reverted"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="804" author="cmatias" >
+        <addColumn tableName="payment_group">
+            <column name="comments" type="VARCHAR(500)" remarks="Comments about request payments only reason or authority for approving changes">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="805" author="cmatias" >
+        <addColumn tableName="payment_group">
+            <column name="payments_only_approval" type="boolean" remarks="Is project payments only approved?">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="806" author="cmelville">
+        <addColumn tableName="user_roles">
+            <column name="org_admin_requested" type="boolean" remarks="if this user has requested to become org admin"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

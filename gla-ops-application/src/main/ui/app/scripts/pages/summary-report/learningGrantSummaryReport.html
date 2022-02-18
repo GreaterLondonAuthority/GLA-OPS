@@ -7,11 +7,23 @@
 
   <div>
     <div class="report-label mtop10">{{$ctrl.labels.deliverAllocation}}</div>
-    <div class="report-value" default-value="'Not provided'">{{$ctrl.currentAllocation.allocation | number}}</div>
+    <div class="report-value" default-value="'Not provided'">{{$ctrl.currentDelivery.allocation | number}}</div>
   </div>
   <div ng-if="$ctrl.isAebGrant">
-    <div class="report-label mtop10">{{$ctrl.labels.communityAllocation}}</div>
-    <div class="report-value" default-value="'Not provided'">{{$ctrl.currentAllocation.communityAllocation | number}}</div>
+    <div class="mbottom10 mtop10">
+      <toggle-icon [(collapsed)]="$ctrl.ofWhich.collapsed"></toggle-icon>
+      <label>{{$ctrl.labels.ofWhich}}</label>
+    </div>
+    <div ng-if="!$ctrl.ofWhich.collapsed">
+      <div class="report-label mtop10">{{$ctrl.labels.communityAllocation}}</div>
+      <div class="report-value" default-value="'Not provided'">{{$ctrl.currentCommunity.allocation | number}}</div>
+
+      <div class="report-label mtop10">{{$ctrl.labels.innovationFund}}</div>
+      <div class="report-value" default-value="'Not provided'">{{$ctrl.currentInnovationFund.allocation | number}}</div>
+
+      <label class="report-label mtop10">{{$ctrl.labels.responseFundStrand1}}</label>
+      <div class="report-value" default-value="'Not provided'">{{$ctrl.currentResponseFundStrand1.allocation | number}}</div>
+    </div>
   </div>
   <learning-grant-table columns="$ctrl.labels.tableColumns"
                         class="mbottom20"
@@ -22,7 +34,7 @@
 
   <div ng-if="$ctrl.isAebProcured">
     <div class="report-label mtop10">{{$ctrl.labels.learnerSupportAllocation}}</div>
-    <div class="report-value" default-value="'Not provided'">{{$ctrl.currentAllocation.learnerSupportAllocation | number}}</div>
+    <div class="report-value" default-value="'Not provided'">{{$ctrl.currentLearningSupport.allocation | number}}</div>
   </div>
 
   <learning-grant-table columns="$ctrl.labels.tableColumns"

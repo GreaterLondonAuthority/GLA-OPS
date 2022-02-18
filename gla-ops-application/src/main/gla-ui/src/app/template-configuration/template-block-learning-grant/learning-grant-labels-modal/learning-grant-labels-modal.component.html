@@ -1,0 +1,103 @@
+<div class="modal-header text-center">
+  <button aria-label="Close" class="close" data-dismiss="modal" (click)="activeModal.dismiss()" on-enter="activeModal.dismiss()" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <h1>EDIT LABELS</h1>
+  <div *ngIf="!draft" class="error">Changes will take effect almost immediately on all projects using this template.</div>
+</div>
+
+<div class="modal-body text-left">
+  <form name="modalForm" #modalForm="ngForm">
+    <div class="form-group">
+      <label for="profile-title">Profile column label</label>
+      <input [(ngModel)]="block.profileTitle"
+             id="profile-title"
+             aria-label="Profile column label"
+             name="profileTitle"
+             class="form-control"
+             type="text"
+             maxlength="50">
+    </div>
+
+    <div class="form-group">
+      <label for="allocation-title">Allocation column label</label>
+      <input [(ngModel)]="block.allocationTitle"
+             id="allocation-title"
+             aria-label="Allocation column label"
+             name="allocationTitle"
+             class="form-control"
+             type="text"
+             maxlength="50">
+    </div>
+
+    <div class="form-group">
+      <label for="cumulative-allocation-title">Cumulative allocation column label</label>
+      <input [(ngModel)]="block.cumulativeAllocationTitle"
+             id="cumulative-allocation-title"
+             aria-label="Cumulative allocation column label"
+             name="cumulativeAllocationTitle"
+             class="form-control"
+             type="text"
+             maxlength="50">
+    </div>
+
+    <div class="form-group">
+      <label for="cumulative-earnings-title">Cumulative earnings column label</label>
+      <input [(ngModel)]="block.cumulativeEarningsTitle"
+             id="cumulative-earnings-title"
+             aria-label="Cumulative earnings column label"
+             name="cumulativeEarningsTitle"
+             class="form-control"
+             type="text"
+             maxlength="50">
+    </div>
+
+    <div class="form-group">
+      <label for="cumulative-payment-title">Cumulative payment column label</label>
+      <input [(ngModel)]="block.cumulativePaymentTitle"
+             id="cumulative-payment-title"
+             aria-label="Cumulative payment column label"
+             name="cumulativePaymentTitle"
+             class="form-control"
+             type="text"
+             maxlength="50">
+    </div>
+
+
+    <div class="form-group">
+      <label for="payment-due-title">Payment due column label</label>
+      <input [(ngModel)]="block.paymentDueTitle"
+             id="payment-due-title"
+             aria-label="Payment due column label"
+             name="paymentDueTitle"
+             class="form-control"
+             type="text"
+             maxlength="50">
+    </div>
+  </form>
+</div>
+
+
+<div class="modal-footer">
+  <div class="row">
+    <div class="col-xs-12 text-center mbottom15">
+
+      <button
+        id="abandon-btn"
+        class="btn btn-default btn-primary btn-center"
+        type="button"
+        (click)="changeLabels()"
+        [disabled]="!addButtonEnabled()">UPDATE
+      </button>
+
+      <button
+        id="cancel-btn"
+        class="btn btn-default btn-secondary btn-center"
+        type="button"
+        (click)="activeModal.dismiss()">CANCEL
+      </button>
+
+    </div>
+  </div>
+</div>
+

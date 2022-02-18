@@ -7,12 +7,14 @@
  */
 package uk.gov.london.ops.project.repeatingentity;
 
-import java.time.OffsetDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.london.ops.project.BaseProjectService;
 import uk.gov.london.ops.project.ProjectService;
 import uk.gov.london.ops.project.block.ProjectBlockService;
-import uk.gov.london.ops.user.UserService;
+
+import java.time.OffsetDateTime;
+
+import static uk.gov.london.ops.framework.OPSUtils.currentUsername;
 
 public abstract class RepeatingEntityService<T extends RepeatingEntity> extends BaseProjectService {
 
@@ -21,9 +23,6 @@ public abstract class RepeatingEntityService<T extends RepeatingEntity> extends 
 
     @Autowired
     ProjectBlockService projectBlockService;
-
-    @Autowired
-    UserService userService;
 
     public abstract Class<T> getEntityType();
 
@@ -45,7 +44,7 @@ public abstract class RepeatingEntityService<T extends RepeatingEntity> extends 
         repeatingEntityBlock.updateExistingEntity(entity);
 
         T updated = (T) repeatingEntityBlock.getEntry(entity.getId());
-        updated.setModifiedBy(userService.currentUsername());
+        updated.setModifiedBy(currentUsername());
         updated.setModifiedOn(OffsetDateTime.now());
 
         repeatingEntityBlock = (RepeatingEntityBlock) projectService.updateProjectBlock(repeatingEntityBlock, projectId);

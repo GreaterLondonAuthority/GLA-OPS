@@ -30,6 +30,9 @@ class PendingUsersCtrl {
     this.currentPage = 1;
     this.updateFilters(true);
     this.initialised = true;
+
+    this.showAuthorisedSignatory = this.UserService.hasPermission('users.assign.signatory');
+    this.authorisedSignatoryTooltip = this.UserService.getAuthorisedSignatoryTooltip();
   }
 
   $onChanges(changes) {
@@ -77,9 +80,17 @@ class PendingUsersCtrl {
     })
   }
 
+  canChangeAuthorisedSignatory(role){
+    return this.UserService.canChangeAuthorisedSignatory(role)
+  }
+
+  signatoryChange(organisationId, roleName, signatory) {
+    this.UserService.updateAuthorisedSignatory(this.userProfile.username, organisationId, roleName, signatory);
+  }
+
   approveUser(roleSummary) {
     this.$rootScope.showGlobalLoadingMask = true;
-    this.OrganisationService.approveUser(roleSummary.organisationId, roleSummary.username, roleSummary.newRole)
+    this.OrganisationService.approveUser(roleSummary.organisationId, roleSummary.username, roleSummary.newRole, roleSummary.authorisedSignatory)
       .then(resp => {
         this.updateFilters(true);
       })

@@ -15,9 +15,9 @@ import uk.gov.london.ops.framework.annotations.PermissionRequired;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.framework.jpa.NonJoin;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
+import uk.gov.london.ops.refdata.PaymentSource;
 import uk.gov.london.ops.service.ManagedEntityInterface;
-import uk.gov.london.ops.user.domain.User;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -122,7 +122,7 @@ public class PaymentSummary implements ManagedEntityInterface {
     private BigDecimal interest;
 
     @Column(name = "interestPayment")
-    private final Boolean interestPayment = Boolean.FALSE;
+    private Boolean interestPayment = Boolean.FALSE;
 
     @Column(name = "wbs_code")
     @NonJoin("Duplicates the WBS code from the organisation being paid")
@@ -131,7 +131,7 @@ public class PaymentSummary implements ManagedEntityInterface {
     @Column(name = "ce_code")
     private String ceCode;
 
-    @Column(name = "calculated_sap_vendor_id")
+    @Column(name = "sap_vendor_id")
     @PermissionRequired({ORG_VIEW_VENDOR_SAP_ID})
     @NonJoin("Not a join")
     private String sapVendorId;
@@ -143,23 +143,27 @@ public class PaymentSummary implements ManagedEntityInterface {
     @JsonIgnore
     @ManyToOne(cascade = {})
     @JoinColumn(name = "managing_organisation_id")
-    private Organisation managingOrganisation;
+    private OrganisationEntity managingOrganisation;
 
     @Column(name = "created_on")
     private OffsetDateTime createdOn;
 
     @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "created_by")
-    private User creator;
+    @Column(name = "created_by")
+    private String creator;
+
+    @Transient
+    private String creatorName;
 
     @Column(name = "modified_on")
     private OffsetDateTime modifiedOn;
 
     @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "modified_by")
-    private User modifiedByUser;
+    @Column(name = "modified_by")
+    private String modifiedBy;
+
+    @Transient
+    private String lastModifierName;
 
     @Column(name = "authorised_on")
     private OffsetDateTime authorisedOn;
@@ -177,9 +181,11 @@ public class PaymentSummary implements ManagedEntityInterface {
     private String companyName;
 
     @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "resent_by")
-    private User resender;
+    @Column(name = "resent_by")
+    private String resender;
+
+    @Transient
+    private String resenderName;
 
     @Column(name = "resent_on")
     private OffsetDateTime resentOn;
@@ -250,7 +256,7 @@ public class PaymentSummary implements ManagedEntityInterface {
         return interest == null ? null : interest.negate();
     }
 
-    public Organisation getManagingOrganisation() {
+    public OrganisationEntity getManagingOrganisation() {
         return managingOrganisation;
     }
 
@@ -262,12 +268,12 @@ public class PaymentSummary implements ManagedEntityInterface {
         return modifiedOn;
     }
 
-    public User getModifiedByUser() {
-        return modifiedByUser;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public String getModifiedBy() {
-        return modifiedByUser == null ? null : modifiedByUser.getUsername();
+        return modifiedBy;
     }
 
     public String getWbsCode() {
@@ -336,17 +342,25 @@ public class PaymentSummary implements ManagedEntityInterface {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getCreatedBy() {
-        return creator == null ? null : creator.getUsername();
+        return creator;
     }
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getCreator() {
-        return creator != null ? creator.getFullName() : null;
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
     }
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getLastModifierName() {
-        return modifiedByUser != null ? modifiedByUser.getFullName() : null;
+        return lastModifierName;
+    }
+
+    public void setLastModifierName(String lastModifierName) {
+        this.lastModifierName = lastModifierName;
     }
 
     public Integer getReclaimOfPaymentId() {
@@ -393,19 +407,22 @@ public class PaymentSummary implements ManagedEntityInterface {
         this.resentOn = resentOn;
     }
 
-    public User getResender() {
+    public String getResender() {
         return resender;
     }
 
-    public void setResender(User resender) {
+    public void setResender(String resender) {
         this.resender = resender;
     }
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getResenderName() {
-        return resender != null ? resender.getFullName() : null;
+        return resenderName;
     }
 
+    public void setResenderName(String resenderName) {
+        this.resenderName = resenderName;
+    }
 
     public Integer getInterestForPaymentId() {
         return interestForPaymentId;
@@ -441,5 +458,30 @@ public class PaymentSummary implements ManagedEntityInterface {
 
     public void setPaymentSourceDetails(PaymentSource paymentSourceDetails) {
         this.paymentSourceDetails = paymentSourceDetails;
+    }
+
+    public static PaymentSummary createFrom(ProjectLedgerEntry ple) {
+        PaymentSummary ps = new PaymentSummary();
+        ps.id = ple.getId();
+        ps.projectId = ple.getProjectId();
+        ps.category = ple.getCategory();
+        ps.subCategory = ple.getSubCategory();
+        ps.interest = ple.getInterest();
+        ps.value = ple.getValue();
+        ps.ledgerSource = ple.getLedgerSource();
+        ps.ledgerStatus = ple.getLedgerStatus();
+        ps.ledgerType = ple.getLedgerType();
+        ps.projectName = ple.getProjectName();
+        ps.programmeName = ple.getProgrammeName();
+        ps.vendorName = ple.getVendorName();
+        ps.paymentSource = ple.getPaymentSource();
+        ps.reclaimOfPaymentId = ple.getReclaimOfPaymentId();
+        ps.managingOrganisation = ple.getManagingOrganisation();
+        ps.organisationId = ple.getOrganisationId();
+        ps.sapVendorId = ple.getSapVendorId();
+        ps.interestPayment = ple.isInterestPayment();
+        ps.modifiedBy = ple.getModifiedBy();
+        ps.creator = ple.getCreatedBy();
+        return ps;
     }
 }

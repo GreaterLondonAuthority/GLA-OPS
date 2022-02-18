@@ -11,7 +11,7 @@ import '../programme/programme-template-modal/programmeTemplateModal';
 import DataUtil from '../../util/DateUtil';
 
 class ProgrammeCtrl {
-  constructor($state, $log, UserService, ProgrammeService, AssessmentService, ProgrammeTemplateModal, $rootScope, ConfirmationDialog, $animate, $timeout, TemplateService, fYearFilter) {
+  constructor($state, $log, UserService, ProgrammeService, AssessmentService, ProgrammeTemplateModal, $rootScope, ConfirmationDialog, $animate, $timeout, TemplateService, fYearFilter, ErrorService) {
     this.$state = $state;
     this.$log = $log;
     this.UserService = UserService;
@@ -24,12 +24,14 @@ class ProgrammeCtrl {
     this.$timeout = $timeout;
     this.TemplateService = TemplateService;
     this.fyearFilter = fYearFilter;
+    this.ErrorService = ErrorService;
   };
 
   $onInit() {
     this.user = this.UserService.currentUser();
     this.newTemplateWbsDefault = null;
-
+    this.companyEmailTooltipId = 'company-email-tooltip'
+    this.companyEmailTooltip = 'Separate multiple email addresses with a comma.'
 
     // static
     this.wbsCodeTypes = this.ProgrammeService.getWbsCodeTypes();
@@ -48,6 +50,9 @@ class ProgrammeCtrl {
       enabled: false,
       restricted: false
     };
+    this.getHourOptions()
+    this.getOpeningAndClosingDatetimes()
+    this.setDateOptions()
     this.templatesList = this.templatesList || [];
     this.submitenabled = false;
     this.loading = true;
@@ -126,6 +131,95 @@ class ProgrammeCtrl {
 
   getFormattedYear(year){
     return year? this.fyearFilter(year):year;
+  }
+
+  setDateOptions() {
+    this.openingDateOptions = {
+      showWeeks: false,
+      format: 'dd/MM/yyyy',
+      formatYear: 'yyyy',
+      formatMonth: 'MMM',
+      minMode: 'day',
+      maxMode: 'day',
+      yearColumns: 1,
+      initDate: new Date(),
+      minDate: new Date(),
+      datepickerMode: 'day'
+    };
+    this.setMaxDate(this.openingDateOptions)
+    this.closingDateOptions = {
+      showWeeks: false,
+      format: 'dd/MM/yyyy',
+      formatYear: 'yyyy',
+      formatMonth: 'MMM',
+      minMode: 'day',
+      maxMode: 'day',
+      yearColumns: 1,
+      initDate: this.programme.openingDatetime? new Date(this.programme.openingDatetime) : new Date(),
+      minDate: this.programme.openingDatetime? new Date(this.programme.openingDatetime) : new Date(),
+      datepickerMode: 'day'
+    };
+    this.setMaxDate(this.closingDateOptions)
+  }
+
+  setMaxDate(dateOptions) {
+    dateOptions.maxDate = new Date()
+    dateOptions.maxDate.setFullYear(dateOptions.minDate.getFullYear() + 1)
+  }
+
+  getOpeningAndClosingDatetimes() {
+    if (this.programme.openingDatetime) {
+      //date conversion required for so setHours works
+      this.programme.openingDatetime = new Date(this.programme.openingDatetime)
+      //string and model separate because of datepicker bug not using our formatted time as the default date (transposes day and month numbers)
+      this.openingDateString = DataUtil.getFormattedDateFromOffsetDatetime(this.programme.openingDatetime)
+      this.openingDateModel = this.programme.openingDatetime
+      const currentOpeningHour = DataUtil.getHourFromOffsetDatetime(this.programme.openingDatetime)
+      this.openingHour = this.hourOptions[currentOpeningHour]
+    }
+    if (this.programme.closingDatetime) {
+      //date conversion required for so setHours works
+      this.programme.closingDatetime = new Date(this.programme.closingDatetime)
+      //string and model separate because of datepicker bug not using our formatted time as the default date (transposes day and month numbers)
+      this.closingDateString = DataUtil.getFormattedDateFromOffsetDatetime(this.programme.closingDatetime)
+      this.closingDateModel = this.programme.closingDatetime
+      const currentClosingHour = DataUtil.getHourFromOffsetDatetime(this.programme.closingDatetime)
+      this.closingHour = this.hourOptions[currentClosingHour]
+    }
+  }
+
+  onOpeningDateChange(date) {
+    this.programme.openingDatetime = date
+    this.closingDateOptions.minDate = date
+    this.closingDateOptions.initDate = date
+    if (this.openingHour) {
+      this.programme.openingDatetime.setHours(this.openingHour.value)
+    }
+  }
+
+  onClosingDateChange(date) {
+    this.programme.closingDatetime = date
+    if (this.closingHour) {
+      this.programme.closingDatetime.setHours(this.closingHour.value)
+    }
+  }
+
+  onHourChange() {
+    if (this.programme.openingDatetime) {
+      this.programme.openingDatetime.setHours(this.openingHour.value)
+    }
+    if (this.programme.closingDatetime) {
+      this.programme.closingDatetime.setHours(this.closingHour.value)
+    }
+  }
+
+  getHourOptions() {
+    this.hourOptions = []
+    for (let i = 0; i < 24; i++) {
+      const prepend = i < 10 ? '0' : ''
+      const hourString = prepend + i + ':00'
+      this.hourOptions.push({'label': hourString, 'value':i})
+    }
   }
 
 
@@ -262,7 +356,11 @@ class ProgrammeCtrl {
       this.programme.grantTypes = null;
       return this.ProgrammeService.updateProgramme(this.programme, this.programme.id).then(()=>{
         this.$state.reload();
-      })
+      }).catch(this.ErrorService.apiValidationHandler(error => {
+        this.isSaving = false;
+        this.$log.error(error);
+        this.loading = false;
+      }));
     } else {
       return this.ProgrammeService.createProgramme(this.programme)
       .then(resp => {
@@ -271,11 +369,11 @@ class ProgrammeCtrl {
         this.$log.log(resp);
         this.$state.go('programme', {programmeId: resp.data.id});
       })
-      .catch((error) => {
+      .catch(this.ErrorService.apiValidationHandler((error) => {
         this.isSaving = false;
         this.$log.error(error);
         this.loading = false;
-      });
+      }));
     }
   };
 
@@ -366,10 +464,7 @@ class ProgrammeCtrl {
   }
 
   stopEditing(){
-    let cache = this.TemplateService.getCache();
-    if(cache){
-      cache.removeAll();
-    }
+    this.TemplateService.clearCache();
     this.submit();
   }
 
@@ -400,7 +495,7 @@ class ProgrammeCtrl {
 
 }
 
-ProgrammeCtrl.$inject = ['$state', '$log', 'UserService', 'ProgrammeService', 'AssessmentService', 'ProgrammeTemplateModal', '$rootScope', 'ConfirmationDialog', '$animate', '$timeout', 'TemplateService', 'fYearFilter'];
+ProgrammeCtrl.$inject = ['$state', '$log', 'UserService', 'ProgrammeService', 'AssessmentService', 'ProgrammeTemplateModal', '$rootScope', 'ConfirmationDialog', '$animate', '$timeout', 'TemplateService', 'fYearFilter', 'ErrorService'];
 
 angular.module('GLA')
   .component('programmePage', {

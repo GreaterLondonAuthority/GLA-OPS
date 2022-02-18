@@ -1,0 +1,13 @@
+<div class="fileUploadButton">
+  <div>&nbsp;</div>
+    <div id="{{uniqueId}}" class="fileInputForm">
+      <input #fileUploadInput id="{{componentInputId}}"
+             type="file"
+             style="display: none;">
+      <button id="file-upload-button"
+              class="btn"
+              [ngClass]="cls || 'btn-secondary'"
+              (click)="openFileDialog()"
+              [disabled]="isDisabled">{{label}}</button>
+    </div>
+  </div>

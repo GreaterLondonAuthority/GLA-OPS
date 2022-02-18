@@ -114,7 +114,8 @@
             p.approval_will_generate_reclaim, approval_will_generate_payment,
             p.total_grant_eligibility,
             pdb.title,
-            prog.name as prog_name, prog.status as prog_status, prog.in_assessment, prog.enabled
+            prog.name as prog_name, prog.status as prog_status, prog.in_assessment, prog.enabled,
+            p.suspend_payments
             FROM project p
             LEFT JOIN organisation org ON p.org_id = org.id
             LEFT JOIN programme prog ON p.programme_id = prog.id
@@ -174,13 +175,16 @@
         a column from project.
         -->
         <createView viewName="v_project_summaries" replaceIfExists="true">
-            SELECT prg.name prg_name, org.name org_name, tpl.name template_name, og.name og_name, og.type og_type, og.lead_organisation_id, pdb.title,  p.*,
+            SELECT prg.name prg_name, org.name org_name, tpl.name template_name, tpl.is_programme_allocation, og.name og_name, og.lead_organisation_id, pdb.title, p.*,
             p.status = 'Active' AND p.substatus = 'UnapprovedChanges' as unnapproved_changes,
             CASE
             WHEN p.status = 'Assess' THEN concat_ws(':', p.status, p.recommendation)
             ELSE concat_ws(':', p.status, p.substatus)
             END state,
-            (SELECT string_agg( concat('|', es.username), '|') from entity_subscription es where es.entity_type = 'project' AND es.entity_id = p.id) AS subscriptions
+            (SELECT string_agg( concat('|', es.username), '|') from entity_subscription es where es.entity_type = 'project' AND es.entity_id = p.id) AS subscriptions,
+            (SELECT string_agg( pa.username, '|') from project_assignee pa where pa.project_id = p.id) AS assignee_username,
+            (SELECT string_agg( concat( u.firstname, ' ', u.lastname), '|')
+                   FROM project_assignee pa  JOIN users u ON pa.username = u.username  WHERE pa.project_id = p.id) AS assignee_name
             FROM project p
             LEFT JOIN programme prg ON p.programme_id = prg.id
             LEFT JOIN template tpl ON p.template_id = tpl.id
@@ -310,6 +314,32 @@
             oa.external_id = 4003
         </createView>
 
+        <createView viewName="v_grant_source_all" replaceIfExists="true">
+            SELECT gs.id block_id,
+               gs.zero_grant_requested zero_grant_requested,
+               gs.rcgf_value rcgf_value,
+               gs.dpf_value dpf_value,
+               gs.grant_value grant_value,
+               gs.associated_project associated_project,
+               gs.strategic_funding strategic_funding
+            FROM grant_source_block gs
+            UNION
+            SELECT pb.id block_id,
+               tb.zero_grant_requested zero_grant_requested,
+               (SELECT sum(gre.value) FROM  indicative_grant_request_entry gre
+                   WHERE gre.block_id= pb.id  AND gre.type = 'RCGF' ) rcgf_value,
+               (SELECT sum(gre.value) FROM  indicative_grant_request_entry gre
+                   WHERE gre.block_id= pb.id AND gre.type = 'DPF' ) dpf_value,
+               (SELECT sum(gre.value) FROM  indicative_grant_request_entry gre
+                   WHERE gre.block_id= pb.id AND gre.type = 'Grant' ) grant_value,
+               false associated_project,
+               null strategic_funding
+            FROM project_block pb
+            JOIN tenure_block  tb ON pb.id = tb.id
+            WHERE pb.block_type ='AFFORDABLE_HOMES'
+            GROUP BY pb.id, tb.zero_grant_requested
+        </createView>
+
         <createView viewName="v_grant_source" replaceIfExists="true">
             SELECT p.id project_id,
             gs.zero_grant_requested as gs_zero_grant_requested,
@@ -318,8 +348,8 @@
             gs.dpf_value gs_dpf_requested,
             gs.grant_value gs_grant_requested,
             gs.strategic_funding as gs_strategic_funding
-            FROM grant_source_block gs
-            INNER JOIN v_project_block_active pb ON gs.id = pb.id AND pb.block_type = 'GRANT_SOURCE'
+            FROM v_grant_source_all gs
+            INNER JOIN v_project_block_active pb ON gs.block_id = pb.id AND pb.block_type IN ('GRANT_SOURCE', 'AFFORDABLE_HOMES')
             LEFT JOIN project p ON p.id = pb.project_id
         </createView>
 
@@ -609,7 +639,6 @@
             ple.project_id,
             ple.category,
             ple.sap_vendor_id,
-            o.sap_vendor_id sap_vendor_id_org,
             ple.sub_category,
             ple.amount,
             ple.ledger_status as status,
@@ -697,11 +726,7 @@
                     ) milestone
                     LEFT JOIN
                     (
-                        SELECT
-                            pba.project_id,
-                            gsb.grant_value
-                        FROM GRANT_SOURCE_BLOCK gsb
-                        INNER JOIN V_PROJECT_BLOCK_ACTIVE pba ON pba.id = gsb.id
+                        SELECT project_id, gs_grant_requested grant_value FROM v_grant_source
                     )  grant_source ON milestone.project_id=grant_source.project_id
                     GROUP BY pid, financial_year
 
@@ -844,7 +869,10 @@
         </createView>
 
         <createView viewName="v_organisation_summaries" replaceIfExists="true">
-            SELECT o.id, o.name, o.entity_type, o.managing_organisation_id, o.icon_attachment_id, mo.name managing_organisation_name, mo.icon_attachment_id managing_organisation_icon_attachment_id, o.sap_vendor_id, o.status, t.name team_name, t.id team_id, o.registration_allowed
+            SELECT o.id, o.name, o.entity_type, o.managing_organisation_id, o.icon_attachment_id, mo.name managing_organisation_name,
+            mo.icon_attachment_id managing_organisation_icon_attachment_id, o.status, t.name team_name, t.id team_id, o.registration_allowed,
+            (SELECT si.sap_id FROM sap_id si WHERE si.organisation_id = o.id and is_default_sap_id = true) as default_sap_vendor_id,
+            (SELECT string_agg( '|' || sid.sap_id || '|', ',') FROM sap_id sid WHERE sid.organisation_id = o.id) AS sap_vendor_ids
             FROM organisation o
             LEFT OUTER JOIN organisation mo ON o.managing_organisation_id = mo.id
             LEFT OUTER JOIN team t ON o.team_id = t.id
@@ -890,8 +918,6 @@
         <createView viewName="v_payment_summaries" replaceIfExists="true">
             SELECT ple.*,
             pdb.title as project_title,
-            o.sap_vendor_id AS org_sap_vendor_id,
-            CASE WHEN (ple.ledger_status = 'Pending') then o.sap_vendor_id else ple.sap_vendor_id end as calculated_sap_vendor_id,
             a.firstname AS authorisor_firstname, a.lastname AS authorisor_lastname,
             prg.name as prg_name,
             prg.id as programme_id,
@@ -911,7 +937,7 @@
 
         <createView viewName="v_user_role_summaries" replaceIfExists="true">
             select ROW_NUMBER() OVER() AS id, u.firstname, u.lastname, u.username, u.user_id, o.name as org_name, o.id as organisation_id,
-            o.managing_organisation_id, o.entity_type, r.name as role, r.approved, r.created_on,
+            o.managing_organisation_id, o.entity_type, r.name as role, r.approved, r.created_on, r.authorised_signatory,
             t.approved_threshold , t.pending_threshold,
             case when r.name = 'ROLE_OPS_ADMIN' or r.name='ROLE_GLA_SPM' or r.name='ROLE_GLA_ORG_ADMIN'
             then true else false end as can_have_threshold
@@ -921,19 +947,23 @@
             left join user_org_finance_threshold t on r.username = t.username and r.organisation_id = t.organisation_id
         </createView>
 
-        <createView viewName="v_budget_summaries" replaceIfExists="true">
-            select
-            (
-                select count (ple1.*)
-                from project_ledger_entry ple1
-                where ple.year = ple1.year
-                and ple.block_id = ple1.block_id
-                and ple.spend_type = ple1.spend_type
-                and ple1.ledger_type != 'BUDGET'
-            ) as nb_activities,
-            ple.*
-            from project_ledger_entry ple
-            where ple.ledger_type = 'BUDGET'
+        <createView viewName="v_email_summaries" replaceIfExists="true">
+            SELECT e.id, e.recipient, e.status, e.body, e.subject, e.date_sent as date, e.nb_attempts as attempts FROM email e
+        </createView>
+
+
+        <createView viewName="v_assessment_summaries" replaceIfExists="true">
+            SELECT a.project_id project_id, vps.title project_title, vps.programme_id programme_id, vps.prg_name programme_name, a.id, at.name, a.status, at.name assessment_template, a.MANAGING_ORG_ID, a.PROJECT_STATUS , a.PROJECT_SUBSTATUS , concat(u.firstname, ' ', u.lastname) as creator, a.created_on, a.modified_on, o.name users_primary_org
+            FROM assessment a
+            INNER JOIN assessment_template at on at.id = a.assessment_template_id
+            INNER JOIN users u on u.username=a.CREATED_BY
+            LEFT JOIN organisation o on o.id = a.users_primary_organisation_id
+            LEFT JOIN v_project_summaries vps ON vps.id = a.project_id
+        </createView>
+
+        <createView viewName="v_assessment_user_access" replaceIfExists="true">
+            SELECT  a.id , ur.username FROM assessment a
+            INNER JOIN user_roles ur ON ur.organisation_id = a.managing_org_id
         </createView>
 
     </changeSet>
@@ -954,6 +984,32 @@
             case when date_part('month', CURRENT_DATE) &lt; 4 then date_part('year', CURRENT_DATE) -1 else date_part('year', CURRENT_DATE) end as financial_year
 
         </createView>
+    </changeSet>
+
+    <changeSet id="V_BUDGET_SUMMARY_H2_CREATION" author="team" dbms="h2"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="v_budget_summaries" replaceIfExists="true">
+            select ROWNUM() as id, *   from (
+            select
+            ple.project_id, ple.block_id, ple.year, ple.ledger_type, ple.spend_type, ple.category, sum( ple.amount) as amount from funding_block fb
+            left join project_ledger_entry ple on fb.id = ple.block_id
+            and ple.year &gt;=  fb.start_year and ple.year &lt;=  fb.start_year + fb.year_available_to
+            and ple.ledger_type != 'BUDGET'
+            group by project_id, ple.block_id, ple.year, ple.ledger_type, ple.spend_type, ple.category
+            )
+        </createView>
+    </changeSet>
+
+    <changeSet id="V_BUDGET_SUMMARY_PG_CREATION" author="team" dbms="postgresql"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+    <createView viewName="v_budget_summaries" >
+        select ROW_NUMBER() OVER() AS id,
+        ple.project_id, ple.block_id, ple.year, ple.ledger_type, ple.spend_type, ple.category, sum( ple.amount) as amount from funding_block fb
+        left join project_ledger_entry ple on fb.id = ple.block_id
+        and ple.year &gt;=  fb.start_year and ple.year &lt;=  fb.start_year + fb.year_available_to
+        and ple.ledger_type != 'BUDGET'
+        group by project_id, ple.block_id, ple.year, ple.ledger_type, ple.spend_type, ple.category
+    </createView>
     </changeSet>
     <changeSet id="V_OUTPUTS_SUMMARY_PG_CREATION" author="team" dbms="h2"
                runOnChange="true" runAlways="true" failOnError="${failsOnError}">
@@ -1141,7 +1197,7 @@
             AND concat(p.status, ':', p.substatus) IN ('Assess:Recommended', 'Assess:', 'Active:ApprovalRequested')
             LEFT OUTER JOIN project_block app
             ON p.id = app.project_id AND app.block_type = 'GRANT_SOURCE' AND app.block_status = 'LAST_APPROVED'
-            LEFT OUTER JOIN grant_source_block gsb ON coalesce(unapp.id, app.id) = gsb.id
+            LEFT OUTER JOIN v_grant_source_all gsb ON coalesce(unapp.id, app.id) = gsb.block_id
             WHERE concat(p.status, ':', p.substatus) IN
             ('Assess:Recommended', 'Assess:', 'Active:', 'Active:ApprovalRequested', 'Active:PaymentAuthorisationPending',
             'Active:UnapprovedChanges', 'Closed:Completed')
@@ -1171,7 +1227,7 @@
             ON p.id = app.project_id AND app.block_type = 'GRANT_SOURCE' AND app.block_status = 'LAST_APPROVED'
             LEFT OUTER JOIN project_block app_cg
             ON p.id = app_cg.project_id AND app_cg.block_type = 'CALCULATE' AND app_cg.block_status = 'LAST_APPROVED'
-            LEFT OUTER JOIN grant_source_block gsb ON app.id = gsb.id
+            LEFT OUTER JOIN v_grant_source_all gsb ON app.id = gsb.block_id
             LEFT OUTER JOIN tenure_and_units tau ON app_cg.id = tau.block_id
             INNER JOIN template_tenure_type t ON tau.tenure_type_id = t.id
             INNER JOIN tenure_type tt ON t.external_id = tt.id
@@ -1207,7 +1263,7 @@
             AND concat(p.status, ':', p.substatus) IN ('Assess:Recommended', 'Assess:', 'Active:ApprovalRequested')
             LEFT OUTER JOIN project_block app_cg
             ON p.id = app_cg.project_id AND app_cg.block_type = 'CALCULATE' AND app_cg.block_status = 'LAST_APPROVED'
-            LEFT OUTER JOIN grant_source_block gsb ON coalesce(unapp.id, app.id) = gsb.id
+            LEFT OUTER JOIN v_grant_source_all gsb ON coalesce(unapp.id, app.id) = gsb.block_id
             LEFT OUTER JOIN tenure_and_units tau ON coalesce(unapp_cg.id, app_cg.id) = tau.block_id
             INNER JOIN template_tenure_type t ON tau.tenure_type_id = t.id
             INNER JOIN tenure_type tt ON t.external_id = tt.id
@@ -1475,6 +1531,8 @@
             SUM(amount)   AS amount
             FROM project_ledger_entry ple
             left outer join funding_activity_project_ledger_entry e on ple.id = e.project_ledger_entry_id
+            left join funding_block fb on fb.id = ple.block_id
+            where ple.year &gt;= fb.start_year and ple.year &lt;= fb.start_year + fb.year_available_to
             GROUP BY project_id, block_id, fin_year, ledger_status, ledger_type, spend_type, category, e.funding_activity_id
             ) as sub
             GROUP BY project_id, block_id, fin_Year
@@ -1494,7 +1552,9 @@
             SUM(CASE WHEN ple.claim_id IS NULL AND ple.ledger_type = 'PAYMENT' THEN ple.amount ELSE 0 END)     AS forecast
             FROM project_ledger_entry ple
             INNER JOIN project_block pb ON ple.block_id = pb.id AND pb.block_type = 'Funding'
-            WHERE ple.category IS NULL
+            left join funding_block fb on fb.id = ple.block_id
+            where ple.year &gt;= fb.start_year and ple.year &lt;= fb.start_year + fb.year_available_to
+            and ple.category IS NULL
             GROUP BY ple.block_id, ple.year, ple.spend_type
             ) AS sub
         </createView>
@@ -1511,7 +1571,9 @@
             SUM(CASE WHEN ple.claim_id IS NULL AND ple.ledger_type = 'PAYMENT' THEN ple.amount ELSE 0 END)     AS forecast
             FROM project_ledger_entry ple
             INNER JOIN project_block pb ON ple.block_id = pb.id AND pb.block_type = 'Funding'
-            WHERE ple.category IS NULL
+            left join funding_block fb on fb.id = ple.block_id
+            where ple.year &gt;= fb.start_year and ple.year &lt;= fb.start_year + fb.year_available_to
+            and ple.category IS NULL
             GROUP BY ple.block_id, ple.year, ple.spend_type
             ) AS sub
         </createView>
@@ -1531,19 +1593,11 @@
             CREATE RULE delete_remove AS ON UPDATE TO v_funding_budget_summary DO INSTEAD nothing;
         </sql>
     </changeSet>
-
-    <changeSet id="assessment_views" author="cmelville" failOnError="true" runAlways="true" runOnChange="true">
-        <createView viewName="v_assessment_summaries" replaceIfExists="true">
-            SELECT a.project_id project_id, vps.title project_title, vps.programme_id programme_id, vps.prg_name programme_name, a.id, at.name, a.status, at.name assessment_template, a.MANAGING_ORG_ID, a.PROJECT_STATUS , a.PROJECT_SUBSTATUS , concat(u.firstname, ' ', u.lastname) as creator, a.created_on, a.modified_on, o.name users_primary_org
-            FROM assessment a
-            INNER JOIN assessment_template at on at.id = a.assessment_template_id
-            INNER JOIN users u on u.username=a.CREATED_BY
-            LEFT JOIN organisation o on o.id = a.users_primary_organisation_id
-            LEFT JOIN v_project_summaries vps ON vps.id = a.project_id
-        </createView>
-        <createView viewName="v_assessment_user_access" replaceIfExists="true">
-            SELECT  a.id , ur.username FROM assessment a
-            INNER JOIN user_roles ur ON ur.organisation_id = a.managing_org_id
+    <changeSet id="v_contracts_summary" author="team"
+               runOnChange="true" runAlways="true" failOnError="${failsOnError}">
+        <createView viewName="V_CONTRACTS_SUMMARY" replaceIfExists="true" >
+            SELECT MC.ID, MC.NAME, MC.CONTRACT_WORKFLOW_TYPE, (SELECT STRING_AGG(T.NAME, ',') FROM CONTRACT C
+            RIGHT JOIN TEMPLATE T ON T.CONTRACT_ID = C.ID  WHERE C.ID = MC.ID) as TEMPLATES FROM CONTRACT MC
         </createView>
     </changeSet>
 

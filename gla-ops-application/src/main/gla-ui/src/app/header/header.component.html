@@ -1,0 +1,28 @@
+<header>
+  <div class="gla-header" id="gla-header">
+    <div class="row">
+      <div class="gla-mayor">MAYOR OF LONDON</div>
+      <h1 class="gla-ops" [ngClass]="envName">OPEN PROJECT SYSTEM</h1>
+      <div class="gla-header-user" *ngIf="userData?.loggedOn">
+        <div class="gla-header-username-and-logout">
+
+          <span class="user-notification">
+            <span class="badge badge-pill badge-danger notification-counter" *ngIf="numberOfUnreadNotifications">
+              {{numberOfUnreadNotifications > 99 ? '99+' : numberOfUnreadNotifications}}
+            </span>
+            <a href="JavaScript:void(0)" id="notifications" (click)="goTo('notifications')">Notifications</a>
+          </span>
+          <span class="no-print"><span class="gla-header-vbar hidden-xs">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span></span>
+          <span id="hdr-username">
+            <a href="JavaScript:void(0)"
+               (click)="goTo('user-account', {userId:userData.username})">
+              <span class="glyphicon glyphicon-user"></span>
+              {{ userData.firstName }} {{ userData.lastName }}</a>
+          </span>
+          <span class="no-print"><span class="gla-header-vbar hidden-xs">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span></span>
+          <a id="logout" class="logout no-print" href="JavaScript:void(0)" (click)="logout()">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

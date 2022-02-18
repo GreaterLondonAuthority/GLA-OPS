@@ -1,0 +1,65 @@
+<div class="funding-claim-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Confirm claim for {{section.label}} {{section.year}}?</h1>
+    <div>Claim details</div>
+  </div>
+
+  <div class="modal-body text-left">
+    <div>
+      <div *ngIf="!section.activities.length" class="empty-table">Not provided</div>
+
+      <table class="table table-borderless claim-values-table" *ngIf="section.activities.length">
+        <thead>
+          <tr class="with-border">
+            <th> </th>
+            <th> Capital £</th>
+            <th> Revenue £</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        <tr><td> {{section.activities[0].categoryDescription}}</td> <td></td> <td></td></tr>
+        <ng-container *ngFor="let activity of section.activities">
+        <tr *ngIf="activity.status === 'Claimable'">
+          <td>{{activity.name}}</td>
+          <td *ngIf="showCapitalGla || showCapitalOther"> {{(activity.capitalValue || 0) | currency:'£'}}</td>
+          <td *ngIf="showRevenueGla || showRevenueOther"> {{(activity.revenueValue || 0) | currency:'£'}}</td>
+        </tr>
+        </ng-container>
+        <tr class="footer-row bolder">
+          <td> Total claim value</td>
+          <td *ngIf="showCapitalGla || showCapitalOther">{{(section.totalCapitalValue || 0) | currency:'£'}}</td>
+          <td *ngIf="showRevenueGla || showRevenueOther">{{(section.totalRevenueValue || 0) | currency:'£'}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <button
+          id="claim-btn"
+          *ngIf="!section.claim && !readOnly"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          (click)="activeModal.close('claim')">CONFIRM</button>
+
+        <button
+          id="cancel-claim-btn"
+          *ngIf="section.claim && section.status !== 'Approved' && !readOnly"
+          class="btn btn-default btn-secondary btn-negative btn-center"
+          type="button"
+          (click)="activeModal.close('cancel')">CLOSE</button>
+
+        <div class="mtop20 mbottom10">
+          <a href="JavaScript:void(0)" class="form-cancel dismiss-btn" (click)="activeModal.dismiss()">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

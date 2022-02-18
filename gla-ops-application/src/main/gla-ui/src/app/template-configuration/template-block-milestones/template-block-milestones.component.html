@@ -4,7 +4,7 @@
            id="show-status"
            aria-label="Show status"
            name="show-status"
-           [disabled]="readOnly"
+           [disabled]="readOnly || !editable"
            type="checkbox">
     <label for="show-status">Show status column on project milestones</label>
   </div>
@@ -14,7 +14,7 @@
            id="auto-set-status"
            aria-label="Auto set status"
            name="auto-set-status"
-           [disabled]="readOnly"
+           [disabled]="readOnly || !editable"
            type="checkbox">
     <label class ="item-label" for="auto-set-status">Always set status of a date in the future as 'Forecast' and a date in the past as 'Actual'</label>
   </div>
@@ -25,8 +25,8 @@
            id="description-enabled"
            aria-label="Description Enabled"
            name="description-enabled"
-           [class]="{checked: block.descriptionEnabled}"
-           [disabled]="readOnly">
+           [ngClass]="{checked: block.descriptionEnabled}"
+           [disabled]="readOnly || !editable">
     <label for="description-enabled">Show description column on project milestones</label>
   </div>
 
@@ -34,12 +34,25 @@
     <label for="evidence-applicability">Apply evidence to project milestones</label>
 
     <select [(ngModel)]="block.evidenceApplicability"
-            [class]="{placeholder: !block.evidenceApplicability}"
-            [disabled]="readOnly"
+            [ngClass]="{placeholder: !block.evidenceApplicability}"
+            [disabled]="readOnly || !editable"
             class="form-control"
             id="evidence-applicability">
       <option disabled value="undefined">Evidence Applicability</option>
       <option *ngFor="let applicability of applicabilityOptions" [ngValue]="applicability.id">{{applicability.label}}</option>
+    </select>
+  </div>
+
+  <div class="form-group" *ngIf="block.evidenceApplicability=='ALL_MILESTONES' || this.block.evidenceApplicability=='NEW_MILESTONES_ONLY'">
+    <label for="show-evidences">When to show evidence column</label>
+
+    <select [(ngModel)]="block.showEvidences"
+            [ngClass]="{placeholder: !block.showEvidences}"
+            [disabled]="readOnly || !editable"
+            class="form-control"
+            id="show-evidences">
+      <option disabled value="undefined">Show Evidences</option>
+      <option *ngFor="let showEvidence of showEvidenceOptions" [ngValue]="showEvidence.id">{{showEvidence.label}}</option>
     </select>
   </div>
 
@@ -49,7 +62,7 @@
            id="max-attachments"
            [(ngModel)]="block.maxEvidenceAttachments"
            mask="separator.0"
-           [disabled]="readOnly"
+           [disabled]="readOnly || !editable"
            maxlength="2"
            numberType
            placeholder="Max Attachments" />
@@ -60,8 +73,8 @@
 
     <select (ngModelChange)="onMilestoneTypeChange($event)"
             [(ngModel)]="template.milestoneType"
-            [class]="{placeholder: !template.milestoneType}"
-            [disabled]="readOnly"
+            [ngClass]="{placeholder: !template.milestoneType}"
+            [disabled]="readOnly || !editable"
             class="form-control"
             id="milestoneType"
             name="milestoneType">
@@ -72,7 +85,7 @@
 
   <div *ngIf="template.milestoneType">
     <div class="text-right mbottom5">
-      <button (click)="showProcessingRouteModal()" *ngIf="!readOnly" class="btn btn-secondary">ADD PROCESSING ROUTE</button>
+      <button (click)="showProcessingRouteModal()" *ngIf="!readOnly && editable" class="btn btn-secondary">ADD PROCESSING ROUTE</button>
     </div>
 
     <div class="table-responsive" id="milestones">
@@ -88,6 +101,7 @@
             <th>MONETARY?</th>
             <th>KEY EVENT?</th>
             <th>SPLIT %</th>
+            <th *ngIf="!draft && editable">ACTIONS</th>
             <th *ngIf="!readOnly"></th>
             <th *ngIf="!readOnly"></th>
           </tr>
@@ -99,30 +113,35 @@
           </tr>
 
           <ng-container *ngFor="let processingRoute of block.processingRoutes">
-            <tr  [class]="{'cursor-pointer': !readOnly}">
-              <td (click)="!readOnly && showProcessingRouteModal(processingRoute)" colspan="7">
-                <toggle-icon *ngIf="processingRoute.milestones.length" [(collapsed)]="processingRoute.collapsed"></toggle-icon>
-                <span>{{processingRoute.name}}</span>
+            <tr  [ngClass]="{'cursor-pointer': !readOnly}">
+              <td (click)="!readOnly && editable && showProcessingRouteModal(processingRoute)" colspan="7">
+                <toggle-icon  *ngIf="processingRoute.milestones.length" [(collapsed)]="processingRoute.collapsed"></toggle-icon>
+                <span class="processing-route">
+                  {{processingRoute.name}}
+                </span>
+                <span *ngIf="template.milestoneType == 'MonetarySplit' && !processingRoute.monetarySplitValid"
+                      class="error">Split % needs to be equal to 100% </span>
                 <a (click)="showMilestoneModal(processingRoute, {});$event.stopPropagation()"
-                   *ngIf="!readOnly"
+                   *ngIf="!readOnly && editable"
                    class="text-nowrap add-milestone"
                    href="JavaScript: void(0);">Add preset milestone</a>
               </td>
+              <td *ngIf="!draft && editable "> </td>
               <td colspan="2" *ngIf="!readOnly" class="delete-btn-container up-down-button text-nowrap">
-                <gla-show-up-down-arrow-buttons
+                <gla-show-up-down-arrow-buttons *ngIf="editable"
                   [currentItem]=processingRoute
                   [sortedCollectionItems]=block.processingRoutes
                   [titleUp]="'Move processing route Up'"
                   [titleDown]="'Move processing route Down'"
                   (onDisplayOrderChange)= "updateProcessingRoute($event)">
                 </gla-show-up-down-arrow-buttons>
-                <delete-button (click)="deleteProcessingRoute(processingRoute)" *ngIf="!readOnly"></delete-button>
+                <delete-button (click)="deleteProcessingRoute(processingRoute)" *ngIf="!readOnly && editable"></delete-button>
               </td>
             </tr>
             <ng-container *ngIf="!processingRoute?.collapsed">
-              <tr (click)="!readOnly && showMilestoneModal(processingRoute, milestone)"
+              <tr (click)="!readOnly && editable && showMilestoneModal(processingRoute, milestone)"
                   *ngFor="let milestone of processingRoute.milestones"
-                  [class]="{'cursor-pointer': !readOnly}" class="milestone-row">
+                  [ngClass]="{'cursor-pointer': !readOnly}" class="milestone-row">
                 <td>{{milestone.displayOrder}}</td>
                 <td>{{milestone.externalId}}</td>
                 <td>{{milestone.summary}}</td>
@@ -132,9 +151,13 @@
                 <td>
                   <span>{{milestone.monetarySplit}}</span>
                 </td>
-
+                <td *ngIf="!draft && editable ">
+                  <button  role="button" id="command-section-edit-milestone-{{milestone.externalId}}"
+                          (click)="showMilestoneModal(processingRoute, milestone)"
+                          class="btn btn-primary btn-edit">EDIT MILESTONE</button>
+                </td>
                 <td class="up-down-button text-nowrap"  *ngIf="!readOnly" (click)="$event.stopPropagation()">
-                  <gla-show-up-down-arrow-buttons
+                  <gla-show-up-down-arrow-buttons *ngIf="editable"
                     [currentItem]=milestone
                     [sortedCollectionItems]=processingRoute.milestones
                     [titleUp]="'Move processing route Up'"
@@ -143,7 +166,7 @@
                   </gla-show-up-down-arrow-buttons>
                 </td>
                 <td class="delete-btn-container"  *ngIf="!readOnly">
-                  <delete-button (click)="deleteMilestone(processingRoute, milestone);$event.stopPropagation()" *ngIf="!readOnly"></delete-button>
+                  <delete-button (click)="deleteMilestone(processingRoute, milestone);$event.stopPropagation()" *ngIf="!readOnly && editable"></delete-button>
                 </td>
               </tr>
             </ng-container>

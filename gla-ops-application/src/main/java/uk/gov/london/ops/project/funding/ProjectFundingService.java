@@ -7,38 +7,22 @@
  */
 package uk.gov.london.ops.project.funding;
 
-import static uk.gov.london.ops.framework.calendar.OPSCalendar.yearStringShort;
-import static uk.gov.london.ops.payment.ProjectLedgerEntry.MATCH_FUND_CATEGORY;
-import static uk.gov.london.ops.payment.SpendType.CAPITAL;
-import static uk.gov.london.ops.payment.SpendType.REVENUE;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.london.common.GlaUtils;
+import uk.gov.london.ops.EventType;
+import uk.gov.london.ops.OpsEvent;
 import uk.gov.london.ops.file.AttachmentFile;
 import uk.gov.london.ops.file.FileService;
 import uk.gov.london.ops.framework.exception.ValidationException;
-import uk.gov.london.ops.payment.LedgerCategory;
-import uk.gov.london.ops.payment.LedgerSource;
-import uk.gov.london.ops.payment.LedgerStatus;
-import uk.gov.london.ops.payment.LedgerType;
-import uk.gov.london.ops.payment.PaymentGroup;
-import uk.gov.london.ops.payment.ProjectLedgerEntry;
-import uk.gov.london.ops.payment.ProjectLedgerItemRequest;
-import uk.gov.london.ops.payment.SpendType;
+import uk.gov.london.ops.payment.*;
 import uk.gov.london.ops.project.BaseProjectFinanceService;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.ProjectPaymentGenerator;
 import uk.gov.london.ops.project.StandardAttachment;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
+import uk.gov.london.ops.project.block.ProjectBlockStatus;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.claim.Claim;
 import uk.gov.london.ops.project.claim.ClaimStatus;
@@ -49,6 +33,22 @@ import uk.gov.london.ops.project.milestone.ProjectMilestonesBlock;
 import uk.gov.london.ops.project.template.domain.TemplateBlock;
 import uk.gov.london.ops.refdata.ConfigurableListItem;
 import uk.gov.london.ops.refdata.RefDataService;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.ops.framework.calendar.OPSCalendar.yearStringShort;
+import static uk.gov.london.ops.payment.ProjectLedgerEntry.MATCH_FUND_CATEGORY;
+import static uk.gov.london.ops.payment.SpendType.CAPITAL;
+import static uk.gov.london.ops.payment.SpendType.REVENUE;
+import static uk.gov.london.ops.project.claim.ClaimStatus.*;
 
 @Service
 @Transactional
@@ -76,56 +76,108 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
     }
 
     public List<Integer> getYearsMilestoneUsed(Integer projectId, Integer blockId, String milestoneName) {
-        FundingBlock fundingBlock = this.getProjectFundingBlock(projectId, blockId, 2000);
-        List<Integer> years = new ArrayList<>();
-        FundingByYearAndQuarter fundingByYearAndQuarter = fundingBlock.getFundingByYearAndQuarter();
-        for (FundingByYearAndQuarter.FundingYQYear year : fundingByYearAndQuarter.getYears()) {
-            if (year.getMilestone(milestoneName) != null) {
-                years.add(year.getYear());
+        FundingBlock fundingBlock = this.getProjectFundingBlock(projectId, blockId);
+        Set<Integer> years = new HashSet<>();
+
+        for (FundingYearBreakdown funding : fundingBlock.getAllProjectFunding().getFundingByYear().values()) {
+            for (FundingSection section : funding.getSections()) {
+                if ( section.getMilestone(milestoneName) != null) {
+                    years.add(funding.getYear());
+                }
             }
         }
-        return years;
+        return new ArrayList<>(years);
     }
 
-    public FundingBlock getProjectFundingBlock(Integer projectId, Integer blockId, Integer year) {
-        FundingBlock fundingBlock = (FundingBlock) get(projectId).getProjectBlockById(blockId);
+    public FundingBlock getProjectFundingBlock(Integer projectId, Integer blockId) {
+        Project project = get(projectId);
+        FundingBlock fundingBlock = getFundingBlock(project, blockId);
+        FundingBlock previousFundingBlock = (FundingBlock)project.getLatestApprovedBlock(ProjectBlockType.Funding);
+
+        if (previousFundingBlock != null && !fundingBlock.getId().equals(previousFundingBlock.getId()) && fundingBlock.isLatestVersion()) {
+            previousFundingBlock = getFundingBlock(project, previousFundingBlock.getId());
+            fundingBlock.getAllProjectFunding().setPreviousFundingTotals(
+                    previousFundingBlock.getAllProjectFunding().getTotalProjectFunding());
+
+            for (Integer year : fundingBlock.getAllProjectFunding().getFundingByYear().keySet()) {
+                FundingYearBreakdown currentYear = fundingBlock.getAllProjectFunding().getFundingByYear().get(year);
+                FundingYearBreakdown previousYear = previousFundingBlock.getAllProjectFunding().getFundingByYear().get(year);
+
+                if (currentYear != null && previousYear != null) {
+                    currentYear.setPreviousYearlyTotal(previousYear);
+                }
+            }
+        }
+        return fundingBlock;
+    }
+
+    public FundingBlock getFundingBlock(Project project, Integer blockId) {
+
+        FundingBlock fundingBlock = (FundingBlock) project.getProjectBlockById(blockId);
+
+        Integer startYear = project.getProgramme().getStartYear();
+        Integer endYear = project.getProgramme().getEndYear();
         setPopulatedYears(fundingBlock);
 
+        ProjectFunding pf = new ProjectFunding();
+        fundingBlock.setAllProjectFunding(pf);
+
         List<FundingActivity> blockActivities = findActivitiesByBlockId(blockId);
-        Set<Integer> yearsWithActivities = blockActivities.stream().map(a -> a.getYear()).collect(Collectors.toSet());
+        Set<Integer> yearsWithActivities;
+        if(startYear != null && endYear != null) {
+            yearsWithActivities = blockActivities.stream()
+                    .filter(activity -> (startYear <= activity.getYear()) && (activity.getYear() <= endYear))
+                    .map(a -> a.getYear()).collect(Collectors.toSet());
+        } else {
+            yearsWithActivities = blockActivities.stream().map(a -> a.getYear()).collect(Collectors.toSet());
+        }
+
 
         for (Integer populatedYear : yearsWithActivities) {
             List<FundingActivity> activities = blockActivities.stream().filter(a -> a.getYear().equals(populatedYear))
                     .collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(activities)) {
-                fundingBlock.getFundingSummary().addActivities(activities);
-
-                fundingBlock.getFundingByYearAndQuarter().addActivities(activities);
-
-                if (populatedYear.equals(year)) {
-                    fundingBlock.setYearBreakdown(new FundingYearBreakdown(year, activities));
-                    initialiseClaimDataForSections(fundingBlock, year);
-                }
+                pf.getFundingByYear().put(populatedYear, new FundingYearBreakdown(populatedYear, activities));
+                initialiseClaimDataForAllSections(fundingBlock);
             }
         }
-
         return fundingBlock;
     }
 
+    void initialiseClaimDataForAllSections(FundingBlock fundingBlock) {
+        List<ProjectLedgerEntry> blockPayments = findAllForBlockId(fundingBlock.getId());
+
+
+        Map<Integer, FundingYearBreakdown> allProjectFunding = fundingBlock.getAllProjectFunding().getFundingByYear();
+
+        for (Integer year : allProjectFunding.keySet()) {
+            FundingYearBreakdown fundingYearBreakdown = allProjectFunding.get(year);
+            fundingYearBreakdown.getSections().forEach(section -> {
+                initialiseClaimForSection(fundingBlock, year, blockPayments, section);
+            });
+        }
+    }
+
+    // TODO: Delete
     void initialiseClaimDataForSections(FundingBlock fundingBlock, Integer year) {
         List<ProjectLedgerEntry> blockPayments = findAllForBlockId(fundingBlock.getId());
 
-        for (FundingSection section : fundingBlock.getYearBreakdown().getSections()) {
-            Claim claim = fundingBlock.getClaim(year, section.getSectionNumber(), ClaimType.QUARTER);
-            initialiseClaimDataFor(fundingBlock, year, section, claim, blockPayments);
-            if (Boolean.TRUE.equals(fundingBlock.getCanClaimActivity())) {
-                initialiseClaimDataForActivities(fundingBlock, year, section, blockPayments);
-            }
+        for (FundingSection section : fundingBlock.getAllProjectFunding().getFundingByYear().get(2017).getSections()) {
+            initialiseClaimForSection(fundingBlock, year, blockPayments, section);
+        }
+    }
+
+    private void initialiseClaimForSection(FundingBlock fundingBlock, Integer year, List<ProjectLedgerEntry> blockPayments,
+                                           FundingSection section) {
+        Claim claim = fundingBlock.getClaim(year, section.getSectionNumber(), ClaimType.QUARTER);
+        initialiseClaimDataFor(fundingBlock, year, section, claim, blockPayments);
+        if (Boolean.TRUE.equals(fundingBlock.getCanClaimActivity())) {
+            initialiseClaimDataForActivities(fundingBlock, year, section, blockPayments);
         }
     }
 
     void initialiseClaimDataForActivities(FundingBlock fundingBlock, Integer year, FundingSection section,
-            List<ProjectLedgerEntry> blockPayments) {
+                                          List<ProjectLedgerEntry> blockPayments) {
         for (FundingActivityLineItem activity : section.getActivities()) {
             Claim claim = fundingBlock.getClaim(year, section.getSectionNumber(), ClaimType.ACTIVITY, activity.getOriginalId());
             initialiseClaimDataFor(fundingBlock, year, activity, claim, blockPayments);
@@ -133,64 +185,71 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
     }
 
     void initialiseClaimDataFor(FundingBlock fundingBlock, Integer year, ClaimableFundingEntity claimableEntity, Claim claim,
-            List<ProjectLedgerEntry> blockPayments) {
+                                List<ProjectLedgerEntry> blockPayments) {
         Integer quarterValue = claimableEntity.getSectionNumber();
 
         if (claim != null) {
             claimableEntity.setClaim(claim);
-            switch (claim.getClaimStatus()) {
-                case Claimed:
-                    List<ProjectLedgerEntry> pendingPayments = blockPayments.stream()
-                            .filter(payment -> LedgerStatus.Pending.equals(payment.getLedgerStatus())
-                                    && payment.getClaimId().equals(claim.getOriginalId()))
-                            .collect(Collectors.toList());
+            if (Claimed.equals(claim.getClaimStatus())) {
+                List<ProjectLedgerEntry> pendingPayments = blockPayments.stream()
+                        .filter(payment -> LedgerStatus.Pending.equals(payment.getLedgerStatus())
+                                && payment.getClaimId().equals(claim.getOriginalId()))
+                        .collect(Collectors.toList());
 
-                    if (pendingPayments.isEmpty()) {
-                        claimableEntity.setStatus(FundingClaimStatus.Claimed);
-                    } else {
-                        claimableEntity.setStatus(FundingClaimStatus.Processing);
-                    }
-                    break;
-                case Approved:
-                    claimableEntity.setStatus(FundingClaimStatus.Paid);
-                    break;
+                if (pendingPayments.isEmpty()) {
+                    claimableEntity.setStatus(FundingClaimStatus.Claimed);
+                } else {
+                    claimableEntity.setStatus(FundingClaimStatus.Processing);
+                }
+            } else if (Approved.equals(claim.getClaimStatus())) {
+                claimableEntity.setStatus(FundingClaimStatus.Paid);
+                claimableEntity.setAuthorisedBy(claim.getAuthorisedBy());
+                claimableEntity.setAuthorisedOn(claim.getAuthorisedOn());
+            } else if (Withdrawn.equals(claim.getClaimStatus())) {
+                //cancelled approved payments should appear like new claims
+                initialiseClaimableData(fundingBlock, year, claimableEntity, quarterValue);
             }
         } else {
-            OffsetDateTime now = OffsetDateTime.now();
-            int currentQuarter = GlaUtils.getCurrentQuarter(now.getMonthValue());
-            int currentFinYear = (currentQuarter == 4) ? now.getYear() - 1 : now.getYear();
-            int currentFinYearAndQuarter = (currentFinYear * 10) + currentQuarter;
-            int requestedFinYearAndQuarter = (year * 10) + quarterValue;
-            claimableEntity.setStatus(FundingClaimStatus.Claimable);
+            initialiseClaimableData(fundingBlock, year, claimableEntity, quarterValue);
+        }
+    }
 
-            if (!fundingBlock.getProject().isClaimsEnabled() || !fundingBlock.isFundingBalanceEnforced() || !fundingBlock
-                    .isComplete()) {
-                claimableEntity.setStatus(FundingClaimStatus.NotClaimable);
-            } else if (currentFinYearAndQuarter < requestedFinYearAndQuarter || (!fundingBlock.getCanClaimActivity()
-                    && currentFinYearAndQuarter == requestedFinYearAndQuarter)) {
-                // check quarter is in the past
-                claimableEntity.setStatus(FundingClaimStatus.NotClaimable);
-                claimableEntity.setNotClaimableReason("Claim range is not yet in the past.");
-            } else if (!claimableEntity.isMonetaryClaimRequired()) {
-                // not claimable if nothing to claim
-                claimableEntity.setStatus(FundingClaimStatus.NotClaimable);
-                claimableEntity.setNotClaimableReason("Nothing to claim.");
-            } else if (fundingBlock.isEvidenceAttachmentsMandatory() && !claimableEntity.isEvidenceAttached()) {
-                // evidence must be attached if appropriate
-                claimableEntity.setStatus(FundingClaimStatus.NotClaimable);
-                claimableEntity.setNotClaimableReason("All evidence must be attached to claim.");
-            }
+    private void initialiseClaimableData(FundingBlock fundingBlock, Integer year, ClaimableFundingEntity claimableEntity, Integer quarterValue) {
+        OffsetDateTime now = OffsetDateTime.now();
+        int currentQuarter = GlaUtils.getCurrentQuarter(now.getMonthValue());
+        int currentFinYear = (currentQuarter == 4) ? now.getYear() - 1 : now.getYear();
+        int currentFinYearAndQuarter = (currentFinYear * 10) + currentQuarter;
+        int requestedFinYearAndQuarter = (year * 10) + quarterValue;
+        claimableEntity.setStatus(FundingClaimStatus.Claimable);
+
+        if (!fundingBlock.getProject().isClaimsEnabled() || !fundingBlock.isComplete()) {
+            claimableEntity.setStatus(FundingClaimStatus.NotClaimable);
+        } else if (currentFinYearAndQuarter < requestedFinYearAndQuarter || (!fundingBlock.getCanClaimActivity()
+                && currentFinYearAndQuarter == requestedFinYearAndQuarter)) {
+            // check quarter is in the past
+            claimableEntity.setStatus(FundingClaimStatus.NotClaimable);
+            claimableEntity.setNotClaimableReason("Claim range is not yet in the past.");
+        } else if (!claimableEntity.isMonetaryClaimRequired()) {
+            // not claimable if nothing to claim
+            claimableEntity.setStatus(FundingClaimStatus.NotClaimable);
+            claimableEntity.setNotClaimableReason("Nothing to claim.");
+        } else if (fundingBlock.isEvidenceAttachmentsMandatory() && !claimableEntity.isEvidenceAttached()) {
+            // evidence must be attached if appropriate
+            claimableEntity.setStatus(FundingClaimStatus.NotClaimable);
+            claimableEntity.setNotClaimableReason("All evidence must be attached to claim.");
         }
     }
 
     boolean checkForAnyExistingClaims(FundingBlock fundingBlock, Integer year, Integer quarter) {
         return fundingBlock.getClaims().stream()
-                .anyMatch(c -> c.getClaimTypePeriod().equals(quarter) && c.getYear().equals(year) && !ClaimType.ACTIVITY
-                        .equals(c.getClaimType()));
+                .anyMatch(c -> c.getClaimTypePeriod().equals(quarter)
+                        && c.getYear().equals(year)
+                        && !Withdrawn.equals(c.getClaimStatus())
+                        && !ClaimType.ACTIVITY.equals(c.getClaimType()));
     }
 
     public FundingActivity createOrUpdateFundingActivity(Integer projectId, Integer blockId,
-            FundingActivityLineItem activityRequest) {
+                                                         FundingActivityLineItem activityRequest) {
 
         FundingBlock fundingBlock = validateFundingBlockLocked(projectId, blockId);
         checkForCorrectSpendType(fundingBlock, activityRequest);
@@ -217,7 +276,8 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
                     throw new ValidationException("Unable to find milestone matching given name");
                 }
                 // TODO ADD BACK IN WHEN EXTERNAL ID (25805) issue is fixed
-                // if (activityRequest.getReferencedId() != null && milestonesBlock.getMilestoneById(activityRequest.getReferencedId()) == null) {
+                // if (activityRequest.getReferencedId() != null
+                // && milestonesBlock.getMilestoneById(activityRequest.getReferencedId()) == null) {
                 //     throw new ValidationException("Unable to find milestone matching given external id");
                 // }
             }
@@ -250,6 +310,8 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
                 REVENUE, null);
         updateFundingActivityValue(fundingActivity, projectId, blockId, activityRequest,
                 activityRequest.getRevenueMatchFundValue(), REVENUE, MATCH_FUND_CATEGORY);
+
+        updateFundingActivityYearQuarterAndMilestone(fundingActivity, activityRequest);
 
         fundingActivity = fundingActivityRepository.save(fundingActivity);
 
@@ -298,9 +360,16 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
         return activity;
     }
 
+    private void updateFundingActivityYearQuarterAndMilestone(FundingActivity fundingActivity, FundingActivityLineItem activityRequest) {
+        fundingActivity.setYear(activityRequest.getYear());
+        fundingActivity.setQuarter(activityRequest.getQuarter());
+        fundingActivity.setCategoryDescription(activityRequest.getCategoryDescription());
+        fundingActivity.setExternalId(activityRequest.getExternalId());
+    }
+
     private void updateFundingActivityValue(FundingActivity fundingActivity, Integer projectId, Integer blockId,
-            FundingActivityLineItem activityRequest,
-            BigDecimal value, SpendType spendType, String category) {
+                                            FundingActivityLineItem activityRequest,
+                                            BigDecimal value, SpendType spendType, String category) {
         if (value != null) { // CREATE
             if (fundingActivity.getLedgerEntry(spendType, category) == null) {
                 ProjectLedgerItemRequest ledgerItemRequest = toLedgerItemRequest(projectId, blockId, activityRequest, spendType,
@@ -316,8 +385,8 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
     }
 
     private ProjectLedgerItemRequest toLedgerItemRequest(Integer projectId, Integer blockId,
-            FundingActivityLineItem fundingActivityRequest,
-            SpendType spendType, String category, BigDecimal value) {
+                                                         FundingActivityLineItem fundingActivityRequest,
+                                                         SpendType spendType, String category, BigDecimal value) {
         ProjectLedgerItemRequest ledgerItemRequest = new ProjectLedgerItemRequest();
         ledgerItemRequest.setProjectId(projectId);
         ledgerItemRequest.setBlockId(blockId);
@@ -333,7 +402,7 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
     }
 
     public List<StandardAttachment> addFundingActivityEvidence(Integer projectId, Integer blockId, Integer activityId,
-            Integer fileId) {
+                                                               Integer fileId) {
         FundingBlock fundingBlock = validateFundingBlockLocked(projectId, blockId);
 
         FundingActivity activity = getFundingActivity(blockId, activityId);
@@ -406,19 +475,24 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
 
     public void addClaim(Integer projectId, Integer blockId, Integer financialYear, Integer quarter, List<Integer> activityIds) {
         Project project = get(projectId);
-        FundingBlock projectFundingBlock = this.getProjectFundingBlock(projectId, blockId, financialYear);
+        FundingBlock projectFundingBlock = this.getProjectFundingBlock(projectId, blockId);
+        projectFundingBlock.getAllProjectFunding().getFundingByYear().get(financialYear);
         checkForLock(projectFundingBlock);
 
         List<Claim> claims = new ArrayList<>();
         if (Boolean.TRUE.equals(projectFundingBlock.getCanClaimActivity()) && CollectionUtils.isNotEmpty(activityIds)) {
             for (Integer activityId : activityIds) {
-                Claim claim = createAuditedClaim(blockId, financialYear, quarter, ClaimStatus.Claimed, ClaimType.ACTIVITY);
+                Claim claim = createAuditedClaim(blockId, financialYear, quarter, Claimed, ClaimType.ACTIVITY);
                 FundingActivity activity = fundingActivityRepository.findById(activityId).orElse(null);
+                BigDecimal capitalClaimValue = activity.getCapitalMainValue() != null ? activity.getCapitalMainValue() : BigDecimal.ZERO;
+                BigDecimal revenueClaimValue = activity.getRevenueMainValue() != null ? activity.getRevenueMainValue() : BigDecimal.ZERO;
+                claim.setAmount(capitalClaimValue.add(revenueClaimValue));
                 claim.setEntityId(activity.getOriginalId());
                 claims.add(claim);
             }
         } else {
-            Claim claim = createAuditedClaim(blockId, financialYear, quarter, ClaimStatus.Claimed, ClaimType.QUARTER);
+            Claim claim = createAuditedClaim(blockId, financialYear, quarter, Claimed, ClaimType.QUARTER);
+            claim.setAmount(getClaimValue(blockId, financialYear, quarter));
             claims.add(claim);
         }
 
@@ -429,8 +503,57 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
         this.updateProject(project);
     }
 
+    BigDecimal getClaimValue(Integer blockId, Integer year, Integer quarter) {
+        List<FundingActivity> activities = fundingActivityRepository.findAllByBlockIdAndYearAndQuarter(blockId, year, quarter);
+        BigDecimal value = BigDecimal.ZERO;
+        for (FundingActivity activity : activities) {
+            if (activity.getCapitalMainValue() != null) {
+                value = value.add(activity.getCapitalMainValue());
+            }
+            if (activity.getRevenueMainValue() != null) {
+                value = value.add(activity.getRevenueMainValue());
+            }
+        }
+        return value;
+    }
+
+    public void updateClaimStatuses(Integer projectId, List<Integer> claimIds, ClaimStatus targetStatus, String reason) {
+        Project project = get(projectId);
+        FundingBlock fundingBlock = project.getFundingBlock();
+
+        if (!environment.isTestEnvironment() && targetStatus == Approved) {
+            throw new ValidationException("Should not be approving claims using this method");
+        }
+
+        for (Integer claimId : claimIds) {
+            fundingBlock.getClaims().stream().forEach(c -> {
+                if (c.getId().equals(claimId)) {
+                    c.setClaimStatus(targetStatus);
+                    //deals with legacy claims where amount was not set
+                    if (targetStatus == Withdrawn && c.getClaimType().equals(ClaimType.ACTIVITY) && c.getAmount() == null) {
+                        FundingActivity activity = fundingActivityRepository.findById(c.getEntityId()).orElse(null);
+                        BigDecimal capitalClaimValue = activity.getCapitalMainValue() != null ? activity.getCapitalMainValue() : BigDecimal.ZERO;
+                        BigDecimal revenueClaimValue = activity.getRevenueMainValue() != null ? activity.getRevenueMainValue() : BigDecimal.ZERO;
+                        c.setAmount(capitalClaimValue.add(revenueClaimValue));
+                    }
+                    if (targetStatus == Withdrawn && c.getClaimType().equals(ClaimType.QUARTER) && c.getAmount() == null) {
+                        c.setAmount(getClaimValue(fundingBlock.getId(), c.getYear(), c.getClaimTypePeriod()));
+                    }
+                }
+            });
+        }
+
+        this.updateProject(project);
+
+        if (targetStatus == Withdrawn) {
+            project.handleEvent(new OpsEvent(EventType.CancelApprovedClaim, "Claim cancelled", null, reason, userService.currentUser()));
+            performProjectUpdate(project);
+            auditService.auditCurrentUserActivity("Claim cancelled - " + reason);
+        }
+    }
+
     private Claim createAuditedClaim(Integer blockId, Integer financialYear, Integer quarter, ClaimStatus status,
-            ClaimType type) {
+                                     ClaimType type) {
         Claim claim = new Claim(blockId, financialYear, quarter, status, type);
         claim.setClaimedOn(environment.now());
         claim.setClaimedBy(userService.currentUsername());
@@ -443,11 +566,14 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
         checkForLock(fundingBlock);
 
         for (Integer claimID : claimIDs) {
-            boolean removed = fundingBlock.getClaims().removeIf(c -> c.getId().equals(claimID));
-
-            if (!removed) {
+            Claim toRemove = fundingBlock.getClaims().stream().filter(c -> c.getId().equals(claimID)).findFirst().orElse(null);
+            if (toRemove == null) {
                 throw new ValidationException("Unable to find claim to cancel.");
+            } else if (Withdrawn.equals(toRemove.getClaimStatus()) || Approved.equals(toRemove.getClaimStatus())) {
+                throw new ValidationException("`Should not delete previously approved claims`");
             }
+
+            fundingBlock.getClaims().remove(toRemove);
             paymentService.updateFundingBlockRecordsFollowingDeletedClaim(fundingBlock, claimID);
         }
 
@@ -457,16 +583,19 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
     @Override
     public PaymentGroup generatePaymentsForProject(Project project, String approvalRequestedBy) {
         FundingBlock fundingBlock = project.getFundingBlock();
-        if (fundingBlock != null && fundingBlock.getApprovalWillCreatePendingPayment()) {
+        if (fundingBlock != null && (fundingBlock.getApprovalWillCreatePendingPayment() || fundingBlock.getApprovalWillCreatePendingReclaim())) {
             List<ProjectLedgerEntry> ples = new ArrayList<>();
             for (Claim claim : fundingBlock.getClaimed()) {
                 Set<ProjectLedgerEntry> allForClaim = paymentService.findAllForClaim(fundingBlock.getId(), claim.getOriginalId());
+                Set<ProjectLedgerEntry> historicEntriesForClaim = getHistoricEntriesForClaim(project, fundingBlock, claim);
+                allForClaim.addAll(historicEntriesForClaim);
+
                 BigDecimal totalRevenue = BigDecimal.ZERO;
                 BigDecimal totalCapital = BigDecimal.ZERO;
                 for (ProjectLedgerEntry projectLedgerEntry : allForClaim) {
-                    if (CAPITAL.equals(projectLedgerEntry.getSpendType()) && projectLedgerEntry.getCategory() == null) {
+                    if (CAPITAL.equals(projectLedgerEntry.getSpendType()) && (projectLedgerEntry.getCategory() == null || projectLedgerEntry.getCategory().equals("Activity") || projectLedgerEntry.getCategory().equals("Quarterly"))) {
                         totalCapital = totalCapital.add(projectLedgerEntry.getValue());
-                    } else if (REVENUE.equals(projectLedgerEntry.getSpendType()) && projectLedgerEntry.getCategory() == null) {
+                    } else if (REVENUE.equals(projectLedgerEntry.getSpendType()) && (projectLedgerEntry.getCategory() == null || projectLedgerEntry.getCategory().equals("Activity") || projectLedgerEntry.getCategory().equals("Quarterly"))) {
                         totalRevenue = totalRevenue.add(projectLedgerEntry.getValue());
                     }
                 }
@@ -476,14 +605,53 @@ public class ProjectFundingService extends BaseProjectFinanceService implements 
                 if (totalRevenue.compareTo(BigDecimal.ZERO) > 0) {
                     ples.add(createPaymentFor(project, fundingBlock, claim, totalRevenue, REVENUE));
                 }
+
+                ProjectLedgerEntry initialClaim = historicEntriesForClaim.stream().findFirst().orElse(null);
+                if (totalCapital.compareTo(BigDecimal.ZERO) < 0) {
+                    ples.add(paymentService.createReclaim(historicEntriesForClaim, totalCapital.negate(), claim.getId(), fundingBlock.getId(), CAPITAL));
+                }
+                if (totalRevenue.compareTo(BigDecimal.ZERO) < 0) {
+                    ples.add(paymentService.createReclaim(historicEntriesForClaim, totalRevenue.negate(), claim.getId(), fundingBlock.getId(), REVENUE));
+                }
             }
             return paymentService.createPaymentGroup(approvalRequestedBy, ples);
         }
         return null;
     }
 
+    /**
+     *
+     * check historic payments that could have been paid against this claim before it was cancelled and add
+     * them to the total claim. Paid claims will have negative values so adding as they are will work out difference
+     * @param project project
+     * @param fundingBlock the current version of the funding block
+     * @param claim claim
+     */
+    Set<ProjectLedgerEntry> getHistoricEntriesForClaim(Project project, FundingBlock fundingBlock, Claim claim) {
+        Set<ProjectLedgerEntry> historicPayments = new HashSet<>();
+        List<FundingBlock> historicBlocks = project.getBlocksByTypeAndDisplayOrder(ProjectBlockType.Funding, fundingBlock.getDisplayOrder()).stream()
+                .filter(b -> b instanceof FundingBlock)
+                .map(FundingBlock.class::cast)
+                .collect(Collectors.toList());
+        for (FundingBlock historicBlock : historicBlocks) {
+            if (historicBlock != null) {
+                List<Claim> allPreviouslyApprovedClaims = historicBlock.getAllPreviouslyApprovedClaims(claim);
+                for (Claim previousClaim : allPreviouslyApprovedClaims) {
+                    if (previousClaim != null) {
+                        Set<ProjectLedgerEntry> previousPLEs = paymentService.findAllForClaim(historicBlock.getId(), previousClaim.getOriginalId());
+                        Set<ProjectLedgerEntry> previouslyApprovedPLEs = previousPLEs.stream()
+                                .filter(ple -> LedgerStatus.getApprovedPaymentStatuses().contains(ple.getLedgerStatus()))
+                                .collect(Collectors.toSet());
+                        historicPayments.addAll(previouslyApprovedPLEs);
+                    }
+                }
+            }
+        }
+        return historicPayments;
+    }
+
     private ProjectLedgerEntry createPaymentFor(Project project, FundingBlock fundingBlock, Claim claim, BigDecimal grant,
-            SpendType spendType) {
+                                                SpendType spendType) {
         TemplateBlock singleBlockByType = project.getTemplate().getSingleBlockByType(ProjectBlockType.Funding);
         // use MOPAC if available otherwise assume grant
         Set<String> paymentSources = singleBlockByType.getPaymentSources();

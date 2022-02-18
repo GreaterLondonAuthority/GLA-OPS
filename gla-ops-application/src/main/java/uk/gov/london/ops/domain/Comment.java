@@ -7,10 +7,8 @@
  */
 package uk.gov.london.ops.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.gov.london.ops.framework.EntityType;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.framework.OpsEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -37,10 +35,8 @@ public class Comment implements Serializable, OpsEntity<Integer> {
     @Column(name = "comment")
     private String comment;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "created_by")
-    private User creator;
+    @Column(name = "created_by")
+    private String createdBy;
 
     @Column(name = "created_on", updatable = false)
     private OffsetDateTime createdOn;
@@ -50,6 +46,9 @@ public class Comment implements Serializable, OpsEntity<Integer> {
 
     @Column(name = "modified_on")
     private OffsetDateTime modifiedOn;
+
+    @Transient
+    private String creatorName;
 
     public Comment() {}
 
@@ -98,12 +97,12 @@ public class Comment implements Serializable, OpsEntity<Integer> {
 
     @Override
     public String getCreatedBy() {
-        return creator != null ? creator.getUsername() : null;
+        return createdBy;
     }
 
     @Override
     public void setCreatedBy(String createdBy) {
-        this.creator = new User(createdBy);
+        this.createdBy = createdBy;
     }
 
     @Override
@@ -136,9 +135,12 @@ public class Comment implements Serializable, OpsEntity<Integer> {
         this.modifiedOn = modifiedOn;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getCreatorName() {
-        return creator != null ? creator.getFullName() : null;
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
     }
 
 }

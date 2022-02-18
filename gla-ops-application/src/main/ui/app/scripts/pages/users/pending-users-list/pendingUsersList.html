@@ -3,13 +3,13 @@
   <div class="text-center mtop20" ng-if="!$ctrl.dataLoaded">Loading...</div>
 
   <div ng-if="$ctrl.dataLoaded">
-    <pagination class="top-pagination mtop10"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                ng-if="$ctrl.users.length"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.updateFilters()"
-                total-items="$ctrl.totalItems"></pagination>
+    <gla-pagination class="top-pagination mtop10"
+                    [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                    ng-if="$ctrl.users.length"
+                    [number-of-elements]="$ctrl.itemsPerPage"
+                    (on-change)="$ctrl.updateFilters()"
+                    [total-items]="$ctrl.totalItems"></gla-pagination>
     <div class="row mtop20 no-results text-center" ng-if="!$ctrl.users.length">
       0 results match your search. Check your search query and try again.
     </div>
@@ -25,6 +25,8 @@
             <th>ORGANISATION</th>
             <th>ORG TYPE</th>
             <th>ROLE</th>
+            <th ng-if="$ctrl.showAuthorisedSignatory" >AUTHORISED SIGNATORY<gla-info-tooltip  [help-text]="$ctrl.authorisedSignatoryTooltip"></gla-info-tooltip>
+            </th>
             <th>ACTIONS</th>
           </tr>
           </thead>
@@ -45,7 +47,14 @@
                       style-placeholder>
                 <option disabled value="">Select role</option>
               </select>
-
+            </td>
+            <td ng-if="$ctrl.showAuthorisedSignatory">
+            <span>
+                <input type="checkbox" name="authorised-signatory"
+                       ng-model="user.authorisedSignatory"
+                       ng-change="$ctrl.signatoryChange(user.organisationId, user.newRole, user.authorisedSignatory)"
+                       ng-disabled="!$ctrl.canChangeAuthorisedSignatory(user.newRole)">
+            </span>
             </td>
             <td class="text-nowrap">
               <button class="btn btn-sm btn-primary approve-btn" ng-click="$event.stopPropagation();$ctrl.approveUser(user);" ng-disabled="!user.newRole" ng-if="user.isEditable">APPROVE</button>
@@ -57,12 +66,12 @@
       </div>
     </div>
 
-    <pagination class="bottom-pagination mtop10"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                ng-if="$ctrl.users.length"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.updateFilters()"
-                total-items="$ctrl.totalItems"></pagination>
+    <gla-pagination class="bottom-pagination mtop10"
+                    [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                    ng-if="$ctrl.users.length"
+                    [number-of-elements]="$ctrl.itemsPerPage"
+                    (on-change)="$ctrl.updateFilters()"
+                    [total-items]="$ctrl.totalItems"></gla-pagination>
   </div>
 </div>

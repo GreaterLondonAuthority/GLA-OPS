@@ -24,14 +24,14 @@ public class HomeController {
 
     Logger log = LoggerFactory.getLogger("CLOUDWATCH");
 
-    @RequestMapping(value="/", method = RequestMethod.GET)
-    @ApiOperation(value="",hidden = true)
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "text/html; charset=utf-8")
+    @ApiOperation(value = "", hidden = true)
     ModelAndView home(ModelMap model) {
-        return new ModelAndView("redirect:/index.html", model);
+        return new ModelAndView("forward:/index.html", model);
     }
 
-    @RequestMapping(value="/testLog", method = RequestMethod.GET)
-    @ApiOperation(value="",hidden = true)
+    @RequestMapping(value = "/testLog", method = RequestMethod.GET)
+    @ApiOperation(value = "", hidden = true)
     public void testLog(@RequestParam String line) {
         log.info("test log: {}", line);
     }

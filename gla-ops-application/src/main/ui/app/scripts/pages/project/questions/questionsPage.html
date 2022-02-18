@@ -5,12 +5,12 @@
 
   <gla-spinner ng-if="$ctrl.loading"></gla-spinner>
 
-  <questions class="mtop30"
+  <gla-questions class="mtop30"
              ng-if="!$ctrl.loading"
              project="$ctrl.project"
              block="$ctrl.projectBlock"
              questions="$ctrl.questions"
-             read-only="$ctrl.readOnly"></questions>
+             read-only="$ctrl.readOnly"></gla-questions>
 
   <project-block-footer editable-block="$ctrl"></project-block-footer>
 

@@ -828,16 +828,6 @@ var api = {
   });
   },
 
-  // projectBulkOperation: (ids, operation) => {
-  //   return $http({
-  //     url: `${urlPrefix}/projects/bulkOperation`,
-  //     method: 'PUT',
-  //     data: {
-  //       operation: operation,
-  //       projects: ids
-  //     }
-  //   });
-  // },
   bulkProjectOperation(operation, ids, callback) {
     console.log('-----------\nbulkProjectOperation:',operation,ids);
     const options = {

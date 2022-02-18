@@ -116,12 +116,6 @@ class ProjectDetailsChangeReport {
       this.resetRestrictedFields(right);
     }
 
-
-    // left.aNumber = right.aNumber = '1234567890.1234';
-    // left.aCurrency = right.aCurrency = '1234567890';
-    // left.aDate = right.aDate = '2017-07-24T15:24:22.713+01:00';
-    // left.aBoolean = right.aBoolean = false
-
     // go and find block in block sorted list
     this.details = {
       left: left,

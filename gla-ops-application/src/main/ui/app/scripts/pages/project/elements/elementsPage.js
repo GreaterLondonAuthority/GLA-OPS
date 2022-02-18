@@ -25,6 +25,13 @@ class ElementsPage extends ProjectBlockCtrl {
     this.projectBlock.validationFailures = undefined;
     return this.ProjectBlockService.updateBlock(this.project.id, this.projectBlock.id, this.projectBlock, true);
   }
+
+  getAnswerAsText(boolValue){
+    if(boolValue == null){
+      return 'Not provided';
+    }
+    return boolValue? 'Yes' : 'No';
+  }
 }
 
 ElementsPage.$inject = ['$injector', 'ProjectBlockService', 'TemplateService'];

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="766" author="jdimsa">
+        <addColumn tableName="template">
+            <column name="secondary_contact_requirement" type="varchar(10)" defaultValue="optional"></column>
+            <column name="secondary_contact_email_requirement" type="varchar(10)" defaultValue="optional"></column>
+        </addColumn>
+
+        <addColumn tableName="project_details_block">
+            <column name="secondary_contact_name" type="varchar(80)"></column>
+            <column name="secondary_contact_email" type="varchar(100)"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="767" author="jdimsa">
+        <addDefaultValue tableName="template" columnName="secondary_contact_requirement" defaultValue="hidden" />
+        <addDefaultValue tableName="template" columnName="secondary_contact_email_requirement" defaultValue="hidden" />
+    </changeSet>
+    <changeSet id="768" author="jsingh">
+        <addColumn tableName="template">
+            <column name="project_submission_reminder" type="boolean" defaultValue="false"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="769" author="ybouhass">
+        <createSequence sequenceName="broadcast_seq" startValue="100" incrementBy="1"/>
+        <createTable tableName="broadcast">
+            <column name="id" type="INT4" autoIncrement="true"  defaultValueSequenceNext="broadcast_seq">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="managing_organisation_id" type="INT4" />
+            <column name="created_by" type="varchar(255)" />
+            <column name="created_on" type="TIMESTAMP" />
+            <column name="modified_by" type="varchar(255)" />
+            <column name="modified_on" type="TIMESTAMP" />
+            <column name="status" type="varchar(50)" />
+            <column name="main_project_contacts" type="boolean" />
+            <column name="programme_id" type="INT4" />
+            <column name="template_ids" type="varchar(255)" />
+            <column name="project_status" type="varchar(255)" />
+            <column name="subject" type="varchar(150)" />
+            <column name="body" type="varchar(5000)" />
+            <column name="sign_off" type="varchar(100)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="770" author="aworrall">
+        <dropColumn tableName="project" columnName="assignee" />
+    </changeSet>
+
+    <changeSet id="771" author="jsingh">
+        <addColumn tableName="tenure_block">
+            <column name="zero_grant_requested" type="boolean" defaultValue="false"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="772" author="cmelville">
+        <addColumn tableName="broadcast">
+            <column name="email_sent" type="boolean" defaultValue="false"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="773" author="jsingh">
+        <dropColumn tableName="template" columnName="image_requirement"/>
+        <dropColumn tableName="template" columnName="contact_requirement"/>
+    </changeSet>
+
+</databaseChangeLog>

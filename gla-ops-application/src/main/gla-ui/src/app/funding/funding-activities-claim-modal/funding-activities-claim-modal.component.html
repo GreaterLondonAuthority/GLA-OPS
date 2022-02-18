@@ -1,0 +1,50 @@
+<div class="funding-claim-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Confirm claim for {{section.label}} {{section.year}}?</h1>
+    <div>Claim details</div>
+  </div>
+  <div class="modal-body text-left">
+
+    <div>
+      <div class="clearfix">
+        <span class="label">{{activity.categoryDescription}} - {{activity.name}}</span>
+        <span class="pull-right"> {{activity.capitalValue + activity.revenueValue | currency:'£'}}</span>
+      </div>
+      <div class="payment-group">
+        <div *ngIf="activity.capitalValue && (showCapitalGla || showCapitalOther)">Capital Funding <span class="pull-right">{{activity.capitalValue | currency:'£'}}</span></div>
+        <div *ngIf="activity.revenueValue && (showRevenueGla || showRevenueOther)">Revenue Funding <span class="pull-right">{{activity.revenueValue | currency:'£'}}</span></div>
+      </div>
+    </div>
+
+    <div class="mtop30">
+      <span *ngIf="section.status === 'Claimed'">Milestone claims must be cancelled before the milestones can be edited.</span>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <button
+          id="claim-btn"
+          *ngIf="!section.claim && !readOnly"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          (click)="activeModal.close('claim')">CONFIRM</button>
+
+        <button
+          id="cancel-claim-btn"
+          *ngIf="section.claim && section.status !== 'Approved' && !readOnly"
+          class="btn btn-default btn-secondary btn-negative btn-center"
+          type="button"
+          (click)="activeModal.close('cancel')">CLOSE</button>
+
+        <div class="mtop20 mbottom10">
+          <a href="JavaScript:void(0)" class="form-cancel dismiss-btn" (click)="activeModal.dismiss()">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

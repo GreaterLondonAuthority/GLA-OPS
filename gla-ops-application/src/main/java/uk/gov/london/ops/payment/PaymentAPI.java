@@ -18,13 +18,19 @@ import org.springframework.integration.file.remote.session.Session;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.london.ops.framework.annotations.PermissionRequired;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.framework.feature.Feature;
 import uk.gov.london.ops.framework.feature.FeatureStatus;
-import uk.gov.london.ops.user.UserService;
+import uk.gov.london.ops.user.UserServiceImpl;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -35,20 +41,30 @@ import java.util.List;
 import java.util.Map;
 
 import static uk.gov.london.common.GlaUtils.parseDateString;
-import static uk.gov.london.common.user.BaseRole.*;
+import static uk.gov.london.common.user.BaseRole.GLA_FINANCE;
+import static uk.gov.london.common.user.BaseRole.GLA_ORG_ADMIN;
+import static uk.gov.london.common.user.BaseRole.GLA_PM;
+import static uk.gov.london.common.user.BaseRole.GLA_PROGRAMME_ADMIN;
+import static uk.gov.london.common.user.BaseRole.GLA_READ_ONLY;
+import static uk.gov.london.common.user.BaseRole.GLA_SPM;
+import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
+import static uk.gov.london.common.user.BaseRole.ORG_ADMIN;
+import static uk.gov.london.common.user.BaseRole.PROJECT_EDITOR;
+import static uk.gov.london.common.user.BaseRole.PROJECT_READER;
+import static uk.gov.london.common.user.BaseRole.TECH_ADMIN;
 import static uk.gov.london.ops.framework.OPSUtils.verifyBinding;
 import static uk.gov.london.ops.permission.PermissionType.VIEW_PAYMENT_HISTORY;
 
 @RestController
 @RequestMapping("/api/v1")
-@Api(description = "Payment request API")
+@Api
 public class PaymentAPI {
 
     @Autowired
     PaymentService paymentService;
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
 
     @Autowired
     AuthorisedPaymentsProcessor authorisedPaymentsProcessor;
@@ -68,8 +84,8 @@ public class PaymentAPI {
     @Value("${sap.ftp.remote.path.outgoing.invoices}")
     String remotePathOutgoingInvoice;
 
-    @Secured({OPS_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_SPM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_PROGRAMME_ADMIN, GLA_SPM, ORG_ADMIN,
+            PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/payments", method = RequestMethod.GET)
     @ApiOperation(value = "Get all payments with optional filter", notes = "Get all payments")
     // TODO when getAll is called, pass PaymentFilterOption.ALL.statuses() (for updating tests)
@@ -77,10 +93,12 @@ public class PaymentAPI {
             @RequestParam(name = "project", required = false) String projectIdOrName,
             @RequestParam(name = "organisation", required = false) String organisationName,
             @RequestParam(name = "programme", required = false) String programmeName,
+            @RequestParam(name = "sapVendorId", required = false) String sapVendorId,
             @RequestParam(required = false) List<String> paymentSources,
             @RequestParam(required = false) List<LedgerStatus> relevantStatuses,
             @RequestParam(required = false) List<String> categories,
             @RequestParam(required = false) List<String> relevantProgrammes,
+            @RequestParam(required = false) List<Integer> managingOrganisations,
             @RequestParam(required = false) String fromDate,
             @RequestParam(required = false) String toDate,
             @RequestParam(required = false) List<String> paymentDirection,
@@ -105,39 +123,45 @@ public class PaymentAPI {
         return paymentService.findAll(projectIdOrName,
                 organisationName,
                 programmeName,
+                sapVendorId,
                 paymentSources,
                 relevantStatuses,
                 categories,
                 relevantProgrammes,
+                managingOrganisations,
                 from,
                 to,
                 paymentDirection,
                 pageable);
     }
 
-    @Secured({OPS_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_SPM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_PROGRAMME_ADMIN, GLA_SPM,
+            ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/paymentGroups", method = RequestMethod.GET)
     @ApiOperation(value = "Get all payments groups with optional filter", notes = "Get all payments")
-    public List<PaymentGroup> getPaymentGroups(@RequestParam(required = false) PaymentFilterOption status) {
+    public List<PaymentGroupEntity> getPaymentGroups(@RequestParam(required = false) PaymentFilterOption status) {
         ensurePaymentsFeatureIsEnabled();
-        return paymentService.findAllPaymentGroupsByStatus(status);
+        if (featureStatus.isEnabled(Feature.UseFastPendingPayments)) {
+            return paymentService.findAllPaymentGroupsByStatusFast(status);
+        } else {
+            return paymentService.findAllPaymentGroupsByStatus(status);
+        }
     }
 
-    @Secured({OPS_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_SPM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_PROGRAMME_ADMIN,
+            GLA_SPM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/paymentGroups/{groupId}", method = RequestMethod.GET)
     @ApiOperation(value = "Get a payment group by id", notes = "Get payment by id")
-    public PaymentGroup getPaymentGroupById(@PathVariable("groupId") final Integer groupId) {
+    public PaymentGroupEntity getPaymentGroupById(@PathVariable("groupId") final Integer groupId) {
         ensurePaymentsFeatureIsEnabled();
         return paymentService.getGroupById(groupId);
     }
 
-    @Secured({OPS_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_SPM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER,
-        TECH_ADMIN})
+    @Secured({OPS_ADMIN, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, GLA_ORG_ADMIN, GLA_PROGRAMME_ADMIN, GLA_SPM, ORG_ADMIN,
+            PROJECT_EDITOR, PROJECT_READER, TECH_ADMIN})
     @RequestMapping(value = "/paymentGroups/payment/{paymentId}", method = RequestMethod.GET)
     @ApiOperation(value = "Get a payment group by the id of one of it's payments", notes = "Get payment group by id payment id")
-    public PaymentGroup getPaymentGroupByPaymentId(@PathVariable("paymentId") final Integer paymentId) {
+    public PaymentGroupEntity getPaymentGroupByPaymentId(@PathVariable("paymentId") final Integer paymentId) {
         ensurePaymentsFeatureIsEnabled();
         return paymentService.getGroupByPaymentId(paymentId);
     }
@@ -178,7 +202,7 @@ public class PaymentAPI {
         if (createPaymentInGroup) {
             List<ProjectLedgerEntry> entries = new ArrayList<>();
             entries.add(createdProjectLedgerEntry);
-            paymentService.save(new PaymentGroup(entries));
+            paymentService.save(new PaymentGroupEntity(entries));
         }
 
         if (runAuthorisedPaymentsJob) {
@@ -196,16 +220,6 @@ public class PaymentAPI {
             throw new ForbiddenAccessException();
         }
         return paymentService.createReclaim(id, value);
-    }
-
-    @Secured({OPS_ADMIN, GLA_PM, GLA_SPM, GLA_ORG_ADMIN})
-    @RequestMapping(value = "/payments/{id}/interest", method = RequestMethod.POST)
-    @ApiOperation(value = "Creates a payment reclaim request", notes = "Creates a payment reclaim request")
-    public @ResponseBody ProjectLedgerEntry setReclaimInterest(@PathVariable Integer id,  @RequestBody BigDecimal value) {
-        if (!featureStatus.isEnabled(Feature.Reclaims)) {
-            throw new ForbiddenAccessException();
-        }
-        return paymentService.setReclaimInterest(id, value);
     }
 
     @Secured({OPS_ADMIN, GLA_PM, GLA_SPM, GLA_ORG_ADMIN})
@@ -238,7 +252,8 @@ public class PaymentAPI {
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
     @RequestMapping(value = "/payments/assessInterest/group/{groupId}", method = RequestMethod.PUT)
     @ApiOperation(value = "Records that the interest for this group has been considered")
-    public @ResponseBody PaymentGroup recordInterestAssessed(@PathVariable int groupId) {
+    public @ResponseBody
+    PaymentGroupEntity recordInterestAssessed(@PathVariable int groupId) {
         ensurePaymentsFeatureIsEnabled();
         return paymentService.recordInterestAssessed(groupId);
     }
@@ -254,7 +269,8 @@ public class PaymentAPI {
     @RequestMapping(value = "/payments/decline/group/{groupId}", method = RequestMethod.POST)
     @ApiOperation(value = "Decline a set of pending payment request which belong to the same projects"
         + "based on paymentGroupId")
-    public @ResponseBody PaymentGroup decline(@PathVariable Integer groupId, @Valid @RequestBody PaymentGroup paymentGroup) {
+    public @ResponseBody
+    PaymentGroupEntity decline(@PathVariable Integer groupId, @Valid @RequestBody PaymentGroupEntity paymentGroup) {
         ensurePaymentsFeatureIsEnabled();
         return paymentService.declinePaymentsByGroupId(groupId, paymentGroup);
     }

@@ -1,0 +1,43 @@
+<div class="outputs-configuration-page page col-xs-12 mtop15 no-padding">
+  <div *ngIf="!outputConfigurations.length" class="no-output-message">
+    <span>0 results match your search. Check your search query and try again.</span>
+  </div>
+  <div class="table-responsive mtop20" id="outputs-configuration-table" *ngIf="outputConfigurations.length">
+    <div class="text-right mtop15 mbottom15">
+      <button permission set-permission="{only: 'outputsConfiguration.manage'}"
+              class="btn btn-primary btn-md"
+              (click)="addCategory()">
+        ADD OUTPUT CATEGORY<span class="glyphicon glyphicon-plus"></span>
+      </button>
+    </div>
+    <div *ngIf="outputConfigurations.length == 0" class="empty-table">Not provided</div>
+    <table *ngIf="outputConfigurations.length > 0" class="outputs-configuration-table table table-hover table-bordered">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>ID</th>
+        <th>Category</th>
+        <th>Subcategory</th>
+        <th>Type</th>
+        <th>Tenure</th>
+        <th>Hidden?</th>
+        <th>Groups</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngIf="outputConfigurations.length == 0"><td colspan="6">Not provided</td></tr>
+
+      <tr class="cursor-pointer" *ngFor="let outputConfiguration of outputConfigurations">
+        <td>{{outputConfiguration.id}}</td>
+        <td>{{outputConfiguration.category}}</td>
+        <td>{{outputConfiguration.subcategory}}</td>
+        <td>{{outputConfiguration.valueType}}</td>
+        <td>{{outputConfiguration.tenureTypeId}}</td>
+        <td>{{outputConfiguration.hidden == true ? 'Yes' : 'No'}}</td>
+        <td>{{outputConfiguration.outputGroupIds}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

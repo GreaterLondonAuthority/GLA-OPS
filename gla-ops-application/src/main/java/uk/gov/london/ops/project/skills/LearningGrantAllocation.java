@@ -10,6 +10,8 @@ package uk.gov.london.ops.project.skills;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,11 +33,9 @@ public class LearningGrantAllocation {
     @Column(name = "allocation")
     private BigDecimal allocation;
 
-    @Column(name = "community_allocation")
-    private BigDecimal communityAllocation;
-
-    @Column(name = "learner_support_allocation")
-    private BigDecimal learnerSupportAllocation;
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private AllocationType type;
 
     @Transient
     private boolean deliveryAllocationEditingInProgress = false;
@@ -50,12 +50,10 @@ public class LearningGrantAllocation {
         this.year = year;
     }
 
-    public LearningGrantAllocation(Integer year, BigDecimal allocation, BigDecimal communityAllocation,
-            BigDecimal learnerSupportAllocation) {
+    public LearningGrantAllocation(Integer year, BigDecimal allocation, AllocationType type) {
         this(year);
         this.allocation = allocation;
-        this.communityAllocation = communityAllocation;
-        this.learnerSupportAllocation = learnerSupportAllocation;
+        this.type = type;
     }
 
     public Integer getId() {
@@ -82,20 +80,12 @@ public class LearningGrantAllocation {
         this.allocation = allocation;
     }
 
-    public BigDecimal getCommunityAllocation() {
-        return communityAllocation;
+    public AllocationType getType() {
+        return type;
     }
 
-    public void setCommunityAllocation(BigDecimal communityAllocation) {
-        this.communityAllocation = communityAllocation;
-    }
-
-    public BigDecimal getLearnerSupportAllocation() {
-        return learnerSupportAllocation;
-    }
-
-    public void setLearnerSupportAllocation(BigDecimal learnerSupportAllocation) {
-        this.learnerSupportAllocation = learnerSupportAllocation;
+    public void setType(AllocationType type) {
+        this.type = type;
     }
 
     public boolean isDeliveryAllocationEditingInProgress() {
@@ -118,8 +108,7 @@ public class LearningGrantAllocation {
         LearningGrantAllocation clone = new LearningGrantAllocation();
         clone.setYear(year);
         clone.setAllocation(allocation);
-        clone.setCommunityAllocation(communityAllocation);
-        clone.setLearnerSupportAllocation(learnerSupportAllocation);
+        clone.setType(type);
         clone.setDeliveryAllocationEditingInProgress(deliveryAllocationEditingInProgress);
         clone.setSupportAllocationEditingInProgress(supportAllocationEditingInProgress);
         return clone;

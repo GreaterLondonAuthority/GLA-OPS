@@ -1,0 +1,30 @@
+<div class="template-block-project-objectives">
+  <gla-template-block-repeating-entity [block]="block"
+                                       [readOnly]="readOnly"
+                                       [template]="template"
+                                       [editable]="editable"
+                                       [blockEntity]="'objectives'"></gla-template-block-repeating-entity>
+
+  <div class="form-group">
+    <label for="singular-title">Objective text singular</label>
+    <input class="form-control"
+           [disabled]="readOnly || !editable"
+           id="singular-title"
+           maxlength="50"
+           [(ngModel)]="block.objectiveTextSingular"
+           placeholder="Objective text singular"
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="plural-title">Objective text plural</label>
+    <input class="form-control"
+           [disabled]="readOnly || !editable"
+           id="plural-title"
+           maxlength="50"
+           [(ngModel)]="block.objectiveTextPlural"
+           placeholder="Objective text plural"
+           type="text"/>
+  </div>
+
+</div>

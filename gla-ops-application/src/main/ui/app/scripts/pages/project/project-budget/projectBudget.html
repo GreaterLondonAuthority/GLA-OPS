@@ -17,7 +17,7 @@
       </div>
 
 
-      <well class="row from-to-date-edit" ng-if="!$ctrl.readOnly">
+      <gla-well class="row from-to-date-edit" ng-if="!$ctrl.readOnly">
         <div class="col-md-6 col-sm-6">
           <div class="box">
             <div class="innerPadding">
@@ -59,10 +59,10 @@
             </div>
           </div>
         </div>
-      </well>
+      </gla-well>
 
       <div class="flex-container">
-        <well class="text-center capital-box">
+        <gla-well class="text-center capital-box">
 
           <label class="totalBox__label property-name" for="project-budgets-capital">Capital</label><br/>
           <div ng-if="!$ctrl.readOnly">
@@ -92,9 +92,9 @@
                      type="'CAPITAL'"
                      codes="$ctrl.data.wbsCodes"
                      on-wbs-code-modification="$ctrl.autoSave()"></wbs-codes>
-        </well>
+        </gla-well>
 
-        <well class="revenue-box">
+        <gla-well class="revenue-box">
           <label class="totalBox__label property-name" for="project-budgets-revenue">Revenue</label><br/>
           <div ng-if="!$ctrl.readOnly">
             <input id="project-budgets-revenue"
@@ -121,14 +121,14 @@
                      type="'REVENUE'"
                      codes="$ctrl.data.wbsCodes"
                      on-wbs-code-modification="$ctrl.autoSave()"></wbs-codes>
-        </well>
+        </gla-well>
       </div>
       <div class="row approval-needed-message">
         <!-- <span class="approval-required-error glyphicon glyphicon-exclamation-sign"></span>  -->
         <strong class="text-left pull-left">Approval is needed to update the total amount</strong>
         <span class="text-right pull-right approval-needed-message-date" ng-if="$ctrl.data.lastModified">Last updated {{$ctrl.data.lastModified | date: "dd/MM/yyyy"}}</span>
       </div>
-      <well class="row mtop15" ng-if="!$ctrl.readOnly">
+      <gla-well class="row mtop15" ng-if="!$ctrl.readOnly">
         <h4>Add approval documents</h4>
         <h5>Maximum file size: 5MB</h5>
 
@@ -150,17 +150,17 @@
           </div>
 
           <div class="col-xs-6 no-padding">
-            <file-upload class="add-document"
-                         label="ADD DOCUMENT +"
-                         upload-params="$ctrl.uploadParams"
-                         on-progress="$ctrl.onFileUploadProgress(event)"
-                         on-complete="$ctrl.onFileUploadComplete(event)"
-                         on-error="$ctrl.onFileUploadError(event)"
-                         is-disabled="!$ctrl.selectedDocumentType || $ctrl.readOnly">
-            </file-upload>
+            <gla-file-upload-button class="add-document"
+                                    [label]="'ADD DOCUMENT +'"
+                                    [upload-params]="$ctrl.uploadParams"
+                                    (on-progress)="$ctrl.onFileUploadProgress($event)"
+                                    (on-complete)="$ctrl.onFileUploadComplete($event)"
+                                    (on-error)="$ctrl.onFileUploadError($event)"
+                                    [is-disabled]="!$ctrl.selectedDocumentType || $ctrl.readOnly">
+            </gla-file-upload-button>
           </div>
         </div>
-      </well>
+      </gla-well>
 
 
 
@@ -182,7 +182,7 @@
               <tr ng-repeat="attachment in $ctrl.data.attachments | orderBy:'createdOn':true">
 
                 <td>
-                  <a ng-href="/api/v1/file/{{attachment.fileId}}" target="_blank"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{attachment.fileName}}</a>
+                  <a ng-href="/api/v1/project/{{$ctrl.project.id}}/file/{{attachment.fileId}}" target="_blank"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{attachment.fileName}}</a>
                 </td>
                 <td>{{attachment.documentType}}</td>
                 <td>{{attachment.createdOn | date: 'MMM d, yyyy'}}</td>
@@ -267,19 +267,13 @@
         </total-box>
       </div>
     </div>
-
+    </div>
   </form>
 </div>
 
 
 
-
-
-
-
-
 <div class="annual-spend">
-
   <form role="form" name="asForm">
     <div class="col-xs-12 mtop20 text-center">
       <hr>

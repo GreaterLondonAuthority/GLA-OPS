@@ -7,9 +7,9 @@
  */
 
 import ProjectBlockCtrl from '../ProjectBlockCtrl';
-import './wizard/outputsWizard';
+import {ClaimModalComponent} from '../../../../../../gla-ui/src/app/claim-modal/claim-modal.component'
 import './assumptionModal/assumptionModal';
-
+import './output-entry-modal/outputEntryModal';
 
 const ClaimType = {
   ADVANCE: 'ADVANCE'
@@ -17,7 +17,7 @@ const ClaimType = {
 
 
 class OutputsCtrl extends ProjectBlockCtrl {
-  constructor(project, $injector, $scope, $timeout, template, PermPermissionStore, OutputsService, Util, outputsMessage, currentFinancialYear, currentAcademicYear, ClaimModal, ConfirmationDialog, ErrorService) {
+  constructor(project, $injector, $scope, $timeout, template, PermPermissionStore, OutputsService, Util, outputsMessage, currentFinancialYear, currentAcademicYear, ConfirmationDialog, ErrorService, OutputEntryModal, NgbModal) {
     super($injector);
     this.$scope = $scope;
     this.$timeout = $timeout;
@@ -25,7 +25,6 @@ class OutputsCtrl extends ProjectBlockCtrl {
     this.blockConfig = _.find(template.blocksEnabled, {block: 'Outputs'});
     this.outputsBlock = _.find(project.projectBlocksSorted, {blockType: 'Outputs'});
     this.outputsMessage = outputsMessage;
-    this.ClaimModal = ClaimModal;
     this.ConfirmationDialog = ConfirmationDialog;
     this.ErrorService = ErrorService;
     this.PermPermissionStore = PermPermissionStore;
@@ -34,6 +33,8 @@ class OutputsCtrl extends ProjectBlockCtrl {
     this.DateUtil = Util.Date;
     this.currentFinancialYear = currentFinancialYear;
     this.currentAcademicYear = currentAcademicYear;
+    this.OutputEntryModal = OutputEntryModal;
+    this.NgbModal = NgbModal
   }
 
   $onInit(){
@@ -162,10 +163,12 @@ class OutputsCtrl extends ProjectBlockCtrl {
       claimType: ClaimType.ADVANCE,
     };
 
-    let modal = this.ClaimModal.show(config, claimRequest);
+    let modal = this.NgbModal.open(ClaimModalComponent)
+    modal.componentInstance.config = config
+    modal.componentInstance.claimRequest = claimRequest
     modal.result.then((result) => {
       this.loadDataForYear(this.blockSessionStorage.currentYear.financialYear, false);
-    });
+    }, err => {});
   }
 
 
@@ -538,9 +541,36 @@ class OutputsCtrl extends ProjectBlockCtrl {
       this.outputsExpanded = !this.outputsExpanded;
     }
   }
+
+  showOutputEntryModal(isBaselineOutput) {
+    let config = {
+      year: this.currentYear,
+      readOnly: this.readOnly,
+      baseline: isBaselineOutput,
+      periodType: this.periodType,
+      outputTypeName: this.outputTypeName,
+      categoryName: this.categoryName,
+      categories: this.categories,
+      directOrIndirectChoices: this.outputTypes,
+      subcategoryName: this.subcategoryName,
+      displayOutputType: this.displayOutputType,
+      categoriesCosts: this.categoriesCosts,
+      disabledMonths: this.disabledMonths,
+      displayUnitCost : this.displayUnitCost,
+    };
+
+    let modal = this.OutputEntryModal.show(config);
+    modal.result.then(data => {
+      if(isBaselineOutput) {
+        this.onAddBaselineOutput(data.output.event);
+      } else {
+        this.onAddOutput(data.event);
+      }
+    })
+  }
 }
 
-OutputsCtrl.$inject = ['project', '$injector', '$scope', '$timeout', 'template', 'PermPermissionStore', 'OutputsService', 'Util', 'outputsMessage', 'currentFinancialYear', 'currentAcademicYear', 'ClaimModal', 'ConfirmationDialog', 'ErrorService'];
+OutputsCtrl.$inject = ['project', '$injector', '$scope', '$timeout', 'template', 'PermPermissionStore', 'OutputsService', 'Util', 'outputsMessage', 'currentFinancialYear', 'currentAcademicYear', 'ConfirmationDialog', 'ErrorService', 'OutputEntryModal', 'NgbModal'];
 
 angular.module('GLA')
   .controller('OutputsCtrl', OutputsCtrl);

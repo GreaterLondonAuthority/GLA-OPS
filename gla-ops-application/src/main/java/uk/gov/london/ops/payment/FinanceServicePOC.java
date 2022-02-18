@@ -155,7 +155,7 @@ public class FinanceServicePOC {
 
     public SalesInvoiceDocument createSampleInvoice() {
         SalesInvoiceDocument invoice = new SalesInvoiceDocument();
-        invoice.narrative = "Test by steve.leach@keytree.co.uk";
+        invoice.narrative = "";
         //invoice.amount = new BigDecimal(1234.56);
         //invoice.addLine("9876.54");
 

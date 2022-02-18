@@ -9,11 +9,11 @@ package uk.gov.london.ops.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.london.ops.framework.Environment;
 import uk.gov.london.ops.domain.Message;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.repository.MessageRepository;
+import uk.gov.london.ops.user.UserService;
 
 import java.util.List;
 
@@ -22,18 +22,30 @@ public class MessageService {
 
     Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
+    private final UserService userService;
+    private final Environment environment;
 
-    @Autowired
-    private Environment environment;
+    public MessageService(MessageRepository messageRepository, UserService userService, Environment environment) {
+        this.messageRepository = messageRepository;
+        this.userService = userService;
+        this.environment = environment;
+    }
 
     public List<Message> getAll() {
-        return messageRepository.findAll();
+        List<Message> messages = messageRepository.findAll();
+        for (Message message: messages) {
+            enrich(message);
+        }
+        return messages;
+    }
+
+    private void enrich(Message message) {
+        userService.enrich(message);
     }
 
     public Message find(String key) {
-        Message response = null;
+        Message response;
         if (key.equalsIgnoreCase("system-environment")) {
             response = environmentSummaryMessage(key);
         } else if (key.equalsIgnoreCase("system-hostname")) {
@@ -48,7 +60,6 @@ public class MessageService {
     }
 
     public void update(Message message) {
-
         Message existing = messageRepository.getOne(message.getCode());
         existing.setEnabled(message.isEnabled());
         if (message.getText() == null) {

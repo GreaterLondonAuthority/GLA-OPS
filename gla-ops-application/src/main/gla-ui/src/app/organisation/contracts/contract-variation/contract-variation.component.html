@@ -1,0 +1,152 @@
+<div class="contract-variation">
+  <gla-page-header (onBack)="goToOrganisation()">Contract Variation</gla-page-header>
+
+  <div class="page-content">
+    <div >
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+          <div class="form-group">
+            <label for="org-name">Organisation</label>
+            <div id="org-name" class="read-only-text">{{organisation.name}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+          <div class="form-group">
+            <label for="contract-name">Contract type</label>
+            <div id="contract-name" class="read-only-text">{{contract.contract.name}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+          <div class="form-group">
+            <label for="contract-status-name">Variation status:</label>
+            <div id="contract-status-name" class="read-only-text">{{contractStatusMap[contract.status]}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="variation-name">Variation name </label>
+          <div>
+            <input [(ngModel)]="contract.variationName"
+                   class="form-control"
+                   id="variation-name"
+                   name="variation-name"
+                   [disabled]="!variationEditable"
+                   type="text"
+                   [maxLength]="50">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <label for="variation-reason">Reason for variation </label>
+          <div>
+            <input [(ngModel)]="contract.variationReason"
+                   class="form-control"
+                   id="variation-reason"
+                   name="variation-reason"
+                   [disabled]="!variationEditable"
+                   type="text"
+                   [maxLength]="255">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+        <div class="form-group">
+          <gla-file-upload
+            [attachmentsTotalSize]="contract.totalAttachmentsSize"
+            [attachments]="contract.contractFiles"
+            [maxCombinedUploadSizeInMb]="5"
+            [readOnly]="!variationEditable"
+            [additionalCompletionActions]="true"
+            [additionalRemovalActions]="true"
+            [downloadUrl]="'/api/v1/file/'"
+            (onCompleteActions)="onFileUpload($event)"
+            (onRemovalActions)="onFileRemoval($event)"
+            [postUrl]="getPostUrl()"></gla-file-upload>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="canUserAcceptContract">
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+          <div class="form-group">
+            <label for="contract-signee-name">Your name</label>
+            <div id="contract-signee-name" class="read-only-text">{{user.fullName}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+          <div class="form-group">
+            <label for="accepted-by-job-title">Your job title at {{organisation.name}}</label>
+            <div>
+              <input [(ngModel)]="contract.acceptedByJobTitle"
+                     class="form-control"
+                     id="accepted-by-job-title"
+                     name="accepted-by-job-title"
+                     [disabled]="!isAuthorisedSignatory()"
+                     type="text"
+                     [maxLength]="255">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mtop5">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+          <div style="text-align: justify" class="form-group">
+            <span>
+              <input class = "mright5" [(ngModel)]="acceptContractTicked"
+                                     id="accept-contract-checkbox"
+                                     name="accept-contract-checkbox"
+                                     [disabled]="!isAuthorisedSignatory()"
+                                     type="checkbox">
+              I, a person duly and validly authorised to execute documents for and on behalf of and legally bind the Body (in this instance
+              by clicking “accept”) as confirmed by the Body in writing to the GLA prior to the GLA making this offer by
+              submission of the above <b>“Document”</b>, hereby accept the offer (on the terms of the above <b>“Document”</b>) and
+              represent and warrant that the Body has read and understood the <b>“Document”</b> and agrees to be legally bound
+              fully by its terms from the time and date of such acceptance.</span>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="contract.status !== 'Accepted'" class="row mtop10" >
+      <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 form-group text-center ">
+        <button *ngIf="allowedToDeleteContract && deleteButtonShown()" class="btn btn-secondary mright10"
+                (click)="deleteVariation()">DELETE</button>
+        <button *ngIf="!canUserAcceptContract || user.isAdmin" class="btn btn-primary mright10"
+                [disabled]="buttonDisabled()"
+                (click)="buttonAction()">{{buttonText}}</button>
+        <button *ngIf="canUserAcceptContract" class="btn btn-primary mright10"
+                [disabled]="!variationReadyForAcceptance()"
+                (click)="acceptVariationOffer()">ACCEPT OFFER</button>
+      </div>
+    </div>
+
+  </div>
+
+
+</div>
+

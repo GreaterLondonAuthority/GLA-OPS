@@ -1,8 +1,8 @@
-<div class="{{$ctrl.id}}-skill-profiles-section" ng-class="{'edit-mode': !$ctrl.readOnly}">
+<div class="{{$ctrl.id}}-skill-profiles-section" data-ng-class="{'edit-mode': !$ctrl.readOnly}">
 
   <section-header class="with-button">
     <span>{{$ctrl.title}}</span>
-    <button class="btn btn-secondary btn-md pull-right" ng-if="!$ctrl.readOnly" ng-click="$ctrl.onCreate()">
+    <button class="btn btn-secondary btn-md pull-right" data-ng-if="!$ctrl.readOnly" data-ng-click="$ctrl.onCreate()">
       ADD NEXT YEAR<span class="glyphicon glyphicon-plus"/>
     </button>
   </section-header>
@@ -11,80 +11,80 @@
     <table class="{{$ctrl.id}}-skill-profiles table table-hover table-bordered table-with-inputs">
       <thead class="thead-inverse uppercase">
       <tr>
-        <th class="table-header-column">ACADEMIC YEAR</th>
-        <th>P1</th>
-        <th>P2</th>
-        <th>P3</th>
-        <th>P4</th>
-        <th>P5</th>
-        <th>P6</th>
-        <th>P7</th>
-        <th>P8</th>
-        <th>P9</th>
-        <th>P10</th>
-        <th>P11</th>
-        <th>P12</th>
-        <th>TOTAL</th>
+        <th scope="col" class="table-header-column">ACADEMIC YEAR</th>
+        <th scope="col">P1</th>
+        <th scope="col">P2</th>
+        <th scope="col">P3</th>
+        <th scope="col">P4</th>
+        <th scope="col">P5</th>
+        <th scope="col">P6</th>
+        <th scope="col">P7</th>
+        <th scope="col">P8</th>
+        <th scope="col">P9</th>
+        <th scope="col">P10</th>
+        <th scope="col">P11</th>
+        <th scope="col">P12</th>
+        <th scope="col">TOTAL</th>
       </tr>
       </thead>
 
-      <tr ng-repeat-start="(year, periods) in $ctrl.data">
-        <td>
-          <toggle-icon [(collapsed)]="periods.collapsed" ng-if="$ctrl.paymentType === 'AEB_GRANT'"></toggle-icon>
+      <tr data-ng-repeat-start="(year, periods) in $ctrl.data">
+        <th scope="row">
+          <toggle-icon [(collapsed)]="periods.collapsed" data-ng-if="$ctrl.paymentType === 'AEB_GRANT'"></toggle-icon>
           {{ year | fYear }}
-        </td>
-        <td class="cell-with-input" ng-repeat="item in periods | orderBy: ['year', 'period'] track by item.id">
+        </th>
+        <td class="cell-with-input" data-ng-repeat="item in periods | orderBy: ['year', 'period'] track by item.id">
           <input
-            ng-attr-id="{{'date-picker-' + $ctrl.id + '-' + year + '-' + $index}}"
+            data-ng-attr-id="{{'date-picker-' + $ctrl.id + '-' + year + '-' + $index}}"
             change-on-blur="$ctrl.onUpdate({$event:item})"
             class="form-control"
             max="100"
             maxlength="6"
-            ng-disabled="$ctrl.readOnly || !item.editable"
-            ng-model="item.percentage"
+            data-ng-disabled="$ctrl.readOnly || !item.editable"
+            data-ng-model="item.percentage"
             number-mask="2"
             type="text">
         </td>
         <td class="vertical-center delete-btn-container"  rowspan="{{!periods.collapsed && $ctrl.paymentType === 'AEB_GRANT' ? '2' : '1'}}">
-          <span ng-class="{'total-error' : !$ctrl.isRowValid(year)}">
+          <span data-ng-class="{'total-error' : !$ctrl.isRowValid(year)}">
             {{ $ctrl.totals[year] }}%
           </span>
-          <delete-button  ng-if="!$ctrl.readOnly && $ctrl.isRowDeletable(year) && ($last && !$first)"
-                          ng-click="$ctrl.onDelete({$event:{ type: $ctrl.paymentType, year: year }}); $event.stopPropagation();">
+          <delete-button  data-ng-if="!$ctrl.readOnly && $ctrl.isRowDeletable(year) && ($last && !$first)"
+                          data-ng-click="$ctrl.onDelete({$event:{ type: $ctrl.paymentType, year: year }}); $event.stopPropagation();">
           </delete-button>
         </td>
       </tr>
-      <tr ng-repeat-end ng-if="!periods.collapsed && $ctrl.paymentType === 'AEB_GRANT'">
-        <td>Payment due date</td>
-        <td class="cell-with-input" ng-repeat="item in periods | orderBy: ['year', 'period'] track by item.id" style="background-color: #f7f7f9; padding: 8px; vertical-align: middle; border: 1px solid #ddd">
-          <div class="date-picker right-aligned" ng-class="{'no-selection': !item.date}">
-            <span class="input-group text-nowrap">
-              <span ng-if="item.paymentDate">{{item.paymentDate | date: 'dd/MM'}}</span>
+      <tr data-ng-repeat-end data-ng-if="!periods.collapsed && $ctrl.paymentType === 'AEB_GRANT'">
+        <th scope="row">Payment due date</th>
+        <td class="cell-with-input" data-ng-repeat="item in periods | orderBy: ['year', 'period'] track by item.id" style="background-color: #f7f7f9; padding: 8px; vertical-align: middle; border: 1px solid #ddd">
+          <div class="date-picker right-aligned" data-ng-class="{'no-selection': !item.date}">
+            <div class="input-group text-nowrap">
+              <span data-ng-if="item.paymentDate">{{item.paymentDate | date: 'dd/MM'}}</span>
               <input aria-label="From Date"
                      class="form-control date-input"
                      close-text="Close"
                      is-open="showDatePopup"
                      name="fromDate"
                      datepicker-options="item.dateOptions"
-                     ng-change="$ctrl.changeFromFilterDates($ctrl.fromDate)"
-                     ng-click="$ctrl.openFromDate()"
-                     ng-model="item.paymentDate"
-                     ng-required="false"
+                     data-ng-change="$ctrl.changeFromFilterDates($ctrl.fromDate)"
+                     data-ng-click="$ctrl.openFromDate()"
+                     data-ng-model="item.paymentDate"
+                     data-ng-required="false"
                      placeholder="From date" show-button-bar="false"
                      type="hidden"
                      uib-datepicker-popup="{{$ctrl.dateFormat}}"
               />
-              <span class="input-group-btn" ng-hide="$ctrl.readOnly || (!$ctrl.readOnly && !item.editable)">
-                <button class="btn btn-default" ng-click="showDatePopup = !showDatePopup" style="padding: 0; margin: 0; background: none; border: 0;" type="button">
+              <span class="input-group-btn" data-ng-hide="$ctrl.readOnly || (!$ctrl.readOnly && !item.editable)">
+                <button class="btn btn-default" data-ng-click="showDatePopup = !showDatePopup" style="padding: 0; margin: 0; background: none; border: 0;" type="button">
                   <i class="glyphicon glyphicon-calendar calendar-spacing"></i>
                 </button>
               </span>
-            </span>
+            </div>
           </div>
         </td>
       </tr>
     </table>
-    <div ng-if="!$ctrl.isEveryRowValid()" class="total-error" id="error-summary">
+    <div data-ng-if="!$ctrl.isEveryRowValid()" class="total-error" id="error-summary">
       Total % must equal 100. Please amend the Period allocation to avoid payment delays.
     </div>
   </div>

@@ -7,25 +7,12 @@
  */
 package uk.gov.london.ops.project.skills;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.london.common.skills.SkillsGrantType;
+import uk.gov.london.ops.framework.OpsEntity;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
-import uk.gov.london.common.skills.SkillsGrantType;
-import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.user.domain.User;
-
 
 @Entity(name = "payment_profile")
 /**
@@ -52,10 +39,8 @@ public class SkillsPaymentProfile implements OpsEntity<Integer> {
     @Column(name = "percentage")
     private BigDecimal percentage;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "created_by")
-    private User creator;
+    @Column(name = "created_by")
+    private String createdBy;
 
     @Column(name = "created_on", updatable = false)
     private OffsetDateTime createdOn;
@@ -125,12 +110,12 @@ public class SkillsPaymentProfile implements OpsEntity<Integer> {
 
     @Override
     public String getCreatedBy() {
-        return creator != null ? creator.getUsername() : null;
+        return createdBy;
     }
 
     @Override
     public void setCreatedBy(String createdBy) {
-        this.creator = new User(createdBy);
+        this.createdBy = createdBy;
     }
 
     @Override
@@ -161,11 +146,6 @@ public class SkillsPaymentProfile implements OpsEntity<Integer> {
     @Override
     public void setModifiedOn(OffsetDateTime modifiedOn) {
         this.modifiedOn = modifiedOn;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public String getCreatorName() {
-        return creator != null ? creator.getFullName() : null;
     }
 
     public OffsetDateTime getPaymentDate() {

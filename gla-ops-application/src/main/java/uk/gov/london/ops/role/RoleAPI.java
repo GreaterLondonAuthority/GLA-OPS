@@ -38,7 +38,7 @@ public class RoleAPI {
         return allRolesNameAndDescription;
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_REGISTRATION_APPROVER, GLA_FINANCE, GLA_READ_ONLY,
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_REGISTRATION_APPROVER, GLA_PROGRAMME_ADMIN, GLA_FINANCE, GLA_READ_ONLY,
             TECH_ADMIN, ORG_ADMIN})
     @RequestMapping(value = "/assignableRoles", method = RequestMethod.GET)
     public @ResponseBody List<RoleNameAndDescription> assignableRoles(@RequestParam Integer orgId) {

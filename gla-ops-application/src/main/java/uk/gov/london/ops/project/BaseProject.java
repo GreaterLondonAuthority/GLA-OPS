@@ -13,10 +13,11 @@ import uk.gov.london.common.error.ApiErrorItem;
 import uk.gov.london.ops.framework.annotations.PermissionRequired;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.programme.domain.Programme;
 import uk.gov.london.ops.programme.domain.ProgrammeSummary;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
+import uk.gov.london.ops.project.block.ProjectBlockStatus;
 import uk.gov.london.ops.project.internalblock.InternalProjectBlock;
 import uk.gov.london.ops.project.label.Label;
 import uk.gov.london.ops.project.state.*;
@@ -53,12 +54,12 @@ public class BaseProject {
 
     @ManyToOne(cascade = {})
     @JoinColumn(name = "org_id", nullable = false)
-    protected Organisation organisation;
+    protected OrganisationEntity organisation;
 
     @JsonIgnore
     @ManyToOne(cascade = {})
     @JoinColumn(name = "managing_organisation_id")
-    protected Organisation managingOrganisation;
+    protected OrganisationEntity managingOrganisation;
 
     @Column(name = "marked_for_corporate")
     private boolean markedForCorporate;
@@ -78,6 +79,9 @@ public class BaseProject {
 
     @Column(name = "approval_will_generate_payment")
     private Boolean approvalWillGeneratePaymentPersisted;
+
+    @Column(name = "suspend_payments")
+    private boolean suspendPayments = false;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(cascade = {})
@@ -105,6 +109,9 @@ public class BaseProject {
 
     @Transient
     private boolean isPreviouslyReturned;
+
+    @Transient
+    private boolean isFinanceEmailMissing;
 
     @Transient
     private List<ApiErrorItem> messages = new ArrayList<>();
@@ -159,11 +166,11 @@ public class BaseProject {
         return title;
     }
 
-    public Organisation getOrganisation() {
+    public OrganisationEntity getOrganisation() {
         return organisation;
     }
 
-    public void setOrganisation(Organisation organisation) {
+    public void setOrganisation(OrganisationEntity organisation) {
         this.organisation = organisation;
     }
 
@@ -171,11 +178,11 @@ public class BaseProject {
         return managingOrganisation.getId();
     }
 
-    public Organisation getManagingOrganisation() {
+    public OrganisationEntity getManagingOrganisation() {
         return managingOrganisation;
     }
 
-    public void setManagingOrganisation(Organisation managingOrganisation) {
+    public void setManagingOrganisation(OrganisationEntity managingOrganisation) {
         this.managingOrganisation = managingOrganisation;
     }
 
@@ -232,8 +239,8 @@ public class BaseProject {
     }
 
     protected boolean isBlockApproved(NamedProjectBlock block) {
-        return NamedProjectBlock.BlockStatus.LAST_APPROVED.equals(block.getBlockStatus())
-                || NamedProjectBlock.BlockStatus.APPROVED.equals(block.getBlockStatus());
+        return ProjectBlockStatus.LAST_APPROVED.equals(block.getBlockStatus())
+                || ProjectBlockStatus.APPROVED.equals(block.getBlockStatus());
     }
 
     public boolean isComplete() {
@@ -456,6 +463,14 @@ public class BaseProject {
         this.pendingPayments = pendingPayments;
     }
 
+    public boolean isSuspendPayments() {
+        return suspendPayments;
+    }
+
+    public void setSuspendPayments(boolean suspendProjectPayments) {
+        this.suspendPayments = suspendProjectPayments;
+    }
+
     @JsonProperty("hasReclaimedPayments")
     public boolean hasReclaimedPayments() {
         return reclaimedPayments;
@@ -479,6 +494,11 @@ public class BaseProject {
 
     public void setLabels(Set<Label> labels) {
         this.labels = labels;
+    }
+
+    public boolean isFinanceEmailMissing() {
+        return (this.getOrganisation() != null
+                && (this.getOrganisation().getFinanceContactEmail() == null || this.getOrganisation().getFinanceContactEmail().isEmpty()));
     }
 
 }

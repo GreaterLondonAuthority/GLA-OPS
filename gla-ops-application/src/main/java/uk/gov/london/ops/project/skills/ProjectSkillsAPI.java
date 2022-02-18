@@ -93,7 +93,7 @@ public class ProjectSkillsAPI {
         return projectSkillsService.updateFundingClaimsBlock(projectId, block, releaseLock);
     }
 
-    @PreAuthorize("authentication.name == 'system.scheduler@gla.org' or hasRole('OPS_ADMIN')")
+    @PreAuthorize("authentication.name == 'system.scheduler' or hasRole('OPS_ADMIN')")
     @RequestMapping(value = "/runScheduledPayments/onDate", method = RequestMethod.PUT)
     @ApiOperation(value = "run the scheduler on the specified date", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))

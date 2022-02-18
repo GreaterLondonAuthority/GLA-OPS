@@ -7,10 +7,6 @@
  */
 package uk.gov.london.ops.project.unit;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.london.ops.audit.AuditService;
@@ -21,8 +17,13 @@ import uk.gov.london.ops.project.ProjectService;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.template.domain.TemplateTenureType;
 import uk.gov.london.ops.refdata.CategoryValue;
-import uk.gov.london.ops.refdata.RefDataService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.refdata.RefDataServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
+
+import javax.transaction.Transactional;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -35,7 +36,7 @@ public class UnitDetailsService extends BaseProjectService {
     AuditService auditService;
 
     @Autowired
-    RefDataService refDataService;
+    RefDataServiceImpl refDataService;
 
     /**
      * Delete an existing table row entry
@@ -72,7 +73,7 @@ public class UnitDetailsService extends BaseProjectService {
         unitTableEntry.setProjectId(projectId);
         validateEntry(unitTableEntry);
 
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
 
         unitTableEntry.setCreatedOn(environment.now());
         unitTableEntry.setCreatedBy(currentUser.getUsername());
@@ -144,8 +145,8 @@ public class UnitDetailsService extends BaseProjectService {
                 .sorted(Comparator.comparingInt(TemplateTenureType::getDisplayOrder)).collect(Collectors.toList());
 
         UnitDetailsMetaData metaData = new UnitDetailsMetaData();
-        metaData.setBeds(refDataService.findAllByCategoryOrderByDisplayOrder(CategoryValue.Category.Bedrooms));
-        metaData.setUnitDetails(refDataService.findAllByCategoryOrderByDisplayOrder(CategoryValue.Category.UnitTypes));
+        metaData.setBeds(refDataService.getCategoryValues(CategoryValue.Category.Bedrooms));
+        metaData.setUnitDetails(refDataService.getCategoryValues(CategoryValue.Category.UnitTypes));
         metaData.setTenureDetails(tenureDetails);
         return metaData;
     }

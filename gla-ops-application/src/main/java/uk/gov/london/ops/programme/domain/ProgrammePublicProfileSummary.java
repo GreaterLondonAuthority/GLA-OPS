@@ -9,7 +9,7 @@ package uk.gov.london.ops.programme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import uk.gov.london.ops.framework.jpa.NonJoin;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.service.ManagedEntityInterface;
 
 import javax.persistence.*;
@@ -46,7 +46,7 @@ public class ProgrammePublicProfileSummary implements ManagedEntityInterface {
     @JsonIgnore
     @ManyToOne(cascade = {})
     @JoinColumn(name = "managing_organisation_id")
-    private Organisation managingOrganisation;
+    private OrganisationEntity managingOrganisation;
 
     @Column(name = "description")
     private String description;
@@ -117,11 +117,11 @@ public class ProgrammePublicProfileSummary implements ManagedEntityInterface {
     }
 
     @Override
-    public Organisation getManagingOrganisation() {
+    public OrganisationEntity getManagingOrganisation() {
         return managingOrganisation;
     }
 
-    public void setManagingOrganisation(Organisation managingOrganisation) {
+    public void setManagingOrganisation(OrganisationEntity managingOrganisation) {
         this.managingOrganisation = managingOrganisation;
     }
 

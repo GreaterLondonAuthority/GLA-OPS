@@ -10,6 +10,7 @@ package uk.gov.london.ops.project.budget;
 import static uk.gov.london.common.user.BaseRole.GLA_FINANCE;
 import static uk.gov.london.common.user.BaseRole.GLA_ORG_ADMIN;
 import static uk.gov.london.common.user.BaseRole.GLA_PM;
+import static uk.gov.london.common.user.BaseRole.GLA_PROGRAMME_ADMIN;
 import static uk.gov.london.common.user.BaseRole.GLA_READ_ONLY;
 import static uk.gov.london.common.user.BaseRole.GLA_SPM;
 import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
@@ -28,6 +29,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +59,7 @@ public class ProjectBudgetsAPI {
     @Autowired
     FinanceService financeService;
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/projectBudgets/{blockId}", method = RequestMethod.GET)
     @ApiOperation(value = "get a project's project Spend block, incl table totals", notes = "")
     public ProjectBudgetsBlock getProjectBudgets(@PathVariable Integer id, @PathVariable Integer blockId) {
@@ -65,7 +67,7 @@ public class ProjectBudgetsAPI {
         return projectBudgetsService.getProjectBudgets(service.get(id), blockId);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/projectBudgets", method = RequestMethod.PUT)
     @ApiOperation(value = "set a project's project Spend details", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -79,7 +81,7 @@ public class ProjectBudgetsAPI {
     }
 
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/{blockId}/annualSpendFor/{year}", method = RequestMethod.GET)
     @ApiOperation(value = "get annual spend details for the given year ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -97,7 +99,7 @@ public class ProjectBudgetsAPI {
         return projectBudgetsService.getAnnualSpendForSpecificYear(projectBlockById.getId(), year);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/{blockId}/annualSpend/{year}", method = RequestMethod.PUT)
     @ApiOperation(value = "create annual spend details for the given year ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -119,7 +121,7 @@ public class ProjectBudgetsAPI {
                 spendSummary.getAnnualBudgetRevenue(), spendSummary.getAnnualBudgetCapital(), autosave);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/payments", method = RequestMethod.POST)
     @ApiOperation(value = "creates a payment in the project Spend block for specific year")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -142,7 +144,7 @@ public class ProjectBudgetsAPI {
         service.createOrUpdateProjectLedgerEntry(projectId, blockId, entry);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{projectId}/blocks/{blockId}/ledgerEntries/{ledgerEntryId}", method = RequestMethod.DELETE)
     @ApiOperation(value = "delete a project's block ledger entry", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -156,7 +158,7 @@ public class ProjectBudgetsAPI {
         financeService.deleteProjectLedgerEntry(ledgerEntryId);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/projects/{id}/{blockId}/annualSpendForecast/{year}", method = RequestMethod.DELETE)
     @ApiOperation(value = "delete annual spend details for the given year, sap code and expenditure type ", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -183,8 +185,8 @@ public class ProjectBudgetsAPI {
 
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_FINANCE, GLA_READ_ONLY})
-    @RequestMapping(value = "/projects/{projectId}/projectBudgetsMetaData/{blockId}/categoryCode/{categoryId}/yearMonth/{yearMonth}", method = RequestMethod.GET)
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_FINANCE, GLA_READ_ONLY, GLA_PROGRAMME_ADMIN})
+    @GetMapping(value = "/projects/{projectId}/projectBudgetsMetaData/{blockId}/categoryCode/{categoryId}/yearMonth/{yearMonth}")
     @ApiOperation(value = "get meta data for a receipt", notes = "")
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
     public List<SAPMetaData> getPaymentMetaData(@PathVariable Integer projectId, @PathVariable Integer blockId,

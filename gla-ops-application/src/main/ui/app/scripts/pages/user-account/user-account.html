@@ -6,19 +6,42 @@
     <div class="col-xs-12">
       <div class="row no-gutter">
         <section-header subheader="">User Details</section-header>
-        <div class="row mbottom10">
-            <div class="col-md-2 bolder" for="user-name">Name</div>
-            <div class="col-md-3 read-only-text" id="user-name">
+        <dl class="row mbottom10" ng-if="$ctrl.readOnly || (!$ctrl.readOnly && !$ctrl.canEditUserName)">
+            <dt class="col-md-2 bolder" for="user-name">Name</dt>
+            <dd class="col-md-3 read-only-text" id="user-name">
             {{$ctrl.userProfile.firstName}} {{$ctrl.userProfile.lastName}}
-            </div>
+            </dd>
+        </dl>
+
+        <div ng-if="!$ctrl.readOnly && $ctrl.canEditUserName">
+          <dl class="row mbottom10">
+            <dt class="col-md-2">
+              <label class ="bolder" for="first-name">First Name</label>
+            </dt>
+            <dd class="col-md-3">
+              <input class="form-control" id="first-name"
+                     ng-model="$ctrl.userProfile.firstName"
+                     maxlength="255">
+            </dd>
+          </dl>
+          <dl class="row mbottom10">
+            <dt class="col-md-2">
+              <label class="bolder" for="last-name">Surname</label>
+            </dt>
+            <dd class="col-md-3">
+              <input class="form-control" id="last-name"
+                     ng-model="$ctrl.userProfile.lastName"
+                     maxlength="255">
+            </dd>
+          </dl>
         </div>
 
-        <div class="row mbottom10">
-            <div class="col-md-2 bolder" for="user-email">Email</div>
-            <div class="col-md-3 read-only-text" id="user-email">
+        <dl class="row mbottom10">
+            <dt class="col-md-2 bolder" for="user-email">Email</dt>
+            <dd class="col-md-3 read-only-text" id="user-email">
               {{$ctrl.userProfile.username}}
-            </div>
-        </div>
+            </dd>
+        </dl>
 
         <div class="row mbottom10">
           <div class="col-md-2 bolder" for="user-status">Status</div>
@@ -35,6 +58,31 @@
           </div>
         </div>
       </div>
+
+      <dl class="row mbottom10" >
+        <dt class="col-md-2 bolder" for="user-last-login">Last logged in</dt>
+        <dd class="col-md-3 read-only-text" id="user-last-login" ng-if="$ctrl.userProfile.lastLoggedIn">
+          {{$ctrl.userProfile.lastLoggedIn | date: 'dd/MM/yyyy'}}
+        </dd>
+        <dd class="col-md-3 read-only-text" id="user-last-login" ng-if="!$ctrl.userProfile.lastLoggedIn">
+          Not logged in
+        </dd>
+        <div class="col-md-4">
+            <button class="btn btn-primary btn-md"
+                    id="reset-user-password-button"
+                    ng-click="$ctrl.resetUserPassword();"
+                    ng-if="!$ctrl.readOnly && $ctrl.userProfile.canResetPassword">
+              RESET PASSWORD
+            </button>
+          </div>
+      </dl>
+
+      <dl class="row mbottom10" ng-if="!$ctrl.userProfile.enabled">
+        <dt class="col-md-2 bolder" for="user-deactivated-by">Deactivated by</dt>
+        <dd class="col-md-3 read-only-text" id="user-deactivated-by">
+          {{$ctrl.userProfile.deactivatedBy}}
+        </dd>
+      </dl>
 
       <hr class="mtop40 mbottom0">
       <div class="row mTop30 rent-units">
@@ -53,7 +101,7 @@
 
     <div class="col-xs-12 org-table table-responsive no-padding organisations-table user-organisations">
       <div ng-if="!$ctrl.userProfile.organisations.length" class="empty-table">Not provided</div>
-      <table ng-if="$ctrl.userProfile.organisations.length" class="table table-default table-bordered table-striped">
+      <table id="user-role-table" ng-if="$ctrl.userProfile.organisations.length" class="table table-default table-bordered table-striped">
         <thead class="thead-inverse uppercase">
         <tr>
           <th ng-if="!$ctrl.readOnly && $ctrl.canEditPrimaryOrg" >PRIMARY ORG</th>
@@ -61,7 +109,14 @@
           <th ng-if="$ctrl.showManagedBy">MANAGED BY</th>
           <th ng-if="$ctrl.showThresholds">SPEND THRESHOLD £</th>
           <th>ROLE</th>
+          <th ng-if="$ctrl.showAuthorisedSignatory" >AUTHORISED SIGNATORY
+            <gla-info-tooltip [help-text]="$ctrl.authorisedSignatoryTooltip"></gla-info-tooltip>
+          </th>
           <th>REGISTRATION STATUS</th>
+          <th ng-if="($ctrl.canRequestOrgAdmin || $ctrl.canCloseeOrgAdminRequest)"> ACTIONS
+            <gla-info-tooltip [help-text]="$ctrl.actionsColumnToolTop"></gla-info-tooltip>
+          </th>
+          <th ng-if="!$ctrl.readOnly"></th>
         </tr>
         </thead>
 
@@ -69,7 +124,7 @@
         <tr class="user-role-row" ng-repeat="org in $ctrl.userProfile.organisations">
           <td ng-if="!$ctrl.readOnly && $ctrl.canEditPrimaryOrg">
             <span ng-if="!$ctrl.readOnly && $ctrl.canEditPrimaryOrg">
-                <input id="primaryRadio" name="primary" ng-change="$ctrl.primaryChange(org.orgId, org.roleName)" type="radio" ng-disabled="$ctrl.readOnly" ng-model="org.primary" ng-value="true">
+                <input name="primary" ng-change="$ctrl.primaryChange(org.orgId, org.roleName)" type="radio" ng-disabled="$ctrl.readOnly" ng-model="org.primary" ng-value="true">
             </span>
           </td>
           <td>{{org.orgName}}<span ng-if="org.primary && $ctrl.readOnly"> (primary)</span></td>
@@ -106,7 +161,17 @@
               <option disabled value="">Select role</option>
             </select>
           </td>
-          <td class="actions delete-btn-container text-nowrap">
+
+          <td ng-if=" $ctrl.showAuthorisedSignatory">
+            <span >
+                <input type="checkbox" name="authorised-signatory"
+                       ng-model="org.authorisedSignatory"
+                       ng-change="$ctrl.signatoryChange(org.orgId, org.roleName, org.authorisedSignatory)"
+                       ng-disabled="$ctrl.readOnly || !$ctrl.canChangeAuthorisedSignatory(org.roleName)">
+            </span>
+          </td>
+
+          <td >
             <span ng-if="!org.approved">
               <span ng-if="$ctrl.readOnly || !org.isEditable">Pending</span>
 
@@ -122,6 +187,31 @@
               Approved <span class="glyphicon glyphicon-ok"></span>
             </span>
 
+
+          </td>
+          <td ng-if="($ctrl.canRequestOrgAdmin || $ctrl.canCloseeOrgAdminRequest)">
+            <span ng-if="$ctrl.readOnly"  class="lighter">
+              <span ng-if="$ctrl.canRequestOrgAdmin && org.roleName === 'ROLE_PROJECT_EDITOR' && !org.hasOrgAdminRoleRequested && $ctrl.isUserOwnRecord()">
+                 Request Admin Role
+              </span>
+              <span ng-if="$ctrl.canCloseeOrgAdminRequest && org.roleName === 'ROLE_PROJECT_EDITOR' && org.hasOrgAdminRoleRequested">
+                 Close Request
+              </span>
+            </span>
+            <span ng-if="!$ctrl.readOnly">
+              <a ng-if="$ctrl.canRequestOrgAdmin && org.roleName === 'ROLE_PROJECT_EDITOR' && !org.hasOrgAdminRoleRequested && $ctrl.isUserOwnRecord()"
+                 disabled="$ctrl.readOnly"
+                 ng-click="$ctrl.requestOrgAdminRole(org.orgId, org.orgName)"> Request Admin Role </a>
+
+              <a ng-if="$ctrl.canCloseeOrgAdminRequest && org.roleName === 'ROLE_PROJECT_EDITOR' && org.hasOrgAdminRoleRequested" disabled="$ctrl.readOnly"
+                 ng-click="$ctrl.closeOrgAdminRole(org.orgId)"> Close Request </a>
+            </span>
+
+            <span ng-if="$ctrl.canRequestOrgAdmin && org.roleName === 'ROLE_PROJECT_EDITOR' && org.hasOrgAdminRoleRequested && $ctrl.isUserOwnRecord()">
+              Admin role requested
+            </span>
+          </td>
+          <td ng-if="!$ctrl.readOnly" class="actions delete-btn-container text-nowrap">
             <delete-button
               ng-click="$ctrl.deleteUser(org)"
               ng-if="org.approved && !$ctrl.readOnly && org.isEditable">

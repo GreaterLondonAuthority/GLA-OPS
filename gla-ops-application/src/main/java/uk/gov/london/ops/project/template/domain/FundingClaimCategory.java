@@ -7,6 +7,7 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,6 +17,8 @@ public class FundingClaimCategory {
     private String name;
     private boolean actualsEditable;
     private Integer displayOrder;
+
+    private Set<FundingClaimCategory> subCategories = new HashSet<>();
     private Set<FundingClaimCategoryMatchingRule> matchingRules;
 
     public FundingClaimCategory() {
@@ -72,6 +75,14 @@ public class FundingClaimCategory {
         this.matchingRules = matchingRules;
     }
 
+    public Set<FundingClaimCategory> getSubCategories() {
+        return subCategories;
+    }
+
+    public void setSubCategories(Set<FundingClaimCategory> subCategories) {
+        this.subCategories = subCategories;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -85,11 +96,12 @@ public class FundingClaimCategory {
                 && Objects.equals(id, that.id)
                 && Objects.equals(name, that.name)
                 && Objects.equals(displayOrder, that.displayOrder)
+                && Objects.equals(subCategories, that.subCategories)
                 && Objects.equals(matchingRules, that.matchingRules);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, actualsEditable, displayOrder, matchingRules);
+        return Objects.hash(id, name, actualsEditable, displayOrder, matchingRules, subCategories);
     }
 }

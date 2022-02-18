@@ -9,7 +9,9 @@ package uk.gov.london.ops.framework.feature;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface FeatureRepository extends JpaRepository<FeatureEntity, String> {
 
     @Query(value = "select enabled as permitted  from feature  where  name = ?1 ", nativeQuery = true)

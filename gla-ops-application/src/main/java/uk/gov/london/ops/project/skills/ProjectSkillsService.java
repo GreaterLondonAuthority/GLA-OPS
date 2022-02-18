@@ -7,10 +7,29 @@
  */
 package uk.gov.london.ops.project.skills;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import uk.gov.london.common.GlaUtils;
+import uk.gov.london.common.skills.SkillsGrantType;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.payment.*;
+import uk.gov.london.ops.project.*;
+import uk.gov.london.ops.project.block.NamedProjectBlock;
+import uk.gov.london.ops.project.block.ProjectBlockType;
+import uk.gov.london.ops.project.claim.Claim;
+import uk.gov.london.ops.project.claim.ClaimGenerator;
+import uk.gov.london.ops.project.claim.ClaimType;
+import uk.gov.london.ops.project.template.domain.*;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import static uk.gov.london.common.GlaUtils.addBigDecimals;
-import static uk.gov.london.common.skills.SkillsGrantType.AEB_GRANT;
-import static uk.gov.london.common.skills.SkillsGrantType.AEB_LEARNER_SUPPORT;
-import static uk.gov.london.common.skills.SkillsGrantType.AEB_PROCURED;
+import static uk.gov.london.common.skills.SkillsGrantType.*;
 import static uk.gov.london.ops.payment.ProjectLedgerEntry.RECLAIMED_PAYMENT;
 import static uk.gov.london.ops.payment.ProjectLedgerEntry.SUPPLEMENTARY_PAYMENT;
 import static uk.gov.london.ops.project.claim.ClaimStatus.Claimed;
@@ -19,63 +38,16 @@ import static uk.gov.london.ops.project.claim.Claimable.CLAIM_STATUS_PARTLY_PAID
 import static uk.gov.london.ops.project.skills.LearningGrantEntryType.DELIVERY;
 import static uk.gov.london.ops.project.skills.LearningGrantEntryType.SUPPORT;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import org.apache.commons.lang3.ObjectUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import uk.gov.london.common.GlaUtils;
-import uk.gov.london.common.skills.SkillsGrantType;
-import uk.gov.london.ops.framework.exception.ValidationException;
-import uk.gov.london.ops.payment.LedgerSource;
-import uk.gov.london.ops.payment.LedgerStatus;
-import uk.gov.london.ops.payment.LedgerType;
-import uk.gov.london.ops.payment.PaymentGroup;
-import uk.gov.london.ops.payment.PaymentSummary;
-import uk.gov.london.ops.payment.ProjectLedgerEntry;
-import uk.gov.london.ops.project.BaseProjectService;
-import uk.gov.london.ops.project.EnrichmentRequiredListener;
-import uk.gov.london.ops.project.PostCloneNotificationListener;
-import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.ProjectPaymentGenerator;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockService;
-import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.claim.Claim;
-import uk.gov.london.ops.project.claim.ClaimGenerator;
-import uk.gov.london.ops.project.claim.ClaimType;
-import uk.gov.london.ops.project.template.domain.FundingClaimCategory;
-import uk.gov.london.ops.project.template.domain.FundingClaimCategoryMatchingRule;
-import uk.gov.london.ops.project.template.domain.FundingClaimsTemplateBlock;
-import uk.gov.london.ops.project.template.domain.LearningGrantTemplateBlock;
-import uk.gov.london.ops.project.template.domain.TemplateBlock;
-
 @Service
 @Transactional
 public class ProjectSkillsService extends BaseProjectService implements EnrichmentRequiredListener,
         ClaimGenerator<LearningGrantBlock>, ProjectPaymentGenerator, PostCloneNotificationListener {
-
-    Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     SkillsPaymentScheduler scheduler;
 
     @Autowired
     private SkillsService skillsService;
-
-    @Autowired
-    private ProjectBlockService projectBlockService;
 
     public LearningGrantBlock getLearningGrant(Integer projectId, Integer blockId) {
         Project project = get(projectId);
@@ -112,19 +84,34 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
                 .findAllMatching(project.getOrganisation().getUkprn(), block.getGrantType());
 
         for (FundingClaimsEntry fundingClaimsEntry : block.getFundingClaimsEntries()) {
-            FundingClaimCategory fundingClaimCategoryById = templateBlock
-                    .getFundingClaimCategoryById(fundingClaimsEntry.getCategoryId());
-            fundingClaimCategoryById.setActualsEditable(fundingClaimCategoryById.isActualsEditable());
+            if (fundingClaimsEntry.getParentCategoryId() == null) {
+                FundingClaimCategory fundingClaimCategoryById = templateBlock
+                        .getFundingClaimCategoryById(fundingClaimsEntry.getCategoryId());
+                fundingClaimCategoryById.setActualsEditable(fundingClaimCategoryById.isActualsEditable());
 
-            if (!fundingClaimCategoryById.isActualsEditable() && fundingClaimCategoryById.getMatchingRules() != null) {
-                fundingClaimsEntry.setActualsEditable(false);
-                BigDecimal total = sumMatchingValues(fundingClaimsEntry, allMatching,
-                        fundingClaimCategoryById.getMatchingRules());
-                fundingClaimsEntry.setActualDelivery(total);
+                if (!fundingClaimCategoryById.isActualsEditable() && fundingClaimCategoryById.getMatchingRules() != null) {
+                    fundingClaimsEntry.setActualsEditable(false);
+                    BigDecimal total = sumMatchingValues(fundingClaimsEntry, allMatching,
+                            fundingClaimCategoryById.getMatchingRules());
+                    fundingClaimsEntry.setActualDelivery(total);
+                } else {
+                    fundingClaimsEntry.setActualsEditable(true);
+
+                }
             } else {
-                fundingClaimsEntry.setActualsEditable(true);
-
+                enrichFundingClaimsSubCategory(fundingClaimsEntry, templateBlock);
             }
+        }
+    }
+
+    void enrichFundingClaimsSubCategory(FundingClaimsEntry fundingClaimsEntry, FundingClaimsTemplateBlock templateBlock ) {
+        FundingClaimCategory fundingClaimSubCategory = templateBlock
+                .getFundingClaimCategoryById(fundingClaimsEntry.getParentCategoryId()).getSubCategories()
+                .stream()
+                .filter(category -> category.getId() == fundingClaimsEntry.getCategoryId())
+                .findFirst().orElse(null);
+        if (fundingClaimSubCategory != null) {
+            fundingClaimsEntry.setActualsEditable(fundingClaimSubCategory.isActualsEditable());
         }
     }
 
@@ -161,13 +148,12 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
     }
 
     boolean isRuleMatched(Set<FundingClaimCategoryMatchingRule> matches, String source, String category) {
-        boolean ruleMatched = false;
         for (FundingClaimCategoryMatchingRule match : matches) {
             if (match.getSource().equals(source) && match.getPatternToMatch().equals(category)) {
-                ruleMatched = true;
+                return true;
             }
         }
-        return ruleMatched;
+        return false;
     }
 
 
@@ -175,7 +161,6 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
             LearningGrantBlock updatedBlock, boolean releaseLock) {
         Project project = get(projectId);
         LearningGrantBlock existingBlock = project.getLearningGrantBlock();
-        validateOnlyOneAllocationChangedPerApproval(existingBlock, updatedBlock);
         checkForLock(existingBlock);
         existingBlock.merge(updatedBlock);
 
@@ -186,24 +171,6 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
         updateProject(project);
 
         return existingBlock;
-    }
-
-    private void validateOnlyOneAllocationChangedPerApproval(LearningGrantBlock existingBlock, LearningGrantBlock updatedBlock) {
-        if (existingBlock.getGrantType().equals(AEB_PROCURED)) {
-            for (LearningGrantAllocation updated : updatedBlock.getAllocations()) {
-                LearningGrantAllocation existing = existingBlock.getAllocation(updated.getYear());
-                boolean deliveryChanged = ObjectUtils.compare(existing.getAllocation(), updated.getAllocation()) != 0;
-                boolean supportChanged = ObjectUtils.compare(existing.getLearnerSupportAllocation(),
-                        updated.getLearnerSupportAllocation()) != 0;
-
-                if (deliveryChanged && supportChanged) {
-                    throw new ValidationException("Cannot change both allocations per approval.");
-                } else {
-                    updated.setDeliveryAllocationEditingInProgress(deliveryChanged);
-                    updated.setSupportAllocationEditingInProgress(supportChanged);
-                }
-            }
-        }
     }
 
     public FundingClaimsBlock updateFundingClaimsEntry(Integer projectId, FundingClaimsEntry updatedEntry, boolean releaseLock) {
@@ -239,34 +206,29 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
     }
 
     public void enrichLearningGrantBlock(LearningGrantBlock learningGrantBlock, Project project) {
-        Optional<NamedProjectBlock> previousBlock = Optional.ofNullable(projectBlockService.getLearningGrantBlockByProjectIdVersionNumber(
-                project.getId(), learningGrantBlock.getVersionNumber() - 1, learningGrantBlock.getDisplayOrder()));
-        if (previousBlock.isPresent()) {
-            validateOnlyOneAllocationChangedPerApproval((LearningGrantBlock) previousBlock.get(), learningGrantBlock);
-        }
-
         Integer startYear = learningGrantBlock.getStartYear();
         for (int j = 0; j < learningGrantBlock.getNumberOfYears(); j++) {
-            LearningGrantAllocation yearAllocation = learningGrantBlock.getAllocation(startYear + j);
+            LearningGrantAllocation delivery = learningGrantBlock.getAllocation(startYear + j, AllocationType.Delivery);
+            LearningGrantAllocation support = learningGrantBlock.getAllocation(startYear + j, AllocationType.LearnerSupport);
+            SkillsGrantType grantType = learningGrantBlock.getGrantType();
+            SkillsGrantType profileAllocationType = learningGrantBlock.getProfileAllocationType();
 
             List<LearningGrantEntry> deliveryEntries = learningGrantBlock.getLearningGrantEntries(DELIVERY, startYear + j);
-            Map<Integer, SkillsPaymentProfile> profiles = getPaymentProfilesAsMap(learningGrantBlock.getGrantType(),
-                    startYear + j);
+            Map<Integer, SkillsPaymentProfile> profiles = getPaymentProfilesAsMap(profileAllocationType, startYear + j);
             Map<Integer, SkillsFundingGroupedSummary> fundingSummaryMap = getFundingSummaryMapForAcademicYear(
-                    project.getOrganisation().getUkprn(), startYear + j, learningGrantBlock.getGrantType());
-            enrichLearningGrantEntries(deliveryEntries, profiles, fundingSummaryMap, yearAllocation.getAllocation(),
-                    learningGrantBlock.getGrantType());
+                    project.getOrganisation().getUkprn(), startYear + j, grantType);
+            enrichLearningGrantEntries(deliveryEntries, profiles, fundingSummaryMap, delivery.getAllocation(), grantType);
 
-            if (learningGrantBlock.getGrantType().equals(AEB_PROCURED)) {
+            if (learningGrantBlock.getProfileAllocationType().equals(AEB_PROCURED) || learningGrantBlock.getProfileAllocationType().equals(AEB_NSCT)) {
                 List<LearningGrantEntry> learnerSupportEntries = learningGrantBlock
                         .getLearningGrantEntries(SUPPORT, startYear + j);
                 Map<Integer, SkillsPaymentProfile> learnerSupportProfiles = getPaymentProfilesAsMap(AEB_LEARNER_SUPPORT,
                         startYear + j);
                 enrichLearningGrantEntries(learnerSupportEntries, learnerSupportProfiles, null,
-                        yearAllocation.getLearnerSupportAllocation(), AEB_PROCURED);
+                        support.getAllocation(), AEB_PROCURED);
             }
 
-            checkForExistingReturn(project, yearAllocation, deliveryEntries);
+            checkForExistingReturn(project, delivery, deliveryEntries);
         }
         loadPaymentsFor(project, learningGrantBlock);
     }
@@ -288,7 +250,7 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
         }
     }
 
-    private Map<Integer, SkillsPaymentProfile> getPaymentProfilesAsMap(SkillsGrantType grantType, Integer selectedYear) {
+    Map<Integer, SkillsPaymentProfile> getPaymentProfilesAsMap(SkillsGrantType grantType, Integer selectedYear) {
         return skillsService.getSkillsPaymentProfiles(grantType, selectedYear).stream()
                 .collect(Collectors.toMap(SkillsPaymentProfile::getPeriod, Function.identity()));
     }
@@ -306,7 +268,14 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
             SkillsGrantType grantType) {
         boolean profileValid = isProfileValid(profiles);
 
-        for (LearningGrantEntry entry : entries) {
+
+        List<LearningGrantEntry> sorted = entries.stream()
+                .sorted(Comparator.comparingInt(LearningGrantEntry::getPeriod))
+                .collect(Collectors.toList());
+
+        BigDecimal totalSoFar = BigDecimal.ZERO;
+
+        for (LearningGrantEntry entry : sorted) {
             entry.setGrantType(grantType);
 
             if (profileValid) {
@@ -320,8 +289,16 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
 
             if (allocation == null) {
                 entry.setAllocation(null);
+            } else if (entry.getPeriod() == 12) {
+                // p12 should be the remaining unused allocation to prevent rounding issues
+                entry.setAllocation(allocation.subtract(totalSoFar));
             } else if (entry.getPercentage() != null) {
-                entry.setAllocation(entry.getPercentage().divide(new BigDecimal(100)).multiply(allocation));
+                BigDecimal newAllocation =
+                        entry.getPercentage().divide(new BigDecimal(100)).multiply(allocation).setScale(2, RoundingMode.HALF_UP);
+                if (entry.getPeriod() < 12) {
+                    totalSoFar = totalSoFar.add(newAllocation);
+                }
+                entry.setAllocation(newAllocation);
             }
 
             if (fundingSummaryMap != null && fundingSummaryMap.get(entry.getPeriod()) != null) {
@@ -353,7 +330,7 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
                     i > 0 ? addBigDecimals(entries.get(i - 1).getPaymentDue(), entries.get(i - 1).getCumulativePayment())
                             : new BigDecimal(0));
 
-            if (AEB_PROCURED.equals(grantType) && DELIVERY.equals(entry.getType())) {
+            if ((AEB_PROCURED.equals(grantType) || AEB_NSCT.equals(grantType))  && DELIVERY.equals(entry.getType())) {
                 setProcuredDeliveryPaymentDue(entries, i);
             } else {
                 if (!entry.isReturn()) {
@@ -370,17 +347,17 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
      * months 9-12.
      **/
     private void setProcuredDeliveryPaymentDue(List<LearningGrantEntry> entries, int i) {
-        BigDecimal financialYearCAP = entries.stream().filter(e -> e.getPeriod().equals(8)).findFirst().get()
+        BigDecimal financialYearCap = entries.stream().filter(e -> e.getPeriod().equals(8)).findFirst().get()
                 .getCumulativeAllocation();
-        BigDecimal academicYearCAP = entries.stream().filter(e -> e.getPeriod().equals(12)).findFirst().get()
+        BigDecimal academicYearCap = entries.stream().filter(e -> e.getPeriod().equals(12)).findFirst().get()
                 .getCumulativeAllocation();
 
         LearningGrantEntry previousEntry = i > 0 ? entries.get(i - 1) : null;
         LearningGrantEntry entry = entries.get(i);
         if (i < 8) {
-            entry.setPaymentDue(getCappedPaymentDue(financialYearCAP, previousEntry, entry));
+            entry.setPaymentDue(getCappedPaymentDue(financialYearCap, previousEntry, entry));
         } else {
-            entry.setPaymentDue(getCappedPaymentDue(academicYearCAP, previousEntry, entry));
+            entry.setPaymentDue(getCappedPaymentDue(academicYearCap, previousEntry, entry));
         }
     }
 
@@ -393,9 +370,7 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
         }
 
         BigDecimal maxCappedPaymentDue = cap != null ? cap.subtract(entry.getCumulativePayment()) : null;
-        BigDecimal cappedPaymentDue =
-                (paymentDueInTheory != null && maxCappedPaymentDue != null) ? paymentDueInTheory.min(maxCappedPaymentDue) : null;
-        return cappedPaymentDue;
+        return (paymentDueInTheory != null && maxCappedPaymentDue != null) ? paymentDueInTheory.min(maxCappedPaymentDue) : null;
     }
 
     @Override
@@ -426,7 +401,7 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
             throw new ValidationException("Claims are not enabled at this stage");
         }
 
-        if (AEB_PROCURED != learningGrantBlock.getGrantType() && AEB_GRANT != learningGrantBlock.getGrantType()) {
+        if (AEB_PROCURED != learningGrantBlock.getGrantType() && AEB_GRANT != learningGrantBlock.getGrantType() && AEB_NSCT != learningGrantBlock.getGrantType()) {
             throw new ValidationException("Claiming grant type is not supported " + learningGrantBlock.getGrantType());
         }
 
@@ -479,9 +454,7 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
             }
 
             // Generate an extra payment or a reclaim if is needed due to increase or decrease of allocation amount
-            if (project.getGrantSourceAdjustmentAmount() != null) {
-                ples = generateExtraPaymentOrReclaim(project, learningGrantBlock, ples);
-            }
+            generateExtraPaymentOrReclaim(project, learningGrantBlock, ples);
 
             return paymentService.createPaymentGroup(approvalRequestedBy, ples);
         }
@@ -489,8 +462,7 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
         return null;
     }
 
-    private List<ProjectLedgerEntry> generateExtraPaymentOrReclaim(Project project, LearningGrantBlock learningGrantBlock,
-            List<ProjectLedgerEntry> ples) {
+    void generateExtraPaymentOrReclaim(Project project, LearningGrantBlock learningGrantBlock, List<ProjectLedgerEntry> ples) {
         learningGrantBlock.getLearningGrantEntries().stream().filter(l -> !l.isCanManuallyClaimValue())
                 .forEach(learningGrantEntry -> {
                     if (learningGrantEntry.getPaymentStatus() != null && learningGrantEntry.getPaymentStatus()
@@ -509,7 +481,6 @@ public class ProjectSkillsService extends BaseProjectService implements Enrichme
                         ples.add(createReclaim(project, learningGrantBlock, learningGrantEntry, category, adjustment));
                     }
                 });
-        return ples;
     }
 
     private ProjectLedgerEntry createPaymentFor(Project project, LearningGrantBlock learningGrantBlock, Claim claim,

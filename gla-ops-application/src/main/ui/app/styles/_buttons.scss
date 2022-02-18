@@ -20,6 +20,19 @@
   &:focus,
   &:active:focus {
     @include tab-focus;
+    outline: 2px solid $gla-white;
+    outline-offset: -4px;
+    &:not(:focus-visible){
+      outline: none;
+    }
+  }
+}
+.btn.btn-secondary {
+  &:focus,
+  &:active:focus {
+    @include tab-focus;
+    outline: 2px solid $gla-black;
+    outline-offset: -4px;
     &:not(:focus-visible){
       outline: none;
     }
@@ -56,7 +69,7 @@
   &[disabled] {
     &:focus, &:active, & {
       background-color: $btn-disabled-bg !important;
-      color: rgba(255, 255, 255, 0.3);
+      color: $gla-black;
     }
   }
   &.btn-negative{
@@ -94,7 +107,7 @@
     &:active,
     &:focus {
       background-color: $btn-secondary-bg;
-      color: rgba(119, 119, 119, 0.3);
+      color: $secondary-grey;
     }
   }
 }
@@ -121,7 +134,7 @@
 
 .back-button, .btn-project-menu {
   background-color: white;
-  color: #5ca9c4;
+  color: $moonstone;
   font-size: 0.75rem;
   font-weight: bold;
   //width: 4.68rem;
@@ -130,6 +143,17 @@
   i {
     padding-top: 0.2rem;
     font-size: 0.7rem;
+  }
+
+  &:focus,
+  &:active:focus {
+    @include tab-focus;
+    outline: 2px solid $gla-black;
+    outline-offset: -4px;
+    background-color: #ffffff;
+    &:not(:focus-visible){
+      outline: none;
+    }
   }
 }
 

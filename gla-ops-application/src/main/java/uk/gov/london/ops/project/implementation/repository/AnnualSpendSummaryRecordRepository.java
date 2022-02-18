@@ -17,6 +17,9 @@ import java.util.List;
  */
 public interface AnnualSpendSummaryRecordRepository extends ReadOnlyRepository<AnnualSpendSummaryRecord, Integer> {
 
-    List<AnnualSpendSummaryRecord> findByProjectIdAndBlockIdAndFinancialYearBetweenOrderByFinancialYearAsc(Integer projectId, Integer blockId, Integer financialYearFrom, Integer financialYearTo);
+    List<AnnualSpendSummaryRecord> findByProjectIdAndBlockIdAndFinancialYearBetweenOrderByFinancialYearAsc(Integer projectId,
+                                                                            Integer blockId,
+                                                                            Integer financialYearFrom,
+                                                                            Integer financialYearTo);
 
 }

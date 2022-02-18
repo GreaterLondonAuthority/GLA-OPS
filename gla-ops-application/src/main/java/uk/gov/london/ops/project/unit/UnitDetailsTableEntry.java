@@ -18,7 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
-import uk.gov.london.ops.domain.OpsEntity;
+import uk.gov.london.ops.framework.OpsEntity;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.framework.jpa.NonJoin;
@@ -89,10 +89,13 @@ public class UnitDetailsTableEntry implements OpsEntity<Integer>, ComparableItem
     private BigDecimal marketValue;
 
     @Column(name = "first_tranche_sales")
-    private Integer firstTrancheSales;
+    private BigDecimal firstTrancheSales;
 
     @Column(name = "discount_off_market_value")
-    private Integer discountOffMarketValue;
+    private BigDecimal discountOffMarketValue;
+
+    @Column(name = "rent_charged_on_unsold_equity")
+    private BigDecimal rentChargedOnUnsoldEquity;
 
     @Column(name = "created_on", updatable = false)
     private OffsetDateTime createdOn;
@@ -199,20 +202,28 @@ public class UnitDetailsTableEntry implements OpsEntity<Integer>, ComparableItem
         this.marketValue = marketValue;
     }
 
-    public Integer getFirstTrancheSales() {
+    public BigDecimal getFirstTrancheSales() {
         return firstTrancheSales;
     }
 
-    public void setFirstTrancheSales(Integer firstTrancheSales) {
+    public void setFirstTrancheSales(BigDecimal firstTrancheSales) {
         this.firstTrancheSales = firstTrancheSales;
     }
 
-    public Integer getDiscountOffMarketValue() {
+    public BigDecimal getDiscountOffMarketValue() {
         return discountOffMarketValue;
     }
 
-    public void setDiscountOffMarketValue(Integer discountOffMarketValue) {
+    public void setDiscountOffMarketValue(BigDecimal discountOffMarketValue) {
         this.discountOffMarketValue = discountOffMarketValue;
+    }
+
+    public BigDecimal getRentChargedOnUnsoldEquity() {
+        return rentChargedOnUnsoldEquity;
+    }
+
+    public void setRentChargedOnUnsoldEquity(BigDecimal rentChargedOnUnsoldEquity) {
+        this.rentChargedOnUnsoldEquity = rentChargedOnUnsoldEquity;
     }
 
     public Integer getProjectId() {
@@ -310,6 +321,7 @@ public class UnitDetailsTableEntry implements OpsEntity<Integer>, ComparableItem
         copy.marketValue = this.marketValue;
         copy.firstTrancheSales = this.firstTrancheSales;
         copy.discountOffMarketValue = this.discountOffMarketValue;
+        copy.rentChargedOnUnsoldEquity = this.rentChargedOnUnsoldEquity;
         copy.createdOn = this.createdOn;
         copy.createdBy = this.createdBy;
         copy.modifiedOn = this.modifiedOn;
@@ -326,6 +338,7 @@ public class UnitDetailsTableEntry implements OpsEntity<Integer>, ComparableItem
         this.setMarketValue(unitTableEntry.getMarketValue());
         this.setFirstTrancheSales(unitTableEntry.getFirstTrancheSales());
         this.setDiscountOffMarketValue(unitTableEntry.getDiscountOffMarketValue());
+        this.setRentChargedOnUnsoldEquity(unitTableEntry.getRentChargedOnUnsoldEquity());
     }
 
     @Override

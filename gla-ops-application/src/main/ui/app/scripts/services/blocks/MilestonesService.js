@@ -6,20 +6,25 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-MilestonesService.$inject = ['$http', 'config', 'moment', '$timeout', '$rootScope'];
+MilestonesService.$inject = ['$http', 'config', 'UserService', 'moment', '$timeout', '$rootScope'];
 
-function MilestonesService($http, config, moment, $timeout, $rootScope) {
+function MilestonesService($http, config, UserService,  moment, $timeout, $rootScope) {
 
   return {
     claimActions: {
       claim: 1,
       return: 2,
       cancel: 3,
-      cancelReclaim: 4
+      cancelReclaim: 4,
+      withdrawApproval: 5
     },
 
     getMilestoneBlock(projectId, blockId) {
       return $http.get(`${config.basePath}/projects/${projectId}/milestones/${blockId}`);
+    },
+
+    getMilestoneBlockByProject(projectId) {
+      return $http.get(`${config.basePath}/projects/${projectId}/milestones`);
     },
 
     claimMilestone(projectId, milestoneId, data) {
@@ -27,6 +32,21 @@ function MilestonesService($http, config, moment, $timeout, $rootScope) {
         url: `${config.basePath}/projects/${projectId}/milestones/${milestoneId}/claim`,
         method: 'PUT',
         data: data
+      });
+    },
+
+    withdrawMilestone(projectId, milestoneId, data) {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/milestones/${milestoneId}/withdraw`,
+        method: 'PUT',
+        data: data
+      });
+    },
+
+    cancelWithdrawMilestone(projectId, milestoneId) {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/milestones/${milestoneId}/cancelWithdraw`,
+        method: 'PUT'
       });
     },
 
@@ -81,7 +101,7 @@ function MilestonesService($http, config, moment, $timeout, $rootScope) {
           if (m.externalId && p.externalId) {
             return p.externalId === m.externalId;
           } else {
-            let originalName = m.monetaryValue ? `Bespoke ${m.summary}` : m.summary;
+            let originalName = m.paymentSubType;
             let milestoneName = p.reclaim ? `Reclaimed ${originalName}` : originalName;
             return p.subCategory.toLowerCase() === milestoneName.toLowerCase();
           }
@@ -93,13 +113,23 @@ function MilestonesService($http, config, moment, $timeout, $rootScope) {
         m.displayText = m.claimStatus;
         m.hasAction = false;
         m.isCancelable = false;
+        m.isUserAbleToWithdraw = false;
+        m.isUserAbleToCancelWithdraw = false;
         m.isClaimable = false;
         m.isRepayable = false;
         m.isReclaimed = false;
 
 
+        let hasWithdrawPermission = UserService.hasPermission(`proj.milestone.withdraw`);
+        if (m.claimStatus === 'Withdrawn' && hasWithdrawPermission) {
+          m.isUserAbleToCancelWithdraw = true;
+        }
         if (m.claimStatus === 'Approved') {
           let isReclaimDisabledForMoneatryValue = !isMonetaryValueReclaimsEnabled && isMonetaryValueType;
+          if ((m.withdrawable) && hasWithdrawPermission) {
+            m.isUserAbleToWithdraw = true;
+          }
+
           if (!isReclaimDisabledForMoneatryValue && !readOnly && (
               (m.claimedRcgf ? (availableToReclaimByType.RCGF + (m.reclaimedRcgf || 0)) : 0) +
               (m.claimedDpf ? (availableToReclaimByType.DPF + (m.reclaimedDpf || 0)) : 0)

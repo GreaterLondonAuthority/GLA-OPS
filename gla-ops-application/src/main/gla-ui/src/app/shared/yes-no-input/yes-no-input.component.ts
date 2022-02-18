@@ -12,6 +12,7 @@ export class YesNoInputComponent implements OnInit {
   @Input() mode: string;
   @Input() model: any;
   @Input () disabled: boolean;
+  @Input () required: boolean;
   @Input () readOnly = false;
   @Output() modelChange = new EventEmitter();
 

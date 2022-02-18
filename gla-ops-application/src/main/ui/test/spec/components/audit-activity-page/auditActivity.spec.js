@@ -35,7 +35,7 @@ describe('Component: Audit activity page', () => {
             summary: 'Data initialiser framework completed.',
             timestamp: '2018-05-01T15:19:55.984+01:00',
             type: null,
-            userName: 'TestDataInitialiser@gla.org'
+            userName: 'TestDataInitialiser'
           }]
         }
       }
@@ -65,7 +65,7 @@ describe('Component: Audit activity page', () => {
     it('contains table row with audit event data', () => {
       let row = element.find('#100008').text();
       expect(row).toContain('Data initialiser framework completed.');
-      expect(row).toContain('TestDataInitialiser@gla.org');
+      expect(row).toContain('TestDataInitialiser');
       expect(row).toContain('01/05/2018');
       expect(row).toContain('100008');
     });

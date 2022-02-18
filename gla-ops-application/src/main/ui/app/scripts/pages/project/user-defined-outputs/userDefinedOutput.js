@@ -16,6 +16,10 @@ class UserDefinedOutput extends RepeatingEntityCtrl{
 
   $onInit() {
     super.$onInit();
+    this.outputNameId = this.generateId();
+    this.deliveryAmountId = this.generateId();
+    this.baselineId = this.generateId();
+    this.monitorOfOutputId = this.generateId();
     this.labels = {
       outputName: this.blockTemplate.outputNameText,
       deliveryAmount: this.blockTemplate.amountToDeliverText,
@@ -24,6 +28,9 @@ class UserDefinedOutput extends RepeatingEntityCtrl{
     }
   }
 
+  generateId(){
+    return Math.floor(Math.random() * Date.now());
+  }
 }
 
 UserDefinedOutput.$inject = ['TemplateService'];

@@ -1,0 +1,79 @@
+<div class="funding-claim-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{isClaimable ? 'CLAIMED' : 'CLAIM'}} PAYMENT</h1>
+    <div>Q{{section.quarter}} Milestones and activities</div>
+  </div>
+  <div class="modal-body text-left">
+    <div>
+      <div class="clearfix">
+        <span class="label">{{section.year | fYear}} Total Budget</span>
+        <span class="pull-right"> {{budget.total | currency:'£':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="payment-group">
+        <div *ngIf="showCapitalGla || showCapitalOther">Capital Funding <span class="pull-right">{{budget.capital | currency:'£':'symbol':'1.0-0'}}</span></div>
+        <div *ngIf="showRevenueGla || showRevenueOther">Revenue Funding <span class="pull-right">{{budget.revenue | currency:'£':'symbol':'1.0-0'}}</span></div>
+      </div>
+    </div>
+
+    <div class="mtop20 unclaimed grant" *ngIf="isClaimable">
+      <div class="clearfix">
+        <span class="label">Unclaimed grant payment amount</span>
+        <span class="pull-right"> {{unclaimedGrant.total | currency:'£':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="payment-group">
+        <div *ngIf="showCapitalGla || showCapitalOther">Capital Grant <span class="pull-right">{{unclaimedGrant.capital | currency:'£':'symbol':'1.0-0'}}</span></div>
+        <div *ngIf="showRevenueGla || showRevenueOther">Revenue Grant <span class="pull-right">{{unclaimedGrant.revenue | currency:'£':'symbol':'1.0-0'}}</span></div>
+      </div>
+    </div>
+
+    <div class="mtop20">
+      <div class="clearfix">
+        <span class="label">Grant payment amount</span>
+        <span class="pull-right"> {{((section.totalCapitalValue + section.totalRevenueValue) || 0) | currency:'£':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="payment-group">
+        <div *ngIf="showCapitalGla || showCapitalOther">Capital Grant <span class="pull-right">{{(section.totalCapitalValue || 0) | currency:'£':'symbol':'1.0-0'}}</span></div>
+        <div *ngIf="showRevenueGla || showRevenueOther">Revenue Grant <span class="pull-right">{{(section.totalRevenueValue || 0) | currency:'£':'symbol':'1.0-0'}}</span></div>
+      </div>
+    </div>
+
+    <div class="mtop30">
+      <span *ngIf="section.status === 'Claimed'">Milestone claims must be cancelled before the milestones can be edited.</span>
+      <span *ngIf="isClaimable">By claiming the milestones and activities, you are confirming the milestones and activities have been completed. Claimed payments will display in the Payment section of GLA OPS once the project changes have been approved</span>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <button
+          id="claim-btn"
+          *ngIf="isClaimable && !readOnly"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          (click)="activeModal.close('claim')">CLAIM Q{{section.quarter}} PAYMENT</button>
+
+        <button
+          id="cancel-claim-btn"
+          *ngIf="!isClaimable && section.status !== 'Paid' && !readOnly"
+          class="btn btn-default btn-secondary btn-negative btn-center"
+          type="button"
+          (click)="activeModal.close('cancel')">CANCEL CLAIM</button>
+
+        <button
+          id="cancel-approved-claim-btn"
+          *ngIf="cancelApprovedActivitiesFeature && section.claim && section.status == 'Paid' && canCancelApprovedActivities"
+          class="btn btn-default btn-secondary btn-negative btn-center"
+          type="button"
+          (click)="activeModal.close('cancel-approved')">CANCEL CLAIM</button>
+
+        <div class="mtop20 mbottom10">
+          <a href="JavaScript:void(0)" class="form-cancel dismiss-btn" (click)="activeModal.dismiss()">Close</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

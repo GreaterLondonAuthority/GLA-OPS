@@ -2,18 +2,18 @@
   <table class="table table-bordered table-default" id="total-funding-table">
     <thead class="thead-inverse uppercase">
     <tr>
-      <th >YEAR</th>
-      <th class="number" ng-if="$ctrl.showCapitalGla">{{$ctrl.capClaimedLabel}}</th>
-      <th class="number" ng-if="$ctrl.showCapitalOther">{{$ctrl.capOtherLabel}}</th>
-      <th class="number" ng-if="$ctrl.showRevenueGla">{{$ctrl.revClaimedLabel}}</th>
-      <th class="number" ng-if="$ctrl.showRevenueOther">{{$ctrl.revOtherLabel}}</th>
-      <th class="number" >TOTAL</th>
+      <th scope="col">YEAR</th>
+      <th scope="col" class="number" ng-if="$ctrl.showCapitalGla">{{$ctrl.capClaimedLabel}}</th>
+      <th scope="col" class="number" ng-if="$ctrl.showCapitalOther">{{$ctrl.capOtherLabel}}</th>
+      <th scope="col" class="number" ng-if="$ctrl.showRevenueGla">{{$ctrl.revClaimedLabel}}</th>
+      <th scope="col" class="number" ng-if="$ctrl.showRevenueOther">{{$ctrl.revOtherLabel}}</th>
+      <th scope="col" class="number" >TOTAL</th>
     </tr>
     </thead>
     <tbody>
     <tr ng-if="$ctrl.yearlyData.length === 0"><td colspan="6"><b>No budget added to any year, select a year to add expected annual budget</b></td></tr>
     <tr ng-repeat="year in $ctrl.totalBudget.years">
-      <td class="">{{year.yearLabel}}</td>
+      <th scope="row" class="">{{year.yearLabel}}</th>
       <td class="number" ng-if="$ctrl.showCapitalGla">{{year.capitalValue | number}}</td>
       <td class="number" ng-if="$ctrl.showCapitalOther">{{year.capitalMatchFundValue | number}}</td>
       <td class="number" ng-if="$ctrl.showRevenueGla">{{year.revenueValue | number}}</td>
@@ -21,7 +21,7 @@
       <td class="number" >{{year.total | number}}</td>
     </tr>
     <tr class="footer-row">
-      <td >TOTALS</td>
+      <th scope="row">TOTALS</th>
       <td class="number"  ng-if="$ctrl.showCapitalGla">{{$ctrl.totals.totalCapitalValue | number}}</td>
       <td class="number" ng-if="$ctrl.showCapitalOther">{{$ctrl.totals.totalCapitalMatchFund | number}}</td>
       <td class="number" ng-if="$ctrl.showRevenueGla">{{$ctrl.totals.totalRevenueValue | number}}</td>

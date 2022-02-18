@@ -6,8 +6,10 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
+import {PaymentAuthorisationModalComponent} from '../../../../../../gla-ui/src/app/payment/payment-authorisation-modal/payment-authorisation-modal/payment-authorisation-modal.component';
+
 class PendingPaymentsCtrl {
-  constructor($log, PaymentService, UserService, orderByFilter, $state, $stateParams, ToastrUtil, MessageModal, DeclinePaymentsDialog, $anchorScroll, $location, InterestDialog, ConfirmationDialog, NgbModal) {
+  constructor($log, PaymentService, UserService, orderByFilter, $state, $stateParams, ToastrUtil, DeclinePaymentsDialog, $anchorScroll, $location, InterestDialog, ConfirmationDialog, NgbModal) {
     this.canViewSapVendorId = UserService.hasPermission('org.view.vendor.sap.id');
     this.PaymentService = PaymentService;
     this.orderByFilter = orderByFilter;
@@ -15,7 +17,6 @@ class PendingPaymentsCtrl {
     this.$stateParams = $stateParams;
     this.UserService = UserService;
     this.ToastrUtil = ToastrUtil;
-    this.MessageModal = MessageModal;
     this.DeclinePaymentsDialog = DeclinePaymentsDialog;
     this.$log = $log;
     this.$location = $location;
@@ -63,21 +64,24 @@ class PendingPaymentsCtrl {
   }
 
   authorisePayments(groupToAuthorise) {
-    console.log('groupToAuthorise', groupToAuthorise);
-    this.PaymentService.authoriseGroup(groupToAuthorise.id).then(() =>{
-      let paymentType = groupToAuthorise.payments[0].reclaim? 'Reclaim': 'Payment';
-      this.ToastrUtil.success(`${paymentType} authorised`);
-      _.remove(this.paymentGroups, group => group === groupToAuthorise);
-    }).catch(err => {
-      let description = 'Authorisation failed!';
-      if (err && err.data && err.data.description) {
-        description = err.data.description;
-        let programmeId = this.getProgrammeIdForMissingRevenueWbsError(err);
-        if(programmeId){
-          description = `WBS Revenue code has not been provided. The WBS Revenue code must be added to the <a href="#programme/${programmeId}">programme associated template</a> by an OPS admin.`;
+    const modal = this.NgbModal.open(PaymentAuthorisationModalComponent, { size: 'lg' });
+    modal.componentInstance.paymentGroup = groupToAuthorise;
+    modal.result.then(() => {
+      this.PaymentService.authoriseGroup(groupToAuthorise.id).then(() =>{
+        let paymentType = groupToAuthorise.payments[0].reclaim? 'Reclaim': 'Payment';
+        this.ToastrUtil.success(`${paymentType} authorised`);
+        _.remove(this.paymentGroups, group => group === groupToAuthorise);
+      }).catch(err => {
+        let description = 'Authorisation failed!';
+        if (err && err.data && err.data.description) {
+          description = err.data.description;
+          let programmeId = this.getProgrammeIdForMissingRevenueWbsError(err);
+          if(programmeId){
+            description = `WBS Revenue code has not been provided. The WBS Revenue code must be added to the <a href="#programme/${programmeId}">programme associated template</a> by an OPS admin.`;
+          }
         }
-      }
-      this.ConfirmationDialog.warn(description);
+        this.ConfirmationDialog.warn(description);
+      });
     });
   }
 
@@ -118,9 +122,7 @@ class PendingPaymentsCtrl {
           errorMsg = err.data.description;
         }
         // `Payment cannot be authorised as the payment amount is greater than the remaining ${payment.source} balance`
-        this.MessageModal.show({
-          message: errorMsg
-        });
+        this.ConfirmationDialog.show({message:errorMsg, approveText:'Ok', showDismiss:false, showIcon:false})
         this.$log.error('failed:', err);
       });
     });
@@ -160,7 +162,7 @@ class PendingPaymentsCtrl {
   }
 }
 
-PendingPaymentsCtrl.$inject = ['$log', 'PaymentService', 'UserService', 'orderByFilter', '$state', '$stateParams', 'ToastrUtil', 'MessageModal', 'DeclinePaymentsDialog', '$anchorScroll', '$location', 'InterestDialog', 'ConfirmationDialog', 'NgbModal'];
+PendingPaymentsCtrl.$inject = ['$log', 'PaymentService', 'UserService', 'orderByFilter', '$state', '$stateParams', 'ToastrUtil', 'DeclinePaymentsDialog', '$anchorScroll', '$location', 'InterestDialog', 'ConfirmationDialog', 'NgbModal'];
 
 
 angular.module('GLA')

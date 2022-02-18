@@ -8,13 +8,13 @@
 
 
 class AssessmentListCtrl {
-  constructor($state, AssessmentService, $rootScope, $stateParams, SessionService, ProjectService) {
+  constructor($state, AssessmentService, $rootScope, $stateParams, SessionService, GlaProjectService) {
     this.$state = $state;
     this.AssessmentService = AssessmentService;
     this.$rootScope = $rootScope;
     this.$stateParams = $stateParams;
     this.SessionService = SessionService;
-    this.ProjectService = ProjectService;
+    this.GlaProjectService = GlaProjectService;
   }
 
   $onInit(){
@@ -24,7 +24,7 @@ class AssessmentListCtrl {
     this.assessmentTypeOptions = _.map(this.assessmentTemplates, p => {return {id: p.id, label: p.name}});
     this.assessmentStatusOptions = this.AssessmentService.getAssessmentStatusOptions();
     this.programmeOptions = _.map(this.allProgrammes, p => {return {id: p.id, label: p.name}});
-    let projectStatuses = this.ProjectService.filterDropdownItems(false, this.projectStates);
+    let projectStatuses = this.GlaProjectService.filterDropdownItems(false, this.projectStates);
     this.projectStatusOptions = _.map(projectStatuses, p => {return {id: p.id, label: p.name, items: p.items, model: false}});
 
     this.currentState = {
@@ -117,7 +117,7 @@ class AssessmentListCtrl {
 
 }
 
-AssessmentListCtrl.$inject = ['$state', 'AssessmentService', '$rootScope', '$stateParams', 'SessionService', 'ProjectService'];
+AssessmentListCtrl.$inject = ['$state', 'AssessmentService', '$rootScope', '$stateParams', 'SessionService', 'GlaProjectService'];
 
 angular.module('GLA')
   .component('assessmentList', {

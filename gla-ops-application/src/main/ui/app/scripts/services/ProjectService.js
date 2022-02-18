@@ -6,11 +6,12 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-ProjectService.$inject = ['$resource', '$http', 'config', 'UserService'];
+ProjectService.$inject = ['$resource', '$http', 'config', 'UserService', 'GlaProjectService'];
 
-function ProjectService($resource, $http, config, UserService) {
+function ProjectService($resource, $http, config, UserService, GlaProjectService) {
 
   return {
+    //TODO remove
     getTransitionMap() {
       return {
         'Initial_Assessment': 'Initial assessment complete',
@@ -55,44 +56,6 @@ function ProjectService($resource, $http, config, UserService) {
     },
 
     /**
-     * Retrieve list of all projects
-     * @returns {Object} promise
-     */
-    getProjects(idOrTitle, organisationName, programmeName, states, programmes, templates, watchingProject, page) {
-      let cfg = {
-        params: {
-          project: idOrTitle,
-          organisation: organisationName,
-          programme: programmeName,
-          states: states,
-          programmes: programmes, //Array now
-          templates: templates,
-          size: 50,
-          watchingProject: watchingProject,
-          page: page,
-          sort: 'lastModified,desc'
-        }
-      };
-
-      return $http.get(`${config.basePath}/projects`, cfg);
-    },
-
-
-    /**
-     * Create a new project
-     * @param {Object} data
-     * @returns {Object} promise
-     */
-    createProject(data) {
-      return $http({
-        url: config.basePath + '/projects',
-        method: 'POST',
-        data: data,
-        serialize: false
-      })
-    },
-
-    /**
      * Update a project
      * @param {Object} data
      * @param {Number} id
@@ -122,19 +85,13 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @returns {Object} promise
      */
+    //TODO remove
     getProject(id, params) {
       params = params || {};
       return $http({
         url: config.basePath + '/projects/' + id,
         method: 'GET',
         params: params
-      });
-    },
-
-    canProjectBeAssignedToTemplate(templateId, organisationId) {
-      return $http({
-        url: config.basePath + `/projects/template/${templateId}/organisation/${organisationId}/createAllowed`,
-        method: 'GET',
       });
     },
 
@@ -156,6 +113,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Number} id - project id
      * @return {Object} promise
      */
+    //TODO remove
     getProjectHistory(id) {
       return $resource(config.basePath + '/projects/:id/history')
         .query({
@@ -341,6 +299,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
+    //TODO Remove
     saveProjectToActive(projectId, comment) {
       return this.changeStatus(projectId, 'Active', null, comment);
     },
@@ -351,6 +310,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
+    //TODO remove
     onSubmitReturnedProject(projectId, comment) {
       return this.changeStatus(projectId, 'Assess', null, comment);
     },
@@ -361,6 +321,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
+    //TODO remove
     withdrawProject(projectId, comment) {
       return this.changeStatus(projectId, 'Draft', null, comment);
     },
@@ -371,26 +332,27 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
+    //TODO remove
     returnProject(projectId, comment) {
       return this.changeStatus(projectId, 'Returned', null, comment);
     },
-
+//TODO remove
     onReturnFromApprovalRequested(projectId, comments) {
       return this.changeStatus(projectId, 'Active', 'UnapprovedChanges', comments);
     },
-
+//TODO remove
     onApproveFromApprovalRequested(projectId, comments) {
       return this.changeStatus(projectId, 'Active', null, comments);
     },
-
+//TODO remove
     onRequestPaymentAuthorisation(projectId, comments) {
       return this.changeStatus(projectId, 'Active', 'PaymentAuthorisationPending', comments);
     },
-
+//TODO remove
     approveAbandon(projectId, comments) {
       return this.changeStatus(projectId, 'Closed', 'Abandoned', comments);
     },
-
+//TODO remove
     rejectAbandon(projectId, comments) {
       return this.changeStatus(projectId, 'Active', null, comments);
     },
@@ -401,6 +363,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {Object} data
      * @return {Object} promise
      */
+    //TODO remove
     saveProjectComment(id, data) {
       return $http({
         url: config.basePath + '/projects/' + id + '/draftcomment',
@@ -495,6 +458,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param projectId
      * @param markedForCorporate (boolean)
      */
+    //TODO remove
     updateProjectMarkedForCorporate(projectId, markedForCorporate) {
       return $http({
         url: `${config.basePath}/projects/${projectId}/markedForCorporate`,
@@ -503,6 +467,7 @@ function ProjectService($resource, $http, config, UserService) {
       });
     },
 
+    //TODO remove
     isProjectMarkedForCorporate(projectId) {
       return $http({
         url: `${config.basePath}/projects/${projectId}/markedForCorporate`,
@@ -597,26 +562,12 @@ function ProjectService($resource, $http, config, UserService) {
         });
       },
 
-    /**
-     * Mark a list of projects (passed as ID's) to be moved into assessed status
-     * @param  [Interger] ids list of project id's
-     * @return http promise
-     */
-    projectBulkOperation(ids, operation) {
-        return $http({
-          url: `${config.basePath}/projects/bulkOperation`,
-          method: 'PUT',
-          data: {
-            operation: operation,
-            projects: ids
-          }
-        })
-      },
 
     /**
      * Update the project recommendation status to `RecommendApproval`
      * @param projectId
      */
+    //TODO remove
     recommendApproval(projectId, comment) {
         return $http({
           url: `${config.basePath}/projects/${projectId}/recommendation/RecommendApproval`,
@@ -629,6 +580,8 @@ function ProjectService($resource, $http, config, UserService) {
      * Update the project recommendation status to `RecommendReject`
      * @param projectId
      */
+    //TODO remove
+
     recommendReject(projectId, comment) {
         return $http({
           url: `${config.basePath}/projects/${projectId}/recommendation/RecommendRejection`,
@@ -639,51 +592,34 @@ function ProjectService($resource, $http, config, UserService) {
 
     /**
      * approve a project. this project status will change to active
-     * @param  {Interger} projectId
+     * @param  {Integer} projectId
      */
+    //TODO remove
+
     approve(projectId, comment) {
       return this.changeStatus(projectId, 'Active', null, comment);
     },
 
     /**
      * Reject a project. this project status will change to closed rejected
-     * @param  {Interger} projectId
+     * @param  {Integer} projectId
      */
+    //TODO remove
+
     reject(projectId, comment) {
       return this.changeStatus(projectId, 'Closed', 'Rejected', comment);
     },
 
     /**
-     * Abandon a project. this project status will change to closed abandoned
-     * @param  {Interger} projectId
+     * Request to suspend/resume any payments on the project
+     * @param  {Integer} projectId
+     * @param  {boolean} paymentsSuspended flag
+     * @param {String} comments user input comment
      */
-    abandon(projectId, comment) {
-      return this.changeStatus(projectId, 'Closed', 'Abandoned', comment);
-    },
-
-    /**
-     * Request to Abandon a project. this project status will change to closed
-     * @param  {Interger} projectId
-     */
-    requestAbandon(projectId, comment) {
-      return this.changeStatus(projectId, 'Active', 'AbandonPending', comment);
-    },
-
-    /**
-     * Request to Abandon a project. this project status will change to closed
-     * @param  {Interger} projectId
-     */
-    completeProject(projectId, comment) {
-      return this.changeStatus(projectId, 'Closed', 'Completed', comment);
-    },
-
-    /**
-     * Request to reinstate a project. this project status will change to last state (but not sub state
-     * @param  {Interger} projectId
-     */
-    reinstateProject(projectId, comments) {
+    //TODO remove
+    suspendProjectPayments(projectId, paymentsSuspended, comments) {
       return $http({
-        url: `${config.basePath}/projects/${projectId}/reinstate`,
+        url: `${config.basePath}/projects/${projectId}/suspendPayments?paymentsSuspended=${paymentsSuspended}`,
         method: 'PUT',
         data: comments
       });
@@ -697,15 +633,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param {String} comments optional comments
      */
     changeStatus(projectId, status, subStatus, comments, validateOnly) {
-      return $http({
-        url: `${config.basePath}/projects/${projectId}/status?validateOnly=${!!validateOnly}`,
-        method: 'PUT',
-        data: {
-          status: status,
-          subStatus: subStatus,
-          comments: comments
-        }
-      });
+      return GlaProjectService.changeStatus(projectId, status, subStatus, comments, validateOnly).toPromise();
     },
 
 
@@ -718,6 +646,7 @@ function ProjectService($resource, $http, config, UserService) {
      * @param validateOnly
      * @returns {*}
      */
+    //TODO remove
     transitionTo(projectId, transition, comment) {
       return this.changeStatus(projectId, transition.status, transition.subStatus, comment);
     },
@@ -733,178 +662,25 @@ function ProjectService($resource, $http, config, UserService) {
         method: 'GET'
       });
     },
-
-    validateTransition(projectId, transition) {
-      return this.changeStatus(projectId, transition.status, transition.subStatus, null, true);
-    },
-
+    //TODO remove
     addLabel(projectId, label) {
       return $http.post(`${config.basePath}/projects/${projectId}/labels`, label)
     },
 
-    filterDropdownItems(canViewRecommendations, projectStates) {
-      let labels = {
-        'Assess': 'Awaiting Recommendation'
-      };
-
-      let filterDropdownItems = [];
-
-      let groupStatuses = _.groupBy(projectStates, 'status');
-
-      let keys = Object.keys(groupStatuses);
-      // Closed should be at the bottom of the filter. So zzz will come last
-      keys = _.sortBy(keys, status => status === 'Closed' ? 'zzz' : status.toLowerCase());
-
-      keys.forEach(status => {
-        let item = {
-          id: status,
-          label: status,
-          name: status
-        };
-
-        if (groupStatuses[status].length === 1) {
-          item.model = status !== 'Closed';
-          item.projectStatusKey = status;
-        } else {
-          item.items = [];
-          groupStatuses[status].forEach(state => {
-            if (status === 'Assess') {
-              item.items = this.getAssessChildrenItems(canViewRecommendations);
-            } else {
-              let subStatusLabel = labels[`${status}${state.subStatus || ''}`] || _.startCase(state.subStatus) || 'No Changes';
-              item.items.push({
-                name: `${status}${state.subStatus}`,
-                model: status !== 'Closed',
-                label: subStatusLabel,
-                ariaLabel: `${status}: ${subStatusLabel}`,
-                projectStatusKey: status,
-                projectSubStatusKeys: state.subStatus === 'Rejected' ? [state.subStatus, null] : [state.subStatus]
-              });
-            }
-          });
-          item.items = _.sortBy(item.items, subStatus => subStatus.label.toLowerCase());
-        }
-        filterDropdownItems.push(item);
-      });
-
-      return filterDropdownItems;
-    },
-
-    getAssessChildrenItems(canViewRecommendations) {
-      if (canViewRecommendations) {
-        return [{
-          name: 'assessRecommendApprove',
-          model: true,
-          label: 'Recommend Approve',
-          projectStatusKey: 'Assess',
-          projectRecommentationKeys: ['RecommendApproval']
-        }, {
-          name: 'assessRecommendReject',
-          model: true,
-          label: 'Recommend Reject',
-          projectStatusKey: 'Assess',
-          projectRecommentationKeys: ['RecommendRejection']
-        }, {
-          checkedClass: 'assess',
-          name: 'assessNull',
-          model: true,
-          label: 'Awaiting Recommendation',
-          projectStatusKey: 'Assess',
-          projectRecommentationKeys: [null]
-
-        }];
-      } else {
-        return [{
-          checkedClass: 'assess',
-          name: 'assessAll',
-          model: true,
-          label: 'Awaiting Recommendation',
-          projectStatusKey: 'Assess',
-          projectRecommentationKeys: [null, 'RecommendApproval', 'RecommendRejection']
-        }];
-      }
-    },
-
-    searchOptions() {
-      return [
-        {
-          name: 'title',
-          description: 'By Project',
-          hint: 'Enter the project id number or title',
-          maxLength: '50'
-        },
-        {
-          name: 'programmeName',
-          description: 'By Programme',
-          hint: 'Enter the programme name',
-          maxLength: '50'
-        },
-        {
-          name: 'organisationName',
-          description: 'By Organisation',
-          hint: 'Enter the org name or id',
-          maxLength: '50'
-        }
-      ];
-    },
-
-    transferProject(projectIds, orgId) {
-      projectIds = _.isArray(projectIds) ? projectIds : [projectIds];
-      return $http({
-        method: 'PUT',
-        url: `${config.basePath}/projects/transfer`,
-        params: {
-          // projectIds: projectIds,
-          organisationId: orgId
-        },
-        data: projectIds
-      })
-    },
-
     subStatusText(project) {
-      if (project.recommendation && project.statusName !== 'Active' && project.statusName !== 'Closed'
-        && UserService.hasPermission('proj.view.recommendation')) {
-        return this.recommendationText(project);
-      }
+      return GlaProjectService.subStatusText(project);
+    },
 
-      return this.getSubStatusText(project.subStatusName);
-    }
-    ,
     getProjectStates() {
       return $http.get(`${config.basePath}/projects/filters/statuses`);
     },
 
     getSubStatusText(subStatusCode) {
-      switch (subStatusCode) {
-        case 'UnapprovedChanges':
-          return 'Unapproved Changes';
-        case 'ApprovalRequested':
-          return 'Approval Requested';
-        case 'AbandonPending':
-          return 'Abandon Pending';
-        case 'PaymentAuthorisationPending':
-          return 'Payment Authorisation Pending';
-        case 'Abandoned':
-          return 'Abandoned';
-        case 'Rejected':
-          return 'Rejected';
-        case 'Completed':
-          return 'Completed';
-        default:
-          return subStatusCode;
-      }
-    }
-    ,
+      return GlaProjectService.getSubStatusText(subStatusCode);
+    },
 
     recommendationText(project) {
-      switch (project.recommendation) {
-        case 'RecommendApproval':
-          return 'Recommend Approve';
-        case 'RecommendRejection':
-          return 'Recommend Reject';
-        default:
-          return null;
-      }
+      return GlaProjectService.recommendationText(project);
     },
 
     /**
@@ -1021,11 +797,10 @@ function ProjectService($resource, $http, config, UserService) {
     cancelClaim(projectId, blockId, claimIds){
       return $http.delete(`${config.basePath}/projects/${projectId}/block/${blockId}/claim/${claimIds}`);
     },
-
+    //TODO remove
     shareProject(projectId, orgId) {
       return $http.post(`${config.basePath}/projects/${projectId}/accessControlList?orgId=${orgId}`);
     }
-
   };
 }
 

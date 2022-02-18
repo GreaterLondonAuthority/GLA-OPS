@@ -14,19 +14,19 @@
     </div>
 
     <div class="form-group question"
-         ng-if="$ctrl.templateConfig.showPartnersFundingQuestion">
-      <label class="question-text" for="Q1">{{$ctrl.templateConfig.partnersFundingQuestion}}</label>
+         ng-if="$ctrl.templateConfig.hasBlockRequiredOption">
+      <label class="question-text" for="Q1">{{$ctrl.templateConfig.blockRequiredOptionText ? $ctrl.templateConfig.blockRequiredOptionText : 'Do you hope to also receive funding from other sources?'}}</label>
       <gla-yes-no-input id="Q1"
                         mode="bool"
                         name="Q1"
                         [read-only]="$ctrl.readOnly"
                         (model-change)="$ctrl.save(false)"
-                        [(model)]="$ctrl.projectBlock.hasFundingPartners">
+                        [(model)]="$ctrl.projectBlock.blockRequired">
       </gla-yes-no-input>
     </div>
 
     <div class="form-group question"
-         ng-if="$ctrl.projectBlock.hasFundingPartners || !$ctrl.templateConfig.showPartnersFundingQuestion">
+         ng-if="$ctrl.projectBlock.blockRequired || !$ctrl.templateConfig.hasBlockRequiredOption">
 
       <div class="other-funding-list row no-gutter mtop20">
         <div></div>
@@ -47,6 +47,7 @@
 
       <other-funding-table block="$ctrl.projectBlock"
                            org-id="$ctrl.project.organisation.id"
+                           programme-id="$ctrl.project.programmeId"
                            template="$ctrl.templateConfig"
                            funding-entries="$ctrl.otherFundings"
                            on-entry-change="$ctrl.showProjectOtherFundingModal($event)"

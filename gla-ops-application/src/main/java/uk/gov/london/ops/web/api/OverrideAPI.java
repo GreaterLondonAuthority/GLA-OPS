@@ -7,21 +7,25 @@
  */
 package uk.gov.london.ops.web.api;
 
+import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
+import static uk.gov.london.ops.permission.PermissionType.OVERRIDES_MANAGE;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gov.london.ops.domain.DeliveryOverride;
 import uk.gov.london.ops.framework.annotations.PermissionRequired;
 import uk.gov.london.ops.service.OverrideService;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-
-import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
-import static uk.gov.london.ops.permission.PermissionType.OVERRIDES_MANAGE;
 
 /**
  * Spring MVC controller for the Overrides Information REST endpoint.
@@ -30,7 +34,7 @@ import static uk.gov.london.ops.permission.PermissionType.OVERRIDES_MANAGE;
  */
 @RestController
 @RequestMapping("/api/v1")
-@Api(description = "managing override data")
+@Api("managing override data")
 public class OverrideAPI {
 
     @Autowired

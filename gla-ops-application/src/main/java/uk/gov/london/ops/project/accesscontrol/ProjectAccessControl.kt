@@ -13,7 +13,7 @@ interface ProjectAccessControlInterface {
 
     fun getOrganisationId() : Int?
 
-    val relationshipType: AccessControlRelationshipType
+    fun getRelationshipType() : AccessControlRelationshipType?
 
 }
 
@@ -23,16 +23,16 @@ interface ProjectAccessControlInterface {
 class ProjectAccessControlSummary(
 
         @EmbeddedId
-        val id: ProjectAccessControlId,
-
-        @Enumerated(EnumType.STRING)
-        @Column(name = "relationship_type")
-        override val relationshipType: AccessControlRelationshipType
+        val id: ProjectAccessControlId
 
 ) : ProjectAccessControlInterface {
 
     override fun getOrganisationId(): Int? {
         return id.organisationId
+    }
+
+    override fun getRelationshipType(): AccessControlRelationshipType? {
+        return id.relationshipType
     }
 
 }

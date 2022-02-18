@@ -67,6 +67,22 @@
     <include file="db/changelog/db.changelog-r8.4.xml" />
     <include file="db/changelog/db.changelog-r8.5.xml" />
     <include file="db/changelog/db.changelog-r8.6.xml" />
+    <include file="db/changelog/db.changelog-r8.7.xml" />
+    <include file="db/changelog/db.changelog-r8.8.xml" />
+    <include file="db/changelog/db.changelog-r8.9.xml" />
+    <include file="db/changelog/db.changelog-r9.1.xml" />
+    <include file="db/changelog/db.changelog-r9.2.xml" />
+    <include file="db/changelog/db.changelog-r9.3.xml" />
+    <include file="db/changelog/db.changelog-r9.4.xml" />
+    <include file="db/changelog/db.changelog-r9.5.xml" />
+    <include file="db/changelog/db.changelog-r9.6.xml" />
+    <include file="db/changelog/db.changelog-r9.7.xml" />
+    <include file="db/changelog/db.changelog-r9.8.xml" />
+    <include file="db/changelog/db.changelog-r9.9.xml" />
+    <include file="db/changelog/db.changelog-r10.1.xml" />
+    <include file="db/changelog/db.changelog-r10.2.xml" />
+    <include file="db/changelog/db.changelog-r10.3.xml" />
+    <include file="db/changelog/db.changelog-r10.4.xml" />
 
     <!-- THIS NEEDS TO BE LAST -->
     <include file="db/changelog/db.changelog-runOnChange.xml" />

@@ -18,7 +18,7 @@ import uk.gov.london.ops.project.BaseProjectService;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.ProjectService;
 import uk.gov.london.ops.project.implementation.repository.ProjectBlockRepository;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.domain.UserEntity;
 
 /**
  * Service interface for managing projects questions blocks.
@@ -45,7 +45,7 @@ public class ProjectQuestionsService extends BaseProjectService {
     public ProjectQuestionsBlock updateProjectAnswers(Integer projectId, Integer blockId, ProjectQuestionsBlock answers,
             boolean autosave) {
         ProjectQuestionsBlock block = getQuestionsBlock(blockId);
-        User user = userService.currentUser();
+        UserEntity user = userService.currentUser();
         log.trace("updateProjectAnswers start: projectID: {} user: {}", projectId, user);
 
         checkForLock(block);

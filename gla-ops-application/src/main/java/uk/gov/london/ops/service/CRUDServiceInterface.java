@@ -10,10 +10,12 @@ package uk.gov.london.ops.service;
 /**
  * Interface for Service implementations supporting a basic Create/Read/Update/Delete model.
  */
-public interface CRUDServiceInterface<KeyType,EntityType> {
+public interface CRUDServiceInterface<K, T> {
 
-    EntityType save(EntityType entity);
-    EntityType find(KeyType key);
-    void delete(KeyType key);
+    T save(T entity);
+
+    T find(K key);
+
+    void delete(K key);
 
 }

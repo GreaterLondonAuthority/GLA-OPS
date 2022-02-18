@@ -24,8 +24,10 @@ import uk.gov.london.ops.framework.annotations.PermissionRequired;
 import uk.gov.london.ops.role.model.RoleModel;
 import uk.gov.london.ops.service.DataAccessControlService;
 import uk.gov.london.ops.user.domain.*;
+import uk.gov.london.ops.user.implementation.UserScheduledService;
 
 import javax.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -41,17 +43,20 @@ import static uk.gov.london.ops.permission.PermissionType.*;
 @Api("managing user data")
 public class UserAPI {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final UserFinanceThresholdService userFinanceThresholdService;
     private final UserPasswordService userPasswordService;
     private final DataAccessControlService dataAccessControlService;
+    private final UserScheduledService userScheduledService;
 
-    public UserAPI(UserService userService, UserFinanceThresholdService userFinanceThresholdService,
-                   UserPasswordService userPasswordService, DataAccessControlService dataAccessControlService) {
+    public UserAPI(UserServiceImpl userService, UserFinanceThresholdService userFinanceThresholdService,
+                   UserPasswordService userPasswordService, DataAccessControlService dataAccessControlService,
+                   UserScheduledService userScheduledService) {
         this.userService = userService;
         this.userFinanceThresholdService = userFinanceThresholdService;
         this.userPasswordService = userPasswordService;
         this.dataAccessControlService = dataAccessControlService;
+        this.userScheduledService = userScheduledService;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -96,7 +101,7 @@ public class UserAPI {
                 orgTypes,
                 spendAuthority,
                 pageable);
-    }
+        }
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
@@ -117,10 +122,36 @@ public class UserAPI {
         userService.updateUserStatus(userIdOrName, enabled);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/users/changes", method = RequestMethod.PUT)
+    public void updateUserDetails(@RequestBody UserProfile userProfile) {
+        userService.updateUserDetails(userProfile);
+    }
+
+    @PermissionRequired(USER_REQUEST_ORG_ADMIN)
+    @RequestMapping(value = "/user/{username}/organisation/{organisationId}/requestOrgAdminRole", method = RequestMethod.PUT)
+    public void requestOrgAdminRole(@PathVariable String username,
+                                  @PathVariable Integer organisationId) {
+        userService.requestOrgAdminRole(username, organisationId, true);
+    }
+
+    @PermissionRequired(CLOSE_REQUEST_ORG_ADMIN)
+    @RequestMapping(value = "/user/{username}/organisation/{organisationId}/closeOrgAdminRequest", method = RequestMethod.PUT)
+    public void closeOrgAdminRequest(@PathVariable String username,
+                                  @PathVariable Integer organisationId) {
+        userService.requestOrgAdminRole(username, organisationId, false);
+    }
+
     @PermissionRequired(USER_VIEW_THRESHOLD)
     @RequestMapping(value = "/userThresholds/{userIdOrName}/", method = RequestMethod.GET)
     public Set<UserOrgFinanceThreshold> getUserThresholds(@PathVariable String userIdOrName) {
         return userFinanceThresholdService.getFinanceThresholds(userIdOrName);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/userThresholds/organisation/{organisationId}", method = RequestMethod.GET)
+    public Set<UserOrgFinanceThreshold> getUserThresholdsByOrgId(@PathVariable Integer organisationId) {
+        return userFinanceThresholdService.getFinanceThresholdsByOrgId(organisationId);
     }
 
     @Secured({OPS_ADMIN,  GLA_FINANCE})
@@ -170,6 +201,18 @@ public class UserAPI {
         userPasswordService.resetUserPassword(username, userPasswordReset);
     }
 
+    @Secured({OPS_ADMIN})
+    @RequestMapping(value = "/users/{username}/specifyPassword", method = RequestMethod.PUT)
+    public void specifyPassword(@PathVariable String username, @Valid @RequestBody String newPassword) {
+        userPasswordService.specifyUserPassword(username, newPassword);
+    }
+
+    @Secured({OPS_ADMIN})
+    @RequestMapping(value = "/users/{username}/passwordExpiry", method = RequestMethod.PUT)
+    public void expirePassword(@PathVariable String username, @RequestParam String date) {
+        userPasswordService.setUserPasswordExpiry(username, OffsetDateTime.parse(date + "T00:00:00+01:00"));
+    }
+
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, ORG_ADMIN})
     @RequestMapping(value = "/users/{username}/role", method = RequestMethod.POST)
     @ApiOperation(value = "assigns a second role to the given user")
@@ -191,11 +234,10 @@ public class UserAPI {
         return userService.assignRoleToUsers(roleRequests, teamId);
     }
 
-    @Secured(OPS_ADMIN)
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN})
     @RequestMapping(value = "/admin/users/{username}/password", method = RequestMethod.PUT)
-    public String setPassword(@PathVariable String username, @RequestBody String password) {
+    public void setPassword(@PathVariable String username, @RequestBody String password) {
         userPasswordService.setPassword(username, password);
-        return "Password set for user " + username;
     }
 
     @ApiOperation(value = "calculates strength of a password", notes = "Value is in the range 0 (least secure) to 4 (most secure)")
@@ -208,6 +250,23 @@ public class UserAPI {
     @RequestMapping(value = "/checkCurrentUserAccess", method = RequestMethod.GET)
     public void checkCurrentUserAccess(@RequestParam EntityType entityType, @RequestParam String entityId) {
         dataAccessControlService.checkAccess(entityType, entityId);
+    }
+
+    @Secured({OPS_ADMIN})
+    @RequestMapping(value = "/deactivateAllExpiredUserAccounts", method = RequestMethod.PUT)
+    public void deactivateAllExpiredUserAccounts() {
+        userScheduledService.deactivateExpiredUsers();
+    }
+
+    @PermissionRequired(USERS_ASSIGN_SIGNATORY)
+    @RequestMapping(value = "/users/{userIdOrName}/authorisedSignatory/{orgId}/roleName/{roleName}/signatory/{signatory}",
+            method = RequestMethod.PUT)
+    public void setAuthorisedSignatory(@PathVariable String userIdOrName,
+                                       @PathVariable Integer orgId,
+                                       @PathVariable String roleName,
+                                       @PathVariable Boolean signatory
+    ) {
+        userService.setAuthorisedSignatory(userIdOrName, orgId, roleName, signatory);
     }
 
 }

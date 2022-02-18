@@ -15,7 +15,6 @@ import uk.gov.london.ops.project.skills.SkillsPaymentProfile;
 
 import java.util.List;
 
-
 @Repository
 public interface SkillsPaymentProfileRepository extends JpaRepository<SkillsPaymentProfile, Integer>  {
 
@@ -26,7 +25,8 @@ public interface SkillsPaymentProfileRepository extends JpaRepository<SkillsPaym
     @Query(value = "SELECT count(1) > 0 AS used FROM project p "
         + "INNER JOIN project_block pb ON p.id = pb.project_id INNER JOIN learning_grant_block lgb ON lgb.id = pb.id "
         + "WHERE grant_type = ?1 AND (?2 >= start_year AND (?2 <= start_year + number_of_years -1)) AND (p.status = 'Active' "
-        + "OR ( p.first_approved != null OR p.status = 'Submitted' OR (p.status = 'Stage 1' AND p.substatus = 'Submitted') OR p.status = 'Stage 2' OR p.status = 'Stage 3'))", nativeQuery = true)
+        + "OR ( p.first_approved != null OR p.status = 'Submitted' OR (p.status = 'Stage 1' AND p.substatus = 'Submitted') "
+        + "OR p.status = 'Stage 2' OR p.status = 'Stage 3'))", nativeQuery = true)
     boolean isSkillsProfileUsedForActiveProjects(String type, Integer year);
 
 }

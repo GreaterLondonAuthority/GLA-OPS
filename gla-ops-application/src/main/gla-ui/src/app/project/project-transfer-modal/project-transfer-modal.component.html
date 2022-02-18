@@ -1,0 +1,68 @@
+<div class="modal-header text-center">
+  <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <h1>Transfer project</h1>
+</div>
+<div class="modal-body text-left transfer-modal">
+  <div class="row" *ngIf="isTransferAllowed">
+    <div class="col-md-10 center-col">
+      <form id="transferForm"
+            role="form"
+            name="transferForm">
+
+        <label for="orgcode" class="label">Enter organisation number to transfer project</label>
+        <div class="form-group has-feedback mbottom0">
+
+          <input id="orgcode" type="text" name="orgcode" aria-label="Organisation Code" class="form-control" minlength="3" [disabled]="transferred"
+                 [(ngModel)]="orgCode" placeholder="Enter organisation number" autofocus autocomplete="off" (glaOrgLookup)="orgName = $event"/>
+          <span *ngIf="orgName" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+          <div class="error-wrapper" role="alert" style="min-height: 12px">
+            <span class="error" *ngIf="orgCode?.length > 2 && !orgName">Organisation number not recognised</span>
+          </div>
+          <div *ngIf="orgName" class="organisation-name">
+            {{orgName}}
+          </div>
+        </div>
+
+        <div class="mtop30 text-center">
+          <div *ngIf="nbTransferredMsg">
+            <span class="glyphicon glyphicon-ok green" aria-hidden="true"></span>
+            {{nbTransferredMsg}}
+          </div>
+          <div *ngIf="nbErrorMsg">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            {{nbErrorMsg}}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div *ngIf="!isTransferAllowed" class="text-center">You cannot transfer a project with pending changes</div>
+</div>
+<div class="modal-footer">
+  <div class="row">
+    <div class="col-xs-12 text-center mbottom15">
+      <button
+        id="abandon-btn"
+        class="btn btn-default btn-primary btn-center"
+        type="button"
+        *ngIf="!transferred && isTransferAllowed"
+        (click)="onTransfer()"
+        [disabled]="!orgName">TRANSFER PROJECT</button>
+
+      <button
+        id="cancel-btn"
+        class="btn btn-default btn-primary btn-center"
+        type="button"
+        *ngIf="!(transferred || !isTransferAllowed)"
+        (click)="activeModal.dismiss()">CANCEL</button>
+      <button
+        id="close-btn"
+        class="btn btn-default btn-primary btn-center"
+        type="button"
+        *ngIf="transferred || !isTransferAllowed"
+        (click)="activeModal.close()">CLOSE</button>
+    </div>
+  </div>
+</div>

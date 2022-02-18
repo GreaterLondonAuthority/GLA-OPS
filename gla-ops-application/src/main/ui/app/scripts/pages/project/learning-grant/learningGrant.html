@@ -59,34 +59,107 @@
                ng-if="$ctrl.canEditDeliveryAllocation()"
                number-mask="2"
                type="text"
-               ng-model="$ctrl.currentAllocation.allocation"
-               ng-change="$ctrl.changeAllocation(true)"
+               ng-model="$ctrl.currentDelivery.allocation"
                maxlength="14"
                class="form-control"
                change-on-blur="$ctrl.autoSave()"
                placeholder="Enter Total Allocation"
                aria-label="allocation">
-        <div ng-if="!$ctrl.canEditDeliveryAllocation()">{{$ctrl.currentAllocation.allocation | number}}</div>
+        <div ng-if="!$ctrl.canEditDeliveryAllocation()">{{$ctrl.currentDelivery.allocation | number}}</div>
       </div>
 
-      <div ng-if="$ctrl.isAebGrant" class="form-group" >
-        <label for="community-allocation">{{$ctrl.labels.communityAllocation}}</label>
-        <input id="community-allocation"
+      <div class="form-group" ng-if="$ctrl.isAebGrant && ($ctrl.allocationTypesConfig.showCommunity || $ctrl.allocationTypesConfig.showInnovationFund || $ctrl.allocationTypesConfig.showResponseFund1)">
+        <toggle-icon [(collapsed)]="$ctrl.ofWhich.collapsed" ng-if="$ctrl.isAebGrant"></toggle-icon>
+        <span class="bolder">{{$ctrl.labels.ofWhich}}</span>
+      </div>
+
+      <div ng-if="!$ctrl.ofWhich.collapsed && $ctrl.isAebGrant" class="form-group" >
+        <div ng-if="$ctrl.allocationTypesConfig.showCommunity">
+          <label for="community-allocation">{{$ctrl.labels.communityAllocation}}</label>
+          <input id="community-allocation"
+                 ng-if="$ctrl.canEditDeliveryAllocation()"
+                 number-mask="2"
+                 type="text"
+                 ng-model="$ctrl.currentCommunity.allocation"
+                 maxlength="14"
+                 class="form-control mbottom10"
+                 change-on-blur="$ctrl.autoSave()"
+                 placeholder="Enter Community Learning Allocation"
+                 aria-label="allocation">
+          <div ng-if="!$ctrl.canEditDeliveryAllocation()" default-value="'Not provided'" class="mbottom10">{{$ctrl.currentCommunity.allocation | number}}</div>
+          <div id="community-allocation-exceeded-error" class="mtop10 mbottom5" ng-if="$ctrl.learningGrant.validationFailures && $ctrl.learningGrant.validationFailures.COMMUNITY_ALLOCATION_EXCEEDED">
+            <div class="error-wrapper error">
+              {{$ctrl.learningGrant.validationFailures.COMMUNITY_ALLOCATION_EXCEEDED[0].description}}
+            </div>
+          </div>
+        </div>
+
+        <div ng-if="$ctrl.allocationTypesConfig.showInnovationFund">
+        <label for="innovation-fund">{{$ctrl.labels.innovationFund}}</label>
+        <input id="innovation-fund"
                ng-if="$ctrl.canEditDeliveryAllocation()"
                number-mask="2"
                type="text"
-               ng-model="$ctrl.currentAllocation.communityAllocation"
+               ng-model="$ctrl.currentInnovationFund.allocation"
                maxlength="14"
-               class="form-control"
+               class="form-control mbottom10"
                change-on-blur="$ctrl.autoSave()"
-               placeholder="Enter Community Learning Allocation"
+               placeholder="Enter Innovation Fund Allocation"
                aria-label="allocation">
-        <div ng-if="!$ctrl.canEditDeliveryAllocation()">{{$ctrl.currentAllocation.communityAllocation | number}}</div>
-        <div id="community-allocation-exceeded-error" class="mtop10" ng-if="$ctrl.learningGrant.validationFailures && $ctrl.learningGrant.validationFailures.COMMUNITY_ALLOCATION_EXCEEDED">
+        <div ng-if="!$ctrl.canEditDeliveryAllocation()" default-value="'Not provided'" class="mbottom10">{{$ctrl.currentInnovationFund.allocation | number}}</div>
+        <div id="innovation-fund-exceeded-error" class="mtop10 mbottom5" ng-if="$ctrl.learningGrant.validationFailures && $ctrl.learningGrant.validationFailures.INNOVATION_FUND_EXCEEDED">
           <div class="error-wrapper error">
-            {{$ctrl.learningGrant.validationFailures.COMMUNITY_ALLOCATION_EXCEEDED[0].description}}
+            {{$ctrl.learningGrant.validationFailures.INNOVATION_FUND_EXCEEDED[0].description}}
           </div>
         </div>
+        </div>
+
+        <div ng-if="$ctrl.allocationTypesConfig.showResponseFund1">
+        <label for="response-fund-strand-1">{{$ctrl.labels.responseFundStrand1}}</label>
+        <input id="response-fund-strand-1"
+               ng-if="$ctrl.canEditDeliveryAllocation()"
+               number-mask="2"
+               type="text"
+               ng-model="$ctrl.currentResponseFundStrand1.allocation"
+               maxlength="14"
+               class="form-control mbottom10"
+               change-on-blur="$ctrl.autoSave()"
+               placeholder="Enter Response Fund Strand 1 Allocation"
+               aria-label="allocation">
+        <div ng-if="!$ctrl.canEditDeliveryAllocation()" default-value="'Not provided'" class="mbottom10">{{$ctrl.currentResponseFundStrand1.allocation | number}}</div>
+        <div id="response-fund-strand-1-exceeded-error" class="mtop10 mbottom5" ng-if="$ctrl.learningGrant.validationFailures && $ctrl.learningGrant.validationFailures.RESPONSE_FUND_EXCEEDED">
+          <div class="error-wrapper error">
+            {{$ctrl.learningGrant.validationFailures.RESPONSE_FUND_EXCEEDED[0].description}}
+          </div>
+        </div>
+        </div>
+
+        <div ng-if="$ctrl.allocationTypesConfig.showNationalSkillsFund">
+        <label for="national-skills-fund">{{$ctrl.labels.nationalSkillsFund}}</label>
+        <input id="national-skills-fund"
+               ng-if="$ctrl.canEditDeliveryAllocation()"
+               number-mask="2"
+               type="text"
+               ng-model="$ctrl.currentNationalSkillsFund.allocation"
+               maxlength="14"
+               class="form-control mbottom10"
+               change-on-blur="$ctrl.autoSave()"
+               placeholder="Enter National Skills Fund Allocation"
+               aria-label="allocation">
+        <div ng-if="!$ctrl.canEditDeliveryAllocation()" default-value="'Not provided'" class="mbottom10">{{$ctrl.currentNationalSkillsFund.allocation | number}}</div>
+        <div id="national-skills-fund-exceeded-error" class="mtop10 mbottom5" ng-if="$ctrl.learningGrant.validationFailures && $ctrl.learningGrant.validationFailures.NATIONAL_SKILLS_FUND_EXCEEDED">
+          <div class="error-wrapper error">
+            {{$ctrl.learningGrant.validationFailures.NATIONAL_SKILLS_FUND_EXCEEDED[0].description}}
+          </div>
+        </div>
+        </div>
+
+        <div id="of-which-exceeded-error" class="mtop10" ng-if="$ctrl.learningGrant.validationFailures && $ctrl.learningGrant.validationFailures.OF_WHICH_EXCEEDED">
+          <div class="error-wrapper error">
+            {{$ctrl.learningGrant.validationFailures.OF_WHICH_EXCEEDED[0].description}}
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -99,14 +172,16 @@
                         columns="$ctrl.labels.tableColumns"
                         on-cancel-claim="$ctrl.refreshData()"
                         is-aeb-procured="$ctrl.isAebProcured"
+                        has-manual-claim-status="$ctrl.isAebProcured || $ctrl.isAebNsct"
                         is-aeb-grant="$ctrl.isAebGrant"
+                        is-aeb-Nsct="$ctrl.isAebNsct"
                         is-support-allocation="false"
                         read-only="$ctrl.readOnly"
                         on-claim="$ctrl.refreshData()"
                         on-save="$ctrl.autoSave()"
                         project="$ctrl.project"></learning-grant-table>
 
-  <div class="row mtop20 text-center" ng-if="$ctrl.isAebProcured">
+  <div class="row mtop20 text-center" ng-if="$ctrl.showSupportAllocation">
     <div class="mtop10 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
       <div class="form-group">
         <label for="learner_support_allocation">{{$ctrl.labels.learnerSupportAllocation}}</label>
@@ -114,13 +189,12 @@
                ng-if="$ctrl.canEditSupportAllocation()"
                number-mask="2"
                type="text"
-               ng-model="$ctrl.currentAllocation.learnerSupportAllocation"
-               ng-change="$ctrl.changeAllocation(false)"
+               ng-model="$ctrl.currentLearningSupport.allocation"
                maxlength="14"
                class="form-control"
                change-on-blur="$ctrl.autoSave()"
                aria-label="Learner Support Allocation">
-        <div id="read-only-learner-support-allocation" ng-if="!$ctrl.canEditSupportAllocation()">{{$ctrl.currentAllocation.learnerSupportAllocation | number}}</div>
+        <div id="read-only-learner-support-allocation" ng-if="!$ctrl.canEditSupportAllocation()">{{$ctrl.currentLearningSupport.allocation | number}}</div>
       </div>
     </div>
   </div>
@@ -130,9 +204,10 @@
                         data="$ctrl.supportEntries"
                         claimable="$ctrl.learningGrant.claimable"
                         columns="$ctrl.labels.tableColumns"
-                        ng-if="$ctrl.supportEntries.length && $ctrl.isAebProcured"
+                        ng-if="$ctrl.supportEntries.length && $ctrl.showSupportAllocation"
                         project="$ctrl.project"
                         is-aeb-procured="$ctrl.isAebProcured"
+                        has-manual-claim-status="$ctrl.isAebProcured || $ctrl.isAebNsct"
                         is-support-allocation="true"
                         read-only="$ctrl.readOnly"
                         on-cancel-claim="$ctrl.refreshData()"

@@ -10,13 +10,11 @@ package uk.gov.london.ops.project.block;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.framework.jpa.NonJoin;
 import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants;
 import uk.gov.london.ops.project.state.ProjectStatus;
 import uk.gov.london.ops.project.template.domain.DetailsTemplate;
 
@@ -24,12 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.post_code;
-import static uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants.FieldNames.project_name;
 
 /**
  * The Project Details block in a Project.
@@ -78,6 +71,12 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
     @Column(name = "main_contact_email")
     private String mainContactEmail;
 
+    @Column(name = "secondary_contact_name")
+    private String secondaryContact;
+
+    @Column(name = "secondary_contact_email")
+    private String secondaryContactEmail;
+
     @Column(name = "site_owner")
     private String siteOwner;
 
@@ -95,6 +94,9 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
 
     @Column(name = "planning_permission_reference")
     private String planningPermissionReference;
+
+    @Column(name = "sap_id")
+    private String sapId;
 
     @Column(name = "pcs_project_code")
     @NonJoin("Usually references the original project code in IMS or PCS")
@@ -119,11 +121,17 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
             comment = "The organisation liable for this project post completion")
     private Integer postCompletionLiabilityOrganisationId;
 
+    @Column(name = "use_allocation")
+    private Boolean useAllocation;
+
     @Transient
     private boolean orgSelected;
 
     @Transient
     private String boroughDelimiter = ", ";
+
+    @Transient
+    private boolean multipleOrganisations;
 
     public ProjectDetailsBlock() {
     }
@@ -150,6 +158,7 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
         ProjectDetailsBlock details = (ProjectDetailsBlock) target;
         details.setTitle(this.getTitle());
         details.setDescription(this.getDescription());
+        details.setSapId(this.getSapId());
         details.setAddress(this.getAddress());
         details.setBorough(this.getBorough());
         details.setBoroughDelimiter(this.getBoroughDelimiter());
@@ -169,6 +178,7 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
         details.setPostCompletionLiabilityOrganisationId(this.getPostCompletionLiabilityOrganisationId());
         details.setDevelopingOrganisationId(this.getDevelopingOrganisationId());
         details.setAddressRestricted(this.isAddressRestricted());
+        details.setUseAllocation(this.useAllocation);
     }
 
     @Override
@@ -192,14 +202,25 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
                 && this.getTitle() != null && this.getTitle().length() > 0
                 && checkRequirement(this.getMainContact(), config.getMaincontactRequirement())
                 && checkRequirement(this.getMainContactEmail(), config.getMaincontactemailRequirement())
+                && checkRequirement(this.getSecondaryContact(), config.getSecondaryContactRequirement())
+                && checkRequirement(this.getSecondaryContactEmail(), config.getSecondaryContactEmailRequirement())
                 && checkRequirement(this.getSiteOwner(), config.getSiteOwnerRequirement())
                 && checkRequirement(this.getInterest(), config.getInterestRequirement())
                 && checkRequirement(this.getProjectManager(), config.getProjectManagerRequirement())
                 && checkRequirement(this.getSiteStatus(), config.getSiteStatusRequirement())
                 && checkRequirement(this.getLegacyProjectCode(), config.getLegacyProjectCodeRequirement())
                 && checkRequirement(this.getDescription(), config.getDescriptionRequirement())
+                && requiresLiabilityOrgIds(config)
                 && (project.getOrganisationGroupId() == null || this.getDevelopingOrganisationId() != null)
                 && project.isOrgSelected();
+    }
+
+    private boolean requiresLiabilityOrgIds(DetailsTemplate config) {
+        // GLA-39406 if question is mandatory causes completeness issues when question not displayed
+        // Question is not displayed if there are not multiple organisations to choose from
+        return !this.hasMultipleOrganisations()
+                || (checkRequirement(this.getDevelopmentLiabilityOrganisationId(), config.getDevelopmentLiabilityOrganisationRequirement())
+                    && checkRequirement(this.getPostCompletionLiabilityOrganisationId(), config.getPostCompletionLiabilityOrganisationRequirement()));
     }
 
     public boolean isCanEditAddressRestrictedField() {
@@ -209,7 +230,6 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
                 && (!Requirement.hidden.equals(config.getAddressRequirement())
                 || !Requirement.hidden.equals(config.getPostcodeRequirement()));
     }
-
 
     public boolean isShowAddressRestrictedField() {
         DetailsTemplate config = project.getTemplate().getDetailsConfig();
@@ -243,6 +263,7 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
             this.setTitle(projectDetailsBlock.getTitle());
         }
         this.setDescription(projectDetailsBlock.getDescription());
+        this.setSapId(projectDetailsBlock.getSapId());
         this.setAddress(projectDetailsBlock.getAddress());
         this.setBorough(projectDetailsBlock.getBorough());
         this.setBoroughDelimiter(projectDetailsBlock.getBoroughDelimiter());
@@ -252,6 +273,8 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
         this.setCoordY(projectDetailsBlock.getCoordY());
         this.setMainContact(projectDetailsBlock.getMainContact());
         this.setMainContactEmail(projectDetailsBlock.getMainContactEmail());
+        this.setSecondaryContact(projectDetailsBlock.getSecondaryContact());
+        this.setSecondaryContactEmail(projectDetailsBlock.getSecondaryContactEmail());
         this.setLegacyProjectCode(projectDetailsBlock.getLegacyProjectCode());
         this.setSiteOwner(projectDetailsBlock.getSiteOwner());
         this.setSiteStatus(projectDetailsBlock.getSiteStatus());
@@ -261,29 +284,17 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
         this.setPlanningPermissionReference(projectDetailsBlock.getPlanningPermissionReference());
         this.setDevelopmentLiabilityOrganisationId(projectDetailsBlock.getDevelopmentLiabilityOrganisationId());
         this.setPostCompletionLiabilityOrganisationId(projectDetailsBlock.getPostCompletionLiabilityOrganisationId());
+        this.setMultipleOrganisations(projectDetailsBlock.hasMultipleOrganisations());
         project.setOrganisationGroupId(projectDetailsBlock.organisationGroupId);
         this.setDevelopingOrganisationId(projectDetailsBlock.developingOrganisationId);
         project.setOrgSelected(projectDetailsBlock.orgSelected);
+        this.setUseAllocation(projectDetailsBlock.useAllocation);
     }
 
 
     @Override
     protected void generateValidationFailures() {
         // do nothing for now.
-    }
-
-    public Map<String, Object> simpleDataExtract(SimpleProjectExportConfig simpleProjectExportConfig) {
-        final Map<String, Object> map = new HashMap<>();
-        map.put(project_name.name(), this.getTitle());
-        map.put(SimpleProjectExportConstants.FieldNames.address.name(),
-                this.getAddress());
-        map.put(SimpleProjectExportConstants.FieldNames.borough.name(),
-                this.getBorough());
-        map.put(post_code.name(), this.getPostcode());
-        map.put(SimpleProjectExportConstants.FieldNames.description.name(),
-                this.getDescription());
-
-        return map;
     }
 
     public String getTitle() {
@@ -364,6 +375,22 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
 
     public void setMainContactEmail(String mainContactEmail) {
         this.mainContactEmail = mainContactEmail;
+    }
+
+    public String getSecondaryContact() {
+        return secondaryContact;
+    }
+
+    public void setSecondaryContact(String secondaryContact) {
+        this.secondaryContact = secondaryContact;
+    }
+
+    public String getSecondaryContactEmail() {
+        return secondaryContactEmail;
+    }
+
+    public void setSecondaryContactEmail(String secondaryContactEmail) {
+        this.secondaryContactEmail = secondaryContactEmail;
     }
 
     public String getSiteOwner() {
@@ -470,6 +497,30 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
         this.boroughDelimiter = boroughDelimiter;
     }
 
+    public String getSapId() {
+        return sapId;
+    }
+
+    public void setSapId(String sapId) {
+        this.sapId = sapId;
+    }
+
+    public boolean hasMultipleOrganisations() {
+        return multipleOrganisations;
+    }
+
+    public void setMultipleOrganisations(boolean multipleOrganisations) {
+        this.multipleOrganisations = multipleOrganisations;
+    }
+
+    public Boolean getUseAllocation() {
+        return useAllocation;
+    }
+
+    public void setUseAllocation(Boolean useAllocation) {
+        this.useAllocation = useAllocation;
+    }
+
     @Override
     protected void compareBlockSpecificContent(NamedProjectBlock otherBlock, ProjectDifferences differences) {
         super.compareBlockSpecificContent(otherBlock, differences);
@@ -481,6 +532,9 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
         }
         if (!Objects.equals(StringUtils.trimAllWhitespace(description), StringUtils.trimAllWhitespace(other.description))) {
             differences.add(new ProjectDifference(this, "description"));
+        }
+        if (!Objects.equals(StringUtils.trimAllWhitespace(sapId), StringUtils.trimAllWhitespace(other.sapId))) {
+            differences.add(new ProjectDifference(this, "sapId"));
         }
         if (!Objects.equals(StringUtils.trimAllWhitespace(address), StringUtils.trimAllWhitespace(other.address))) {
             differences.add(new ProjectDifference(this, "address"));
@@ -507,6 +561,13 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
                 .equals(StringUtils.trimAllWhitespace(mainContactEmail), StringUtils.trimAllWhitespace(other.mainContactEmail))) {
             differences.add(new ProjectDifference(this, "mainContactEmail"));
         }
+        if (!Objects.equals(StringUtils.trimAllWhitespace(secondaryContact), StringUtils.trimAllWhitespace(other.secondaryContact))) {
+            differences.add(new ProjectDifference(this, "secondaryContact"));
+        }
+        if (!Objects
+                .equals(StringUtils.trimAllWhitespace(secondaryContactEmail), StringUtils.trimAllWhitespace(other.secondaryContactEmail))) {
+            differences.add(new ProjectDifference(this, "secondaryContactEmail"));
+        }
         if (!Objects.equals(legacyProjectCode, other.legacyProjectCode)) {
             differences.add(new ProjectDifference(this, "legacyProjectCode"));
         }
@@ -532,11 +593,16 @@ public class ProjectDetailsBlock extends NamedProjectBlock {
         if (!Objects.equals(postCompletionLiabilityOrganisationId, other.postCompletionLiabilityOrganisationId)) {
             differences.add(new ProjectDifference(this, "postCompletionLiabilityOrganisationId"));
         }
+        if (!Objects.equals(useAllocation, other.useAllocation)) {
+            differences.add(new ProjectDifference(this, "useAllocation"));
+        }
     }
 
     @Override
     public boolean isSelfContained() {
         return false;
     }
+
+
 
 }

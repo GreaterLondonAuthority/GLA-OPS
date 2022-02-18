@@ -7,28 +7,19 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
-import static uk.gov.london.ops.project.template.domain.AnswerType.Dropdown;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.london.ops.framework.OpsEntity;
+
+import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.user.domain.User;
+
+import static uk.gov.london.ops.project.template.domain.AnswerType.Dropdown;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true, value = {"handler", "hibernateLazyInitializer"})
@@ -62,19 +53,23 @@ public class Question implements OpsEntity<Integer> {
     @Column(name = "max_answers")
     private Integer maxAnswers = 1;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "created_by")
-    private User creator;
+    @Column(name = "created_by")
+    private String createdBy;
 
+    @Transient
+    private String creatorName;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "created_on", updatable = false)
     private OffsetDateTime createdOn;
 
-    @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "modified_by")
-    private User modifier;
+    @Column(name = "modified_by")
+    private String modifiedBy;
 
+    @Transient
+    private String modifierName;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "modified_on")
     private OffsetDateTime modifiedOn;
 
@@ -141,17 +136,22 @@ public class Question implements OpsEntity<Integer> {
 
     @Override
     public String getCreatedBy() {
-        return creator != null ? creator.getUsername() : null;
+        return createdBy;
     }
 
     @Override
     public void setCreatedBy(String createdBy) {
-        this.creator = new User(createdBy);
+        this.createdBy = createdBy;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Override
     public String getCreatorName() {
-        return creator != null ? creator.getFullName() : null;
+        return creatorName;
+    }
+
+    @Override
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
     }
 
     @Override
@@ -166,17 +166,22 @@ public class Question implements OpsEntity<Integer> {
 
     @Override
     public String getModifiedBy() {
-        return modifier != null ? modifier.getUsername() : null;
+        return modifiedBy;
     }
 
     @Override
     public void setModifiedBy(String modifiedBy) {
-        this.modifier = new User(modifiedBy);
+        this.modifiedBy = modifiedBy;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Override
     public String getModifierName() {
-        return modifier != null ? modifier.getFullName() : null;
+        return modifierName;
+    }
+
+    @Override
+    public void setModifierName(String modifierName) {
+        this.modifierName = modifierName;
     }
 
     @Override

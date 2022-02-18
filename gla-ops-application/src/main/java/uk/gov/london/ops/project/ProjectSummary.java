@@ -12,6 +12,7 @@ import com.querydsl.core.annotations.QueryEntity;
 import uk.gov.london.ops.framework.jpa.NonJoin;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
@@ -37,10 +38,6 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
     @Column
     Integer orgId;
 
-    @Column(name = "og_type")
-    @Enumerated(EnumType.STRING)
-    OrganisationType orgType;
-
     @Column(name = "og_name")
     String organisationGroupName;
 
@@ -64,9 +61,6 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
 
     @Column(name = "lead_organisation_id")
     Integer leadOrgId;
-
-    @Column
-    Boolean orgSelected;
 
     @Column(name = "unnapproved_changes")
     private Boolean unapprovedChanges;
@@ -100,6 +94,18 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
     @Column(name = "acl_user")
     private String aclUser;
 
+    @Column(name = "assignee_username")
+    private String assignee;
+
+    @Column(name = "assignee_name")
+    private String assigneeName;
+
+    @Column(name = "is_programme_allocation")
+    private Boolean isProgrammeAllocation;
+
+    @Transient
+    private BigDecimal allocationTotal;
+
     public String getTitle() {
         return title;
     }
@@ -110,16 +116,6 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
         } else {
             return orgId;
         }
-    }
-
-    public OrganisationType getOrgType() {
-        if ((orgSelected == null) || (!orgSelected)) {
-            return null;
-        }
-        if (orgType == null) {
-            return OrganisationType.Individual;
-        }
-        return orgType;
     }
 
     public String getOrgName() {
@@ -197,10 +193,6 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
         this.orgId = orgId;
     }
 
-    public void setOrgType(OrganisationType orgType) {
-        this.orgType = orgType;
-    }
-
     public void setOrganisationGroupName(String organisationGroupName) {
         this.organisationGroupName = organisationGroupName;
     }
@@ -231,10 +223,6 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
 
     public void setLeadOrgId(Integer leadOrgId) {
         this.leadOrgId = leadOrgId;
-    }
-
-    public void setOrgSelected(Boolean orgSelected) {
-        this.orgSelected = orgSelected;
     }
 
     public void setCreatedOn(OffsetDateTime createdOn) {
@@ -293,4 +281,35 @@ public class ProjectSummary implements Comparable<ProjectSummary> {
         this.aclUser = aclUser;
     }
 
+    public String getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(String assignee) {
+        this.assignee = assignee;
+    }
+
+    public String getAssigneeName() {
+        return assigneeName;
+    }
+
+    public void setAssigneeName(String assigneeName) {
+        this.assigneeName = assigneeName;
+    }
+
+    public Boolean getProgrammeAllocation() {
+        return isProgrammeAllocation;
+    }
+
+    public void setProgrammeAllocation(Boolean programmeAllocation) {
+        isProgrammeAllocation = programmeAllocation;
+    }
+
+    public BigDecimal getAllocationTotal() {
+        return allocationTotal;
+    }
+
+    public void setAllocationTotal(BigDecimal allocationTotal) {
+        this.allocationTotal = allocationTotal;
+    }
 }

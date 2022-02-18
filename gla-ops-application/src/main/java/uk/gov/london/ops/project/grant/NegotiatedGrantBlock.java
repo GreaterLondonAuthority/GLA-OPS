@@ -8,17 +8,6 @@
 package uk.gov.london.ops.project.grant;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import org.springframework.util.StringUtils;
 import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.framework.jpa.Join;
@@ -28,8 +17,15 @@ import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.block.ProjectDifference;
 import uk.gov.london.ops.project.block.ProjectDifferences;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConstants;
+import uk.gov.london.ops.project.template.domain.NegotiatedGrantTemplateBlock;
+import uk.gov.london.ops.project.template.domain.TemplateBlock;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by chris on 13/10/2016.
@@ -44,6 +40,15 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
 
     @Column(name = "justification")
     private String justification;
+
+    @Column(name = "show_specialised_units")
+    private boolean showSpecialisedUnits;
+
+    @Column(name = "show_development_cost")
+    private boolean showDevelopmentCost;
+
+    @Column(name = "show_percentage_costs")
+    private boolean showPercentageCosts;
 
     public NegotiatedGrantBlock() {
         setBlockType(ProjectBlockType.NegotiatedGrant);
@@ -95,7 +100,7 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
     }
 
     private Integer calculateUnitDevelopmentCost(ProjectTenureDetails projectTenureDetails) {
-        if (isRowValid(projectTenureDetails)) {
+        if (showDevelopmentCost && isRowValid(projectTenureDetails)) {
             return new Long(Math.round(
                     projectTenureDetails.getTotalCost() / (double) projectTenureDetails.getTotalUnits())).intValue();
         } else {
@@ -111,9 +116,11 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
         int supportedUnits = tenureTypeAndUnit.getSupportedUnits() == null ? 0 : tenureTypeAndUnit.getSupportedUnits();
         long totalDevCosts = tenureTypeAndUnit.getTotalCost() == null ? 0L : tenureTypeAndUnit.getTotalCost();
 
-        if (tenureTypeAndUnit.getGrantRequested() != null && totalAffordableUnits != 0
-                && tenureTypeAndUnit.getSupportedUnits() != null && totalDevCosts != 0L
-                && totalAffordableUnits >= supportedUnits) {
+        boolean basicValidation = tenureTypeAndUnit.getGrantRequested() != null && totalAffordableUnits != 0;
+        boolean devCostsValid = !this.showDevelopmentCost || totalDevCosts != 0L;
+        boolean supportedUnitsValid = !this.showSpecialisedUnits || (tenureTypeAndUnit.getSupportedUnits() != null && totalAffordableUnits >= supportedUnits);
+
+        if (basicValidation && supportedUnitsValid && devCostsValid ) {
             valid = true;
         }
 
@@ -166,13 +173,13 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
             } else if (totalAffordableUnits == 0) {
                 this.addErrorMessage(String.valueOf(tenureTypeAndUnit.getId()),
                         "totalUnits", "Total units must be provided if applying for grant");
-            } else if (tenureTypeAndUnit.getSupportedUnits() == null) {
+            } else if (this.showSpecialisedUnits && tenureTypeAndUnit.getSupportedUnits() == null) {
                 this.addErrorMessage(String.valueOf(tenureTypeAndUnit.getId()),
                         "supportedUnits", "Supported Units must be provided if applying for grant");
-            } else if (totalDevCosts == 0L) {
+            } else if (this.showDevelopmentCost && totalDevCosts == 0L) {
                 this.addErrorMessage(String.valueOf(tenureTypeAndUnit.getId()), "totalCost",
                         "Development costs must be provided for this project");
-            } else if (supportedUnits > totalAffordableUnits) {
+            } else if (this.showSpecialisedUnits && supportedUnits > totalAffordableUnits) {
                 this.addErrorMessage(String.valueOf(tenureTypeAndUnit.getId()), "grantRequested",
                         "The project cannot have more supported units than the total number of affordable units");
             } else if (tenureTypeAndUnit.getGrantRequested() == null) {
@@ -206,15 +213,28 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
         this.justification = justification;
     }
 
-    @Override
-    public Map<String, Object> simpleDataExtract(
-            final SimpleProjectExportConfig simpleProjectExportConfig) {
-        final Map<String, Object> map = super
-                .simpleDataExtract(simpleProjectExportConfig);
-        final SimpleProjectExportConstants.ReportPrefix prefix =
-                SimpleProjectExportConstants.ReportPrefix.eg_;
-        map.put(prefix + "justification", justification);
-        return map;
+    public boolean isShowSpecialisedUnits() {
+        return showSpecialisedUnits;
+    }
+
+    public void setShowSpecialisedUnits(boolean showSpecialisedUnits) {
+        this.showSpecialisedUnits = showSpecialisedUnits;
+    }
+
+    public boolean isShowDevelopmentCost() {
+        return showDevelopmentCost;
+    }
+
+    public void setShowDevelopmentCost(boolean showDevelopmentCost) {
+        this.showDevelopmentCost = showDevelopmentCost;
+    }
+
+    public boolean isShowPercentageCosts() {
+        return showPercentageCosts;
+    }
+
+    public void setShowPercentageCosts(boolean showPercentageCosts) {
+        this.showPercentageCosts = showPercentageCosts;
     }
 
     @Transient
@@ -225,8 +245,11 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
     @Override
     protected void copyBlockContentInto(final NamedProjectBlock target) {
         super.copyBlockContentInto(target);
-        ((NegotiatedGrantBlock) target)
-                .setJustification(this.getJustification());
+        NegotiatedGrantBlock ngbTarget = (NegotiatedGrantBlock) target;
+        ngbTarget.setJustification(this.getJustification());
+        ngbTarget.setShowSpecialisedUnits(this.isShowSpecialisedUnits());
+        ngbTarget.setShowDevelopmentCost(this.isShowDevelopmentCost());
+        ngbTarget.setShowPercentageCosts(this.isShowPercentageCosts());
     }
 
     @Override
@@ -303,6 +326,7 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
         if (!Objects.equals(this.getTotalGrantEligibility(), otherBlock.getTotalGrantEligibility())) {
             differences.add(new ProjectDifference(this, "totalGrantEligibility"));
         }
+
     }
 
     public class Totals {
@@ -365,5 +389,13 @@ public class NegotiatedGrantBlock extends BaseGrantBlock {
     @Override
     public boolean isBlockRevertable() {
         return true;
+    }
+
+    protected void initFromTemplateSpecific(TemplateBlock templateBlock) {
+        super.initFromTemplateSpecific(templateBlock);
+        NegotiatedGrantTemplateBlock ngtb = (NegotiatedGrantTemplateBlock) templateBlock;
+        this.setShowDevelopmentCost(ngtb.isShowDevelopmentCost());
+        this.setShowPercentageCosts(ngtb.isShowPercentageCosts());
+        this.setShowSpecialisedUnits(ngtb.isShowSpecialisedUnits());
     }
 }

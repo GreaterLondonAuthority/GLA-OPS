@@ -8,36 +8,20 @@
 package uk.gov.london.ops.project.skills;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 import uk.gov.london.common.GlaUtils;
 import uk.gov.london.common.skills.SkillsGrantType;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.payment.FundingClaimsVariation;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.block.ProjectDifference;
 import uk.gov.london.ops.project.block.ProjectDifferences;
-import uk.gov.london.ops.project.template.domain.FundingClaimCategory;
-import uk.gov.london.ops.project.template.domain.FundingClaimPeriod;
-import uk.gov.london.ops.project.template.domain.FundingClaimsTemplateBlock;
-import uk.gov.london.ops.project.template.domain.LearningGrantTemplateBlock;
-import uk.gov.london.ops.project.template.domain.TemplateBlock;
+import uk.gov.london.ops.project.template.domain.*;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity(name = "funding_claims_block")
 @DiscriminatorValue("FundingClaims")
@@ -109,26 +93,30 @@ public class FundingClaimsBlock extends NamedProjectBlock {
         this.fundingClaimsVariations = fundingClaimsVariations;
     }
 
+    protected boolean allPopulatedOrNull(Integer year, Integer period) {
+        List<FundingClaimsEntry> entriesInPeriod = this.fundingClaimsEntries.stream()
+                .filter(fce -> fce.getAcademicYear().equals(year) && fce.getPeriod().equals(period))
+                .collect(Collectors.toList());
+
+        boolean allEmpty = entriesInPeriod.stream().allMatch(FundingClaimsEntry::isEmpty);;
+        boolean allPopulated = entriesInPeriod.stream().allMatch(FundingClaimsEntry::isFull);
+
+        return allEmpty || allPopulated;
+    }
+
     @Override
     public boolean isComplete() {
         if (this.getContractTypes().size() > 0 && this.contractTypes.stream().anyMatch(ct -> ct.getSelected() == null)) {
             return false;
         }
 
-        Set<Integer> allYears = this.fundingClaimsEntries.stream().map(fce -> fce.getAcademicYear()).collect(Collectors.toSet());
-        Set<Integer> allPeriods = this.fundingClaimsEntries.stream().map(fce -> fce.getPeriod()).collect(Collectors.toSet());
+        Set<Integer> allYears = this.fundingClaimsEntries.stream().map(FundingClaimsEntry::getAcademicYear).collect(Collectors.toSet());
+        Set<Integer> allPeriods = this.fundingClaimsEntries.stream().map(FundingClaimsEntry::getPeriod).collect(Collectors.toSet());
 
         //If there is modified data in some period but not all entries are complete then block is incomplete
         for (Integer year : allYears) {
             for (Integer period : allPeriods) {
-                List<FundingClaimsEntry> entriesInPeriod = this.fundingClaimsEntries.stream()
-                        .filter(fce -> fce.getAcademicYear().equals(year) && fce.getPeriod().equals(period))
-                        .collect(Collectors.toList());
-                boolean hasModifiedData = entriesInPeriod.stream()
-                        .anyMatch(fce -> fce.getContractTypeFundingEntries().stream().anyMatch(ct -> ct.isModified()));
-                if (hasModifiedData && entriesInPeriod.stream().anyMatch(
-                        fce -> fce.getContractTypeFundingEntries().isEmpty() || fce.getContractTypeFundingEntries().stream()
-                                .anyMatch(ct -> !ct.isComplete()))) {
+                if ( !this.allPopulatedOrNull(year, period) ) {
                     return false;
                 }
             }
@@ -151,7 +139,7 @@ public class FundingClaimsBlock extends NamedProjectBlock {
         List<FundingClaimsEntry> entriesInPeriod = this.fundingClaimsEntries.stream()
                 .filter(fce -> fce.getAcademicYear().equals(year) && fce.getPeriod().equals(period)).collect(Collectors.toList());
         return entriesInPeriod.stream().anyMatch(fce -> {
-            if (this.grantType.equals(SkillsGrantType.AEB_PROCURED)) {
+            if (this.grantType.equals(SkillsGrantType.AEB_PROCURED) || this.grantType.equals(SkillsGrantType.AEB_NSCT)) {
                 return fce.getContractTypeFundingEntries().stream().anyMatch(ct -> ct.isModified());
             } else {
                 return fce.getActualDelivery() != null || fce.getForecastDelivery() != null;
@@ -165,6 +153,10 @@ public class FundingClaimsBlock extends NamedProjectBlock {
                         .equals(categoryId))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<FundingClaimsEntry> getFundingClaimEntriesForCategory(Integer categoryId) {
+        return fundingClaimsEntries.stream().filter(e -> categoryId.equals(e.getCategoryId())).collect(Collectors.toList());
     }
 
     public ContractTypeFundingEntry getContractTypeEntry(Integer year, Integer period, Integer categoryId, String contractType) {
@@ -186,23 +178,64 @@ public class FundingClaimsBlock extends NamedProjectBlock {
     protected void initFromTemplateSpecific(TemplateBlock templateBlock) {
         if (templateBlock instanceof FundingClaimsTemplateBlock) {
             FundingClaimsTemplateBlock fundingClaimsTemplateBlock = (FundingClaimsTemplateBlock) templateBlock;
+            for (FundingClaimCategory category : fundingClaimsTemplateBlock.getCategories()) {
+                addFundingClaimEntriesForCategory(fundingClaimsTemplateBlock, category);
+            }
+        }
+    }
 
-            LearningGrantTemplateBlock learningGrantTemplateBlock = (LearningGrantTemplateBlock) getProject().getTemplate()
-                    .getSingleBlockByType(ProjectBlockType.LearningGrant);
-            Integer startYear = learningGrantTemplateBlock.getStartYear();
-            Integer numberOfYears = learningGrantTemplateBlock.getNumberOfYears();
+    public void addFundingClaimEntriesForCategorySubcategory(FundingClaimsTemplateBlock fundingClaimsTemplateBlock,
+            FundingClaimCategory category, FundingClaimCategory subcategory) {
+        LearningGrantTemplateBlock learningGrantTemplateBlock = (LearningGrantTemplateBlock) getProject().getTemplate()
+                .getSingleBlockByType(ProjectBlockType.LearningGrant);
+        Integer startYear = learningGrantTemplateBlock.getStartYear();
+        Integer numberOfYears = learningGrantTemplateBlock.getNumberOfYears();
 
-            for (Integer year = startYear; year < startYear + numberOfYears; year++) {
-                if (fundingClaimsTemplateBlock.getPeriods() != null) {
-                    for (FundingClaimPeriod period : fundingClaimsTemplateBlock.getPeriods()) {
-                        for (FundingClaimCategory category : fundingClaimsTemplateBlock.getCategories()) {
-                            this.getFundingClaimsEntries()
-                                    .add(new FundingClaimsEntry(year, period.getPeriod(), category.getId(), category.getName(),
-                                            category.getDisplayOrder()));
-                        }
+        for (Integer year = startYear; year < startYear + numberOfYears; year++) {
+            if (fundingClaimsTemplateBlock.getPeriods() != null) {
+                for (FundingClaimPeriod period : fundingClaimsTemplateBlock.getPeriods()) {
+                    FundingClaimsEntry entry = new FundingClaimsEntry(year, period.getPeriod(), subcategory.getId(), subcategory.getName(),
+                            subcategory.getDisplayOrder());
+                    entry.setParentCategoryId(category.getId());
+                    entry.setForecastDelivery(BigDecimal.ZERO);
+                    if(subcategory.isActualsEditable()) {
+                        entry.setActualDelivery(BigDecimal.ZERO);
+                    }
+                    getFundingClaimsEntries().add(entry);
+                }
+            }
+        }
+    }
+
+    public void addFundingClaimEntriesForCategory(FundingClaimsTemplateBlock fundingClaimsTemplateBlock,
+                                                  FundingClaimCategory category) {
+        LearningGrantTemplateBlock learningGrantTemplateBlock = (LearningGrantTemplateBlock) getProject().getTemplate()
+                .getSingleBlockByType(ProjectBlockType.LearningGrant);
+        Integer startYear = learningGrantTemplateBlock.getStartYear();
+        Integer numberOfYears = learningGrantTemplateBlock.getNumberOfYears();
+
+        for (Integer year = startYear; year < startYear + numberOfYears; year++) {
+            if (fundingClaimsTemplateBlock.getPeriods() != null) {
+                for (FundingClaimPeriod period : fundingClaimsTemplateBlock.getPeriods()) {
+                    FundingClaimsEntry entry = new FundingClaimsEntry(year, period.getPeriod(), category.getId(),
+                            category.getName(), category.getDisplayOrder());
+                    getFundingClaimsEntries().add(entry);
+                    if (category.getSubCategories() != null) {
+                        addFundingClaimEntriesForSubCategory(category.getId(), category.getSubCategories(), year,
+                                period.getPeriod());
                     }
                 }
             }
+        }
+    }
+
+    void addFundingClaimEntriesForSubCategory(Integer parentCategoryId, Set<FundingClaimCategory> subCategories,
+                                                     Integer year, Integer period) {
+        for (FundingClaimCategory subCategory: subCategories) {
+            FundingClaimsEntry entry = new FundingClaimsEntry(year, period, subCategory.getId(), subCategory.getName(),
+                    subCategory.getDisplayOrder());
+            entry.setParentCategoryId(parentCategoryId);
+            getFundingClaimsEntries().add(entry);
         }
     }
 
@@ -268,7 +301,7 @@ public class FundingClaimsBlock extends NamedProjectBlock {
                 FundingClaimsTotals thisPeriodTotals = thisTotals.get(year).get(period);
                 FundingClaimsTotals otherPeriodTotals = otherTotals.get(year).get(period);
 
-                if (SkillsGrantType.AEB_PROCURED == otherFundingClaimsBlock.getGrantType() && otherFundingClaimsBlock
+                if ((SkillsGrantType.AEB_PROCURED == otherFundingClaimsBlock.getGrantType() || SkillsGrantType.AEB_NSCT == otherFundingClaimsBlock.getGrantType()) && otherFundingClaimsBlock
                         .getContractTypes().isEmpty()) {
                     differences.add(new ProjectDifference(comparisonId, ProjectDifference.DifferenceType.Addition));
                     continue;
@@ -375,7 +408,7 @@ public class FundingClaimsBlock extends NamedProjectBlock {
     }
 
     public FundingClaimsTotals getFundingClaimsTotals(Integer year, Integer period) {
-        if (this.grantType.equals(SkillsGrantType.AEB_PROCURED)) {
+        if (this.grantType.equals(SkillsGrantType.AEB_PROCURED) || this.grantType.equals(SkillsGrantType.AEB_NSCT)) {
             return getProcuredTotals(year, period);
         } else {
             return new FundingClaimsTotals(getActualTotal(period), getForecastTotal(period), getTotalDelivery(period));
@@ -412,17 +445,23 @@ public class FundingClaimsBlock extends NamedProjectBlock {
     }
 
     private BigDecimal getActualTotal(Integer period) {
-        return fundingClaimsEntries.stream().filter(fc -> Objects.equals(period, fc.getPeriod()))
+        return fundingClaimsEntries.stream()
+                .filter(fc -> Objects.equals(period, fc.getPeriod()))
+                .filter(fc -> Objects.equals(null, fc.getParentCategoryId()))
                 .map(FundingClaimsEntry::getActualDelivery).reduce(BigDecimal.ZERO, GlaUtils::nullSafeAdd);
     }
 
     private BigDecimal getForecastTotal(Integer period) {
-        return fundingClaimsEntries.stream().filter(fc -> Objects.equals(period, fc.getPeriod()))
+        return fundingClaimsEntries.stream()
+                .filter(fc -> Objects.equals(period, fc.getPeriod()))
+                .filter(fc -> Objects.equals(null, fc.getParentCategoryId()))
                 .map(FundingClaimsEntry::getForecastDelivery).reduce(BigDecimal.ZERO, GlaUtils::nullSafeAdd);
     }
 
     private BigDecimal getTotalDelivery(Integer period) {
-        return fundingClaimsEntries.stream().filter(fc -> Objects.equals(period, fc.getPeriod()))
+        return fundingClaimsEntries.stream()
+                .filter(fc -> Objects.equals(period, fc.getPeriod()))
+                .filter(fc -> Objects.equals(null, fc.getParentCategoryId()))
                 .map(FundingClaimsEntry::getTotalDelivery).reduce(BigDecimal.ZERO, GlaUtils::nullSafeAdd);
     }
 

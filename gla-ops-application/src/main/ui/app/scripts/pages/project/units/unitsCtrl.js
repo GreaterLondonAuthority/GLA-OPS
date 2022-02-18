@@ -8,9 +8,10 @@
 
 import ProjectBlockCtrl from '../ProjectBlockCtrl';
 import './profiled-unit-table/profiledUnitTable';
+import {ProfiledUnitsModalComponent} from '../../../../../../gla-ui/src/app/project-block/unit-details-block/profiled-units-modal/profiled-units-modal.component';
 
 class UnitsCtrl extends ProjectBlockCtrl {
-  constructor($state, $log, ProjectService, ProjectBlockService, moment, project, $injector, unitsMetadata, UnitsService){
+  constructor($state, $log, ProjectService, ProjectBlockService, moment, project, $injector, unitsMetadata, UnitsService, template){
     super($injector);
 
     this.$state = $state;
@@ -18,7 +19,7 @@ class UnitsCtrl extends ProjectBlockCtrl {
     this.ProjectService = ProjectService;
     this.ProjectBlockService = ProjectBlockService;
     this.UnitsService = UnitsService;
-
+    this.template = template
     this.unitsMetadata = unitsMetadata;
     this.moment = moment;
   }
@@ -36,6 +37,7 @@ class UnitsCtrl extends ProjectBlockCtrl {
     let summaryTiles = [];
 
     this.blockData = this.projectBlock;
+    this.blockConfig = _.find(this.template.blocksEnabled, {block: 'UnitDetails'});
 
     _.forEach(this.blockData.tenureProfiles.breakdown, (tenure) => {
 
@@ -78,6 +80,17 @@ class UnitsCtrl extends ProjectBlockCtrl {
 
     this.showRentUnits = availableForRentalCount > 0;
     this.showSalesUnits = availableForSalesCount > 0;
+  }
+
+  showProfiledUnitsModal(type){
+    const modal = this.NgbModal.open(ProfiledUnitsModalComponent);
+    modal.componentInstance.type = type;
+    modal.componentInstance.config = this.unitsMetadata;
+    modal.componentInstance.showMarketTypes = this.showSalesMarketTypes;
+    modal.result.then((unit) => {
+      console.log('done.. ProfiledUnitsModalComponent', unit)
+      this.addUnit(unit);
+    }, ()=>{});
   }
 
   addUnit(unit) {
@@ -153,7 +166,8 @@ class UnitsCtrl extends ProjectBlockCtrl {
       type7Units: this.blockData.type7Units,
       type8Units: this.blockData.type8Units,
       nbWheelchairUnits: this.blockData.nbWheelchairUnits,
-      grossInternalArea: this.blockData.grossInternalArea
+      grossInternalArea: this.blockData.grossInternalArea,
+      buildTypeEntries: this.blockData.buildTypeEntries
     };
 
     return this.ProjectBlockService.updateBlock(this.project.id, this.blockData.id, data, releaseLock);
@@ -177,7 +191,7 @@ class UnitsCtrl extends ProjectBlockCtrl {
   }
 }
 
-UnitsCtrl.$inject = ['$state', '$log', 'ProjectService', 'ProjectBlockService', 'moment', 'project', '$injector', 'unitsMetadata', 'UnitsService'];
+UnitsCtrl.$inject = ['$state', '$log', 'ProjectService', 'ProjectBlockService', 'moment', 'project', '$injector', 'unitsMetadata', 'UnitsService', 'template'];
 
 angular.module('GLA')
   .controller('UnitsCtrl', UnitsCtrl);

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
+import uk.gov.london.ops.programme.ProgrammeTemplateID;
 import uk.gov.london.ops.project.template.domain.Template;
 
 import javax.persistence.*;
@@ -37,13 +38,15 @@ public class ProgrammeTemplate implements Serializable {
     private ProgrammeTemplateID id = new ProgrammeTemplateID();
 
     @JsonIgnore
-    @JoinData(sourceTable = "programme_template", sourceColumn = "programme_id", targetTable = "programme", targetColumn = "id", joinType = Join.JoinType.ManyToOne, comment = "part of compound primary key.")
+    @JoinData(sourceTable = "programme_template", sourceColumn = "programme_id", targetTable = "programme",
+            targetColumn = "id", joinType = Join.JoinType.ManyToOne, comment = "part of compound primary key.")
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("programmeId")
     private Programme programme;
 
     @JsonIgnore
-    @JoinData(sourceTable = "programme_template", sourceColumn = "template_id", targetTable = "template", targetColumn = "id", joinType = Join.JoinType.ManyToOne, comment = "part of compound primary key.")
+    @JoinData(sourceTable = "programme_template", sourceColumn = "template_id", targetTable = "template",
+            targetColumn = "id", joinType = Join.JoinType.ManyToOne, comment = "part of compound primary key.")
     @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("templateId")
     private Template template;
@@ -70,7 +73,7 @@ public class ProgrammeTemplate implements Serializable {
 
     @JoinData(sourceTable = "programme_template", targetTable = "programme_template_assessment_template",
             joinType = Join.JoinType.OneToMany, comment = "List of assessment templates for this programme template")
-    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumns({
             @JoinColumn(name = "programme_id", referencedColumnName = "programme_id"),
             @JoinColumn(name = "template_id", referencedColumnName = "template_id")
@@ -177,6 +180,8 @@ public class ProgrammeTemplate implements Serializable {
                 case Revenue:
                     response = getRevenueWbsCode();
                     break;
+                default:
+                    throw new IllegalStateException("Unrecognised WBS code type: " + defaultWbsCodeType);
             }
         }
         return response;
@@ -191,6 +196,8 @@ public class ProgrammeTemplate implements Serializable {
                 case Revenue:
                     setRevenueWbsCode(wbsCode);
                     break;
+                default:
+                    throw new IllegalStateException("Unrecognised WBS code type: " + type);
             }
         }
     }

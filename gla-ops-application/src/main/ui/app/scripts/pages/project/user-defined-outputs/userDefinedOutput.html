@@ -2,13 +2,13 @@
   <form class="user-defined-output-form" name="$ctrl.form">
 
       <div class="form-group">
-        <label for="outputName">{{$ctrl.labels.outputName}}</label>
+        <label ng-attr-for="{{$ctrl.outputNameId}}">{{$ctrl.labels.outputName}}</label>
         <textarea class="form-control"
                   gla-read-only="$ctrl.readOnly"
-                  id="outputName"
+                  ng-attr-id="{{$ctrl.outputNameId}}"
                   name="outputName"
                   change-on-blur="$ctrl.onFormChange($ctrl.definedOutput)"
-                  maxlength="$ctrl.blockTemplate.outputNameCharacterLimit"
+                  maxlength="$ctrl.blockTemplate.outputNameCharacterLimit || 1500"
                   ng-trim="false"
                   placeholder="{{$ctrl.labels.outputName}}"
                   ng-model="$ctrl.definedOutput.outputName"
@@ -22,19 +22,19 @@
             </div>
           </div>
           <div class="col-xs-4">
-            <gla-remaining-characters [max]="$ctrl.blockTemplate.outputNameCharacterLimit" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.outputName"></gla-remaining-characters>
+            <gla-remaining-characters [max]="$ctrl.blockTemplate.outputNameCharacterLimit || 1500" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.outputName"></gla-remaining-characters>
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="deliveryAmount">{{$ctrl.labels.deliveryAmount}}</label>
+        <label ng-attr-for="{{$ctrl.deliveryAmountId}}">{{$ctrl.labels.deliveryAmount}}</label>
         <textarea class="form-control"
                   gla-read-only="$ctrl.readOnly"
-                  id="deliveryAmount"
+                  ng-attr-id="{{$ctrl.deliveryAmountId}}"
                   name="deliveryAmount"
                   change-on-blur="$ctrl.onFormChange($ctrl.definedOutput)"
-                  maxlength="$ctrl.blockTemplate.amountToDeliverCharacterLimit"
+                  maxlength="$ctrl.blockTemplate.amountToDeliverCharacterLimit || 1500"
                   ng-trim="false"
                   placeholder="{{$ctrl.labels.deliveryAmount}}"
                   ng-model="$ctrl.definedOutput.deliveryAmount"
@@ -48,21 +48,21 @@
             </div>
           </div>
           <div class="col-xs-4">
-            <gla-remaining-characters [max]="$ctrl.blockTemplate.amountToDeliverCharacterLimit" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.deliveryAmount"></gla-remaining-characters>
+            <gla-remaining-characters [max]="$ctrl.blockTemplate.amountToDeliverCharacterLimit || 1500" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.deliveryAmount"></gla-remaining-characters>
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="baseline">{{$ctrl.labels.baseline}}
+        <label ng-attr-for="{{$ctrl.baselineId}}">{{$ctrl.labels.baseline}}
           <span ng-if="$ctrl.blockTemplate.baselineRequirement ==='optional'"> (Optional)</span>
         </label>
         <textarea class="form-control"
                   gla-read-only="$ctrl.readOnly"
-                  id="baseline"
+                  ng-attr-id="{{$ctrl.baselineId}}"
                   name="baseline"
                   change-on-blur="$ctrl.onFormChange($ctrl.definedOutput)"
-                  maxlength="$ctrl.blockTemplate.baselineCharacterLimit"
+                  maxlength="$ctrl.blockTemplate.baselineCharacterLimit || 1500"
                   ng-trim="false"
                   placeholder="{{$ctrl.labels.baseline}}"
                   ng-model="$ctrl.definedOutput.baseline"
@@ -75,19 +75,19 @@
             </div>
           </div>
           <div class="col-xs-4">
-            <gla-remaining-characters [max]="$ctrl.blockTemplate.baselineCharacterLimit" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.baseline"></gla-remaining-characters>
+            <gla-remaining-characters [max]="$ctrl.blockTemplate.baselineCharacterLimit || 1500" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.baseline"></gla-remaining-characters>
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="monitorOfOutput">{{$ctrl.labels.monitorOfOutput}}</label>
+        <label ng-attr-for="{{$ctrl.monitorOfOutputId}}">{{$ctrl.labels.monitorOfOutput}}</label>
         <textarea class="form-control"
                   gla-read-only="$ctrl.readOnly"
-                  id="monitorOfOutput"
+                  ng-attr-id="{{$ctrl.monitorOfOutputId}}"
                   name="monitorOfOutput"
                   change-on-blur="$ctrl.onFormChange($ctrl.definedOutput)"
-                  maxlength="$ctrl.blockTemplate.monitorQuestionCharacterLimit"
+                  maxlength="$ctrl.blockTemplate.monitorQuestionCharacterLimit || 1500"
                   ng-trim="false"
                   placeholder="{{$ctrl.labels.monitorOfOutput}}"
                   ng-model="$ctrl.definedOutput.monitorOfOutput"
@@ -101,7 +101,7 @@
             </div>
           </div>
           <div class="col-xs-4">
-            <gla-remaining-characters [max]="$ctrl.blockTemplate.monitorQuestionCharacterLimit" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.monitorOfOutput"></gla-remaining-characters>
+            <gla-remaining-characters [max]="$ctrl.blockTemplate.monitorQuestionCharacterLimit || 1500" ng-if="!$ctrl.readOnly" [text]="$ctrl.definedOutput.monitorOfOutput"></gla-remaining-characters>
           </div>
         </div>
       </div>

@@ -36,7 +36,8 @@ gla.component('milestoneClaimStatus', {
     milestone: '<',
     readOnly: '<',
     milestoneType: '<',
-    openClaimMilestoneModal: '&'
+    openClaimMilestoneModal: '&',
+    openWithdrawInfoModal: '&'
   },
   controller: MilestoneClaimStatus,
   templateUrl: 'scripts/components/milestone-claim-status/milestoneClaimStatus.html'

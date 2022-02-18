@@ -1,9 +1,9 @@
 <div class="objective">
   <form class="objective-form" name="$ctrl.form">
       <div class="form-group">
-        <label for="title">{{$ctrl.labels.title}}</label>
+        <label ng-attr-for="{{$ctrl.titleId}}">{{$ctrl.labels.title}}</label>
         <input class="form-control"
-               id="title"
+               ng-attr-id="{{$ctrl.titleId}}"
                change-on-blur="$ctrl.onFormChange($ctrl.objective)"
                name="title"
                maxlength="60"
@@ -17,10 +17,10 @@
       </div>
 
       <div class="form-group">
-        <label for="summary">{{$ctrl.labels.description}}</label>
+        <label ng-attr-for="{{$ctrl.summaryId}}">{{$ctrl.labels.description}}</label>
         <textarea class="form-control"
                   gla-read-only="$ctrl.readOnly"
-                  id="summary"
+                  ng-attr-id="{{$ctrl.summaryId}}"
                   name="summary"
                   change-on-blur="$ctrl.onFormChange($ctrl.objective)"
                   maxlength="1200"

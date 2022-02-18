@@ -12,7 +12,7 @@ function PostLoginService($http, config) {
   return {
     checkOrganisationsLegalStatus(){
       return $http({
-        url: `${config.basePath}/postLogin/legalStatus`,
+        url: `${config.basePath}/postLogin/checkOrgType`,
         method: 'GET',
         transformResponse: (data, headers, status) => {
           return data;

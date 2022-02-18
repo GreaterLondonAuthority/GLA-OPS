@@ -13,6 +13,7 @@ export class PageHeaderComponent implements OnInit, AfterViewInit {
   @Input() backBtnName: string
   @Input() hideBackBtn: boolean
   @Input() stopEditing: string
+  @Input() warning: string
   @Output() onBack = new EventEmitter<void>();
   @ViewChild('editCol') editCol: ElementRef;
 

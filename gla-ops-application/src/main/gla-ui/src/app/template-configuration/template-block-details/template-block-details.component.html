@@ -1,0 +1,46 @@
+<div class="details-template-block">
+  <div class="form-group">
+    <label attr.for="allocation-question">Project Allocation Question label</label>
+    <input
+      class="form-control"
+      id="allocation-question"
+      maxlength="100"
+      number-mask="0"
+      type="text"
+      name="allocationQuestion"
+      [(ngModel)]="block.allocationQuestion"
+      [disabled]="readOnly || !editable"/>
+  </div>
+
+  <div class="form-group" *ngFor="let field of configurableFields;trackBy:trackByKey">
+
+    <div *ngIf="canDisplayMaxBorough(field.id)">
+      <label attr.for="max-boroughs">Maximum number of Boroughs</label>
+      <input
+        class="form-control"
+        id="max-boroughs"
+        maxlength="3"
+        number-mask="0"
+        name="max-boroughs"
+        [(ngModel)]="block.maxBoroughs"
+        [disabled]="readOnly || !editable"
+        placeholder="Maximum number of Boroughs"/>
+    </div>
+
+    <div *ngIf="field?.displayAsSelect">
+      <label attr.for="{{field.id}}">{{field.label}}</label>
+      <select class="form-control"
+              attr.id="{{field.id}}"
+              attr.name="{{field.id}}"
+              [disabled]="readOnly || !editable"
+              [(ngModel)]="template.detailsConfig[field.id]"
+              style-placeholder>
+        <option disabled value="undefined">Requirement</option>
+        <option *ngFor="let requirement of requirementOptions" [ngValue]="requirement.id">
+          {{ requirement.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+</div>
+

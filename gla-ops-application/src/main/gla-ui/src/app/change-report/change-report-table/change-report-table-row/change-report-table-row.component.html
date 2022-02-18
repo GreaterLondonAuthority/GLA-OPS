@@ -1,0 +1,47 @@
+<div class="table-row" *ngIf="heading">
+  <div class="left-col col" [ngClass]="{'no-block': !row.left}">
+    <div class="row-heading">
+      <span *ngIf="!is2ColumnHeading">{{heading}}</span>
+      <div class="row text-left" *ngIf="is2ColumnHeading">
+        <div class="col-xs-6 no-padding">{{heading[0]}}</div>
+        <div class="col-xs-6 second-heading">{{heading[1]}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-col col" [ngClass]="{'no-block': !row.right}">
+    <div class="row-heading">
+      <span *ngIf="!is2ColumnHeading">{{heading}}</span>
+      <div class="row text-left" *ngIf="is2ColumnHeading">
+        <div class="col-xs-6 no-padding">{{heading[0]}}</div>
+        <div class="col-xs-6 second-heading">{{heading[1]}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TODO currently uses multiline comments to avoid e2e failures for cssContainingText with new lines -->
+<ng-container *ngFor="let field of fields">
+  <div class="table-row" *ngIf="fieldVisible(field)">
+    <div class="left-col col" [ngClass]="{'no-block': !row.left}">
+      <div class="field-label">{{field.label}}</div>
+      <div class="field-value" [ngClass]="[field.cls || '']">
+        <span *ngIf="!fileURL(row.left, field)">{{getValue(row.left, field)}}</span>
+        <a *ngIf="fileURL(row.left, field)" href="{{fileURL(row.left, field)}}" target="_blank">
+        <span class="glyphicon glyphicon-file" aria-hidden="true"></span>{{getValue(row.left, field)}}
+      </a>
+      </div>
+    </div>
+
+    <div class="right-col col" [ngClass]="{'no-block': !row.right}">
+      <div class="field-label">{{field.label}}</div>
+      <div class="field-value" [ngClass]="[hasFieldChanges(field)? 'changed-value': '', field.cls || '']">
+        <span *ngIf="!fileURL(row.right, field)">{{getValue(row.right, field)}}</span>
+        <a *ngIf="fileURL(row.right, field)" href="{{fileURL(row.right, field)}}" target="_blank">
+         <span class="glyphicon glyphicon-file" aria-hidden="true"></span>{{getValue(row.right, field)}}
+        </a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" *ngIf="hasFieldChanges(field)"></span>
+      </div>
+    </div>
+  </div>
+</ng-container>

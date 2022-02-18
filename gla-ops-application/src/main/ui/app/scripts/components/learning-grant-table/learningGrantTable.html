@@ -40,14 +40,14 @@
 
       <td ng-if="!$ctrl.isSupportAllocation">{{ (entry.cumulativeEarnings | currency:'£':2) }}</td>
 
-      <td ng-if="$ctrl.isAebProcured && !$ctrl.isSupportAllocation">{{entry.cumulativePayment | currency:'£':2 }}</td>
+      <td ng-if="$ctrl.showColumns.cumulativePayment">{{entry.cumulativePayment | currency:'£':2 }}</td>
 
       <td>
-        <span ng-if="$ctrl.isAebProcured">
+        <span ng-if="$ctrl.isAebProcured || $ctrl.isAebNsct">
           {{entry.paymentDue | currency:'£':2}}
         </span>
 
-        <span ng-if="!$ctrl.isAebProcured">
+        <span ng-if="!($ctrl.isAebProcured || $ctrl.isAebNsct)">
           <span ng-if="entry.canManuallyClaimValue">
           <span ng-if="$ctrl.showClaimAmountBox(entry) && !$ctrl.isClaimedClaimForEntry(entry)">
             <input id="r14adjustment"
@@ -79,9 +79,9 @@
 
 
       <td>
-        <span id="status-no-link" ng-if="!$ctrl.showStatusAsLink(entry) && $ctrl.isAebProcured">{{$ctrl.getStatusColumnText(entry)  }}</span>
+        <span ng-if="!$ctrl.showStatusAsLink(entry) && $ctrl.isAebProcured">{{$ctrl.getStatusColumnText(entry)  }}</span>
 
-        <a href="JavaScript:void(0)" ng-click="$ctrl.showClaimModal(entry)"  ng-if="$ctrl.showStatusAsLink(entry) && $ctrl.claimable && $ctrl.isAebProcured && $ctrl.getStatusColumnText(entry) && (!$ctrl.isSupportAllocation || $ctrl.isSupportAllocation && entry.claimable)">
+        <a href="JavaScript:void(0)" ng-click="$ctrl.showClaimModal(entry)"  ng-if="$ctrl.showStatusAsLink(entry) && $ctrl.claimable && $ctrl.hasManualClaimStatus && $ctrl.getStatusColumnText(entry) && (!$ctrl.isSupportAllocation || $ctrl.isSupportAllocation && entry.claimable)">
          {{$ctrl.getStatusColumnText(entry) || 'N/A'}}
         </a>
         <div ng-if="$ctrl.isAebGrant">

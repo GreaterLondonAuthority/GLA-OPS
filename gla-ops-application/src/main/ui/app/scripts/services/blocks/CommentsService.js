@@ -22,18 +22,21 @@ function CommentsService($http, config, orderByFilter) {
       return $http.post(`${config.basePath}/comments`, commentEntity);
     },
 
-    getInternalRiskComments(entityId){
+    getInternalComments(entityId, entityType){
       return this.getComments({
-        entityType: INTERNAL_RISK_ENTITY_TYPE,
+        entityType: entityType,
         entityId: entityId,
         size: 10000
       });
     },
 
+    getInternalRiskComments(entityId){
+      return this.getInternalComments(entityId, 'internalRiskBlock');
+    },
 
-    saveInternalRiskComments(projectId, entityId, comment){
+    saveInternalComments(projectId, entityId, entityType, comment){
       return this.saveComment({
-        entityType: INTERNAL_RISK_ENTITY_TYPE,
+        entityType: entityType,
         projectId: projectId,
         entityId: entityId,
         comment: comment

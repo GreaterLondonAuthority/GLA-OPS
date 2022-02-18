@@ -1,0 +1,47 @@
+@import 'variables';
+
+.glaFooter {
+  color: $gla-white;
+  background-color: #353d42;
+  text-align: center;
+  font-size: 0.75rem;
+  padding: 0.625rem 0.9375rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: baseline;
+
+
+  .glaFooter__ops {
+    color: $gla-grey;
+    text-align: right;
+    font-size: 0.625rem;
+    width: 25%;
+  }
+
+  .glaFooter__links {
+    color: $gla-grey;
+    text-align: left;
+    font-size: 0.625rem;
+    cursor: pointer;
+    width: 25%;
+  }
+
+  .copyright{
+    width: 50%;
+  }
+
+  a:hover, a:focus {
+    color: white;
+    text-decoration: underline;
+    outline: 2px solid $white;
+    outline-offset: 4px;
+  }
+
+  a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+}
+
+

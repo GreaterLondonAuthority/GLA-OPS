@@ -82,7 +82,7 @@
     justify-content: space-between;
     flex-flow: wrap;
 
-    > well {
+    > gla-well {
       width: 100%;
       margin-top: 10px;
       &:first-child{
@@ -91,7 +91,7 @@
     }
 
     @include when-sm{
-      > well{
+      > gla-well{
         margin-top: 0;
         width: 49%;
       }

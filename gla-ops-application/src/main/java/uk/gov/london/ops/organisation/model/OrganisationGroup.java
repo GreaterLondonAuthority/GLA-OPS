@@ -8,10 +8,11 @@
 package uk.gov.london.ops.organisation.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import uk.gov.london.ops.domain.OpsEntity;
+import uk.gov.london.ops.framework.OpsEntity;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.programme.domain.Programme;
+import uk.gov.london.ops.organisation.OrganisationGroupType;
+import uk.gov.london.ops.programme.ProgrammeDetailsSummary;
 import uk.gov.london.ops.service.ManagedEntityInterface;
 
 import javax.persistence.*;
@@ -27,11 +28,6 @@ import java.util.stream.Collectors;
 @Entity
 public class OrganisationGroup implements OpsEntity<Integer>, ManagedEntityInterface {
 
-    public enum Type {
-        Consortium,
-        Partnership
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "organisation_group_seq_gen")
     @SequenceGenerator(name = "organisation_group_seq_gen", sequenceName = "organisation_group_seq", initialValue = 10000,
@@ -43,11 +39,11 @@ public class OrganisationGroup implements OpsEntity<Integer>, ManagedEntityInter
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private OrganisationGroupType type;
 
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "programme_id")
-    private Programme programme;
+    @Column(name = "programme_id")
+    @JoinData(targetTable = "programme", targetColumn = "id", joinType = Join.JoinType.ManyToOne, comment = "")
+    private Integer programmeId;
 
     @Column(name = "lead_organisation_id")
     @JoinData(targetTable = "organisation", targetColumn = "id", joinType = Join.JoinType.OneToOne,
@@ -58,7 +54,7 @@ public class OrganisationGroup implements OpsEntity<Integer>, ManagedEntityInter
     @JoinTable(name = "organisation_group_organisation",
             joinColumns = @JoinColumn(name = "organisation_group_id", referencedColumnName = "id"),
                 inverseJoinColumns = @JoinColumn(name = "organisation_id", referencedColumnName = "id"))
-    private Set<Organisation> organisations;
+    private Set<OrganisationEntity> organisations;
 
 
     @JoinData(joinType = Join.JoinType.ManyToOne, sourceTable = "organisation_group", targetColumn = "username",
@@ -79,11 +75,14 @@ public class OrganisationGroup implements OpsEntity<Integer>, ManagedEntityInter
     @JsonIgnore
     @ManyToOne(cascade = {})
     @JoinColumn(name = "managing_organisation_id")
-    private Organisation managingOrganisation;
+    private OrganisationEntity managingOrganisation;
+
+    @Transient
+    private ProgrammeDetailsSummary programme;
 
     public OrganisationGroup() {}
 
-    public OrganisationGroup(Integer id, String name, Type type) {
+    public OrganisationGroup(Integer id, String name, OrganisationGroupType type) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -101,20 +100,20 @@ public class OrganisationGroup implements OpsEntity<Integer>, ManagedEntityInter
         this.name = name;
     }
 
-    public Type getType() {
+    public OrganisationGroupType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(OrganisationGroupType type) {
         this.type = type;
     }
 
-    public Programme getProgramme() {
-        return programme;
+    public Integer getProgrammeId() {
+        return programmeId;
     }
 
-    public void setProgramme(Programme programme) {
-        this.programme = programme;
+    public void setProgrammeId(Integer programmeId) {
+        this.programmeId = programmeId;
     }
 
     public Integer getLeadOrganisationId() {
@@ -125,11 +124,11 @@ public class OrganisationGroup implements OpsEntity<Integer>, ManagedEntityInter
         this.leadOrganisationId = leadOrganisationId;
     }
 
-    public Set<Organisation> getOrganisations() {
+    public Set<OrganisationEntity> getOrganisations() {
         return organisations;
     }
 
-    public void setOrganisations(Set<Organisation> organisations) {
+    public void setOrganisations(Set<OrganisationEntity> organisations) {
         this.organisations = organisations;
     }
 
@@ -170,24 +169,32 @@ public class OrganisationGroup implements OpsEntity<Integer>, ManagedEntityInter
     }
 
     @Override
-    public Organisation getManagingOrganisation() {
+    public OrganisationEntity getManagingOrganisation() {
         return managingOrganisation;
     }
 
-    public void setManagingOrganisation(Organisation managingOrganisation) {
+    public void setManagingOrganisation(OrganisationEntity managingOrganisation) {
         this.managingOrganisation = managingOrganisation;
+    }
+
+    public ProgrammeDetailsSummary getProgramme() {
+        return programme;
+    }
+
+    public void setProgramme(ProgrammeDetailsSummary programme) {
+        this.programme = programme;
     }
 
     @JsonIgnore
     public List<Integer> getAllOrganisationIds() {
         List<Integer> ids = new ArrayList<>();
         ids.add(leadOrganisationId);
-        ids.addAll(organisations.stream().map(Organisation::getId).collect(Collectors.toList()));
+        ids.addAll(organisations.stream().map(OrganisationEntity::getId).collect(Collectors.toList()));
         return ids;
     }
 
-    public Organisation getLeadOrganisation() {
-        for (Organisation org: organisations) {
+    public OrganisationEntity getLeadOrganisation() {
+        for (OrganisationEntity org: organisations) {
             if (org.getId().equals(leadOrganisationId)) {
                 return org;
             }
@@ -196,11 +203,11 @@ public class OrganisationGroup implements OpsEntity<Integer>, ManagedEntityInter
     }
 
     public boolean isConsortium() {
-        return Type.Consortium.equals(type);
+        return OrganisationGroupType.Consortium.equals(type);
     }
 
     public boolean isPartnership() {
-        return Type.Partnership.equals(type);
+        return OrganisationGroupType.Partnership.equals(type);
     }
 
     @Override

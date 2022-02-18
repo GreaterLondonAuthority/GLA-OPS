@@ -32,8 +32,17 @@ class NewOrganisationProfileCtrl extends NewOrganisationCtrl {
     this.orgsToCopyFrom = [defaultOrgToCopyFrom].concat(this.userOrganisations);
 
     _.assign(this.labels, {
-      orgType: 'Organisation type for this profile',
-      orgName: 'New organisation profile name',
+      orgType: 'Organisation type',
+      orgName: 'Organisation name',
+      knownAs: 'Also known as (Optional)',
+      companyCode: 'Companies House registration number',
+      societyNumber: 'Society number',
+      isCharityCommission: 'Is the organisation registered with Charity Commission?',
+      charityNumber: 'Registered charity number',
+      isRegulator: 'Is the organisation registered with the social housing regulator?',
+      providerNumber: 'Registered Provider of Social Housing number',
+      isLearningProvider: 'Is the organisation a Registered Learning Provider?',
+      ukprn: 'UKPRN (Optional)',
       managingOrg: 'The GLA department you will be dealing with (managing organisation)'
     });
 
@@ -54,8 +63,9 @@ class NewOrganisationProfileCtrl extends NewOrganisationCtrl {
         this.org = this.OrganisationService.apiToFormModelData(org.data);
         this.org.managingOrganisationId = this.$state.params.managingOrgId * 1 || this.org.managingOrganisationId;
         this.org.id = null;
+        this.org.sapIds = null;
         this.org.sapVendorId = null;
-        this.org.imsNumber = null;
+        this.org.providerNumber = null;
         this.org.name = null;
         this.org.userRegStatus = null;
         this.org.status = null;

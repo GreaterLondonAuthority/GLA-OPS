@@ -1,0 +1,38 @@
+<div class="table-responsive template-blocks mtop20">
+  <div *ngIf="!blocks.length" class="empty-table">Not provided</div>
+  <table *ngIf="blocks.length" class="table table-default table-hover table-bordered blocks blocks-table">
+    <thead class="thead-inverse uppercase">
+    <tr>
+      <th>DISPLAY ORDER</th>
+      <th>BLOCK TYPE</th>
+      <th>DISPLAY NAME</th>
+      <th>APPEARS ON STATUS</th>
+      <th *ngIf="inUse">ACTIONS</th>
+    </tr>
+    </thead>
+
+    <tbody ng-attr-ui-sortable="$ctrl.sortableOptions" ng-model="blocks">
+    <tr class="cursor-pointer" *ngFor="let block of blocks"
+        (click)="onSelectBlock.emit(block)" (keydown.enter)="onSelectBlock.emit(block)"
+        allow-enter tabindex="0">
+      <td class="display-order">{{block.displayOrder}}</td>
+      <td class="type">{{block.block}}</td>
+      <td class="name">{{block.blockDisplayName}}</td>
+      <td class="delete-btn-container appears-on-status">{{block.blockAppearsOnStatus}}
+        <delete-button (click)="$event.stopPropagation();deleteBlock(block);"
+                       *ngIf="hasPermissionToEdit && !readOnly && block.block != 'Details'">
+        </delete-button>
+      </td>
+      <td *ngIf="inUse">
+        <gla-action-dropdown  *ngIf="hasPermissionToEdit && block.templateBlockCommands.length > 0"
+                              (actionClick)="performAction($event, block)"
+                              [toggleButtonText]="'Select action'"
+                              [actionsList]="getBlockCommands(block.templateBlockCommands, true)"></gla-action-dropdown>
+      </td>
+    </tr>
+    <tr class="bolder" *ngIf="!blocks.length">
+      <td colspan="4">Not provided</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

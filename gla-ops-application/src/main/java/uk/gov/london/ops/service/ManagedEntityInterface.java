@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.service;
 
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 
 /**
  * Interface for Managed Entities (anything with a managing organisation)
@@ -15,7 +15,7 @@ import uk.gov.london.ops.organisation.model.Organisation;
  */
 public interface ManagedEntityInterface  {
 
-    Organisation getManagingOrganisation();
+    OrganisationEntity getManagingOrganisation();
 
     default Integer getManagingOrganisationId() {
         return getManagingOrganisation() == null ? null : getManagingOrganisation().getId();

@@ -8,7 +8,7 @@
 package uk.gov.london.ops.project.block;
 
 import javax.persistence.Embeddable;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.domain.UserEntity;
 
 /**
  * Simple base project block class
@@ -35,7 +35,7 @@ public class SimpleProjectBlock extends NamedProjectBlock {
     }
 
     public SimpleProjectBlock(Integer blockId, Integer versionNumber, Boolean markedComplete, String displayName,
-            Integer displayOrder, BlockStatus blockStatus, ProjectBlockType blockType, String lockedBy,
+            Integer displayOrder, ProjectBlockStatus blockStatus, ProjectBlockType blockType, String lockedBy,
             Boolean hasUpdatesPersisted) {
         super();
         this.id = blockId;
@@ -47,7 +47,7 @@ public class SimpleProjectBlock extends NamedProjectBlock {
         this.setBlockType(blockType);
         this.setHasUpdatesPersisted(hasUpdatesPersisted);
         if (lockedBy != null) {
-            this.setLockDetails(new LockDetails(new User(lockedBy), 0));
+            this.setLockDetails(new LockDetails(new UserEntity(lockedBy), 0));
         }
     }
 }

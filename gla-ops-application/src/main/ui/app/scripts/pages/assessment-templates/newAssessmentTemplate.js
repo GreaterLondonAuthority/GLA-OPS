@@ -26,7 +26,8 @@ class NewAssessmentTemplateCtrl {
   }
 
   onManagingOrganisation(selectedOrg) {
-    this.assessmentTemplate.managingOrganisation = selectedOrg;
+    this.assessmentTemplate.managingOrganisationId = selectedOrg.id;
+    this.assessmentTemplate.managingOrganisationName = selectedOrg.name;
   }
 
   create() {

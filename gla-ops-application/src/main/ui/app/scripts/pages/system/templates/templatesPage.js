@@ -73,10 +73,10 @@ class templatesPageCtrl {
     let programmeText = this.isSearchByProgramme() ? this.searchText : null;
     let templateText = this.isSearchByProgramme() ? null : this.searchText;
 
-    this.TemplateService.getAllProjectTemplateSummaries(page, programmeText, templateText, selectedTemplateStatuses).then(rsp => {
+    this.TemplateService.getAllProjectTemplateSummaries(page, programmeText, templateText, selectedTemplateStatuses).toPromise().then(rsp => {
       this.$rootScope.showGlobalLoadingMask = false;
-      this.templates = rsp.data.content;
-      this.totalItems = rsp.data.totalElements;
+      this.templates = rsp.content;
+      this.totalItems = rsp.totalElements;
       this.SessionService.setTemplatesFilter({
         searchText: this.searchText,
         selectedSearchOptionIndex: this.searchOptions.indexOf(this.selectedSearchOption),

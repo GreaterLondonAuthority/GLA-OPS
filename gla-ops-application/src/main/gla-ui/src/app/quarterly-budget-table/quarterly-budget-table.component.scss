@@ -1,0 +1,100 @@
+@import "variables";
+
+$activity-row-bg: $read-only-cell;
+
+.profiles-and-activity-header {
+  min-width: 285px;
+}
+
+td.last-approved-total {
+  padding-bottom: 15px;
+}
+
+span.last-approved-total {
+  margin-bottom: 15px;
+  display:inline-block;
+}
+
+tr.project-total-row {
+  //font-family: $font-family-bolder;
+  font-family: 'Courier New', monospace !important;
+  font-weight: bold;
+
+  td {
+    background-color: darken($activity-row-bg, 9%);
+  }
+}
+
+tr.year-row {
+  font-family: 'Courier New', monospace !important;
+  font-weight: bold;
+  td {
+    background-color: darken($activity-row-bg, 5%);
+  }
+}
+
+tr.quarter-row {
+  font-family: 'Courier New', monospace !important;
+  font-weight: bold;
+
+  td {
+    background-color: darken($activity-row-bg, 3%);
+
+    &:first-child {
+      padding-left: 45px;
+      position: relative;
+      background-clip: padding-box;
+      toggle-icon {
+        position: absolute;
+        left: 25px;
+      }
+    }
+  }
+}
+
+tr.milestone-row {
+  th {
+    padding-left: 55px;
+  }
+  td {
+    background-color: $activity-row-bg;
+    font-family: 'Courier New', monospace !important;
+  }
+}
+
+tr.activity-row {
+  th {
+    font-family: $font-family-default;
+
+    padding-left: 75px;
+  }
+  td.number {
+    background-color: $activity-row-bg;
+    font-family: 'Courier New', monospace !important;
+  }
+  td.number-input {
+    background-color: $activity-row-bg;
+    font-family: 'Courier New', monospace !important;
+  }
+}
+
+.view-mode {
+  label {
+    padding-right: 5px;
+  }
+
+  select {
+    width: 140px;
+    display: inline-block;
+  }
+}
+
+.add-btn{
+  margin-left: 10px;
+}
+
+.secondary-text{
+  font-family: $font-family-default;
+}
+
+

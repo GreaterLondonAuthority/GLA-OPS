@@ -82,7 +82,7 @@ public class EmailServiceImpl implements EmailService, InfoContributor {
 
     int timeout = 60000;
 
-    @Value("${sender.email:noreply@london.gov.uk}")
+    @Value("${sender.email:noreply.uk}")
     String senderEmail;
 
     @Value("${app.url}")

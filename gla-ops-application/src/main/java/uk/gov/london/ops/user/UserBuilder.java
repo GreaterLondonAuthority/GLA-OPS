@@ -34,8 +34,8 @@ public class UserBuilder {
 
     Logger log = LoggerFactory.getLogger(getClass());
 
-    public static final String DATA_INITIALISER_USER = "TestDataInitialiser@gla.org";
-    public static final String SYSTEM_SCHEDULER_USER = "system.scheduler@gla.org";
+    public static final String DATA_INITIALISER_USER = "TestDataInitialiser";
+    public static final String SYSTEM_SCHEDULER_USER = "system.scheduler";
 
     private final UserServiceImpl userService;
     private final OrganisationServiceImpl organisationService;
@@ -145,7 +145,7 @@ public class UserBuilder {
     public void createSpendThreshold(String username, Integer orgId, Long approvedThreshold, Long pendingThreshold,
                                      String requester) {
         UserOrgFinanceThreshold threshold = new UserOrgFinanceThreshold(username, orgId, approvedThreshold, pendingThreshold,
-                        requester, "finance.gla@gla.com");
+                        requester, "finance.gla");
         userFinanceThresholdService.save(threshold);
     }
 

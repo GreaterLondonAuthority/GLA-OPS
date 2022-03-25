@@ -40,8 +40,8 @@ import static uk.gov.london.ops.project.ProjectBuilder.STATUS_ACTIVE;
 @Transactional
 public class MultiRoleUserDataInitialiser implements DataInitialiserModule {
 
-    public static final String MULTI_ROLE_ORG_USER = "multi_role_org@gla.org";
-    public static final String MULTI_ROLE_RP_ORG_USER = "multi_role_rp_org@gla.org";
+    public static final String MULTI_ROLE_ORG_USER = "multi_role_org";
+    public static final String MULTI_ROLE_RP_ORG_USER = "multi_role_rp_org";
 
     @Autowired
     UserServiceImpl userService;
@@ -99,7 +99,7 @@ public class MultiRoleUserDataInitialiser implements DataInitialiserModule {
                 "Org with multi role user",
                 "MULTI_ORG",
                 "User Alpha",
-                "user.alpha@gla.org",
+                "user.alpha",
                 true,
                 false);
 
@@ -110,10 +110,10 @@ public class MultiRoleUserDataInitialiser implements DataInitialiserModule {
                 "Provider Org",
                 "",
                 "User Alpha",
-                "user.alpha@gla.org",
+                "user.alpha",
                 null,
                 OrganisationType.PROVIDER,
-                "finance@gla.com");
+                "finance");
 
         providerOrg = organisationService.findOne(MULTI_ROLE_PROVIDER_ORGANISATION);
         providerOrg.setManagingOrganisation(managingOrg);
@@ -142,7 +142,7 @@ public class MultiRoleUserDataInitialiser implements DataInitialiserModule {
             userService.saveUser(rp);
         }
 
-        UserEntity opsAdmin = userService.get("test.admin@gla.com");
+        UserEntity opsAdmin = userService.get("test.admin");
         if (opsAdmin != null) {
             opsAdmin.addApprovedRole(GLA_FINANCE, glaPrimeOrg);
             userService.saveUser(opsAdmin);

@@ -285,7 +285,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
                     OffsetDateTime.of(2020, 1, 2, 1 + i, 12, 12,
                             12, ZoneOffset.UTC),
                     value);
-            auditItem.setUsername("test.admin@gla.com");
+            auditItem.setUsername("test.admin");
             paymentAuditService.savePaymentAuditItem(auditItem);
         }
     }
@@ -639,7 +639,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
 
         for (ProjectLedgerEntry payment : payments) {
             payment.setAuthorisedOn(OffsetDateTime.now().minusDays(1));
-            payment.setAuthorisedBy("test.admin@gla.com");
+            payment.setAuthorisedBy("test.admin");
         }
 
         grantStategicSupplemental.setAuthorisedOn(OffsetDateTime.of(2013, 12, 12, 12, 12,
@@ -647,7 +647,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
 
         for (ProjectLedgerEntry payment : declinedPayments) {
             payment.setLedgerStatus(LedgerStatus.Declined);
-            payment.setModifiedBy("test.admin@gla.com");
+            payment.setModifiedBy("test.admin");
         }
 
         projectLedgerRepository.saveAll(payments);
@@ -695,7 +695,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
                 "Bespoke Manual", BigDecimal.valueOf(-100000.00), LedgerStatus.Authorised);
         monetaryPayment.setAuthorisedOn(OffsetDateTime.of(2013, 1, 1, 12, 12, 12,
                 12, ZoneOffset.UTC));
-        monetaryPayment.setAuthorisedBy("test.admin@gla.com");
+        monetaryPayment.setAuthorisedBy("test.admin");
         populateDefaultPaymentData(monetaryPayment, monetary);
         projectLedgerRepository.save(monetaryPayment);
 
@@ -709,7 +709,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
                 "Bespoke Manual", BigDecimal.valueOf(-100000.00), LedgerStatus.Authorised);
         monetaryPayment.setAuthorisedOn(OffsetDateTime.of(2013, 1, 1, 12, 12, 12,
                 12, ZoneOffset.UTC));
-        monetaryPayment.setAuthorisedBy("test.admin@gla.com");
+        monetaryPayment.setAuthorisedBy("test.admin");
         populateDefaultPaymentData(monetaryPayment, monetary);
         projectLedgerRepository.save(monetaryPayment);
         monetaryGroup.getLedgerEntries().add(monetaryPayment);
@@ -719,7 +719,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
                 "Bespoke Manual", BigDecimal.valueOf(-120000L), LedgerStatus.Authorised);
         monetaryPayment.setAuthorisedOn(OffsetDateTime.of(2013, 1, 1, 12, 12, 12,
                 12, ZoneOffset.UTC));
-        monetaryPayment.setAuthorisedBy("test.admin@gla.com");
+        monetaryPayment.setAuthorisedBy("test.admin");
         populateDefaultPaymentData(monetaryPayment, monetary);
         monetaryPayment.setLedgerType(LedgerType.RCGF);
         projectLedgerRepository.save(monetaryPayment);
@@ -730,7 +730,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
                 "Bespoke Manual", BigDecimal.valueOf(-80000L), LedgerStatus.Authorised);
         monetaryPayment.setAuthorisedOn(OffsetDateTime.of(2013, 1, 1, 12, 12, 12,
                 12, ZoneOffset.UTC));
-        monetaryPayment.setAuthorisedBy("test.admin@gla.com");
+        monetaryPayment.setAuthorisedBy("test.admin");
         populateDefaultPaymentData(monetaryPayment, monetary);
         monetaryPayment.setLedgerType(LedgerType.DPF);
         projectLedgerRepository.save(monetaryPayment);
@@ -744,7 +744,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
                 "Start on site", BigDecimal.valueOf(-1000.00), LedgerStatus.Authorised);
         populateDefaultPaymentData(apwpEntry1, activeProjectWithPayments);
         apwpEntry1.setAuthorisedOn(OffsetDateTime.now().minusDays(1));
-        apwpEntry1.setAuthorisedBy("test.admin@gla.com");
+        apwpEntry1.setAuthorisedBy("test.admin");
         projectLedgerRepository.save(apwpEntry1);
 
         PaymentGroupEntity activeProjectWithPaymentsGroup = new PaymentGroupEntity();
@@ -756,7 +756,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
                 "Start on site", BigDecimal.valueOf(-1000.00), LedgerStatus.Authorised);
         populateDefaultPaymentData(nowbsEntry1, noWBSReclaims);
         nowbsEntry1.setAuthorisedOn(OffsetDateTime.now().minusDays(1));
-        nowbsEntry1.setAuthorisedBy("test.admin@gla.com");
+        nowbsEntry1.setAuthorisedBy("test.admin");
         projectLedgerRepository.save(nowbsEntry1);
 
         PaymentGroupEntity noWBSPaymentGroup = new PaymentGroupEntity();
@@ -779,7 +779,7 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
                 "Start on site", BigDecimal.valueOf(-1000.00), LedgerStatus.Authorised);
         populateDefaultPaymentData(cpwpEntry1, closedProjectWithPayments);
         cpwpEntry1.setAuthorisedOn(OffsetDateTime.now().minusDays(1));
-        cpwpEntry1.setAuthorisedBy("test.admin@gla.com");
+        cpwpEntry1.setAuthorisedBy("test.admin");
         projectLedgerRepository.save(cpwpEntry1);
 
         PaymentGroupEntity closedProjectWithPaymentsGroup = new PaymentGroupEntity();
@@ -860,8 +860,8 @@ public class PaymentDataInitialiser implements DataInitialiserModule {
         ple.setCeCode(DEFAULT_LEDGER_CE_CODE);
         ple.setWbsCode("wbs-test");
         ple.setCompanyName(project.getProgramme().getCompanyName());
-        ple.setCreatedBy("testdatainitialiser@gla.org");
-        ple.setModifiedBy("testdatainitialiser@gla.org");
+        ple.setCreatedBy("testdatainitialiser");
+        ple.setModifiedBy("testdatainitialiser");
         return ple;
     }
 

@@ -242,7 +242,7 @@ public class ProjectDataInitialiser implements DataInitialiserModule {
                     .createTestProject("Project with edit lock on Details", GLA_HNL_ORG_ID, bucketProgramme, housingTemplate,
                             STATUS_EMPTY);
 
-            LockDetails lock1 = new LockDetails(userService.get("test.admin@gla.com"), 60);
+            LockDetails lock1 = new LockDetails(userService.get("test.admin"), 60);
             lock1.setBlock(lockProject.getSingleBlockByType(ProjectBlockType.Details));
             lockDetailsRepository.save(lock1);
 
@@ -254,7 +254,7 @@ public class ProjectDataInitialiser implements DataInitialiserModule {
                     .createTestProject("Project with about to expire lock on Milestones", GLA_HNL_ORG_ID, bucketProgramme,
                             housingTemplate, STATUS_EMPTY);
 
-            LockDetails lock2 = new LockDetails(userService.get("test.admin@gla.com"), 5);
+            LockDetails lock2 = new LockDetails(userService.get("test.admin"), 5);
             lock2.setBlock(aboutToExpireProject.getSingleBlockByType(Milestones));
             lockDetailsRepository.save(lock2);
 
@@ -368,7 +368,7 @@ public class ProjectDataInitialiser implements DataInitialiserModule {
             milestonesBlock.getMilestones()
                     .addAll(milestoneMapper.toProjectMilestones(processingRoute.getMilestones(), negotiatedActive.getTemplate()));
             milestonesBlock.setLastModified(OffsetDateTime.now());
-            milestonesBlock.setModifiedBy("testapproved@gla.com");
+            milestonesBlock.setModifiedBy("testapproved");
 
             for (Milestone milestone : milestonesBlock.getMilestones()) {
                 milestone.setMilestoneDate(LocalDate.of(2018, 12, 12));
@@ -497,7 +497,7 @@ public class ProjectDataInitialiser implements DataInitialiserModule {
             calcGrant.completionMilestoneApproved();
 
             calcGrant.setApprovalTime(OffsetDateTime.now().plus(10, ChronoUnit.SECONDS));
-            calcGrant.setApproverUsername("test.admin@gla.com");
+            calcGrant.setApproverUsername("test.admin");
             calcGrant.setBlockStatus(ProjectBlockStatus.LAST_APPROVED);
             calcGrant.setLockDetails(null);
 
@@ -696,7 +696,7 @@ public class ProjectDataInitialiser implements DataInitialiserModule {
             milestone.setClaimStatus(ClaimStatus.Claimed);
 
             ProjectHistoryEntity history = new ProjectHistoryEntity(ProjectTransition.ApprovalRequested);
-            history.setCreatedBy("testapproved@gla.com");
+            history.setCreatedBy("testapproved");
             testingOddGrantSource.getHistory().add(history);
             testingOddGrantSource.setSubStatus(ApprovalRequested);
 
@@ -980,7 +980,7 @@ public class ProjectDataInitialiser implements DataInitialiserModule {
         createReceiptsDataForProject(testLandProject);
         for (NamedProjectBlock namedProjectBlock : testLandProject.getProjectBlocks()) {
             namedProjectBlock.setLastModified(environment.now());
-            namedProjectBlock.setModifiedBy("test.admin@gla.com");
+            namedProjectBlock.setModifiedBy("test.admin");
         }
         projectRepository.save(testLandProject);
         return testLandProject;
@@ -1295,7 +1295,7 @@ public class ProjectDataInitialiser implements DataInitialiserModule {
 
     private void cloneBlock(Project project, ProjectBlockType type) {
         NamedProjectBlock singleBlockByType = project.getSingleBlockByType(type);
-        NamedProjectBlock clone = singleBlockByType.cloneBlock("test.admin@gla.com", environment.now());
+        NamedProjectBlock clone = singleBlockByType.cloneBlock("test.admin", environment.now());
         project.addBlockToProject(clone);
         clone.setVersionNumber(2);
 

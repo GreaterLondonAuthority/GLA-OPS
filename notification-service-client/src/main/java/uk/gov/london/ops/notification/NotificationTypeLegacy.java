@@ -221,7 +221,7 @@ public enum NotificationTypeLegacy {
             "A project has been transferred to another organisation",
             "Project {{id}} has been transferred from {{fromOrganisation.name}} to {{toOrganisation.name}}. "
                     + "{{fromOrganisation.name}} no longer has access to this project. If you have any issues, "
-                    + "email the OPS team at ops@london.gov.uk.",
+                    + "email the OPS team at ops.uk.",
             project,
             Info,
             null,

@@ -11,19 +11,19 @@ const config = {
   lastLoginConfig: false,
   adminUser: {
     isAdmin: true,
-    username: 'test.admin@gla.com',
+    username: 'test.admin',
     password: process.env.ADMIN_PASSWORD
   },
 
   adminUser2: {
     isAdmin: true,
-    username: 'user.alpha@gla.org',
+    username: 'user.alpha',
     password: process.env.ADMIN_PASSWORD
   },
 
   //This user is always approved. Don't change status in tests
   rpUserApproved: {
-    username: 'testapproved@gla.com',
+    username: 'testapproved',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Test',
     lastName: 'Approved',
@@ -32,7 +32,7 @@ const config = {
 
   //This user is never approved. Don't change status in tests
   rpUserUnapproved: {
-    username: 'testunapproved@gla.com',
+    username: 'testunapproved',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Test',
     lastName: 'Unapproved',
@@ -41,7 +41,7 @@ const config = {
 
   //This user is changed in tests from unapproved to approved. It is reverted after tests back to unapproved
   rpUserForApproval: {
-    username: 'unapprovedgla@gmail.com',
+    username: 'unapprovedgla',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Test',
     lastName: 'Unapproved',
@@ -51,13 +51,13 @@ const config = {
 
   //This user is removed in tests. It is reverted after tests back to unapproved
   rpUserForRemoval: {
-    username: 'testremoveuser@gla.com',
+    username: 'testremoveuser',
     password: process.env.ADMIN_PASSWORD,
     organisationId: 9999
   },
 
   orgAdminUser: {
-    username: 'testorgadmin@gla.com',
+    username: 'testorgadmin',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Org',
     lastName: 'Admin',
@@ -65,7 +65,7 @@ const config = {
   },
 
   withoutRoleUser: {
-    username: 'without.role@gla.com',
+    username: 'without.role',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Without',
     lastName: 'Role',
@@ -73,7 +73,7 @@ const config = {
   },
 
   userWithMultipleOrg: {
-    username: 'multi.org@gla.com',
+    username: 'multi.org',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Multi',
     lastName: 'Org',
@@ -95,57 +95,57 @@ const config = {
   },
 
   projectManagerUser: {
-    username: 'project.manager@gla.com',
+    username: 'project.manager',
     password: process.env.ADMIN_PASSWORD
   },
 
   readonlyUser: {
-    username: 'testreadonly@gla.com',
+    username: 'testreadonly',
     password: process.env.ADMIN_PASSWORD
   },
 
   readonlyGlaUser: {
-    username: 'readonly.gla@gla.com',
+    username: 'readonly.gla',
     password: process.env.ADMIN_PASSWORD
   },
 
   progAdmin: {
-    username: 'programme.admin@gla.com',
+    username: 'programme.admin',
     password: process.env.ADMIN_PASSWORD
   },
 
   financeUser: {
-    username: 'finance.gla@gla.com',
+    username: 'finance.gla',
     password: process.env.ADMIN_PASSWORD
   },
 
   seniorProjectManagerUser: {
-    username: 'senior.pm@gla.com',
+    username: 'senior.pm',
     password: process.env.ADMIN_PASSWORD
   },
 
   lesserSeniorProjectManagerUser: {
-    username: 'less_senior_pm@gla.com',
+    username: 'less_senior_pm',
     password: process.env.ADMIN_PASSWORD
   },
 
   multiOrgSpmUser: {
-    username: 'spm.multi.managing.orgs@gla.com',
+    username: 'spm.multi.managing.orgs',
     password: process.env.ADMIN_PASSWORD
   },
 
   multiOrgPmUser: {
-    username: 'pm.multi.managing.orgs@gla.com',
+    username: 'pm.multi.managing.orgs',
     password: process.env.ADMIN_PASSWORD
   },
 
   expiredPasswordUser: {
-    username: 'expired_pw@gla.ops',
+    username: 'expired_pw',
     password: process.env.ADMIN_PASSWORD
   },
 
   expiredPasswordUserMixedCase: {
-    username: 'exPired_Pw@gla.ops',
+    username: 'exPired_Pw',
     password: process.env.ADMIN_PASSWORD
   },
 
@@ -155,37 +155,37 @@ const config = {
   },
 
   cultureSPM: {
-    username: 'culture.spm@gla.com',
+    username: 'culture.spm',
     password: process.env.ADMIN_PASSWORD
   },
 
   regenAdmin: {
-    username: 'regen.admin@gla.com',
+    username: 'regen.admin',
     password: process.env.ADMIN_PASSWORD
   },
 
   cultureAdmin: {
-    username: 'culture.admin@gla.com',
+    username: 'culture.admin',
     password: process.env.ADMIN_PASSWORD
   },
 
   hnlAdmin: {
-    username: 'hnl.admin@gla.com',
+    username: 'hnl.admin',
     password: process.env.ADMIN_PASSWORD
   },
 
   regenSPM: {
-    username: 'regen.spm@gla.com',
+    username: 'regen.spm',
     password: process.env.ADMIN_PASSWORD
   },
 
   regenPM: {
-    username: 'regen.pm@gla.com',
+    username: 'regen.pm',
     password: process.env.ADMIN_PASSWORD
   },
 
   regenRP: {
-    username: 'regen.rp@gla.com',
+    username: 'regen.rp',
     password: process.env.ADMIN_PASSWORD
   },
 
@@ -195,103 +195,103 @@ const config = {
   },
 
   businessNoAllocationsRP: {
-    username: 'other.rp@gla.com',
+    username: 'other.rp',
     password: process.env.ADMIN_PASSWORD
   },
 
   boroughRP: {
-    username: 'borough.rp@gla.com',
+    username: 'borough.rp',
     password: process.env.ADMIN_PASSWORD
   },
 
   projectEditor: {
-    username: 'project.editor@gla.com',
+    username: 'project.editor',
     password: process.env.ADMIN_PASSWORD
   },
 
   singleOrgProfileCreator: {
-    username: 'org.profile.creator@gla.ops',
+    username: 'org.profile.creator',
     password: process.env.ADMIN_PASSWORD
   },
 
    techAdminUser: {
-      username: 'tech.support@gla.ops',
+      username: 'tech.support',
       password: process.env.ADMIN_PASSWORD,
       firstName: 'Tech',
       lastName: 'Admin'
     },
 
   techOrgAdminUser: {
-    username: 'tech.orgadmin@gla.ops',
+    username: 'tech.orgadmin',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Tech',
     lastName: 'OrgAdmin'
   },
 
   skillsRP: {
-    username: 'skillsapproved@gla.com',
+    username: 'skillsapproved',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Skills',
     lastName: 'Approved'
   },
   skills2RP: {
-    username: 'skills2approved@gla.com',
+    username: 'skills2approved',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Skills2',
     lastName: 'Approved'
   },
   skillsAdmin: {
-    username: 'skills.admin@gla.com',
+    username: 'skills.admin',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Skills',
     lastName: 'Admin'
   },
   skillsSPM: {
-    username: 'skills.spm@gla.com',
+    username: 'skills.spm',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Skills',
     lastName: 'SPM'
   },
   mopacRP: {
-    username: 'mopac.rp@gla.com',
+    username: 'mopac.rp',
     password: process.env.ADMIN_PASSWORD
   },
   mopacAdmin: {
-    username: 'mopac.admin@gla.com',
+    username: 'mopac.admin',
     password: process.env.ADMIN_PASSWORD
   },
   mopacPM: {
-    username: 'mopac.pm@gla.com',
+    username: 'mopac.pm',
     password: process.env.ADMIN_PASSWORD
   },
   mopacSPM: {
-    username: 'mopac.spm@gla.com',
+    username: 'mopac.spm',
     password: process.env.ADMIN_PASSWORD
   },
   multiRoleRP: {
-    username: 'multi_role_rp_org@gla.org',
+    username: 'multi_role_rp_org',
     password: process.env.ADMIN_PASSWORD
   },
   multiRoleGLA: {
-    username: 'multi_role_org@gla.org',
+    username: 'multi_role_org',
     password: process.env.ADMIN_PASSWORD
   },
   northWest: {
-    username: 'north.west@gla.com',
+    username: 'north.west',
     password: process.env.ADMIN_PASSWORD
   },
   northEast: {
-    username: 'north.east@gla.com',
+    username: 'north.east',
     password: process.env.ADMIN_PASSWORD
   },
   externalRequestingTeamAccessUser: {
-    username: 'external.requesting.team.access@gla.ops',
+    username: 'external.requesting.team.access',
     password: process.env.ADMIN_PASSWORD
   },
 
   //This user is always approved. Don't change status in tests
   internalBlockEditor: {
-    username: 'internalblock.editor@gla.com',
+    username: 'internalblock.editor',
     password: process.env.ADMIN_PASSWORD,
     firstName: 'Internal Block',
     lastName: 'Editor',

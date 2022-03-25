@@ -187,7 +187,7 @@ public class ProgrammeAPI {
         return service.getDefaultAccess(id);
     }
 
-    @PreAuthorize("authentication.name == 'system.scheduler@gla.org' or hasRole('OPS_ADMIN')")
+    @PreAuthorize("authentication.name == 'system.scheduler' or hasRole('OPS_ADMIN')")
     @RequestMapping(value = "/runProgrammeScheduler/onDate", method = RequestMethod.PUT)
     public void runProgrammeScheduler(@RequestParam(name = "datetime") String datetime) {
         DateTimeFormatter dtf = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
@@ -195,7 +195,7 @@ public class ProgrammeAPI {
         service.scheduleProgammeEnabled(targetDatetime);
     }
 
-    @PreAuthorize("authentication.name == 'system.scheduler@gla.org' or hasRole('OPS_ADMIN')")
+    @PreAuthorize("authentication.name == 'system.scheduler' or hasRole('OPS_ADMIN')")
     @RequestMapping(value = "/programmes/{id}/openCloseDates", method = RequestMethod.PUT)
     public void setProgrammeScheduledDates(@PathVariable Integer id,
                                            @RequestParam(name = "open", required = false) String openDatestring,

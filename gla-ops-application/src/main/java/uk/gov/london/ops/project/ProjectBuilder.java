@@ -163,11 +163,11 @@ public class ProjectBuilder {
         }
         try {
             if (orgId == Organisation.TEST_ORG_ID_1) {
-                userBuilder.withLoggedInUser("test.glaops@gmail.com");
+                userBuilder.withLoggedInUser("test.glaops");
             } else if (orgId == MOPAC_TEST_ORG_1) {
-                userBuilder.withLoggedInUser("mopac.rp@gla.com");
+                userBuilder.withLoggedInUser("mopac.rp");
             } else if (orgId == SKILLS_TEST_ORG_1) {
-                userBuilder.withLoggedInUser("skillsapproved@gla.com");
+                userBuilder.withLoggedInUser("skillsapproved");
             } else {
                 userBuilder.withLoggedInUser(DATA_INITIALISER_USER);
             }
@@ -228,9 +228,9 @@ public class ProjectBuilder {
         detailsBlock.setSiteOwner("Mr M Smith");
         detailsBlock.setDescription("Planned development of a 21 houses.");
         detailsBlock.setMainContact("User Alpha");
-        detailsBlock.setMainContactEmail("user.alpha@gla.org");
+        detailsBlock.setMainContactEmail("user.alpha");
         detailsBlock.setSecondaryContact("User2 Alpha");
-        detailsBlock.setSecondaryContactEmail("user2.alpha@gla.org");
+        detailsBlock.setSecondaryContactEmail("user2.alpha");
     }
 
     public Project createPopulatedTestProject(String title, Integer programmeId, Template template, int org, int initialStatus) {
@@ -281,7 +281,7 @@ public class ProjectBuilder {
         projectHistory.setTransition(ProjectTransition.Submitted);
         projectHistory.setComments("Submitted");
         projectHistory.setCreatedOn(dateTime.minus(3, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("test.admin@gla.com");
+        projectHistory.setCreatedBy("test.admin");
         projectHistoryRepository.save(projectHistory);
 
         projectHistory = new ProjectHistoryEntity();
@@ -289,7 +289,7 @@ public class ProjectBuilder {
         projectHistory.setTransition(ProjectTransition.Withdrawn);
         projectHistory.setComments("Returned to Draft");
         projectHistory.setCreatedOn(dateTime.minus(2, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("test.admin@gla.com");
+        projectHistory.setCreatedBy("test.admin");
         projectHistoryRepository.save(projectHistory);
 
         projectHistory = new ProjectHistoryEntity();
@@ -297,7 +297,7 @@ public class ProjectBuilder {
         projectHistory.setTransition(ProjectTransition.Submitted);
         projectHistory.setComments("Submitted Again");
         projectHistory.setCreatedOn(dateTime.minus(1, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("user.alpha@gla.org");
+        projectHistory.setCreatedBy("user.alpha");
         projectHistoryRepository.save(projectHistory);
     }
 
@@ -780,7 +780,7 @@ public class ProjectBuilder {
         projectHistory.setTransition(ProjectTransition.Assess);
         projectHistory.setComments("Set to assess");
         projectHistory.setCreatedOn(dateTime.minus(3, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("test.admin@gla.com");
+        projectHistory.setCreatedBy("test.admin");
         projectHistoryRepository.save(projectHistory);
         projectRepository.save(project);
     }
@@ -791,7 +791,7 @@ public class ProjectBuilder {
         project.setFirstApproved(project.getCreatedOn());
         for (NamedProjectBlock block : project.getProjectBlocks()) {
             if (block.getBlockStatus().equals(ProjectBlockStatus.UNAPPROVED)) {
-                block.approve("test.admin@gla.com", now);
+                block.approve("test.admin", now);
                 block.setLockDetails(null);
             }
         }
@@ -804,7 +804,7 @@ public class ProjectBuilder {
             projectHistory.setComments("Approved");
             projectHistory.setDescription("Project saved to active");
             projectHistory.setCreatedOn(project.getFirstApproved());
-            projectHistory.setCreatedBy("user.alpha@gla.org");
+            projectHistory.setCreatedBy("user.alpha");
             projectHistoryRepository.save(projectHistory);
         }
         projectRepository.save(project);
@@ -843,13 +843,13 @@ public class ProjectBuilder {
         projectHistory.setTransition(ApprovalRequested);
         projectHistory.setComments("Approval Requested");
         projectHistory.setCreatedOn(environment.now().minus(2, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("test.admin@gla.com");
+        projectHistory.setCreatedBy("test.admin");
         projectHistoryRepository.save(projectHistory);
     }
 
     public void cloneBlock(Project project, ProjectBlockType type) {
         NamedProjectBlock singleBlockByType = project.getSingleBlockByType(type);
-        NamedProjectBlock clone = singleBlockByType.cloneBlock("test.admin@gla.com", environment.now());
+        NamedProjectBlock clone = singleBlockByType.cloneBlock("test.admin", environment.now());
         project.addBlockToProject(clone);
         clone.setVersionNumber(2);
 

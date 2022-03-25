@@ -114,7 +114,7 @@ public class OrganisationGroupAPI {
         return organisationGroupService.update(id, organisationGroup);
     }
 
-    @PreAuthorize("authentication.name == 'test.admin@gla.com'")
+    @PreAuthorize("authentication.name == 'test.admin'")
     @RequestMapping(value = "/organisationGroups/{id}", method = RequestMethod.DELETE)
     @ApiOperation("deletes an organisation group")
     public void delete(@PathVariable Integer id) {

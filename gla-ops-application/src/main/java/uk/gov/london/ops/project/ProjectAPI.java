@@ -306,14 +306,14 @@ public class ProjectAPI {
         return service.getProjectHistory(id);
     }
 
-    @PreAuthorize("authentication.name == 'test.admin@gla.com'")
+    @PreAuthorize("authentication.name == 'test.admin'")
     @RequestMapping(value = "/projects/{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable Integer id) {
         service.deleteProject(id);
         return "Deleted project " + id;
     }
 
-    @PreAuthorize("authentication.name == 'test.admin@gla.com'")
+    @PreAuthorize("authentication.name == 'test.admin'")
     @RequestMapping(value = "/projects/{id}/removeLocks", method = RequestMethod.DELETE)
     public String deleteAllLocksOnProject(@PathVariable Integer id) {
         Project project = service.get(id);
@@ -463,7 +463,7 @@ public class ProjectAPI {
         service.deleteUnapprovedBlock(projectId, blockId);
     }
 
-    @PreAuthorize("authentication.name == 'test.admin@gla.com'")
+    @PreAuthorize("authentication.name == 'test.admin'")
     @RequestMapping(value = "/projects/{projectId}/blocks/{blockId}/lastModified", method = RequestMethod.PUT)
     public void updateProjectBlockLastModified(@PathVariable Integer projectId,
                                                @PathVariable Integer blockId,

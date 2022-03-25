@@ -122,7 +122,7 @@ public class SkillsPaymentScheduler {
                     lock.unlock();
                 }
                 UserEntity opsAdmin = environment.isTestEnvironment()
-                        ? userService.get("test.admin@gla.com") : userService.get("ops@london.gov.uk");
+                        ? userService.get("test.admin") : userService.get("ops.uk");
                 notificationService.createNotificationForUser(PaymentSchedulerSummary, opsAdmin, model, opsAdmin.getUsername());
             }
         } else {

@@ -20,7 +20,7 @@ import java.util.Set;
 public interface User {
 
     String SYSTEM_DEACTIVATED_USERNAME = "System";
-    String SGW_SYSTEM_USER = "ilr.system@gla.ops";
+    String SGW_SYSTEM_USER = "ilr.system";
 
     String getUsername();
 

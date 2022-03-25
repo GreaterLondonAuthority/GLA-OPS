@@ -51,27 +51,27 @@ public class TestUserDataInitialiser implements DataInitialiserModule {
 
     @Override
     public void addUsers() {
-        userBuilder.createDisabledUser("Disabled", "User", "disabled_user@gla.ops");
+        userBuilder.createDisabledUser("Disabled", "User", "disabled_user");
         userBuilder.createTestUser("HNL", "Registration Approver",
-                "hnl.registration.approver@gla.com", GLA_HNL_ORG_ID, true, GLA_REGISTRATION_APPROVER);
+                "hnl.registration.approver", GLA_HNL_ORG_ID, true, GLA_REGISTRATION_APPROVER);
         userBuilder.createTestUser("programme", "admin",
-                "programme.admin@gla.com", GLA_HNL_ORG_ID, true, GLA_PROGRAMME_ADMIN);
-        userBuilder.createTestUser("Disabled", "User", "user_to_be_disabled@gla.ops", "FAKE1", true, PROJECT_EDITOR);
-        userBuilder.createTestUser("ExpiredPW", "User", "expired_pw@gla.ops", "FAKE1", true, PROJECT_EDITOR);
-        userBuilder.createTestUser("LongExpiredPW", "User", "long_expired_pw@gla.ops", "FAKE1", true, PROJECT_EDITOR);
-        userBuilder.createTestUser("Cromwood", "editor", "cromwood.editor@gla.com", CROMWOOD_ORG_ID, true, PROJECT_EDITOR);
-        userBuilder.createTestUser("Without", "Role", "without.role@gla.com", null, false, "",
+                "programme.admin", GLA_HNL_ORG_ID, true, GLA_PROGRAMME_ADMIN);
+        userBuilder.createTestUser("Disabled", "User", "user_to_be_disabled", "FAKE1", true, PROJECT_EDITOR);
+        userBuilder.createTestUser("ExpiredPW", "User", "expired_pw", "FAKE1", true, PROJECT_EDITOR);
+        userBuilder.createTestUser("LongExpiredPW", "User", "long_expired_pw", "FAKE1", true, PROJECT_EDITOR);
+        userBuilder.createTestUser("Cromwood", "editor", "cromwood.editor", CROMWOOD_ORG_ID, true, PROJECT_EDITOR);
+        userBuilder.createTestUser("Without", "Role", "without.role", null, false, "",
             false);
-        userBuilder.createTestUser("Multi", "MO SPM", "spm.multi.managing.orgs@gla.com", GLA_CULTURE_ORG_ID, true, GLA_SPM);
-        UserEntity multiMOUser = userService.get("spm.multi.managing.orgs@gla.com");
+        userBuilder.createTestUser("Multi", "MO SPM", "spm.multi.managing.orgs", GLA_CULTURE_ORG_ID, true, GLA_SPM);
+        UserEntity multiMOUser = userService.get("spm.multi.managing.orgs");
         multiMOUser.addApprovedRole(GLA_SPM, organisationService.findOne(GLA_SKILLS_ORG_ID));
         userService.saveUser(multiMOUser);
-        userBuilder.createTestUser("Multi", "MO PM", "pm.multi.managing.orgs@gla.com", GLA_CULTURE_ORG_ID, true, GLA_PM);
-        UserEntity multiMOUserPM = userService.get("pm.multi.managing.orgs@gla.com");
+        userBuilder.createTestUser("Multi", "MO PM", "pm.multi.managing.orgs", GLA_CULTURE_ORG_ID, true, GLA_PM);
+        UserEntity multiMOUserPM = userService.get("pm.multi.managing.orgs");
         multiMOUserPM.addApprovedRole(GLA_PM, organisationService.findOne(GLA_SKILLS_ORG_ID));
         userService.saveUser(multiMOUserPM);
-        expireUserPassword("expired_pw@gla.ops", 1);
-        expireUserPassword("long_expired_pw@gla.ops", 370);
+        expireUserPassword("expired_pw", 1);
+        expireUserPassword("long_expired_pw", 370);
 
         setupTestUsersFinanceThresholds();
     }
@@ -84,17 +84,17 @@ public class TestUserDataInitialiser implements DataInitialiserModule {
     }
 
     private void setupTestUsersFinanceThresholds() {
-        userBuilder.createSpendThreshold("less_senior_pm@gla.com", GLA_HNL_ORG_ID, 1000L, null, "");
-        userBuilder.createSpendThreshold("less_senior_pm@gla.com", GLA_HNL_ORG_ID, 1000L, null, "");
-        userBuilder.createSpendThreshold("senior.pm@gla.com", GLA_HNL_ORG_ID, 1000000L, null, "test.admin@gla.com");
-        userBuilder.createSpendThreshold("user.alpha@gla.org", GLA_HNL_ORG_ID, 5000000L, 4000000L, "user.alpha@gla.org");
-        userBuilder.createSpendThreshold("junk.user@gla.org", GLA_HNL_ORG_ID, 5000000L, 4000000L, "junk.user@gla.org");
-        userBuilder.createSpendThreshold("test.admin@gla.com", GLA_HNL_ORG_ID, 4000000L, null, null);
-        userBuilder.createSpendThreshold("hnl.admin@gla.com", GLA_HNL_ORG_ID, 4000000L, 5000000L, "user.alpha@gla.org");
-        userBuilder.createSpendThreshold("hnl.admin@gla.com", GLA_HNL_ORG_ID, 4000000L, 5000000L, "user.alpha@gla.org");
-        userBuilder.createSpendThreshold("skills.admin@gla.com", GLA_SKILLS_ORG_ID, 30000000L, null, null);
-        userBuilder.createSpendThreshold("test.admin@gla.com", GLA_SKILLS_ORG_ID, 30000000L, null, null);
-        userBuilder.createSpendThreshold("test.admin@gla.com", Organisation.GLA_REGEN_ORG_ID, 4000000L, null, null);
+        userBuilder.createSpendThreshold("less_senior_pm", GLA_HNL_ORG_ID, 1000L, null, "");
+        userBuilder.createSpendThreshold("less_senior_pm", GLA_HNL_ORG_ID, 1000L, null, "");
+        userBuilder.createSpendThreshold("senior.pm", GLA_HNL_ORG_ID, 1000000L, null, "test.admin");
+        userBuilder.createSpendThreshold("user.alpha", GLA_HNL_ORG_ID, 5000000L, 4000000L, "user.alpha");
+        userBuilder.createSpendThreshold("junk.user", GLA_HNL_ORG_ID, 5000000L, 4000000L, "junk.user");
+        userBuilder.createSpendThreshold("test.admin", GLA_HNL_ORG_ID, 4000000L, null, null);
+        userBuilder.createSpendThreshold("hnl.admin", GLA_HNL_ORG_ID, 4000000L, 5000000L, "user.alpha");
+        userBuilder.createSpendThreshold("hnl.admin", GLA_HNL_ORG_ID, 4000000L, 5000000L, "user.alpha");
+        userBuilder.createSpendThreshold("skills.admin", GLA_SKILLS_ORG_ID, 30000000L, null, null);
+        userBuilder.createSpendThreshold("test.admin", GLA_SKILLS_ORG_ID, 30000000L, null, null);
+        userBuilder.createSpendThreshold("test.admin", Organisation.GLA_REGEN_ORG_ID, 4000000L, null, null);
     }
 
     @Override

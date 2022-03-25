@@ -90,56 +90,56 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
             name: 'opsAdmin',
             model: undefined,
             label: 'OPS Admin',
-            key: 'ROLE_OPS_ADMIN',
+            key: '  ',
           }, {
             checkedClass: 'glaOrgAdmin',
             ariaLabel: 'GLA Organisation Admin',
             name: 'glaOrgAdmin',
             model: undefined,
             label: 'GLA Organisation Admin',
-            key: 'ROLE_GLA_ORG_ADMIN',
+            key: '',
           }, {
             checkedClass: 'seniorProjectManager',
             ariaLabel: 'Senior Project Manager',
             name: 'seniorProjectManager',
             model: undefined,
             label: 'Senior Project Manager',
-            key: 'ROLE_GLA_SPM',
+            key: '',
           }, {
             checkedClass: 'projectManager',
             ariaLabel: 'Project Manager',
             name: 'projectManager',
             model: undefined,
             label: 'Project Manager',
-            key: 'ROLE_GLA_PM',
+            key: '',
           }, {
             checkedClass: 'registrationApprover',
             ariaLabel: 'Registration Approver',
             name: 'registrationApprover',
             model: undefined,
             label: 'Registration Approver',
-            key: 'ROLE_GLA_REGISTRATION_APPROVER',
+            key: '',
           },{
             checkedClass: 'programmeAdmin',
             ariaLabel: 'Programme Admin',
             name: 'programmeAdmin',
             model: undefined,
             label: 'Programme Admin',
-            key: 'ROLE_GLA_PROGRAMME_ADMIN',
+            key: '',
           }, {
             checkedClass: 'glaFinance',
             ariaLabel: 'GLA Finance',
             name: 'glaFinance',
             model: undefined,
             label: 'GLA Finance',
-            key: 'ROLE_GLA_FINANCE',
+            key: '',
           }, {
             checkedClass: 'glaReadOnly',
             ariaLabel: 'GLA Read Only',
             name: 'glaReadOnly',
             model: undefined,
             label: 'GLA Read Only',
-            key: 'ROLE_GLA_READ_ONLY',
+            key: '',
           }, {
             checkedClass: 'noRoles',
             ariaLabel: 'No Roles',
@@ -153,7 +153,7 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
           name: 'technicalAdmin',
           model: undefined,
           label: 'Technical Admin',
-          key: 'ROLE_TECH_ADMIN',
+          key: '',
         }]);
       }
       res = _.concat(res,
@@ -163,21 +163,21 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
           name: 'orgAdmin',
           model: undefined,
           label: 'Organisation Admin',
-          key: 'ROLE_ORG_ADMIN',
+          key: '',
         }, {
           checkedClass: 'projectEditor',
           ariaLabel: 'Project Editor',
           name: 'projectEditor',
           model: undefined,
           label: 'Project Editor',
-          key: 'ROLE_PROJECT_EDITOR',
+          key: '',
         }, {
           checkedClass: 'projectReader',
           ariaLabel: 'Project Reader',
           name: 'projectReader',
           model: undefined,
           label: 'Project Reader',
-          key: 'ROLE_PROJECT_READER',
+          key: '',
         }
       ]);
       return res;
@@ -443,7 +443,7 @@ function UserService($http, config, $rootScope, $sessionStorage, $state, Session
     },
 
     canChangeAuthorisedSignatory(role){
-      if (role != null && ( role == 'ROLE_PROJECT_EDITOR' || role == 'ROLE_PROJECT_READER' || role == 'ROLE_ORG_ADMIN' )) {
+      if (role != null && ( role == '' || role == '' || role == '' )) {
         return true
       }
       return  false

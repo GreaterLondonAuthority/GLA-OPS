@@ -1,1 +1,0 @@
-select  distinct organisation_id, programme_id, pg.name programme, sum(amount) total_provided_budget  from organisation_budget_entry ob inner join programme pg on  ob.programme_id = pg.id   group by organisation_id, programme_id, pg.name order by 1,2

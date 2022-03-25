@@ -1,5 +1,0 @@
-select distinct  pb.project_id,  inc.year inc_year, sum(coalesce(inc.units,0)) inc_units, sum(coalesce(inc.units,0) * coalesce(ten.grant_per_unit,0)) inc_grant
-from project_block pb
-inner join tenure_and_units ten on pb.id = ten.block_id
-inner join indicative_tenure_value inc on ten.id = inc.tenure_units_id
-where pb.block_type = 'Indicative'  and pb.reporting_version = 'true' and pb.block_status <> 'UNAPPROVED' group by  pb.project_id,  inc.year

@@ -1,8 +1,0 @@
-select distinct og.*, pg.name programme, m_org.name managing_organisation, l_org.name lead_organisation, d_org.name developing_organisation, pj.id project_id
-from organisation_group og
-left join programme pg on og.programme_id = pg.id
-left join organisation m_org on og.managing_organisation_id = m_org.id
-left join organisation l_org on og.lead_organisation_id = l_org.id
-left join organisation_group_organisation ogo on og.id = ogo.organisation_group_id
-left join organisation d_org on ogo.organisation_id = d_org.id
-inner join project pj on ogo.organisation_id = pj.org_id

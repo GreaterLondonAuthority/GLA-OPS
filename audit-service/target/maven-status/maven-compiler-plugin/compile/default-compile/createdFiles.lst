@@ -1,7 +1,0 @@
-uk\gov\london\ops\audit\implementation\AuditRepository.class
-uk\gov\london\ops\audit\implementation\AuditableActivityQueryBuilder.class
-uk\gov\london\ops\audit\implementation\AuditActivityDataInitialiser.class
-uk\gov\london\ops\audit\AuditServiceImpl.class
-uk\gov\london\ops\audit\QAuditableActivityEntity.class
-uk\gov\london\ops\audit\AuditableActivityEntity.class
-uk\gov\london\ops\audit\AuditAPI.class

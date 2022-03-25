@@ -1,5 +1,0 @@
-#Mon Oct 18 15:56:54 BST 2021
-module-resource*?\:checkstyle-suppressions.xml=1110E5C0DB682A99A7622D25070778F667B78A87
-module-resource*?\:checkstyle-xpath-suppressions.xml=B5221F1DDBE676905D565E9E1AD9F0618BC192C9
-C\:\\Projects\\GLA\\GlaRefresh2021\\assessment-service-client\\src\\main\\java\\uk\\gov\\london\\ops\\assessment\\AssessmentService.java=1634559737988
-configuration*?=A638B5450D0CA42D291FB6505B7302DBB69B7A41

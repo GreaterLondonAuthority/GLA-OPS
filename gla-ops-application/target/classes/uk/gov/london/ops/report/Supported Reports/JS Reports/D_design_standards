@@ -1,4 +1,0 @@
-select pb.project_id,  pb.block_status ds_block_status, pb.last_modified ds_last_modified,  ds.meeting_design_guide  ds_meeting_design_guide, ds.reason_not_meeting_design_guide   ds_reason_not_meeting_design_guide
-from project_block pb
-inner join design_standards ds on pb.id = ds.id
-where pb.reporting_version = 'true'

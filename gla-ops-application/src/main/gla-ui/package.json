@@ -57,7 +57,7 @@
     "jsoneditor": "^7.5.0",
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15",
-    "moment": "^2.15.1",
+    "moment": "^2.29.2",
     "ng-device-detector": "^3.0.1",
     "ngstorage": "^0.3.11",
     "ngx-cacheable": "^1.4.2",

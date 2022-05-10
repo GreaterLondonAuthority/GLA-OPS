@@ -33,7 +33,7 @@ public class DeliveryPartnersTemplateBlock extends TemplateBlock {
     private String entityName;
 
     @Column(name = "has_delivery_partners_title")
-    private String hasDeliveryPartnersTitle;
+    private String hasDeliveryPartnersTitle = "Does this project have delivery partners?";
 
     @Column(name = "question2")
     private String question2;
@@ -60,16 +60,16 @@ public class DeliveryPartnersTemplateBlock extends TemplateBlock {
     private Set<DeliverableType> availableDeliverableTypes = new HashSet<>();
 
     @Column(name = "deliverable_name")
-    private String deliverableName;
+    private String deliverableName = "PROVISION";
 
     @Column(name = "quantity_name")
-    private String quantityName;
+    private String quantityName = "NUMBER OF LEARNERS";
 
     @Column(name = "value_name")
-    private String valueName;
+    private String valueName = "AMOUNT ALLOCATED";
 
     @Column(name = "feeName")
-    private String feeName;
+    private String feeName = "RETENTION FEE";
 
     @Column(name = "show_deliverables")
     private boolean showDeliverables;
@@ -81,25 +81,25 @@ public class DeliveryPartnersTemplateBlock extends TemplateBlock {
     private boolean showOrganisationType = false;
 
     @Transient
-    private String organisationTypeColumnName;
+    private String organisationTypeColumnName = "ORG TYPE";
 
     @Transient
-    private String organisationNameColumnText;
+    private String organisationNameColumnText = "ORG NAME";
 
     @Transient
-    private String roleColumnText;
+    private String roleColumnText = "ROLE";
 
     @Transient
     private boolean showRoleColumn = false;
 
     @Transient
-    private String ukprnColumnText;
+    private String ukprnColumnText = "UKRPRN";
 
     @Transient
     private boolean showUkprnColumn = false;
 
     @Transient
-    private String contractValueColumnText;
+    private String contractValueColumnText = "CONTRACT VALUE";
 
     @Transient
     private boolean showContractValueColumn = false;

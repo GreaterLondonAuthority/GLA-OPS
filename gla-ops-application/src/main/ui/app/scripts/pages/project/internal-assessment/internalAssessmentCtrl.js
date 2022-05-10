@@ -9,8 +9,9 @@
 import './assessmentTypeModal.js'
 
 class InternalAssessmentCtrl {
-  constructor($state, project, block, template, ProjectBlockService, AssessmentService, UserService, assessmentTemplates, AssessmentTypeModal, SessionService) {
+  constructor($state, project, block, template, ProjectBlockService, AssessmentService, UserService, assessmentTemplates, assessments, AssessmentTypeModal, SessionService) {
     this.assessmentTemplates = assessmentTemplates;
+    this.assessments = assessments;
     this.$state = $state;
     this.project = project;
     this.block = block;
@@ -28,6 +29,7 @@ class InternalAssessmentCtrl {
     if(this.UserService.hasPermission('assessment.manage') && this.assessmentTemplates.length){
       this.createBtnName = 'START ASSESSMENT'
     }
+    this.infoMessage = this.block.infoMessage
   }
 
   back() {
@@ -58,7 +60,7 @@ class InternalAssessmentCtrl {
     let assessment = {
       assessmentTemplate: assessmentTemplate
     };
-    return this.AssessmentService.saveAssessment(this.project.id, assessment).then(resp => {
+    return this.AssessmentService.createAssessment(this.project.id, this.block.id, assessment).then(resp => {
       // Clear session data to make 'BACK' navigation work on assessment page all the time.
       this.SessionService.setAssessmentPage(null);
       return this.$state.go('assessment-edit', {
@@ -75,7 +77,7 @@ class InternalAssessmentCtrl {
 
 }
 
-InternalAssessmentCtrl.$inject = ['$state', 'project', 'block', 'template', 'ProjectBlockService', 'AssessmentService', 'UserService', 'assessmentTemplates', 'AssessmentTypeModal', 'SessionService'];
+InternalAssessmentCtrl.$inject = ['$state', 'project', 'block', 'template', 'ProjectBlockService', 'AssessmentService', 'UserService', 'assessmentTemplates', 'assessments', 'AssessmentTypeModal', 'SessionService'];
 
 angular.module('GLA')
   .controller('InternalAssessmentCtrl', InternalAssessmentCtrl);

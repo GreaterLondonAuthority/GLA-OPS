@@ -1,0 +1,78 @@
+<div class="assign-project-dialog">
+
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1 *ngIf="!unassign">Assign Project</h1>
+    <h1 *ngIf="unassign">Unassign Project</h1>
+  </div>
+
+  <div *ngIf="managingOrgIds.length > 1 && !unassign" class="warning-msg">
+    <p>Warning: you have selected projects from more than one managing organisation, so the list of users below is limited to those with eligible roles in all of those managing organisations.</p>
+  </div>
+
+  <div *ngIf="unassign" class="info-msg">
+    <span>Deselect the user(s) you want to unassign</span><span *ngIf="projects.length > 1"> from your chosen projects</span>
+  </div>
+
+  <div class="modal-body">
+    <form #modalForm="ngForm" name="modalForm">
+      <div *ngIf="projects.length == 1" class="row form-group">
+        <div class="col-md-4">
+          <label for="projectId">Project ID: </label>
+        </div>
+        <div class="col-md-8">
+          <span id="projectId">{{projects[0].id}}</span>
+        </div>
+      </div>
+
+      <div *ngIf="projects.length == 1" class="row form-group">
+        <div class="col-md-4">
+          <label for="projectTitle">Project title: </label>
+        </div>
+        <div class="col-md-8">
+          <span id="projectTitle">{{projects[0].title}}</span>
+        </div>
+      </div>
+
+      <div *ngIf="projects.length == 1" class="row form-group">
+        <div class="col-md-4">
+          <label for="orgName">Organisation name: </label>
+        </div>
+        <div class="col-md-8">
+          <span id="orgName">{{projects[0].orgName}}</span>
+        </div>
+      </div>
+
+      <div *ngIf="projects.length > 1" class="row form-group">
+        <div class="col-md-4">
+          <label for="orgName">Project Count: </label>
+        </div>
+        <div class="col-md-8">
+          <span id="orgName">{{projects.length}}</span>
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-4">
+          <label for="assignee">Select assignee: </label>
+        </div>
+        <div class="col-md-8">
+          <gla-multi-select id="assignee" [filterDropdownItems]="assignableUsers"></gla-multi-select>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button (click)="save()"  [disabled]="disableSave()" class="btn btn-primary btn-confirm-assign">SAVE</button>
+        <button (click)="activeModal.dismiss()" class="btn btn-secondary">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+</div>

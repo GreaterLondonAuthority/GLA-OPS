@@ -8,13 +8,17 @@
 package uk.gov.london.ops.project.template.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.london.ops.framework.JSONUtils;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @DiscriminatorValue("MILESTONES")
@@ -23,6 +27,11 @@ public class MilestonesTemplateBlock extends TemplateBlock {
     public enum EvidenceApplicability {
         NOT_APPLICABLE, NEW_MILESTONES_ONLY, ALL_MILESTONES
     }
+
+    public enum ShowEvidences {
+        ALWAYS, PAST_MILESTONE_DATE
+    }
+
 
     @JoinData(joinType = Join.JoinType.OneToMany, sourceTable = "template_block", sourceColumn = "id",
             targetColumn = "template_block_id", targetTable = "processing_route", comment = "")
@@ -42,6 +51,9 @@ public class MilestonesTemplateBlock extends TemplateBlock {
     @Column(name = "evidence_applicability")
     @Enumerated(EnumType.STRING)
     private EvidenceApplicability evidenceApplicability;
+
+    @Transient
+    private ShowEvidences showEvidences = ShowEvidences.ALWAYS;
 
     @Column(name = "auto_calculate_milestone_state")
     private boolean autoCalculateMilestoneState;
@@ -70,6 +82,14 @@ public class MilestonesTemplateBlock extends TemplateBlock {
         this.maxEvidenceAttachments = maxEvidenceAttachments;
     }
 
+    public ShowEvidences getShowEvidences() {
+        return showEvidences;
+    }
+
+    public void setShowEvidences(ShowEvidences showEvidences) {
+        this.showEvidences = showEvidences;
+    }
+
     public boolean isDescriptionEnabled() {
         return descriptionEnabled;
     }
@@ -87,6 +107,17 @@ public class MilestonesTemplateBlock extends TemplateBlock {
         return null;
     }
 
+    @JsonIgnore
+    public ProcessingRoute getProcessingRouteByExternalId(Integer externalId) {
+        for (ProcessingRoute pr : processingRoutes) {
+            if (pr.getExternalId().equals(externalId)) {
+                return pr;
+            }
+        }
+        return null;
+    }
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public ProcessingRoute getDefaultProcessingRoute() {
         for (ProcessingRoute processingRoute : processingRoutes) {
             if (ProcessingRoute.DEFAULT_PROCESSING_ROUTE_NAME.equals(processingRoute.getName())) {
@@ -143,6 +174,7 @@ public class MilestonesTemplateBlock extends TemplateBlock {
         cloned.setShowMilestoneStatus(this.getShowMilestoneStatus());
         cloned.setAutoCalculateMilestoneState(this.getAutoCalculateMilestoneState());
         cloned.setEvidenceApplicability(this.getEvidenceApplicability());
+        cloned.setShowEvidences(this.getShowEvidences());
         Set<ProcessingRoute> source = this.getProcessingRoutes();
         for (ProcessingRoute processingRoute : source) {
             ProcessingRoute cloneRoute = new ProcessingRoute();
@@ -166,4 +198,25 @@ public class MilestonesTemplateBlock extends TemplateBlock {
         }
     }
 
+    @Override
+    public boolean shouldSaveBlockData() {
+        return true;
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    void loadBlockData() {
+        MilestonesTemplateBlock data = JSONUtils.fromJSON(this.blockData, MilestonesTemplateBlock.class);
+        if (data != null) {
+            this.showEvidences = data.showEvidences;
+        }
+    }
+
+    @Override
+    public List<TemplateBlockCommand> getTemplateBlockCommands() {
+        List<TemplateBlockCommand> globalCommands = super.getTemplateBlockCommands().stream().collect(Collectors.toList());
+        globalCommands.add(TemplateBlockCommand.EDIT_MILESTONES);
+        return globalCommands;
+    }
 }

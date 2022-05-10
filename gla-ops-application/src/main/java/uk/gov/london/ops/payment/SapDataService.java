@@ -13,16 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import uk.gov.london.ops.framework.Environment;
 import uk.gov.london.ops.audit.AuditService;
-import uk.gov.london.ops.domain.ScheduledTask;
 import uk.gov.london.ops.framework.MapResult;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.framework.scheduledtask.ScheduledTask;
+import uk.gov.london.ops.framework.scheduledtask.ScheduledTaskService;
 import uk.gov.london.ops.payment.implementation.ProjectLedgerEntryMapper;
 import uk.gov.london.ops.payment.implementation.repository.SapDataRepository;
-import uk.gov.london.ops.service.ScheduledTaskService;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.UserServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class SapDataService {
     Environment environment;
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
 
     @Autowired
     AuditService auditService;
@@ -205,7 +205,7 @@ public class SapDataService {
 
     public SapData markSapDataIgnored(Integer sapDataId, Boolean ignore) {
 
-        User user = userService.currentUser();
+        UserEntity user = userService.currentUser();
         SapData sapData = sapDataRepository.findById(sapDataId).orElse(null);
 
         if (sapData == null) {

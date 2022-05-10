@@ -11,8 +11,9 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.stereotype.Repository;
 import uk.gov.london.ops.framework.jpa.ReadOnlyRepository;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.programme.domain.Programme;
 import uk.gov.london.ops.programme.domain.ProgrammeSummary;
 
@@ -23,7 +24,9 @@ import java.util.Collection;
  *
  * @author Steve Leach
  */
-public interface ProgrammeSummaryRepository extends ReadOnlyRepository<ProgrammeSummary, Integer>, QuerydslPredicateExecutor<ProgrammeSummary> {
+@Repository
+public interface ProgrammeSummaryRepository extends ReadOnlyRepository<ProgrammeSummary, Integer>,
+        QuerydslPredicateExecutor<ProgrammeSummary> {
 
     default Page<ProgrammeSummary> findAllEnabled(Collection<Programme.Status> statuses, boolean includeRestricted,
                                                   Pageable pageable) {
@@ -35,11 +38,11 @@ public interface ProgrammeSummaryRepository extends ReadOnlyRepository<Programme
         return findAll(predicate, pageable);
     }
 
-    default Page<ProgrammeSummary> findAll(Collection<Organisation> organisations,
-                                           Collection<Programme.Status> statuses,
-                                           boolean includeRestricted,
-                                           String programmeIdOrName,
-                                           Pageable pageable) {
+    default Page<ProgrammeSummary> findAll(Collection<OrganisationEntity> organisations,
+            Collection<Programme.Status> statuses,
+            boolean includeRestricted,
+            String programmeIdOrName,
+            Pageable pageable) {
         Predicate predicate = new ProgrammeSummaryQueryBuilder()
                 .withIncludeRestricted(includeRestricted)
                 .withOrganisations(organisations)

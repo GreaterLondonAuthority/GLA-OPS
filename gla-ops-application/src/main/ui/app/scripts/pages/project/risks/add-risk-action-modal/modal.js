@@ -23,6 +23,8 @@ function AddRiskActionModal($uibModal) {
         controller: ['$uibModalInstance', function ($uibModalInstance) {
           this.type = type;
           this.dataBlock = riskOrIssue || {};
+          this.btnName = this.dataBlock.id? 'SAVE' : 'CREATE';
+          this.actionType = this.dataBlock.id? 'Update' : 'Add';
           if(type === 'Mitigation') {
           } else if(type === 'Action'){
           }

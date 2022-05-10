@@ -1,0 +1,60 @@
+<div class="table-responsive">
+<table class="table table-hover table-bordered table-default table-with-inputs indicative-grant-requested-table"
+       ng-class="{'edit-mode': !$ctrl.isReadonly}">
+  <thead class="thead-inverse uppercase">
+  <tr>
+    <th>TENURE TYPE</th>
+    <th *ngFor="let grantType of grantTypes">£ {{grantType}} REQUESTED</th>
+    <th>TOTAL UNITS <span *ngIf="!completionOnly">(SOS)</span></th>
+    <th>£ GRANT PER UNIT</th>
+    <th>£ TOTAL SCHEME COSTS (TSC)</th>
+    <th>£ TSC PER UNIT</th>
+    <th>GRANT AS % OF TSC</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let tenure of tenures">
+    <td>{{tenure.name}}</td>
+    <td *ngFor="let grantType of grantTypes">
+      <span *ngIf="readOnly">{{entriesByTenureAndType[tenure.externalId][grantType].value  | number}}</span>
+      <input *ngIf="!readOnly "
+             mask="separator.0"
+             numberType
+             [(ngModel)]="entriesByTenureAndType[tenure.externalId][grantType].value"
+             maxlength="12"
+             [disabled]="zeroGrantRequested"
+             thousandSeparator=","
+             (blur)="onChange.emit()">
+    </td>
+    <td>{{totals.totalsByTenure[tenure.externalId].totalUnits}}</td>
+    <td>{{totals.totalsByTenure[tenure.externalId].grantPerUnit  | number}}</td>
+    <td>
+      <span *ngIf="readOnly">{{entriesByTenureAndType[tenure.externalId]['TOTAL_SCHEME_COST'].value | number}}</span>
+      <input *ngIf="!readOnly"
+             mask="separator.0"
+             numberType
+             [(ngModel)]="entriesByTenureAndType[tenure.externalId]['TOTAL_SCHEME_COST'].value"
+             maxlength="12"
+             thousandSeparator=","
+             (blur)="onChange.emit()">
+    </td>
+    <td>{{totals.totalsByTenure[tenure.externalId].tscPerUnit | number}}</td>
+    <td>{{totals.totalsByTenure[tenure.externalId].grantAsPercentageOfTsc | number}}</td>
+  </tr>
+  <tr class="bolder totals-row">
+    <td>TOTAL</td>
+    <td *ngFor="let grantType of grantTypes">
+      {{totals.totalsByType[grantType] || 0 | number}}
+    </td>
+    <td>
+      <span *ngIf="!completionOnly">{{totals.totalsByType['StartOnSite'] || 0 | number}}</span>
+      <span *ngIf="completionOnly">{{totals.totalsByType['Completion'] || 0 | number}}</span>
+    </td>
+    <td></td>
+    <td>{{totals.totalsByType['TOTAL_SCHEME_COST'] || 0 | number}}</td>
+    <td></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+</div>

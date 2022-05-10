@@ -7,10 +7,10 @@
  */
 package uk.gov.london.ops.framework;
 
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.state.ProjectState;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.domain.UserEntity;
 
 public class BasicTextReplacer {
 
@@ -24,7 +24,7 @@ public class BasicTextReplacer {
     public static final String SUFFIX = "}";
 
 
-    public static String replaceText(String text, User user, Project project, Organisation organisation) {
+    public static String replaceText(String text, UserEntity user, Project project, OrganisationEntity organisation) {
         text = text.replace(PREFIX + PROJECT_ID_SUBSTITUTION + SUFFIX, "P" + project.getId());
         text = text.replace(PREFIX + ORGANISATION_ID_SUBSTITUTION + SUFFIX, String.valueOf(organisation.getId()));
         text = text.replace(PREFIX + ORGANISATION_NAME_SUBSTITUTION + SUFFIX, String.valueOf(organisation.getName()));
@@ -33,7 +33,8 @@ public class BasicTextReplacer {
         return text;
     }
 
-    public static String replaceText(String text, User user, Project project, Organisation organisation, ProjectState fromState, ProjectState toState) {
+    public static String replaceText(String text, UserEntity user, Project project, OrganisationEntity organisation,
+                                     ProjectState fromState, ProjectState toState) {
         text = BasicTextReplacer.replaceText(text, user, project, organisation);
         text = text.replace(PREFIX + FROM_STATUS + SUFFIX, fromState.getStatus());
         text = text.replace(PREFIX + TO_STATUS + SUFFIX, toState.getStatus());

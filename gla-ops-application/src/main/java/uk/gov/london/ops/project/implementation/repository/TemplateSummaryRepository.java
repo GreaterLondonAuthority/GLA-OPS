@@ -23,10 +23,14 @@ public interface TemplateSummaryRepository extends JpaRepository<TemplateSummary
 
     Page<TemplateSummary> findAllByIdOrNameContainingIgnoreCase(Integer id, String name, Pageable pageable);
 
-    Page<TemplateSummary> findAllByIdOrNameContainingIgnoreCaseAndTemplateStatusIn(Integer id, String name, List<Template.TemplateStatus> templateStatusList, Pageable pageable);
+    Page<TemplateSummary> findAllByIdOrNameContainingIgnoreCaseAndTemplateStatusIn(Integer id,
+                                                                                   String name,
+                                                                                   List<Template.TemplateStatus> templateStatuses,
+                                                                                   Pageable pageable);
 
-    @Query(value = "select t.id from template t inner join programme_template pt on t.id = pt.template_id " +
-            "inner join programme p on p.id = pt.programme_id where p.id = ?1 or lower(p.name) like concat('%', ?2, '%')",nativeQuery = true)
+    @Query(value = "select t.id from template t inner join programme_template pt on t.id = pt.template_id "
+            + "inner join programme p on p.id = pt.programme_id where p.id = ?1 or lower(p.name) like concat('%', ?2, '%')",
+            nativeQuery = true)
     Set<Integer> findAllByProgrammeIdOrName(Integer id, String name);
 
     Page<TemplateSummary> findByIdIn(Set<Integer> templateIds, Pageable pageable);

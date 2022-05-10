@@ -2,17 +2,16 @@
 <gla-page-header (on-back)="$ctrl.back()" header="Audit History"></gla-page-header>
 
 
-  <well class="row search-container mbottom20">
+  <gla-well class="row search-container mbottom20">
 
     <div class="col-xs-12 col-md-5 search-column">
-      <div class="text-align-left">Search</div>
-      <search-field on-clear="$ctrl.clearSearchText()"
-                    on-search="$ctrl.search()"
-                    on-select="$ctrl.select($ctrl.selectedSearchOption)"
-                    options="$ctrl.searchOptions"
-                    reset="$ctrl.resetSearch"
-                    search-text="$ctrl.searchText"
-                    selected-option="$ctrl.selectedSearchOption"></search-field>
+      <gla-search-field [options]="$ctrl.searchOptions"
+                        [(selected-option)]="$ctrl.selectedSearchOption"
+                        [(search-text)]="$ctrl.searchText"
+                        (on-select)="$ctrl.select($ctrl.selectedSearchOption)"
+                        (on-search)="$ctrl.search()"
+                        (on-clear)="$ctrl.clearSearchText()"
+                        (reset)="$ctrl.resetSearch"></gla-search-field>
     </div>
 
     <div class="col-xs-12 col-sm-6 col-md-4 no-padding">
@@ -21,7 +20,7 @@
       </div>
       <div class="">
         <div class="col-xs-6 date-picker">
-          <span class="input-group">
+          <div class="input-group">
             <input aria-label="From Date"
                    class="form-control date-input"
                    close-text="Close"
@@ -39,10 +38,10 @@
             <span class="input-group-btn">
               <button class="btn btn-default" ng-click="fromDateOpened = !fromDateOpened" type="button"><i class="glyphicon glyphicon-calendar"></i></button>
             </span>
-          </span>
+          </div>
         </div>
         <div class="col-xs-6 date-picker">
-          <span class="input-group">
+          <div class="input-group">
             <input aria-label="To Date"
                    class="form-control date-input"
                    close-text="Close"
@@ -60,7 +59,7 @@
             <span class="input-group-btn">
                 <button class="btn btn-default" ng-click="toDateOpened = !toDateOpened" type="button"><i class="glyphicon glyphicon-calendar"></i></button>
             </span>
-          </span>
+          </div>
         </div>
       </div>
     </div>
@@ -72,16 +71,16 @@
           ng-if="$ctrl.searchText || $ctrl.fromDate || $ctrl.toDate"><span class="glyphicon glyphicon-remove"></span>Reset all</button>
       </div>
     </div>
-  </well>
+  </gla-well>
 
 
   <div ng-if="$ctrl.auditEvents.length > 0">
-    <pagination class="mbottom10"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                total-items="$ctrl.totalItems"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.getAuditEvents(false)"></pagination>
+    <gla-pagination class="mbottom10"
+                    [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                    [total-items]="$ctrl.totalItems"
+                    [number-of-elements]="$ctrl.itemsPerPage"
+                    (on-change)="$ctrl.getAuditEvents(false)"></gla-pagination>
 
     <div class="table-responsive">
       <table id="audit-activity" class="table table-hover table-bordered table-striped">
@@ -104,12 +103,12 @@
       </table>
     </div>
 
-    <pagination class="bottom-pagination mtop10"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                total-items="$ctrl.totalItems"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.getAuditEvents(false)"></pagination>
+    <gla-pagination class="bottom-pagination mtop10"
+                    [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                [total-items]="$ctrl.totalItems"
+                [number-of-elements]="$ctrl.itemsPerPage"
+                (on-change)="$ctrl.getAuditEvents(false)"></gla-pagination>
   </div>
 
   <div class="text-center" id="no-results" ng-if="!$ctrl.loading && !$ctrl.auditEvents.length">

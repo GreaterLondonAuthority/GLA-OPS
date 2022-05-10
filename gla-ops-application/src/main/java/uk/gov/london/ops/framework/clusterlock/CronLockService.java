@@ -8,14 +8,13 @@
 
 package uk.gov.london.ops.framework.clusterlock;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class CronLockService implements InfoContributor {
@@ -37,7 +36,7 @@ public class CronLockService implements InfoContributor {
         List<CronLock> cronLocks = findAll();
 
         for (CronLock lock : cronLocks) {
-            data.put(lock.getLockKey(),lock);
+            data.put(lock.getLockKey(), lock);
         }
 
         List<ClusterLock> clusterLocks = clusterLockService.findAll();

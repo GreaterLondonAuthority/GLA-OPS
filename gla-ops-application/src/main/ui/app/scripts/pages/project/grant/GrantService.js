@@ -29,7 +29,27 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
 
     negotiatedGrantBlock(apiData) {
       var summaryDetails = apiData.tenureSummaryDetails || [];
-      return summaryDetails.map(negotiatedGrantBlock);
+      var show = apiData.showDevelopmentCost;
+      return summaryDetails.map(   (summaryBlock) => {
+        var items = [];
+        if (show) {
+          items.push({
+            itemName: 'Unit development cost',
+            itemValue: '£' + numberFilter(summaryBlock.unitDevelopmentCost)
+          });
+        }
+        items.push(
+          {
+            itemName: 'Grant per unit',
+            itemValue: '£' + numberFilter(summaryBlock.grantPerUnit)
+          }
+        );
+
+        return {
+          name: summaryBlock.name,
+          items: items,
+        };
+      });
     },
 
     calculateGrantBlock(apiData) {
@@ -165,22 +185,6 @@ function GrantService(numberFilter, orderByFilter, ReportService) {
     }
   };
 
-
-  function negotiatedGrantBlock(summaryBlock) {
-    return {
-      name: summaryBlock.name,
-      items: [
-        {
-          itemName: 'Unit development cost',
-          itemValue: '£' + numberFilter(summaryBlock.unitDevelopmentCost)
-        },
-        {
-          itemName: 'Grant per unit',
-          itemValue: '£' + numberFilter(summaryBlock.grantPerUnit)
-        }
-      ]
-    }
-  }
 
   function calculateGrantBlock(summaryBlock) {
     return {

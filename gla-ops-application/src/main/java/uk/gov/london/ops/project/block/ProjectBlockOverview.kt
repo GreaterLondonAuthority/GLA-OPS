@@ -33,7 +33,7 @@ class ProjectBlockOverview (
 
         @Column(name = "block_status")
     @Enumerated(EnumType.STRING)
-    var blockStatus: NamedProjectBlock.BlockStatus = NamedProjectBlock.BlockStatus.UNAPPROVED,
+    var blockStatus: ProjectBlockStatus = ProjectBlockStatus.UNAPPROVED,
 
         @Column(name = "display_order")
     var displayOrder: Int,

@@ -16,7 +16,7 @@ import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.xml.source.DomSourceFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.payment.SapData;
 import uk.gov.london.ops.payment.implementation.repository.SapDataRepository;
 
@@ -85,8 +85,8 @@ public class SAPDataRecordEndpoint {
                 return null;
             }
 
-            String interfaceType = null;
-            List<String> messages = null;
+            String interfaceType;
+            List<String> messages;
             try {
                 interfaceType = getInterfaceType(root);
                 messages = splitMessage(root);
@@ -108,8 +108,7 @@ public class SAPDataRecordEndpoint {
 
                 if (deleteLocalFiles && file.delete()) {
                     log.debug("Successfully deleted file {}", file.getName());
-                }
-                else {
+                } else {
                     log.warn("Failed to delete file {} after being processed!", file.getName());
                 }
             }
@@ -161,7 +160,7 @@ public class SAPDataRecordEndpoint {
 
         List<String> lines = new LinkedList<>();
 
-        NodeList nodes = (NodeList)xpath.evaluate("//data",root, XPathConstants.NODESET);
+        NodeList nodes = (NodeList) xpath.evaluate("//data", root, XPathConstants.NODESET);
         for (int n = 0; n < nodes.getLength(); n++) {
             Node data = nodes.item(n);
             lines.add(nodeToString(data));

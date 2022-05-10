@@ -8,7 +8,7 @@
 package uk.gov.london.ops.project.implementation.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.refdata.RefDataService;
 
 import java.time.OffsetDateTime;

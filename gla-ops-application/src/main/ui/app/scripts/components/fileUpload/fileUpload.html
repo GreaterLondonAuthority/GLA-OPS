@@ -1,5 +1,5 @@
 <div class="fileUpload">
-    <form ng-attr-id="{{$ctrl._id+'-fileInputForm'}}">
+    <div ng-attr-id="{{$ctrl._id+'-fileInputForm'}}">
         <input ng-attr-id="{{$ctrl._id+'-upload-input'}}"
                type="file"
                style="display: none;">
@@ -7,5 +7,5 @@
                 class="btn" ng-class="$ctrl.cls || 'btn-secondary'"
                 ng-click="$ctrl.openFileDialog()"
                 ng-disabled="$ctrl.isDisabled">{{$ctrl.label}}</button>
-    </form>
+    </div>
 </div>

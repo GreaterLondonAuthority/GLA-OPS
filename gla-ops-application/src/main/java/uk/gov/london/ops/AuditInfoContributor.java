@@ -6,17 +6,16 @@ package uk.gov.london.ops; /**
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
-import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -39,10 +38,11 @@ public class AuditInfoContributor implements InfoContributor {
 
     }
 
-    public Map<String,Object> getAuditSummary() {
+    public Map<String, Object> getAuditSummary() {
 
         Map<String, Object> auditInfo = new HashMap<>();
-        List<Map<String,Object>> auditActivity = jdbcTemplate.queryForList("select * from audit_activity order by activity_time desc");
+        List<Map<String, Object>> auditActivity = jdbcTemplate
+                .queryForList("select * from audit_activity order by activity_time desc");
         int numberAuditActivities = auditActivity.size();
         Timestamp mostRecentEventTime = (Timestamp) auditActivity.get(0).get("ACTIVITY_TIME");
         auditInfo.put("numberAuditActivities", numberAuditActivities);

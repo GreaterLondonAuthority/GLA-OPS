@@ -1,9 +1,9 @@
 <div class="element">
   <form class="element-form" name="$ctrl.form">
     <div class="form-group">
-      <label for="name">{{$ctrl.labels.name}}</label>
+      <label ng-attr-for="{{$ctrl.nameId}}">{{$ctrl.labels.name}}</label>
       <input class="form-control"
-             id="name"
+             ng-attr-id="{{$ctrl.nameId}}"
              change-on-blur="$ctrl.onFormChange($ctrl.element)"
              name="name"
              maxlength="60"
@@ -18,9 +18,9 @@
     </div>
 
     <div class="form-group">
-      <label for="postcode">{{$ctrl.labels.postcode}}</label>
+      <label ng-attr-for="{{$ctrl.postcodeId}}">{{$ctrl.labels.postcode}}</label>
       <input class="form-control"
-             id="postcode"
+             ng-attr-id="{{$ctrl.postcodeId}}"
              change-on-blur="$ctrl.onFormChange($ctrl.element)"
              name="postcode"
              maxlength="60"
@@ -35,10 +35,10 @@
     </div>
 
     <div class="form-group">
-      <label for="projectType">{{$ctrl.labels.projectType}}</label>
+      <label ng-attr-for="{{$ctrl.projectTypeId}}">{{$ctrl.labels.projectType}}</label>
       <select class="form-control"
               gla-read-only="$ctrl.readOnly"
-              id="projectType"
+              ng-attr-id="{{$ctrl.projectTypeId}}"
               name="projectType"
               ng-class="{disabled: $ctrl.readOnly}"
               ng-disabled="$ctrl.blockTemplate.projectTypes.length == 0"
@@ -51,10 +51,10 @@
     </div>
 
     <div class="form-group">
-      <label for="guidance">{{$ctrl.labels.guidance}}</label>
+      <label ng-attr-for="{{$ctrl.guidanceId}}">{{$ctrl.labels.guidance}}</label>
       <textarea class="form-control"
                 gla-read-only="$ctrl.readOnly"
-                id="guidance"
+                ng-attr-id="{{$ctrl.guidanceId}}"
                 name="guidance"
                 change-on-blur="$ctrl.onFormChange($ctrl.element)"
                 maxlength="1000"
@@ -81,10 +81,10 @@
     </div>
 
     <div class="form-group">
-      <label for="description">{{$ctrl.labels.description}}</label>
+      <label ng-attr-for="{{$ctrl.descriptionId}}">{{$ctrl.labels.description}}</label>
       <textarea class="form-control"
                 gla-read-only="$ctrl.readOnly"
-                id="description"
+                ng-attr-id="{{$ctrl.descriptionId}}"
                 name="description"
                 change-on-blur="$ctrl.onFormChange($ctrl.element)"
                 maxlength="2000"
@@ -111,10 +111,10 @@
     </div>
 
     <div class="form-group">
-      <label for="projectClassification">{{$ctrl.labels.projectClassification}}</label>
+      <label ng-attr-for="{{$ctrl.projectClassificationId}}">{{$ctrl.labels.projectClassification}}</label>
       <select class="form-control"
               gla-read-only="$ctrl.readOnly"
-              id="projectClassification"
+              ng-attr-id="{{$ctrl.projectClassificationId}}"
               name="projectClassification"
               ng-class="{disabled: $ctrl.readOnly}"
               ng-disabled="$ctrl.blockTemplate.projectClassifications.length == 0"
@@ -127,10 +127,10 @@
     </div>
 
     <div class="form-group">
-      <label for="projectStage">{{$ctrl.labels.projectStage}}</label>
+      <label ng-attr-for="{{$ctrl.projectStageId}}">{{$ctrl.labels.projectStage}}</label>
       <select class="form-control"
                  name="projectStage"
-              id="projectStage"
+                 ng-attr-id="{{$ctrl.projectStageId}}"
                  ng-class="{disabled: $ctrl.readOnly}"
                  ng-model="$ctrl.element.projectStage"
                  ng-options="projectStage.option as projectStage.option for projectStage in $ctrl.blockTemplate.projectStages | orderBy: 'displayOrder'"
@@ -142,9 +142,9 @@
     </div>
 
     <div class="form-group">
-      <label for="operationalPeriod">{{$ctrl.labels.operationalPeriod}}</label>
+      <label ng-attr-for="{{$ctrl.operationalPeriodId}}">{{$ctrl.labels.operationalPeriod}}</label>
       <input class="form-control"
-             id="operationalPeriod"
+             ng-attr-id="{{$ctrl.operationalPeriodId}}"
              change-on-blur="$ctrl.onFormChange($ctrl.element)"
              name="operationalPeriod"
              maxlength="60"

@@ -1,0 +1,75 @@
+<div class="file-upload" [ngClass]="'file-upload'">
+
+
+  <gla-well *ngIf="!readOnly">
+    <h4>Attachments</h4>
+
+    <h5 *ngIf="maxCombinedUploadSizeInMb" class="bold">
+      Combined file size limit: {{maxCombinedUploadSizeInMb}}MB
+      &nbsp;&nbsp;&nbsp;
+      Remaining: <span class="remaining-combined-file-size">{{getRemainingCombinedFileSizeReadable()}}MB</span>
+    </h5>
+
+    <h5 *ngIf="maxUploadSizeInMbPerAttachment" class="bold">
+      Max number of files: {{maxNumberAttachments}}
+      &nbsp;&nbsp;&nbsp;
+      Max file size per upload: {{maxUploadSizeInMbPerAttachment}}MB
+    </h5>
+
+    <div class="row mbottom15">
+
+      <div class="col-xs-12 no-padding">
+        <gla-file-upload-button
+                     class="add-document"
+                     [componentInputId]="componentId"
+                     [context]="context"
+                     [isDisabled]="addButtonDisabled()"
+                     [label]="'ADD DOCUMENT +'"
+                     [uploadParams]="uploadParams"
+                     [maxFileSizeInMb]="maxUploadSizeInMbPerAttachment"
+                     [maxCombinedUploadSizeInMb]="maxCombinedUploadSizeInMb"
+                     [remainingCombinedFileSize]="getRemainingCombinedFileSize()"
+                     (onComplete)="onFileUploadComplete($event)"
+                     (onError)="onFileUploadError($event)"
+                     (onProgress)="onFileUploadProgress($event)"
+                     [postUrl]="postUrl">
+        </gla-file-upload-button>
+      </div>
+    </div>
+  </gla-well>
+
+  <div class="row">
+
+      <div class="table-responsive attached-files text-left">
+        <div *ngIf="!attachments || attachments.length == 0" class="empty-table no-attached-files mtop5">No files added.</div>
+        <table *ngIf="attachments && attachments.length != 0" class="table table-hover table-bordered table-striped" id="{{componentId}}">
+          <thead class="thead-inverse uppercase">
+          <tr>
+            <th>DOCUMENT NAME</th>
+            <th>UPLOAD DATE</th>
+            <th>UPLOADED BY</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="staged-file" *ngFor="let attachment of attachments">
+            <td>
+              <a class="uploaded-file-link" href="{{downloadUrl + attachment.id}}" target="_blank"><span aria-hidden="true" class="glyphicon glyphicon-file"></span>
+                {{attachment.fileName}}</a>
+            </td>
+            <td>{{attachment.createdOn | date: 'MMM d, yyyy'}}</td>
+            <td>{{attachment.creatorName}}</td>
+            <td>
+              <div *ngIf="!readOnly">
+                <a href="JavaScript:void(0)" (click)="removeAttachment(attachment)">DELETE</a>
+              </div>
+            </td>
+          </tr>
+          <tr class="no-attached-files" *ngIf="attachments.length == 0">
+            <td colspan="4">No files added.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>

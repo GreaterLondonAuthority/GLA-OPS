@@ -8,14 +8,36 @@
 package uk.gov.london.ops.project.template.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import uk.gov.london.ops.framework.enums.GrantType;
 import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.grant.GrantType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
 import java.io.Serializable;
-import java.util.*;
+import java.lang.reflect.Executable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static uk.gov.london.common.GlaUtils.listToCsString;
@@ -34,6 +56,7 @@ import static uk.gov.london.common.GlaUtils.listToCsString;
         @JsonSubTypes.Type(value = ProjectDetailsTemplateBlock.class),
         @JsonSubTypes.Type(value = GrantSourceTemplateBlock.class),
         @JsonSubTypes.Type(value = IndicativeGrantTemplateBlock.class),
+        @JsonSubTypes.Type(value = AffordableHomesTemplateBlock.class),
         @JsonSubTypes.Type(value = MilestonesTemplateBlock.class),
         @JsonSubTypes.Type(value = OutputsTemplateBlock.class),
         @JsonSubTypes.Type(value = QuestionsTemplateBlock.class),
@@ -47,11 +70,15 @@ import static uk.gov.london.common.GlaUtils.listToCsString;
         @JsonSubTypes.Type(value = ProjectObjectivesTemplateBlock.class),
         @JsonSubTypes.Type(value = OtherFundingTemplateBlock.class),
         @JsonSubTypes.Type(value = UserDefinedOutputTemplateBlock.class),
-        @JsonSubTypes.Type(value = ProjectElementsTemplateBlock.class)
+        @JsonSubTypes.Type(value = NegotiatedGrantTemplateBlock.class),
+        @JsonSubTypes.Type(value = CalculateGrantTemplateBlock.class),
+        @JsonSubTypes.Type(value = DeveloperLedGrantTemplateBlock.class),
+        @JsonSubTypes.Type(value = ProjectElementsTemplateBlock.class),
+        @JsonSubTypes.Type(value = UnitDetailsTemplateBlock.class)
 })
 
 @DiscriminatorValue("BASE")
-public class TemplateBlock implements Serializable, Comparable {
+public class TemplateBlock implements Serializable, Comparable, Commandable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "template_block_seq_gen")
@@ -266,4 +293,24 @@ public class TemplateBlock implements Serializable, Comparable {
     public void updateCloneFromBlock(TemplateBlock clone) {
 
     }
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public List<TemplateBlockCommand> getTemplateBlockCommands() {
+        return TemplateBlockCommand.GLOBAL_COMMANDS;
+    }
+
+    @Override
+    public void performCommand(TemplateBlockCommand command, CommandPayload payload) {
+    }
+
+    /**
+     * Should only be used to merge fields that do not affect project data
+     * @param updatedBlock fields to be merged in
+     */
+    public void mergeConfig(TemplateBlock updatedBlock) {
+        if (updatedBlock.getInfoMessage() != null) {
+            this.setInfoMessage(updatedBlock.getInfoMessage());
+        }
+    }
+
 }

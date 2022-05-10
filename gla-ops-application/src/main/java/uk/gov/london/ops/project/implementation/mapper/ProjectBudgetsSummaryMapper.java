@@ -30,10 +30,13 @@ public class ProjectBudgetsSummaryMapper {
 
         ProjectBudgetsBlock.Totals totals = projectBudgetsBlock.getTotals();
 
-        BigDecimal projectBudgetsBudgetCapital = projectBudgetsBlock.getCapital() == null ? BigDecimal.ZERO : new BigDecimal(projectBudgetsBlock.getCapital());
-        BigDecimal projectBudgetsBudgetRevenue = projectBudgetsBlock.getRevenue() == null ? BigDecimal.ZERO : new BigDecimal(projectBudgetsBlock.getRevenue());
+        BigDecimal projectBudgetsBudgetCapital = projectBudgetsBlock.getCapital() == null
+                ? BigDecimal.ZERO : new BigDecimal(projectBudgetsBlock.getCapital());
+        BigDecimal projectBudgetsBudgetRevenue = projectBudgetsBlock.getRevenue() == null
+                ? BigDecimal.ZERO : new BigDecimal(projectBudgetsBlock.getRevenue());
 
-        if (projectBudgetsBudgetCapital.compareTo(BigDecimal.ZERO) == 0 && projectBudgetsBudgetRevenue.compareTo(BigDecimal.ZERO) ==0 ) {
+        if (projectBudgetsBudgetCapital.compareTo(BigDecimal.ZERO) == 0
+                && projectBudgetsBudgetRevenue.compareTo(BigDecimal.ZERO) == 0) {
             return;
         }
 
@@ -64,16 +67,20 @@ public class ProjectBudgetsSummaryMapper {
         forecastRev  = forecastRev.negate();
 
         //new fields
-        totals.setAvailableToForecastCapital(BigDecimal.ZERO.max(projectBudgetsBudgetCapital.subtract(forecastCap).subtract(actualCap)));
-        totals.setAvailableToForecastRevenue(BigDecimal.ZERO.max(projectBudgetsBudgetRevenue.subtract(forecastRev).subtract(actualRev)));
+        totals.setAvailableToForecastCapital(BigDecimal.ZERO.max(projectBudgetsBudgetCapital.subtract(forecastCap)
+                .subtract(actualCap)));
+        totals.setAvailableToForecastRevenue(BigDecimal.ZERO.max(projectBudgetsBudgetRevenue.subtract(forecastRev)
+                .subtract(actualRev)));
 
         // left to spend on project is budget minus spend to date excl current month
         totals.setLeftToSpendOnProjectCapital(projectBudgetsBudgetCapital.subtract(actualCap));
         totals.setLeftToSpendOnProjectRevenue(projectBudgetsBudgetRevenue.subtract(actualRev));
 
         // approved project forecast is: the lesser of (Budget - Actuals) or forecast
-        totals.setApprovedProjectForecastCapital(BigDecimal.ZERO.max(projectBudgetsBudgetCapital.subtract(actualCap).min(forecastCap)));
-        totals.setApprovedProjectForecastRevenue(BigDecimal.ZERO.max(projectBudgetsBudgetRevenue.subtract(actualRev).min(forecastRev)));
+        totals.setApprovedProjectForecastCapital(BigDecimal.ZERO.max(projectBudgetsBudgetCapital.subtract(actualCap)
+                .min(forecastCap)));
+        totals.setApprovedProjectForecastRevenue(BigDecimal.ZERO.max(projectBudgetsBudgetRevenue.subtract(actualRev)
+                .min(forecastRev)));
 
         // unapproved project forecast is: the larger of 0 and total forecast - budget
         BigDecimal totalForecastCapital = actualCap.add(forecastCap);
@@ -83,7 +90,8 @@ public class ProjectBudgetsSummaryMapper {
         totals.setUnapprovedProjectForecastRevenue(BigDecimal.ZERO.max(totalForecastRevenue.subtract(projectBudgetsBudgetRevenue)));
     }
 
-    public void mapProjectBudgets(ProjectBudgetsBlock projectBudgetsBlock, List<AnnualSpendSummaryRecord> records,Integer currentYearMonth, Integer from, Integer to) {
+    public void mapProjectBudgets(ProjectBudgetsBlock projectBudgetsBlock, List<AnnualSpendSummaryRecord> records,
+                                  Integer currentYearMonth, Integer from, Integer to) {
 
         ArrayList<ProjectBudgetsSummaryEntry> summaryEntries = new ArrayList<>();
         ProjectBudgetsYearlySummary projectBudgetsYearlySummary = new ProjectBudgetsYearlySummary();
@@ -92,7 +100,7 @@ public class ProjectBudgetsSummaryMapper {
 
 
 
-        for (int i = from ;  i <= to ; i++ ) {
+        for (int i = from; i <= to; i++) {
 
             BigDecimal capActual = null;
             BigDecimal revActual = null;

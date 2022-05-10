@@ -7,29 +7,22 @@
  */
 package uk.gov.london.ops.project.skills;
 
-import static uk.gov.london.common.GlaUtils.nullSafeAdd;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
-import uk.gov.london.ops.framework.jpa.Join;
-import uk.gov.london.ops.framework.jpa.JoinData;
+
+import static uk.gov.london.common.GlaUtils.nullSafeAdd;
 
 @Entity(name = "funding_claims_entry")
 public class FundingClaimsEntry {
+
+    private static final int NO_FORECAST_PERIOD = 14;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "funding_claims_entry_seq_gen")
@@ -48,6 +41,9 @@ public class FundingClaimsEntry {
 
     @Column(name = "category_id")
     private Integer categoryId;
+
+    @Column(name = "parent_category_id")
+    private Integer parentCategoryId;
 
     @Column(name = "category_name")
     private String categoryName;
@@ -125,6 +121,14 @@ public class FundingClaimsEntry {
         this.categoryId = categoryId;
     }
 
+    public Integer getParentCategoryId() {
+        return parentCategoryId;
+    }
+
+    public void setParentCategoryId(Integer parentCategoryId) {
+        this.parentCategoryId = parentCategoryId;
+    }
+
     public String getCategoryName() {
         return categoryName;
     }
@@ -184,6 +188,7 @@ public class FundingClaimsEntry {
         clone.setAcademicYear(this.getAcademicYear());
         clone.setPeriod(this.getPeriod());
         clone.setCategoryId(this.getCategoryId());
+        clone.setParentCategoryId(this.getParentCategoryId());
         clone.setCategoryName(this.getCategoryName());
         clone.setDisplayOrder(this.getDisplayOrder());
         clone.setActualDelivery(this.getActualDelivery());
@@ -207,16 +212,19 @@ public class FundingClaimsEntry {
                 && Objects.equals(academicYear, that.academicYear)
                 && Objects.equals(period, that.period)
                 && Objects.equals(categoryId, that.categoryId)
+                && Objects.equals(parentCategoryId, that.parentCategoryId)
                 && Objects.equals(categoryName, that.categoryName)
                 && Objects.equals(displayOrder, that.displayOrder)
                 && Objects.equals(actualDelivery, that.actualDelivery)
                 && Objects.equals(forecastDelivery, that.forecastDelivery);
+
     }
 
     @Override
     public int hashCode() {
         return Objects
-                .hash(originalId, academicYear, period, categoryId, categoryName, displayOrder, actualDelivery, forecastDelivery);
+                .hash(originalId, academicYear, period, categoryId, parentCategoryId, categoryName, displayOrder, actualDelivery,
+                        forecastDelivery);
     }
 
     public BigDecimal getContractTypeTotal() {
@@ -252,4 +260,20 @@ public class FundingClaimsEntry {
     public void removeContractTypeFundingEntriesFor(String contractType) {
         this.contractTypeFundingEntries.removeIf(e -> e.getContractType().equals(contractType));
     }
+
+    public boolean isEmpty() {
+        return this.getActualDelivery() == null
+                && this.getForecastDelivery() == null
+                && (this.getContractTypeFundingEntries().isEmpty() ||
+                this.getContractTypeFundingEntries().stream().allMatch(ContractTypeFundingEntry::isEmpty));
+    }
+
+    public boolean isFull() {
+        return ((this.getActualsEditable() != null && this.getActualsEditable() && this.getActualDelivery() !=null)
+                || (this.getActualsEditable() == null || !this.getActualsEditable()))
+                && (this.getForecastDelivery() != null || this.getPeriod() == NO_FORECAST_PERIOD)
+                && (this.getContractTypeFundingEntries().isEmpty() ||
+                this.getContractTypeFundingEntries().stream().allMatch(ContractTypeFundingEntry::isComplete));
+    }
+
 }

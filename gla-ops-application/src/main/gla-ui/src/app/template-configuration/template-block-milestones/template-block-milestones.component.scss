@@ -1,28 +1,39 @@
 :host {
   display: block;
-}
 
-input[type=checkbox] {
-  margin-right: 5px;
-}
+  input[type=checkbox] {
+    margin-right: 5px;
+  }
 
-a.add-milestone {
-  display: inline-block;
-  margin-right: 10px;
-  float: right;
-}
+  a.add-milestone {
+    display: inline-block;
+    margin-right: 10px;
+    float: right;
+  }
 
-.sub-item {
-  margin-left: 20px;
-  margin-top: -15px;
-}
 
-.item-label{
-  font-family: "Gotham-book", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"
-}
+  .processing-route {
+    display: inline-block;
+    width: 300px;
+  }
 
-.up-down-button {
-  width: 10%;
+  .sub-item {
+    margin-left: 20px;
+    margin-top: -15px;
+  }
+
+  .item-label {
+    font-family: "Gotham-book", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"
+  }
+
+  .up-down-button {
+    width: 10%;
+  }
+
+  gla-show-up-down-arrow-buttons {
+    display: block;
+    margin-right: 5px;
+  }
 }
 
 

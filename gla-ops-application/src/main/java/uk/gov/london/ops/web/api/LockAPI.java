@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.london.ops.framework.EntityType;
-import uk.gov.london.ops.domain.LockableEntity;
-import uk.gov.london.ops.service.LockService;
+import uk.gov.london.ops.framework.locking.LockableEntity;
+import uk.gov.london.ops.service.LockServiceImpl;
 
 import static uk.gov.london.common.user.BaseRole.*;
 
 @RestController
 @RequestMapping("/api/v1")
-@Api(description="lock api")
+@Api("lock api")
 public class LockAPI {
 
     @Autowired
-    private LockService lockService;
+    private LockServiceImpl lockService;
 
     @Secured({OPS_ADMIN, ORG_ADMIN, PROJECT_EDITOR})
     @RequestMapping(value = "/locks", method = RequestMethod.POST)

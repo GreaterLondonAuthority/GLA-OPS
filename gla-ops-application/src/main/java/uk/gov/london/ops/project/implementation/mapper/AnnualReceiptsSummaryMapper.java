@@ -27,7 +27,8 @@ public class AnnualReceiptsSummaryMapper extends BaseAnnualSummaryMapper {
         initialiseAnnualReceiptMonthlyTotals(summary, year);
 
         for (ProjectLedgerEntry entry: entries) {
-            AnnualReceiptsMonthlyTotal monthlyTotal = summary.getAnnualReceiptMonthlyTotals().get(getArrayPositionByMonth(entry.getMonth()));
+            AnnualReceiptsMonthlyTotal monthlyTotal = summary.getAnnualReceiptMonthlyTotals()
+                    .get(getArrayPositionByMonth(entry.getMonth()));
             String category = refDataService.getFinanceCategory(entry.getCategoryId()).getText();
             AnnualReceiptsLineItem relevantLineItem = monthlyTotal.getLineItemByCategory(category);
             if (relevantLineItem == null) {
@@ -38,8 +39,7 @@ public class AnnualReceiptsSummaryMapper extends BaseAnnualSummaryMapper {
             if (LedgerStatus.FORECAST.equals(entry.getLedgerStatus())) {
                 relevantLineItem.setForecastId(entry.getId());
                 relevantLineItem.addForecast(entry.getValue());
-            }
-            else {
+            } else {
                 relevantLineItem.addActual(entry.getValue());
             }
         }
@@ -72,7 +72,7 @@ public class AnnualReceiptsSummaryMapper extends BaseAnnualSummaryMapper {
         annualReceiptsMonthlyTotals.add(new AnnualReceiptsMonthlyTotal("OCT", yearMonth++));
         annualReceiptsMonthlyTotals.add(new AnnualReceiptsMonthlyTotal("NOV", yearMonth++));
         annualReceiptsMonthlyTotals.add(new AnnualReceiptsMonthlyTotal("DEC", yearMonth++));
-        yearMonth =  ((year+1) * 100) + 1;
+        yearMonth =  ((year + 1) * 100) + 1;
         annualReceiptsMonthlyTotals.add(new AnnualReceiptsMonthlyTotal("JAN", yearMonth++));
         annualReceiptsMonthlyTotals.add(new AnnualReceiptsMonthlyTotal("FEB", yearMonth++));
         annualReceiptsMonthlyTotals.add(new AnnualReceiptsMonthlyTotal("MAR", yearMonth));

@@ -14,14 +14,10 @@ function ProjectFundingService($http, config) {
 
   return {
 
-    getProjectFunding: (projectId, blockId, year) => {
-      let self = this;
+    getProjectFunding(projectId, blockId) {
       return $http({
         url: `${config.basePath}/projects/${projectId}/funding/${blockId}`,
-        method: 'GET',
-        params: {
-          year: year
-        }
+        method: 'GET'
       });
     },
 
@@ -94,9 +90,9 @@ function ProjectFundingService($http, config) {
       let yearSections = [];
 
       let sectionLabels = DateUtil.getQuaterLabels();
-
-
+      console.log('getMappedSections', yearBreakdown)
       for (let i = 0; i < nbSections; i++) {
+        // console.log('_.find(yearBreakdown.sections, {sectionNumber: i + 1}', _.find(yearBreakdown.sections, {sectionNumber: i + 1}));
         //Need to set null values for claim/status to fix merging issues when BE is not returning a property
         let section =
           _.merge(
@@ -165,6 +161,20 @@ function ProjectFundingService($http, config) {
 
     cancelClaim(projectId, blockId, claimId) {
       return $http.delete(`${config.basePath}/projects/${projectId}/funding/${blockId}/claim/${claimId}`);
+    },
+
+    editClaimStatuses(projectId, claimIds, status, reason) {
+      return $http({
+        url: `${config.basePath}/projects/${projectId}/funding/claim`,
+        method: 'PUT',
+        params: {
+          claimIds
+        },
+        data: {
+          status, 
+          reason
+        }
+      });
     }
 
 

@@ -61,6 +61,12 @@ public class Claim implements ComparableItem {
     @Column(name = "claimed_by")
     private String claimedBy;
 
+    @Column
+    private String authorisedBy;
+
+    @Column
+    private OffsetDateTime authorisedOn;
+
     public Claim() {
     }
 
@@ -187,6 +193,22 @@ public class Claim implements ComparableItem {
         this.claimedBy = claimedBy;
     }
 
+    public String getAuthorisedBy() {
+        return authorisedBy;
+    }
+
+    public void setAuthorisedBy(String authorisedBy) {
+        this.authorisedBy = authorisedBy;
+    }
+
+    public OffsetDateTime getAuthorisedOn() {
+        return authorisedOn;
+    }
+
+    public void setAuthorisedOn(OffsetDateTime authorisedOn) {
+        this.authorisedOn = authorisedOn;
+    }
+
     public Integer getYearPeriod() {
         if (getYear() != null && getClaimTypePeriod() != null) {
             return (getYear() * 100) + getClaimTypePeriod();
@@ -220,6 +242,8 @@ public class Claim implements ComparableItem {
         clone.setClaimTypePeriod(this.getClaimTypePeriod());
         clone.setClaimedOn(this.getClaimedOn());
         clone.setClaimedBy(this.getClaimedBy());
+        clone.setAuthorisedOn(this.getAuthorisedOn());
+        clone.setAuthorisedBy(this.getAuthorisedBy());
         return clone;
     }
 

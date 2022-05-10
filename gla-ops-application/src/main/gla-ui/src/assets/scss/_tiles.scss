@@ -1,0 +1,11 @@
+.tiles-list {
+  list-style-type: none;
+  padding-inline-start: 0px;
+  margin-bottom: 0px;
+}
+
+gla-tile {
+  span[vertilize] {
+    display: inline-block;
+  }
+}

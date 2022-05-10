@@ -38,7 +38,9 @@ public class ProgrammeTemplateAssessmentTemplate implements Serializable {
     @Column(name = "template_id")
     private Integer template;
 
-    @JoinData(sourceTable = "programme_template_assessment_template", sourceColumn = "assessment_template_id", targetTable = "assessment_template", targetColumn = "id", joinType = Join.JoinType.ManyToOne, comment = "part of compound primary key.")
+    @JoinData(sourceTable = "programme_template_assessment_template", sourceColumn = "assessment_template_id",
+            targetTable = "assessment_template", targetColumn = "id", joinType = Join.JoinType.ManyToOne,
+            comment = "part of compound primary key.")
     @ManyToOne
     @JoinColumn(name = "assessment_template_id")
     private AssessmentTemplate assessmentTemplate;
@@ -119,4 +121,9 @@ public class ProgrammeTemplateAssessmentTemplate implements Serializable {
     public void setNoNewAssessments(Boolean noNewAssessments) {
         this.noNewAssessments = noNewAssessments;
     }
+
+    public Integer getAssessmentTemplateId() {
+        return assessmentTemplate != null ? assessmentTemplate.getId() : null;
+    }
+
 }

@@ -21,6 +21,19 @@ class UserDefinedOutputsPage extends ProjectBlockCtrl {
     this.templateConfig = this.TemplateService.getBlockConfig(this.template, this.projectBlock);
   }
 
+  getAnswerAsText(boolValue){
+    if(boolValue == null){
+      return 'Not provided';
+    }
+    return boolValue? 'Yes' : 'No';
+  }
+  
+  updateNa() {
+    return this.ProjectBlockService.updateBlock(this.project.id, this.projectBlock.id, this.projectBlock, false).then(rsp => {
+      this.projectBlock.validationFailures = rsp.data.validationFailures;
+    });
+  }
+
   submit(){
     return this.ProjectBlockService.updateBlock(this.project.id, this.projectBlock.id, this.projectBlock, true);
   }

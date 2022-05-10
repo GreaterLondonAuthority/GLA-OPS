@@ -8,35 +8,70 @@
 
 const DEFAULT_NUMBER_CONTRACTS_SHOWN = 3;
 class ContractsList {
-  constructor($rootScope, $scope, OrganisationService, UserService) {
+  constructor($rootScope, $scope, OrganisationService, UserService, NavigationService) {
     this.OrganisationService = OrganisationService;
     this.UserService = UserService;
+    this.NavigationService = NavigationService
   }
 
   $onInit(){
     this.showAll = false;
     this.showHowMany = DEFAULT_NUMBER_CONTRACTS_SHOWN;
-    this.canEditContracts = this.UserService.hasPermission('org.edit.contract') && (this.org.allowedActions || []).indexOf('EDIT') != -1;
     this.contractStatusMap = {
       'NotRequired': 'Not Required',
       'Signed': 'Signed',
-      'Blank': 'Not Signed'
+      'Blank': 'Pending',
+      'PendingOffer': 'Pending Offer',
+      'Offered': 'Offered',
+      'Accepted': 'Accepted',
     };
     this.contractStatusConst = {
       BLANK: 'Blank',
       SIGNED: 'Signed',
-      NOT_REQUIRED: 'NotRequired'
+      NOT_REQUIRED: 'NotRequired',
+      PENDING_OFFER: 'PendingOffer'
     };
   }
 
-  statusCheckboxClicked(contract, status) {
-    console.warn(`e2e statusCheckboxClicked: ${new Date().getTime()}, ${status}, ${JSON.stringify(contract, null, 2)}`);
+  getContractTypeTitle(contract){
+    return  contract.variation ? '    ' + (contract.variationName ? contract.variationName : '[empty]') :
+                               contract.name + (contract.orgGroupType ? (' - ' + contract.orgGroupType) : '')
 
+  }
+
+  performAction(contract, action) {
+    if (action.newVariationEntry && !contract.variation) {
+      this.OrganisationService.createContractVariation(this.org.id, contract).then((resp) => {
+        this.NavigationService.goToUiRouterState('organisation.contract-variation',
+         {orgId: this.org.id, orgContractId: resp.data.id}, {reload: true});
+      })
+    } else if(contract.variation) {
+      this.NavigationService.goToUiRouterState('organisation.contract-variation',
+        {orgId: this.org.id, orgContractId: contract.id}, {reload: true});
+    } else if (action.doViewDetails) {
+      this.NavigationService.goToUiRouterState('organisation.contract-details',
+        {organisation: this.org, orgContractId: contract.id}, {reload: true});
+    } else if (action.nextStatus) {
+      this.updateContract(contract, action.nextStatus)
+    }
+  }
+
+  hasContractVariation(contract){
+     return _.find(this.org.contracts, {name: contract.name, variation:true}) ? true : false
+  }
+
+  updateContract(contract, status) {
     let contractClone = _.clone(contract);
-    contractClone.status = contractClone.status === status ? 'Blank' : status;
-    this.OrganisationService.updateContractStatus(this.org.id, contractClone.id, contractClone).then(()=>{
-      this.refreshDetails();
-    });
+    if (status === 'Blank') {
+      this.OrganisationService.deleteContractStatus(this.org.id, contractClone.id).then(() => {
+        this.refreshDetails();
+      })
+    } else {
+      contractClone.status = contractClone.status === status ? 'Blank' : status;
+      this.OrganisationService.updateContractStatus(this.org.id, contractClone.id, contractClone).then(()=>{
+        this.refreshDetails();
+      });
+    }
   }
 
   showMoreLessContract() {
@@ -45,7 +80,7 @@ class ContractsList {
   }
 }
 
-ContractsList.$inject = ['$rootScope', '$scope', 'OrganisationService', 'UserService'];
+ContractsList.$inject = ['$rootScope', '$scope', 'OrganisationService', 'UserService', 'NavigationService'];
 
 angular.module('GLA')
   .component('contractsList', {

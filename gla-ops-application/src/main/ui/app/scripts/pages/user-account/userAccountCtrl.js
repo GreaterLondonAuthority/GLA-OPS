@@ -9,12 +9,13 @@
 import './UserAccountService.js'
 
 class UserAccountCtrl {
-  constructor(userProfile, userThresholds, UserService, $state, ConfirmationDialog, OrganisationService, ToastrUtil, $rootScope, ModalDisplayService, FeatureToggleService, RequestAdditionalRoleModal, UserAccountService, ErrorService) {
+  constructor(userProfile, userThresholds, UserService, $state, ConfirmationDialog, UserPasswordReset, OrganisationService, ToastrUtil, $rootScope, ModalDisplayService, FeatureToggleService, RequestAdditionalRoleModal, UserAccountService, ErrorService) {
     this.userProfile = userProfile;
     this.userThresholds = userThresholds;
     this.UserService = UserService;
     this.$state = $state;
     this.ConfirmationDialog = ConfirmationDialog;
+    this.UserPasswordReset = UserPasswordReset;
     this.OrganisationService = OrganisationService;
     this.ToastrUtil = ToastrUtil;
     this.$rootScope = $rootScope;
@@ -29,10 +30,13 @@ class UserAccountCtrl {
     });
 
     this.showThresholds = !!userThresholds.length;
+    this.canRequestOrgAdmin = UserService.hasPermission('users.request.org.admin');
+    this.canCloseeOrgAdminRequest = UserService.hasPermission('users.close.org.admin');
     this.canSetThresholds = UserService.hasPermission('user.org.pending.threshold.set');
     this.canEditPrimaryOrg = UserService.hasPermission('users.assign.primary');
+    this.showAuthorisedSignatory = UserService.hasPermission('users.assign.signatory');
     this.canChangeUserStatus = UserService.hasPermission('user.change.status');
-
+    this.canEditUserName = (UserService.hasPermission('user.edit') || this.isUserOwnRecord());
     this.userProfile.organisations = _.sortBy(this.userProfile.organisations, item => item.orgName.toLowerCase());
 
     this.orgIdToThresholdItem = {};
@@ -46,24 +50,63 @@ class UserAccountCtrl {
       org.canApprove = UserService.hasPermission('user.approve', org.orgId);
       org.canRemove = UserService.hasPermission('user.remove', org.orgId);
       // org.isEditable = UserService.hasPermission('org.edit.details', org.orgId);
-      org.isEditable = org.canApprove || org.canRemove;
+      org.isEditable = org.canApprove || org.canRemove || this.canEditProviderRole(org);
       org.defaultRole = (_.find(org.assignableRoles, {default: true}) || {}).description;
 
     });
     let canEditAnyOrg = (this.userProfile.organisations || []).some(org => org.isEditable);
     let canSetThresholds = UserService.hasPermission('user.org.pending.threshold.set');
 
-    this.editable = (canSetThresholds && this.showThresholds) || canEditAnyOrg;
+    this.editable = this.canEditUserName || (canSetThresholds && this.showThresholds) || canEditAnyOrg
+                       || this.showAuthorisedSignatory;
     this.readOnly = (this.editable && this.$state.params.editMode)? false : true;
 
-
     this.showManagedBy = _.some(this.userProfile.organisations, (org) => {return !!org.managingOrgName});
+    this.authorisedSignatoryTooltip = UserService.getAuthorisedSignatoryTooltip();
+    this.actionsColumnToolTop = UserService.getActionsColumnToolTop();
     console.log('userProfile', this.userProfile)
+  }
+
+  canEditProviderRole(org){
+    return this.UserService.hasPermission('user.edit.provider.role') &&
+      this.UserService.currentUser().organisations.some(o => o.isManagingOrganisation && o.id == org.managingOrgId);
+  }
+
+  isUserOwnRecord(){
+    let loggedInUserName = this.UserService.currentUser().username
+    let currentUserRecord = this.userProfile.username
+    return loggedInUserName === currentUserRecord
   }
 
   edit() {
     this.readOnly = false;
   }
+
+  canChangeAuthorisedSignatory(role){
+     return this.UserService.canChangeAuthorisedSignatory(role)
+  }
+
+  resetUserPassword() {
+    let modal = this.UserPasswordReset.show({
+      title: 'Reset password for user ' + this.userProfile.username,
+    })
+    modal.result.then(result => {
+      return this.UserService.resetUserPassword(this.userProfile.username, result)
+      .then(resp => {
+        this.ConfirmationDialog.show({
+          title: 'Password changed',
+          message: `Password changed for user ${this.userProfile.username}`,
+          approveText: 'OK',
+          showIcon: false,
+          showDismiss: false,
+        })
+      })
+      .catch(err => {
+        this.ConfirmationDialog.warn(err.data ? err.data.description : null);
+      })
+    })
+  }
+
 
   changeUserStatus() {
     let modal = this.ConfirmationDialog.show({
@@ -128,6 +171,10 @@ class UserAccountCtrl {
     });
   }
 
+  signatoryChange(organisationId, roleName, signatory) {
+    this.UserService.updateAuthorisedSignatory(this.userProfile.username, organisationId, roleName, signatory);
+  }
+
   approve(thresholdObj) {
     this.UserService.approveUserThreshold(thresholdObj.id.username, thresholdObj.id.organisationId).then(rsp => {
       this.refreshThreshold(rsp.data, true);
@@ -153,6 +200,49 @@ class UserAccountCtrl {
     });
   }
 
+
+  requestOrgAdminRoleForOrg(organisationId){
+    this.requestOrgAdminRole()
+    this.UserService.requestOrgAdminRole(this.userProfile.username,organisationId)
+  }
+
+  closeRequestOrgAdminRoleForOrg(organisationId){
+    this.UserService.closeOrgAdminRole(this.userProfile.username,organisationId)
+  }
+
+  requestOrgAdminRole(organisationId, orgName){
+    let modal = this.ConfirmationDialog.show({
+      title: `Request Organisation Admin Role`,
+      message:
+        '<div align="left" class="mleft30"> <li>The existing Organisation Admin for ' + orgName + '  is no longer able to carry out this role and should have their OPS account deactivated.</li>' +
+        '<li>I\'m authorised by ' + orgName + ' to be assigned as its new Organisation Admin.</li></div>',
+      showConfirmationCheckbox: 'true',
+      approveText: 'Request',
+      dismissText: 'Cancel'
+    });
+    modal.result.then(() => {
+      return this.UserService.requestOrgAdminRole(this.userProfile.username, organisationId).then(() => {
+        this.ToastrUtil.success('Thank you for your request. We aim to respond within two working days.');
+        this.refresh(true);
+      });
+    });
+
+  }
+
+  closeOrgAdminRole(organisationId){
+    let modal = this.ConfirmationDialog.show({
+      title: `Close Request`,
+      message: 'Are you sure you want to close this user\'s request to assign them the Organisation Admin role?',
+      approveText: 'Close Request',
+      dismissText: 'Cancel'
+    });
+    modal.result.then(() => {
+      return this.UserService.closeOrgAdminRole(this.userProfile.username, organisationId).then(() => {
+        this.refresh(true);
+      });
+    });
+  }
+
   deleteUser(role) {
     this.UserAccountService.deleteUser(role, this.userProfile).then(()=>{
       if (role.hasSingleRoleInThisOrg && this.userProfile.organisations.length === 1) {
@@ -165,7 +255,7 @@ class UserAccountCtrl {
 
   approveUser(org) {
     this.$rootScope.showGlobalLoadingMask = true;
-    this.OrganisationService.approveUser(org.orgId, this.userProfile.username, org.roleName)
+    this.OrganisationService.approveUser(org.orgId, this.userProfile.username, org.roleName, org.authorisedSignatory)
       .then(resp => this.refresh(true))
       .catch(this.ErrorService.apiValidationHandler())
   }
@@ -189,6 +279,9 @@ class UserAccountCtrl {
   }
 
   save() {
+    if (this.canEditUserName && this.userProfile.firstName && this.userProfile.lastName) {
+      this.UserService.updateUserDetails(this.userProfile)
+    }
     this.back();
   }
 
@@ -198,7 +291,7 @@ class UserAccountCtrl {
 
 }
 
-UserAccountCtrl.$inject = ['userProfile', 'userThresholds', 'UserService', '$state', 'ConfirmationDialog', 'OrganisationService', 'ToastrUtil', '$rootScope', 'ModalDisplayService', 'FeatureToggleService','RequestAdditionalRoleModal', 'UserAccountService', 'ErrorService'];
+UserAccountCtrl.$inject = ['userProfile', 'userThresholds', 'UserService', '$state', 'ConfirmationDialog', 'UserPasswordReset', 'OrganisationService', 'ToastrUtil', '$rootScope', 'ModalDisplayService', 'FeatureToggleService','RequestAdditionalRoleModal', 'UserAccountService', 'ErrorService'];
 
 
 angular.module('GLA')

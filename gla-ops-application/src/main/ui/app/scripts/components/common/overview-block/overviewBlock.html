@@ -1,4 +1,6 @@
-<button class="overview-block"
+<div class="overview-block"
+        tabindex="0"
+        allow-enter
         ng-class="{'overview-block-green':$ctrl.blockState == 'valid','overview-block-amber':$ctrl.blockState == 'invalid', 'with-border': $ctrl.color}"
         ng-style="{'border': $ctrl.color}">
 
@@ -20,4 +22,4 @@
       <div class="block-overview-banner">{{$ctrl.banner}}</div>
     </div>
   </div>
-</button>
+</div>

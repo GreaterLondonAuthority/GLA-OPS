@@ -33,7 +33,9 @@ public class ValidationException extends RuntimeException {
 
     public ValidationException(String description, List<FieldError> fieldErrors) {
         super(description);
-        List<ApiErrorItem> errors = fieldErrors.stream().map(fe -> new ApiErrorItem(fe.getField(), fe.getDefaultMessage())).collect(Collectors.toList());
+        List<ApiErrorItem> errors = fieldErrors.stream()
+                .map(fe -> new ApiErrorItem(fe.getField(), fe.getDefaultMessage()))
+                .collect(Collectors.toList());
         error = new ApiError(description, errors);
     }
 

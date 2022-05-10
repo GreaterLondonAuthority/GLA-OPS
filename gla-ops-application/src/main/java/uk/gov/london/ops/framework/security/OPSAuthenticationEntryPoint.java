@@ -11,10 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import uk.gov.london.ops.audit.AuditService;
+import uk.gov.london.ops.user.UserPasswordService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +29,9 @@ public class OPSAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Autowired
     AuditService auditService;
 
+    @Autowired
+    UserPasswordService userPasswordService;
+
     /**
      * How long to delay (in ms) before sending response to a failed logon request.
      */
@@ -34,15 +39,20 @@ public class OPSAuthenticationEntryPoint implements AuthenticationEntryPoint {
     int failedLogonDelayMs;
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+            throws IOException {
         delayBeforeSendingAuthenticationFailure();
 
         String errorMessage;
         if (authException instanceof DisabledException) {
             auditDisabledUserLoginAttempt(request);
             errorMessage = "Your account has been deactivated. Please contact your Organisation Admin.";
-        }
-        else {
+        } else if (authException instanceof CredentialsExpiredException) {
+            response.addHeader("ERROR", "PASSWORD_EXPIRED");
+            userPasswordService.createPasswordResetToken(getUsername(request));
+            errorMessage = "PASSWORD_EXPIRED";
+        } else {
+            response.addHeader("ERROR", "PASSWORD_INCORRECT");
             errorMessage = "Sorry, your email and password combination is not recognised";
         }
 
@@ -51,21 +61,28 @@ public class OPSAuthenticationEntryPoint implements AuthenticationEntryPoint {
     }
 
     private void auditDisabledUserLoginAttempt(HttpServletRequest request) {
-        String username = (String) request.getAttribute("username");
+        String username = getUsername(request);
         if (username != null) {
-            auditService.auditActivityForUser((String) request.getAttribute("username"), "Disabled user attempted to login");
-        }
-        else {
+            auditService.auditActivityForUser(username, "Disabled user attempted to login");
+        } else {
             log.warn("username attribute not present in the request!");
         }
+    }
+
+    String getUsername(HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+        if (username != null) {
+            return username.toLowerCase();
+        }
+        return null;
     }
 
     private void delayBeforeSendingAuthenticationFailure() {
         try {
             log.debug("Sleeping for {} ms after failed logon attempt", failedLogonDelayMs);
             Thread.sleep(failedLogonDelayMs);
-        }
-        catch (InterruptedException ignored) {
+        } catch (InterruptedException ignored) {
+            // ignored
         }
     }
 

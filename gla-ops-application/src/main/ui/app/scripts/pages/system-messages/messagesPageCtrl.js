@@ -22,11 +22,11 @@ class messagesPageCtrl {
   }
 
   onMessageEdit(message){
-    this.ConfigurationService.udpateConfigMessage({
+    this.ConfigurationService.updateConfigMessage({
       code: message.code,
       text: message.text,
       enabled: message.enabled
-    }).then(() => {
+    }).toPromise().then(() => {
       this.$state.go(
         this.$state.current,
         this.$stateParams,

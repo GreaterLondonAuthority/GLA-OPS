@@ -15,9 +15,6 @@ class ReceiptsChangeReport {
 
 
   $onInit() {
-
-    console.log('data', this.data);
-
     let comparableReceiptRows = this.getComparableReceiptRows(this.data.left, this.data.right);
     this.comparableReceiptGroups = this.ReportService.groupComparableRows(comparableReceiptRows, 'financialYear', true);
 

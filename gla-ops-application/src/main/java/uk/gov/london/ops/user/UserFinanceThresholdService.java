@@ -12,18 +12,25 @@ import uk.gov.london.ops.audit.ActivityType;
 import uk.gov.london.ops.audit.AuditService;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.notification.NotificationService;
+import uk.gov.london.ops.organisation.Organisation;
 import uk.gov.london.ops.organisation.OrganisationService;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.permission.PermissionServiceImpl;
+import uk.gov.london.ops.project.accesscontrol.AccessControlRelationshipType;
+import uk.gov.london.ops.project.accesscontrol.ProjectAccessControlSummary;
 import uk.gov.london.ops.role.model.Role;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.domain.UserEntity;
 import uk.gov.london.ops.user.domain.UserOrgFinanceThreshold;
 import uk.gov.london.ops.user.domain.UserOrgKey;
 import uk.gov.london.ops.user.implementation.UserOrgFinanceThresholdRepository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static uk.gov.london.ops.notification.NotificationType.PendingSpendAuthorityThresholdApproval;
 
@@ -33,26 +40,29 @@ public class UserFinanceThresholdService {
     final AuditService auditService;
     final NotificationService notificationService;
     final OrganisationService organisationService;
-    final UserService userService;
+    final PermissionServiceImpl permissionService;
+    final UserServiceImpl userService;
     final UserOrgFinanceThresholdRepository userOrgFinanceThresholdRepository;
 
     public UserFinanceThresholdService(AuditService auditService, NotificationService notificationService,
-                                       OrganisationService organisationService, UserService userService,
+                                       OrganisationService organisationService, PermissionServiceImpl permissionService,
+                                       UserServiceImpl userService,
                                        UserOrgFinanceThresholdRepository userOrgFinanceThresholdRepository) {
         this.auditService = auditService;
         this.notificationService = notificationService;
         this.organisationService = organisationService;
+        this.permissionService = permissionService;
         this.userService = userService;
         this.userOrgFinanceThresholdRepository = userOrgFinanceThresholdRepository;
     }
 
     public Set<UserOrgFinanceThreshold> getFinanceThresholds(String userIdOrName) {
-        User user = userService.find(userIdOrName);
+        UserEntity user = userService.find(userIdOrName);
         Set<UserOrgFinanceThreshold> thresholds = userOrgFinanceThresholdRepository.findByIdUsername(user.getUsername());
 
         Set<Role> approvedRoles = user.getApprovedRoles();
         for (Role approvedRole : approvedRoles) {
-            if (approvedRole.getOrganisation().isManagingOrganisation() && approvedRole.isThresholdRole()) {
+            if (canThresholdBeSetOn(approvedRole.getOrganisation()) && approvedRole.isThresholdRole()) {
                 boolean found = false;
                 for (UserOrgFinanceThreshold threshold : thresholds) {
                     if (threshold.getId().getOrganisationId().equals(approvedRole.getOrganisation().getId())) {
@@ -69,20 +79,67 @@ public class UserFinanceThresholdService {
         return thresholds;
     }
 
+    public Set<UserOrgFinanceThreshold> getFinanceThresholdsByOrgId(Integer orgId) {
+        Set<UserOrgFinanceThreshold> thresholds = userOrgFinanceThresholdRepository.findByIdOrganisationId(orgId);
+        return thresholds;
+    }
+
     public UserOrgFinanceThreshold getFinanceThreshold(String username, Integer orgId) {
         return userOrgFinanceThresholdRepository.findById(new UserOrgKey(username, orgId)).orElse(null);
     }
 
+    public UserOrgFinanceThreshold getFinanceThresholdForProject(String username, Integer projectId) {
+        Map<Integer, UserOrgFinanceThreshold> thresholds = userOrgFinanceThresholdRepository.findByIdUsername(username).stream()
+                .collect(Collectors.toMap(u -> u.getId().getOrganisationId(), Function.identity()));
+        return getFinanceThresholdForProject(thresholds, projectId);
+    }
+
+    public UserOrgFinanceThreshold getFinanceThresholdForProject(Map<Integer, UserOrgFinanceThreshold> userThresholds,
+                                                                 Integer projectId) {
+        Collection<ProjectAccessControlSummary> accessControlList = permissionService.getProjectAccessControlList(projectId);
+        UserOrgFinanceThreshold threshold = getMaxThresholdForProject(accessControlList, isNonManagingOrgAcl(), userThresholds);
+        if (threshold == null) {
+            threshold = getMaxThresholdForProject(accessControlList, isManagingOrgAcl(), userThresholds);
+        }
+        return threshold;
+    }
+
+    public static Predicate<ProjectAccessControlSummary> isManagingOrgAcl() {
+        return e -> AccessControlRelationshipType.MANAGING.equals(e.getRelationshipType());
+    }
+
+    public static Predicate<ProjectAccessControlSummary> isNonManagingOrgAcl() {
+        return e -> !AccessControlRelationshipType.MANAGING.equals(e.getRelationshipType());
+    }
+
+    private UserOrgFinanceThreshold getMaxThresholdForProject(Collection<ProjectAccessControlSummary> accessControlList,
+                                                              Predicate<ProjectAccessControlSummary> aclFilter,
+                                                              Map<Integer, UserOrgFinanceThreshold> userThresholds) {
+        UserOrgFinanceThreshold threshold = null;
+        Collection<ProjectAccessControlSummary> filteredAcl = accessControlList.stream()
+                .filter(aclFilter)
+                .collect(Collectors.toList());
+        for (ProjectAccessControlSummary accessControlEntry: filteredAcl) {
+            if (userThresholds.containsKey(accessControlEntry.getOrganisationId())) {
+                UserOrgFinanceThreshold newThresholdCandidate = userThresholds.get(accessControlEntry.getOrganisationId());
+                if (threshold == null || threshold.getApprovedThreshold() < newThresholdCandidate.getApprovedThreshold()) {
+                    threshold = userThresholds.get(accessControlEntry.getOrganisationId());
+                }
+            }
+        }
+        return threshold;
+    }
+
     public UserOrgFinanceThreshold createPendingThreshold(String userIdOrName, Integer orgId, Long pendingThreshold) {
-        User user = userService.find(userIdOrName);
+        UserEntity user = userService.find(userIdOrName);
         Organisation organisation = organisationService.findOne(orgId);
 
         if (!user.getOrganisations().contains(organisation)) {
             throw new ValidationException("Unable to assign threshold to organisation the user is not a member of");
         }
 
-        if (!organisation.isManagingOrganisation()) {
-            throw new ValidationException("Unable to assign threshold to organisation that is not a managing organisation");
+        if (!canThresholdBeSetOn(organisation)) {
+            throw new ValidationException("Threshold can only be assigned to roles in managing organisations or teams");
         }
 
         UserOrgFinanceThreshold existing = getFinanceThreshold(user.getUsername(), orgId);
@@ -91,7 +148,7 @@ public class UserFinanceThresholdService {
             existing = new UserOrgFinanceThreshold(user.getUsername(), orgId);
         }
 
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
         auditService.auditCurrentUserActivity(String.format("User %s created a pending threshold of %d for org: %d for user %s",
                 currentUser.getUsername(), pendingThreshold, orgId, user.getUsername()),
                 ActivityType.Requested, user.getUsername(), orgId, new BigDecimal(pendingThreshold));
@@ -104,10 +161,14 @@ public class UserFinanceThresholdService {
         return existing;
     }
 
+    boolean canThresholdBeSetOn(Organisation organisation) {
+        return organisation.isManaging() || organisation.isTeamOrganisation();
+    }
+
     public UserOrgFinanceThreshold approvePendingThreshold(String userIdOrName, Integer orgId) {
-        User user = userService.find(userIdOrName);
+        UserEntity user = userService.find(userIdOrName);
         UserOrgFinanceThreshold existing = getFinanceThreshold(user.getUsername(), orgId);
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
 
         validateThresholdApproval(existing, currentUser);
 
@@ -122,7 +183,7 @@ public class UserFinanceThresholdService {
         existing.setRequesterUsername(null);
         existing.setPendingThreshold(null);
 
-        User requester = userService.get(existing.getId().getUsername());
+        UserEntity requester = userService.get(existing.getId().getUsername());
         Organisation organisation = organisationService.findOne(orgId);
 
         Map<String, Object> model = new HashMap<String, Object>() {{
@@ -135,7 +196,7 @@ public class UserFinanceThresholdService {
         return save(existing);
     }
 
-    private void validateThresholdApproval(UserOrgFinanceThreshold existing, User currentUser) {
+    private void validateThresholdApproval(UserOrgFinanceThreshold existing, UserEntity currentUser) {
         if (existing == null || existing.getPendingThreshold() == null) {
             throw new ValidationException("Unable to approve threshold as no existing threshold found.");
         }
@@ -144,7 +205,7 @@ public class UserFinanceThresholdService {
             throw new ValidationException("Unable to approve threshold as no requester found.");
         }
 
-        User requester = userService.get(existing.getRequesterUsername());
+        UserEntity requester = userService.get(existing.getRequesterUsername());
         if (requester == null) {
             throw new ValidationException("Unable to approve threshold requester not found.");
         }
@@ -159,7 +220,7 @@ public class UserFinanceThresholdService {
     }
 
     public UserOrgFinanceThreshold declineThreshold(String userIdOrName, Integer orgId) {
-        User user = userService.find(userIdOrName);
+        UserEntity user = userService.find(userIdOrName);
         UserOrgFinanceThreshold existing = getFinanceThreshold(user.getUsername(), orgId);
         if (existing == null || existing.getPendingThreshold() == null) {
             throw new ValidationException("Unable to decline pending threshold as no existing threshold found.");

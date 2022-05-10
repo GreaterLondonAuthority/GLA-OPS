@@ -7,13 +7,13 @@
  */
 package uk.gov.london.ops.framework;
 
+import static uk.gov.london.common.GlaUtils.getRequestIp;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.stereotype.Component;
 import uk.gov.london.ops.audit.AuditService;
-
-import static uk.gov.london.common.GlaUtils.getRequestIp;
 
 @Component
 public class AuthenticationFailureApplicationListener implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
@@ -24,7 +24,7 @@ public class AuthenticationFailureApplicationListener implements ApplicationList
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
         String sourceIp = getRequestIp();
-        String summary = "failed to login" + (sourceIp != null ? (" "+sourceIp) : "");
+        String summary = "failed to login" + (sourceIp != null ? (" " + sourceIp) : "");
         auditService.auditActivityForUser(event.getAuthentication().getName(), summary);
     }
 

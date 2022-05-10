@@ -27,9 +27,9 @@
     <div class="grant inverse-margin">
       <ul class="tiles-list">
         <li class="col-xs-12 col-sm-3 grant-column" ng-repeat="tile in $ctrl.tiles track by tile.name">
-          <tile class="centered" items="tile.items">
-            <div vertilize>{{ tile.name }}</div>
-          </tile>
+          <gla-tile class="centered" [items]="tile.items">
+            <span vertilize>{{ tile.name }}</span>
+          </gla-tile>
         </li>
       </ul>
     </div>

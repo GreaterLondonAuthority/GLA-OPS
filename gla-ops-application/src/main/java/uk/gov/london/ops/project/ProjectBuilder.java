@@ -7,24 +7,58 @@
  */
 package uk.gov.london.ops.project;
 
-import static uk.gov.london.ops.organisation.OrganisationBuilder.MOPAC_TEST_ORG_1;
-import static uk.gov.london.ops.organisation.OrganisationBuilder.SKILLS_TEST_ORG_1;
-import static uk.gov.london.ops.organisation.OrganisationBuilder.TEST_ORG_ID_1;
-import static uk.gov.london.ops.payment.LedgerType.BUDGET;
-import static uk.gov.london.ops.payment.LedgerType.PAYMENT;
-import static uk.gov.london.ops.payment.ProjectLedgerEntry.MATCH_FUND_CATEGORY;
-import static uk.gov.london.ops.payment.SpendType.CAPITAL;
-import static uk.gov.london.ops.payment.SpendType.REVENUE;
-import static uk.gov.london.ops.project.block.ProjectBlockType.CalculateGrant;
-import static uk.gov.london.ops.project.block.ProjectBlockType.DeliveryPartners;
-import static uk.gov.london.ops.project.block.ProjectBlockType.Funding;
-import static uk.gov.london.ops.project.block.ProjectBlockType.GrantSource;
-import static uk.gov.london.ops.project.block.ProjectBlockType.Milestones;
-import static uk.gov.london.ops.project.block.ProjectBlockType.Outputs;
-import static uk.gov.london.ops.project.block.ProjectBlockType.ProjectObjectives;
-import static uk.gov.london.ops.project.block.ProjectBlockType.Risks;
-import static uk.gov.london.ops.project.block.ProjectBlockType.UserDefinedOutput;
-import static uk.gov.london.ops.user.UserBuilder.DATA_INITIALISER_USER;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import uk.gov.london.ops.file.AttachmentFile;
+import uk.gov.london.ops.file.FileService;
+import uk.gov.london.ops.framework.environment.Environment;
+import uk.gov.london.ops.framework.exception.ValidationException;
+import uk.gov.london.ops.organisation.Organisation;
+import uk.gov.london.ops.organisation.OrganisationGroupService;
+import uk.gov.london.ops.organisation.OrganisationServiceImpl;
+import uk.gov.london.ops.organisation.model.OrganisationGroup;
+import uk.gov.london.ops.payment.FinanceService;
+import uk.gov.london.ops.payment.LedgerStatus;
+import uk.gov.london.ops.payment.ProjectLedgerEntry;
+import uk.gov.london.ops.payment.SpendType;
+import uk.gov.london.ops.programme.domain.Programme;
+import uk.gov.london.ops.project.block.*;
+import uk.gov.london.ops.project.claim.ClaimStatus;
+import uk.gov.london.ops.project.deliverypartner.Deliverable;
+import uk.gov.london.ops.project.deliverypartner.DeliverableType;
+import uk.gov.london.ops.project.deliverypartner.DeliveryPartner;
+import uk.gov.london.ops.project.deliverypartner.DeliveryPartnersBlock;
+import uk.gov.london.ops.project.funding.FundingActivity;
+import uk.gov.london.ops.project.funding.FundingActivityGroup;
+import uk.gov.london.ops.project.funding.FundingBlock;
+import uk.gov.london.ops.project.grant.*;
+import uk.gov.london.ops.project.implementation.mapper.MilestoneMapper;
+import uk.gov.london.ops.project.implementation.repository.FundingActivityGroupRepository;
+import uk.gov.london.ops.project.implementation.repository.ProjectHistoryRepository;
+import uk.gov.london.ops.project.implementation.repository.ProjectRepository;
+import uk.gov.london.ops.project.internalblock.InternalProjectBlock;
+import uk.gov.london.ops.project.milestone.Milestone;
+import uk.gov.london.ops.project.milestone.MilestoneStatus;
+import uk.gov.london.ops.project.milestone.ProjectMilestonesBlock;
+import uk.gov.london.ops.project.outputs.OutputsBlock;
+import uk.gov.london.ops.project.outputs.OutputsCostsBlock;
+import uk.gov.london.ops.project.question.Answer;
+import uk.gov.london.ops.project.question.ProjectQuestionsBlock;
+import uk.gov.london.ops.project.repeatingentity.UserDefinedOutput;
+import uk.gov.london.ops.project.repeatingentity.*;
+import uk.gov.london.ops.project.risk.ProjectRiskAndIssue;
+import uk.gov.london.ops.project.risk.ProjectRisksBlock;
+import uk.gov.london.ops.project.state.ProjectStatus;
+import uk.gov.london.ops.project.state.ProjectSubStatus;
+import uk.gov.london.ops.project.template.domain.*;
+import uk.gov.london.ops.refdata.Borough;
+import uk.gov.london.ops.refdata.CategoryValue;
+import uk.gov.london.ops.refdata.ConfigurableListItem;
+import uk.gov.london.ops.refdata.RefDataService;
+import uk.gov.london.ops.user.UserBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -35,80 +69,21 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import uk.gov.london.ops.file.AttachmentFile;
-import uk.gov.london.ops.file.FileService;
-import uk.gov.london.ops.framework.Environment;
-import uk.gov.london.ops.framework.exception.ValidationException;
-import uk.gov.london.ops.organisation.OrganisationGroupService;
-import uk.gov.london.ops.organisation.OrganisationService;
-import uk.gov.london.ops.organisation.model.OrganisationGroup;
-import uk.gov.london.ops.payment.FinanceService;
-import uk.gov.london.ops.payment.LedgerStatus;
-import uk.gov.london.ops.payment.ProjectLedgerEntry;
-import uk.gov.london.ops.payment.SpendType;
-import uk.gov.london.ops.programme.domain.Programme;
-import uk.gov.london.ops.project.block.DesignStandardsBlock;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.block.ProjectDetailsBlock;
-import uk.gov.london.ops.project.deliverypartner.Deliverable;
-import uk.gov.london.ops.project.deliverypartner.DeliverableType;
-import uk.gov.london.ops.project.deliverypartner.DeliveryPartner;
-import uk.gov.london.ops.project.deliverypartner.DeliveryPartnersBlock;
-import uk.gov.london.ops.project.funding.FundingActivity;
-import uk.gov.london.ops.project.funding.FundingActivityGroup;
-import uk.gov.london.ops.project.funding.FundingBlock;
-import uk.gov.london.ops.project.grant.BaseGrantBlock;
-import uk.gov.london.ops.project.grant.CalculateGrantBlock;
-import uk.gov.london.ops.project.grant.DeveloperLedGrantBlock;
-import uk.gov.london.ops.project.grant.GrantSourceBlock;
-import uk.gov.london.ops.project.grant.IndicativeGrantBlock;
-import uk.gov.london.ops.project.grant.IndicativeTenureValue;
-import uk.gov.london.ops.project.grant.NegotiatedGrantBlock;
-import uk.gov.london.ops.project.grant.ProjectTenureDetails;
-import uk.gov.london.ops.project.implementation.mapper.MilestoneMapper;
-import uk.gov.london.ops.project.implementation.repository.FundingActivityGroupRepository;
-import uk.gov.london.ops.project.implementation.repository.ProjectHistoryRepository;
-import uk.gov.london.ops.project.implementation.repository.ProjectRepository;
-import uk.gov.london.ops.project.milestone.Milestone;
-import uk.gov.london.ops.project.milestone.MilestoneStatus;
-import uk.gov.london.ops.project.milestone.ProjectMilestonesBlock;
-import uk.gov.london.ops.project.outputs.OutputsBlock;
-import uk.gov.london.ops.project.outputs.OutputsCostsBlock;
-import uk.gov.london.ops.project.question.Answer;
-import uk.gov.london.ops.project.question.ProjectQuestionsBlock;
-import uk.gov.london.ops.project.repeatingentity.OtherFundingBlock;
-import uk.gov.london.ops.project.repeatingentity.ProjectObjective;
-import uk.gov.london.ops.project.repeatingentity.ProjectObjectivesBlock;
-import uk.gov.london.ops.project.repeatingentity.UserDefinedOutput;
-import uk.gov.london.ops.project.repeatingentity.UserDefinedOutputBlock;
-import uk.gov.london.ops.project.risk.ProjectRiskAndIssue;
-import uk.gov.london.ops.project.risk.ProjectRisksBlock;
-import uk.gov.london.ops.project.state.ProjectStatus;
-import uk.gov.london.ops.project.template.domain.AnswerType;
-import uk.gov.london.ops.project.template.domain.FundingTemplateBlock;
-import uk.gov.london.ops.project.template.domain.GrantSourceTemplateBlock;
-import uk.gov.london.ops.project.template.domain.MilestoneTemplate;
-import uk.gov.london.ops.project.template.domain.MilestonesTemplateBlock;
-import uk.gov.london.ops.project.template.domain.ProcessingRoute;
-import uk.gov.london.ops.project.template.domain.Template;
-import uk.gov.london.ops.project.template.domain.TemplateQuestion;
-import uk.gov.london.ops.refdata.Borough;
-import uk.gov.london.ops.refdata.CategoryValue;
-import uk.gov.london.ops.refdata.ConfigurableListItem;
-import uk.gov.london.ops.refdata.RefDataService;
-import uk.gov.london.ops.user.UserBuilder;
+
+import static uk.gov.london.ops.organisation.Organisation.TEST_ORG_ID_1;
+import static uk.gov.london.ops.organisation.OrganisationBuilder.MOPAC_TEST_ORG_1;
+import static uk.gov.london.ops.organisation.OrganisationBuilder.SKILLS_TEST_ORG_1;
+import static uk.gov.london.ops.payment.LedgerType.BUDGET;
+import static uk.gov.london.ops.payment.LedgerType.PAYMENT;
+import static uk.gov.london.ops.payment.ProjectLedgerEntry.MATCH_FUND_CATEGORY;
+import static uk.gov.london.ops.payment.SpendType.CAPITAL;
+import static uk.gov.london.ops.payment.SpendType.REVENUE;
+import static uk.gov.london.ops.project.ProjectTransition.ApprovalRequested;
+import static uk.gov.london.ops.project.block.ProjectBlockType.*;
+import static uk.gov.london.ops.project.grant.IndicativeGrantRequestedEntryKt.TOTAL_SCHEME_COST;
+import static uk.gov.london.ops.user.UserBuilder.DATA_INITIALISER_USER;
 
 /**
  * Factory class for building Project entities, primarily for testing.
@@ -146,7 +121,7 @@ public class ProjectBuilder {
     ProjectRepository projectRepository;
 
     @Autowired
-    OrganisationService organisationService;
+    OrganisationServiceImpl organisationService;
 
     @Autowired
     OrganisationGroupService organisationGroupService;
@@ -169,6 +144,10 @@ public class ProjectBuilder {
     @Autowired
     Environment environment;
 
+    public Project createTestProject(String title, int orgId, Integer programmeId, Template template, int initialStatus) {
+        return createTestProject(title, orgId, new Programme(programmeId, null), template, null, initialStatus);
+    }
+
     /**
      * Creates and saves a test project.
      */
@@ -183,12 +162,12 @@ public class ProjectBuilder {
             return null;
         }
         try {
-            if (orgId == TEST_ORG_ID_1) {
-                userBuilder.withLoggedInUser("test.glaops@gmail.com");
+            if (orgId == Organisation.TEST_ORG_ID_1) {
+                userBuilder.withLoggedInUser("test.glaops");
             } else if (orgId == MOPAC_TEST_ORG_1) {
-                userBuilder.withLoggedInUser("mopac.rp@gla.com");
+                userBuilder.withLoggedInUser("mopac.rp");
             } else if (orgId == SKILLS_TEST_ORG_1) {
-                userBuilder.withLoggedInUser("skillsapproved@gla.com");
+                userBuilder.withLoggedInUser("skillsapproved");
             } else {
                 userBuilder.withLoggedInUser(DATA_INITIALISER_USER);
             }
@@ -249,7 +228,13 @@ public class ProjectBuilder {
         detailsBlock.setSiteOwner("Mr M Smith");
         detailsBlock.setDescription("Planned development of a 21 houses.");
         detailsBlock.setMainContact("User Alpha");
-        detailsBlock.setMainContactEmail("user.alpha@gla.org");
+        detailsBlock.setMainContactEmail("user.alpha");
+        detailsBlock.setSecondaryContact("User2 Alpha");
+        detailsBlock.setSecondaryContactEmail("user2.alpha");
+    }
+
+    public Project createPopulatedTestProject(String title, Integer programmeId, Template template, int org, int initialStatus) {
+        return createPopulatedTestProject(title, new Programme(programmeId, null), template, org, initialStatus);
     }
 
     public Project createPopulatedTestProject(String title, Programme prog, Template template, int org, int initialStatus) {
@@ -275,7 +260,7 @@ public class ProjectBuilder {
         projectRepository.saveAndFlush(project);
     }
 
-    private void populateAndSubmitProject(Project submitted) {
+    public void populateAndSubmitProject(Project submitted) {
         populateAllProjectData(submitted);
 
         submitted.setStatus(ProjectStatus.Submitted);
@@ -285,34 +270,34 @@ public class ProjectBuilder {
                 .atZone(ZoneId.systemDefault()).toOffsetDateTime();
 
         // as the "Created" history transition is timestamped on the creation date time, we need this to mock the data
-        ProjectHistory projectCreationTransition = projectHistoryRepository
+        ProjectHistoryEntity projectCreationTransition = projectHistoryRepository
                 .findAllByProjectIdOrderByCreatedOnDesc(submitted.getId()).get(0);
         projectCreationTransition.setCreatedOn(dateTime.minus(4, ChronoUnit.DAYS));
         projectHistoryRepository.save(projectCreationTransition);
 
-        ProjectHistory projectHistory = new ProjectHistory();
+        ProjectHistoryEntity projectHistory = new ProjectHistoryEntity();
 
         projectHistory.setProjectId(submitted.getId());
-        projectHistory.setTransition(ProjectHistory.Transition.Submitted);
+        projectHistory.setTransition(ProjectTransition.Submitted);
         projectHistory.setComments("Submitted");
         projectHistory.setCreatedOn(dateTime.minus(3, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("test.admin@gla.com");
+        projectHistory.setCreatedBy("test.admin");
         projectHistoryRepository.save(projectHistory);
 
-        projectHistory = new ProjectHistory();
+        projectHistory = new ProjectHistoryEntity();
         projectHistory.setProjectId(submitted.getId());
-        projectHistory.setTransition(ProjectHistory.Transition.Withdrawn);
+        projectHistory.setTransition(ProjectTransition.Withdrawn);
         projectHistory.setComments("Returned to Draft");
         projectHistory.setCreatedOn(dateTime.minus(2, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("test.admin@gla.com");
+        projectHistory.setCreatedBy("test.admin");
         projectHistoryRepository.save(projectHistory);
 
-        projectHistory = new ProjectHistory();
+        projectHistory = new ProjectHistoryEntity();
         projectHistory.setProjectId(submitted.getId());
-        projectHistory.setTransition(ProjectHistory.Transition.Submitted);
+        projectHistory.setTransition(ProjectTransition.Submitted);
         projectHistory.setComments("Submitted Again");
         projectHistory.setCreatedOn(dateTime.minus(1, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("user.alpha@gla.org");
+        projectHistory.setCreatedBy("user.alpha");
         projectHistoryRepository.save(projectHistory);
     }
 
@@ -522,6 +507,10 @@ public class ProjectBuilder {
             units.setSupportedUnits(12);
             units.setTotalUnits(300);
             units.setTotalCost(2500000L);
+            NegotiatedGrantTemplateBlock singleBlockByType = (NegotiatedGrantTemplateBlock) tenure.getProject().getTemplate().getSingleBlockByType(NegotiatedGrant);
+            negotiatedGrantBlock.setShowSpecialisedUnits(singleBlockByType.isShowSpecialisedUnits());
+            negotiatedGrantBlock.setShowDevelopmentCost(singleBlockByType.isShowDevelopmentCost());
+            negotiatedGrantBlock.setShowPercentageCosts(singleBlockByType.isShowPercentageCosts());
         } else if (tenure instanceof DeveloperLedGrantBlock) {
             DeveloperLedGrantBlock block = (DeveloperLedGrantBlock) tenure;
             block.setAffordableCriteriaMet(true);
@@ -572,30 +561,45 @@ public class ProjectBuilder {
                 Answer ans = new Answer();
                 ans.setQuestion(questionEntity.getQuestion());
 
-                if (AnswerType.FreeText.equals(questionEntity.getQuestion().getAnswerType())) {
-                    ans.setAnswer(
-                            "Some really quite long text, asdiansodnoa ind oasindoaksndo aknso dkasndokasndokn aasdasd asd asd");
-                } else if (AnswerType.Text.equals(questionEntity.getQuestion().getAnswerType())) {
-                    ans.setAnswer("Some no quite so long text");
-                } else if (AnswerType.YesNo.equals(questionEntity.getQuestion().getAnswerType())) {
-                    ans.setAnswer("yes");
-                } else if (AnswerType.Date.equals(questionEntity.getQuestion().getAnswerType())) {
-                    ans.setAnswer("2015-12-12");
-                } else if (AnswerType.Number.equals(questionEntity.getQuestion().getAnswerType())) {
-                    ans.setNumericAnswer(1244.1);
-                } else if (AnswerType.Dropdown.equals(questionEntity.getQuestion().getAnswerType())) {
-                    ans.setAnswer(questionEntity.getQuestion().getAnswerOptions().iterator().next().getOption());
-                } else if (AnswerType.FileUpload.equals(questionEntity.getQuestion().getAnswerType())) {
-                    AttachmentFile file = new AttachmentFile();
-                    file.setFileName("test.pdf");
-                    file.setContentType("applciation/pdf");
-                    file.setCreatedOn(OffsetDateTime.now());
-                    try {
-                        fileService.save(file, new ByteArrayInputStream(new byte[]{1, 2, 3, 4}));
-                    } catch (IOException e) {
-                        throw new ValidationException("Unable to persist file");
-                    }
-                    ans.getFileAttachments().add(file);
+                AnswerType answerType = questionEntity.getQuestion().getAnswerType();
+                Integer maxLength = questionEntity.getQuestion().getMaxLength() != null
+                        ? questionEntity.getQuestion().getMaxLength() : 27;
+                switch (answerType) {
+                    case FreeText:
+                        String longText = "Some really quite long text, asdiansodnoa ind "
+                                + "oasindoaksndo aknso dkasndokasndokn aasdasd asd asd";
+                        maxLength = maxLength < longText.length() ? maxLength : longText.length();
+                        ans.setAnswer(longText.substring(0, maxLength));
+                        break;
+                    case Text:
+                        String shortText = "Some no quite so long text";
+                        maxLength = maxLength < shortText.length() ? maxLength : shortText.length();
+                        ans.setAnswer(shortText.substring(0, maxLength));
+                        break;
+                    case YesNo:
+                        ans.setAnswer("yes");
+                        break;
+                    case Date:
+                        ans.setAnswer("2015-12-12");
+                        break;
+                    case Number:
+                        ans.setNumericAnswer(1244.1);
+                        break;
+                    case Dropdown:
+                        ans.setAnswer(questionEntity.getQuestion().getAnswerOptions().iterator().next().getOption());
+                        break;
+                    case FileUpload:
+                        AttachmentFile file = new AttachmentFile();
+                        file.setFileName("test.pdf");
+                        file.setContentType("application/pdf");
+                        file.setCreatedOn(OffsetDateTime.now());
+                        try {
+                            fileService.save(file, new ByteArrayInputStream(new byte[]{1, 2, 3, 4}));
+                        } catch (IOException e) {
+                            throw new ValidationException("Unable to persist file");
+                        }
+                        ans.getFileAttachments().add(file);
+                        break;
                 }
                 answers.add(ans);
             }
@@ -628,8 +632,9 @@ public class ProjectBuilder {
 
     private void populateFundingBlock(Project project) {
         FundingBlock block = project.getFundingBlock();
-        block.setStartYear(2009);
-        block.setYearAvailableTo(15);
+        FundingTemplateBlock singleBlockByType = (FundingTemplateBlock) project.getTemplate().getSingleBlockByType(Funding);
+        block.setStartYear(singleBlockByType.getStartYear());
+        block.setYearAvailableTo(singleBlockByType.getYearAvailableTo());
 
         String text1 = null;
         String text2 = null;
@@ -673,7 +678,6 @@ public class ProjectBuilder {
 
 
         } else {
-            FundingTemplateBlock singleBlockByType = (FundingTemplateBlock) project.getTemplate().getSingleBlockByType(Funding);
             List<ConfigurableListItem> items = refDataService
                     .getConfigurableListItemsByExtID(singleBlockByType.getCategoriesExternalId())
                     .stream().sorted(Comparator.comparingInt(ConfigurableListItem::getDisplayOrder)).collect(Collectors.toList());
@@ -738,7 +742,6 @@ public class ProjectBuilder {
     private void createActivity(Project project, FundingBlock block, Integer year, Integer quarter, SpendType spendType,
             String name, Integer milestoneId, String milestoneName, BigDecimal value, BigDecimal matchFundValue) {
         FundingActivity activity = new FundingActivity(block.getId(), year, quarter, name, milestoneId, milestoneName);
-
         if (value != null) {
             ProjectLedgerEntry mainLedgerEntry = new ProjectLedgerEntry(project, block, year, PAYMENT, spendType, value);
             mainLedgerEntry.setLedgerStatus(LedgerStatus.FORECAST);
@@ -748,7 +751,6 @@ public class ProjectBuilder {
             mainLedgerEntry = financeService.save(mainLedgerEntry);
             activity.getLedgerEntries().add(mainLedgerEntry);
         }
-
         if (matchFundValue != null) {
             ProjectLedgerEntry matchFundLedgerEntry = new ProjectLedgerEntry(project, block, year, PAYMENT, spendType,
                     matchFundValue, MATCH_FUND_CATEGORY);
@@ -769,26 +771,40 @@ public class ProjectBuilder {
         fundingActivityGroupRepository.save(actGroup);
     }
 
+    public void setProjectToAssess(Project project) {
+        project.setStatus(ProjectStatus.Assess);
+        ProjectHistoryEntity projectHistory = new ProjectHistoryEntity();
+        OffsetDateTime dateTime = LocalDateTime.parse("2016-10-04 12:30", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+            .atZone(ZoneId.systemDefault()).toOffsetDateTime();
+        projectHistory.setProjectId(project.getId());
+        projectHistory.setTransition(ProjectTransition.Assess);
+        projectHistory.setComments("Set to assess");
+        projectHistory.setCreatedOn(dateTime.minus(3, ChronoUnit.DAYS));
+        projectHistory.setCreatedBy("test.admin");
+        projectHistoryRepository.save(projectHistory);
+        projectRepository.save(project);
+    }
+
     public void approveProject(Project project) {
         project.setStatus(ProjectStatus.Active);
         OffsetDateTime now = environment.now();
         project.setFirstApproved(project.getCreatedOn());
         for (NamedProjectBlock block : project.getProjectBlocks()) {
-            if (block.getBlockStatus().equals(NamedProjectBlock.BlockStatus.UNAPPROVED)) {
-                block.approve("test.admin@gla.com", now);
+            if (block.getBlockStatus().equals(ProjectBlockStatus.UNAPPROVED)) {
+                block.approve("test.admin", now);
                 block.setLockDetails(null);
             }
         }
         updateBlockVisibility(project);
         projectService.initialiseWithSkillsData(project);
         if (!project.getStateModel().isApprovalRequired()) {
-            ProjectHistory projectHistory = new ProjectHistory();
+            ProjectHistoryEntity projectHistory = new ProjectHistoryEntity();
             projectHistory.setProjectId(project.getId());
-            projectHistory.setTransition(ProjectHistory.Transition.Approved);
+            projectHistory.setTransition(ProjectTransition.Approved);
             projectHistory.setComments("Approved");
             projectHistory.setDescription("Project saved to active");
             projectHistory.setCreatedOn(project.getFirstApproved());
-            projectHistory.setCreatedBy("user.alpha@gla.org");
+            projectHistory.setCreatedBy("user.alpha");
             projectHistoryRepository.save(projectHistory);
         }
         projectRepository.save(project);
@@ -822,18 +838,18 @@ public class ProjectBuilder {
     }
 
     public void generateProjectApprovalHistory(Project project) {
-        ProjectHistory projectHistory = new ProjectHistory();
+        ProjectHistoryEntity projectHistory = new ProjectHistoryEntity();
         projectHistory.setProjectId(project.getId());
-        projectHistory.setTransition(ProjectHistory.Transition.ApprovalRequested);
+        projectHistory.setTransition(ApprovalRequested);
         projectHistory.setComments("Approval Requested");
         projectHistory.setCreatedOn(environment.now().minus(2, ChronoUnit.DAYS));
-        projectHistory.setCreatedBy("test.admin@gla.com");
+        projectHistory.setCreatedBy("test.admin");
         projectHistoryRepository.save(projectHistory);
     }
 
     public void cloneBlock(Project project, ProjectBlockType type) {
         NamedProjectBlock singleBlockByType = project.getSingleBlockByType(type);
-        NamedProjectBlock clone = singleBlockByType.cloneBlock("test.admin@gla.com", environment.now());
+        NamedProjectBlock clone = singleBlockByType.cloneBlock("test.admin", environment.now());
         project.addBlockToProject(clone);
         clone.setVersionNumber(2);
 
@@ -848,5 +864,127 @@ public class ProjectBuilder {
         projectRepository.save(project);
 
     }
+
+    public static NamedProjectBlock createBlockFromTemplate(ProjectModel project, TemplateBlock templateBlock) {
+        NamedProjectBlock namedProjectBlock = templateBlock.getBlock().newProjectBlockInstance();
+        namedProjectBlock.initFromTemplate(templateBlock);
+        namedProjectBlock.setProject(new Project(project.getProjectId(),""));
+
+        namedProjectBlock.setNew(StringUtils.isNotEmpty(namedProjectBlock.getBlockAppearsOnStatus())
+                && Objects.equals(project.getStatusName(), templateBlock.getBlockAppearsOnStatus()));
+
+        namedProjectBlock.setHidden(StringUtils.isNotEmpty(templateBlock.getBlockAppearsOnStatus())
+                && !Objects.equals(project.getStatusName(), templateBlock.getBlockAppearsOnStatus()));
+
+        return namedProjectBlock;
+    }
+
+    public static NamedProjectBlock createBlockFromTemplate(Project project, TemplateBlock templateBlock) {
+        NamedProjectBlock namedProjectBlock = templateBlock.getBlock().newProjectBlockInstance();
+        namedProjectBlock.setProject(project);
+        namedProjectBlock.initFromTemplate(templateBlock);
+
+        namedProjectBlock.setNew(StringUtils.isNotEmpty(namedProjectBlock.getBlockAppearsOnStatus())
+                && Objects.equals(project.getStatusName(), templateBlock.getBlockAppearsOnStatus()));
+
+        namedProjectBlock.setHidden(StringUtils.isNotEmpty(templateBlock.getBlockAppearsOnStatus())
+                && !Objects.equals(project.getStatusName(), templateBlock.getBlockAppearsOnStatus()));
+
+        return namedProjectBlock;
+    }
+
+    public static void addInternalBlockToProject(Project project, InternalTemplateBlock internalTemplateBlock) {
+        InternalProjectBlock internalProjectBlock = internalTemplateBlock.getType().newBlockInstance();
+        internalProjectBlock.initFromTemplate(internalTemplateBlock);
+        internalProjectBlock.setProject(project);
+        project.getInternalBlocks().add(internalProjectBlock);
+    }
+
+    public Project createProjectForClaimMilestone(String projectName, Programme programme, Template template, boolean monetary, ProjectSubStatus subStatus) {
+        Project project = createPopulatedTestProject(projectName, programme, template, TEST_ORG_ID_1, STATUS_ACTIVE);
+        this.approveProject(project);
+        project.setSubStatus(subStatus);
+
+
+        GrantSourceBlock grantSourceBlock = project.getGrantSourceBlock();
+        if (grantSourceBlock != null) {
+            grantSourceBlock.setZeroGrantRequested(false);
+            grantSourceBlock.setGrantValue(1000000L);
+            grantSourceBlock.setRecycledCapitalGrantFundValue(2000000L);
+            grantSourceBlock.setDisposalProceedsFundValue(3000000L);
+        }
+
+        AffordableHomesBlock indicativeStarts =
+                (AffordableHomesBlock) project.getSingleLatestBlockOfType(AffordableHomes);
+        if (indicativeStarts != null) {
+            Integer year = indicativeStarts.getEntries().stream()
+                    .filter(e -> e.getYear() != null)
+                    .min(Comparator.comparingInt(AffordableHomesEntry::getYear))
+                    .get().getYear();
+
+            indicativeStarts.getCostsAndContributions().stream()
+                    .filter(c -> c.getEntryType().equals(EntryType.Cost))
+                    .min(Comparator.comparingDouble(AffordableHomesCostsAndContributions::getDisplayOrder))
+                    .get()
+                    .setValue(new BigDecimal(10000000L));
+
+            Set<IndicativeGrantRequestedEntry> grantRequestedEntries = indicativeStarts.getGrantRequestedEntries();
+            int tenureTypeId = grantRequestedEntries
+                    .stream()
+                    .min(Comparator.comparing(IndicativeGrantRequestedEntry::getTenureTypeId))
+                    .get().getTenureTypeId();
+
+            indicativeStarts.findEntry(year, tenureTypeId, AffordableHomesType.StartOnSite).setUnits(10);
+            indicativeStarts.findEntry(year, tenureTypeId, AffordableHomesType.Completion).setUnits(10);
+
+
+
+            IndicativeGrantRequestedEntry grant = indicativeStarts.findGrantRequestedEntry(tenureTypeId, "Grant");
+            IndicativeGrantRequestedEntry rcgf = indicativeStarts.findGrantRequestedEntry(tenureTypeId, "RCGF");
+            IndicativeGrantRequestedEntry total = indicativeStarts.findGrantRequestedEntry(tenureTypeId, TOTAL_SCHEME_COST);
+
+            rcgf.setValue(new BigDecimal(2000000L));
+            grant.setValue(new BigDecimal(1000000L));
+            total.setValue(new BigDecimal(10000000L));
+
+        }
+
+        ProjectMilestonesBlock milestonesBlock = project.getMilestonesBlock();
+        milestonesBlock.getSortedMilestones().get(0).setClaimStatus(ClaimStatus.Approved);
+
+        Milestone claimedMilestone = milestonesBlock.getSortedMilestones().get(1);
+        claimedMilestone.setClaimStatus(ClaimStatus.Claimed);
+        if (monetary && claimedMilestone.getMonetarySplit() > 0) {
+            claimedMilestone.setClaimedGrant((claimedMilestone.getMonetarySplit() / 100) * 1000000L);
+        }
+        claimedMilestone.setClaimedRcgf(200000L);
+        if (grantSourceBlock != null) {
+            claimedMilestone.setClaimedDpf(300000L);
+        }
+
+        if (project.getTemplate().getMilestoneType().equals(Template.MilestoneType.MonetaryValue)) {
+            BigDecimal monetaryValue = new BigDecimal(claimedMilestone.getClaimedRcgf());
+            if (claimedMilestone.getClaimedDpf() != null) {
+                monetaryValue = monetaryValue.add(new BigDecimal(claimedMilestone.getClaimedDpf()));
+            }
+            claimedMilestone.setMonetaryValue(monetaryValue);
+        }
+
+        if (milestonesBlock.getMilestones().size() >= 4) {
+            milestonesBlock.getSortedMilestones().get(3).setMilestoneStatus(MilestoneStatus.FORECAST);
+        }
+
+        for (Milestone milestone: milestonesBlock.getMilestones()) {
+            if (milestone.getMonetarySplit() == null) {
+                milestone.setMonetary(monetary);
+            } else {
+                milestone.setMonetary(true);
+            }
+        }
+
+        projectRepository.save(project);
+        return project;
+    }
+
 
 }

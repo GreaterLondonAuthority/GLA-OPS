@@ -7,8 +7,9 @@
  */
 
 class ChangeReportFieldFiles {
-  constructor(ReportService) {
+  constructor(ReportService, $stateParams) {
     this.ReportService = ReportService;
+    this.$stateParams = $stateParams;
   }
 
   $onInit(){
@@ -50,7 +51,7 @@ class ChangeReportFieldFiles {
   }
 }
 
-ChangeReportFieldFiles.$inject = ['ReportService'];
+ChangeReportFieldFiles.$inject = ['ReportService', '$stateParams'];
 
 angular.module('GLA')
   .component('changeReportFieldFiles', {

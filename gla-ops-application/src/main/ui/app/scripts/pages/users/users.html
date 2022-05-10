@@ -3,33 +3,53 @@
 
   <div class="row no-gutter mtop10">
     <div class="col-xs-12 col-md-5 mbottom10">
-      <div class="text-align-left">Search</div>
-      <search-field on-clear="$ctrl.clearSearch()"
-                    on-search="$ctrl.search()"
-                    on-select="$ctrl.select($ctrl.selectedSearchOption)"
-                    options="$ctrl.searchOptions"
-                    search-text="$ctrl.searchTextModel"
-                    selected-option="$ctrl.selectedSearchOption"></search-field>
+      <gla-search-field [options]="$ctrl.searchOptions"
+                        [(selected-option)]="$ctrl.selectedSearchOption"
+                        [(search-text)]="$ctrl.searchTextModel"
+                        (on-select)="$ctrl.select($ctrl.selectedSearchOption)"
+                        (on-search)="$ctrl.search()"
+                        (on-clear)="$ctrl.clearSearch()"></gla-search-field>
     </div>
   </div>
 
   <uib-tabset active="$ctrl.activeTabIndex" class="mtop20">
 
-    <uib-tab class="approved-users-tab" heading="APPROVED USERS" index="$ctrl.tabs.approvedUsers" select="$ctrl.onApprovedUsersTabSelected()">
-      <approved-users-list ng-if="$ctrl.activeTabIndex == $ctrl.tabs.approvedUsers"
-                           on-clear="$ctrl.clearFiltersAndSearch()"
-                           organisation-types="$ctrl.organisationTypes"
-                           search-text="$ctrl.searchText"
-                           search-type="$ctrl.searchType"></approved-users-list>
+    <uib-tab class="all-users-tab" heading="ALL USERS" index="$ctrl.tabs.allUsers" select="$ctrl.onAllUsersTabSelected()">
+      <all-users-list id="all-users" ng-if="$ctrl.activeTabIndex == $ctrl.tabs.allUsers"
+                            on-clear="$ctrl.clearFiltersAndSearch()"
+                            organisation-types="$ctrl.organisationTypes"
+                            search-text="$ctrl.searchText"
+                            show-signatory="false"
+                            search-type="$ctrl.searchType"
+                            user-types="$ctrl.userTypes.allUsers"></all-users-list>
     </uib-tab>
 
-    <uib-tab class="pending-users-tab" heading="PENDING USERS" index="$ctrl.tabs.pendingUsers" select="$ctrl.onPendingUsersTabSelected()">
+    <uib-tab class="approved-users-tab" heading="APPROVED USERS" index="$ctrl.tabs.approvedUsers" select="$ctrl.onApprovedUsersTabSelected()">
+      <all-users-list id="approved-users" ng-if="$ctrl.activeTabIndex == $ctrl.tabs.approvedUsers"
+                            on-clear="$ctrl.clearFiltersAndSearch()"
+                            organisation-types="$ctrl.organisationTypes"
+                            show-signatory="true"
+                            search-text="$ctrl.searchText"
+                            search-type="$ctrl.searchType"
+                            user-types="$ctrl.userTypes.approvedUsers"></all-users-list>
+    </uib-tab>
+
+    <uib-tab class="pending-users-tab" heading="ROLE REQUESTED" index="$ctrl.tabs.pendingUsers" select="$ctrl.onPendingUsersTabSelected()">
       <pending-users-list ng-if="$ctrl.activeTabIndex == $ctrl.tabs.pendingUsers"
                           on-clear="$ctrl.clearFiltersAndSearch()"
                           organisation-types="$ctrl.organisationTypes"
                           search-text="$ctrl.searchText"
                           search-type="$ctrl.searchType"></pending-users-list>
     </uib-tab>
+
+    <uib-tab class="users-without-roles-tab" heading="USERS WITH NO ROLES" index="$ctrl.tabs.orphanedUsers" select="$ctrl.onOrphanedUsersTabSelected()">
+      <all-users-list id="no-roles-users" ng-if="$ctrl.activeTabIndex == $ctrl.tabs.orphanedUsers"
+                            on-clear="$ctrl.clearFiltersAndSearch()"
+                            organisation-types="$ctrl.organisationTypes"
+                            show-signatory="false"
+                            search-text="$ctrl.searchText"
+                            search-type="$ctrl.searchType"
+                            user-types="$ctrl.userTypes.orphanedUsers"></all-users-list>
   </uib-tabset>
 </div>
 

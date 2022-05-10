@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.collections.CollectionUtils;
+import uk.gov.london.ops.contracts.ContractModel;
 import uk.gov.london.ops.framework.exception.NotFoundException;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.programme.domain.Programme;
@@ -18,11 +19,29 @@ import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.internalblock.InternalBlockType;
 import uk.gov.london.ops.project.state.StateModel;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -119,9 +138,11 @@ public class Template implements Serializable {
     @JoinColumn(name = "indicative_tenure_config_id")
     private IndicativeTenureConfiguration indicativeTenureConfiguration;
 
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "contract_id")
-    private Contract contract;
+    @Column(name = "contract_id")
+    private Integer contractId;
+
+    @Transient
+    private ContractModel contract;
 
     @Column(name = "created_on")
     private OffsetDateTime createdOn;
@@ -132,8 +153,17 @@ public class Template implements Serializable {
     @Column(name = "start_on_site_restriction_text")
     private String startOnSiteRestrictionText;
 
+    @Column(name = "project_submission_reminder")
+    private boolean projectSubmissionReminder;
+
+    @Column
+    private boolean isProgrammeAllocation = false;
+
     @Transient
     List<Programme> programmes;
+
+    @Transient
+    private Integer projectsCount = 0;
 
     public Template() {
         // Empty
@@ -284,6 +314,10 @@ public class Template implements Serializable {
         return blocksEnabled.stream().filter(b -> b.getId().equals(id)).findFirst().orElse(null);
     }
 
+    public InternalTemplateBlock getInternalBlockById(Integer id) {
+        return internalBlocks.stream().filter(b -> b.getId().equals(id)).findFirst().orElse(null);
+    }
+
     public Set<TemplateTenureType> getTenureTypes() {
         return tenureTypes;
     }
@@ -371,12 +405,20 @@ public class Template implements Serializable {
         return buildIndicativeTenureYears();
     }
 
-    public Contract getContract() {
+    public ContractModel getContract() {
         return contract;
     }
 
-    public void setContract(Contract contract) {
-        this.contract = contract;
+    public void setContract(ContractModel contractModel) {
+        this.contract = contractModel;
+    }
+
+    public Integer getContractId() {
+        return contractId;
+    }
+
+    public void setContractId(Integer contractId) {
+        this.contractId = contractId;
     }
 
     public OffsetDateTime getCreatedOn() {
@@ -401,6 +443,14 @@ public class Template implements Serializable {
 
     public void setStartOnSiteRestrictionText(String startOnSiteRestrictionText) {
         this.startOnSiteRestrictionText = startOnSiteRestrictionText;
+    }
+
+    public boolean isProjectSubmissionReminder() {
+        return projectSubmissionReminder;
+    }
+
+    public void setProjectSubmissionReminder(boolean projectSubmissionReminder) {
+        this.projectSubmissionReminder = projectSubmissionReminder;
     }
 
     public TemplateStatus getStatus() {
@@ -480,8 +530,23 @@ public class Template implements Serializable {
         } else {
             clone.getTenureTypes().clear();
         }
+
+        if (clone.getBlocksEnabled() == null) {
+            clone.setBlocksEnabled(new ArrayList<>());
+        } else {
+            clone.getBlocksEnabled().clear();
+        }
+
+        if (clone.getInternalBlocks() == null) {
+            clone.setInternalBlocks(new ArrayList<>());
+        } else {
+            clone.getInternalBlocks().clear();
+        }
         clone.setStrategicTemplate(this.isStrategicTemplate());
         clone.setAssociatedProjectsEnabled(this.isAssociatedProjectsEnabled());
+        clone.setProjectSubmissionReminder(this.isProjectSubmissionReminder());
+        clone.setContract(this.getContract());
+        clone.setContractId(this.getContractId());
 
         if (this.getTenureTypes() != null) {
             for (TemplateTenureType templateTenureType : this.getTenureTypes()) {
@@ -498,14 +563,14 @@ public class Template implements Serializable {
         DetailsTemplate sourceConfig = this.getDetailsConfig();
         clonedDetails.setAddressRequirement(sourceConfig.getAddressRequirement());
         clonedDetails.setBoroughRequirement(sourceConfig.getBoroughRequirement());
-        clonedDetails.setContactRequirement(sourceConfig.getContactRequirement());
         clonedDetails.setCoordsRequirement(sourceConfig.getCoordsRequirement());
-        clonedDetails.setImageRequirement(sourceConfig.getImageRequirement());
         clonedDetails.setInterestRequirement(sourceConfig.getInterestRequirement());
         clonedDetails.setLegacyProjectCodeRequirement(sourceConfig.getLegacyProjectCodeRequirement());
         clonedDetails.setMaincontactemailRequirement(sourceConfig.getMaincontactemailRequirement());
+        clonedDetails.setSecondaryContactEmailRequirement(sourceConfig.getSecondaryContactEmailRequirement());
         clonedDetails.setWardIdRequirement(sourceConfig.getWardIdRequirement());
         clonedDetails.setMaincontactRequirement(sourceConfig.getMaincontactRequirement());
+        clonedDetails.setSecondaryContactRequirement(sourceConfig.getSecondaryContactRequirement());
         clonedDetails.setPostcodeRequirement(sourceConfig.getPostcodeRequirement());
         clonedDetails.setProjectManagerRequirement(sourceConfig.getProjectManagerRequirement());
         clonedDetails.setSiteOwnerRequirement(sourceConfig.getSiteOwnerRequirement());
@@ -597,4 +662,23 @@ public class Template implements Serializable {
         return blocksEnabled.stream().filter(b -> b.getDisplayOrder().equals(displayOrderId)).findFirst().orElse(null);
     }
 
+    public InternalTemplateBlock getSingleInternalBlockByDisplayOrder(Integer displayOrderId) {
+        return internalBlocks.stream().filter(b -> b.getDisplayOrder().equals(displayOrderId)).findFirst().orElse(null);
+    }
+
+    public Integer getProjectsCount() {
+        return projectsCount;
+    }
+
+    public void setProjectsCount(Integer projectsCount) {
+        this.projectsCount = projectsCount;
+    }
+
+    public boolean isProgrammeAllocation() {
+        return isProgrammeAllocation;
+    }
+
+    public void setProgrammeAllocation(boolean programmeAllocation) {
+        isProgrammeAllocation = programmeAllocation;
+    }
 }

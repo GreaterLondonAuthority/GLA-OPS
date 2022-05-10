@@ -11,11 +11,14 @@ import static uk.gov.london.common.GlaUtils.nullSafeAdd;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.Nullable;
 import uk.gov.london.ops.project.claim.Claim;
 
 public class FundingSection extends FundingTotalsWrapper implements ClaimableFundingEntity {
@@ -29,6 +32,10 @@ public class FundingSection extends FundingTotalsWrapper implements ClaimableFun
     public String notClaimableReason;
 
     public Claim claim;
+
+    private OffsetDateTime authorisedOn;
+
+    private String authorisedBy;
 
     public FundingSection(Integer sectionNumber) {
         this.sectionNumber = sectionNumber;
@@ -120,4 +127,25 @@ public class FundingSection extends FundingTotalsWrapper implements ClaimableFun
         return new FundingSectionClaimsSummary(nbClaimedActivities, totalCapitalClaimed, totalRevenueClaimed);
     }
 
+    @Nullable
+    @Override
+    public String getAuthorisedBy() {
+        return this.authorisedBy;
+    }
+
+    @Override
+    public void setAuthorisedBy(@Nullable String authorisedBy) {
+        this.authorisedBy = authorisedBy;
+    }
+
+    @Nullable
+    @Override
+    public OffsetDateTime getAuthorisedOn() {
+        return this.authorisedOn;
+    }
+
+    @Override
+    public void setAuthorisedOn(@Nullable OffsetDateTime authorisedOn) {
+        this.authorisedOn = authorisedOn;
+    }
 }

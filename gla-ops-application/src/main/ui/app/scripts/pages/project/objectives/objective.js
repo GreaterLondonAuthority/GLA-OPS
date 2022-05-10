@@ -16,10 +16,16 @@ class Objective extends RepeatingEntityCtrl{
 
   $onInit() {
     super.$onInit();
+    this.titleId = this.generateId();
+    this.summaryId = this.generateId();
     this.labels = {
       title: this.label('Title'),
       description: this.label('Description')
     }
+  }
+
+  generateId(){
+    return Math.floor(Math.random() * Date.now());
   }
 
   label(labelText){
@@ -31,7 +37,7 @@ class Objective extends RepeatingEntityCtrl{
 Objective.$inject = ['TemplateService'];
 
 angular.module('GLA')
-  .component('objective', {
+  .component('glaObjective', {
     controller: Objective,
     require: {
       parentCtrl: '?^^entitiesList'

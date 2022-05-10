@@ -11,10 +11,10 @@
 
     .notification-repeater {
       .notification{
-        padding: 10px 10px 15px 10px;
+        padding: 10px 10px 15px 30px;
       }
 
-      notification {
+      gla-notification {
         display: block;
         delete-button{
           position: absolute;
@@ -50,13 +50,36 @@
     .notification {
       cursor: pointer;
 
+      &:focus {
+        @include tab-focus;
+        outline: 2px solid $gla-black;
+        outline-offset: -6px;
+
+        &:not(:focus-visible) {
+          outline: none;
+        }
+      }
+
       .notification-text {
         padding: 5px;
       }
       .notification-time {
         padding: 5px;
-        color: #777777;
+        color: $secondary-grey;
       }
     }
   }
+
+  .delete-button-container {
+    padding-right: 15px;
+  }
+
+  .select-notification-checkbox {
+    position: absolute;
+    top: 50%;
+    bottom: 50%;
+    margin-left: 7px;
+    margin-top: -13px;
+  }
+
 }

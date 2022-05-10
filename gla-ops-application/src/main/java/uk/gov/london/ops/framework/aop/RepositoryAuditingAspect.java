@@ -32,7 +32,7 @@ public class RepositoryAuditingAspect {
 
         long after = System.currentTimeMillis();
 
-        long executionTime = after-before;
+        long executionTime = after - before;
         if (executionTime > threshold) {
             log.info("{} execution time: {}", getClassAndMethodName(pjp), executionTime);
         }
@@ -42,13 +42,13 @@ public class RepositoryAuditingAspect {
 
     private String getClassAndMethodName(ProceedingJoinPoint pjp) {
         try {
-            for (Class itf: pjp.getTarget().getClass().getInterfaces()) {
+            for (Class itf : pjp.getTarget().getClass().getInterfaces()) {
                 if (itf.getName().contains("uk.gov.london.ops.repository")) {
-                    return pjp.getTarget().getClass().getInterfaces()[0].getSimpleName()+"."+pjp.getSignature().getName()+"(..)";
+                    return pjp.getTarget().getClass().getInterfaces()[0].getSimpleName() + "." + pjp.getSignature().getName()
+                            + "(..)";
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn("could not extract target class name", e);
         }
 

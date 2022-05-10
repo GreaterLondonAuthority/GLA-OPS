@@ -16,8 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.london.ops.framework.Environment;
 import uk.gov.london.ops.file.StorageOption;
+import uk.gov.london.ops.framework.annotations.PermissionRequired;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.feature.Feature;
 import uk.gov.london.ops.framework.feature.FeatureStatus;
@@ -26,10 +27,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
+import static uk.gov.london.ops.permission.PermissionType.SWITCH_STORAGE;
+import static uk.gov.london.ops.permission.PermissionType.SYS_FEATURES_EDIT;
 
 @RestController
 @RequestMapping("/api/v1")
-@Api(description="config api")
+@Api
 public class ConfigAPI {
 
     @Autowired
@@ -53,6 +56,9 @@ public class ConfigAPI {
     @Value("${http.cache.max.age}")
     private Integer httpCacheMaxAge;
 
+    @Value("${max.sap.ids.per.org}")
+    private Integer maxSapIdsPerOrg;
+
     @Autowired
     FeatureStatus featureStatus;
 
@@ -67,6 +73,10 @@ public class ConfigAPI {
         map.put("reportServer-url", environment.reportServerUrl());
         map.put("sgw-url", environment.sgwUrl());
         map.put("about-url", environment.aboutUrl());
+        if (featureStatus.isEnabled(Feature.ShowAccessibilityUrl)) {
+            map.put("accessibility-url", environment.accessibilityUrl());
+        }
+        map.put("privacy-policy-url", environment.privacyUrl());
         map.put("is-test-env", environment.isTestEnvironment());
         map.put("notifications-max-display", notificationsMaxDisplay);
         map.put("annual-submissions-first-year", annualSubmissionsFirstYear);
@@ -74,6 +84,7 @@ public class ConfigAPI {
         map.put("annual-submissions-dpf-last-year", annualSubmissionsDpfLastYear);
         map.put("annual-submissions-agreement-url", annualSubmissionsAgreementUrl);
         map.put("http-cache-max-age", httpCacheMaxAge);
+        map.put("max-sap-ids-per-org", maxSapIdsPerOrg);
         return map;
     }
 
@@ -122,13 +133,14 @@ public class ConfigAPI {
      * Switch between 3 storage options: Database, S3 and OwnCloud.
      * The default option is database.
      */
-    @Secured({OPS_ADMIN})
+    @PermissionRequired(SWITCH_STORAGE)
     @ApiOperation(value = "Switch between 3 storage options: Database, S3 and OwnCloud.", notes = "The default option is Database.")
     @RequestMapping(value = "/config/storage/{option}", method = RequestMethod.PUT)
     public String switchStorageOption(@PathVariable StorageOption option) {
         if ((option.equals(StorageOption.S3) || option.equals(StorageOption.OwnCloud))
             && !featureStatus.isEnabled(Feature.AllowExternalFileStorage)) {
-            throw new ValidationException("AllowExternalFileStorage must be enabled to use S3 and OwnCloud storage. Try enabling and switch again.");
+            throw new ValidationException("AllowExternalFileStorage must be enabled to use S3 and OwnCloud storage. "
+                    + "Try enabling and switch again.");
         } else {
             environment.setStorageOption(String.valueOf(option));
         }

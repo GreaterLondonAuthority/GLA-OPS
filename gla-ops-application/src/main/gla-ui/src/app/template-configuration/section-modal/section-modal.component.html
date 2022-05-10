@@ -1,0 +1,134 @@
+<div class="section-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" (click)="activeModal.dismiss()" on-enter="activeModal.dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{btnName}} Section</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form name="modalForm" #modalForm="ngForm">
+      <div class="form-group">
+        <label for="externalId">Section ID</label>
+        <input #externalId="ngModel"
+               id="externalId"
+               type="number"
+               class="form-control"
+               name="externalId"
+               numbers-only
+               placeholder="Section ID"
+               [(ngModel)]="section.externalId"
+               (keyup)="validateExternalId(section.externalId)"
+               [maxlength]="9"/>
+        <div class="error-wrapper" *ngIf="externalId.touched && isDuplicateExternalId" role="alert">
+          <span class="error" id="duplicate-section-id">Duplicate Section ID</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <textarea id="title"
+                  aria-label="title"
+                  class="form-control"
+                  name="title"
+                  placeholder="Section Name"
+                  [(ngModel)]="section.text"
+                  [maxlength]="1000"
+                  ng-trim="false"
+                  rows="5">
+        </textarea>
+      </div>
+      <div class="form-group">
+        <label for="displayOrder">Display Order</label>
+        <input id="displayOrder"
+               type="number"
+               class="form-control"
+               numbers-only
+               placeholder="Display Order"
+               name="sectionDisplayOrder"
+               #sectionDisplayOrder="ngModel"
+               [(ngModel)]="section.displayOrder"
+               (keyup)="validateDisplayOrder(section.displayOrder)"
+               [maxlength]="9"/>
+        <div class="error-wrapper" *ngIf="sectionDisplayOrder.touched || isDuplicateDisplayOrder"
+             role="alert">
+          <span class="error" id="duplicate-display-order">Duplicate display order</span>
+        </div>
+      </div>
+
+      <!--      PARENT Functionality-->
+      <!--      <div class="form-group" *ngIf="block.questions.length">-->
+      <!--        <div class="form-group" >-->
+      <!--          <label for="parent-id">Depends on question ID (Optional)</label>-->
+      <!--          <div class="form-group">-->
+      <!--            <input id="parent-id"-->
+      <!--                   type="text"-->
+      <!--                   class="form-control"-->
+      <!--                   placeholder="Question ID"-->
+      <!--                   [(ngModel)]="section.parentId"-->
+      <!--                   ng-model-options="{ debounce: 400 }"-->
+      <!--                   ng-change="onParentQuestionIdChange(section)"-->
+      <!--                   maxlength="9"/>-->
+
+      <!--            <div class="error-wrapper"  role="alert">-->
+      <!--              <span *ngIf="section.parentId && !parentQuestionExists && !loading" class="error" id="parent-invalid-question">Question not found</span>-->
+      <!--              <span *ngIf="parentQuestionExists && !isExistingParentQuestion" class="error" id="parent-question-not-in-block">Question does not exists in the block</span>-->
+      <!--              <span *ngIf="parentQuestionExists && !(parentDropdownAnswerExists || parentYesNoAnswerExists)"  class="error" id="parent-wrong-answer-type">Wrong answer type: questions can only depend on Yes/No and Dropdown answer types</span>-->
+      <!--              <span *ngIf=" parentQuestionExists && !isParentQuestionLevelValid"  class="error" id="parent-question-valid-level">Maximum parent levels exceeded</span>-->
+      <!--              <span *ngIf=" parentQuestionExists && isSameSectionQuestion"  class="error" id="parent-question-same-section">Section can only depend on a question in another section</span>-->
+      <!--            </div>-->
+      <!--          </div>-->
+
+      <!--          <div class="form-group" *ngIf="parentQuestionExists">-->
+      <!--            <span id="parent-question-text" style="color: royalblue">{{parentQuestion.text}}</span>-->
+      <!--          </div>-->
+
+      <!--        </div>-->
+
+      <!--        <div *ngIf="section.parentId && parentQuestionValid && parentDropdownAnswerExists && parentQuestion.maxAnswers">-->
+      <!--          <label for="multianswerToMatch">Depends on answer</label>-->
+      <!--          <div class="mtop10 mbottom10">-->
+      <!--            <gla-multi-select id="multianswerToMatch"-->
+      <!--                              [filter-dropdown-items]="parentQuestion.answerOptions"-->
+      <!--                              (on-change)="onMultiSelectChange(parentQuestion)"></gla-multi-select>-->
+      <!--          </div>-->
+      <!--        </div>-->
+
+      <!--        <div class="form-group"  *ngIf="section.parentId && parentQuestionValid && parentYesNoAnswerExists">-->
+      <!--          <label for="yes-no-input">Parent option(s)</label>-->
+      <!--          <div>-->
+      <!--            <gla-yes-no-input id="yes-no-input"-->
+      <!--                              name="yes-no-input"-->
+      <!--                              [(model)]="section.parentAnswerToMatch">-->
+      <!--            </gla-yes-no-input>-->
+      <!--          </div>-->
+      <!--        </div>-->
+
+      <!--      </div>-->
+
+    </form>
+
+    <div class="modal-footer">
+      <div class="row">
+        <div class="col-xs-12 text-center mbottom15">
+
+          <button
+            id="abandon-btn"
+            class="btn btn-default btn-primary btn-center"
+            type="button"
+            (click)="addSection()"
+            [disabled]="!addButtonEnabled()">
+            {{btnName.toUpperCase()}}
+          </button>
+
+          <button
+            id="cancel-btn"
+            class="btn btn-default btn-secondary btn-center"
+            type="button"
+            (click)="activeModal.dismiss()">CANCEL
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

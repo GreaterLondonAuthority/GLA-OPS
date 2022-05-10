@@ -1,0 +1,96 @@
+<div class="budget-categories-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1 *ngIf="updateMode()">Update Category</h1>
+    <h1 *ngIf="!updateMode()">Budget Category</h1>
+  </div>
+
+  <div class="modal-body">
+    <form
+      id="configListCategoryForm"
+      #configListCategoryForm="ngForm"
+      role="form">
+
+      <div class="form-group" *ngIf="!updateMode()">
+        <label for="groupId">Group ID</label>
+        <select id="groupId"
+                  [(ngModel)]="listItem.chosenExternalId"
+                name="listItem.chosenExternalId"
+                class="form-control" (change)="toggleShowInput(listItem.chosenExternalId === '-1')">
+          <option >
+            Please select...
+          </option>
+          <option *ngFor="let id of availableExternalIds">
+            {{ id }}
+          </option>
+          <option ngValue="-1" >
+            Add new group
+          </option>
+        </select>
+
+      </div>
+      <div class="form-group" *ngIf="showGroupIdInputBox || updateMode()">
+        <label for="newGroupId">New Group ID</label>
+        <input id="newGroupId"
+               [disabled]="updateMode()"
+               type="text"
+               name="groupId"
+               class="form-control"
+               placeholder=""
+               [(ngModel)]="listItem.externalId"
+               (blur)="validateGroupId()"
+               required
+               maxlength="50"/>
+        <div *ngIf="showGroupIdInputBox" class="error-wrapper">
+          <div *ngIf="isGroupIdDuplicate" class="error">Group ID already in use.</div>
+        </div>
+      </div>
+
+      <div class="form-group" >
+        <label for="category">Category Name</label>
+        <input id="category"
+               type="text"
+               name="category"
+               class="form-control"
+               placeholder=""
+               [(ngModel)]="listItem.category"
+               required
+               maxlength="50"/>
+      </div>
+      <div class="form-group" >
+        <label for="displayOrder">Display Order</label>
+        <input id="displayOrder"
+               type="text"
+               name="displayOrder"
+               class="form-control"
+               placeholder=""
+               [(ngModel)]="listItem.displayOrder"
+               required numberType
+               maxlength="5"/>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          class="btn confirm-button btn-default btn-primary"
+          (click)="updateMode() ? onUpdate(listItem) : onCreate(listItem)"
+          [disabled]="!isFormValid(configListCategoryForm)"
+          type="button">{{updateMode() ? 'UPDATE':'CREATE'}}</button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          (click)="activeModal.dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>
+

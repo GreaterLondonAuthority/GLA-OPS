@@ -24,6 +24,7 @@ class FundingClaimsCtrl extends ProjectBlockCtrl {
   $onInit() {
     super.$onInit();
     this.templateConfig = this.TemplateService.getBlockConfig(this.template, this.fundingClaims);
+    this.allocationTypesConfig = this.ProjectSkillsService.getAllocationTypesConfig(this.template);
 
     this.labels = this.ProjectSkillsService.getLabels(this.templateConfig);
     this.isAebProcured = this.ProjectSkillsService.isAebProcured(this.fundingClaims);
@@ -34,7 +35,13 @@ class FundingClaimsCtrl extends ProjectBlockCtrl {
     this.academicYearTo = this.fundingClaims.startYear + this.fundingClaims.numberOfYears - 1;
     this.showYearDropDown = this.academicYearFrom !== this.academicYearTo;
 
-    this.currentAllocation = _.find(this.fundingClaims.allocations || [], {year: this.getSelectedYear()});
+    this.currentDelivery = _.find(this.fundingClaims.allocations || [], {year: this.getSelectedYear(), type: 'Delivery'});
+    this.currentCommunity = _.find(this.fundingClaims.allocations || [], {year: this.getSelectedYear(), type: 'Community'});
+    this.currentInnovationFund = _.find(this.fundingClaims.allocations || [], {year: this.getSelectedYear(), type: 'InnovationFund'});
+    this.currentResponseFundStrand1 = _.find(this.fundingClaims.allocations || [], {year: this.getSelectedYear(), type: 'ResponseFundStrand1'});
+    this.currentLearningSupport = _.find(this.fundingClaims.allocations || [], {year: this.getSelectedYear(), type: 'LearnerSupport'});
+    this.ofWhich = {collapsed: false};
+
     this.periods = this.templateConfig.periods;
     this.variation = this.fundingClaims.fundingClaimsVariations[0] || {};
     this.newAllocationText = this.templateConfig.newAllocationText || 'New total project allocation (£)';
@@ -115,7 +122,13 @@ class FundingClaimsCtrl extends ProjectBlockCtrl {
     this.blockSessionStorage.selectedYear = year;
     this.fromDateSelected = this.fromDateSelected || {};
     this.fromDateSelected.financialYear = year;
-    this.currentAllocation = _.find(this.fundingClaims.allocations || [], {year: year});
+
+    this.currentDelivery = _.find(this.fundingClaims.allocations || [], {year: year, type: 'Delivery'});
+    this.currentCommunity = _.find(this.fundingClaims.allocations || [], {year: year, type: 'Community'});
+    this.currentInnovationFund = _.find(this.fundingClaims.allocations || [], {year: year, type: 'InnovationFund'});
+    this.currentResponseFundStrand1 = _.find(this.fundingClaims.allocations || [], {year: year, type: 'ResponseFundStrand1'});
+    this.currentLearningSupport = _.find(this.fundingClaims.allocations || [], {year: year, type: 'LearnerSupport'});
+
     this.initFromBlock(this.fundingClaims);
   }
 

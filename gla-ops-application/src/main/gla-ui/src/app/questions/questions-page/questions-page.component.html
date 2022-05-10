@@ -1,0 +1,12 @@
+<div class="project-questions medium-page">
+    <div class="row text-center">
+      <gla-project-header [editableBlock]="$ctrl" (onBack)="back()">{{projectBlock.blockDisplayName}}</gla-project-header>
+    </div>
+  
+    <gla-questions2 class="mtop30"
+               [project]="project"
+               [block]="projectBlock"
+               [questions]="questions"
+               [readOnly]="readOnly"></gla-questions2>
+  
+  </div>

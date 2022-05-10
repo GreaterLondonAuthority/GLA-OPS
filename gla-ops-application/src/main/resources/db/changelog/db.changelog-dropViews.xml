@@ -23,6 +23,7 @@
             DROP VIEW IF EXISTS v_payment_request;
             DROP VIEW IF EXISTS v_borough_report;
             DROP VIEW IF EXISTS v_indicative_units_1000_grouped;
+            DROP VIEW IF EXISTS v_email_summaries;
             DROP VIEW IF EXISTS v_eligible_grant_1000_null_clean;
             DROP VIEW IF EXISTS v_eligible_grant_1000;
             DROP VIEW IF EXISTS v_tenure_items;
@@ -62,10 +63,13 @@
             DROP VIEW IF EXISTS v_project_block_active;
             DROP VIEW IF EXISTS v_project_funding_summary;
             DROP VIEW IF EXISTS v_funding_budget_summary;
+            DROP VIEW IF EXISTS v_budget_summaries;
             DROP VIEW IF EXISTS v_project_overview;
             DROP VIEW IF EXISTS v_internal_block_summary;
             DROP VIEW IF EXISTS v_project_block_latest;
             DROP VIEW IF EXISTS v_organisation_summaries;
+            DROP VIEW IF EXISTS v_grant_source_all;
+            DROP VIEW IF EXISTS v_contracts_summary;
 <!--            DROP VIEW IF EXISTS team;-->
         </sql>
 

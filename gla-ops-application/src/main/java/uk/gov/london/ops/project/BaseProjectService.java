@@ -7,35 +7,6 @@
  */
 package uk.gov.london.ops.project;
 
-import static uk.gov.london.ops.permission.PermissionType.PROJ_CHANGE_REPORT;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_REINSTATE;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_SHARE;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_SUMMARY_REPORT;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_TRANSFER;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_VIEW_INTERNAL_BLOCKS;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.LAST_APPROVED;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.UNAPPROVED;
-import static uk.gov.london.ops.project.state.ProjectStatus.Active;
-import static uk.gov.london.ops.project.state.ProjectStatus.Closed;
-import static uk.gov.london.ops.project.state.ProjectStatus.Draft;
-import static uk.gov.london.ops.project.state.ProjectStatus.Submitted;
-import static uk.gov.london.ops.project.state.ProjectSubStatus.AbandonPending;
-import static uk.gov.london.ops.project.state.ProjectSubStatus.ApprovalRequested;
-import static uk.gov.london.ops.project.state.ProjectSubStatus.PaymentAuthorisationPending;
-
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import uk.gov.london.common.error.ApiErrorItem;
 import uk.gov.london.ops.audit.ActivityType;
 import uk.gov.london.ops.audit.AuditService;
+import uk.gov.london.ops.contracts.ContractModel;
+import uk.gov.london.ops.contracts.ContractService;
 import uk.gov.london.ops.framework.EntityType;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.framework.exception.NotFoundException;
 import uk.gov.london.ops.framework.exception.ValidationException;
@@ -52,45 +25,40 @@ import uk.gov.london.ops.framework.feature.Feature;
 import uk.gov.london.ops.framework.feature.FeatureStatus;
 import uk.gov.london.ops.notification.NotificationService;
 import uk.gov.london.ops.organisation.OrganisationGroupService;
-import uk.gov.london.ops.organisation.OrganisationService;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.OrganisationGroupType;
+import uk.gov.london.ops.organisation.OrganisationProgrammeService;
+import uk.gov.london.ops.organisation.model.OrganisationContract;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.organisation.model.OrganisationGroup;
 import uk.gov.london.ops.payment.PaymentService;
-import uk.gov.london.ops.permission.PermissionService;
+import uk.gov.london.ops.permission.PermissionServiceImpl;
 import uk.gov.london.ops.programme.domain.Programme;
-import uk.gov.london.ops.project.block.LockDetails;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockActivityMap;
-import uk.gov.london.ops.project.block.ProjectBlockOverview;
-import uk.gov.london.ops.project.block.SimpleProjectBlock;
+import uk.gov.london.ops.project.block.*;
 import uk.gov.london.ops.project.grant.GrantSourceBlock;
-import uk.gov.london.ops.project.implementation.repository.InternalProjectBlockSummaryRepository;
-import uk.gov.london.ops.project.implementation.repository.LockDetailsRepository;
-import uk.gov.london.ops.project.implementation.repository.ProjectBlockOverviewRepository;
-import uk.gov.london.ops.project.implementation.repository.ProjectOverviewRepository;
-import uk.gov.london.ops.project.implementation.repository.ProjectRepository;
-import uk.gov.london.ops.project.implementation.repository.ProjectStateRepository;
+import uk.gov.london.ops.project.implementation.repository.*;
 import uk.gov.london.ops.project.internalblock.InternalBlockType;
 import uk.gov.london.ops.project.internalblock.InternalProjectBlock;
 import uk.gov.london.ops.project.internalblock.InternalProjectBlockOverview;
 import uk.gov.london.ops.project.internalblock.InternalProjectBlockSummary;
 import uk.gov.london.ops.project.label.Label;
-import uk.gov.london.ops.project.label.LabelService;
-import uk.gov.london.ops.project.state.AutoApprovalProjectStateMachine;
-import uk.gov.london.ops.project.state.ManualApprovalProjectStateMachine;
-import uk.gov.london.ops.project.state.MultiAssessmentProjectStateMachine;
-import uk.gov.london.ops.project.state.ProjectState;
-import uk.gov.london.ops.project.state.ProjectStateMachine;
-import uk.gov.london.ops.project.state.ProjectStatus;
-import uk.gov.london.ops.project.state.ProjectSubStatus;
-import uk.gov.london.ops.project.state.StateModel;
-import uk.gov.london.ops.project.template.domain.Contract;
-import uk.gov.london.ops.project.template.domain.InternalTemplateBlock;
+import uk.gov.london.ops.project.label.LabelServiceImpl;
+import uk.gov.london.ops.project.state.*;
 import uk.gov.london.ops.project.template.domain.TemplateBlock;
 import uk.gov.london.ops.refdata.RefDataService;
 import uk.gov.london.ops.service.DataAccessControlService;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.UserServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
+
+import javax.transaction.Transactional;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.ops.permission.PermissionType.*;
+import static uk.gov.london.ops.project.block.ProjectBlockStatus.LAST_APPROVED;
+import static uk.gov.london.ops.project.block.ProjectBlockStatus.UNAPPROVED;
+import static uk.gov.london.ops.project.state.ProjectStatus.*;
+import static uk.gov.london.ops.project.state.ProjectSubStatus.*;
 
 @Transactional
 public class BaseProjectService {
@@ -110,10 +78,10 @@ public class BaseProjectService {
     protected PaymentService paymentService;
 
     @Autowired
-    PermissionService permissionService;
+    PermissionServiceImpl permissionService;
 
     @Autowired
-    protected UserService userService;
+    protected UserServiceImpl userService;
 
     @Autowired
     ManualApprovalProjectStateMachine manualApprovalProjectStateMachine;
@@ -151,6 +119,9 @@ public class BaseProjectService {
     @Value("${default.lock.timeout.minutes}")
     Integer lockTimeoutInMinutes = 60;
 
+    @Value("${project.deletion.enabled}")
+    Boolean projectDeletionEnabled = false;
+
     @Autowired
     Set<EnrichmentRequiredListener> enrichmentListeners;
 
@@ -158,16 +129,19 @@ public class BaseProjectService {
     OrganisationGroupService organisationGroupService;
 
     @Autowired
-    OrganisationService organisationService;
+    OrganisationProgrammeService organisationProgrammeService;
 
     @Autowired
-    private LabelService labelService;
+    private LabelServiceImpl labelService;
 
     @Autowired
     FeatureStatus featureStatus;
 
     @Autowired
     RefDataService refDataService;
+
+    @Autowired
+    ContractService contractService;
 
     public void setProjectRepository(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
@@ -198,7 +172,7 @@ public class BaseProjectService {
      * @return the project corresponding to the given id.
      */
     public Project getEnrichedProject(Integer id, boolean unapprovedChanges, boolean loadUsersFullNames,
-            NamedProjectBlock.BlockStatus compareToStatus, String compareToDate, boolean forComparison) {
+            ProjectBlockStatus compareToStatus, String compareToDate, boolean forComparison) {
         Project project = get(id);
         if (project == null) {
             throw new NotFoundException();
@@ -253,7 +227,7 @@ public class BaseProjectService {
     }
 
     public BaseProject projectOverview(Integer id) {
-        User user = userService.currentUser();
+        UserEntity user = userService.currentUser();
 
         ProjectOverview projectDetails = projectOverviewRepository.findByIdForUser(id, user.getUsername());
         if (projectDetails == null) {
@@ -317,7 +291,7 @@ public class BaseProjectService {
         spb.setBlockStatus(projectBlockOverview.getBlockStatus());
         spb.setHasUpdatesPersisted(projectBlockOverview.getHasUpdatesPersisted());
         if (projectBlockOverview.getLockedBy() != null) {
-            spb.setLockDetails(new LockDetails(new User(projectBlockOverview.getLockedBy()), 0));
+            spb.setLockDetails(new LockDetails(new UserEntity(projectBlockOverview.getLockedBy()), 0));
         }
         return spb;
 
@@ -327,7 +301,7 @@ public class BaseProjectService {
         BaseProject project = new BaseProject();
         project.setOrganisation(projectOverview.getOrganisation());
         project.setManagingOrganisation(projectOverview.getManagingOrganisation());
-        project.setId(projectOverview.getProjectId());
+        project.setId(projectOverview.getId());
         project.setTitle(projectOverview.getTitle());
         project.setProjectBlocksSorted(new ArrayList<>());
         project.setStatusName(projectOverview.getStatusName());
@@ -339,6 +313,7 @@ public class BaseProjectService {
         project.setMarkedForCorporate(projectOverview.isMarkedForCorporate());
         project.setApprovalWillGenerateReclaimPersisted(projectOverview.getApprovalWillGenerateReclaimPersisted());
         project.setApprovalWillGeneratePaymentPersisted(projectOverview.getApprovalWillGeneratePaymentPersisted());
+        project.setSuspendPayments(projectOverview.getSuspendPayments());
 
         Programme programme = new Programme();
         programme.setId(projectOverview.getProgrammeId());
@@ -352,22 +327,48 @@ public class BaseProjectService {
     }
 
     void populateTransientProjectPaymentProperties(Project project) {
-        Organisation organisationForPayment = project.getOrganisation();
-        Contract contract = project.getTemplate().getContract();
-        OrganisationGroup.Type orgGroupType = null;
+        OrganisationEntity organisationForPayment = project.getOrganisation();
+        OrganisationGroupType orgGroupType = null;
         if (project.getOrganisationGroupId() != null) {
             OrganisationGroup organisationGroup = organisationGroupService.find(project.getOrganisationGroupId());
             organisationForPayment = organisationGroup.getLeadOrganisation();
             project.setLeadOrganisationId(organisationGroup.getLeadOrganisation().getId());
             orgGroupType = organisationGroup.getType();
         }
+        //enrich organisation contracts for organisationForPayment
+        List<OrganisationContract> contractEntities = organisationForPayment.getContractEntities();
+        for (OrganisationContract organisationContract : contractEntities) {
+            ContractModel contractModel = contractService.findById(organisationContract.getContractId());
+            if (contractModel != null) {
+                organisationContract.setContract(contractModel);
+            }
+        }
 
-        project.setPendingContractSignature(contract != null
-                && organisationForPayment.isPendingContractSignature(contract, orgGroupType));
-        project.setSapVendorId(organisationForPayment.getsapVendorId());
+        ContractModel contractModel = null;
+        if (project.getTemplate().getContractId() != null) {
+            contractModel = contractService.find(project.getTemplate().getContractId());
+        }
+        project.setPendingContractSignature(contractModel != null
+                && organisationForPayment.isPendingContractSignature(contractModel, orgGroupType));
+        project.setSapVendorId(getProjectSapId(project, organisationForPayment));
     }
 
-    private Project getProjectForComparison(Project project, NamedProjectBlock.BlockStatus compareToStatus, String date) {
+    public String getProjectSapId(Integer projectId, OrganisationEntity organisation) {
+        return getVendorSapId(projectRepository.getSapIdFromProjectDetails(projectId),
+                organisation.getDefaultSapVendorId());
+    }
+
+    private String getProjectSapId(Project project, OrganisationEntity organisation) {
+        ProjectDetailsBlock detailsBlock = project.getDetailsBlock();
+        return getVendorSapId(detailsBlock == null ? null : detailsBlock.getSapId(),
+                organisation.getDefaultSapVendorId());
+    }
+
+    private String getVendorSapId(String projectSapVendorId, String orgSapVendorId) {
+        return projectSapVendorId != null ? projectSapVendorId :  orgSapVendorId;
+    }
+
+    private Project getProjectForComparison(Project project, ProjectBlockStatus compareToStatus, String date) {
         Project projectToCompareTo = new Project(project.getId(), "");
         projectToCompareTo.setTemplate(project.getTemplate());
         projectToCompareTo.setOrganisation(project.getOrganisation());
@@ -385,7 +386,7 @@ public class BaseProjectService {
         return projectToCompareTo;
     }
 
-    private void updateProjectForSpecificState(Project project, NamedProjectBlock.BlockStatus compareToStatus, String date) {
+    private void updateProjectForSpecificState(Project project, ProjectBlockStatus compareToStatus, String date) {
         List<NamedProjectBlock> namedProjectBlocks = new ArrayList<>();
         if (compareToStatus != null) {
             namedProjectBlocks = filterSortedProjectBlocks(project, compareToStatus);
@@ -430,7 +431,7 @@ public class BaseProjectService {
                 .sorted(Comparator.comparingInt(NamedProjectBlock::getDisplayOrder)).collect(Collectors.toList());
     }
 
-    List<NamedProjectBlock> filterSortedProjectBlocks(Project project, NamedProjectBlock.BlockStatus blockStatus) {
+    List<NamedProjectBlock> filterSortedProjectBlocks(Project project, ProjectBlockStatus blockStatus) {
         if (project.getProjectBlocks() == null) {
             return Collections.emptyList();
         }
@@ -502,7 +503,7 @@ public class BaseProjectService {
     }
 
     public void checkForLock(NamedProjectBlock block) {
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
 
         if (!UNAPPROVED.equals(block.getBlockStatus())) {
             log.info("Attempt made to modify a historic block");
@@ -617,7 +618,7 @@ public class BaseProjectService {
         }
     }
 
-    private void calculateProjectPermissions(Project project, User user) {
+    private void calculateProjectPermissions(Project project, UserEntity user) {
         dataAccessControlService.checkAccess(user, project);
 
         for (NamedProjectBlock block : project.getProjectBlocks()) {
@@ -628,7 +629,7 @@ public class BaseProjectService {
         calculateAllowedActions(project);
     }
 
-    private void calculateAllowedStateTransitions(BaseProject project, User user) {
+    private void calculateAllowedStateTransitions(BaseProject project, UserEntity user) {
         Boolean willGeneratePayment = project.getApprovalWillGeneratePaymentPersisted();
         Boolean approvalWillGenerateReclaim = project.getApprovalWillGenerateReclaimPersisted();
 
@@ -686,6 +687,11 @@ public class BaseProjectService {
             allowedActions.add(Project.Action.Share);
         }
 
+        if (projectDeletionEnabled && permissionService.currentUserHasPermissionForOrganisation(PROJ_DELETE,
+                project.getOrganisation().getId())) {
+            allowedActions.add(Project.Action.Delete);
+        }
+
         project.setAllowedActions(allowedActions);
     }
 
@@ -699,7 +705,7 @@ public class BaseProjectService {
     /**
      * Returns the names of the roles that a user has with a project.
      */
-    Set<String> getUserRolesForProject(User user, BaseProject project) {
+    Set<String> getUserRolesForProject(UserEntity user, BaseProject project) {
         Set<String> roles = user.getApprovedRolesForOrgs(project.getOrganisation(), project.getManagingOrganisation());
         List<String> rolesForProject = projectRepository.getUserRolesForProject(user.getUsername(), project.getId());
         roles.addAll(rolesForProject);
@@ -737,30 +743,9 @@ public class BaseProjectService {
         grantSourceBlock.setAssociatedProjectFlagUpdatable(
                 project.isAssociatedProjectsEnabled()
                         && !project.getMilestonesBlock().hasClaimedMilestones()
-                        && organisationService.isStrategic(project.getOrganisation().getId(), project.getProgrammeId())
+                        && organisationProgrammeService.isStrategic(project.getOrganisation().getId(), project.getProgrammeId())
                         && !paymentService.hasPayments(project.getId())
         );
-    }
-
-    protected NamedProjectBlock createBlockFromTemplate(Project project, TemplateBlock templateBlock) {
-        NamedProjectBlock namedProjectBlock = templateBlock.getBlock().newProjectBlockInstance();
-        namedProjectBlock.setProject(project);
-        namedProjectBlock.initFromTemplate(templateBlock);
-
-        namedProjectBlock.setNew(StringUtils.isNotEmpty(namedProjectBlock.getBlockAppearsOnStatus())
-                && Objects.equals(project.getStatusName(), templateBlock.getBlockAppearsOnStatus()));
-
-        namedProjectBlock.setHidden(StringUtils.isNotEmpty(templateBlock.getBlockAppearsOnStatus())
-                && !Objects.equals(project.getStatusName(), templateBlock.getBlockAppearsOnStatus()));
-
-        return namedProjectBlock;
-    }
-
-    protected void addInternalBlockToProject(Project project, InternalTemplateBlock internalTemplateBlock) {
-        InternalProjectBlock internalProjectBlock = internalTemplateBlock.getType().newBlockInstance();
-        internalProjectBlock.initFromTemplate(internalTemplateBlock);
-        internalProjectBlock.setProject(project);
-        project.getInternalBlocks().add(internalProjectBlock);
     }
 
     protected boolean getApprovalWillCreatePendingGrantPayment(Project project) {

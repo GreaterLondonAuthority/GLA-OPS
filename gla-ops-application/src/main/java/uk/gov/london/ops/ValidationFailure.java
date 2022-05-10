@@ -44,6 +44,4 @@ public class ValidationFailure {
     public void setValidationType(ValidationType validationType) {
         this.validationType = validationType;
     }
-
-
 }

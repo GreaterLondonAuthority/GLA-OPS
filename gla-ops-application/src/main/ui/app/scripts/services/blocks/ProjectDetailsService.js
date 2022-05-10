@@ -42,17 +42,24 @@ function ProjectDetailsService() {
 
         developmentLiabilityOrganisationId: {
           label: 'Organisation with grant liability during development',
-          placeholder: 'Organisation with grant liability during development'
+          placeholder: 'Organisation with grant liability during development',
+          configFieldName: 'developmentLiabilityOrganisation'
         },
 
         postCompletionLiabilityOrganisationId: {
           label: 'Organisation with grant liability after completion',
-          placeholder: 'Organisation with grant liability after completion'
+          placeholder: 'Organisation with grant liability after completion',
+          configFieldName: 'postCompletionLiabilityOrganisation'
         },
 
         description: {
           label: 'Enter a brief project description',
           placeholder: 'Provide an overview of project objectives and deliverables, max 1,000 characters'
+        },
+
+        sapId: {
+          label: 'SAP ID for payments related to this project',
+          placeholder: 'Select a SAP ID'
         },
 
         address: {
@@ -138,6 +145,19 @@ function ProjectDetailsService() {
           configFieldName: 'maincontactemail'
         },
 
+
+        secondaryContact: {
+          label: 'Confirm the secondary contact',
+          placeholder: 'Confirm the secondary contact',
+          configFieldName: 'secondaryContact'
+        },
+
+        secondaryContactEmail: {
+          label: 'Confirm email address of the secondary contact',
+          placeholder: 'Confirm email address of the secondary contact',
+          configFieldName: 'secondaryContactEmail'
+        },
+
         siteOwner: {
           label: 'Enter name of site owner',
           placeholder: 'Site Owner'
@@ -215,21 +235,25 @@ function ProjectDetailsService() {
 
     getDetailsConfigurableFields() {
       return [
+        'descriptionRequirement',
         'addressRequirement',
         'boroughRequirement',
         'maxBoroughs',
+        'wardIdRequirement',
         'postcodeRequirement',
         'coordsRequirement',
         'maincontactRequirement',
-        'imageRequirement',
-        'contactRequirement',
+        'maincontactemailRequirement',
+        'secondaryContactRequirement',
+        'secondaryContactEmailRequirement',
         'siteOwnerRequirement',
         'interestRequirement',
         'projectManagerRequirement',
         'siteStatusRequirement',
         'legacyProjectCodeRequirement',
-        'descriptionRequirement',
-        'planningPermissionReferenceRequirement'
+        'planningPermissionReferenceRequirement',
+        'developmentLiabilityOrganisationRequirement',
+        'postCompletionLiabilityOrganisationRequirement'
       ];
     }
   };

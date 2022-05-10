@@ -101,25 +101,13 @@
       <div class="multiline-text mbottom10" ng-if="!$ctrl.readOnly">
         <span class="section-subheader">{{$ctrl.outputsMessage}}</span>
       </div>
-      <form role="form" name="baselineForm">
-        <div class="col-xs-12 text-center no-gutter-outputs">
-          <outputs-wizard
-            ng-if="$ctrl.configLoaded && !$ctrl.readOnly"
-            year="$ctrl.currentYear"
-            baseline=true
-            read-only="$ctrl.readOnly"
-            on-add-output="$ctrl.onAddBaselineOutput(event)"
-            period-type="$ctrl.periodType"
-            output-type-name="$ctrl.outputTypeName"
-            category-name="$ctrl.categoryName"
-            direct-or-indirect-choices="$ctrl.outputTypes"
-            categories="$ctrl.categories"
-            subcategory-name="$ctrl.subcategoryName"
-            display-output-type="$ctrl.displayOutputType"
-            display-unit-cost="$ctrl.displayUnitCost">
-          </outputs-wizard>
-        </div>
-      </form>
+      <div class="text-right mbottom10">
+        <button class="btn btn-secondary"
+                ng-click="$ctrl.showOutputEntryModal(true)"
+                ng-if="!$ctrl.readOnly">
+          ADD <b>+</b>
+        </button>
+      </div>
     </div>
 
     <div class="baseline-section-table">
@@ -144,45 +132,40 @@
   <hr class="mtop40" ng-if="$ctrl.blockConfig.showTotalProjectOutputsTable">
 
   <form role="form" name="asForm">
-    <div class="col-xs-12">
-      <section-header>Financial Year</section-header>
+    <div>
+      <section-header subheader="Add outputs to a financial year">
+        Outputs by financial year
+      </section-header>
     </div>
 
     <div class="col-xs-12 mtop30 text-center">
-      <div class="form-group col-md-2 col-md-offset-5 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2">
+      <div class="form-group col-md-3">
         <label for="annualSpend-currentYear">Financial Year</label>
-        <financial-year id="annualSpend-currentYear"
+        <!--<financial-year id="annualSpend-currentYear"
                         ng-if="$ctrl.realCurrentYear"
                         from="1998"
+                        current-financial-year-const="$ctrl.realCurrentYear"
+                        on-select="$ctrl.onYearSelected(selectedYear)"
+                        selected-year="$ctrl.currentYear.financialYear"
+                        populated-years="$ctrl.projectBlock.populatedYears"></financial-year>-->
+
+        <financial-year id="annualSpend-currentYear"
+                        ng-if="$ctrl.realCurrentYear"
+                        from="$ctrl.projectBlock.startYear"
+                        to="$ctrl.projectBlock.endYear"
                         current-financial-year-const="$ctrl.realCurrentYear"
                         on-select="$ctrl.onYearSelected(selectedYear)"
                         selected-year="$ctrl.currentYear.financialYear"
                         populated-years="$ctrl.projectBlock.populatedYears"></financial-year>
       </div>
     </div>
-    <div class="col-xs-12">
-      <section-header level="4" subheader="Add outputs to a financial year">
-        Outputs by financial year
-      </section-header>
-    </div>
-    <div class="col-xs-12 text-center no-gutter-outputs no-padding mbottom30">
-      <outputs-wizard
-        ng-if="$ctrl.configLoaded && !$ctrl.readOnly"
-        year="$ctrl.currentYear"
-        read-only="$ctrl.readOnly"
-        baseline=false
-        on-add-output="$ctrl.onAddOutput(event)"
-        period-type="$ctrl.periodType"
-        output-type-name="$ctrl.outputTypeName"
-        category-name="$ctrl.categoryName"
-        direct-or-indirect-choices="$ctrl.outputTypes"
-        categories="$ctrl.categories"
-        subcategory-name="$ctrl.subcategoryName"
-        display-output-type="$ctrl.displayOutputType"
-        categories-costs="$ctrl.categoriesCosts"
-        disabled-months="$ctrl.disabledMonths"
-        display-unit-cost="$ctrl.displayUnitCost">
-      </outputs-wizard>
+
+    <div class="text-right mbottom10">
+      <button class="btn btn-secondary"
+              ng-click="$ctrl.showOutputEntryModal(false)"
+              ng-if="$ctrl.configLoaded && !$ctrl.readOnly">
+        ADD <b>+</b>
+      </button>
     </div>
 
     <financial-year-monthly-outputs-table ng-if="$ctrl.tableData.length && !$ctrl.showQuarterlyOutputs"

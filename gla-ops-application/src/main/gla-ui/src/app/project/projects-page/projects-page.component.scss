@@ -1,0 +1,94 @@
+@import 'mixins';
+.projects-page {
+  .input-group {
+    max-width: 450px;
+  }
+
+  .text-align-left {
+    text-align: left;
+  }
+
+  .project-table {
+    border: none;
+    table > thead > tr > th {
+      cursor: pointer;
+    }
+    .title-cell {
+      min-width:200px;
+      word-wrap: break-word;
+    }
+    .assignee-cell {
+      white-space: nowrap
+    }
+
+    td {
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .registration-status-pending {
+      font-weight: bold;
+    }
+
+    .registration-status-approved {
+      color: #31ae52;
+    }
+  }
+
+  .watched-filter-box {
+    //margin-left: 5px;
+    margin-top: 27px;
+  }
+
+  checkbox-watched-input {
+    width: 140px;
+    display: block;
+    float: left;
+  }
+
+  .actions-panel {
+    margin: 10px 0;
+    padding-top: 10px;
+    text-align: left;
+    .actions-panel-title{
+      padding-left: 5px;
+      padding-bottom: 5px;
+    }
+
+    .icon{
+      font-weight: bold;
+      font-size: 13px;
+    }
+  }
+
+  gla-checkbox-filter .dropdown-menu.dropdown-menu{
+    width: 300px;
+    background-color: #f7f7f7;
+    color: #000;
+  }
+
+  .project-status-column {
+    padding-right: 0;
+  }
+  .float-right {
+    float: right;
+  }
+  .status-box {
+    width: 140px;
+    display: block;
+  }
+
+  @include when-md {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  gla-pagination {
+    padding-top: 10px;
+  }
+
+  .clear-filter-and-search-box {
+    text-align: right;
+  }
+
+}

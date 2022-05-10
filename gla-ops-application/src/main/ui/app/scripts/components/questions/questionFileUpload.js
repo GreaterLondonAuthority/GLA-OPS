@@ -34,7 +34,9 @@ class QuestionFileUpload {
     this.remainingCombinedFileSize = this.question.maxCombinedUploadSizeInMb * ONE_MB - this.question.totalAttachmentsSize;
 
     this.uploadParams = {
-      orgId: this.project.organisation.id
+      orgId: this.project.organisation.id,
+      programmeId: this.project.programmeId,
+      projectId: this.project.id
     };
   }
 

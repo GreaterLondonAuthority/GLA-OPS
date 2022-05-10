@@ -7,13 +7,13 @@
  */
 package uk.gov.london.ops.project.skills;
 
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import java.math.BigDecimal;
 
 @Entity(name = "contract_type_funding_entry")
 public class ContractTypeFundingEntry {
@@ -88,5 +88,9 @@ public class ContractTypeFundingEntry {
 
     public boolean isModified() {
         return contractValue != null || flexibleAllocation != null;
+    }
+
+    public boolean isEmpty() {
+        return contractValue == null && flexibleAllocation == null;
     }
 }

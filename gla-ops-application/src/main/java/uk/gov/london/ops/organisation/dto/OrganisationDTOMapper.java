@@ -8,24 +8,26 @@
 package uk.gov.london.ops.organisation.dto;
 
 import org.springframework.stereotype.Component;
-import uk.gov.london.ops.organisation.model.LegalStatus;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.SapId;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
+import uk.gov.london.ops.organisation.model.SapIdEntity;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class OrganisationDTOMapper {
 
-    public Organisation getOrganisationUserDTOFromOrg(OrganisationUserDTO dto) {
-        Organisation org = new Organisation();
+    public OrganisationEntity getOrganisationUserDTOFromOrg(OrganisationUserDTO dto) {
+        OrganisationEntity org = new OrganisationEntity();
         org.setAddress(dto.getAddress());
         org.setContactNumber(dto.getContactNumber());
         org.setEntityType(dto.getEntityType());
-        org.setManagingOrganisation(new Organisation(dto.managingOrganisationId, ""));
+        org.setManagingOrganisation(new OrganisationEntity(dto.managingOrganisationId, ""));
         org.setName(dto.name);
         org.setRegulated(dto.getRegulated());
-        org.setSapVendorId(dto.getSapVendorId());
+        org.setIsLearningProvider(dto.getIsLearningProvider());
         org.setUkprn(dto.getUkprn());
         org.setWebsite(dto.getWebsite());
         org.setCeoName(dto.getCeoName());
@@ -38,43 +40,73 @@ public class OrganisationDTOMapper {
         org.setVatNumber(dto.getVatNumber());
         org.setSortCode(dto.getSortCode());
         org.setBankAccount(dto.getBankAccount());
-        org.setLegalStatus(LegalStatus.valueOf(dto.getLegalStatus()));
+        org.setProviderNumber(dto.getProviderNumber());
+        org.setTeam(dto.getTeam());
+        org.setParentOrganisation(dto.getParentOrganisation());
+        org.setViability(dto.getViability());
+        org.setGovernance(dto.getGovernance());
+        if (dto.getSapIds() != null) {
+            org.getSapIds().addAll(dto.getSapIds().stream().map(this::toSapIdEntity).collect(Collectors.toSet()));
+        }
+        org.setKnownAs(dto.getKnownAs());
+        org.setSocietyNumber(dto.getSocietyNumber());
+        org.setIsCharityCommission(dto.getIsCharityCommission());
+        org.setCharityNumber(dto.getCharityNumber());
         return org;
     }
 
-    public OrganisationUserDTO getOrganisationUserDTOFromOrg(Organisation organisation) {
+    public OrganisationUserDTO getOrganisationUserDTOFromOrg(OrganisationEntity organisation) {
         OrganisationUserDTO dto = new OrganisationUserDTO();
         populateModelFromOrg(dto, organisation);
         dto.setAddress(organisation.getAddress());
         dto.setContactNumber(organisation.getContactNumber());
         dto.setEntityType(organisation.getEntityType());
         dto.setRegulated(organisation.isRegulated());
-        dto.setSapVendorId(organisation.getsapVendorId());
         dto.setWebsite(organisation.getWebsite());
         dto.setEmail(organisation.getEmail());
         dto.setCeoName(organisation.getCeoName());
         dto.setCeoTitle(organisation.getCeoTitle());
         dto.registrationAllowed = organisation.getRegistrationAllowed();
+        if (organisation.getSapIds() != null) {
+            dto.getSapIds().addAll(organisation.getSapIds().stream().map(this::toSapIdModel).collect(Collectors.toSet()));
+        }
+        dto.setKnownAs(organisation.getKnownAs());
+        dto.setSocietyNumber(organisation.getSocietyNumber());
+        dto.setIsLearningProvider(organisation.getIsLearningProvider());
+        dto.setUkprn(organisation.getUkprn());
+        dto.setProviderNumber(organisation.getProviderNumber());
+        dto.setIsCharityCommission(organisation.getIsCharityCommission());
+        dto.setCharityNumber(organisation.getCharityNumber());
         return dto;
     }
 
-    public List<OrganisationModel> getOrganisationModelsFromOrgs(List<Organisation> organisations) {
+    private SapIdEntity toSapIdEntity(SapId model) {
+        return new SapIdEntity(model.getSapId(), model.getOrganisationId(), model.getDescription(), OffsetDateTime.now(),
+                model.isDefaultSapId());
+    }
+
+    private SapId toSapIdModel(SapIdEntity entity) {
+        return new SapId(entity.getSapId(), entity.getOrganisationId(), entity.getDescription(), entity.getCreatedOn(),
+                entity.getDefaultSapId());
+    }
+
+    public List<OrganisationModel> getOrganisationModelsFromOrgs(List<OrganisationEntity> organisations) {
         return organisations.stream().map(this::getOrganisationModelFromOrg).collect(Collectors.toList());
     }
 
-    public OrganisationModel getOrganisationModelFromOrg(Organisation organisation) {
+    public OrganisationModel getOrganisationModelFromOrg(OrganisationEntity organisation) {
         OrganisationModel model = new OrganisationModel();
         populateModelFromOrg(model, organisation);
         return model;
     }
 
-    private void populateModelFromOrg(OrganisationModel model, Organisation organisation) {
+    private void populateModelFromOrg(OrganisationModel model, OrganisationEntity organisation) {
         model.id = organisation.getId();
         model.name = organisation.getName();
         model.managingOrganisationId = organisation.getManagingOrganisationId();
         model.status = organisation.getStatus();
         model.isTechOrg = organisation.isTechSupportOrganisation();
-        model.isManagingOrganisation = organisation.isManagingOrganisation();
+        model.isManagingOrganisation = organisation.isManaging();
         model.registrationAllowed = organisation.getRegistrationAllowed();
         model.skillsGatewayAccessAllowed = organisation.isSkillsGatewayAccessAllowed();
     }

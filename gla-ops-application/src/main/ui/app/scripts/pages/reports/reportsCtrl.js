@@ -24,12 +24,8 @@ class ReportsCtrl{
   $onInit() {
     this.linkLabel = 'GENERATE';
     this.allProgrammes = this.programmes || [];
-    // console.log('this.programmes', this.programmes)
-
-    this.boroughReportLinkForcedToDisabled = false;
     this.enabled = {};
     this.enabled.programmeSelector = false;
-    this.enabled.boroughReportLink = false;
 
     this.canRunJasper = this.UserService.hasPermission('reports.jasper');
     this.UserService.isCurrentUserAllowedToAccessSkillsGateway().then(rsp => {
@@ -184,7 +180,6 @@ class ReportsCtrl{
   updateEnableElements () {
     if (!this.selectedReportType) {
       this.disableFilters();
-      this.enabled.boroughReportLink = false
     }
     else{
       this.enabled.programmeSelector = !!_.find(this.selectedReportType.filters, {name: 'Programme'}); //_.includes(this.selectedReportType.filters, 'Programme');
@@ -205,12 +200,6 @@ class ReportsCtrl{
 
   onFormChange (){
     this.updateEnableElements();
-  };
-
-  enableReportLink () {
-    if (!this.boroughReportLinkForcedToDisabled && this.programmeIds.length) {
-      this.enabled.boroughReportLink = true
-    }
   };
 
   getFiltersObject() {
@@ -250,8 +239,6 @@ class ReportsCtrl{
     if(!this.isFormValid()){
       return;
     }
-    this.boroughReportLinkForcedToDisabled = true;
-    this.enabled.boroughReportLink = false;
 
     //TODO we can use service methods instead of url params. It was a direct html link before but now we don't need it
     //TODO form this.filters object from items selected in checkboxes!
@@ -263,7 +250,6 @@ class ReportsCtrl{
         }
         this.startPolling();
         this.resetFilters();
-        this.boroughReportLinkForcedToDisabled = false;
       })
       .catch(err => {
         let errInfo = err.data || {};
@@ -339,10 +325,7 @@ angular.module('GLA')
     bindings: {
       envVars: '<',
       programmes: '<',
-      reports: '<',
-      programmeReportEnabled: '<',
-      affordableHousingReportEnabled: '<',
-      boroughReportEnabled: '<'
+      reports: '<'
     },
     controller: ReportsCtrl
   });

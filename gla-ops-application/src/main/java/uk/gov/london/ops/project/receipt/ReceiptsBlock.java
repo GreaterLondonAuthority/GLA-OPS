@@ -7,30 +7,17 @@
  */
 package uk.gov.london.ops.project.receipt;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.WbsCode;
-import uk.gov.london.ops.project.block.BaseFinanceBlock;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.block.ProjectDifference;
-import uk.gov.london.ops.project.block.ProjectDifferences;
+import uk.gov.london.ops.project.WbsCodeEntity;
+import uk.gov.london.ops.project.block.*;
+
+import javax.persistence.*;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Entity(name = "receipts_block")
 @DiscriminatorValue("RECEIPTS")
@@ -39,9 +26,9 @@ import uk.gov.london.ops.project.block.ProjectDifferences;
         comment = "the receipts block is a subclass of the project block and shares a common key")
 public class ReceiptsBlock extends BaseFinanceBlock {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = WbsCode.class)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = WbsCodeEntity.class)
     @JoinColumn(name = "block_id")
-    private Set<WbsCode> wbsCodes = new HashSet<>();
+    private Set<WbsCodeEntity> wbsCodes = new HashSet<>();
 
     @Transient
     // TODO Remove single summary
@@ -57,11 +44,11 @@ public class ReceiptsBlock extends BaseFinanceBlock {
         super(project);
     }
 
-    public Set<WbsCode> getWbsCodes() {
+    public Set<WbsCodeEntity> getWbsCodes() {
         return wbsCodes;
     }
 
-    public void setWbsCodes(Set<WbsCode> wbsCodes) {
+    public void setWbsCodes(Set<WbsCodeEntity> wbsCodes) {
         this.wbsCodes = wbsCodes;
     }
 
@@ -94,8 +81,8 @@ public class ReceiptsBlock extends BaseFinanceBlock {
 
         if (ProjectBlockType.Receipts.equals(target.getBlockType())) {
             ReceiptsBlock clone = (ReceiptsBlock) target;
-            for (WbsCode wbsCode : wbsCodes) {
-                clone.getWbsCodes().add(new WbsCode(wbsCode.getCode(), wbsCode.getType()));
+            for (WbsCodeEntity wbsCode : wbsCodes) {
+                clone.getWbsCodes().add(new WbsCodeEntity(wbsCode.getCode(), wbsCode.getType()));
             }
         }
     }
@@ -106,20 +93,20 @@ public class ReceiptsBlock extends BaseFinanceBlock {
 
         ReceiptsBlock other = (ReceiptsBlock) otherBlock;
 
-        Map<String, WbsCode> thisWBSCodes = this.getWbsCodes().stream()
-                .collect(Collectors.toMap(WbsCode::getComparisonId, Function.identity()));
+        Map<String, WbsCodeEntity> thisWBSCodes = this.getWbsCodes().stream()
+                .collect(Collectors.toMap(WbsCodeEntity::getComparisonId, Function.identity()));
 
-        Map<String, WbsCode> otherWBSCodes = other.getWbsCodes().stream()
-                .collect(Collectors.toMap(WbsCode::getComparisonId, Function.identity()));
+        Map<String, WbsCodeEntity> otherWBSCodes = other.getWbsCodes().stream()
+                .collect(Collectors.toMap(WbsCodeEntity::getComparisonId, Function.identity()));
 
         // remove matches in both as wbs codes cannot be edited
         thisWBSCodes.keySet().removeIf(code -> otherWBSCodes.remove(code) != null);
 
-        for (WbsCode wbsCode : thisWBSCodes.values()) {
+        for (WbsCodeEntity wbsCode : thisWBSCodes.values()) {
             differences.add(new ProjectDifference(wbsCode, ProjectDifference.DifferenceType.Addition));
         }
 
-        for (WbsCode wbsCode : otherWBSCodes.values()) {
+        for (WbsCodeEntity wbsCode : otherWBSCodes.values()) {
             differences.add(new ProjectDifference(wbsCode, ProjectDifference.DifferenceType.Deletion));
         }
 
@@ -169,4 +156,9 @@ public class ReceiptsBlock extends BaseFinanceBlock {
         return false;
     }
 
+
+    @Override
+    protected boolean canShowYear(Integer year) {
+        return true;
+    }
 }

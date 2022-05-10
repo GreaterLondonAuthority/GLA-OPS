@@ -9,15 +9,16 @@ package uk.gov.london.ops.payment
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import uk.gov.london.ops.framework.Environment
+import uk.gov.london.ops.framework.OPSUtils.currentUsername
+import uk.gov.london.ops.framework.environment.Environment
 import uk.gov.london.ops.payment.implementation.repository.PaymentAuditItemRepository
 import uk.gov.london.ops.user.UserService
 
 @Service
 class PaymentAuditService @Autowired constructor (
-        private var paymentAuditItemRepository: PaymentAuditItemRepository,
-        private var userService: UserService,
-        private var environment: Environment)  {
+    private var paymentAuditItemRepository: PaymentAuditItemRepository,
+    private var userService: UserService,
+    private var environment: Environment)  {
 
 
     fun getAllAuditItems(paymentId: Int): List<PaymentAuditItem> {
@@ -36,7 +37,7 @@ class PaymentAuditService @Autowired constructor (
 
     fun recordPaymentAuditItem(payment: ProjectLedgerEntry, type: PaymentAuditItemType, xml:String?) {
         val auditItem = PaymentAuditItem(payment.id, environment.now(), type)
-        auditItem.username = userService.currentUsername()
+        auditItem.username = currentUsername()
         auditItem.xmlPayload = xml
         savePaymentAuditItem(auditItem)
     }

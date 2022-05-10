@@ -55,7 +55,9 @@
     <div class="gla-certification">
       <section-header>GLA Certification</section-header>
       <div>
-        The GLA requires that all housing providers who complete a RCGF and/or a DPF annual return must confirm that the information submitted is accurate and certified by an authorised signatory of the organisation holding the RCGF or DPF fund. Please refer to the certification requirements <a ng-href="{{$ctrl.envVars['annual-submissions-agreement-url']}}" target="_blank">HERE</a> for details.
+        The GLA requires that all housing providers who complete a RCGF {{$ctrl.hasDpf ? 'and/or a DPF ' : ''}}annual return must confirm that the information submitted
+        is accurate and certified by an authorised signatory of the organisation holding the RCGF {{$ctrl.hasDpf ? 'or DPF ' : ''}}fund.
+        Please refer to the certification requirements <a ng-href="{{$ctrl.envVars['annual-submissions-agreement-url']}}" target="_blank">HERE</a> for details.
       </div>
 
       <div class="row mtop30 inverse-margin">
@@ -128,7 +130,7 @@
                    ng-if="!$ctrl.showSubmissionCommentText"
                    ng-model="$ctrl.agreementSigned"
                    type="checkbox"/>
-              {{$ctrl.getAgreementText()}}
+            {{$ctrl.getAgreementText()}}
           </label>
         </div>
       </div>
@@ -144,7 +146,7 @@
         <tr>
           <th>Type</th>
           <th>RCGF £</th>
-          <th>DPF £</th>
+          <th ng-if="$ctrl.hasDpf">DPF £</th>
         </tr>
         </thead>
 
@@ -161,7 +163,7 @@
                    maxlength="15"
                    required />
           </td>
-          <td>
+          <td ng-if="$ctrl.hasDpf">
             <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.dpfRollover | currency:'£':0}}</span>
             <input ng-if="$ctrl.showApprovalInputs" id="dpf-rollover" type="text" name="dpfRollover"
                    class="form-control"
@@ -183,7 +185,7 @@
                    number-mask="0"
                    maxlength="15"
                    required />
-          <td>
+          <td ng-if="$ctrl.hasDpf">
             <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.dpfRolloverInterest | currency:'£':0}}</span>
             <input ng-if="$ctrl.showApprovalInputs" id="dgf-rollover-interest" type="text" name="dpfRolloverInterest"
                    class="form-control"
@@ -206,7 +208,7 @@
                    maxlength="15"
                    required />
           </td>
-          <td>
+          <td ng-if="$ctrl.hasDpf">
             <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.dpfWithdrawal | currency:'£':0}}</span>
             <input ng-if="$ctrl.showApprovalInputs" id="dpf-withdrawal" type="text" name="dpfWithdrawal"
                    class="form-control"
@@ -229,7 +231,7 @@
                    maxlength="15"
                    required />
           </td>
-          <td>
+          <td ng-if="$ctrl.hasDpf">
             <span ng-if="!$ctrl.showApprovalInputs">{{$ctrl.annualSubmission.dpfWithdrawalInterest | currency:'£':0}}</span>
             <input ng-if="$ctrl.showApprovalInputs" id="dpf-withdrawal-interest" type="text" name="dpfWithdrawalInterest"
                    class="form-control"
@@ -243,10 +245,11 @@
         </tbody>
       </table>
       <span class="error mtop10 mbottom30 text-left"
-            ng-if="$ctrl.showApprovalInputs && ($ctrl.annualSubmission.rcgfRollover == null || $ctrl.annualSubmission.dpfRollover == null
-                    || $ctrl.annualSubmission.rcgfRolloverInterest == null || $ctrl.annualSubmission.dpfRolloverInterest == null
-                    || $ctrl.annualSubmission.rcgfWithdrawal == null || $ctrl.annualSubmission.dpfWithdrawal == null
-                    || $ctrl.annualSubmission.rcgfWithdrawalInterest == null || $ctrl.annualSubmission.dpfWithdrawalInterest == null)">
+            ng-if="$ctrl.showApprovalInputs && ($ctrl.annualSubmission.rcgfRollover == null || ($ctrl.hasDpf && $ctrl.annualSubmission.dpfRollover == null)
+                    || $ctrl.annualSubmission.rcgfRolloverInterest == null || ($ctrl.hasDpf && $ctrl.annualSubmission.dpfRolloverInterest == null)
+                    || $ctrl.annualSubmission.rcgfWithdrawal == null || ($ctrl.hasDpf && $ctrl.annualSubmission.dpfWithdrawal == null)
+                    || $ctrl.annualSubmission.rcgfWithdrawalInterest == null || ($ctrl.hasDpf && $ctrl.annualSubmission.dpfWithdrawalInterest == null)
+                    )">
               Must enter 0 or more to approve the return.
         </span>
     </div>

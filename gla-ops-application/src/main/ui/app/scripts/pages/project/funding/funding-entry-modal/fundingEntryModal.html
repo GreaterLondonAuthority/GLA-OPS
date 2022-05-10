@@ -3,39 +3,51 @@
     <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
       <span aria-hidden="true">&times;</span>
     </button>
-    <h1>Add spend</h1>
-    <!--<h3 class="subheader">Something has gone wrong</h3>-->
+    <h1>{{$ctrl.titleText}} spend</h1>
   </div>
   <div class="modal-body">
     <form class="form-gla" name="modalForm" role="form">
+      <div class="form-group">
+        <label for="annual-expenditure">Year</label><br/>
+        <financial-year id="annual-expenditure"
+                        from="$ctrl.block.startYear"
+                        to="$ctrl.block.startYear + $ctrl.block.yearAvailableTo"
+                        on-select="$ctrl.onSelectYear($ctrl.data.selectedYear)"
+                        current-financial-year-const="$ctrl.currentFinancialYear"
+                        selected-year="$ctrl.data.selectedYear"
+                        populated-years="$ctrl.projectFunding.populatedYears"></financial-year>
+      </div>
+
       <div class="form-group">
         <month-selector
           ng-if="$ctrl.periodType === 'Monthly'"
           read-only="$ctrl.readOnly"
           selected-month="$ctrl.data.selectedMonth"
-          year="$ctrl.year">
+          year="$ctrl.data.selectedYear.financialYear">
         </month-selector>
 
         <quarter-selector
           ng-if="$ctrl.periodType === 'Quarterly'"
           read-only="$ctrl.readOnly"
           selected-month="$ctrl.data.selectedQuarter"
-          year="$ctrl.year">
+          selected-quarter="$ctrl.data.sectionNumber"
+          year="$ctrl.data.selectedYear.financialYear">
         </quarter-selector>
       </div>
 
-      <div class="form-group" ng-if="$ctrl.spendTypeOptions.length > 1">
-        <label for="spendType">Type</label><br/>
-        <select class="form-control"
-                id="spendType"
-                ng-change="$ctrl.data.value = ''; $ctrl.data.matchFundValue = ''"
-                ng-disabled="$ctrl.readOnly"
-                ng-model="$ctrl.data.spendType"
-                ng-options="item as item.label for item in $ctrl.spendTypeOptions"
-                style-placeholder="">
-          <option disabled value="">Select</option>
-        </select>
-      </div>
+<!--  GLA-36194 : No more type selection, allow editing capital and revenue on modal   -->
+<!--      <div class="form-group" ng-if="$ctrl.spendTypeOptions.length > 1">-->
+<!--        <label for="spendType">Type</label><br/>-->
+<!--        <select class="form-control"-->
+<!--                id="spendType"-->
+<!--                ng-change="$ctrl.data.value = ''; $ctrl.data.matchFundValue = ''"-->
+<!--                ng-disabled="$ctrl.readOnly"-->
+<!--                ng-model="$ctrl.data.spendType"-->
+<!--                ng-options="item as item.label for item in $ctrl.spendTypeOptions"-->
+<!--                style-placeholder="">-->
+<!--          <option disabled value="">Select</option>-->
+<!--        </select>-->
+<!--      </div>-->
 
       <!--  If the flag showMilestones is on, display dropdown with milestones -->
       <div class="form-group" ng-if="($ctrl.milestones.length > 0) && $ctrl.showMilestones">
@@ -61,24 +73,43 @@
         </select>
       </div>
 
-      <div class="form-group" ng-if="($ctrl.data.spendType === undefined && ($ctrl.showCapitalGla || $ctrl.showRevenueGla)) || ($ctrl.data.spendType.type == 'CAPITAL' && $ctrl.showCapitalGla) || ($ctrl.data.spendType.type == 'REVENUE' && $ctrl.showRevenueGla)">
-        <label for="valueInput">{{$ctrl.wizardClaimLabel}}</label><br/>
+      <div class="form-group" ng-if="$ctrl.showCapitalGla">
+        <label for="capitalValueInput">Capital {{$ctrl.wizardClaimLabel}}</label><br/>
         <input class="form-control"
-               id="valueInput"
+               id="capitalValueInput"
                maxlength="13"
-               ng-disabled="($ctrl.data.spendType === undefined)"
-               ng-model="$ctrl.data.value"
+               ng-model="$ctrl.data.capitalValue"
                number-mask="$ctrl.monetaryValueScale"
                placeholder=""
                type="text">
       </div>
-      <div class="form-group" ng-if="($ctrl.data.spendType === undefined && ($ctrl.showCapitalOther || $ctrl.showRevenueOther)) || ($ctrl.data.spendType.type == 'CAPITAL' && $ctrl.showCapitalOther) || ($ctrl.data.spendType.type == 'REVENUE' && $ctrl.showRevenueOther)">
-        <label for="matchFundingInput">{{$ctrl.wizardOtherLabel}}</label><br/>
+      <div class="form-group" ng-if="$ctrl.showCapitalOther">
+        <label for="capitalMatchFundingInput">Capital {{$ctrl.wizardOtherLabel}}</label><br/>
         <input class="form-control match-funding-input"
-               id="matchFundingInput"
+               id="capitalMatchFundingInput"
                maxlength="13"
-               ng-disabled="($ctrl.data.spendType === undefined)"
-               ng-model="$ctrl.data.matchFundValue"
+               ng-model="$ctrl.data.capitalMatchFundValue"
+               number-mask="$ctrl.monetaryValueScale"
+               placeholder=""
+               type="text">
+      </div>
+
+      <div class="form-group" ng-if="$ctrl.showRevenueGla">
+        <label for="revenueValueInput">Revenue {{$ctrl.wizardClaimLabel}}</label><br/>
+        <input class="form-control"
+               id="revenueValueInput"
+               maxlength="13"
+               ng-model="$ctrl.data.revenueValue"
+               number-mask="$ctrl.monetaryValueScale"
+               placeholder=""
+               type="text">
+      </div>
+      <div class="form-group" ng-if="$ctrl.showRevenueOther">
+        <label for="revenueMatchFundingInput">Revenue {{$ctrl.wizardOtherLabel}}</label><br/>
+        <input class="form-control match-funding-input"
+               id="revenueMatchFundingInput"
+               maxlength="13"
+               ng-model="$ctrl.data.revenueMatchFundValue"
                number-mask="$ctrl.monetaryValueScale"
                placeholder=""
                type="text">
@@ -98,7 +129,7 @@
   <div class="modal-footer">
     <button class="btn btn-primary mtop15"
             ng-click="$ctrl.addQuarterlyEntry()"
-            ng-disabled="!$ctrl.canAddOutput()">ADD</button>
+            ng-disabled="!$ctrl.canAddOutput()">{{$ctrl.data.id ? 'SAVE' : 'ADD'}}</button>
     <div class="row">
       <div class="col-xs-12 text-center mtop15 mbottom15">
         <a class="form-cancel" href="JavaScript:void(0)" ng-mousedown="$dismiss()" on-enter="$dismiss()">Cancel</a>

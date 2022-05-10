@@ -1,9 +1,24 @@
 <div class="objectives-page medium-page">
   <gla-project-header [editable-block]="$ctrl" (on-back)="$ctrl.returnToOverview()">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
 
-  <entities-list block="$ctrl.projectBlock" entities="$ctrl.entities" read-only="$ctrl.readOnly">
+  <div class="questions mtop30" ng-if="$ctrl.templateConfig.hasBlockRequiredOption">
+    <div class="form-group question">
+      <label class="question-text" for="q1">{{$ctrl.templateConfig.blockRequiredOptionText ? $ctrl.templateConfig.blockRequiredOptionText : 'Do you have outputs'}}</label>
+      <gla-yes-no-input id="q1"
+                        [disabled]="$ctrl.readOnly"
+                        mode="bool"
+                        name="q1"
+                        ng-if="!$ctrl.readOnly"
+                        [(model)]="$ctrl.projectBlock.blockRequired">
+      </gla-yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.blockRequired)}}</div>
+    </div>
+  </div>
+  <hr ng-if="($ctrl.projectBlock.blockRequired && $ctrl.templateConfig.hasBlockRequiredOption)">
+
+  <entities-list block="$ctrl.projectBlock" entities="$ctrl.entities" read-only="$ctrl.readOnly" ng-if="(!$ctrl.templateConfig.hasBlockRequiredOption || $ctrl.projectBlock.blockRequired)">
     <entities-list-item entity="objective" ng-repeat="objective in $ctrl.entities">
-      <objective block-template="$ctrl.templateConfig" objective="objective" read-only="$ctrl.readOnly"></objective>
+      <gla-objective block-template="$ctrl.templateConfig" objective="objective" read-only="$ctrl.readOnly"></gla-objective>
     </entities-list-item>
   </entities-list>
 </div>

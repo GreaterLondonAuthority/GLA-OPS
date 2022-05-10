@@ -18,7 +18,7 @@ import uk.gov.london.ops.framework.JSONUtils;
  */
 @Entity
 @DiscriminatorValue("PROJECTOBJECTIVES")
-public class ProjectObjectivesTemplateBlock extends TemplateBlock {
+public class ProjectObjectivesTemplateBlock extends RepeatingEntityTemplateBlock {
 
     @Transient
     private String objectiveTextSingular = "Objective";
@@ -43,7 +43,8 @@ public class ProjectObjectivesTemplateBlock extends TemplateBlock {
     }
 
     @PostLoad
-    void loadBlockData() {
+    public void loadBlockData() {
+        super.loadBlockData();
         ProjectObjectivesTemplateBlock data = JSONUtils.fromJSON(this.blockData, ProjectObjectivesTemplateBlock.class);
         if (data != null) {
             this.setObjectiveTextPlural(data.getObjectiveTextPlural());

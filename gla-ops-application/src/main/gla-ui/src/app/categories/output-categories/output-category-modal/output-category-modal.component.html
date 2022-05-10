@@ -1,0 +1,102 @@
+<div class="milestone-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Output Category</h1>
+  </div>
+
+  <div class="modal-body">
+    <form name="modalForm">
+      <div class="form-group">
+        <label for="id">ID</label>
+        <input id="id"
+               type="number"
+               name="id"
+               class="form-control"
+               placeholder="ID"
+               [(ngModel)]="model.id"/>
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category</label>
+        <input id="category"
+               type="text"
+               name="category"
+               class="form-control"
+               placeholder="Category name"
+               [(ngModel)]="model.category"/>
+      </div>
+
+      <div class="form-group">
+        <label for="subcategory">Sub Category</label>
+        <input id="subcategory"
+               type="text"
+               name="subcategory"
+               class="form-control"
+               placeholder="Sub category name"
+               [(ngModel)]="model.subcategory"/>
+      </div>
+
+      <div class="form-group">
+        <label for="groupId">Group ID</label>
+        <input id="groupId"
+               type="number"
+               default-value=""
+               class="form-control"
+               placeholder="Group ID"
+               name="groupId"
+               [(ngModel)]="model.groupId"
+               maxlength="5"/>
+      </div>
+
+      <div class="form-group">
+        <label for="tenureId">Tenure ID</label>
+        <input id="tenureId"
+               type="number"
+               class="form-control"
+               placeholder="Tenure ID"
+               name="tenureTypeId"
+               [(ngModel)]="model.tenureTypeId"
+               maxlength="5"/>
+      </div>
+
+      <div class="form-group" id="value-type-dropdown">
+        <div class="value-type-dropdown-label">
+          <label for="valueType">Value Type</label>
+        </div>
+        <select class="form-control"
+                id="valueType"
+                name="valueType"
+                [(ngModel)]="model.valueType"
+                style-placeholder="">
+          <option disabled value="">Select</option>
+          <option *ngFor="let item of getValueTypes()" [ngValue]="item">{{item}}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="hidden">
+          <input type="checkbox"
+                 aria-label="hidden"
+                 name="hidden"
+                 [(ngModel)]="model.hidden"
+                 id="hidden"/>
+          <span> Hidden</span>
+        </label>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="errorMessage" class="col-xs-12 text-center error "> {{errorMessage}} </div>
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button class="btn btn-primary"
+                (click)="createOrSave()"
+                [disabled]="!isFormValid()">CREATE</button>
+        <button class="btn btn-secondary" (click)="activeModal.dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

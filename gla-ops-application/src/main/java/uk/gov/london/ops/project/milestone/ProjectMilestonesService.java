@@ -7,20 +7,13 @@
  */
 package uk.gov.london.ops.project.milestone;
 
-import static uk.gov.london.ops.project.claim.ClaimStatus.Claimed;
-import static uk.gov.london.ops.project.claim.ClaimStatus.Pending;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.london.common.GlaUtils;
-import uk.gov.london.ops.domain.Requirement;
 import uk.gov.london.ops.file.AttachmentFile;
 import uk.gov.london.ops.file.FileService;
+import uk.gov.london.ops.framework.enums.GrantType;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.payment.PaymentGroup;
 import uk.gov.london.ops.payment.PaymentService;
@@ -34,13 +27,23 @@ import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.claim.ClaimStatus;
 import uk.gov.london.ops.project.funding.FundingBlock;
 import uk.gov.london.ops.project.funding.ProjectFundingService;
-import uk.gov.london.ops.project.grant.GrantType;
 import uk.gov.london.ops.project.implementation.mapper.MilestoneMapper;
 import uk.gov.london.ops.project.state.ProjectStatus;
 import uk.gov.london.ops.project.template.domain.MilestonesTemplateBlock;
 import uk.gov.london.ops.project.template.domain.ProcessingRoute;
 import uk.gov.london.ops.project.template.domain.Template;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.domain.UserEntity;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static uk.gov.london.ops.project.claim.ClaimStatus.Approved;
+import static uk.gov.london.ops.project.claim.ClaimStatus.Claimed;
+import static uk.gov.london.ops.project.claim.ClaimStatus.Pending;
+import static uk.gov.london.ops.project.claim.ClaimStatus.Withdrawn;
 
 @Service
 @Transactional
@@ -78,7 +81,7 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
             throw new ValidationException("summary", "Milestone already exists.");
         }
 
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
 
         milestone.setCreatedOn(environment.now());
         milestone.setCreatedBy(currentUser.getUsername());
@@ -173,6 +176,58 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
         }
     }
 
+    public void cancelWithdrawApprovedMilestone(Integer projectId, Integer milestoneId) {
+        Project project = get(projectId);
+
+        ProjectMilestonesBlock milestonesBlock = project.getMilestonesBlock();
+
+        checkForLock(milestonesBlock);
+
+        Milestone existingMilestone = milestonesBlock.getMilestoneById(milestoneId);
+
+        if (!Withdrawn.equals(existingMilestone.getClaimStatus())) {
+            throw new ValidationException("cannot cancel withdraw milestone in status " + existingMilestone.getClaimStatus());
+        }
+
+        if (existingMilestone.hasMonetaryValue()) {
+            existingMilestone.setReclaimedGrant(null);
+            existingMilestone.setReclaimedDpf(null);
+            existingMilestone.setReclaimedRcgf(null);
+        }
+
+        existingMilestone.setClaimStatus(Approved);
+        existingMilestone.setWithdrawReason(null);
+        auditService.auditCurrentUserActivity(String.format("Undid cancel of Milestone: %s",
+                existingMilestone.getSummary()));
+        updateProject(project);
+    }
+
+    public void withdrawApprovedMilestone(Integer projectId, Integer milestoneId, Milestone updatedMilestone) {
+        Project project = get(projectId);
+
+        ProjectMilestonesBlock milestonesBlock = project.getMilestonesBlock();
+
+        checkForLock(milestonesBlock);
+
+        Milestone existingMilestone = milestonesBlock.getMilestoneById(milestoneId);
+
+        if (!Approved.equals(existingMilestone.getClaimStatus())) {
+            throw new ValidationException("cannot withdraw milestone in status " + existingMilestone.getClaimStatus());
+        }
+
+        existingMilestone.setReclaimedGrant(existingMilestone.getClaimedGrant());
+        existingMilestone.setReclaimedDpf(existingMilestone.getClaimedDpf());
+        existingMilestone.setReclaimedRcgf(existingMilestone.getClaimedRcgf());
+
+        existingMilestone.setClaimStatus(Withdrawn);
+        existingMilestone.setWithdrawReason(updatedMilestone.getWithdrawReason());
+
+        auditService.auditCurrentUserActivity(String.format("Requested cancel of Milestone: %s due to reason %s",
+                existingMilestone.getSummary(), existingMilestone.getWithdrawReason()));
+
+        updateProject(project);
+    }
+
     public void claim(Integer projectId, Integer milestoneId, Milestone updatedMilestone) {
         Project project = get(projectId);
 
@@ -205,7 +260,7 @@ public class ProjectMilestonesService extends BaseProjectService implements Post
         existingMilestone.setClaimedDpf(updatedMilestone.getClaimedDpf());
         existingMilestone.setClaimStatus(Claimed);
 
-        if (existingMilestone.getMonetaryValue() != null) {
+        if (Template.MilestoneType.MonetaryValue.equals(project.getTemplate().getMilestoneType())) {
             existingMilestone.setMonetaryValue(new BigDecimal(updatedMilestone.calculateTotalValueClaimed()));
         }
 

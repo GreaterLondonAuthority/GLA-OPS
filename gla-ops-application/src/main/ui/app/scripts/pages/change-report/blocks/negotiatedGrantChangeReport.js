@@ -13,8 +13,14 @@ class NegotiatedGrantChangeReport {
 
   $onInit() {
     this.reportData = this.GrantService.prepareReportData(this.data.left, this.data.right);
+    this.summariesFields = [];
 
-
+    this.blockFields =
+      {
+        left: this.data.left,
+        right: this.data.right,
+        changes: this.data.changes
+      };
     this.tenuresFields = [
       {
         field: 'tenureType.name',
@@ -28,36 +34,7 @@ class NegotiatedGrantChangeReport {
       {
         field: 'totalUnits',
         label: 'TOTAL AFFORDABLE UNITS',
-      },
-      {
-        field: 'supportedUnits',
-        label: 'OF WHICH SUPPORTED & SPECIALISED UNITS',
-      },
-      {
-        field: 'totalCost',
-        format: 'currency',
-        label: 'TOTAL DEVELOPMENT COSTS £',
-      },
-      {
-        field: 'percentageOfTotalCost',
-        format: 'number|1',
-        label: 'GRANT AS % COSTS',
-      }
-    ];
-
-    this.summariesFields = [
-      {
-        label: 'Unit development cost',
-        field: 'unitDevelopmentCost',
-        format: 'currency'
-      },
-      {
-        label: 'Grant per unit',
-        field: 'grantPerUnit',
-        format: 'currency'
-      }
-    ];
-
+      }];
 
     this.totalsFields = [
       {
@@ -68,26 +45,67 @@ class NegotiatedGrantChangeReport {
       {
         field: 'totalUnits',
         label: 'TOTAL AFFORDABLE UNITS',
-      },
-      {
-        field: 'totalSupportedUnits',
+      }];
+
+    if (this.data.left.showSpecialisedUnits) {
+      this.tenuresFields.push({
+        field: 'supportedUnits',
         label: 'OF WHICH SUPPORTED & SPECIALISED UNITS',
-      },
-      {
+      });
+      this.totalsFields.push(
+        {
+          field: 'totalSupportedUnits',
+          label: 'OF WHICH SUPPORTED & SPECIALISED UNITS',
+        });
+    }
+    if (this.data.left.showDevelopmentCost) {
+      this.tenuresFields.push({
         field: 'totalCost',
         format: 'currency',
         label: 'TOTAL DEVELOPMENT COSTS £',
-      },
-      {
+      });
+      this.totalsFields.push(
+        {
+          field: 'totalCost',
+          format: 'currency',
+          label: 'TOTAL DEVELOPMENT COSTS £',
+        });
+      this.summariesFields.push({
+        label: 'Unit development cost',
+        field: 'unitDevelopmentCost',
+        format: 'currency'
+      });
+    }
+    if (this.data.left.showDevelopmentCost && this.data.left.showPercentageCosts) {
+      this.tenuresFields.push({
         field: 'percentageOfTotalCost',
         format: 'number|1',
-        label: 'GRANT AS % COSTS'
-      }
-    ];
+        label: 'GRANT AS % COSTS',
+      });
+      this.totalsFields.push(
+        {
+          field: 'percentageOfTotalCost',
+          format: 'number|1',
+          label: 'GRANT AS % COSTS'
+        });
+    }
+
+    this.summariesFields.push({
+      label: 'Grant per unit',
+      field: 'grantPerUnit',
+      format: 'currency'
+    });
+
     this.totalsFields.forEach(item =>{
       item.changeAttribute = `totals.${item.field}`;
     });
   }
+
+  canShowOtherAffordableTenureType(){
+    return (this.blockFields.left && this.blockFields.left.otherAffordableTenureType)
+      || (this.blockFields.right && this.blockFields.right.otherAffordableTenureType);
+  }
+
 }
 
 

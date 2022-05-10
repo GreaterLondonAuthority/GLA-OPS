@@ -1,0 +1,163 @@
+<div class="template-block-other-funding">
+
+  <div class="form-group radio-button">
+    <label for="partner-funding">Ask if applicant receiving other funding before showing Other Funding table </label>
+    <div>
+      <gla-yes-no-input [(model)]="block.hasBlockRequiredOption"
+                        id="partner-funding"
+                        [disabled]="readOnly || !editable"
+                        name="partner-funding"
+                        mode="bool">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.hasBlockRequiredOption">
+    <div class="form-group">
+      <label for="receiving-funding-text">Receiving funding text</label>
+      <input class="form-control"
+             id="receiving-funding-text"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.blockRequiredOptionText"
+             number-mask="0"
+             placeholder="Do you hope to also receive funding from other sources?"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="entity-name">Entity name</label>
+    <input class="form-control"
+           id="entity-name"
+           maxlength="50"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.entityName"
+           number-mask="0"
+           placeholder="Funding"
+           type="text"/>
+  </div>
+
+  <gla-funding-source-table
+    [fundingBlock]="block"
+    [readOnly]="readOnly"
+    [editable]="editable">
+  </gla-funding-source-table>
+
+  <div class="conditional-question" *ngIf="showFunderName()">
+    <div class="form-group">
+      <label for="funder-name-text">Funder name text</label>
+      <input class="form-control"
+             id="funder-name-text"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.funderNameText"
+             number-mask="0"
+             placeholder="Funder name"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="showDescription()">
+    <div class="form-group">
+      <label for="description-text">Funding source description text</label>
+      <input class="form-control"
+             id="description-text"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.descriptionText"
+             number-mask="0"
+             placeholder="Provide details"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group radio-button">
+    <label for="amount-column">Show amount (£) column </label>
+    <div>
+      <gla-yes-no-input id="amount-column"
+                        name="amount-column"
+                        [disabled]="readOnly || !editable"
+                        mode="bool"
+                        [(model)]="block.showAmount">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.showAmount">
+    <div class="form-group">
+      <label for="show-amount">Amount (£) text</label>
+      <input class="form-control"
+             id="show-amount"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.amountText"
+             number-mask="0"
+             placeholder="Funding amount (£)"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group radio-button">
+    <label for="funding-secured">Ask if funding secured </label>
+    <div>
+      <gla-yes-no-input id="funding-secured"
+                        [disabled]="readOnly || !editable"
+                        name="funding-secured"
+                        mode="bool"
+                        [(model)]="block.showSecuredQuestion">
+      </gla-yes-no-input>
+    </div>
+  </div>
+
+  <div class="conditional-question" *ngIf="block.showSecuredQuestion">
+    <div class="form-group">
+      <label for="secured-text">Funding secured text</label>
+      <input class="form-control"
+             id="secured-text"
+             maxlength="80"
+             [disabled]="readOnly || !editable"
+             [(ngModel)]="block.securedQuestion"
+             number-mask="0"
+             placeholder="Is this funding secured?"
+             type="text"/>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="evidence-requirement">Evidence requirement</label>
+    <select [(ngModel)]="block.evidenceRequirement"
+            [ngClass]="{placeholder: !block.evidenceRequirement}"
+            [disabled]="readOnly || !editable"
+            class="form-control"
+            id="evidence-requirement">
+      <option disabled value="undefined">Evidence requirement</option>
+      <option *ngFor="let requirement of requirementOptions" [ngValue]="requirement.id">{{requirement.label}}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="max-amount-of-attachments">Max number of attachments</label>
+    <input class="form-control"
+           id="max-amount-of-attachments"
+           maxlength="2"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.maxEvidenceAttachments"
+           number-mask="0"
+           placeholder="Max number of attachments"
+           type="text"/>
+  </div>
+
+  <div class="form-group">
+    <label for="max-attachment-size">Max attachment size (MB)</label>
+    <input class="form-control"
+           id="max-attachment-size"
+           maxlength="3"
+           [disabled]="readOnly || !editable"
+           [(ngModel)]="block.maxUploadSizeInMb"
+           number-mask="0"
+           placeholder="Max attachment size"
+           type="text"/>
+  </div>
+
+</div>

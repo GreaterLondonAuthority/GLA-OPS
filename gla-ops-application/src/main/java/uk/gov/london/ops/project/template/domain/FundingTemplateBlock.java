@@ -7,12 +7,9 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import uk.gov.london.ops.project.block.ProjectBlockType;
+
+import javax.persistence.*;
 
 @Entity
 @DiscriminatorValue("FUNDING")
@@ -37,24 +34,21 @@ public class FundingTemplateBlock extends TemplateBlock {
     @Column(name = "activities_required")
     private boolean activitiesRequired;
 
-    @Column(name = "enforce_funding_balance")
-    private boolean fundingBalanceEnforced;
-
     @Column(name = "funding_spend_type")
     @Enumerated(EnumType.STRING)
     private FundingSpendType fundingSpendType = FundingSpendType.REVENUE_AND_CAPITAL;
 
     @Column(name = "capital_gla_funding")
-    private Boolean showCapitalGLAFunding;
+    private Boolean showCapitalGLAFunding = Boolean.TRUE;
 
     @Column(name = "revenue_gla_funding")
-    private Boolean showRevenueGLAFunding;
+    private Boolean showRevenueGLAFunding = Boolean.TRUE;
 
     @Column(name = "capital_other_funding")
-    private Boolean showCapitalOtherFunding;
+    private Boolean showCapitalOtherFunding = Boolean.TRUE;
 
     @Column(name = "revenue_other_funding")
-    private Boolean showRevenueOtherFunding;
+    private Boolean showRevenueOtherFunding = Boolean.TRUE;
 
     @Column(name = "multiple_bespoke_activities_enabled")
     private boolean multipleBespokeActivitiesEnabled = false;
@@ -62,38 +56,23 @@ public class FundingTemplateBlock extends TemplateBlock {
     @Column(name = "budget_evidence_attachment_enabled")
     private boolean budgetEvidenceAttachmentEnabled = false;
 
-    @Column(name = "total_cap_available_funding")
-    private String totalCapAvailableFunding;
-
-    @Column(name = "total_cap_other_funding")
-    private String totalCapOtherFunding;
-
-    @Column(name = "total_rev_available_funding")
-    private String totalRevAvailableFunding;
-
-    @Column(name = "total_rev_other_funding")
-    private String totalRevOtherFunding;
-
     @Column(name = "wizard_claim_label")
-    private String wizardClaimLabel;
+    private String wizardClaimLabel = "GLA Contribution £";
 
     @Column(name = "wizard_other_label")
-    private String wizardOtherLabel;
-
-    @Column(name = "annual_budget_help_text")
-    private String annualBudgetHelpText;
+    private String wizardOtherLabel = "Applicant Contribution £";
 
     @Column(name = "cap_claimed_funding")
-    private String capClaimedFunding;
+    private String capClaimedFunding = "GLA CAPITAL CONTRIBUTION £";
 
     @Column(name = "cap_other_funding")
-    private String capOtherFunding;
+    private String capOtherFunding = "APPLICANT CAPITAL CONTRIBUTION £";
 
     @Column(name = "rev_claimed_funding")
-    private String revClaimedFunding;
+    private String revClaimedFunding = "GLA REVENUE CONTRIBUTION £";
 
     @Column(name = "rev_other_funding")
-    private String revOtherFunding;
+    private String revOtherFunding = "APPLICANT REVENUE CONTRIBUTION £";
 
     @Column(name = "category_external_id")
     private Integer categoriesExternalId;
@@ -165,14 +144,6 @@ public class FundingTemplateBlock extends TemplateBlock {
         this.fundingSpendType = fundingSpendType;
     }
 
-    public boolean isFundingBalanceEnforced() {
-        return fundingBalanceEnforced;
-    }
-
-    public void setFundingBalanceEnforced(boolean fundingBalanceEnforced) {
-        this.fundingBalanceEnforced = fundingBalanceEnforced;
-    }
-
     public boolean isMultipleBespokeActivitiesEnabled() {
         return multipleBespokeActivitiesEnabled;
     }
@@ -189,38 +160,6 @@ public class FundingTemplateBlock extends TemplateBlock {
         this.budgetEvidenceAttachmentEnabled = budgetEvidenceAttachmentEnabled;
     }
 
-    public String getTotalCapAvailableFunding() {
-        return totalCapAvailableFunding;
-    }
-
-    public void setTotalCapAvailableFunding(String totalCapAvailableFunding) {
-        this.totalCapAvailableFunding = totalCapAvailableFunding;
-    }
-
-    public String getTotalCapOtherFunding() {
-        return totalCapOtherFunding;
-    }
-
-    public void setTotalCapOtherFunding(String totalCapOtherFunding) {
-        this.totalCapOtherFunding = totalCapOtherFunding;
-    }
-
-    public String getTotalRevAvailableFunding() {
-        return totalRevAvailableFunding;
-    }
-
-    public void setTotalRevAvailableFunding(String totalRevAvailableFunding) {
-        this.totalRevAvailableFunding = totalRevAvailableFunding;
-    }
-
-    public String getTotalRevOtherFunding() {
-        return totalRevOtherFunding;
-    }
-
-    public void setTotalRevOtherFunding(String totalRevOtherFunding) {
-        this.totalRevOtherFunding = totalRevOtherFunding;
-    }
-
     public String getWizardClaimLabel() {
         return wizardClaimLabel;
     }
@@ -235,14 +174,6 @@ public class FundingTemplateBlock extends TemplateBlock {
 
     public void setWizardOtherLabel(String wizardOtherLabel) {
         this.wizardOtherLabel = wizardOtherLabel;
-    }
-
-    public String getAnnualBudgetHelpText() {
-        return annualBudgetHelpText;
-    }
-
-    public void setAnnualBudgetHelpText(String annualBudgetHelpText) {
-        this.annualBudgetHelpText = annualBudgetHelpText;
     }
 
     public String getCapClaimedFunding() {
@@ -362,7 +293,6 @@ public class FundingTemplateBlock extends TemplateBlock {
         super.updateCloneFromBlock(clone);
         FundingTemplateBlock cloned = (FundingTemplateBlock) clone;
         cloned.setStartYear(this.getStartYear());
-        cloned.setFundingBalanceEnforced(this.isFundingBalanceEnforced());
         cloned.setYearAvailableTo(this.getYearAvailableTo());
         cloned.setMaxEvidenceAttachments(this.getMaxEvidenceAttachments());
         cloned.setDefaultActivityName(this.getDefaultActivityName());
@@ -371,15 +301,10 @@ public class FundingTemplateBlock extends TemplateBlock {
         cloned.setMultipleBespokeActivitiesEnabled(this.isMultipleBespokeActivitiesEnabled());
         cloned.setBudgetEvidenceAttachmentEnabled(this.isBudgetEvidenceAttachmentEnabled());
 
-        cloned.setAnnualBudgetHelpText(this.getAnnualBudgetHelpText());
         cloned.setCapClaimedFunding(this.getCapClaimedFunding());
         cloned.setCapOtherFunding(this.getCapOtherFunding());
         cloned.setRevClaimedFunding(this.getRevClaimedFunding());
         cloned.setRevOtherFunding(this.getRevOtherFunding());
-        cloned.setTotalCapAvailableFunding(this.getTotalCapAvailableFunding());
-        cloned.setTotalCapOtherFunding(this.getTotalCapOtherFunding());
-        cloned.setTotalRevAvailableFunding(this.getTotalRevAvailableFunding());
-        cloned.setTotalRevOtherFunding(this.getTotalRevOtherFunding());
         cloned.setWizardClaimLabel(this.getWizardClaimLabel());
         cloned.setWizardOtherLabel(this.getWizardOtherLabel());
 

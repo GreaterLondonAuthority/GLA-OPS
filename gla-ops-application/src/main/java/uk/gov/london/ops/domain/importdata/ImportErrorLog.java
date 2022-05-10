@@ -7,8 +7,15 @@
  */
 package uk.gov.london.ops.domain.importdata;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  * Created by chris on 20/03/2017.
@@ -16,10 +23,10 @@ import java.time.OffsetDateTime;
 @Entity(name = "import_errors")
 public class ImportErrorLog {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "import_error_log_seq_gen")
-    @SequenceGenerator(name = "import_error_log_seq_gen", sequenceName = "import_error_log_seq", initialValue = 10000, allocationSize = 1)
+    @SequenceGenerator(name = "import_error_log_seq_gen", sequenceName = "import_error_log_seq",
+            initialValue = 10000, allocationSize = 1)
     private Integer id;
 
     @Column(name = "import_type")
@@ -45,7 +52,8 @@ public class ImportErrorLog {
     public ImportErrorLog() {
     }
 
-    public ImportErrorLog(ImportJobType importJobType, OffsetDateTime executionDate, String importedBy, Integer rowNumber, String newErrorSummary, String newRawData) {
+    public ImportErrorLog(ImportJobType importJobType, OffsetDateTime executionDate, String importedBy, Integer rowNumber,
+            String newErrorSummary, String newRawData) {
         this.importJobType = importJobType;
         this.executionDate = executionDate;
         this.importedBy = importedBy;
@@ -56,7 +64,7 @@ public class ImportErrorLog {
             this.errorSummary = newErrorSummary;
         }
         if (newRawData.length() > 2500) {
-            this.rawData = newRawData.substring(0,2500);
+            this.rawData = newRawData.substring(0, 2500);
         } else {
             this.rawData = newRawData;
         }

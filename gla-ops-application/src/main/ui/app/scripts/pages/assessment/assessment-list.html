@@ -1,44 +1,51 @@
 <div class="assessment-list readonly-mode page">
   <gla-page-header [hide-back-btn]="true">Assessments</gla-page-header>
 
-  <well class="row mbottom10 search-container">
+  <gla-well class="row mbottom10 search-container">
 
     <div class="col-xs-12 no-padding mbottom10">
       <div class="col-xs-12 col-md-5 search-column mbottom10">
-        <div class="text-align-left">Search</div>
-        <search-field options="$ctrl.searchOptions"
-                      selected-option="$ctrl.selectedSearchOption"
-                      search-text="$ctrl.searchTextModel"
-                      on-select="$ctrl.select($ctrl.selectedSearchOption)"
-                      on-search="$ctrl.search()"
-                      on-clear="$ctrl.clearSearch()"></search-field>
+        <gla-search-field [options]="$ctrl.searchOptions"
+                          [(selected-option)]="$ctrl.selectedSearchOption"
+                          [(search-text)]="$ctrl.searchTextModel"
+                          (on-select)="$ctrl.select($ctrl.selectedSearchOption)"
+                          (on-search)="$ctrl.search()"
+                          (on-clear)="$ctrl.clearSearch()"></gla-search-field>
       </div>
 
       <div class="col-xs-12 col-sm-6 col-md-2 assessment-type search-column mbottom10">
         <div class="status-box">
-          <div class="text-align-left">Assessment type</div>
-          <checkbox-filter id="assessment-type-filter" filter-dropdown-items="$ctrl.assessmentTypeOptions" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+          <label class="text-align-left" for="assessment-type-filter">Assessment type</label>
+          <gla-checkbox-filter id="assessment-type-filter"
+                           [filter-dropdown-items]="$ctrl.assessmentTypeOptions"
+                           (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
         </div>
       </div>
 
       <div class="col-xs-12 col-sm-6 col-md-2 assessment-status search-column mbottom10">
         <div class="status-box">
-          <div class="text-align-left">Assessment status</div>
-          <checkbox-filter id="assessment-status-filter" filter-dropdown-items="$ctrl.assessmentStatusOptions" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+          <label class="text-align-left" for="assessment-status-filter">Assessment status</label>
+          <gla-checkbox-filter id="assessment-status-filter"
+                           [filter-dropdown-items]="$ctrl.assessmentStatusOptions"
+                           (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
         </div>
       </div>
 
       <div class="col-xs-12 col-sm-6 col-md-2 programme search-column mbottom10">
         <div class="status-box">
-          <div class="text-align-left">Programme</div>
-          <checkbox-filter id="programme-filter" filter-dropdown-items="$ctrl.programmeOptions" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+          <label class="text-align-left" for="programme-filter">Programme</label>
+          <gla-checkbox-filter id="programme-filter"
+                               [filter-dropdown-items]="$ctrl.programmeOptions"
+                               (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
         </div>
       </div>
 
       <div class="col-xs-12 col-sm-6 col-md-2 project-status search-column mbottom10">
         <div class="status-box">
-          <div class="text-align-left">Project status</div>
-          <checkbox-filter id="project-status-filter" filter-dropdown-items="$ctrl.projectStatusOptions" on-change="$ctrl.updateFilters(true, $event)"></checkbox-filter>
+          <label class="text-align-left" for="project-status-filter">Project status</label>
+          <gla-checkbox-filter id="project-status-filter"
+                               [filter-dropdown-items]="$ctrl.projectStatusOptions"
+                               (on-change)="$ctrl.updateFilters(true, $event)"></gla-checkbox-filter>
         </div>
       </div>
 
@@ -52,13 +59,13 @@
       </div>
 
     </div>
-  </well>
-  <pagination class="bottom-pagination pull-right"
-              current-page="$ctrl.currentPage"
-              items-per-page="$ctrl.itemsPerPage"
-              total-items="$ctrl.totalItems"
-              number-of-elements="$ctrl.itemsPerPage"
-              on-change="$ctrl.getAssessments()"></pagination>
+  </gla-well>
+  <gla-pagination class="bottom-pagination pull-right"
+                  [(current-page)]="$ctrl.currentPage"
+                  [(items-per-page)]="$ctrl.itemsPerPage"
+                  [total-items]="$ctrl.totalItems"
+                  [number-of-elements]="$ctrl.itemsPerPage"
+                  (on-change)="$ctrl.getAssessments()"></gla-pagination>
   <div class="row mtop10 no-results" ng-if="!$ctrl.assessments.length">
     <span ng-if="$ctrl.searchTextModel">0 results match your search for {{$ctrl.searchTextModel}}. Check your search query and filters and try again.</span>
     <span ng-if="!$ctrl.searchTextModel && $ctrl.isDefaultFilterState != undefined">0 results match. Check your filters and try again.</span>
@@ -97,11 +104,11 @@
       </table>
     </div>
   </div>
-  <pagination class="bottom-pagination pull-right"
-              current-page="$ctrl.currentPage"
-              items-per-page="$ctrl.itemsPerPage"
-              total-items="$ctrl.totalItems"
-              number-of-elements="$ctrl.itemsPerPage"
-              on-change="$ctrl.getAssessments()"></pagination>
+  <gla-pagination class="bottom-pagination pull-right"
+                  [(current-page)]="$ctrl.currentPage"
+                  [(items-per-page)]="$ctrl.itemsPerPage"
+                  [total-items]="$ctrl.totalItems"
+                  [number-of-elements]="$ctrl.itemsPerPage"
+                  (on-change)="$ctrl.getAssessments()"></gla-pagination>
 </div>
 </div>

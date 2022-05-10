@@ -15,6 +15,7 @@ export class TemplateMilestoneModalComponent implements OnInit {
   @Input() milestone: any
   @Input() milestones: any
   @Input() milestoneType: any
+  @Input() draft: any
   originalMilestone: any
   requirementOptions: { id: string; label: string }[];
   isBlockMonetary: boolean;
@@ -47,16 +48,27 @@ export class TemplateMilestoneModalComponent implements OnInit {
     return !this.milestones.find(m => m.summary === milestone.summary && m != this.originalMilestone);
   }
 
+  isExternalIdUnique(milestone) {
+    return !this.milestones.find(m => m.externalId === milestone.externalId && m != this.originalMilestone);
+  }
+
   isDisplayOrderUnique(milestone) {
     return !this.milestones.find(m => m.displayOrder === milestone.displayOrder && m != this.originalMilestone);
   }
 
   isFormValid(modalForm: NgForm, milestone) {
-    return modalForm.form.valid &&
-      this.isNameUnique(milestone) &&
-      this.isDisplayOrderUnique(milestone) &&
-      this.milestone.keyEvent != null &&
-      (!this.isBlockMonetary || this.milestone.monetary != null) &&
-      this.milestone.naSelectable != null
+    if(this.draft) {
+      return modalForm.form.valid &&
+        this.isNameUnique(milestone) &&
+        this.isDisplayOrderUnique(milestone) &&
+        this.milestone.keyEvent != null &&
+        this.milestone.monetarySplit <= 100 &&
+        (!this.isBlockMonetary || this.milestone.monetary != null) &&
+        this.milestone.naSelectable != null
+    } else {
+      return this.isNameUnique(milestone) &&
+        this.isDisplayOrderUnique(milestone) &&
+        this.milestone.naSelectable != null
+    }
   }
 }

@@ -8,17 +8,15 @@
 package uk.gov.london.ops.programme.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.PropertyType;
 import com.querydsl.core.annotations.QueryEntity;
 import com.querydsl.core.annotations.QueryType;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.framework.jpa.NonJoin;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.project.template.domain.TemplateSummary;
 import uk.gov.london.ops.service.ManagedEntityInterface;
-import uk.gov.london.ops.user.domain.User;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -60,20 +58,14 @@ public class ProgrammeSummary implements ManagedEntityInterface {
     @OneToMany(mappedBy = "programme", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProgrammeTemplate> templatesByProgramme = new HashSet<>();
 
-    @JsonIgnore
-    @QueryType(PropertyType.NONE)
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "created_by")
-    private User creator;
-
     @Column(name = "created_on")
     private OffsetDateTime createdOn;
 
-    @JsonIgnore
-    @QueryType(PropertyType.NONE)
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "modified_by")
-    private User modifier;
+    @Column(name = "modified_by")
+    private String modifiedBy;
+
+    @Transient
+    private String modifierName;
 
     @Column(name = "modified_on")
     private OffsetDateTime modifiedOn;
@@ -81,7 +73,7 @@ public class ProgrammeSummary implements ManagedEntityInterface {
     @JsonIgnore
     @ManyToOne(cascade = {})
     @JoinColumn(name = "managing_organisation_id")
-    private Organisation managingOrganisation;
+    private OrganisationEntity managingOrganisation;
 
     @JsonIgnore
     @Column(name = "supported_reports")
@@ -157,12 +149,20 @@ public class ProgrammeSummary implements ManagedEntityInterface {
         this.createdOn = createdOn;
     }
 
-    public User getModifier() {
-        return modifier;
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 
-    public void setModifier(User modifier) {
-        this.modifier = modifier;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public String getModifierName() {
+        return modifierName;
+    }
+
+    public void setModifierName(String modifierName) {
+        this.modifierName = modifierName;
     }
 
     public OffsetDateTime getModifiedOn() {
@@ -181,22 +181,12 @@ public class ProgrammeSummary implements ManagedEntityInterface {
         this.status = status;
     }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public String getCreatorName() {
-        return creator != null ? creator.getFullName() : null;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    public String getModifierName() {
-        return modifier != null ? modifier.getFullName() : null;
-    }
-
     @Override
-    public Organisation getManagingOrganisation() {
+    public OrganisationEntity getManagingOrganisation() {
         return managingOrganisation;
     }
 
-    public void setManagingOrganisation(Organisation managingOrganisation) {
+    public void setManagingOrganisation(OrganisationEntity managingOrganisation) {
         this.managingOrganisation = managingOrganisation;
     }
 

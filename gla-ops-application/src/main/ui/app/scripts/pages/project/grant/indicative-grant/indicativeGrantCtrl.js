@@ -22,6 +22,8 @@ class IndicativeGrantCtrl extends ProjectBlockCtrl {
     this.lastRequestId = 0;
 
     this.title = this.GrantService.indicativeGrantSectionTitle(this.template, !this.readOnly);
+    this.otherAffordableTenureTypes = _.find(this.template.blocksEnabled, {block: 'IndicativeGrant'}).otherAffordableTenureTypes;
+    this.showOtherAffordableQuestion = _.find(this.template.blocksEnabled, {block: 'IndicativeGrant'}).showOtherAffordableQuestion;
     this.data = this.GrantService.enhanceIndicativeBlock(this.projectBlock);
     this.criteriaPreviousValue = this.data.affordableCriteriaMet;
     this.tenureSummaryDetailsRows = this.GrantService.indicativeGrantBlocks(this.data);

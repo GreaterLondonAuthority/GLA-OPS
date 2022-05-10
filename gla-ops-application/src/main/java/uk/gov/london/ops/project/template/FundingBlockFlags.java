@@ -13,7 +13,6 @@ package uk.gov.london.ops.project.template;
  * @author Steve Leach
  */
 public class FundingBlockFlags {
-    public Boolean enforceFundingBalance = null;
     public Boolean multipleBespokeActivitiesEnabled = null;
     public Boolean budgetEvidenceAttachmentEnabled = null;
 }

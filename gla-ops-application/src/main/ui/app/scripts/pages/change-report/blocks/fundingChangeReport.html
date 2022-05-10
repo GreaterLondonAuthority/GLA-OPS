@@ -2,7 +2,7 @@
 
   <div ng-repeat="row in $ctrl.rows" ng-class="'yearly-budget-comparison-'+ row.year">
 
-    <change-report-static-text text="row.yearLabel" data="$ctrl.data"  class="next-to-tables block-section"></change-report-static-text>
+    <gla-change-report-static-text [text]="row.yearLabel" [data]="$ctrl.data"  class="next-to-tables block-section"></gla-change-report-static-text>
     <change-report-field ng-if="$ctrl.block.showCapitalGLAFunding" label="$ctrl.capClaimedFunding" data="row.capitalValue" changes="$ctrl.data.changes" fields="'value'" formats="'currency'" class="next-to-tables" ng-attr-id="{{'capital-budget-value-'+ row.year}}"></change-report-field>
     <change-report-field ng-if="$ctrl.block.showCapitalOtherFunding" label="$ctrl.capOtherFunding" data="row.capitalMatchFund" changes="$ctrl.data.changes" fields="'value'" formats="'currency'" class="next-to-tables" ng-attr-id="{{'capital-match-budget-value-' + row.year}}"></change-report-field>
     <change-report-field ng-if="$ctrl.block.showRevenueGLAFunding" label="$ctrl.revClaimedFunding" data="row.revenueValue" changes="$ctrl.data.changes" fields="'value'" formats="'currency'" class="next-to-tables" ng-attr-id="{{'revenue-budget-value-'+ row.year}}"></change-report-field>

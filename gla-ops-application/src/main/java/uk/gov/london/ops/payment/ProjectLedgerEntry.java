@@ -12,16 +12,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QueryEntity;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.london.ops.domain.OpsEntity;
+import uk.gov.london.ops.framework.OpsEntity;
 import uk.gov.london.ops.framework.annotations.PermissionRequired;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.framework.jpa.NonJoin;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
+import uk.gov.london.ops.refdata.PaymentSource;
 import uk.gov.london.ops.service.ManagedEntityInterface;
-import uk.gov.london.ops.user.domain.User;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -30,12 +30,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import static uk.gov.london.ops.payment.LedgerType.PAYMENT;
-import static uk.gov.london.ops.payment.PaymentSource.*;
 import static uk.gov.london.ops.permission.PermissionType.ORG_VIEW_VENDOR_SAP_ID;
+import static uk.gov.london.ops.refdata.PaymentSourceKt.*;
 
 /**
- *
- *
  * Created by chris on 11/01/2017.
  */
 @Entity(name = "PROJECT_LEDGER_ENTRY")
@@ -43,8 +41,6 @@ import static uk.gov.london.ops.permission.PermissionType.ORG_VIEW_VENDOR_SAP_ID
 @JsonFilter("roleBasedFilter")
 public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInterface {
 
-    public static final String INVOICE_TRANSACTION = "INV";
-    public static final String CREDIT_TRANSACTION = "CRN";
     public static final String DEFAULT_LEDGER_CE_CODE = "544076";
     public static final String SUPPLEMENTARY_PAYMENT = "Supplementary";
     public static final String RECLAIMED_PAYMENT = "Reclaimed";
@@ -71,8 +67,8 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     protected Integer interestForPaymentId;
 
     @Column(name = "block_id")
-    @JoinData(targetTable = "project_block", targetColumn = "id", joinType = Join.JoinType.OneToOne,
-            comment = "The block id for this record. These records will usually be duplicated per block except for payment/reclaim details.")
+    @JoinData(targetTable = "project_block", targetColumn = "id", joinType = Join.JoinType.OneToOne, comment =
+            "The block id for this record. These records will usually be duplicated per block except for payment/reclaim details.")
     protected Integer blockId;
 
     @Column(name = "year")
@@ -106,8 +102,7 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     @Column(name = "category")
     private String category;
 
-    @Column(name = "amount")
-    // column called amount in DB due to reserved word value
+    @Column(name = "amount") // column called amount in DB due to reserved word value
     private BigDecimal value;
 
     @Column(name = "interest")
@@ -160,7 +155,8 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     private String comments;
 
     @Column(name = "category_id")
-    @JoinData(targetTable = "finance_category", targetColumn = "id", joinType = Join.JoinType.OneToOne, comment = "This is the finance category code for the record")
+    @JoinData(targetTable = "finance_category", targetColumn = "id", joinType = Join.JoinType.OneToOne,
+            comment = "This is the finance category code for the record")
     private Integer categoryId;
 
     @Enumerated(EnumType.STRING)
@@ -177,9 +173,11 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     private OffsetDateTime modifiedOn;
 
     @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "modified_by")
-    private User modifiedByUser;
+    @Column(name = "modified_by")
+    private String modifiedBy;
+
+    @Transient
+    private String lastModifierName;
 
     @Column(name = "sub_category")
     private String subCategory;
@@ -187,8 +185,8 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     @Column(name = "authorised_on")
     private OffsetDateTime authorisedOn;
 
-    @JoinData(joinType = Join.JoinType.ManyToOne, sourceTable = "project_ledger_entry", targetColumn = "username", targetTable = "users",
-            comment = "")
+    @JoinData(joinType = Join.JoinType.ManyToOne, sourceTable = "project_ledger_entry", targetColumn = "username",
+            targetTable = "users", comment = "")
     @Column(name = "authorised_by")
     private String authorisedBy;
 
@@ -246,10 +244,11 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     @JsonIgnore
     @ManyToOne(cascade = {})
     @JoinColumn(name = "managing_organisation_id")
-    private Organisation managingOrganisation;
+    private OrganisationEntity managingOrganisation;
 
     @Column(name = "original_id")
-    @JoinData(targetTable = "project_ledger_entry", targetColumn = "id", joinType = Join.JoinType.ManyToOne, comment = "The original version of this row")
+    @JoinData(targetTable = "project_ledger_entry", targetColumn = "id", joinType = Join.JoinType.ManyToOne,
+            comment = "The original version of this row")
     private Integer originalId;
 
     /** xml file content to be sent to SAP */
@@ -257,22 +256,28 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     private String xmlFile;
 
     @JsonIgnore
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "resent_by")
-    private User resender;
+    @Column(name = "resent_by")
+    private String resender;
+
+    @Transient
+    private String resenderName;
 
     @Column(name = "resent_on")
     private OffsetDateTime resentOn;
 
+    @Column(name = "threshold_organisation")
+    private Integer thresholdOrganisation;
+
+    @Column(name = "threshold_value")
+    private Long thresholdValue;
+
+    @Column(name = "supplier_product_code")
+    private String supplierProductCode;
+
     public ProjectLedgerEntry() {}
 
-    public ProjectLedgerEntry(final Integer projectId,
-                              final Integer year,
-                              final Integer month,
-                              final String category,
-                              final String paymentSubType,
-                              final BigDecimal value,
-                              final LedgerStatus status) {
+    public ProjectLedgerEntry(Integer projectId, Integer year, Integer month, String category, String paymentSubType,
+                              BigDecimal value, LedgerStatus status) {
         this.projectId = projectId;
         this.category = category;
         this.value = value;
@@ -283,31 +288,37 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
         updateYearMonth();
     }
 
-    public ProjectLedgerEntry(Project project, NamedProjectBlock block, Integer year, LedgerType ledgerType, SpendType spendType, BigDecimal value) {
+    public ProjectLedgerEntry(Project project, NamedProjectBlock block, Integer year, LedgerType ledgerType, SpendType spendType,
+                              BigDecimal value) {
         this(project.getId(), block.getId(), year, 4, null, ledgerType, spendType, null, value);
         if (this.ledgerType == LedgerType.BUDGET) {
             this.ledgerStatus = LedgerStatus.BUDGET;
         }
     }
 
-    public ProjectLedgerEntry(Project project, NamedProjectBlock block, Integer year, LedgerType ledgerType, SpendType spendType, BigDecimal value, String category) {
+    public ProjectLedgerEntry(Project project, NamedProjectBlock block, Integer year, LedgerType ledgerType, SpendType spendType,
+                              BigDecimal value, String category) {
         this(project, block, year, ledgerType, spendType, value);
         this.category = category;
     }
 
-    public ProjectLedgerEntry(Project project, NamedProjectBlock block, Integer year, Integer month, LedgerStatus ledgerStatus, LedgerType ledgerType, SpendType spendType, Integer categoryId, String category, BigDecimal value) {
+    public ProjectLedgerEntry(Project project, NamedProjectBlock block, Integer year, Integer month, LedgerStatus ledgerStatus,
+                              LedgerType ledgerType, SpendType spendType, Integer categoryId, String category, BigDecimal value) {
         this(project.getId(), block.getId(), year, month, ledgerStatus, ledgerType, spendType, categoryId, category, value);
     }
 
-    public ProjectLedgerEntry(Project project, NamedProjectBlock block, Integer year, Integer month, LedgerStatus ledgerStatus, LedgerType ledgerType, SpendType spendType, Integer categoryId, BigDecimal value) {
+    public ProjectLedgerEntry(Project project, NamedProjectBlock block, Integer year, Integer month, LedgerStatus ledgerStatus,
+                              LedgerType ledgerType, SpendType spendType, Integer categoryId, BigDecimal value) {
         this(project.getId(), block.getId(), year, month, ledgerStatus, ledgerType, spendType, null, categoryId, value);
     }
 
-    public ProjectLedgerEntry(Integer projectId, Integer blockId, Integer year, Integer month, LedgerStatus ledgerStatus, LedgerType ledgerType, SpendType spendType, Integer categoryId, BigDecimal value) {
+    public ProjectLedgerEntry(Integer projectId, Integer blockId, Integer year, Integer month, LedgerStatus ledgerStatus,
+                              LedgerType ledgerType, SpendType spendType, Integer categoryId, BigDecimal value) {
         this(projectId, blockId, year, month, ledgerStatus, ledgerType, spendType, null, categoryId, value);
     }
 
-    public ProjectLedgerEntry(Integer projectId, Integer blockId, Integer year, Integer month, LedgerStatus ledgerStatus, LedgerType ledgerType, SpendType spendType, Integer categoryId, String category, BigDecimal value) {
+    public ProjectLedgerEntry(Integer projectId, Integer blockId, Integer year, Integer month, LedgerStatus ledgerStatus,
+                              LedgerType ledgerType, SpendType spendType, Integer categoryId, String category, BigDecimal value) {
         this(projectId, blockId, year, month, ledgerStatus, ledgerType, spendType, category, categoryId, value);
     }
 
@@ -581,11 +592,11 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     }
 
     @Override
-    public Organisation getManagingOrganisation() {
+    public OrganisationEntity getManagingOrganisation() {
         return managingOrganisation;
     }
 
-    public void setManagingOrganisation(Organisation managingOrganisation) {
+    public void setManagingOrganisation(OrganisationEntity managingOrganisation) {
         this.managingOrganisation = managingOrganisation;
     }
 
@@ -619,28 +630,15 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
         this.modifiedOn = modifiedOn;
     }
 
-    public User getModifiedByUser() {
-        return modifiedByUser;
-    }
-
-    public void setModifiedByUser(User modifiedByUser) {
-        this.modifiedByUser = modifiedByUser;
-    }
-
     @Override
     public String getModifiedBy() {
-        return modifiedByUser == null ? null : modifiedByUser.getUsername();
+        return modifiedBy;
     }
 
     @Override
     public void setModifiedBy(String modifiedBy) {
-        this.modifiedByUser = new User(modifiedBy);
+        this.modifiedBy = modifiedBy;
     }
-
-    //======================
-    // Pack various values into the description field.
-    // Short term hack to avoid database changes.
-    // TODO - What to do with the other fields in PaymentRequest?
 
     public void setWbsCode(String wbsCode) {
         this. wbsCode = wbsCode;
@@ -697,7 +695,6 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
     public void setSubCategory(String subCategory) {
         this.subCategory = subCategory;
     }
-
 
     public String getInvoiceFileName() {
         return invoiceFileName;
@@ -773,7 +770,11 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getLastModifierName() {
-        return modifiedByUser != null ? modifiedByUser.getFullName() : null;
+        return lastModifierName;
+    }
+
+    public void setLastModifierName(String lastModifierName) {
+        this.lastModifierName = lastModifierName;
     }
 
     public String getCreator() {
@@ -815,18 +816,23 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
         this.xmlFile = xmlFile;
     }
 
-    public User getResender() {
+    public String getResender() {
         return resender;
     }
 
-    public void setResender(User resender) {
+    public void setResender(String resender) {
         this.resender = resender;
     }
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getResenderName() {
-        return resender != null ? resender.getFullName() : null;
+        return resenderName;
     }
+
+    public void setResenderName(String resenderName) {
+        this.resenderName = resenderName;
+    }
+
 
     public OffsetDateTime getResentOn() {
         return resentOn;
@@ -877,6 +883,30 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
         this.comments = comments;
     }
 
+    public Integer getThresholdOrganisation() {
+        return thresholdOrganisation;
+    }
+
+    public void setThresholdOrganisation(Integer thresholdOrganisation) {
+        this.thresholdOrganisation = thresholdOrganisation;
+    }
+
+    public Long getThresholdValue() {
+        return thresholdValue;
+    }
+
+    public void setThresholdValue(Long thresholdValue) {
+        this.thresholdValue = thresholdValue;
+    }
+
+    public String getSupplierProductCode() {
+        return supplierProductCode;
+    }
+
+    public void setSupplierProductCode(String supplierProductCode) {
+        this.supplierProductCode = supplierProductCode;
+    }
+
     public boolean matchesOriginal(ProjectLedgerEntry entry) {
         return Objects.equals(this.getProjectId(), entry.getProjectId())
                 && this.getBlockId() > entry.getBlockId()
@@ -919,7 +949,7 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
         this.setCreatedBy(null);
         this.setAuthorisedBy(null);
         this.setAuthorisor(null);
-        this.setModifiedByUser(null);
+        this.setModifiedBy(null);
         this.setModifiedOn(null);
         this.setWbsCode(null);
         this.setCompanyName(entry.getCompanyName());
@@ -949,7 +979,7 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
         this.setPcsProjectNumber(entry.getPcsProjectNumber());
         this.setLedgerSource(entry.getLedgerSource());
         this.setModifiedOn(entry.getModifiedOn());
-        this.setModifiedByUser(entry.getModifiedByUser());
+        this.setModifiedBy(entry.getModifiedBy());
         this.setSubCategory(entry.getSubCategory());
         this.setAuthorisedOn(entry.getAuthorisedOn());
         this.setAuthorisedBy(entry.getAuthorisedBy());
@@ -974,6 +1004,8 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
         this.setClaimId(entry.getClaimId());
         this.setComments(entry.getComments());
         this.setCompanyName(entry.getCompanyName());
+        this.setThresholdOrganisation(entry.getThresholdOrganisation());
+        this.setThresholdValue(entry.getThresholdValue());
     }
 
     public boolean isResendable() {
@@ -982,6 +1014,11 @@ public class ProjectLedgerEntry implements OpsEntity<Integer>, ManagedEntityInte
                 && LedgerStatus.getApprovedPaymentStatuses().contains(ledgerStatus)
                 && !LedgerStatus.Cleared.equals(ledgerStatus)
                 && authorisedOn != null;
+    }
+
+    @JsonIgnore
+    public boolean isReconcilliationPayment() {
+        return "R14".equals(getSubCategory());
     }
 
     public PaymentSource getPaymentSourceDetails() {

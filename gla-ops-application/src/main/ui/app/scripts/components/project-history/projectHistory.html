@@ -13,7 +13,7 @@
         <div class="col-xs-12 history-comments">
           <div ng-repeat="item in $ctrl.items" ng-if="item.transition != 'Unconfirmed'">
             <div class="text-left lighter" id="metadata-{{$index}}">
-              {{$ctrl.formatDate(item.createdOn)}} {{item.description || $ctrl.transitionMap[item.transition] || item.transition}} by {{ item.createdByFirstName}} {{ item.createdByLastName}}
+              {{$ctrl.formatDate(item.createdOn)}} {{item.description || $ctrl.transitionMap[item.transition] || item.transition}} by {{ item.creatorName}}
             </div>
             <div class="text-left">{{item.comments}}</div>
             <hr/>

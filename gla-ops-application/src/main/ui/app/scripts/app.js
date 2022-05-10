@@ -6,10 +6,7 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 //--- TODO move dependencies to relevant place where it is actually used ---
-import './services/ConfigurationService';
 import './routes/routes';
-
-import './util/ToastrUtil';
 
 import './services/AssessmentService';
 import './services/ModalDisplayService';
@@ -26,7 +23,6 @@ import './services/blocks/ReceiptsService';
 import './services/blocks/ProjectBlockService';
 import './services/blocks/MilestonesService';
 import './services/ProgrammeService';
-import './services/TemplateService';
 import './services/UserService';
 import './services/blocks/RisksService';
 import './services/blocks/UnitsService';
@@ -42,18 +38,15 @@ import './services/ActuatorService';
 import './services/FinanceService';
 import './services/AnnualSubmissionService';
 import './services/LockingService';
-import './services/MetadataService';
 import './services/SapDataService';
 import './services/SkillProfilesService';
 import './services/blocks/CommentsService';
 import './services/QuestionsService';
-import './services/ErrorService';
 import './services/DashboardService';
 import './services/TeamService';
 import './services/PermissionService'
 import './services/LabelService'
 import './services/OverridesService';
-import './services/OutputConfigurationService';
 import './services/PortableEntityService'
 import './services/RepeatingEntityService'
 import './services/blocks/OtherFundingService'
@@ -62,59 +55,35 @@ import './services/PostLoginService'
 import './services/Downgrade'
 import './util/Util';
 
-import './directives/cookie-warning/gla-cookie-warning.directive';
-import './directives/header/gla-header.directive';
-import './directives/topmenu/topmenu.directive';
 import './directives/permissionUtil/setPermission';
 
 import './components/tenure-tiles/tenureTiles';
-import './components/footer/glaFooter';
 import './components/header-status/headerStatus';
 import './components/project-block-footer/projectBlockFooter';
 import './components/project-id/projectId';
 import './components/project-history/projectHistory';
 import './components/input-cost-budget/inputCostBudget';
-import './components/tile/tile';
 import './components/password-strength/passwordStrength';
-import './components/messageModal/messageModal';
 import './components/fileUpload/fileUpload';
 import './components/forecast-change/forecastChange';
 import './components/financial-year/financialYear.js';
 import './components/section-header/section-header.js';
 import './components/section-header2/section-header.js';
 import './components/mobileDeviceWarning/modal.js';
-import './components/version-history-modal/versionHistoryModal';
-import './components/profiled-unit-wizard/profiledUnitWizard';
 import './components/number-mask/numberMask';
 import './components/abs/absFilter';
 import './components/bool/boolFilter.js';
 import './components/gla-currency/glaCurrency.js';
 import './components/fYear/fYear';
-import './components/session-timeout-modal/sessionTimeoutModal';
-import './components/claim-modal/claimModal';
-import './components/well/well.js';
-import './components/multi-panel/multiPanel.js';
+import './components/multi-panel/mp-field/mpField.js';
 import './components/month-selector/monthSelector.js';
 import './components/quarter-selector/quarterSelector.js';
-import './components/search-field/searchField.js';
-import './components/checkbox-filter/checkboxFilter.js';
-import './components/pagination/pagination.js';
-import './components/actuals-metadata-modal/actualsMetadataModal.js';
-import './components/confirmation/confirmation.js';
 import './components/comments-list/commentsList.js';
 import './components/comments-form/commentsForm.js';
 import './components/show-more-btn/showMoreBtn.js';
-import './components/banner-message/bannerMessage.js';
 import './components/milestone-claim-status/milestoneClaimStatus.js';
 import './components/milestone-actions/milestoneActions.js';
-import './components/template-blocks/templateBlocks.js';
-import './components/template-block/templateBlock.js';
-import './components/template-block-details/detailsTemplateBlock.js';
-import './components/template-block-questions/templateBlockQuestions.js';
-import './components/template-block-outputs/templateBlockOutputs.js';
 import './components/template-details/templateDetails.js';
-import './components/template-block-objectives/templateBlockObjectives.js';
-import './components/template-block-other-funding/templateBlockOtherFunding.js';
 import './components/entities-list/entitiesList.js';
 import './components/file-upload-modal/fileUploadModal.js';
 import './components/programmes-carousel/programmesCarousel.js';
@@ -136,16 +105,13 @@ import './pages/assessment-templates/add-criteria-modal/addCriteriaModal';
 import './pages/project/project-budget/fileDeleteConfirmationModal';
 import './pages/project/project-budget/fileUploadErrorModal';
 
-import './pages/home/homeCtrl';
 import './pages/registration/registrationCtrl';
-import './pages/registration/registrationTypeCtrl';
 import './pages/registration/registrationForm/userRegistrationForm';
 
 import './pages/organisation-registration/organisation-registration-programme/organisationRegistrationProgramme.js';
 import './pages/organisation-registration/organisation-registration-form/organisationRegistrationForm.js';
 import './pages/organisation-registration/organisation-registration-user/organisationRegistrationUser.js';
 
-import './pages/reset-password/requestPasswordResetCtrl';
 import './pages/reset-password/passwordResetCtrl';
 import './pages/user/home/userHomeCtrl';
 import './pages/organisations/organisationsCtrl';
@@ -155,7 +121,6 @@ import './pages/organisation/organisationForm/editOrganisationCtrl';
 import './pages/organisation/organisationForm/newOrganisationCtrl';
 import './pages/organisation/organisationForm/multiStepOrganisationForm';
 import './pages/organisation/organisationForm/newOrganisationProfileCtrl';
-import './pages/organisation/organisationForm/newOrganisationWithUserCtrl';
 import './pages/organisation/contracts/contractsList';
 import './pages/organisation/programme/organisationProgramme';
 import './pages/organisation/programme/create-delegated/modal';
@@ -195,8 +160,6 @@ import './pages/system/validation-details/validationDetailsCtrl';
 import './pages/system/actionModal';
 import './pages/system/question/question';
 import './pages/system/questions-form/questionForm';
-import './pages/system/question-modal/questionModal';
-import './pages/system/section-modal/sectionModal';
 import './pages/system/sapData/page';
 import './pages/system/templates-questions/templateQuestionsPage';
 import './pages/system/templates/templatesPage';
@@ -210,8 +173,6 @@ import './pages/sql/sqlDetailsCtrl';
 import './pages/audit-activity/auditActivityCtrl';
 import './pages/project/progress-updates/progressUpdatesCtrl.js';
 
-import './pages/finance-categories/financeCategoriesCtrl';
-import './pages/finance-categories/updateModal/modal';
 import './pages/change-report/changeReportCtrl';
 import './pages/user-account/userAccountCtrl';
 
@@ -219,13 +180,9 @@ import './pages/change-report/change-report-field/changeReportField';
 import './pages/change-report/change-report-field-files/changeReportFieldFiles';
 import './pages/change-report/change-report-field-lookup/changeReportFieldLookup';
 import './pages/change-report/change-report-coordinates/changeReportCoordinates';
-import './pages/change-report/change-report-table/changeReportTable';
-import './pages/change-report/change-report-table-row/changeReportTableRow';
 import './pages/change-report/change-report-tile-total/changeReportTileTotal';
 import './pages/change-report/change-report-tiles/changeReportTiles';
 import './pages/change-report/change-report-tiles/change-report-tile-row/changeReportTileRow';
-import './pages/change-report/change-report-table-separator/changeReportTableSeparator';
-import './pages/change-report/change-report-static-text/changeReportStaticText';
 
 import './pages/change-report/blocks/projectDetailsChangeReport';
 import './pages/change-report/blocks/budgetsChangeReport';
@@ -260,8 +217,6 @@ import './pages/payments/all-payments/allPaymentsCtrl';
 import './pages/payments/payment-summary/paymentSummaryCtrl';
 import './pages/payments/pending-payments/decline-dialog/declineDialog';
 import './pages/payments/pending-payments/interest-dialog/interestDialog';
-import './pages/projects/projectsCtrl';
-import './pages/projects/new/newProjectCtrl';
 import './pages/consortiums/consortiumsCtrl';
 import './pages/consortiums/new/newConsortiumCtrl';
 import './pages/consortiums/edit/editConsortiumCtrl';
@@ -281,9 +236,6 @@ import './pages/project/project-budget/forecast/projectBudgetForecast';
 import './pages/project/project-budget/forecast/forecastMonthRow';
 
 import './pages/project/questions/questionsPage';
-import './pages/project/overview/projectOverviewCtrl';
-import './pages/project/overview/abandonModal/modal';
-import './pages/project/overview/transferModal/transferModal';
 import './pages/project/grant/calculate-grant/calculateGrantCtrl';
 import './pages/project/grant/negotiated-grant/negotiatedGrantCtrl';
 import './pages/project/grant/GrantService';
@@ -308,12 +260,7 @@ import './pages/project/risks/risk-and-issue-modal/modal';
 import './pages/project/risks/add-risk-action-modal/modal';
 import './pages/project/units/unitsCtrl';
 import './pages/project/funding/fundingPageCtrl';
-import './pages/project/funding/quarterly-budget-table/quarterlyBudgetTable';
 import './pages/project/funding/yearly-budget-funding-totals/yearlyBudgetFundingTotalsTable';
-import './pages/project/funding/yearly-budget-balance-summary/yearlyBudgetBalanceSummaryTable';
-import './pages/project/funding/yearly-budget-funding-summary/yearlyBudgetFundingSummaryTable';
-import './pages/project/funding/yearly-budget-capital-revenue-funding/yearlyBudgetCapitalRevenueFunding.js';
-import './pages/project/funding/yearly-budget-quarterly-claim-summary/yearlyBudgetQuarterlyClaimSummary.js';
 import './pages/project/learning-grant/learningGrantCtrl';
 import './pages/project/funding-claims/fundingClaimsCtrl';
 import './pages/project/funding-claims/funding-claims-table/fundingClaimsTable.js';
@@ -327,7 +274,6 @@ import './pages/project/user-defined-outputs/userDefinedOutputsPage.js';
 import './pages/project/user-defined-outputs/userDefinedOutput.js';
 import './pages/project/elements/elementsPage.js';
 import './pages/project/elements/blockElement.js';
-import './pages/organisations/requestOrganisationAccessModal';
 import './pages/user-account/modal/requestAdditionalRoleModal.js';
 import './pages/users/modal/addUserToTeamModal';
 import './pages/users/users';
@@ -335,7 +281,6 @@ import './pages/permissions/permissionsPage.js';
 import './pages/labels/labelsPage.js';
 import './pages/all-notifications/allNotificationsPage.js';
 import './pages/overrides/overridesPage.js';
-import './pages/outputs-configuration/outputsConfigurationPage.js';
 import './pages/confirmation/orgAndUserCreatedConfirmation.js';
 import './pages/project/funding-claims/contract-type-change-modal/contractTypeChangeModal.js';
 
@@ -343,12 +288,10 @@ import './components/common/input/date-input/dateInput';
 import './components/common/modifiers/focus-me/focusMe';
 import './components/common/modifiers/numbers-only/numbersOnly';
 import './components/common/modifiers/numbers-with-negative/numbersWithNegative';
-import './components/common/loading-mask/loadingMask';
 import './components/common/json-viewer-dialog/JSONViewerDialog';
 import './components/common/overview-block/overviewBlock';
 import './components/common/project-overview-block/projectOverviewBlock';
 import './components/total-box/totalBox';
-import './components/chrome-autofill/chromeAutofill';
 import './components/change-on-blur/change-on-blur';
 import './components/gla-read-only/gla-read-only.js';
 import './components/style-placeholder/style-placeholder.js'
@@ -366,12 +309,13 @@ import './components/programme-templates-table/programmeTemplatesTable';
 import './components/questions/questions.js';
 import './components/learning-grant-table/learningGrantTable.js';
 import './components/navigation-circles/navigationCircles.js';
+
 const WEB_APP_NAME = 'Open Project System | Greater London Authority (GLA)';
 
 angular.module('GLA')
 
   //Moved from appCtrl.js
-  .run(['$rootScope', '$window', 'ConfigurationService', 'UserService', '$log', 'PermPermissionStore', 'Idle', function ($rootScope, $window, ConfigurationService, UserService, $log, PermPermissionStore, Idle) {
+  .run(['$rootScope', '$window', 'ConfigurationService', 'UserService', '$log', 'PermPermissionStore', 'NgxPermissionsService', 'SessionService', function ($rootScope, $window, ConfigurationService, UserService, $log, PermPermissionStore, NgxPermissionsService, SessionService) {
 
     // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
     // jscs:disable requireParenthesesAroundIIFE
@@ -412,8 +356,9 @@ angular.module('GLA')
     if(!skipGoogleAnalytics) {
       // load env vars
       ConfigurationService.getConfig()
+        .toPromise()
         .then(function (resp) {
-          var data = resp.data;
+          var data = resp;
           $log.debug('Environment variables:', JSON.stringify(data, null, 4));
           $rootScope.envVars = data;
           let isDevEnv = _.some(['local', 'Dev'], env => env === data['env-name']);
@@ -426,13 +371,15 @@ angular.module('GLA')
     //TODO move to UserService
     const initPermissions = () => {
       PermPermissionStore.clearStore();
+      NgxPermissionsService.flushPermissions();
 
-      var permissions = UserService.currentUser().permissions;
+      let permissions = UserService.currentUser().permissions;
       PermPermissionStore.defineManyPermissions(permissions, function (permission) {
-        var resolved = _.includes(permissions, permission);
+        let resolved = _.includes(permissions, permission);
         $log.debug('permission ' + (resolved ? 'found' : 'unknown') + ':', permission);
         return resolved;
       });
+      NgxPermissionsService.loadPermissions(permissions);
       $log.debug('Permissions set:', PermPermissionStore.getStore());
     }
     //TODO move to UserService
@@ -441,15 +388,17 @@ angular.module('GLA')
       initPermissions();
     }
     //TODO move to UserService
-    $rootScope.$on('user.login', function () {
+   UserService.onLogin(user => {
       initPermissions();
-    });
+      $rootScope.redirectURL = null;
+   });
 
     //TODO move to UserService
-    $rootScope.$on('user.logout', function () {
-      Idle.unwatch();
+    UserService.onLogout(() => {
       PermPermissionStore.clearStore();
+      NgxPermissionsService.flushPermissions();
       $log.debug('Permissions cleared:', PermPermissionStore.getStore());
+      SessionService.clear()
     });
 
     // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
@@ -465,7 +414,8 @@ angular.module('GLA')
         'registration',
         'registration-type',
         'password-reset',
-        'organisation.new-with-user',
+        'password-expired',
+        'outputs-configuration',
         'organisation.registration-programme',
         'organisation.registration-form',
         'organisation.registration-user',
@@ -481,7 +431,7 @@ angular.module('GLA')
         $log.log('$stateChangeStart, usr not logged in and page is not white listed as public => returning to home');
         event.preventDefault();
         $rootScope.redirectURL = $location.url();
-        $state.transitionTo('home').then(() => $rootScope.showGlobalLoadingMask = false);
+        $state.transitionTo('home', {redirectURL: $rootScope.redirectURL}).then(() => $rootScope.showGlobalLoadingMask = false);
       }
 
       /**
@@ -493,6 +443,7 @@ angular.module('GLA')
     });
 
     $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
+      NavigationService.setCurrentState($state);
       $window.scrollTo(0, 0);
       //Makes keyboard navigation to start from the page top
       $('body').attr('tabIndex', -1).focus();
@@ -525,8 +476,8 @@ angular.module('GLA')
     });
 
     //Listens for ng9 navigating with ng1 ui-router states
-    NavigationService.addStateChangeListener((stateName, stateParams)=>{
-      $state.go(stateName, stateParams);
+    NavigationService.addStateChangeListener((stateName, stateParams, options)=>{
+      $state.go(stateName, stateParams, options);
     })
 
     $rootScope.$state = $state;
@@ -562,8 +513,6 @@ angular.module('GLA')
       $anchorScroll.yOffset = initialYOffset
       $(`#${id}`).focus();
     }
-
-    // BootstrapUtil.enableUiSelectCaretClick();
   }])
 
   //Fix after migrating to angular 1.6.10
@@ -579,90 +528,18 @@ angular.module('GLA')
     }]);
   }])
 
-  .config(['toastrConfig', function (toastrConfig) {
-    angular.extend(toastrConfig, {
-      'closeButton': false,
-      'debug': false,
-      'newestOnTop': false,
-      'progressBar': false,
-      'positionClass': 'toast-top-center',
-      'preventOpenDuplicates': true,
-      'onclick': null,
-      'showDuration': '5000',
-      'hideDuration': '0',
-      'timeOut': '5000',
-      'extendedTimeOut': '5000',
-      // 'showEasing': 'swing',
-      // 'hideEasing': 'linear',
-      // 'showMethod': 'fadeIn',
-      // 'hideMethod': 'fadeOut',
-      'templates': {
-        'toast': 'scripts/components/toast/toast.html'
-      }
-    });
-  }])
-
-  // .config(['uiSelectConfig', function(uiSelectConfig) {
-  //   uiSelectConfig.dropdownPosition = 'down';
-  // }])
-
   .constant('config', {
     basePath: '/api/v1'
   })
 
   .constant('_', _)
 
-  .config(['IdleProvider', 'KeepaliveProvider', function (IdleProvider, KeepaliveProvider) {
-    // configure Idle settings
-    IdleProvider.idle(60*10); // in seconds
-    IdleProvider.timeout(60*5); // in seconds
-    IdleProvider.autoResume('notIdle');
-    KeepaliveProvider.interval(60*10); // in seconds
-  }])
-
   .config(['$qProvider', function ($qProvider) {
     $qProvider.errorOnUnhandledRejections(false);
   }])
 
-  .run(['UserService', '$rootScope', 'MetadataService', 'SessionTimeoutModal', function (UserService, $rootScope, MetadataService, SessionTimeoutModal) {
-
-    UserService.setupUserSession();
-
-    $rootScope.$on('IdleStart', () => {
-      // console.log('IdleStart');
-      // the user appears to have gone idle
-      SessionTimeoutModal.closeModal();
-      SessionTimeoutModal.show();
-    });
-
-    $rootScope.$on('IdleWarn', (e, countdown) => {
-      // console.log('IdleWarn');
-      // Idle.unwatch();
-      // follows after the IdleStart event, but includes a countdown until the user is considered timed out
-      // the countdown arg is the number of seconds remaining until then.
-      // you can change the title or display a warning dialog from here.
-      // you can let them resume their session by calling Idle.watch()
-    });
-
-    $rootScope.$on('IdleTimeout',  () => {
-      // console.log('IdleTimeout');
-
-      // the user has timed out (meaning idleDuration + timeout has passed without any activity)
-      // this is where you'd log them out
-      SessionTimeoutModal.closeModal();
-      UserService.logout('Sorry, your session has timed out');
-    });
-
-    $rootScope.$on('IdleEnd',  () => {
-      // console.log('IdleEnd');
-
-      // the user has come back from AFK and is doing stuff. if you are warning them, you can use this to hide the dialog
-      SessionTimeoutModal.closeModal();
-    });
-
-    $rootScope.$on('Keepalive', () => {
-      // console.log('Keepalive');
-      MetadataService.fireMetadataUpdate();
-      // do something to keep the user's session alive
+  .run(['UserService', '$rootScope', 'MetadataService', 'LoadingMaskService', function (UserService, $rootScope, MetadataService, LoadingMaskService) {
+    LoadingMaskService.subscribe(isLoadingMaskVisible => {
+      $rootScope.showGlobalLoadingMask = isLoadingMaskVisible;
     });
   }]);

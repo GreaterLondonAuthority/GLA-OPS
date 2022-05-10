@@ -1,3 +1,5 @@
+import DateUtil from '../../../../util/DateUtil';
+
 /**
  * Copyright (c) Greater London Authority, 2016.
  *
@@ -9,7 +11,7 @@
 
 function FundingEntryModal($uibModal) {
   return {
-    show: function (config) {
+    show: function (config, activity) {
       return $uibModal.open({
         bindToController: true,
         controllerAs: '$ctrl',
@@ -18,58 +20,77 @@ function FundingEntryModal($uibModal) {
         size: 'md',
         controller: ['$uibModalInstance', function ($uibModalInstance) {
 
+          this.onSelectYear = (year) => {
+            this.data.selectedQuarter = null
+          }
+
           this.addQuarterlyEntry = () => {
-            $uibModalInstance.close({
-              year: this.year.financialYear,
-              quarter: this.data.selectedQuarter.sectionNumber,
-              externalId: this.data.milestoneSelected ? this.data.milestoneSelected.id : this.data.spendCategorySelected.id,
-              categoryDescription: this.data.milestoneSelected ? this.data.milestoneSelected.summary : this.data.spendCategorySelected.category,
-              name: this.data.activityDescription,
-              capitalValue: (this.data.spendType.type === 'CAPITAL' ? this.data.value : undefined),
-              capitalMatchFundValue: (this.data.spendType.type === 'CAPITAL' ? this.data.matchFundValue : undefined),
-              revenueValue: (this.data.spendType.type === 'REVENUE' ? this.data.value : undefined),
-              revenueMatchFundValue: (this.data.spendType.type === 'REVENUE' ? this.data.matchFundValue : undefined)
-            });
+            if (this.data.id) {
+              $uibModalInstance.close({
+                id: this.data.id,
+                year: this.data.selectedYear.financialYear,
+                quarter: this.data.selectedQuarter.sectionNumber,
+                externalId: this.data.milestoneSelected ? this.data.milestoneSelected.id : this.data.spendCategorySelected.id,
+                categoryDescription: this.data.milestoneSelected ? this.data.milestoneSelected.summary : this.data.spendCategorySelected.category,
+                name: this.data.activityDescription,
+                capitalValue: this.data.capitalValue,
+                capitalMatchFundValue: this.data.capitalMatchFundValue,
+                revenueValue: this.data.revenueValue,
+                revenueMatchFundValue: this.data.revenueMatchFundValue
+              });
+            } else {
+              $uibModalInstance.close({
+                year: this.data.selectedYear.financialYear,
+                quarter: this.data.selectedQuarter.sectionNumber,
+                externalId: this.data.milestoneSelected ? this.data.milestoneSelected.id : this.data.spendCategorySelected.id,
+                categoryDescription: this.data.milestoneSelected ? this.data.milestoneSelected.summary : this.data.spendCategorySelected.category,
+                name: this.data.activityDescription,
+                capitalValue: this.data.capitalValue,
+                capitalMatchFundValue: this.data.capitalMatchFundValue,
+                revenueValue: this.data.revenueValue,
+                revenueMatchFundValue: this.data.revenueMatchFundValue
+              });
+            }
           };
 
           this.canAddOutput = () => {
-            return this.data &&
-              this.data.selectedQuarter &&
-              (this.data.milestoneSelected || this.data.spendCategorySelected) &&
-              this.data.activityDescription &&
-              this.data.spendType &&
-              (this.data.value || this.data.matchFundValue);
+            if (this.data.id) {
+              return (activity.allowActivityUpdate && this.data.activityDescription);
+            } else {
+              return this.data &&
+                this.data.selectedYear &&
+                this.data.selectedQuarter &&
+                (this.data.milestoneSelected || this.data.spendCategorySelected)
+                &&
+                this.data.activityDescription &&
+                (this.data.capitalValue || this.data.capitalMatchFundValue ||
+                  this.data.revenueValue || this.data.revenueMatchFundValue);
+            }
           };
 
           this.init = () => {
             _.assign(this, config);
-
-            this.data = {
-              activityDescription: this.allowActivityUpdate ? undefined : this.defaultActivityName
-            };
-
-            if(this.spendTypeOptions && this.spendTypeOptions.length == 1){
-              this.data.spendType = this.spendTypeOptions[0];
-            }
-
             this.periodType = 'Quarterly';
-            let spendTypeOptions = [];
-            if(this.showCapitalGla || this.showCapitalOther){
-              spendTypeOptions.push({
-                label: 'Capital spend',
-                type: 'CAPITAL'
-              });
-            }
-            if(this.showRevenueGla || this.showRevenueOther){
-              spendTypeOptions.push({
-                label: 'Revenue spend',
-                type: 'REVENUE'
-              });
-            }
-
-            this.spendTypeOptions = spendTypeOptions;
-            if(this.spendTypeOptions.length == 1){
-              this.data.spendType = this.spendTypeOptions[0];
+            if (activity != null && activity.isEditWithModal) {
+              this.titleText = 'Edit';
+              let yearLabel = DateUtil.toFinancialYearString(activity.year);
+              this.data = {
+                id: activity.id,
+                activityDescription: activity.originalName,
+                selectedYear: {financialYear: activity.year, label: yearLabel},
+                milestoneSelected: _.find(this.milestones, {summary: activity.categoryDescription}),
+                spendCategorySelected: _.find(this.categories, {id: activity.externalId}),
+                sectionNumber: activity.sectionNumber,
+                capitalValue: activity.capitalValue,
+                capitalMatchFundValue: activity.capitalMatchFundValue,
+                revenueValue: activity.revenueValue,
+                revenueMatchFundValue: activity.revenueMatchFundValue
+              }
+            } else {
+              this.titleText = 'Add';
+              this.data = {
+                activityDescription: this.allowActivityUpdate ? undefined : this.defaultActivityName
+              };
             }
           };
 

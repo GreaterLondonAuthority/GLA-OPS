@@ -19,9 +19,18 @@ class ObjectivesPage extends ProjectBlockCtrl {
     super.$onInit();
     this.entities = this.projectBlock.projectObjectives;
     this.templateConfig = this.TemplateService.getBlockConfig(this.template, this.projectBlock);
+    console.log(this.templateConfig)
+  }
+
+  getAnswerAsText(boolValue){
+    if(boolValue == null){
+      return 'Not provided';
+    }
+    return boolValue? 'Yes' : 'No';
   }
 
   submit(){
+    console.log('submission')
     return this.ProjectBlockService.updateBlock(this.project.id, this.projectBlock.id, this.projectBlock, true);
   }
 }

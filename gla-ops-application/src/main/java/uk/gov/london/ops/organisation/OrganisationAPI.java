@@ -20,14 +20,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uk.gov.london.common.error.ApiError;
-import uk.gov.london.common.organisation.OrganisationType;
+import uk.gov.london.ops.contracts.ContractSummary;
+import uk.gov.london.ops.file.AttachmentFile;
 import uk.gov.london.ops.framework.annotations.PermissionRequired;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.organisation.dto.OrganisationMapper;
 import uk.gov.london.ops.organisation.dto.OrganisationUserDTO;
 import uk.gov.london.ops.organisation.model.*;
+import uk.gov.london.ops.organisation.template.OrganisationTemplate;
+import uk.gov.london.ops.organisation.template.OrganisationTemplateService;
 import uk.gov.london.ops.user.domain.UserModel;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,28 +53,34 @@ import static uk.gov.london.ops.permission.PermissionType.*;
 @Api("managing Organisation data")
 public class OrganisationAPI {
 
-    private final OrganisationService organisationService;
-    private final TeamService teamService;
+    private final OrganisationServiceImpl organisationService;
+    private final OrganisationProgrammeService organisationProgrammeService;
+    private final TeamServiceImpl teamService;
     private final OrganisationMapper organisationMapper;
+    private final OrganisationTemplateService organisationTemplateService;
 
-    public OrganisationAPI(OrganisationService organisationService, TeamService teamService,
-                           OrganisationMapper organisationMapper) {
+    public OrganisationAPI(OrganisationServiceImpl organisationService, OrganisationProgrammeService organisationProgrammeService,
+                           TeamServiceImpl teamService, OrganisationMapper organisationMapper,
+                           OrganisationTemplateService organisationTemplateService) {
         this.organisationService = organisationService;
+        this.organisationProgrammeService = organisationProgrammeService;
         this.teamService = teamService;
         this.organisationMapper = organisationMapper;
+        this.organisationTemplateService = organisationTemplateService;
     }
 
-    @Secured({OPS_ADMIN, ORG_ADMIN})
+    @Secured({OPS_ADMIN, ORG_ADMIN, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/organisations", method = RequestMethod.GET)
     @ApiOperation(value = "get all organisation data",
             notes = "retrieves a list of all organisations")
-    public List<Organisation> getAll(@RequestParam(required = false) List<Integer> entityTypes) {
+    public List<OrganisationEntity> getAll(@RequestParam(required = false) List<Integer> entityTypes) {
         return organisationService.findAll(entityTypes);
     }
 
     @PermissionRequired(ORG_VIEW)
     @RequestMapping(value = "/organisations/page", method = RequestMethod.GET)
-    public Page<OrganisationSummary> getAllPaged(@RequestParam(required = false) String searchText,
+    public Page<OrganisationSummary> getAllPaged(@RequestParam(name = "organisation", required = false) String orgIdOrName,
+                            @RequestParam(name = "sapVendorId", required = false) String sapVendorId,
                             @RequestParam(required = false) List<Integer> entityTypes,
                             @RequestParam(required = false) List<OrganisationStatus> orgStatuses,
                             @RequestParam(required = false) List<String> teams,
@@ -89,14 +99,16 @@ public class OrganisationAPI {
                 }
             }
         }
-        return organisationService.getSummaries(searchText, entityTypes, orgStatuses, teamsList, pageable);
+        return organisationService.getSummaries(orgIdOrName, sapVendorId,  entityTypes, orgStatuses, teamsList, pageable);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/organisations/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "get organisation by ID", notes = "retrieves a single organisation")
-    public Organisation getById(@PathVariable Integer id) {
-        return organisationService.getEnrichedOrganisation(id);
+    public OrganisationEntity getById(@PathVariable Integer id) {
+        OrganisationEntity organisation = organisationService.getEnrichedOrganisation(id);
+        organisation.setProgrammes(organisationProgrammeService.getProgrammes(id));
+        return organisation;
     }
 
     @RequestMapping(value = "/organisations/{orgCode}/name", method = RequestMethod.GET, produces = "text/plain")
@@ -128,7 +140,6 @@ public class OrganisationAPI {
     ) {
 
         List<OrganisationSummary> summaries = organisationService.findAllByType(OrganisationType.MANAGING_ORGANISATION);
-
 
         // as open URL remove any other data.
         List<OrganisationSummary> organisationSummaries = new ArrayList<>();
@@ -170,10 +181,10 @@ public class OrganisationAPI {
     public BulkUploadSummary upload(MultipartFile file) throws IOException {
         BulkUploadSummary summary = new BulkUploadSummary();
 
-        List<Organisation> organisations = organisationMapper.toEntities(file.getInputStream(), summary);
+        List<OrganisationEntity> organisations = organisationMapper.toEntities(file.getInputStream(), summary);
 
         int loaded = 0;
-        for (Organisation organisation : organisations) {
+        for (OrganisationEntity organisation : organisations) {
             try {
                 organisationService.create(organisation);
                 loaded++;
@@ -188,10 +199,10 @@ public class OrganisationAPI {
         return summary;
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, ORG_ADMIN})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, ORG_ADMIN, GLA_PROGRAMME_ADMIN})
     @RequestMapping(value = "/organisations/{id}", method = RequestMethod.PUT)
     @ApiOperation(value = "update an existing organisation", notes = "updates organisation details")
-    public void update(@PathVariable Integer id, @RequestBody Organisation organisation) {
+    public void update(@PathVariable Integer id, @RequestBody OrganisationEntity organisation) {
         if ((organisation.getId() == null) || !organisation.getId().equals(id)) {
             throw new ValidationException("Can only update organisations with a valid ID");
         }
@@ -208,9 +219,10 @@ public class OrganisationAPI {
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_REGISTRATION_APPROVER, ORG_ADMIN})
     @RequestMapping(value = "/organisations/{id}/users/{username}/approved", method = RequestMethod.PUT)
     public void approve(@PathVariable Integer id, @PathVariable String username, @RequestParam Boolean approved,
-                        @RequestParam(required = false) String role) {
+                        @RequestParam(required = false) String role,
+                        @RequestParam(required = false) Boolean signatory) {
         if (approved) {
-            organisationService.approve(id, username, role);
+            organisationService.approve(id, username, role, signatory);
         } else {
             organisationService.unapprove(id, username);
         }
@@ -218,23 +230,68 @@ public class OrganisationAPI {
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
     @RequestMapping(value = "/organisations/{organisationId}/contracts", method = RequestMethod.POST)
-    public void createContract(@PathVariable Integer organisationId, @RequestBody ContractModel model) {
+    public void createContract(@PathVariable Integer organisationId, @RequestBody ContractSummary model) {
         organisationService.createContract(organisationId, model);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
+    @RequestMapping(value = "/organisations/{organisationId}/variations", method = RequestMethod.POST)
+    public OrganisationContract createContractVariation(@PathVariable Integer organisationId, @RequestBody ContractSummary model) {
+        return organisationService.createContractVariation(organisationId, model);
+    }
+
+    @Secured({OPS_ADMIN, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER})
+    @RequestMapping(value = "/organisations/{organisationId}/contracts/{contractId}/accept", method = RequestMethod.PUT)
+    public void acceptContract(@PathVariable Integer organisationId, @PathVariable Integer contractId,
+                                               @RequestBody ContractSummary model) {
+        organisationService.acceptContract(organisationId, model);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/organisations/{organisationId}/contracts/{orgContractId}", method = RequestMethod.GET)
+    public OrganisationContract getContract(@PathVariable Integer organisationId,
+                            @PathVariable Integer orgContractId) {
+        return organisationService.getContract(organisationId, orgContractId);
+    }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM })
     @RequestMapping(value = "/organisations/{organisationId}/contracts/{contractId}", method = RequestMethod.PUT)
     public void updateContract(@PathVariable Integer organisationId, @PathVariable Integer contractId,
-                               @RequestBody ContractModel model) {
+                               @RequestBody ContractSummary model) {
         organisationService.updateContract(organisationId, model);
     }
 
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
+    @RequestMapping(value = "/organisations/{organisationId}/contracts/{contractId}/file", method = RequestMethod.POST)
+    public AttachmentFile uploadContractFile(@PathVariable Integer organisationId,
+                                             @PathVariable Integer contractId,
+                                             @RequestBody MultipartFile file) throws IOException {
+        return organisationService.uploadContractFile(file, contractId, organisationId);
+    }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
+    @RequestMapping(value = "/organisations/{organisationId}/contracts/{contractId}/file/{fileId}", method = RequestMethod.GET)
+    public void downloadContractFile(@PathVariable Integer organisationId,
+                                             @PathVariable Integer contractId,
+                                             @PathVariable Integer fileId,
+                                               HttpServletResponse response) throws IOException {
+        organisationService.getContractFile(organisationId, contractId, fileId, response);
+    }
+
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
+    @RequestMapping(value = "/organisations/{organisationId}/contracts/{contractId}", method = RequestMethod.DELETE)
+    public void deleteContract(@PathVariable Integer organisationId, @PathVariable Integer contractId) {
+        organisationService.deleteOrganisationContract(organisationId, contractId);
+    }
+
     @PermissionRequired(ORG_MANAGE_APPROVE)
+    @ApiOperation(value = "changes an organisation's status", notes = "changes an organisation's status")
+    @ApiResponses(@ApiResponse(code = 400, message = "validation error", response = ApiError.class))
     @RequestMapping(value = "/organisations/{organisationId}/status", method = RequestMethod.PUT)
-    public void updateStatus(@PathVariable Integer organisationId,
-                             @RequestBody UpdateOrganisationStatusRequest request) {
-        organisationService.changeStatus(organisationId, request.getStatus(), request.getReason(), request.getDetails(),
-                request.getDuplicateOrgId());
+    public OrganisationEntity updateStatus(@PathVariable Integer organisationId,
+                                           @RequestBody UpdateOrganisationStatusRequest request) {
+        return organisationService.changeStatus(organisationId, request.getStatus(),
+            request.getReason(), request.getDetails(), request.getDuplicateOrgId());
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_REGISTRATION_APPROVER, ORG_ADMIN})
@@ -259,7 +316,7 @@ public class OrganisationAPI {
             TECH_ADMIN})
     @RequestMapping(value = "/organisations/{organisationId}/programmes/{programmeId}", method = RequestMethod.GET)
     public OrganisationProgramme getOrganisationProgramme(@PathVariable Integer organisationId, @PathVariable Integer programmeId) {
-        return organisationService.getOrganisationProgramme(organisationId, programmeId);
+        return organisationProgrammeService.getOrganisationProgramme(organisationId, programmeId);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, ORG_ADMIN, PROJECT_EDITOR, PROJECT_READER, GLA_FINANCE, GLA_READ_ONLY})
@@ -267,21 +324,21 @@ public class OrganisationAPI {
             method = RequestMethod.GET)
     public ProgrammeRequestedAndPaidRecord getPaymentsAndRequests(@PathVariable Integer organisationId,
                                                                   @PathVariable Integer programmeId) {
-        return organisationService.getRequestedAndPaidRecord(programmeId, organisationId);
+        return organisationProgrammeService.getRequestedAndPaidRecord(programmeId, organisationId);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
     @RequestMapping(value = "/organisations/{organisationId}/programmes/{programmeId}/budget", method = RequestMethod.POST)
     public OrganisationBudgetEntry createBudgetEntry(@PathVariable Integer organisationId, @PathVariable Integer programmeId,
                                                      @Valid @RequestBody OrganisationBudgetEntry entry) {
-        return organisationService.saveBudgetEntry(organisationId, programmeId, entry);
+        return organisationProgrammeService.saveBudgetEntry(organisationId, programmeId, entry);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
     @RequestMapping(value = "/organisations/{organisationId}/programmes/{programmeId}", method = RequestMethod.PUT)
     public void updateOrganisationProgramme(@PathVariable Integer organisationId, @PathVariable Integer programmeId,
                                             @Valid @RequestBody OrganisationProgramme organisationProgramme) {
-        organisationService.updateOrganisationProgramme(organisationId, programmeId, organisationProgramme);
+        organisationProgrammeService.updateOrganisationProgramme(organisationId, programmeId, organisationProgramme);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
@@ -290,7 +347,7 @@ public class OrganisationAPI {
     public ProgrammeRequestedAndPaidRecord recordPlannedUnits(@PathVariable Integer organisationId,
                                                               @PathVariable Integer programmeId, @PathVariable Integer tenureExtId,
                                                               @Valid @RequestBody Integer plannedUnits) {
-        return organisationService.updatePlannedUnits(organisationId, programmeId, tenureExtId, plannedUnits);
+        return organisationProgrammeService.updatePlannedUnits(organisationId, programmeId, tenureExtId, plannedUnits);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
@@ -299,7 +356,7 @@ public class OrganisationAPI {
     public ProgrammeRequestedAndPaidRecord deletePlannedUnits(@PathVariable Integer organisationId,
                                                               @PathVariable Integer programmeId,
                                                               @PathVariable Integer tenureExtId) {
-        return organisationService.deletePlannedUnits(organisationId, programmeId, tenureExtId);
+        return organisationProgrammeService.deletePlannedUnits(organisationId, programmeId, tenureExtId);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
@@ -307,7 +364,7 @@ public class OrganisationAPI {
     public void updateBudgetEntry(@PathVariable Integer organisationId, @PathVariable Integer programmeId,
                                   @PathVariable Integer entryId,
                                   @Valid @RequestBody OrganisationBudgetEntry entry) {
-        organisationService.saveBudgetEntry(organisationId, programmeId, entry);
+        organisationProgrammeService.saveBudgetEntry(organisationId, programmeId, entry);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM})
@@ -315,12 +372,12 @@ public class OrganisationAPI {
             method = RequestMethod.DELETE)
     public void deleteBudgetEntry(@PathVariable Integer organisationId, @PathVariable Integer programmeId,
                                   @PathVariable Integer entryId) {
-        organisationService.deleteBudgetEntry(entryId);
+        organisationProgrammeService.deleteBudgetEntry(entryId);
     }
 
     @RequestMapping(value = "/organisations/types", method = RequestMethod.GET)
-    public Map<Integer, String> getAssignableOrganisationTypes() {
-        return organisationService.getAssignableOrganisationTypes();
+    public Map<Integer, OrganisationType> getOrganisationTypes() {
+        return organisationService.getOrganisationTypes();
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -342,22 +399,22 @@ public class OrganisationAPI {
 
     @PermissionRequired(TEAM_VIEW)
     @RequestMapping(value = "/teams", method = RequestMethod.GET)
-    public Page<Team> getTeams(@RequestParam(required = false) String searchText,
-                               @RequestParam(required = false) List<Integer> managingOrgIds,
-                               @RequestParam(required = false) List<OrganisationStatus> orgStatuses,
-                               Pageable pageable) {
+    public Page<TeamEntity> getTeams(@RequestParam(required = false) String searchText,
+                                     @RequestParam(required = false) List<Integer> managingOrgIds,
+                                     @RequestParam(required = false) List<OrganisationStatus> orgStatuses,
+                                     Pageable pageable) {
         return teamService.getTeams(searchText, managingOrgIds, orgStatuses, pageable);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN})
     @RequestMapping(value = "/teams", method = RequestMethod.POST)
-    public Organisation createTeam(@Valid @RequestBody Team team) {
+    public OrganisationEntity createTeam(@Valid @RequestBody TeamEntity team) {
         return teamService.createTeam(team);
     }
 
     @Secured({OPS_ADMIN, GLA_ORG_ADMIN})
     @RequestMapping(value = "/teams/{teamId}", method = RequestMethod.PUT)
-    public void updateTeam(@PathVariable Integer teamId, @Valid @RequestBody Team team) {
+    public void updateTeam(@PathVariable Integer teamId, @Valid @RequestBody TeamEntity team) {
         teamService.updateTeam(teamId, team);
     }
 
@@ -369,6 +426,11 @@ public class OrganisationAPI {
 
     @RequestMapping(value = "/organisations/legalStatuses", method = RequestMethod.GET)
     public Map<String, String> getLegalStatuses() {
-        return organisationService.getLegalStatuses();
+        return organisationTemplateService.getLegalStatuses();
+    }
+
+    @RequestMapping(value = "/organisations/organisationTemplates", method = RequestMethod.GET)
+    public List<OrganisationTemplate> getOrganisationTemplates() {
+        return organisationTemplateService.getOrganisationTemplates();
     }
 }

@@ -1,0 +1,21 @@
+:host {
+  display: block;
+
+  .report-field-left, .report-field-right {
+    padding-bottom: 0px !important;
+  }
+
+  &.block-section {
+    .left-column-label, .right-column-label {
+      margin-bottom: 10px !important;
+    }
+  }
+
+  &.text-secondary {
+    .left-column-label, .right-column-label {
+      font-size: 14px !important;
+      padding-bottom: 10px;
+    }
+  }
+}
+

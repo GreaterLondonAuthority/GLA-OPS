@@ -32,7 +32,7 @@ import static uk.gov.london.ops.permission.PermissionType.PERMISSION_LIST_VIEW;
 public class PermissionAPI {
 
     @Autowired
-    private PermissionService permissionService;
+    private PermissionServiceImpl permissionService;
 
     @PermissionRequired(PERMISSION_LIST_VIEW)
     @RequestMapping(value = "/permissions", method = RequestMethod.GET)

@@ -8,9 +8,6 @@
 package uk.gov.london.ops.payment.implementation.repository;
 
 import com.querydsl.core.types.Predicate;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,13 +16,19 @@ import uk.gov.london.ops.payment.LedgerStatus;
 import uk.gov.london.ops.payment.PaymentSummary;
 import uk.gov.london.ops.project.accesscontrol.DefaultAccessControlSummary;
 
-public interface PaymentSummaryRepository extends JpaRepository<PaymentSummary, Integer>, QuerydslPredicateExecutor<PaymentSummary> {
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Set;
+
+public interface PaymentSummaryRepository extends JpaRepository<PaymentSummary, Integer>,
+        QuerydslPredicateExecutor<PaymentSummary> {
 
     List<PaymentSummary> findAllByProjectIdAndLedgerStatusIn(Integer projectId, Set<LedgerStatus> statuses);
 
     default Page<PaymentSummary> findAll(String projectIdOrName,
                                              String organisationName,
                                              String programmeName,
+                                             String sapVendorId,
                                              List<String> paymentSources,
                                              List<LedgerStatus> relevantStatuses,
                                              List<String> categories,
@@ -33,14 +36,12 @@ public interface PaymentSummaryRepository extends JpaRepository<PaymentSummary, 
                                              OffsetDateTime fromDate,
                                              OffsetDateTime toDate,
                                              List<Integer> organisations,
+                                             List<Integer> managingOrganisations,
                                              List<DefaultAccessControlSummary> defaultAccess,
                                              List<String> paymentDirection,
                                              Pageable pageable) {
         PaymentSummaryPredicateBuilder query = new PaymentSummaryPredicateBuilder();
-//        if (!currentUser.isGla()) {
-//            query.withOrganisations(currentUser.getOrganisationIds());
-//        }
-        query.andSearch(projectIdOrName, organisationName, programmeName);
+        query.andSearch(projectIdOrName, organisationName, programmeName, sapVendorId);
         query.andStatuses(relevantStatuses);
         query.andPaymentSources(paymentSources);
         query.andCategories(categories);
@@ -48,12 +49,12 @@ public interface PaymentSummaryRepository extends JpaRepository<PaymentSummary, 
         query.andAuthorisedDates(fromDate, toDate);
         query.andFilterReclaims(paymentDirection);
         query.andOrganisations(organisations, defaultAccess);
+        query.andManagingOrganisations(managingOrganisations);
 
         Predicate predicate = query.getPredicate();
         if (predicate != null) {
             return findAll(predicate, pageable);
-        }
-        else {
+        } else {
             return findAll(pageable);
         }
     }

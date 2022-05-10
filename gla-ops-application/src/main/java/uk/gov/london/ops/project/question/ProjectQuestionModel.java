@@ -8,7 +8,7 @@
 package uk.gov.london.ops.project.question;
 
 import java.util.Set;
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.project.template.domain.AnswerOption;
 import uk.gov.london.ops.project.template.domain.AnswerType;
 

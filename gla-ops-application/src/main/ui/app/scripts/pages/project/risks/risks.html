@@ -11,7 +11,7 @@
       auto-save="$ctrl.autoSave()"
     ></risk-rating>
 
-    <div ng-if="$ctrl.showRisksAndIssues">
+    <div>
       <hr class="mtop30">
       <manage-project-risk read-only="$ctrl.readOnly"
           risks="$ctrl.risks"
@@ -19,18 +19,23 @@
           add-mitigation="$ctrl.addMitigation(risk)"
           delete-mitigation="$ctrl.deleteMitigation(risk, mitigation)"
           edit-risk="!$ctrl.readOnly && $ctrl.editRisk(risk)"
+          edit-action="!$ctrl.readOnly && $ctrl.editAction(riskIssue, action, type)"
           delete-risk="$ctrl.deleteRisk(risk)"
           close-risk="$ctrl.closeRiskOrIssue(risk)"
           block-session-storage="$ctrl.blockSessionStorage"
           header="'Manage Project Risks'"
           project-marked-corporate="$ctrl.projectMarkedCorporate"
-          subheader="'A risk is an event which has not yet happened but could have a negative impact on the project if it did occur.'"></manage-project-risk>
+          subheader="'A risk is an event which has not yet happened but could have a negative impact on the project if it did occur.'"
+          risks-block-config="$ctrl.risksBlockConfig"></manage-project-risk>
+    </div>
 
+    <div id="issues-section" ng-if="$ctrl.showIssues">
       <hr class="mtop30">
       <manage-project-issues read-only="$ctrl.readOnly"
           issues="$ctrl.issues"
           create-new-issue="$ctrl.createNewIssue()"
           edit-issue="$ctrl.editIssue(issue)"
+          edit-action="!$ctrl.readOnly && $ctrl.editAction(riskIssue, action, type)"
           add-action="$ctrl.addAction(issue)"
           delete-issue="$ctrl.deleteIssue(issue)"
           delete-action="$ctrl.deleteAction(issue, action)"
@@ -40,6 +45,7 @@
           project-marked-corporate="$ctrl.projectMarkedCorporate"
           subheader="'An issue is anything which has already occurred and is having a negative impact on the project.'"></manage-project-issues>
     </div>
+
   </form>
   <gla-spinner ng-if="$ctrl.loading"></gla-spinner>
   <div class="row no-gutter separator"></div>

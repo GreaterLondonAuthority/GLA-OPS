@@ -9,8 +9,6 @@ package uk.gov.london.ops.web.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -35,8 +33,6 @@ import static uk.gov.london.common.user.BaseRole.TECH_ADMIN;
 @RequestMapping("/api/v1")
 @Api(description = "provides ability to tech support update/query DB")
 public class DatabaseUpdateAPI {
-
-    Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     DatabaseUpdateService databaseUpdateService;

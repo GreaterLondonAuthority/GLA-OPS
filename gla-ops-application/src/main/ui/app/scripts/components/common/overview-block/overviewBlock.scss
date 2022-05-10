@@ -2,8 +2,19 @@ overview-block {
 
   .overview-block {
     gla-icon-new{
-      position: static;
+      position: absolute;
+      left: 10px;
+      top: 0;
+      .arrow-down{
+        top: 26px;
+      }
     }
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    letter-spacing: normal;
 
     background-color: white;
     cursor: pointer;
@@ -21,14 +32,21 @@ overview-block {
     }
 
     &:hover{
-      border: 2px solid $gla-black !important;
-      //padding: 9px;
-
+      border: 1px solid $gla-black !important;
+      &:after {
+        width: 100%;
+        height: 100%;
+        content: '';
+        outline: 1px solid $gla-black !important;
+        outline-offset: -1px;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
     }
 
     &:focus{
       border: 1px solid $form-field-active !important;
-      //padding: 9px;
     }
 
     .block-overview-step-number {

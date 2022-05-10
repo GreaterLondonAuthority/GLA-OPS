@@ -7,21 +7,6 @@
  */
 package uk.gov.london.ops.project.risk;
 
-import static uk.gov.london.ops.project.block.ProjectDifference.DifferenceType.Addition;
-import static uk.gov.london.ops.project.block.ProjectDifference.DifferenceType.Deletion;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.util.StringUtils;
 import uk.gov.london.ops.framework.exception.ValidationException;
@@ -32,8 +17,13 @@ import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.block.ProjectDifference;
 import uk.gov.london.ops.project.block.ProjectDifferences;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
 import uk.gov.london.ops.project.template.domain.TemplateBlock;
+
+import javax.persistence.*;
+import java.util.*;
+
+import static uk.gov.london.ops.project.block.ProjectDifference.DifferenceType.Addition;
+import static uk.gov.london.ops.project.block.ProjectDifference.DifferenceType.Deletion;
 
 /**
  * The Milestones block in a Project.
@@ -134,14 +124,6 @@ public class ProjectRisksBlock extends NamedProjectBlock {
         if (riskBlock.getRating() != null && (riskBlock.getRating() < MIN_RATING || riskBlock.getRating() > MAX_RATING)) {
             throw new ValidationException(String.format("Rating must be between %d and %d", MIN_RATING, MAX_RATING));
         }
-    }
-
-    @Override
-    public Map<String, Object> simpleDataExtract(final SimpleProjectExportConfig simpleProjectExportConfig) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("rating_explanation", this.getRatingExplanation());
-        map.put("rating", this.getRating());
-        return map;
     }
 
     @Override

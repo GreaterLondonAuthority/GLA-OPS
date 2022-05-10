@@ -23,7 +23,7 @@ function LockingService($http, config, UserService) {
     getLockDetails(block) {
       if (block.locked) {
         return {
-          username: block.lockedByUsername,
+          username: block.lockedBy,
           firstName: block.lockedByFirstName,
           lastName: block.lockedByLastName,
         }

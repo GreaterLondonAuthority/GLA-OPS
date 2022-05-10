@@ -1,0 +1,69 @@
+<div class="info-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" ng-mousedown="$dismiss()" on-enter="$dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>CANCEL APPROVED MILESTONE</h1>
+    <div class="mtop20">{{$ctrl.milestone.summary}}</div>
+    <div class="mtop20" ng-if="$ctrl.viewOnly">Cancellation requested</div>
+    <div class="mtop20" ng-if="!$ctrl.viewOnly">Once you confirm cancellation below, ensure the Provider submits the Project for approval: only once the changes have been approved will the cancellation take effect.</div>
+  </div>
+
+  <div class="mtop5 mbottom15 left">
+    <form
+      id="withdrawMilestoneForm"
+      role="form"
+      name="withdrawMilestoneForm">
+
+      <div class="row">
+        <div class="col-xs-12">
+        <label for="cancel-input" class="bolder">Reason for cancellation</label>
+        <textarea ng-disabled="$ctrl.viewOnly"
+          id="cancel-input"
+          class="form-control"
+          rows="4"
+          cols="24"
+          aria-label="cancel-input"
+          maxlength="255"
+          required
+          name="withdrawalReason"
+          ng-model="$ctrl.milestone.withdrawReason"
+        ></textarea>
+
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div>
+    <div class="row" ng-if="!$ctrl.viewOnly">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="claim-btn"
+          class="btn btn-default btn-primary btn-center claim-btn"
+          type="button"
+          ng-click="$ctrl.cancelClaim()"
+          ng-disabled="!withdrawMilestoneForm.$valid">CANCEL CLAIM
+        </button>
+      </div>
+    </div>
+    <div class="row" ng-if="$ctrl.actionsEnabled && $ctrl.viewOnly">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="claim-btn"
+          class="btn btn-default btn-primary btn-center claim-btn"
+          type="button"
+          ng-click="$ctrl.cancelWithdraw()">WITHDRAW CANCELLATION
+        </button>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15 no-border">
+        <a class="form-cancel dismiss-btn" href="JavaScript:void(0)" ng-mousedown="$dismiss()" on-enter="$dismiss()">Close</a>
+      </div>
+    </div>
+  </div>
+</div>

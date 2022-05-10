@@ -31,4 +31,4 @@ function MessageModal($uibModal) {
 }
 
 angular.module('GLA')
-  .service('MessageModal', MessageModal);
+  .service('OldDeleteMessageModal', MessageModal);

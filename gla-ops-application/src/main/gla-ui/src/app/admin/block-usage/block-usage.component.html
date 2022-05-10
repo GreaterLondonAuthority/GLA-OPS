@@ -1,0 +1,83 @@
+<div class="page block-usage">
+  <div class="text-center">
+    <gla-page-header hideBackBtn="true" class="mbottom10">Block Usage</gla-page-header>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-2">
+      <label for="block-type-dropdown">Block type</label>
+      <select class="form-control"
+              id="block-type-dropdown"
+              name="block-type-dropdown"
+              (change)="onInternalOrExternalBlockSelect(internalOrExternal)"
+              [(ngModel)]="internalOrExternal"
+              required
+              style-placeholder="">
+        <option disabled value="undefined">Block type</option>
+        <option *ngFor="let blockType of ['External', 'Internal']" [ngValue]="blockType">{{blockType}}</option>
+      </select>
+    </div>
+
+    <div class="form-group col-md-4" *ngIf="internalOrExternal === 'External'">
+      <label for="external-block-type">External blocks</label>
+      <select class="form-control"
+              id="external-block-type"
+              name="external-block-type"
+              (change)="onBlockTypeSelect(externalBlockType)"
+              [(ngModel)]="externalBlockType"
+              required
+              style-placeholder="">
+        <option disabled value="undefined">External block type</option>
+        <option *ngFor="let externalBlockType of blockTypes" [ngValue]="externalBlockType.blockType">{{externalBlockType.displayName}}</option>
+      </select>
+    </div>
+
+    <div class="form-group col-md-4" *ngIf="internalOrExternal === 'Internal'">
+      <label for="internal-block-type">Internal blocks</label>
+      <select class="form-control"
+              id="internal-block-type"
+              name="internal-block-type"
+              (change)="onBlockTypeSelect(internalBlockType)"
+              [(ngModel)]="internalBlockType"
+              required
+              style-placeholder="">
+        <option disabled value="undefined">Internal block type</option>
+        <option *ngFor="let internalBlockType of internalBlockTypes" [ngValue]="internalBlockType.blockType">{{internalBlockType.displayName}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-responsive mtop20 block-usage-table">
+    <table class="table table-hover table-bordered">
+      <thead class="thead-inverse uppercase">
+      <tr>
+        <th>Template ID</th>
+        <th>Template name</th>
+        <th>Programme ID</th>
+        <th>Programme name</th>
+        <th>Managing Organisation</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngIf="blockUsages.length == 0"><td colspan="5"></td></tr>
+      <tr class="cursor-pointer" *ngFor="let blockUsage of blockUsages">
+        <td>{{blockUsage.templateId}}</td>
+        <td>
+          <a href="JavaScript:void(0)" tabindex="0" (click)="goToTemplate(blockUsage.templateId)">
+            {{blockUsage.templateName}}
+          </a>
+        </td>
+        <td>{{blockUsage.programmeId}}</td>
+        <td>
+          <a href="JavaScript:void(0)" tabindex="0" (click)="goToProgramme(blockUsage.programmeId)">
+            {{blockUsage.programmeName}}
+          </a>
+        </td>
+        <td>{{blockUsage.managingOrganisation}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

@@ -12,6 +12,7 @@ import uk.gov.london.common.GlaUtils.addBigDecimals
 import uk.gov.london.ops.project.StandardAttachment
 import uk.gov.london.ops.project.claim.Claim
 import java.math.BigDecimal
+import java.time.OffsetDateTime
 import java.util.*
 
 enum class FundingClaimStatus {
@@ -32,6 +33,10 @@ interface ClaimableFundingEntity {
 
     var notClaimableReason: String?
 
+    var authorisedBy: String?
+
+    var authorisedOn: OffsetDateTime?
+
     fun getSectionNumber(): Int?
 
     fun isMonetaryClaimRequired(): Boolean
@@ -47,6 +52,10 @@ class FundingActivityLineItem : ClaimableFundingEntity {
     override var status: FundingClaimStatus? = null
 
     override var notClaimableReason: String? = null
+
+    override var authorisedBy: String? = null
+
+    override var authorisedOn: OffsetDateTime? = null
 
     var id: Int? = null
 

@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {TemplateMilestoneModalComponent} from './template-milestone-modal.component';
 
@@ -6,7 +6,7 @@ describe('TemplateMilestoneModalComponent', () => {
   let component: TemplateMilestoneModalComponent;
   let fixture: ComponentFixture<TemplateMilestoneModalComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TemplateMilestoneModalComponent ]
     })

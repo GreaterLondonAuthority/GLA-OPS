@@ -1,14 +1,45 @@
 <div class="confirmation-dialog">
   <div class="modal-body text-center">
-    <button (keydown.enter)="activeModal.dismiss('cancel')" (mousedown)="activeModal.dismiss('cancel')" aria-label="Close" class="close" data-dismiss="modal" type="button">
+    <button (keydown.enter)="activeModal.dismiss('cancel')" (mousedown)="activeModal.dismiss('cancel')"
+            aria-label="Close" class="close" data-dismiss="modal" type="button">
       <span aria-hidden="true">&times;</span>
     </button>
-    <span *ngIf="config.showIcon" [class]="{'info': config.info}" aria-hidden="true" class="glyphicon glyphicon-exclamation-sign"></span>
-    <h1 *ngIf="config.title" class="title">{{config.title}}</h1>
-    <div [innerHTML]="config.message" class="text-center confirm-message"></div>
+    <span *ngIf="config.showIcon" [ngClass]="{'info': config.info}" aria-hidden="true"
+          class="glyphicon glyphicon-exclamation-sign"></span>
+    <h1 class="title" *ngIf="config.title">
+      <label for="comment">{{config.title}}</label>
+    </h1>
+    <div  *ngIf="config.showConfirmationCheckbox" align="left" class="mbottom15 form-group">
+      <input width="15px" type="checkbox" id="confirmation" name="confirmation" [(ngModel)]="confirmed">
+      <label class="mleft15 " for="confirmation">I confirm that:</label>
+    </div>
+
+    <div [innerHTML]="config.message" class="text-center confirm-message">
+
+
+    </div>
+    <div *ngIf="config.userCommentRequired" class="mtop10">
+              <label *ngIf="config.userCommentLabel" class="pull-left">{{config.userCommentLabel}}</label>
+              <textarea #comment="ngModel"
+                        [(ngModel)]="userComment"
+                        id="comment"
+                        name="comment"
+                        rows="5"
+                        class="form-control"
+                        required
+                        maxlength="{{config.maxCommentLength}}">
+        </textarea>
+    </div>
   </div>
   <div class="modal-footer">
-    <button (click)="activeModal.close()" *ngIf="config.showApprove" class="btn btn-default btn-primary btn-center approve-btn min-padding" type="button">{{config.approveText}}</button>
-    <button (click)="activeModal.dismiss('cancel')" *ngIf="config.showDismiss" class="btn btn-default btn-secondary btn-center dismiss-btn min-padding" type="button">{{config.dismissText}}</button>
+    <button (click)="activeModal.close(userComment)"
+            *ngIf="config.showApprove"
+            [disabled]="!isModalValid(config.userCommentRequired, userComment)"
+            class="btn btn-default btn-primary btn-center approve-btn min-padding"
+            type="button">{{config.approveText}}</button>
+
+    <button (click)="activeModal.dismiss('cancel')" *ngIf="config.showDismiss"
+            class="btn btn-default btn-secondary btn-center dismiss-btn min-padding"
+            type="button">{{config.dismissText}}</button>
   </div>
 </div>

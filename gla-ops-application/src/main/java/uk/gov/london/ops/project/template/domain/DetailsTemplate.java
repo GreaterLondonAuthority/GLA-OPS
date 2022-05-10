@@ -7,7 +7,7 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.enums.Requirement;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -46,13 +46,13 @@ public class DetailsTemplate implements Serializable {
     @Enumerated(EnumType.STRING)
     private Requirement maincontactemailRequirement;
 
-    @Column(name = "image_requirement")
+    @Column(name = "secondary_contact_requirement")
     @Enumerated(EnumType.STRING)
-    private Requirement imageRequirement;
+    private Requirement secondaryContactRequirement = Requirement.hidden;
 
-    @Column(name = "contact_requirement")
+    @Column(name = "secondary_contact_email_requirement")
     @Enumerated(EnumType.STRING)
-    private Requirement contactRequirement;
+    private Requirement secondaryContactEmailRequirement = Requirement.hidden;
 
     @Column(name = "site_owner_requirement")
     @Enumerated(EnumType.STRING)
@@ -81,6 +81,14 @@ public class DetailsTemplate implements Serializable {
     @Column(name = "planning_permission_reference_requirement")
     @Enumerated(EnumType.STRING)
     private Requirement planningPermissionReferenceRequirement = Requirement.optional;
+
+    @Column(name = "dev_liability_org_requirement")
+    @Enumerated(EnumType.STRING)
+    private Requirement developmentLiabilityOrganisationRequirement = Requirement.optional;
+
+    @Column(name = "postcomp_liability_org_requirement")
+    @Enumerated(EnumType.STRING)
+    private Requirement postCompletionLiabilityOrganisationRequirement = Requirement.optional;
 
     public Requirement getWardIdRequirement() {
         return wardIdRequirement;
@@ -138,20 +146,20 @@ public class DetailsTemplate implements Serializable {
         this.maincontactemailRequirement = maincontactemailRequirement;
     }
 
-    public Requirement getImageRequirement() {
-        return imageRequirement;
+    public Requirement getSecondaryContactRequirement() {
+        return secondaryContactRequirement;
     }
 
-    public void setImageRequirement(Requirement imageRequirement) {
-        this.imageRequirement = imageRequirement;
+    public void setSecondaryContactRequirement(Requirement secondaryContactRequirement) {
+        this.secondaryContactRequirement = secondaryContactRequirement;
     }
 
-    public Requirement getContactRequirement() {
-        return contactRequirement;
+    public Requirement getSecondaryContactEmailRequirement() {
+        return secondaryContactEmailRequirement;
     }
 
-    public void setContactRequirement(Requirement contactRequirement) {
-        this.contactRequirement = contactRequirement;
+    public void setSecondaryContactEmailRequirement(Requirement secondaryContactEmailRequirement) {
+        this.secondaryContactEmailRequirement = secondaryContactEmailRequirement;
     }
 
     public Requirement getSiteOwnerRequirement() {
@@ -210,4 +218,21 @@ public class DetailsTemplate implements Serializable {
         this.planningPermissionReferenceRequirement = planningPermissionReferenceRequirement;
     }
 
+    public Requirement getDevelopmentLiabilityOrganisationRequirement() {
+        return developmentLiabilityOrganisationRequirement;
+    }
+
+    public void setDevelopmentLiabilityOrganisationRequirement(
+            Requirement developmentLiabilityOrganisationRequirement) {
+        this.developmentLiabilityOrganisationRequirement = developmentLiabilityOrganisationRequirement;
+    }
+
+    public Requirement getPostCompletionLiabilityOrganisationRequirement() {
+        return postCompletionLiabilityOrganisationRequirement;
+    }
+
+    public void setPostCompletionLiabilityOrganisationRequirement(
+            Requirement postCompletionLiabilityOrganisationRequirement) {
+        this.postCompletionLiabilityOrganisationRequirement = postCompletionLiabilityOrganisationRequirement;
+    }
 }

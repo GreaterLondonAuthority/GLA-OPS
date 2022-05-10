@@ -1,3 +1,5 @@
+import {VersionHistoryModalComponent} from '../../../../../gla-ui/src/app/project-block/version-history-modal/version-history-modal.component';
+
 /**
  * Copyright (c) Greater London Authority, 2016.
  *
@@ -19,11 +21,10 @@ class ProjectBlockCtrl {
     this.$anchorScroll = $injector.get('$anchorScroll');
     this.ConfirmationDialog = $injector.get('ConfirmationDialog');
     this.ProjectBlockService = $injector.get('ProjectBlockService');
-    this.VersionHistoryModal = $injector.get('VersionHistoryModal');
+    this.NgbModal = $injector.get('NgbModal');
     this.ToastrUtil = $injector.get('ToastrUtil');
     this.$q = $injector.get('$q');
     this.dateFilter = $injector.get('dateFilter');
-    this.MessageModal = $injector.get('MessageModal');
     this.TemplateService = $injector.get('TemplateService');
     this.ErrorService = $injector.get('ErrorService');
   }
@@ -191,11 +192,14 @@ class ProjectBlockCtrl {
   }
 
   viewHistory() {
-    let modal = this.VersionHistoryModal.show(this.blockHistory, this.project);
-    modal.result.then(block => {
+    const modal = this.NgbModal.open(VersionHistoryModalComponent, { size: 'lg' });
+    modal.componentInstance.versionHistory = this.blockHistory;
+    modal.componentInstance.project = this.project;
+
+    modal.result.then((block) => {
       this.$stateParams.version = block.blockVersion;
-      this.$state.go(this.$state.current, this.$stateParams, {reload: true});
-    })
+        this.$state.go(this.$state.current, this.$stateParams, {reload: true});
+    }, ()=>{});
   }
 
   deleteBlock() {
@@ -207,7 +211,7 @@ class ProjectBlockCtrl {
 
     modal.result.then(() => {
       this.ProjectBlockService.deleteBlock(this.projectBlock.projectId, this.projectBlock.id).then(() => {
-        this.ToastrUtil.success('Block deleted');
+        this.ToastrUtil.success('Unapproved changes undone');
         this.$stateParams.version = null;
         let previousBlock = _.find(this.blockHistory, {blockVersion: this.projectBlock.versionNumber - 1});
         this.$stateParams.blockId = previousBlock.blockId;
@@ -215,9 +219,7 @@ class ProjectBlockCtrl {
       }).catch(rsp => {
           let error = rsp.data || {};
           let msg = error.description || 'Block can\'t be deleted';
-          this.MessageModal.show({
-            message: msg
-          })
+          this.ConfirmationDialog.show({message:msg, approveText:'Ok', showDismiss:false, showIcon:false})
         })
     });
   }
@@ -230,16 +232,14 @@ class ProjectBlockCtrl {
     });
     modal.result.then(() => {
       this.ProjectBlockService.revertBlock(this.projectBlock.projectId, this.projectBlock.id).then((rsp) => {
-        this.ToastrUtil.success('Block deleted');
+        this.ToastrUtil.success('Unapproved changes undone');
         this.$stateParams.version = null;
         this.$stateParams.blockId = rsp.data.id;
         this.$state.go(this.$state.current.name, this.$stateParams, {reload: true});
       }).catch(rsp => {
         let error = rsp.data || {};
         let msg = error.description || 'Block changes can\'t be deleted';
-        this.MessageModal.show({
-          message: msg
-        })
+        this.ConfirmationDialog.show({message:msg, approveText:'Ok', showDismiss:false, showIcon:false})
       })
     });
   }

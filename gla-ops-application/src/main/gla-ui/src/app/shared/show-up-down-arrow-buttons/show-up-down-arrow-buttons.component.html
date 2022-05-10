@@ -1,12 +1,14 @@
 <div id="show-up-down-arrow-buttons">
   <div class="pull-right">
-    <button title={{titleUp}} *ngIf="isUpArrowAllowed()"  class="up-down-button btn btn-secondary btn-sm "
-            id="move-up-button" (click)="onMoveRow(-1)">
-      <span class="glyphicon glyphicon-arrow-up "></span>
+    <button title={{titleUp}} *ngIf="isUpArrowAllowed()"
+            class="up-down-button move-up-button btn btn-secondary btn-sm "
+            (click)="onMoveRow(-1)">
+      <span class="glyphicon glyphicon-arrow-up"></span>
     </button>
 
-    <button title={{titleDown}} *ngIf="isDownArrowAllowed()" class="up-down-button btn btn-secondary btn-sm"
-            id="move-down-button" (click)="onMoveRow(+1)">
+    <button title={{titleDown}} *ngIf="isDownArrowAllowed()"
+            class="up-down-button move-down-button btn btn-secondary btn-sm"
+            (click)="onMoveRow(+1)">
       <span class="glyphicon glyphicon-arrow-down"></span>
     </button>
   </div>

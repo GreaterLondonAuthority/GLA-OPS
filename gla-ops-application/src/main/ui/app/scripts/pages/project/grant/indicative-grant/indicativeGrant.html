@@ -6,10 +6,12 @@
   <gla-spinner ng-if="!$ctrl.data && $ctrl.loading"></gla-spinner>
   <div ng-if="$ctrl.data">
 
-    <div class="row table-title">
-      {{$ctrl.title}}
-    </div>
-    <grant-table data="$ctrl.data" is-readonly="$ctrl.readOnly" on-tenure-change="$ctrl.saveTenure(true)">
+    <section-header class="table-title" subheader="Column totals are updated every time you change a value in the table">{{$ctrl.title}}</section-header>
+    <grant-table data="$ctrl.data"
+                 other-affordable-tenure-types="$ctrl.otherAffordableTenureTypes"
+                 show-other-affordable-question ="$ctrl.showOtherAffordableQuestion"
+                 is-readonly="$ctrl.readOnly"
+                 on-tenure-change="$ctrl.saveTenure(true)">
     </grant-table>
 
     <div style="position: relative;">
@@ -21,14 +23,14 @@
               <li class="grant-column"
                   ng-class="'col-xs-{{$ctrl.tilesPerRow > 4? 3 : 12/$ctrl.tilesPerRow}}'"
                   ng-repeat="grant in tenure.grantBlocks track by grant.name">
-                <tile class="centered" items="grant.items">{{ grant.name }}</tile>
+                <gla-tile class="centered" [items]="grant.items">{{ grant.name }}</gla-tile>
               </li>
             </ul>
           </div>
         </div>
       </div>
       <total-grant total="$ctrl.data.totalGrantEligibility"></total-grant>
-      <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
+      <gla-loading-mask ng-if="$ctrl.loading" text=""></gla-loading-mask>
     </div>
 
     <project-block-footer editable-block="$ctrl"></project-block-footer>

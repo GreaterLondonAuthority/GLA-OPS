@@ -1,0 +1,23 @@
+<div class="clearfix">
+  <div class="pull-left pagination-number-of-items-per-page" *ngIf="showItemsPerPageDropdown">
+    <label for="items-per-page">Items per page:</label>
+    <select id="items-per-page" [(ngModel)]="itemsPerPage" (change)="changePageSize()">
+      <option *ngFor="let item of itemsPerPageDropdown" [ngValue]="item">{{item}}</option>
+    </select>
+  </div>
+  <div class="pull-right" *ngIf="showPages()">
+    <ngb-pagination [collectionSize]="totalItems"
+                    [(page)]="currentPage"
+                    [pageSize]="itemsPerPage"
+                    [maxSize]="3"
+                    [ellipses]="true"
+                    (pageChange)="changePage($event)">
+      <ng-template ngbPaginationPrevious>Previous</ng-template>
+      <ng-template ngbPaginationNext>Next</ng-template>
+    </ngb-pagination>
+  </div>
+
+  <div class="pull-right pagination-summary">
+    Showing <span class="start-end-index">{{calculateIndex() && indexStart}} - {{indexEnd}}</span> of {{totalItems}}
+  </div>
+</div>

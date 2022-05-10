@@ -20,9 +20,6 @@ public class BudgetSummary implements ComparableItem {
     @Id
     private Integer id;
 
-    @Column(name = "original_id")
-    private Integer originalId;
-
     @Column(name = "project_id")
     private Integer projectId;
 
@@ -47,9 +44,6 @@ public class BudgetSummary implements ComparableItem {
     // column called amount in DB due to reserved word value
     private BigDecimal value;
 
-    @Column(name = "nb_activities")
-    private int nbActivities;
-
     public BudgetSummary() {}
 
     public BudgetSummary(SpendType spendType, BigDecimal value) {
@@ -62,15 +56,13 @@ public class BudgetSummary implements ComparableItem {
         this.category = category;
     }
 
-    public BudgetSummary(Integer originalId, Integer year, SpendType spendType, BigDecimal value) {
+    public BudgetSummary(Integer year, SpendType spendType, BigDecimal value) {
         this(spendType, value);
-        this.originalId = originalId;
         this.year = year;
     }
 
-    public BudgetSummary(Integer originalId, Integer year, SpendType spendType, String category, BigDecimal value) {
+    public BudgetSummary(Integer year, SpendType spendType, String category, BigDecimal value) {
         this(spendType, category, value);
-        this.originalId = originalId;
         this.year = year;
     }
 
@@ -80,17 +72,6 @@ public class BudgetSummary implements ComparableItem {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getOriginalId() {
-        if (originalId == null) {
-            return id;
-        }
-        return originalId;
-    }
-
-    public void setOriginalId(Integer originalId) {
-        this.originalId = originalId;
     }
 
     public Integer getProjectId() {
@@ -149,17 +130,9 @@ public class BudgetSummary implements ComparableItem {
         this.value = value;
     }
 
-    public int getNbActivities() {
-        return nbActivities;
-    }
-
-    public void setNbActivities(int nbActivities) {
-        this.nbActivities = nbActivities;
-    }
-
     @Override
     public String getComparisonId() {
-        return String.valueOf(getOriginalId());
+        return projectId + ":" + blockId + ":" + year + ":" + spendType + ":" + category;
     }
 
     public boolean isMatchFund() {

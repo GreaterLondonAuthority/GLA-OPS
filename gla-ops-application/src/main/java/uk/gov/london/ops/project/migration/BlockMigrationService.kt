@@ -15,11 +15,10 @@ import uk.gov.london.ops.project.question.ProjectQuestionsBlock
 import uk.gov.london.ops.project.repeatingentity.EntityCollection
 import uk.gov.london.ops.project.repeatingentity.OtherFundingBlock
 import uk.gov.london.ops.project.template.TemplateProjectService
-import uk.gov.london.ops.project.template.TemplateService
+import uk.gov.london.ops.project.template.TemplateServiceImpl
 import uk.gov.london.ops.project.template.domain.AnswerType
 import uk.gov.london.ops.project.template.domain.QuestionsTemplateBlock
 import uk.gov.london.ops.project.template.domain.TemplateBlock
-import uk.gov.london.ops.user.UserService
 import java.lang.reflect.Method
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -32,9 +31,8 @@ import kotlin.reflect.jvm.jvmName
 @Service
 class BlockMigrationService @Autowired constructor(
         val projectService: ProjectService,
-        val templateService: TemplateService,
+        val templateService: TemplateServiceImpl,
         val templateProjectService: TemplateProjectService,
-        val userService: UserService,
         val auditService: AuditService,
         val entityManager: EntityManager) {
 
@@ -62,7 +60,7 @@ class BlockMigrationService @Autowired constructor(
             migrateBlock(sourceBlock, targetBlock, migrationRequest, migrationResponse)
             entityManager.detach(project)
         }
-        auditService.auditActivityForUser(userService.currentUsername(), "Data from block ${migrationRequest.sourceBlockId} migrated to block ${migrationRequest.destinationBlockId} for ${migrationResponse.migratedProjects.size} projects using template ${migrationRequest.templateId}")
+        auditService.auditCurrentUserActivity("Data from block ${migrationRequest.sourceBlockId} migrated to block ${migrationRequest.destinationBlockId} for ${migrationResponse.migratedProjects.size} projects using template ${migrationRequest.templateId}")
 
         return migrationResponse
     }

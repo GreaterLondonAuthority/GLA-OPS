@@ -10,5 +10,6 @@ package uk.gov.london.ops.project.claim;
 public enum ClaimStatus {
     Pending,
     Claimed,
-    Approved
+    Approved,
+    Withdrawn
 }

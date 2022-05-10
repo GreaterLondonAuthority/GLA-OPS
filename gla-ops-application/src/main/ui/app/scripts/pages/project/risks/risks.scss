@@ -72,7 +72,7 @@
 
     box-shadow: none;
     thead {
-      background-color: $table-sub-header;
+      background-color: $table-sub-header-grey;
     }
     tr {
       td {
@@ -87,14 +87,9 @@
     border-left: 0;
   }
   .add-mitigation {
-    background-color: #fff;
+    background-color: $read-only-cell;
     padding: 5px 15px;
     border: 0;
-  }
-  .glyphicon {
-      &.glyphicon-triangle-top,&.glyphicon-triangle-bottom{
-        font-size: 19px;
-      }
   }
   tr.primary-row{
     cursor: pointer;
@@ -127,4 +122,12 @@
   textarea, .title {
     margin-bottom: 10px;
   }
+}
+
+#risks-mitigation-table{
+  box-shadow: none;
+}
+
+#issues-action-table{
+  box-shadow: none;
 }

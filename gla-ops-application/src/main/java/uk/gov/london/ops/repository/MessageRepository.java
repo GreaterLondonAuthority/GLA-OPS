@@ -8,8 +8,10 @@
 package uk.gov.london.ops.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import uk.gov.london.ops.domain.Message;
 
+@Repository
 public interface MessageRepository extends JpaRepository<Message, String> {
 
 }

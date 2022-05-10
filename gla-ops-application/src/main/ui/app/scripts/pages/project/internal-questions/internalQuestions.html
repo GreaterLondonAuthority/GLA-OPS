@@ -3,11 +3,19 @@
 
   <div class="text-center">This block is only visible to GLA staff</div>
 
-  <questions class="mtop30"
+  <gla-questions class="mtop30"
              ng-if="$ctrl.showQuestions"
              project="$ctrl.project"
              block="$ctrl.block"
              questions="$ctrl.questions"
-             read-only="$ctrl.readOnly"></questions>
+             read-only="$ctrl.readOnly"></gla-questions>
+
+  <div ng-if="$ctrl.config.showComments">
+    <section-header>Comments</section-header>
+    <comments-form ng-if="!$ctrl.readOnly"
+                   class="mbottom30"
+                   on-save="$ctrl.saveComment($event.data)"></comments-form>
+    <comments-list comments="$ctrl.comments" is-open="true"></comments-list>
+  </div>
 
 </div>

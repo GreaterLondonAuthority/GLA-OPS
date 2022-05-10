@@ -1,0 +1,171 @@
+<div class="template-block">
+  <form class="form-gla" name="modalForm" role="form">
+    <div class="row">
+      <div class="col-xs-12 col-sm-10 center-col">
+        <gla-page-header header="Block details" (onBack)="onSave.emit(block)"
+                         warning="{{activeTemplateWarning}}"
+                         class="mbottom20">
+          <ph-right>
+            <button class="btn btn-primary btn-md" (click)="copyBlock()">
+              COPY<span class="glyphicon glyphicon-copy"></span>
+            </button>
+            <button class="btn btn-primary btn-md mleft5" *ngIf="!isDraft && block.block === 'UserDefinedOutput'"
+                    (click)="editActiveTemplateBlock()" id="command-edit-active-block">
+              {{isEditModeActive ? 'DONE' : 'EDIT'}}</button>
+          </ph-right>
+        </gla-page-header>
+
+        <div class="form-group">
+          <label for="block-type">Block type</label>
+          <select class="form-control"
+                  id="block-type"
+                  #blockType="ngModel"
+                  name="block-type"
+                  (change)="onBlockTypeSelect(block.block)"
+                  [disabled]="!isNew || readOnly || !editable || (!isDraft && isEditModeActive)"
+                  [(ngModel)]="block.block"
+                  required
+                  style-placeholder="">
+            <option disabled value="undefined">Block type</option>
+            <option *ngFor="let blockType of blockTypes" [ngValue]="blockType.blockType">{{blockType.blockType}}</option>
+          </select>
+          <div class="error-wrapper" *ngIf="(blockType?.touched && blockType?.errors?.required)" role="alert">
+            <span class="error">Required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="display-name">Display name</label>
+          <input class="form-control"
+                 id="display-name"
+                 maxlength="100"
+                 #displayName="ngModel"
+                 name="display-name"
+                 [(ngModel)]="block.blockDisplayName"
+                 [disabled]="readOnly || !editable || (!isDraft && isEditModeActive)"
+                 placeholder="Display name"
+                 required
+                 type="text"/>
+          <div class="error-wrapper" *ngIf="displayName.touched && displayName.invalid" role="alert">
+            <span class="error">Required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="display-order">Display order</label>
+          <input class="form-control"
+                 id="display-order"
+                 maxlength="5"
+                 #displayOrder="ngModel"
+                 name="display-order"
+                 [(ngModel)]="block.displayOrder"
+                 [disabled]="readOnly || !editable || (!isDraft && isEditModeActive)"
+                 number-mask="0"
+                 placeholder="Display order"
+                 required
+                 type="text"/>
+          <div class="error-wrapper" *ngIf="displayOrder.touched && displayOrder.invalid" role="alert">
+            <span class="error">Required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="info-text">Block info text (Optional)</label>
+          <input class="form-control"
+                 id="info-text"
+                 #infoText="ngModel"
+                 name="infoText"
+                 maxlength="80"
+                 [disabled]="readOnly || !editable || (!isDraft && isEditModeActive)"
+                 [(ngModel)]="block.infoMessage"
+                 type="text"/>
+        </div>
+
+        <gla-template-block-details *ngIf="block.block === 'Details'"
+                                    [block]="block"
+                                    [readOnly]="readOnly"
+                                    [template]="template"
+                                    [editable]="editable"></gla-template-block-details>
+
+        <gla-template-block-questions *ngIf="block.block === 'Questions'"
+                                      [block]="block"
+                                      [readOnly]="readOnly"
+                                      [draft]="isDraft"
+                                      [editable]="editable"></gla-template-block-questions>
+
+
+        <gla-template-block-milestones *ngIf="block.block === 'Milestones'"
+                                       [readOnly]="readOnly"
+                                       [block]="block"
+                                       [template]="template"
+                                       [draft]="isDraft"
+                                       [editable]="editable"></gla-template-block-milestones>
+
+        <gla-template-block-outputs *ngIf="block.block === 'Outputs'"
+                                    [block]="block"
+                                    [template]="template"
+                                    [readOnly]="readOnly"
+                                    [editable]="editable"></gla-template-block-outputs>
+
+        <gla-template-block-starts-and-completions *ngIf="block.block === 'AffordableHomes'"
+                                                   [block]="block"
+                                                   [readOnly]="readOnly"
+                                                   [template]="template"
+                                                   [editable]="editable"></gla-template-block-starts-and-completions>
+
+        <gla-template-block-project-objectives *ngIf="block.block === 'ProjectObjectives'"
+                                               [block]="block"
+                                               [readOnly]="readOnly"
+                                               [template]="template"
+                                               [editable]="editable"></gla-template-block-project-objectives>
+
+        <gla-template-block-other-funding *ngIf="block.block === 'OtherFunding'"
+                                          [block]="block"
+                                          [readOnly]="readOnly"
+                                          [template]="template"
+                                          [editable]="editable"></gla-template-block-other-funding>
+
+        <gla-template-block-grant-source *ngIf="block.block === 'GrantSource'"
+                                         [block]="block"
+                                         [readOnly]="readOnly"
+                                         [template]="template"
+                                         [editable]="editable"></gla-template-block-grant-source>
+
+        <gla-template-block-delivery-partners *ngIf="block.block === 'DeliveryPartners'"
+                                              [block]="block"
+                                              [readOnly]="readOnly"
+                                              [template]="template"
+                                              [editable]="editable"></gla-template-block-delivery-partners>
+
+        <gla-template-block-funding *ngIf="block.block === 'Funding'"
+                                    [block]="block"
+                                    [readOnly]="readOnly"
+                                    [template]="template"
+                                    [editable]="editable"></gla-template-block-funding>
+
+        <gla-template-block-learning-grant *ngIf="block.block === 'LearningGrant'"
+                                           [block]="block"
+                                           [readOnly]="readOnly"
+                                           [template]="template"
+                                           [draft]="isDraft"
+                                           [editable]="editable"></gla-template-block-learning-grant>
+
+
+        <gla-template-block-user-defined-outputs *ngIf="block.block === 'UserDefinedOutput'"
+                                                 [block]="block"
+                                                 [readOnly]="readOnly"
+                                                 [template]="template"
+                                                 [editable]="editable"
+                                                 [draft]="isDraft"></gla-template-block-user-defined-outputs>
+
+
+        <gla-template-block-project-elements *ngIf="block.block === 'ProjectElements'"
+                                             [block]="block"
+                                             [readOnly]="readOnly"
+                                             [template]="template"
+                                             [editable]="editable"></gla-template-block-project-elements>
+
+      </div>
+    </div>
+  </form>
+</div>

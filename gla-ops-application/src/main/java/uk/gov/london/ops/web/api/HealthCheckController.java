@@ -21,19 +21,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import uk.gov.london.ops.framework.di.DataInitialiser;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
 
 import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
+import static uk.gov.london.ops.framework.OPSUtils.currentUsername;
 
 @Controller
 @Api(hidden = true)
 public class HealthCheckController {
 
     Logger log = LoggerFactory.getLogger(getClass());
-
-    @Autowired
-    UserService userService;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -60,8 +56,7 @@ public class HealthCheckController {
         jdbcTemplate.execute("select 1");
         if (dataInitialiser.isFinished()) {
             return ResponseEntity.ok("OK");
-        }
-        else {
+        } else {
             return ResponseEntity.status(503).body("KO");
         }
     }
@@ -71,8 +66,7 @@ public class HealthCheckController {
     @ApiOperation(value = "", hidden = true)
     public @ResponseBody boolean mockHealthCheck(@RequestBody String mocked) {
         this.mocked = Boolean.parseBoolean(mocked);
-        User currentUser = userService.currentUser();
-        log.info("health check mocked status changed to {} by {}", this.mocked, currentUser.getUsername());
+        log.info("health check mocked status changed to {} by {}", this.mocked, currentUsername());
         return this.mocked;
     }
 

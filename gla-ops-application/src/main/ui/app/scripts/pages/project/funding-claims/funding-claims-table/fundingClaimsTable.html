@@ -1,5 +1,5 @@
 <div class="table-responsive" ng-if="$ctrl.fundingClaimsEntries && $ctrl.selectedPeriod">
-  <table class="table funding-claims-table table-hover table-bordered">
+  <table class="table funding-claims-table table-hover table-bordered table-default">
     <thead class="thead-inverse uppercase">
     <tr>
       <th>FUNDING CLAIM CATEGORY</th>
@@ -11,8 +11,10 @@
 
     <tbody>
     <tr ng-class="{'cursor-pointer': !$ctrl.readOnly}"
-        ng-repeat="entry in $ctrl.fundingClaimsEntries | filter: {period: $ctrl.selectedPeriod.period, academicYear: $ctrl.selectedYear} | orderBy: 'displayOrder' track by entry.id">
-      <td> {{entry.categoryName}}</td>
+        class="primary-row summary-row"
+        ng-repeat-start="entry in $ctrl.fundingClaimsEntriesModel | filter: {period: $ctrl.selectedPeriod.period, academicYear: $ctrl.selectedYear} | orderBy: 'displayOrder' track by entry.id">
+
+      <td> <toggle-icon (collapsed-change)="$ctrl.onCollapseChange($event)" [(collapsed)]="entry.collapsed"  ng-if="entry.subCategories.length != 0" ></toggle-icon>{{entry.categoryName}}</td>
       <td>
 
         <span ng-if="$ctrl.readOnly || !entry.actualsEditable">{{entry.actualDelivery | currency:'':2}}</span>
@@ -40,6 +42,40 @@
                aria-label="Monetary value">
       </td>
       <td class="bolder"> {{entry.totalDelivery | currency:'£':2}}</td>
+    </tr>
+
+    <tr ng-repeat-end ng-repeat="subCategory in entry.subCategories | orderBy: 'displayOrder' track by subCategory.id"
+        ng-class="{'cursor-pointer': !$ctrl.readOnly}"
+        ng-if="!entry.collapsed"
+        class ="sub-row no-gutter">
+      <td>{{subCategory.categoryName}}</td>
+      <td>
+
+        <span ng-if="$ctrl.readOnly || !subCategory.actualsEditable">{{subCategory.actualDelivery | currency:'':2}}</span>
+        <input ng-if="!$ctrl.readOnly && subCategory.actualsEditable"
+               type="text"
+               name="value"
+               ng-model="subCategory.actualDelivery"
+               change-on-blur="$ctrl.onEntryChange({$event:subCategory})"
+               maxlength="13"
+               number-mask="2"
+               aria-label="Monetary value">
+      </td>
+      <td>
+        <span ng-if="$ctrl.readOnly || !$ctrl.canEditForecast">
+          <span ng-if="$ctrl.readOnly && $ctrl.canEditForecast">{{subCategory.forecastDelivery | currency:'':2}}</span>
+          <span ng-if="!$ctrl.canEditForecast">N/A</span>
+        </span>
+        <input ng-if="!$ctrl.readOnly && $ctrl.canEditForecast"
+               type="text"
+               name="value"
+               ng-model="subCategory.forecastDelivery"
+               change-on-blur="$ctrl.onEntryChange({$event:subCategory})"
+               maxlength="13"
+               number-mask="2"
+               aria-label="Monetary value">
+      </td>
+      <td> {{subCategory.totalDelivery | currency:'£':2}}</td>
     </tr>
     </tbody>
 

@@ -9,24 +9,22 @@ package uk.gov.london.ops.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.london.ops.framework.Environment;
 import uk.gov.london.ops.domain.importdata.ImportErrorLog;
 import uk.gov.london.ops.domain.importdata.ImportJobStatus;
 import uk.gov.london.ops.domain.importdata.ImportJobType;
 import uk.gov.london.ops.domain.importdata.ImportProcessLog;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.repository.ImportErrorLogRepository;
 import uk.gov.london.ops.repository.ImportProcessLogRepository;
-import uk.gov.london.ops.user.UserService;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
+import static uk.gov.london.ops.framework.OPSUtils.currentUsername;
+
 @Service
 @Transactional(Transactional.TxType.REQUIRES_NEW)
 public class ImportLogService {
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private ImportProcessLogRepository importProcessLogRepository;
@@ -61,7 +59,8 @@ public class ImportLogService {
     }
 
     public void recordError(ImportJobType type, String message, int rowIndex, String rowSource) {
-        importErrorLogRepository.save(new ImportErrorLog(type, environment.now(), userService.currentUser().getUsername(), rowIndex, message, rowSource));
+        importErrorLogRepository.save(new ImportErrorLog(type, environment.now(),
+                currentUsername(), rowIndex, message, rowSource));
     }
 
     public void recordErrors(Iterable<ImportErrorLog> errors) {

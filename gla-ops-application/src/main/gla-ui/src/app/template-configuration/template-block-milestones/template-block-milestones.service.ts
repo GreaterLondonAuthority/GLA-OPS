@@ -17,6 +17,11 @@ export class TemplateBlockMilestonesService {
     block.processingRoutes = sortBy(block.processingRoutes, 'displayOrder');
     block.processingRoutes.forEach(pr => {
       pr.milestones = sortBy(pr.milestones, 'displayOrder');
+      var splitTotal = pr.milestones
+        .filter(x => x.monetary == true && x.monetarySplit != undefined)
+        .map(x => x.monetarySplit)
+        .reduce((a, b) => a + b, 0);
+      pr.monetarySplitValid = splitTotal == 100;
     });
   }
 
@@ -31,6 +36,18 @@ export class TemplateBlockMilestonesService {
       }, {
         id: 'ALL_MILESTONES',
         label: 'All milestones',
+      }
+    ]
+  }
+
+  getShowEvidenceOptions(): { id: string, label: string }[] {
+    return [
+      {
+        id: 'ALWAYS',
+        label: 'Always',
+      }, {
+        id: 'PAST_MILESTONE_DATE',
+        label: 'Only when one or more Milestone dates are in past or today\'s date',
       }
     ]
   }

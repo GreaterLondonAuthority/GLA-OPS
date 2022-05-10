@@ -67,6 +67,12 @@ exports.config = {
     ],
     annualSubmission: [
       'test/features/annualsubmission/*.feature',
+    ],
+    report: [
+      'test/features/report/*.feature',
+    ],
+    settings: [
+      'test/features/settings/*.feature',
     ]
 
   },

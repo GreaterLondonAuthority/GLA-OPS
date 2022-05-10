@@ -45,6 +45,33 @@
           </div>-->
         </div>
 
+        <div class="form-group">
+          <label for="programme-allocation">Template type</label>
+          <button
+            ng-if="$ctrl.readOnly && !$ctrl.editable"
+            ng-click="$ctrl.editTemplateType()"
+            class="btn-primary">{{$ctrl.isEditingTemplateType ? 'DONE' : 'EDIT'}}</button>
+          <div id="programme-allocation">
+            <div id="programme-allocation-selector" ng-if="!$ctrl.readOnly || $ctrl.isEditingTemplateType">
+              <input ng-model="$ctrl.template.programmeAllocation"
+                ng-value="false"
+                id="programme-allocation-selector-project"
+                tabindex="0"
+                type="radio">
+              <label class="programme-allocation-option-label" for="programme-allocation-selector-project">Project</label>
+              &nbsp;
+              &nbsp;
+              <input ng-model="$ctrl.template.programmeAllocation"
+                     ng-value="true"
+                     id="programme-allocation-selector-programme-allocation"
+                     tabindex="0"
+                     type="radio">
+              <label class="programme-allocation-option-label" for="programme-allocation-selector-programme-allocation">Programme Allocation</label>
+            </div>
+            <div ng-if="$ctrl.readOnly && !$ctrl.isEditingTemplateType" class="readonly-form-el read-only-text multiline-text">{{$ctrl.template.programmeAllocation ? 'Programme Allocation' : 'Project'}}</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </form>

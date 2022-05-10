@@ -33,13 +33,12 @@
       <tbody>
         <tr><td colspan="7" ng-if="$ctrl.sapData.length == 0" class="bolder">No errors received from SAP</tr>
         <tr ng-repeat-start="entry in $ctrl.sapData"
-            allow-enter
-            aria-expanded="{{!!entry.expanded}}"
-            aria-label="{{!entry.expanded? 'Expand' : 'Collapse'}}"
-            ng-click="entry.expanded = !entry.expanded; $ctrl.showAllEntries = false;"
-            role="button"
-            tabindex="0">
-          <td>
+            ng-click="entry.expanded = !entry.expanded; $ctrl.showAllEntries = false;">
+          <td allow-enter
+              aria-expanded="{{!!entry.expanded}}"
+              aria-label="{{!entry.expanded? 'Expand' : 'Collapse'}}"
+              role="button"
+              tabindex="0">
             <span>
               <i class="glyphicon glyphicon-triangle-bottom" ng-if="!entry.expanded"></i>
               <i class="glyphicon glyphicon-triangle-top" ng-if="entry.expanded"></i>

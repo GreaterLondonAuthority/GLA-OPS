@@ -8,7 +8,7 @@
   </gla-page-header>
   <div class="table-responsive mtop20" id="overrides-table">
     <div ng-if="!$ctrl.overrides.length" class="empty-table">Not provided</div>
-    <table ng-if="$ctrl.overrides.length" class="overrides-table table table-hover table-bordered table-with-inputs">
+    <table ng-if="$ctrl.overrides.length" class="overrides-table table table-hover table-bordered">
       <thead class="thead-inverse uppercase">
       <tr>
         <th>Project ID</th>
@@ -33,7 +33,7 @@
         <td>{{deliveryOverride.tenure}}</td>
         <td>{{deliveryOverride.reportedValue | number}}</td>
         <td>{{deliveryOverride.reportedDate | date: 'dd/MM/yyyy'}}</td>
-        <td>{{deliveryOverride.overriddenBy}}</td>
+        <td>{{deliveryOverride.overriddenByName}}</td>
         <td class="delete-btn-container">
           <span>{{deliveryOverride.overriddenOn | date: 'MMM d, yyyy HH:mm'}}</span>
           <delete-button ng-click="$ctrl.delete(deliveryOverride); $event.stopPropagation();"></delete-button>

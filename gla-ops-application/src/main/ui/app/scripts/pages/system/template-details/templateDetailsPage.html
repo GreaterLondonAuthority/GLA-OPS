@@ -9,41 +9,87 @@
       <div class="mtop20">
 
         <template-details template="$ctrl.templateObj"
-                          read-only="$ctrl.readOnly"></template-details>
+                          read-only="$ctrl.readOnly"
+                          editable="$ctrl.editable"
+                          perform-update="$ctrl.updateLiveTemplate($event)"
+                          template-id="$ctrl.templateObj.id"></template-details>
       </div>
     </uib-tab>
 
-    <uib-tab class="blocks-tab" heading="BLOCKS" index="$ctrl.tabs.blocks" select="$ctrl.onBlocksTabSelected()">
+    <uib-tab class="blocks-tab" heading="EXTERNAL BLOCKS" index="$ctrl.tabs.blocks" select="$ctrl.onBlocksTabSelected()">
       <div class="text-right">
         <button class="btn btn-secondary mtop10" ng-click="$ctrl.onAddBlock()"
-                ng-if="!$ctrl.readOnly && !$ctrl.selectedBlock">
+                ng-if="$ctrl.hasPermissionToEditExternalBlocks && !$ctrl.readOnly && !$ctrl.selectedBlock">
           ADD BLOCK <b>+</b>
         </button>
 
         <button class="btn btn-secondary mtop10" ng-click="$ctrl.onPasteBlock()"
-                ng-if="!$ctrl.readOnly && !$ctrl.selectedBlock && $ctrl.getCopiedBlock()">
+                ng-if="$ctrl.hasPermissionToEditExternalBlocks && !$ctrl.readOnly && !$ctrl.selectedBlock && $ctrl.getCopiedBlock()">
           PASTE NEW BLOCK <b>+</b>
         </button>
       </div>
-      <template-block block="$ctrl.selectedBlock"
-                      template="$ctrl.templateObj"
-                      ng-if="$ctrl.selectedBlock"
-                      read-only="$ctrl.readOnly"
-                      block-types="$ctrl.blockTypes"
-                      class="mtop20"
-                      is-new="$ctrl.isBlockNew"
-                      on-save="$ctrl.onBlockSave($event)"></template-block>
 
-      <template-blocks blocks="$ctrl.templateObj.blocksEnabled"
-                       ng-class="{mtop20: $ctrl.readOnly, mtop10: !$ctrl.readOnly}"
-                       ng-if="!$ctrl.selectedBlock"
-                       on-select-block="$ctrl.selectBlock(event)"
-                       on-remove-block="$ctrl.removeBlock(event)"
-                       read-only="$ctrl.readOnly"></template-blocks>
+      <gla-template-external-block ng-if="$ctrl.selectedBlock"
+                                   [block]="$ctrl.selectedBlock"
+                                   [template]="$ctrl.templateObj"
+                                   [read-only]="$ctrl.readOnly"
+                                   [editable]="$ctrl.hasPermissionToEditExternalBlocks"
+                                   [block-types]="$ctrl.blockTypes"
+                                   class="mtop20"
+                                   [is-new]="$ctrl.isBlockNew"
+                                   (on-save)="$ctrl.onBlockSave($event)"></gla-template-external-block>
+
+
+      <gla-template-external-blocks ng-if="!$ctrl.selectedBlock"
+                                    [template-id]="$ctrl.templateObj.id"
+                                    [read-only]="$ctrl.readOnly"
+                                    [in-use]="$ctrl.isTemplateInUse()"
+                                    [blocks]="$ctrl.templateObj.blocksEnabled"
+                                    ng-class="{mtop20: $ctrl.readOnly, mtop10: !$ctrl.readOnly}"
+                                    [is-new]="$ctrl.isInternalBlockNew"
+                                    (on-select-block)="$ctrl.selectBlock($event)"
+                                    (on-perform-command)="$ctrl.performCommand($event)"
+                                    (on-remove-block)="$ctrl.removeBlock($event)"></gla-template-external-blocks>
+
     </uib-tab>
 
+    <uib-tab class="internal-blocks-tab" heading="INTERNAL BLOCKS" index="$ctrl.tabs.internalBlocks" select="$ctrl.onInternalBlocksTabSelected()">
+      <div class="internal-blocks-panel">
+        <div class="text-right">
+          <button class="btn btn-secondary mtop10" ng-click="$ctrl.onAddInternalBlock()"
+                  ng-if="$ctrl.hasPermissionToEditInternalBlocks && !$ctrl.readOnly && !$ctrl.selectedInternalBlock">
+            ADD BLOCK <b>+</b>
+          </button>
 
-    <uib-tab class="json-tab" heading="JSON" index="$ctrl.tabs.json" select="$ctrl.onJsonTabSelected()">
+          <button class="btn btn-secondary mtop10" ng-click="$ctrl.onPasteInternalBlock()"
+                  ng-if="$ctrl.hasPermissionToEditInternalBlocks && !$ctrl.readOnly && !$ctrl.selectedInternalBlock && $ctrl.getInternalCopiedBlock()">
+            PASTE NEW BLOCK <b>+</b>
+          </button>
+        </div>
+        <gla-template-internal-block [block]="$ctrl.selectedInternalBlock"
+                                     [template]="$ctrl.templateObj"
+                                     ng-if="$ctrl.selectedInternalBlock"
+                                     [read-only]="$ctrl.readOnly"
+                                     [editable]="$ctrl.hasPermissionToEditInternalBlocks"
+                                     [block-types]="$ctrl.internalBlockTypes"
+                                     class="mtop20"
+                                     [is-new]="$ctrl.isInternalBlockNew"
+                                     (on-save)="$ctrl.onInternalBlockSave($event)"></gla-template-internal-block>
+
+
+        <gla-template-internal-blocks [blocks]="$ctrl.templateObj.internalBlocks"
+                                      ng-class="{mtop20: $ctrl.readOnly, mtop10: !$ctrl.readOnly}"
+                                      ng-if="!$ctrl.selectedInternalBlock"
+                                      [in-use]="$ctrl.isTemplateInUse()"
+                                      (on-select-block)="$ctrl.selectInternalBlock($event)"
+                                      (on-remove-block)="$ctrl.removeInternalBlock($event)"
+                                      [block-types]="$ctrl.internalBlockTypes"
+                                      (on-perform-command)="$ctrl.performCommand($event)"
+                                      [read-only]="$ctrl.readOnly"></gla-template-internal-blocks>
+      </div>
+    </uib-tab>
+
+    <uib-tab ng-if="$ctrl.hasPermissionToEditExternalBlocks && $ctrl.hasPermissionToEditInternalBlocks" class="json-tab" heading="JSON" index="$ctrl.tabs.json" select="$ctrl.onJsonTabSelected()">
       <div class="text-left mtop20" ng-if="$ctrl.isNew"><b>Add JSON code to create a new template.</b></div>
       <div ng-class="{'has-error':$ctrl.errorMsg}">
         <div class="viewer text-left" ng-class="{mtop10: $ctrl.isNew, mtop20: !$ctrl.isNew}">
@@ -67,9 +113,12 @@
     {{$ctrl.errorMsg}}
   </div>
   <div class="text-center">
+    <button class="btn btn-primary btn-center approve-btn mtop40 btn-md" ng-click="$ctrl.validateTemplate()" type="button" ng-if="!$ctrl.readOnly">VALIDATE TEMPLATE</button>
+
     <button class="btn btn-primary btn-center approve-btn mtop40" ng-click="$ctrl.onAdd()"
             ng-disabled="!$ctrl.isSaveTemplateBtnEnabled()" ng-if="$ctrl.isNew" type="button">SAVE TEMPLATE
     </button>
+
     <button class="btn btn-primary btn-center approve-btn mtop40" clipboard ng-if="$ctrl.activeTabIndex === $ctrl.tabs.json || $ctrl.activeTabIndex === $ctrl.tabs.text"
             on-copied="$ctrl.success()" on-error="$ctrl.fail(err)" supported="$ctrl.supported" text="$ctrl.copyAll()"
             type="button">COPY ALL
@@ -78,5 +127,4 @@
             ng-if="$ctrl.activeTabIndex === $ctrl.tabs.json || $ctrl.activeTabIndex === $ctrl.tabs.text && !$ctrl.readOnly" supported="$ctrl.supported" type="button">PASTE ALL
     </button>
   </div>
-
 </div>

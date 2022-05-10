@@ -1,0 +1,59 @@
+<div class="gla-finance-categories-page">
+<!--  <section-header>Spend and receipt data</section-header>-->
+
+  <div class="col-xs-12 mtop15 no-padding">
+    <div *ngIf="!financeCategories.length" class="no-finance-message">
+      <span>0 results match your search. Check your search query and try again.</span>
+    </div>
+    <div class="table-responsive" *ngIf="financeCategories.length">
+      <div class="form-group show-all">
+        <div class="checkbox" [ngClass]="{checked: showAllCodes}">
+          <input type="checkbox"
+                 id="show-all-code"
+                 aria-label="'Show all codes'"
+                 [(ngModel)]="showAllCodes">
+        </div>
+        <label for="show-all-code">Show all codes</label>
+        <button class="pull-right btn btn-primary"
+                (click)="addRow()">
+          ADD FINANCE CATEGORY<span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </div>
+
+      <div *ngIf="!financeCategories.length" class="empty-table">Not provided</div>
+      <table *ngIf="financeCategories.length" id="finance-categories-table" class="table table-bordered table-striped-groups table-selectable-row">
+        <thead class="thead-inverse uppercase">
+        <tr>
+          <th>CATEGORY</th>
+          <th>CE CODE</th>
+          <th>OPS ID</th>
+          <th>SPEND FORECAST & VISIBILITY</th>
+          <th>RECEIPT FORECAST & VISIBILITY</th>
+          <th>LAST UPDATED ON</th>
+          <th>LAST UPDATED BY</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr *ngFor="let item of financeCategories; let i = index"
+            [ngClass]="{'odd-row': i % 2 === 1}"
+            class="clickable-row"
+            tabindex="0"
+            (keydown.enter)="editRow(item)"
+            (click)="editRow(item)">
+          <td>{{item.text}}</td>
+          <td *ngIf="(showAllCodes && !item.longCodes) || (!showAllCodes && !item.showLongCode)"><div class="codes">{{item.shortCodes}}</div><a href="JavaScript:void(0)" *ngIf="item.longCodes" (click)="$event.stopPropagation(); item.showLongCode = true">Show more</a></td>
+          <td *ngIf="(showAllCodes && item.longCodes) || (!showAllCodes && item.showLongCode)"><div class="codes">{{item.longCodes}}</div><a href="JavaScript:void(0)" *ngIf="!showAllCodes" (click)="$event.stopPropagation(); item.showLongCode = false">Show less</a></td>
+          <td>{{item.id}}</td>
+          <td><div class="visbilityAndForecast">{{textMapping[item.spendStatus]}}</div></td>
+          <td><div class="visbilityAndForecast">{{textMapping[item.receiptStatus]}}</div></td>
+          <td>{{item.modifiedOn | date: 'dd/MM/yyyy'}}</td>
+          <td>{{item.modifiedBy}}</td>
+        </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

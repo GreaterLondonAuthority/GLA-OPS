@@ -6,18 +6,20 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
+import {ClaimModalComponent} from '../../../../../gla-ui/src/app/claim-modal/claim-modal.component'
+
 class LearningGrantTable {
-  constructor(ProjectSkillsService, PaymentService, ClaimModal) {
+  constructor(ProjectSkillsService, PaymentService, NgbModal) {
     this.ProjectSkillsService = ProjectSkillsService;
     this.PaymentService = PaymentService;
-    this.ClaimModal = ClaimModal;
+    this.NgbModal = NgbModal
   }
 
   $onInit() {
     this.paymentsExist = false;
     this.showColumns = {
       cumulativeEarnings: !this.isSupportAllocation,
-      cumulativePayment: this.isAebProcured && !this.isSupportAllocation
+      cumulativePayment: (this.isAebProcured || this.isAebNsct) && !this.isSupportAllocation
     };
 
     let hiddenColumnCount = Object.keys(this.showColumns).filter(k => !this.showColumns[k]).length;
@@ -87,7 +89,7 @@ class LearningGrantTable {
   }
 
   getStatusColumnText(entry) {
-    if (!(this.isAebProcured || this.isAebGrant) || !entry) {
+    if (!(this.isAebProcured || this.isAebGrant || this.hasManualClaimStatus) || !entry) {
       return null;
     }
 
@@ -116,10 +118,6 @@ class LearningGrantTable {
   }
 
   showClaimAmountBox(entry) {
-    if (entry.claim) {
-      console.log('Status: ' ,  entry.claim.claimStatus ,  entry.canManuallyClaimValue);
-      console.log('Status:: ' , !this.readOnly && entry.canManuallyClaimValue && (entry.claim === undefined || entry.claim.claimStatus === 'Claimed'));
-    }
     return !this.readOnly && entry.canManuallyClaimValue && (entry.claim === undefined || entry.claim.claimStatus === 'Claimed');
   }
 
@@ -151,16 +149,18 @@ class LearningGrantTable {
       claimTypePeriod: entry.actualMonth
     };
 
-    let modal = this.ClaimModal.show(config, claimRequest);
+    let modal = this.NgbModal.open(ClaimModalComponent);
+    modal.componentInstance.config = config
+    modal.componentInstance.claimRequest = claimRequest
     modal.result.then((result) => {
       let event = {event: entry};
       return (result === 'claim') ? this.onClaim(event) : this.onCancelClaim(event);
-    });
+    }, err => {});
   }
 
 }
 
-LearningGrantTable.$inject = ['ProjectSkillsService', 'PaymentService', 'ClaimModal'];
+LearningGrantTable.$inject = ['ProjectSkillsService', 'PaymentService', 'NgbModal'];
 
 angular.module('GLA')
   .component('learningGrantTable', {
@@ -172,9 +172,11 @@ angular.module('GLA')
       data: '<',
       isAebProcured: '<',
       isAebGrant: '<',
+      isAebNsct: '<',
       isSupportAllocation: '<',
       readOnly: '<',
       claimable: '<',
+      hasManualClaimStatus: '<',
       onClaim: '&',
       onSave: '&',
       onCancelClaim: '&'

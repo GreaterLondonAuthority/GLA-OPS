@@ -37,7 +37,7 @@ public class SapInterfaceInfoContributor implements InfoContributor  {
     SapDataService sapDataService;
 
     public void contribute(Info.Builder builder) {
-        Map<String,Object> data = new TreeMap<>();
+        Map<String, Object> data = new TreeMap<>();
 
         data.put("moveItSyncPaused", moveItSynchroniser.isPaused());
         data.put("moveItSyncCount", moveItSynchroniser.getSyncCount());

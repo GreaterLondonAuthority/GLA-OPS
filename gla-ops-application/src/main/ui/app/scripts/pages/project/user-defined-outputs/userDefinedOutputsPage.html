@@ -1,13 +1,28 @@
 <div class="user-defined-outputs-page medium-page">
   <gla-project-header [editable-block]="$ctrl" (on-back)="$ctrl.returnToOverview()">{{$ctrl.projectBlock.blockDisplayName}}</gla-project-header>
 
-    <div class="row" >
-      <div class="col-xs-12 mtop15 text-center">
-        <div class="error-wrapper error" ng-if="$ctrl.entities.length < $ctrl.templateConfig.minNumberOfEntities">Minimum {{$ctrl.templateConfig.minNumberOfEntities}} {{$ctrl.templateConfig.definedOutputTextPlural}} required </div>
-      </div>
+  <div class="row" >
+    <div class="col-xs-12 mtop15 text-center">
+      <div class="error-wrapper error" ng-if="(!$ctrl.templateConfig.hasBlockRequiredOption || $ctrl.projectBlock.blockRequired) && $ctrl.entities.length < $ctrl.templateConfig.minNumberOfEntities">Minimum {{$ctrl.templateConfig.minNumberOfEntities}} {{$ctrl.templateConfig.definedOutputTextPlural}} required </div>
     </div>
+  </div>
 
-  <entities-list block="$ctrl.projectBlock" entities="$ctrl.entities" read-only="$ctrl.readOnly">
+  <div class="questions mtop30" ng-if="$ctrl.templateConfig.hasBlockRequiredOption">
+    <div class="form-group question">
+      <label class="question-text" for="q1">{{$ctrl.templateConfig.blockRequiredOptionText ? $ctrl.templateConfig.blockRequiredOptionText : 'Do you have additional outputs'}}</label>
+      <gla-yes-no-input id="q1"
+                        [disabled]="$ctrl.readOnly"
+                        mode="bool"
+                        name="q1"
+                        ng-if="!$ctrl.readOnly"
+                        [(model)]="$ctrl.projectBlock.blockRequired">
+      </gla-yes-no-input>
+      <div ng-if="$ctrl.readOnly" >{{$ctrl.getAnswerAsText($ctrl.projectBlock.blockRequired)}}</div>
+    </div>
+  </div>
+  <hr ng-if="($ctrl.projectBlock.blockRequired && $ctrl.templateConfig.hasBlockRequiredOption)">
+
+  <entities-list block="$ctrl.projectBlock" entities="$ctrl.entities" read-only="$ctrl.readOnly" ng-if="($ctrl.projectBlock.blockRequired || !$ctrl.templateConfig.hasBlockRequiredOption)">
     <entities-list-item entity="userDefinedOutput" ng-repeat="userDefinedOutput in $ctrl.entities">
       <user-defined-output block-template="$ctrl.templateConfig" defined-output="userDefinedOutput" read-only="$ctrl.readOnly"></user-defined-output>
     </entities-list-item>
@@ -15,7 +30,7 @@
 
   <div class="row" >
     <div class="col-xs-12 mtop15 text-center">
-      <div class="error-wrapper error" ng-if="$ctrl.entities.length > $ctrl.templateConfig.maxNumberOfEntities">Maximum {{$ctrl.templateConfig.maxNumberOfEntities}} {{$ctrl.templateConfig.definedOutputTextPlural}} allowed</div>
+      <div class="error-wrapper error" ng-if="($ctrl.projectBlock.blockRequired || !$ctrl.templateConfig.hasBlockRequiredOption) && $ctrl.entities.length > $ctrl.templateConfig.maxNumberOfEntities">Maximum {{$ctrl.templateConfig.maxNumberOfEntities}} {{$ctrl.templateConfig.definedOutputTextPlural}} allowed</div>
     </div>
   </div>
 </div>

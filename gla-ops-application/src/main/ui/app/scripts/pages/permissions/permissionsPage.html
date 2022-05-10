@@ -2,7 +2,7 @@
   <gla-page-header [hide-back-btn]="true"> Permissions</gla-page-header>
 
   <table id="permission-table"
-         class="permission-table table table-hover table-bordered table-with-inputs">
+         class="permission-table table table-hover table-bordered">
     <thead class="thead-inverse uppercase">
     <tr>
       <th> Role </th>
@@ -13,7 +13,7 @@
     </thead>
 
     <tbody>
-    <tr ng-repeat="(role, permissions) in $ctrl.permissions">
+    <tr ng-repeat="(role, permissions) in $ctrl.permissions ">
       <td> {{role}}</td>
       <td>
         <div ng-repeat="permission in permissions | orderBy: 'permissionDescription'"

@@ -1,42 +1,51 @@
 <div class="org-contracts">
-  <div class="row no-padding-row" ng-if="$ctrl.org.contracts.length">
-    <div class="col-xs-12 no-padding contracts-list list">
-      <div class="row no-padding-row section-header">
-        <div class="col-xs-6">
-          Contract
+
+  <div class="row" ng-if="$ctrl.org.contracts.length">
+    <div class="col-xs-12 contracts-list list">
+      <div class="row section-header">
+        <div class="contract-text col-xs-3">
+          Contract Type
         </div>
-        <div class="col-xs-6">
-          Contract status
+        <div class="contract-text col-xs-2">
+          Contract Status
+        </div>
+        <div class="contract-text col-xs-2">
+          Date Accepted
+        </div>
+        <div class="contract-text col-xs-2">
+          Accepted By
+        </div>
+        <div class="contract-text col-xs-3">
+          Actions
         </div>
       </div>
-      <!-- Blank, Signed, NotRequired -->
-      <div class="row no-padding-row" ng-repeat="contract in $ctrl.org.contracts | orderBy: 'name' | limitTo: $ctrl.showHowMany">
-        <div class="org-contract list-item">
-          <div class="row no-padding-row">
-            <div class="contract-title col-sm-6 contract-name">{{contract.name}}{{contract.orgGroupType ? (' - ' + contract.orgGroupType) : '' }}</div>
-            <div class="col-sm-3" ng-if="$ctrl.canEditContracts">
-              <label class="checkbox signed"
-                ng-class="{checked: contract.status === $ctrl.contractStatusConst.SIGNED}">
-                <input type="checkbox"
-                  aria-label="contract signed"
-                  name="signed"
-                  ng-click="$ctrl.statusCheckboxClicked(contract,$ctrl.contractStatusConst.SIGNED)">
-                <div class="checkbox-label">Signed</div>
-              </label>
 
+      <div class="row" ng-repeat-start="contract in $ctrl.org.contracts | filter: {variation:false} | orderBy: 'name' | limitTo: $ctrl.showHowMany">
+
+        <div class="org-contract list-item">
+          <div class="row">
+            <div class="contract-title col-sm-3 contract-text" id="contract-name">
+              <toggle-icon ng-if ="$ctrl.hasContractVariation(contract)" (collapsed-change)="" [(collapsed)]="contract.collapsed"></toggle-icon>{{$ctrl.getContractTypeTitle(contract)}}</div>
+            <div class="col-sm-2 contract-text" id="contract-status">{{$ctrl.contractStatusMap[contract.status]}}</div>
+            <div class="col-sm-2 contract-text" id="contract-date">{{contract.acceptedOn ? (contract.acceptedOn | date: "dd/MM/yyyy") : 'N/A'}}</div>
+            <div class="col-sm-2 contract-text" id="contract-accepted-by">{{contract.acceptedByFullName ? contract.acceptedByFullName : 'N/A'}}</div>
+            <div class="col-sm-3 contract-text" id="contract-actions">
+              <span ng-repeat="action in contract.availableActions"><a href="JavaScript:void(0)" ng-click="$ctrl.performAction(contract, action)">{{action.text}}</a><br/></span>
             </div>
-            <div class="col-sm-3" ng-if="$ctrl.canEditContracts">
-              <label class="checkbox not-required"
-                ng-class="{checked: contract.status === $ctrl.contractStatusConst.NOT_REQUIRED}">
-                <input type="checkbox"
-                  aria-label="contract required"
-                  name="required"
-                  ng-click="$ctrl.statusCheckboxClicked(contract,$ctrl.contractStatusConst.NOT_REQUIRED)">
-                <div class="checkbox-label">Not required</div>
-              </label>
-            </div>
-            <div class="col-xs-6" ng-if="!$ctrl.canEditContracts">
-              <div class="checkbox-label no-checkbox">{{$ctrl.contractStatusMap[contract.status]}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="!contract.collapsed" ng-repeat-end
+           ng-repeat="variation in $ctrl.org.contracts | filter: {variation:true, name:contract.name} | orderBy: 'name+id' track by variation.id">
+        <div class="org-contract list-item">
+          <div class="row">
+            <div style=" padding-left: 26px;"  class="contract-title col-sm-3 contract-text" id="variation-name">{{$ctrl.getContractTypeTitle(variation)}}</div>
+            <div class="col-sm-2 contract-text" id="variation-status">{{$ctrl.contractStatusMap[variation.status]}}</div>
+            <div class="col-sm-2 contract-text" id="variation-date">{{variation.acceptedOn ? (variation.acceptedOn | date: "dd/MM/yyyy") : 'N/A'}}</div>
+            <div class="col-sm-2 contract-text" id="variation-accepted-by">{{variation.acceptedByFullName ? variation.acceptedByFullName : 'N/A'}}</div>
+            <div class="col-sm-3 contract-text" id="variation-actions">
+              <span ng-repeat="action in variation.availableActions"><a href="JavaScript:void(0)" ng-click="$ctrl.performAction(variation, action)">{{action.text}}</a><br/></span>
             </div>
           </div>
         </div>

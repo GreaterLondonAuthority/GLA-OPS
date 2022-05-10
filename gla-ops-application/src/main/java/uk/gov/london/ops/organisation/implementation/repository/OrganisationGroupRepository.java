@@ -8,7 +8,8 @@
 package uk.gov.london.ops.organisation.implementation.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.OrganisationGroupType;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.organisation.model.OrganisationGroup;
 
 import java.util.List;
@@ -20,12 +21,12 @@ public interface OrganisationGroupRepository extends JpaRepository<OrganisationG
 
     Set<OrganisationGroup> findAllByName(String name);
 
-    List<OrganisationGroup> findAllByTypeAndProgrammeIdAndLeadOrganisationId(OrganisationGroup.Type type, Integer programmeId,
+    List<OrganisationGroup> findAllByTypeAndProgrammeIdAndLeadOrganisationId(OrganisationGroupType type, Integer programmeId,
                                                                              Integer leadOrganisationId);
 
-    List<OrganisationGroup> findAllByTypeAndProgrammeIdAndOrganisations(OrganisationGroup.Type type, Integer programmeId,
-                                                                        Organisation organisation);
+    List<OrganisationGroup> findAllByTypeAndProgrammeIdAndOrganisations(OrganisationGroupType type, Integer programmeId,
+                                                                        OrganisationEntity organisation);
 
-    List<OrganisationGroup> findAllByManagingOrganisation(Organisation managingOrganisationId);
+    List<OrganisationGroup> findAllByManagingOrganisation(OrganisationEntity managingOrganisationId);
 
 }

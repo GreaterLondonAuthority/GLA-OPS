@@ -7,13 +7,14 @@
  */
 
 class AllPaymentsCtrl {
-  constructor(orderByFilter, PaymentService, $log, SessionService, $state, $stateParams, programmes, $q, paymentSources) {
+  constructor(orderByFilter, PaymentService, UserService, $log, SessionService, $state, $stateParams, programmes, $q, paymentSources) {
     this.orderByFilter = orderByFilter;
     this.$log = $log;
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.SessionService = SessionService;
     this.PaymentService = PaymentService;
+    this.UserService = UserService;
     this.paymentSources = paymentSources;
     this.$q = $q;
     this.requestsQueue = [];
@@ -50,11 +51,20 @@ class AllPaymentsCtrl {
     this.sortByName = 'name';
     this.sortReverse = false;
 
+    this.defaultManagingOrgsFilter = _.filter(_.sortBy(this.UserService.currentUserOrganisations(), 'name'), {isManagingOrganisation: true})
+      .map(o => {
+        return {
+          id: o.id,
+          label: o.name
+        }
+      });
+
 
     this.searchOptions = PaymentService.searchOptions();
     this.sourceDropdownItems = this.applyFilterState(PaymentService.sourceOptions(this.paymentSources));
     this.statusDropdownItems = this.applyFilterState(PaymentService.statusOptions());
     this.paymentDirectionDropdownItems = this.applyFilterState(PaymentService.paymentDirectionOptions());
+    this.managingOrgDropdownItems = this.applyFilterState(this.defaultManagingOrgsFilter);
 
     let programmeDropdown = _.filter(programmes, (p)=>{return p.status != 'Abandoned';});
 
@@ -66,13 +76,17 @@ class AllPaymentsCtrl {
     this.byProjectOption = _.find(this.searchOptions,{name: 'project'});
     this.byProgrammeOption = _.find(this.searchOptions,{name: 'programme'});
     this.byOrganisationOption = _.find(this.searchOptions,{name: 'organisation'});
+    this.bySapId = _.find(this.searchOptions,{name: 'sapId'});
 
     if (paymentsSearchState.organisation) {
       this.selectedSearchOption = this.byOrganisationOption;
       this.searchTextModel = paymentsSearchState.organisation;
-    }else if (paymentsSearchState.programme) {
+    } else if (paymentsSearchState.programme) {
       this.selectedSearchOption = this.byProgrammeOption;
       this.searchTextModel = paymentsSearchState.programme;
+    } else if (paymentsSearchState.sapId) {
+      this.selectedSearchOption = this.bySapId;
+      this.searchTextModel = paymentsSearchState.sapId;
     }
     else {
       this.selectedSearchOption = this.byProjectOption;
@@ -160,6 +174,7 @@ class AllPaymentsCtrl {
     this.isDefaultFilterState = !(_.some(this.statusDropdownItems, {model: true}) ||
                                   _.some(this.sourceDropdownItems, {model: true}) ||
                                   _.some(this.paymentDirectionDropdownItems, {model: true}) ||
+                                  _.some(this.managingOrgDropdownItems, {model: true}) ||
                                   _.some(this.programmeDropDownItems, {model: true}));
 
     this.saveFilterState(_.concat(
@@ -167,37 +182,48 @@ class AllPaymentsCtrl {
       this.sourceDropdownItems,
       this.paymentDirectionDropdownItems,
       this.programmeDropDownItems,
+      this.managingOrgDropdownItems,
       {name: 'fromDate', model: this.fromDate},
       {name: 'toDate', model: this.toDate}
     ));
 
-    // let statuses = _.map(_.filter(this.statusDropdownItems, {model:true}), 'statusKey') || [];
     let statuses = []
     _.forEach(this.statusDropdownItems, status => {
       if(status.model){
-        statuses.push(status.statusKey);
-        if(status.subStatusesKeys){
-          statuses = _.concat(statuses, status.subStatusesKeys);
+        //check for sub statuses and if they exist send those to API instead of status
+        if(status.items){
+          _.forEach(status.items, item => {
+            if (item.model) {
+              statuses.push(item.statusKey)
+            }
+          })
+        }
+        else {
+          statuses.push(status.statusKey);
         }
       }
     });
 
     let sources = _.map(_.filter(this.sourceDropdownItems, {model:true}), 'sourceKey') || [];
     let programmes = _.map(_.filter(this.programmeDropDownItems, {model:true}), 'sourceKey') || [];
+    let managingOrganisations = _.map(_.filter(this.managingOrgDropdownItems, {model:true}), 'id') || [];
     let paymentDirection = _.map(_.filter(this.paymentDirectionDropdownItems, {model:true}), 'sourceKey') || [];
 
     let projectIdOrName;
     let orgName;
-    let programmeName
+    let programmeName;
+    let sapId;
 
     let isProgrammeOption = false;
     if(this.selectedSearchOption.name === this.byProjectOption.name){
       projectIdOrName = this.searchTextModel;
     } else if(this.selectedSearchOption.name === this.byOrganisationOption.name){
       orgName = this.searchTextModel;
-   } else if(this.selectedSearchOption.name === this.byProgrammeOption.name){
+    } else if(this.selectedSearchOption.name === this.byProgrammeOption.name){
       programmeName = this.searchTextModel;
       isProgrammeOption = true;
+    } else if(this.selectedSearchOption.name === this.bySapId.name){
+      sapId = this.searchTextModel;
     }
 
 
@@ -214,9 +240,11 @@ class AllPaymentsCtrl {
       let p = this.PaymentService.getPayments(projectIdOrName,
         orgName,
         programmeName,
+        sapId,
         statuses,
         sources,
         isProgrammeOption ? null : programmes,
+        managingOrganisations,
         this.toDate,
         this.fromDate,
         paymentDirection,
@@ -289,6 +317,6 @@ class AllPaymentsCtrl {
   }
 }
 
-AllPaymentsCtrl.$inject = ['orderByFilter', 'PaymentService', '$log', 'SessionService', '$state', '$stateParams', 'programmes', '$q', 'paymentSources'];
+AllPaymentsCtrl.$inject = ['orderByFilter', 'PaymentService', 'UserService', '$log', 'SessionService', '$state', '$stateParams', 'programmes', '$q', 'paymentSources'];
 
 angular.module('GLA').controller('AllPaymentsCtrl', AllPaymentsCtrl);

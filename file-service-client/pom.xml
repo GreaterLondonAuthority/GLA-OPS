@@ -9,6 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <jacoco.coverage.ratio>0.51</jacoco.coverage.ratio>
+        <jacoco.missed.class.count>1</jacoco.missed.class.count>
+    </properties>
+
     <artifactId>file-service-client</artifactId>
 
     <dependencies>

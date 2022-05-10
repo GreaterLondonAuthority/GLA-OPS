@@ -6,9 +6,9 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-SessionService.$inject = ['$sessionStorage'];
+SessionService.$inject = ['$sessionStorage', 'GlaSessionService'];
 
-function SessionService($sessionStorage) {
+function SessionService($sessionStorage, GlaSessionService) {
   return {
     setProjectsFilterState(filterState) {
       $sessionStorage.filterState = filterState;
@@ -50,11 +50,11 @@ function SessionService($sessionStorage) {
     },
 
     setDoNotShowAgainDeleteNotificationModal(doNotShow) {
-      $sessionStorage.doNotShowAgainDeleteNotificationModal = doNotShow;
+      GlaSessionService.setDoNotShowAgainDeleteNotificationModal(doNotShow);
     },
 
     getDoNotShowAgainDeleteNotificationModal() {
-      return $sessionStorage.doNotShowAgainDeleteNotificationModal;
+      return GlaSessionService.getDoNotShowAgainDeleteNotificationModal();
     },
 
     setOrganisationsFilter(orgFilter) {
@@ -158,14 +158,6 @@ function SessionService($sessionStorage) {
       return $sessionStorage.usersSearchState || {};
     },
 
-    setBannerMessageState(state) {
-      $sessionStorage.bannerMessageState = state;
-    },
-
-    getBannerMessageState() {
-      return $sessionStorage.bannerMessageState;
-    },
-
     setTemplateBlock(state) {
       $sessionStorage.templateBlock = state;
     },
@@ -175,17 +167,19 @@ function SessionService($sessionStorage) {
     },
 
     setOrgRegistration(state) {
-      $sessionStorage.orgRegistration = state;
+      GlaSessionService.setOrgRegistration(state);
     },
 
     getOrgRegistration() {
-      return $sessionStorage.orgRegistration;
+      return GlaSessionService.getOrgRegistration();
     },
 
+    //TODO remove
     setProjectOverview(state) {
       $sessionStorage.projectOverview = state;
     },
 
+    //TODO remove
     getProjectOverview() {
       return $sessionStorage.projectOverview;
     },
@@ -209,6 +203,7 @@ function SessionService($sessionStorage) {
 
     clear(){
       $sessionStorage.$reset();
+      GlaSessionService.clear();
     }
   };
 }

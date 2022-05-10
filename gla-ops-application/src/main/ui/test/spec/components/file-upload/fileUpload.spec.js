@@ -28,14 +28,14 @@ describe('Component: file-upload', () => {
       readOnly: false
     };
 
-    let template = `<file-upload class="add-document"
-                      label="ADD DOCUMENT +"
-                      upload-params="$ctrl.uploadParams"
-                      on-progress="$ctrl.onProgress(event)"
-                      on-complete="$ctrl.onComplete(event)"
-                      on-error="$ctrl.onError(event)"
-                      is-disabled="$ctrl.readOnly">
-                    </file-upload>`;
+    let template = `<gla-file-upload-button class="add-document"
+                        [label]="'ADD DOCUMENT +'"
+                        [upload-params]="$ctrl.uploadParams"
+                        (on-progress)="$ctrl.onProgress($event)"
+                        (on-complete)="$ctrl.onComplete($event)"
+                        (on-error)="$ctrl.onComplete($event)"
+                        [is-disabled]="$ctrl.readOnly">
+                     </gla-file-upload-button>`;
     element = $compile(template)($scope);
     $timeout.flush();
   }));

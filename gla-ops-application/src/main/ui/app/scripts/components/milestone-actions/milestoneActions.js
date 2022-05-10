@@ -24,6 +24,8 @@ gla.component('milestoneActions', {
     readOnly: '<',
     onClaimCancel: '&',
     onClaim: '&',
+    onWithdraw: '&',
+    onCancelWithdraw: '&',
     onRepay: '&'
   },
   controller: MilestoneActions,

@@ -20,7 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import org.apache.commons.lang3.StringUtils;
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.state.ProjectState;

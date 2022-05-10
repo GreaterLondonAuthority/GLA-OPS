@@ -14,48 +14,57 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import uk.gov.london.common.skills.SkillsGrantType;
 import uk.gov.london.ops.EventType;
 import uk.gov.london.ops.audit.ActivityType;
-import uk.gov.london.ops.domain.PreSetLabel;
-import uk.gov.london.ops.domain.Requirement;
+import uk.gov.london.ops.contracts.ContractModel;
+import uk.gov.london.ops.contracts.ContractSummary;
+import uk.gov.london.ops.file.AttachmentFile;
+import uk.gov.london.ops.file.FileService;
 import uk.gov.london.ops.framework.EntityType;
+import uk.gov.london.ops.framework.enums.ContractWorkflowType;
+import uk.gov.london.ops.framework.enums.GrantType;
+import uk.gov.london.ops.framework.enums.OrganisationContractStatus;
+import uk.gov.london.ops.framework.enums.Requirement;
 import uk.gov.london.ops.framework.exception.ForbiddenAccessException;
 import uk.gov.london.ops.framework.exception.NotFoundException;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.feature.Feature;
 import uk.gov.london.ops.framework.feature.FeatureStatus;
-import uk.gov.london.ops.notification.EntitySubscription;
-import uk.gov.london.ops.notification.NotificationType;
+import uk.gov.london.ops.notification.*;
+import uk.gov.london.ops.notification.broadcast.BroadcastService;
 import uk.gov.london.ops.organisation.OrganisationGroupService;
-import uk.gov.london.ops.organisation.OrganisationService;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.organisation.OrganisationGroupType;
+import uk.gov.london.ops.organisation.OrganisationServiceImpl;
+import uk.gov.london.ops.organisation.implementation.repository.OrganisationGroupRepository;
+import uk.gov.london.ops.organisation.model.OrganisationContract;
+import uk.gov.london.ops.organisation.model.OrganisationEntity;
 import uk.gov.london.ops.organisation.model.OrganisationGroup;
 import uk.gov.london.ops.payment.*;
 import uk.gov.london.ops.permission.implementation.DefaultAccessControlSummaryRepository;
 import uk.gov.london.ops.permission.implementation.ProjectAccessControlRepository;
-import uk.gov.london.ops.programme.ProgrammeService;
+import uk.gov.london.ops.programme.ProgrammeServiceImpl;
 import uk.gov.london.ops.programme.domain.Programme;
 import uk.gov.london.ops.programme.domain.ProgrammeTemplate;
-import uk.gov.london.ops.project.accesscontrol.AccessControlRelationshipType;
-import uk.gov.london.ops.project.accesscontrol.DefaultAccessControlSummary;
-import uk.gov.london.ops.project.accesscontrol.GrantAccessTrigger;
+import uk.gov.london.ops.project.accesscontrol.*;
 import uk.gov.london.ops.project.block.*;
 import uk.gov.london.ops.project.budget.AnnualSpendSummary;
 import uk.gov.london.ops.project.budget.ProjectBudgetsBlock;
 import uk.gov.london.ops.project.claim.Claim;
 import uk.gov.london.ops.project.claim.ClaimStatus;
 import uk.gov.london.ops.project.funding.FundingBlock;
+import uk.gov.london.ops.project.grant.AffordableHomesBlock;
 import uk.gov.london.ops.project.grant.GrantSourceBlock;
 import uk.gov.london.ops.project.implementation.repository.*;
 import uk.gov.london.ops.project.internalblock.InternalProjectBlock;
 import uk.gov.london.ops.project.label.Label;
-import uk.gov.london.ops.project.label.LabelService;
+import uk.gov.london.ops.project.label.LabelServiceImpl;
 import uk.gov.london.ops.project.label.LabelType;
-import uk.gov.london.ops.project.label.PreSetLabelService;
+import uk.gov.london.ops.project.label.PreSetLabelEntity;
 import uk.gov.london.ops.project.milestone.Milestone;
 import uk.gov.london.ops.project.milestone.ProjectMilestonesBlock;
 import uk.gov.london.ops.project.question.Answer;
@@ -64,36 +73,49 @@ import uk.gov.london.ops.project.question.ProjectQuestionsBlock;
 import uk.gov.london.ops.project.risk.*;
 import uk.gov.london.ops.project.skills.*;
 import uk.gov.london.ops.project.state.*;
-import uk.gov.london.ops.project.template.TemplateService;
+import uk.gov.london.ops.project.template.TemplateServiceImpl;
 import uk.gov.london.ops.project.template.domain.*;
 import uk.gov.london.ops.refdata.Borough;
 import uk.gov.london.ops.refdata.CategoryValue;
-import uk.gov.london.ops.refdata.RefDataService;
+import uk.gov.london.ops.refdata.RefDataServiceImpl;
 import uk.gov.london.ops.refdata.Ward;
+import uk.gov.london.ops.role.model.Role;
+import uk.gov.london.ops.user.User;
 import uk.gov.london.ops.user.UserFinanceThresholdService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.UserIdAndName;
+import uk.gov.london.ops.user.domain.UserEntity;
 import uk.gov.london.ops.user.domain.UserOrgFinanceThreshold;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import static java.util.Comparator.comparingInt;
 import static uk.gov.london.common.GlaUtils.parseInt;
 import static uk.gov.london.common.user.BaseRole.OPS_ADMIN;
+import static uk.gov.london.common.user.BaseRole.ORG_ADMIN;
 import static uk.gov.london.ops.notification.NotificationType.ProjectTransfer;
 import static uk.gov.london.ops.payment.implementation.ProjectLedgerEntryMapper.BESPOKE_PREFIX;
 import static uk.gov.london.ops.payment.implementation.ProjectLedgerEntryMapper.RECLAIMED_PREFIX;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_READ;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_VIEW_RECOMMENDATION;
-import static uk.gov.london.ops.project.ProjectHistory.HistoryEventType.Label;
-import static uk.gov.london.ops.project.ProjectHistory.HistoryEventType.Transfer;
-import static uk.gov.london.ops.project.ProjectHistory.Transition.Created;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.Action.DELETE;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.LAST_APPROVED;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.UNAPPROVED;
+import static uk.gov.london.ops.permission.PermissionType.*;
+import static uk.gov.london.ops.project.ProjectBuilder.addInternalBlockToProject;
+import static uk.gov.london.ops.project.ProjectBuilder.createBlockFromTemplate;
+import static uk.gov.london.ops.project.ProjectHistoryEventType.Label;
+import static uk.gov.london.ops.project.ProjectHistoryEventType.Transfer;
+import static uk.gov.london.ops.project.ProjectTransition.Created;
+import static uk.gov.london.ops.project.block.ProjectBlockAction.DELETE;
+import static uk.gov.london.ops.project.block.ProjectBlockStatus.LAST_APPROVED;
+import static uk.gov.london.ops.project.block.ProjectBlockStatus.UNAPPROVED;
+import static uk.gov.london.ops.project.skills.AllocationType.Delivery;
 import static uk.gov.london.ops.project.skills.LearningGrantEntryType.SUPPORT;
 import static uk.gov.london.ops.project.state.ProjectStatus.*;
 import static uk.gov.london.ops.project.state.ProjectSubStatus.*;
@@ -106,7 +128,7 @@ import static uk.gov.london.ops.project.state.StateTransitionResult.Status.INVAL
  * @author Steve Leach
  */
 @Service
-public class ProjectService extends BaseProjectService {
+public class ProjectService extends BaseProjectService implements BroadcastTargetService {
 
     Logger log = LoggerFactory.getLogger(getClass());
 
@@ -120,16 +142,22 @@ public class ProjectService extends BaseProjectService {
     FinanceService financeService;
 
     @Autowired
-    OrganisationService organisationService;
+    BroadcastService broadcastService;
 
     @Autowired
-    ProgrammeService programmeService;
+    EmailService emailService;
 
     @Autowired
-    RefDataService refDataService;
+    OrganisationServiceImpl organisationService;
 
     @Autowired
-    TemplateService templateService;
+    ProgrammeServiceImpl programmeService;
+
+    @Autowired
+    RefDataServiceImpl refDataService;
+
+    @Autowired
+    TemplateServiceImpl templateService;
 
     @Autowired
     FeatureStatus featureStatus;
@@ -138,7 +166,10 @@ public class ProjectService extends BaseProjectService {
     OrganisationGroupService organisationGroupService;
 
     @Autowired
-    LabelService labelService;
+    OrganisationGroupRepository organisationGroupRepository;
+
+    @Autowired
+    LabelServiceImpl labelService;
 
     @Autowired
     LockDetailsRepository lockDetailsRepository;
@@ -151,9 +182,6 @@ public class ProjectService extends BaseProjectService {
 
     @Autowired
     RiskLevelLookupRepository riskLevelLookupRepository;
-
-    @Autowired
-    PreSetLabelService preSetLabelService;
 
     @Autowired
     PreSetLabelRepository preSetLabelRepository;
@@ -171,17 +199,25 @@ public class ProjectService extends BaseProjectService {
     ProjectAccessControlRepository projectAccessControlRepository;
 
     @Autowired
+    ProjectAssigneeRepository projectAssigneeRepository;
+
+    @Autowired
     UserFinanceThresholdService userFinanceThresholdService;
+
+    @Autowired
+    FileService fileService;
 
     public Page<ProjectSummary> findAll(String project,
                                         String organisation,
                                         String programme,
+                                        String assignee,
                                         List<Integer> programmes,
                                         List<Integer> templates,
                                         List<String> states,
                                         boolean watchingProject,
+                                        Boolean isProgrammeAllocation, //nullable to prevent filtering from TemplateAPI
                                         Pageable pageable) {
-        User currentUser = userService.loadCurrentUser();
+        UserEntity currentUser = userService.loadCurrentUser();
 
         Integer organisationId = parseInt(organisation);
         Integer programmeId = parseInt(programme);
@@ -191,6 +227,9 @@ public class ProjectService extends BaseProjectService {
             throw new ForbiddenAccessException();
         }
 
+        // if feature toggle off revert to previous behaviour by using null
+        isProgrammeAllocation = featureStatus.isEnabled(Feature.ProgrammeAllocationsPage) ? isProgrammeAllocation : null;
+
         Page<ProjectSummary> result = projectSummaryRepository.findAll(currentUser,
                 getProjectId(project),
                 project,
@@ -198,13 +237,20 @@ public class ProjectService extends BaseProjectService {
                 organisation,
                 programmeId,
                 programme,
+                assignee,
                 programmes,
                 templates,
                 states,
                 watchingProject,
+                isProgrammeAllocation,
                 pageable);
 
         cleanProjectSummaries(result.getContent());
+        if (isProgrammeAllocation != null && isProgrammeAllocation) {
+            for (ProjectSummary summary : result.getContent()) {
+                summary.setAllocationTotal(getAllocationTotal(summary));
+            }
+        }
 
         return result;
     }
@@ -222,11 +268,11 @@ public class ProjectService extends BaseProjectService {
     }
 
     public List<Project> findAllByProgrammeAndTemplateAndOrganisation(Programme programme, Template template,
-            Organisation organisation) {
-        return projectRepository.findAllByProgrammeAndTemplateAndOrganisation(programme, template, organisation);
+                                                                      Integer organisationId) {
+        return projectRepository.findAllByProgrammeAndTemplateAndOrganisationId(programme, template, organisationId);
     }
 
-    public List<Project> findAllByOrganisationAndStatusName(Organisation organisation, String statusName) {
+    public List<Project> findAllByOrganisationAndStatusName(OrganisationEntity organisation, String statusName) {
         return projectRepository.findAllByOrganisationAndStatusName(organisation, statusName);
     }
 
@@ -274,22 +320,38 @@ public class ProjectService extends BaseProjectService {
     }
 
     // removes recommendation for roles without permission to view it, annotation approach is too slow for large data volumes
-    private List<ProjectSummary> cleanProjectSummaries(List<ProjectSummary> summaries) {
-        User user = userService.currentUser();
-        Set<String> permissionsForUser = permissionService.getPermissionsForUser(user);
-        boolean showProperty = false;
-        for (String userPermission : permissionsForUser) {
-            if (PROJ_VIEW_RECOMMENDATION.getPermissionKey().equals(userPermission)) {
-                showProperty = true;
-            }
-        }
+    private void cleanProjectSummaries(List<ProjectSummary> summaries) {
+        boolean canViewProjectRecommendation = permissionService.currentUserHasPermission(PROJ_VIEW_RECOMMENDATION);
+        boolean canViewProjectAssignee = permissionService.currentUserHasPermission(PROJ_VIEW_ASSIGNEE);
 
-        if (!showProperty) {
+        if (!canViewProjectRecommendation || !canViewProjectAssignee) {
             for (ProjectSummary summary : summaries) {
-                summary.setRecommendation(null);
+                if (!canViewProjectRecommendation) {
+                    summary.setRecommendation(null);
+                }
+                if (!canViewProjectAssignee) {
+                    summary.setAssignee(null);
+                    summary.setAssigneeName(null);
+                }
             }
         }
-        return summaries;
+    }
+
+    private BigDecimal getAllocationTotal(ProjectSummary summary) {
+        BigDecimal total = BigDecimal.ZERO;
+        Project project = get(summary.getId());
+        total = total.add(getAllocationFromAffordableHomesBlock(project));
+        return total;
+    }
+
+    private BigDecimal getAllocationFromAffordableHomesBlock(Project project) {
+        BigDecimal total = BigDecimal.ZERO;
+        AffordableHomesBlock block = (AffordableHomesBlock) project.getLatestApprovedBlock(ProjectBlockType.AffordableHomes);
+        if (block != null && block.getGrantRequestedTotals() != null) {
+            BigDecimal grantTotal = block.getGrantRequestedTotals().getTotalsByType().get(GrantType.Grant.toString());
+            total = grantTotal == null ? BigDecimal.ZERO : grantTotal;
+        }
+        return total;
     }
 
     private void populateOrganisationGroups(Collection<Project> projects) {
@@ -313,7 +375,7 @@ public class ProjectService extends BaseProjectService {
     }
 
     public <T extends NamedProjectBlock> T updateProjectBlock(Integer projectId, Integer blockId, T updatedBlock,
-            boolean releaseLock) {
+                                                              boolean releaseLock) {
         Project project = get(projectId);
         T existingBlock = (T) project.getSingleLatestBlockOfType(updatedBlock.getBlockType());
         checkForLock(existingBlock);
@@ -322,6 +384,10 @@ public class ProjectService extends BaseProjectService {
         updateProject(project);
 
         return existingBlock;
+    }
+
+    public Set<Integer> getProjectIdsContainingBlock(ProjectBlockType type) {
+        return projectRepository.getProjectIdsContainingBlock(type.name());
     }
 
     public GrantSourceBlock getProjectGrantSource(Integer projectId) {
@@ -387,7 +453,7 @@ public class ProjectService extends BaseProjectService {
         handleRestrictedAddressChange(block, existingDetailsBlock);
 
         if (block.getBorough() != null) {
-            validateBorough(block.getBorough(),block);
+            validateBorough(block.getBorough(), block);
         }
 
         existingDetailsBlock.merge(block);
@@ -398,7 +464,7 @@ public class ProjectService extends BaseProjectService {
     }
 
     protected void validateBorough(String boroughs, ProjectDetailsBlock block) {
-        List < String > boroughNames = Arrays.asList(boroughs.split(block.getBoroughDelimiter()));
+        List<String> boroughNames = Arrays.asList(boroughs.split(block.getBoroughDelimiter()));
 
         for (String boroughName:boroughNames) {
             Borough borough = refDataService.findBoroughByName(boroughName);
@@ -442,6 +508,7 @@ public class ProjectService extends BaseProjectService {
         if (project.getProgramme() != null) {
             // get real programme as Programme from project may be skeleton from UI
             Programme programme = programmeService.find(project.getProgrammeId());
+            project.setProgramme(programme);
             project.setManagingOrganisation(programme.getManagingOrganisation());
         }
 
@@ -460,7 +527,7 @@ public class ProjectService extends BaseProjectService {
 
         if (defaultProjectAccess != null && !defaultProjectAccess.isEmpty()) {
             for (DefaultAccessControlSummary defaultAccess : defaultProjectAccess) {
-                Organisation organisation = organisationService.findOne(defaultAccess.getOrganisationId());
+                OrganisationEntity organisation = organisationService.findOne(defaultAccess.getOrganisationId());
                 project.addToAccessControlList(organisation, defaultAccess.getRelationshipType(), GrantAccessTrigger.TEMPLATE);
             }
         }
@@ -504,6 +571,22 @@ public class ProjectService extends BaseProjectService {
         if (template.isBlockPresent(ProjectBlockType.Details)) {
             ((ProjectDetailsBlock) project.getSingleBlockByType(ProjectBlockType.Details)).setTitle(project.getTitle());
         }
+
+        ContractModel contractModel = null;
+        if (template.getContractId() != null) {
+            contractModel = contractService.find(template.getContractId());
+        }
+        if (contractModel != null && contractModel.getContractWorkflowType().equals(ContractWorkflowType.CONTRACT_OFFER_AND_ACCEPTANCE)) {
+            OrganisationEntity organisation = project.getOrganisation();
+            String orgGroupType = null;
+            if (project.getOrganisationGroupId() != null) {
+                OrganisationGroupType type = organisationGroupRepository.getOne(project.getOrganisationGroupId()).getType();
+                orgGroupType = type != null ? type.name() : null;
+            }
+            organisationService.createContract(organisation.getId(), new ContractSummary(null,
+                contractModel.getId(), contractModel.getName(), OrganisationContractStatus.PendingOffer,
+                orgGroupType, ContractWorkflowType.CONTRACT_OFFER_AND_ACCEPTANCE));
+        }
     }
 
     private void updateProjectFromTemplate(Project project, Template template) {
@@ -515,7 +598,7 @@ public class ProjectService extends BaseProjectService {
 
     public boolean canProjectBeAssignedToTemplate(Integer templateId, Integer organisationId) {
         Template template = templateService.find(templateId);
-        Organisation organisation = organisationService.findOne(organisationId);
+        OrganisationEntity organisation = organisationService.findOne(organisationId);
 
         if (template.getNumberOfProjectAllowedPerOrg() == null) {
             return true;
@@ -540,7 +623,7 @@ public class ProjectService extends BaseProjectService {
             project.setCreatedBy(userService.currentUser().getUsername());
         }
 
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
         project.getDetailsBlock().setMainContact(currentUser.getFullName());
         project.getDetailsBlock().setMainContactEmail(currentUser.getUsername());
     }
@@ -578,7 +661,7 @@ public class ProjectService extends BaseProjectService {
     }
 
     private void setOrganisationOnProjectCreation(Project project) {
-        Organisation persistedOrg;
+        OrganisationEntity persistedOrg;
 
         if (project.getOrganisation() != null) {
             Integer id = project.getOrganisation().getId();
@@ -612,9 +695,12 @@ public class ProjectService extends BaseProjectService {
             // and we ask to delete the "magic" project ID
             // then we delete all test projects.
             deleteTestProjects();
-        } else {
-            financeService.deleteAllTestDataByProjectId(projectId);
+        } else if (projectDeletionEnabled && permissionService.currentUserHasPermission(PROJ_DELETE)) {
+            financeService.deleteAllByProjectId(projectId);
             projectRepository.deleteById(projectId);
+            auditService.auditCurrentUserActivity(String.format("Project with ID %d was deleted.", projectId));
+        } else {
+            throw new ValidationException("Project can not be deleted by this user");
         }
     }
 
@@ -624,8 +710,8 @@ public class ProjectService extends BaseProjectService {
         }
     }
 
-    void createProjectHistoryEntry(Project project, ProjectHistory.Transition transition, String description, String comments) {
-        ProjectHistory projectHistory = new ProjectHistory();
+    void createProjectHistoryEntry(Project project, ProjectTransition transition, String description, String comments) {
+        ProjectHistoryEntity projectHistory = new ProjectHistoryEntity();
         projectHistory.setProjectId(project.getId());
         projectHistory.setTransition(transition);
         projectHistory.setComments(comments);
@@ -640,20 +726,20 @@ public class ProjectService extends BaseProjectService {
     public void saveDraftComments(Integer id, String comments) {
         Project project = get(id);
 
-        List<ProjectHistory> projectHistory = getProjectHistory(id);
-        ProjectHistory statusToUse = null;
+        List<ProjectHistoryEntity> projectHistory = getProjectHistory(id);
+        ProjectHistoryEntity statusToUse = null;
         if (projectHistory != null && !projectHistory.isEmpty()) {
-            for (ProjectHistory status : projectHistory) {
-                if (ProjectHistory.Transition.Unconfirmed.equals(status.getTransition())) {
+            for (ProjectHistoryEntity status : projectHistory) {
+                if (ProjectTransition.Unconfirmed.equals(status.getTransition())) {
                     statusToUse = status;
                 }
             }
         }
 
         if (statusToUse == null) {
-            statusToUse = new ProjectHistory();
+            statusToUse = new ProjectHistoryEntity();
             statusToUse.setProjectId(project.getId());
-            statusToUse.setTransition(ProjectHistory.Transition.Unconfirmed);
+            statusToUse.setTransition(ProjectTransition.Unconfirmed);
         }
         statusToUse.setComments(comments);
         statusToUse.setCreatedOn(environment.now());
@@ -662,14 +748,12 @@ public class ProjectService extends BaseProjectService {
         projectHistoryRepository.save(statusToUse);
     }
 
-    public List<ProjectHistory> getProjectHistory(Integer projectId) {
+    public List<ProjectHistoryEntity> getProjectHistory(Integer projectId) {
         dataAccessControlService.checkProjectAccess(projectId);
 
-        List<ProjectHistory> histories = projectHistoryRepository.findAllByProjectIdOrderByCreatedOnDesc(projectId);
-        for (ProjectHistory history : histories) {
-            User user = userService.find(history.getCreatedBy());
-            history.setCreatedByFirstName(user.getFirstName());
-            history.setCreatedByLastName(user.getLastName());
+        List<ProjectHistoryEntity> histories = projectHistoryRepository.findAllByProjectIdOrderByCreatedOnDesc(projectId);
+        for (ProjectHistoryEntity history : histories) {
+            userService.enrich(history);
         }
         return histories;
     }
@@ -677,11 +761,11 @@ public class ProjectService extends BaseProjectService {
     public String getFullNameOfLastUserToRequestApproval(Project project) {
         dataAccessControlService.checkAccess(project);
 
-        List<ProjectHistory> histories = projectHistoryRepository.findAllByProjectIdOrderByCreatedOnDesc(project.getId());
+        List<ProjectHistoryEntity> histories = projectHistoryRepository.findAllByProjectIdOrderByCreatedOnDesc(project.getId());
 
-        for (ProjectHistory history : histories) {
-            if (ProjectHistory.Transition.ApprovalRequested.equals(history.getTransition())) {
-                User user = userService.find(history.getCreatedBy());
+        for (ProjectHistoryEntity history : histories) {
+            if (ProjectTransition.ApprovalRequested.equals(history.getTransition())) {
+                UserEntity user = userService.find(history.getCreatedBy());
                 if (user != null) {
                     return user.getFullName();
                 } else { // unlikely we wont by able find user so soon after they auth'd but just in case
@@ -726,14 +810,14 @@ public class ProjectService extends BaseProjectService {
             StateTransitionResult stateTransitionResult = null;
 
             if (BulkProjectUpdateOperation.Operation.ASSESS.equals(projects.getOperation())) {
-                stateTransitionResult = transitionProjectToStatus(project, new ProjectState(Assess, null), null);
+                stateTransitionResult = transitionProjectToStatus(project, new ProjectState(Assess, null), null, null);
             } else if (BulkProjectUpdateOperation.Operation.REVERT.equals(projects.getOperation())) {
                 // temp do this here, might change when we do revert properly
                 if (!ProjectStatus.Assess.equals(project.getStatusType())) {
                     stateTransitionResult = new StateTransitionResult(ILLEGAL_TRANSITION,
                             "Project must be in assess status to be reverted");
                 } else {
-                    stateTransitionResult = transitionProjectToStatus(project, new ProjectState(Submitted, null), null);
+                    stateTransitionResult = transitionProjectToStatus(project, new ProjectState(Submitted, null), null, null);
                 }
             } else {
                 throw new ValidationException("Unrecognised bulk operation");
@@ -749,17 +833,12 @@ public class ProjectService extends BaseProjectService {
     }
 
     public void testOnlyMoveProjectToStatus(Project project, ProjectStatus newStatus) {
-        if (featureStatus.isEnabled(Feature.TestOnlyStatusTransitions)) {
-            switch (newStatus) {
-                case Assess:
-                    project.setStatus(Assess);
-                    projectRepository.save(project);
-                    break;
-            }
+        if (Assess.equals(newStatus) && featureStatus.isEnabled(Feature.TestOnlyStatusTransitions)) {
+            project.setStatus(Assess);
+            projectRepository.save(project);
         } else {
             throw new ValidationException("Unable to make transition, this is a test api only.");
         }
-
     }
 
     public StateTransitionResult reinstateProject(Project project, String comments) {
@@ -786,12 +865,16 @@ public class ProjectService extends BaseProjectService {
             }
         }
 
-        createProjectHistoryEntry(project, ProjectHistory.Transition.Reinstated, "Project Reinstated", comments);
+        createProjectHistoryEntry(project, ProjectTransition.Reinstated, "Project Reinstated", comments);
 
-        return transitionProjectToStatus(project, state, comments);
+        return transitionProjectToStatus(project, state, comments, null);
     }
 
-    public StateTransitionResult transitionProjectToStatus(Project project, ProjectState targetState, String comments) {
+    public StateTransitionResult transitionProjectToStatus(Project project, ProjectState targetState, String comments, String reason) {
+        return transitionProjectToStatus(project, targetState, comments, false, reason);
+    }
+
+    public StateTransitionResult transitionProjectToStatus(Project project, ProjectState targetState, String comments, boolean paymentsOnly, String reason) {
         if (autoApprovalProjectAndFeatureDisabled(project)) {
             return new StateTransitionResult(INVALID, "Submitting of auto-approval projects is currently not enabled.");
         }
@@ -822,12 +905,14 @@ public class ProjectService extends BaseProjectService {
             return new StateTransitionResult(INVALID, currentState, targetState, project.getId());
         }
 
+        project.setPaymentsOnly(paymentsOnly);
+
         preStateTransitionActions(project, stateTransition.getTo(), stateTransition.getTransitionType());
 
         project.setProjectState(targetState);
         performProjectUpdate(project);
 
-        postStateTransitionActions(project, stateTransition, comments);
+        postStateTransitionActions(project, stateTransition, comments, reason);
 
         projectRepository.save(project);
 
@@ -851,11 +936,35 @@ public class ProjectService extends BaseProjectService {
             project.setRecommendation(null);
         }
 
+        // create any project history events needed for approval
+        if (StateTransitionType.APPROVAL.equals(transitionType) || StateTransitionType.PAYMENTS_ONLY.equals(transitionType)) {
+            auditAndCreateHistoryForApproval(project, transitionType);
+        }
+
+
+
         if (StateTransitionType.APPROVAL.equals(transitionType)) {
+            validateProjectForApproval(project);
             approveAllProjectBlocks(project);
             initialiseWithSkillsData(project);
             project.setApprovalWillGenerateReclaimPersisted(false);
             project.setApprovalWillGeneratePaymentPersisted(false);
+
+        } else if (StateTransitionType.PAYMENTS_ONLY.equals(transitionType)) {
+            validateProjectForApproval(project);
+            for (NamedProjectBlock block : project.getLatestProjectBlocks()) {
+                if (block.isPaymentsOnlyApprovalPossible()) {
+                    block.performPostApprovalActions(userService.currentUsername(), environment.now());
+                    block.setHasBeenThroughPaymentsOnlyCycle(true);
+                }
+            }
+
+            project.setApprovalWillGenerateReclaimPersisted(false);
+            project.setApprovalWillGeneratePaymentPersisted(false);
+        }
+
+        if (targetState.equals(Active, ApprovalRequested)) {
+            validateFinanceEmailPopulated(project);
         }
 
         if (targetState.equals(Active, PaymentAuthorisationPending)) {
@@ -940,6 +1049,31 @@ public class ProjectService extends BaseProjectService {
         }
     }
 
+    private void auditAndCreateHistoryForApproval(Project project, StateTransitionType transitionType) {
+        boolean auditied = false;
+        for (NamedProjectBlock block : project.getLatestProjectBlocks()) {
+            if (block.isPaymentsOnlyApprovalPossible()) {
+                Set<PaymentGroupEntity> allByBlockId = paymentService.findAllByBlockId(block.getId());
+
+                PaymentGroupEntity groupEntity = allByBlockId.stream()
+                        .max(Comparator.comparingInt(PaymentGroupEntity::getId))
+                        .orElse(null);
+
+                if (groupEntity != null) {
+                    PaymentGroupEntity next = allByBlockId.iterator().next();
+                    block.reportSuccessfulPayments(next.getComments(), StateTransitionType.PAYMENTS_ONLY.equals(transitionType));
+
+                    String prefix = StateTransitionType.PAYMENTS_ONLY.equals(transitionType) ? "Payments Only Approved" : "Project and Payments Approved";
+                    auditService.auditCurrentUserActivity(prefix + " payments for payment group: " + groupEntity.getId() + " with comments " + next.getComments());
+                    auditied = true;
+                }
+            }
+        }
+        if (!auditied) {
+            auditService.auditCurrentUserActivity("Approved payments for project: " + project.getId());
+        }
+    }
+
     public void initialiseWithSkillsData(Project project) {
         LearningGrantBlock learningGrantBlock = (LearningGrantBlock) project
                 .getSingleLatestBlockOfType(ProjectBlockType.LearningGrant);
@@ -953,9 +1087,10 @@ public class ProjectService extends BaseProjectService {
                     .collect(Collectors.toMap(SkillsPaymentProfile::getPeriod, Function.identity()));
 
             List<LearningGrantEntry> sorted = learningGrantBlock.getLearningGrantEntries().stream()
-                    .sorted(Comparator.comparingInt(LearningGrantEntry::getPeriod)).collect(Collectors.toList());
+                    .sorted(comparingInt(LearningGrantEntry::getPeriod)).collect(Collectors.toList());
             BigDecimal totalSoFar = BigDecimal.ZERO;
-            LearningGrantAllocation startYearAllocation = learningGrantBlock.getAllocation(learningGrantBlock.getStartYear());
+            LearningGrantAllocation startYearAllocation = learningGrantBlock.getAllocation(learningGrantBlock.getStartYear(),
+                    Delivery);
             BigDecimal allocation = startYearAllocation == null || startYearAllocation.getAllocation() == null ? BigDecimal.ZERO
                     : startYearAllocation.getAllocation();
             for (LearningGrantEntry learningGrantEntry : sorted) {
@@ -978,6 +1113,40 @@ public class ProjectService extends BaseProjectService {
                 }
             }
         }
+    }
+
+    void validateProjectForApproval(Project project) {
+        if (!validOrgContractForProject(project)) {
+            throw new ValidationException("Project cannot be approved until offer has been accepted.");
+        }
+    }
+
+    void validateFinanceEmailPopulated(Project project) {
+        if (project.getApprovalWillCreatePendingGrantPayment()) {
+            if (project.isFinanceEmailMissing()) {
+                if (featureStatus.isEnabled(Feature.PreventClaimsWithoutFinanceEmail)) {
+                    throw new ValidationException("Your Organisation Admin must add a 'Finance contact email address' "
+                            + "to your organisation record before you can submit claims, so we know where to send payment confirmation details.");
+                }
+            }
+        }
+    }
+
+    boolean validOrgContractForProject(Project project) {
+        ContractModel contractModel = null;
+        if (project.getTemplate().getContractId() != null) {
+            contractModel = contractService.find(project.getTemplate().getContractId());
+        }
+
+        if (contractModel != null  && ContractWorkflowType.CONTRACT_OFFER_AND_ACCEPTANCE.equals(
+                contractModel.getContractWorkflowType())) {
+            OrganisationGroup orgGroup = project.getOrganisationGroup();
+            OrganisationContract organisationContract = organisationService.getOrgContractForContract(contractModel,
+                    project.getOrganisation(), orgGroup != null ? orgGroup.getType().name() : null);
+             return organisationContract != null && OrganisationContractStatus.Accepted.equals(organisationContract.getStatus());
+        }
+
+        return true;
     }
 
 
@@ -1046,7 +1215,12 @@ public class ProjectService extends BaseProjectService {
                 for (Claim claim : claims) {
                     if (spendTypes.size() != 2) {
                         Set<ProjectLedgerEntry> allForClaim = paymentService.findAllForClaim(fundingBlock.getId(), claim.getId());
-                        spendTypes.addAll(allForClaim.stream().map(ProjectLedgerEntry::getSpendType).collect(Collectors.toSet()));
+                        spendTypes.addAll(
+                                allForClaim.stream()
+                                        .filter(ple -> ple.getValue() != null && ple.getValue().compareTo(BigDecimal.ZERO) != 0)
+                                        .filter(ple -> !ProjectLedgerEntry.MATCH_FUND_CATEGORY.equals(ple.getCategory()))
+                                        .map(ProjectLedgerEntry::getSpendType).collect(Collectors.toSet())
+                        );
                     }
                 }
             }
@@ -1054,18 +1228,18 @@ public class ProjectService extends BaseProjectService {
         return spendTypes;
     }
 
-    void postStateTransitionActions(Project project, StateTransition stateTransition, String comments) {
+    void postStateTransitionActions(Project project, StateTransition stateTransition, String comments, String reason) {
         ProjectStateMachine stateMachine = stateMachineForProject(project.getStateModel());
 
         ProjectState currentState = stateTransition.getFrom();
         ProjectState targetState = stateTransition.getTo();
 
-        ProjectHistory.Transition historyTransition =
+        ProjectTransition historyTransition =
                 stateTransition.getProjectHistoryTransition() != null ? stateTransition.getProjectHistoryTransition()
                         : stateMachine.getProjectHistoryTransition(currentState, targetState);
         if (historyTransition != null) {
             if (targetState.getStatusType().equals(Submitted)) {
-                project.getHistory().removeIf(e -> ProjectHistory.Transition.Unconfirmed.equals(e.getTransition()));
+                project.getHistory().removeIf(e -> ProjectTransition.Unconfirmed.equals(e.getTransition()));
             }
             String historyDescription = StringUtils.isNotEmpty(stateTransition.getProjectHistoryDescription()) ? stateTransition
                     .getProjectHistoryDescription() : stateMachine.getProjectHistoryDescription(project, historyTransition);
@@ -1082,6 +1256,12 @@ public class ProjectService extends BaseProjectService {
             String approvalRequestedBy = this.getFullNameOfLastUserToRequestApproval(project);
             for (ProjectPaymentGenerator projectPaymentGenerator : projectPaymentGenerators) {
                 paymentGroup = projectPaymentGenerator.generatePaymentsForProject(project, approvalRequestedBy);
+                if (paymentGroup != null) {
+                    PaymentGroupEntity paymentGroupEntity = (PaymentGroupEntity) paymentGroup;
+                    paymentGroupEntity.setPaymentsOnlyApproval(project.isPaymentsOnly());
+                    paymentGroupEntity.setComments(reason);
+                    break;
+                }
             }
         }
 
@@ -1104,12 +1284,21 @@ public class ProjectService extends BaseProjectService {
             ProjectState targetState, PaymentGroup paymentGroup) {
         Map<String, Object> model = new HashMap<String, Object>() {{
             put("projectId", project.getId());
+            put("projectName", project.getTitle());
+            put("programme", project.getProgramme());
             put("organisation", project.getOrganisation());
             put("fromStatus", currentState.getStatus());
             put("toStatus", targetState.getStatus());
         }};
 
         if (paymentGroup != null) {
+            Optional<String> paymentIds = ((PaymentGroupEntity) paymentGroup).getLedgerEntries()
+                    .stream()
+                    .map(e -> e.getId().toString())
+                    .reduce((s1, s2) -> s1 +", "+ s2);
+            if (paymentIds.isPresent()) {
+                model.put("paymentIds", paymentIds.get());
+            }
             notificationService.createNotification(notificationType, paymentGroup, model);
         } else {
             notificationService.createNotification(notificationType, project, model);
@@ -1171,7 +1360,7 @@ public class ProjectService extends BaseProjectService {
                     if (payment.isReclaim()) {
                         milestoneBySummary.setReclaimed(true);
                     }
-                    Long claimedGrant = milestoneBySummary.getClaimedGrant();
+                    Long claimedGrant = milestoneBySummary.getClaimedGrant() != null ? milestoneBySummary.getClaimedGrant() : 0;
                     milestoneBySummary.setClaimedGrant(claimedGrant + payment.getValue().negate().longValue());
                 }
             }
@@ -1218,8 +1407,7 @@ public class ProjectService extends BaseProjectService {
 
     void validateSpendThreshold(Project project, NamedProjectBlock block, String username) {
         Long valueToBeCheckedAgainstFinanceThreshold = block.getValueToBeCheckedAgainstFinanceThresholdOnApproval();
-        UserOrgFinanceThreshold financeThreshold = userFinanceThresholdService
-                .getFinanceThreshold(username, project.getManagingOrganisationId());
+        UserOrgFinanceThreshold financeThreshold = userFinanceThresholdService.getFinanceThresholdForProject(username, project.id);
         if (financeThreshold == null
                 || financeThreshold.getApprovedThreshold() == null
                 || valueToBeCheckedAgainstFinanceThreshold > financeThreshold.getApprovedThreshold()) {
@@ -1242,7 +1430,7 @@ public class ProjectService extends BaseProjectService {
         StateTransition editStateTransition = stateMachineForProject(project.getStateModel())
                 .getTransition(project.getProjectState(), StateTransitionType.EDIT);
         if (editStateTransition != null) {
-            transitionProjectToStatus(project, editStateTransition.getTo(), null);
+            transitionProjectToStatus(project, editStateTransition.getTo(), null, null);
         }
 
         NamedProjectBlock blockToReturn = block;
@@ -1316,7 +1504,7 @@ public class ProjectService extends BaseProjectService {
     public List<Project> filterByUserAccess(Collection<Project> projects) {
         List<Project> results = new LinkedList<>();
 
-        User user = userService.currentUser();
+        UserEntity user = userService.currentUser();
 
         for (Project project : projects) {
             if (dataAccessControlService.hasAccess(user, project)) {
@@ -1369,7 +1557,7 @@ public class ProjectService extends BaseProjectService {
     }
 
     LockDetails lockProjectBlock(NamedProjectBlock block) {
-        User user = userService.currentUser();
+        UserEntity user = userService.currentUser();
         LockDetails ld = new LockDetails(user, lockTimeoutInMinutes);
         ld.setBlock(block);
         lockDetailsRepository.save(ld);
@@ -1395,7 +1583,7 @@ public class ProjectService extends BaseProjectService {
             // TODO : remove this once recording recommendation is part of the generic state transition code
             throw new ValidationException("Unable to record recommendation for project not in Assess status.");
         }
-        createProjectHistoryEntry(project, ProjectHistory.Transition.Initial_Assessment, null, comments);
+        createProjectHistoryEntry(project, ProjectTransition.Initial_Assessment, null, comments);
         return project;
     }
 
@@ -1415,7 +1603,7 @@ public class ProjectService extends BaseProjectService {
     public void deleteUnapprovedBlock(Integer projectId, Integer blockId) {
         Project project = get(projectId);
         NamedProjectBlock block = project.getProjectBlockById(blockId);
-        User currentUser = userService.currentUser();
+        UserEntity currentUser = userService.currentUser();
 
         if (!projectBlockActivityMap.isActionAllowed(project, block, currentUser, DELETE)) {
             throw new ValidationException("DELETE action not allowed!");
@@ -1451,7 +1639,7 @@ public class ProjectService extends BaseProjectService {
             StateTransition revertStateTransition = stateMachineForProject(project.getStateModel())
                     .getTransition(project.getProjectState(), StateTransitionType.REVERT);
             if (revertStateTransition != null) {
-                transitionProjectToStatus(project, revertStateTransition.getTo(), null);
+                transitionProjectToStatus(project, revertStateTransition.getTo(), null, null);
             }
         }
 
@@ -1514,9 +1702,9 @@ public class ProjectService extends BaseProjectService {
 
         Project cloned = projectRepository.save(finalProject);
 
-        List<ProjectHistory> history = projectHistoryRepository.findAllByProjectIdOrderByCreatedOnDesc(sourceProject.getId());
-        for (ProjectHistory projectHistory : history) {
-            ProjectHistory clone = new ProjectHistory();
+        List<ProjectHistoryEntity> history = projectHistoryRepository.findAllByProjectIdOrderByCreatedOnDesc(sourceProject.getId());
+        for (ProjectHistoryEntity projectHistory : history) {
+            ProjectHistoryEntity clone = new ProjectHistoryEntity();
             clone.setProjectId(cloned.getId());
             clone.setCreatedBy(projectHistory.getCreatedBy());
             clone.setTransition(projectHistory.getTransition());
@@ -1528,33 +1716,11 @@ public class ProjectService extends BaseProjectService {
             projectHistoryRepository.save(clone);
         }
 
-        List<EntitySubscription> subscriptions = notificationService
-                .findAllByEntityTypeAndEntityId(EntityType.project, sourceProject.getId());
-        for (EntitySubscription subscription : subscriptions) {
-            notificationService.subscribe(subscription.getUsername(), EntityType.project, cloned.getId());
-        }
-
-        // TODO : this slows down the API and the integration tests, seems like it would be better done in a JUnit test
-        // this will force loading of sorted blocks etc.
-        //        Project enrichedCloned = getEnrichedProject(cloned.getId());
-        //
-        //        Set<ProjectBlockType> enriched = enrichedCloned.getLatestProjectBlocks().stream().map(NamedProjectBlock::getBlockType).collect(Collectors.toSet());
-        //        Set<ProjectBlockType> original = sourceProject.getLatestProjectBlocks().stream().map(NamedProjectBlock::getBlockType).collect(Collectors.toSet());
-        //        boolean matching = original.containsAll(enriched);
-        //        log.warn("CLONED: " + sourceProject.getTitle() + " to " + enrichedCloned.getId());
-        //        for (ProjectBlockType projectBlockType : enriched) {
-        //            log.warn("CLONED Block: " + enrichedCloned.getId() + " " + projectBlockType);
-        //
-        //        }
-        //        if (enrichedCloned.getLatestProjectBlocks().size() != sourceProject.getLatestProjectBlocks().size() || !matching) {
-        //
-        //            throw new ValidationException("Clone operation unsuccessful");
-        //        }
-        //        return enrichedCloned;
+        notificationService.cloneEntitySubscriptions(EntityType.project, sourceProject.getId(), cloned.getId());
 
         cloned.setProjectBlocksSorted(filterSortedProjectBlocks(cloned, UNAPPROVED));
-        this.insertProjectAccessControl(cloned.getProgrammeId(), cloned.getTemplateId(), cloned.getManagingOrganisationId(), AccessControlRelationshipType.MANAGING);
-
+        this.insertProjectAccessControl(cloned.getProgrammeId(), cloned.getTemplateId(), cloned.getManagingOrganisationId(),
+                AccessControlRelationshipType.MANAGING);
 
         return cloned;
     }
@@ -1622,8 +1788,10 @@ public class ProjectService extends BaseProjectService {
     private void refreshProjectStatus(final Project project, final EventType eventType) {
 
         if (Active.equals(project.getStatusType()) && PaymentAuthorisationPending.equals(project.getSubStatusType())) {
-            if (EventType.PaymentAuthorised.equals(eventType)) {
-                transitionProjectToStatus(project, new ProjectState(Active, null), null);
+            if (EventType.PaymentAuthorised.equals(eventType) && project.isPaymentsOnly()) {
+                transitionProjectToStatus(project, new ProjectState(Active, UnapprovedChanges), null, null);
+            } else if (EventType.PaymentAuthorised.equals(eventType)) {
+                transitionProjectToStatus(project, new ProjectState(Active, null), null, null);
             } else if (EventType.PaymentDeclined.equals(eventType)) {
                 project.setSubStatus(ProjectSubStatus.ApprovalRequested);
                 projectRepository.save(project);
@@ -1909,14 +2077,14 @@ public class ProjectService extends BaseProjectService {
     }
 
     public ProjectsTransferResult transfer(List<Integer> projectIds, Integer organisationId) {
-        Organisation toOrganisation = organisationService.findOne(organisationId);
+        OrganisationEntity toOrganisation = organisationService.findOne(organisationId);
         if (toOrganisation == null) {
             throw new NotFoundException();
         }
 
         int nbTransferred = 0;
         int nbErrors = 0;
-        Organisation fromOrganisation = null;
+        OrganisationEntity fromOrganisation = null;
         for (Integer projectId : projectIds) {
             Project project = getEnrichedProject(projectId);
 
@@ -1944,10 +2112,10 @@ public class ProjectService extends BaseProjectService {
         return new ProjectsTransferResult(nbTransferred, nbErrors);
     }
 
-    private void transfer(Project project, Organisation fromOrganisation, Organisation toOrganisation) {
+    private void transfer(Project project, OrganisationEntity fromOrganisation, OrganisationEntity toOrganisation) {
         String historyDescription = String
                 .format("Transferred from %s to %s", fromOrganisation.getName(), toOrganisation.getName());
-        ProjectHistory historyEntry = new ProjectHistory(Transfer, historyDescription, "Project transferred");
+        ProjectHistoryEntity historyEntry = new ProjectHistoryEntity(Transfer, historyDescription, "Project transferred");
 
         project.setOrganisation(toOrganisation);
         project.setOrganisationGroupId(null); // for consortium we are for now changing the bidding arrangement to individual
@@ -1969,14 +2137,14 @@ public class ProjectService extends BaseProjectService {
             throw new ValidationException("You can only bulk transfer test projects in test environments.");
         }
 
-        Organisation toOrganisation = organisationService.findOne(organisationId);
+        OrganisationEntity toOrganisation = organisationService.findOne(organisationId);
         if (toOrganisation == null) {
             throw new NotFoundException();
         }
 
         int nbTransferred = 0;
         int nbErrors = 0;
-        Organisation fromOrganisation = null;
+        OrganisationEntity fromOrganisation = null;
         for (Integer projectId : projectIds) {
             Project project = getEnrichedProject(projectId);
 
@@ -2090,20 +2258,20 @@ public class ProjectService extends BaseProjectService {
             }
 
             String historyDescription = String.format("Label \"%s\" applied", label.getText());
-            ProjectHistory historyEntry = new ProjectHistory(Label, historyDescription, null);
+            ProjectHistoryEntity historyEntry = new ProjectHistoryEntity(Label, historyDescription, null);
             historyEntry.setExternalId(label.getId());
             project.getHistory().add(historyEntry);
         } else {
 
             // Check if pre-set label is already used, if not set to true
-            PreSetLabel preSetLabel = preSetLabelService.find(label.getPreSetLabel().getId());
+            PreSetLabelEntity preSetLabel = labelService.find(label.getPreSetLabel().getId());
             if (preSetLabel != null && !preSetLabel.isUsed()) {
                 preSetLabel.setUsed(true);
                 preSetLabelRepository.saveAndFlush(preSetLabel);
             }
 
             String historyDescription = String.format("Label \"%s\" applied", label.getPreSetLabel().getLabelName());
-            ProjectHistory historyEntry = new ProjectHistory(Label, historyDescription, null);
+            ProjectHistoryEntity historyEntry = new ProjectHistoryEntity(Label, historyDescription, null);
             historyEntry.setExternalId(label.getId());
             project.getHistory().add(historyEntry);
         }
@@ -2129,7 +2297,7 @@ public class ProjectService extends BaseProjectService {
 
     public void shareProject(Integer projectId, Integer orgId, GrantAccessTrigger trigger) {
         Project project = get(projectId);
-        Organisation organisation = organisationService.findOne(orgId);
+        OrganisationEntity organisation = organisationService.findOne(orgId);
         // TODO : might be useful to check if the org is already OWNER or MANAGING
         project.addToAccessControlList(organisation, AccessControlRelationshipType.ASSOCIATED, trigger);
         projectRepository.save(project);
@@ -2172,7 +2340,8 @@ public class ProjectService extends BaseProjectService {
         return projectRepository.findAllIdByProgrammeIdAndTemplateId(programmeId, templateId);
     }
 
-    public void insertProjectAccessControl(Integer programmeId, Integer templateId, Integer organisationId, AccessControlRelationshipType type) {
+    public void insertProjectAccessControl(Integer programmeId, Integer templateId, Integer organisationId,
+                                           AccessControlRelationshipType type) {
         Integer[] projectIds = getProjectIdsByProgrammeIdAndTemplateId(programmeId, templateId);
         if (projectIds.length != 0) {
             GrantAccessTrigger trigger =  GrantAccessTrigger.TEMPLATE;
@@ -2198,4 +2367,240 @@ public class ProjectService extends BaseProjectService {
     public void deleteAllMOProjectLevelAccessControl() {
         projectAccessControlRepository.deleteAllMOProjectLevelAccessControl();
     }
+
+    public void suspendProjectPayments(Integer projectId, boolean paymentsSuspended, String comments) {
+        Project project = get(projectId);
+        validateProjectSuspendPayments(project);
+        String historyMessage = "Payments " + (paymentsSuspended ? "Suspended" : "Resumed");
+        createProjectHistoryEntry(project, null, historyMessage,  comments);
+        project.setSuspendPayments(paymentsSuspended);
+        projectRepository.save(project);
+    }
+
+    private void validateProjectSuspendPayments(Project project) {
+        if (project == null) {
+            throw new ValidationException("Project id is not valid");
+        }
+        if (!Active.equals(project.getStatusType())) {
+            throw new ValidationException("Payments can only be suspended for active projects");
+        }
+    }
+
+    public void getFileForProject(Integer fileId, Integer projectId, HttpServletResponse response) throws IOException {
+        dataAccessControlService.checkProjectAccess(projectId);
+        AttachmentFile file = fileService.getAttachmentFile(fileId);
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFileName() + "\"");
+        response.setContentType(file.getContentType());
+        if (file.getFileSize() != null) {
+            response.setContentLength(file.getFileSize().intValue());
+        }
+        fileService.getFileContent(file, response.getOutputStream());
+        response.flushBuffer();
+    }
+
+    public void getZipFileForProject(Integer projectId, OutputStream out) throws IOException {
+
+        dataAccessControlService.checkProjectAccess(projectId);
+
+        Set<AttachmentFile> attachments = fileService.getAllAttachmentsForProject(projectId);
+        try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(out))) {
+            for (AttachmentFile attachment : attachments) {
+                ZipEntry zipEntry = new ZipEntry(attachment.getId() + "-" + attachment.getFileName());
+                zos.putNextEntry(zipEntry);
+                fileService.getFileStore(attachment.getStorageLocation()).getFileContentWithoutClosingStream(attachment, zos);
+                zos.closeEntry();
+            }
+            zos.flush();
+        }
+    }
+
+    public Set<String> getAllSapIdUsedForOrganisation(Integer organisationId) {
+        return projectRepository.getAllSapIdUsedForOrganisation(organisationId);
+    }
+
+    public void resetToTemplateYears(int programmeId) {
+        Programme one = programmeService.getOne(programmeId);
+        for (Template template : one.getTemplates()) {
+            if (template.isBlockPresent(ProjectBlockType.Funding)) {
+                FundingTemplateBlock budgets = (FundingTemplateBlock) template.getSingleBlockByType(ProjectBlockType.Funding);
+                int endYear = budgets.getYearAvailableTo() + budgets.getStartYear();
+                int updates = projectRepository.resetBudgetBlockStartEndYear(budgets.getStartYear(),
+                        budgets.getYearAvailableTo(), programmeId, template.getId());
+                auditService.auditCurrentUserActivity(String.format("Programme %d changed: reset %d budget blocks to go from %d "
+                                + "to %d for template %d",
+                        programmeId,
+                        updates,
+                        budgets.getStartYear(),
+                        endYear,
+                        template.getId()));
+            }
+        }
+    }
+
+    public void respondToProgrammeYearChange(int programmeId, int startYear, int endYear) {
+        int updates = projectRepository.updateBudgetBlockStartEndYear(startYear, endYear - startYear, programmeId);
+        auditService.auditCurrentUserActivity(String.format("Programme %d changed: Updated %d budget blocks to go from %d to %d",
+                programmeId,
+                updates,
+                startYear,
+                endYear));
+    }
+
+    public Set<UserIdAndName> getProjectAssignableUsers(Integer projectId) {
+        Set<UserIdAndName> users = new HashSet<>();
+        String[] roles = new String[] {Role.GLA_ORG_ADMIN, Role.GLA_SPM, Role.GLA_PM};
+        for (ProjectAccessControlSummary acs: permissionService.getProjectAccessControlList(projectId)) {
+            Set<UserIdAndName> approvedOrgUsers = userService.getOrganisationUsersWithRoles(acs.getOrganisationId(), roles).stream()
+                    .filter(User::isApproved)
+                    .map(u -> new UserIdAndName(u.getUsername(), u.getFirstName(), u.getLastName()))
+                    .collect(Collectors.toSet());
+            users.addAll(approvedOrgUsers);
+        }
+        return users;
+    }
+
+    public Set<UserIdAndName> getProjectAssignableUsers(List<Integer> projectIds) {
+        Set<UserIdAndName> users = null;
+        for (Integer id : projectIds) {
+            Set<UserIdAndName> projectAssignableUsers = getProjectAssignableUsers(id);
+            if (users == null) {
+                users = projectAssignableUsers;
+            } else {
+                users.removeIf(user -> !projectAssignableUsers.contains(user));
+            }
+        }
+        return users;
+    }
+
+    public void assignProject(Integer projectId, List<String> usernames) {
+        Project project = this.get(projectId);
+        if (project == null) {
+            throw new ValidationException("Project not found: " + projectId);
+        }
+        List<ProjectAssignee> projectAssignees = usernames.stream().distinct()
+                .peek(assignee -> {
+                    if (userService.get(assignee) == null) {
+                        throw new ValidationException("Invalid username: " + assignee);
+                    }
+                })
+                .map(user -> {
+                        ProjectAssignee projectAssignee = new ProjectAssignee(projectId, user);
+                        projectAssignee.setCreatedBy(userService.currentUsername());
+                        projectAssignee.setCreatedOn(environment.now());
+                        return projectAssignee;
+                    })
+                .collect(Collectors.toList());
+        projectAssigneeRepository.saveAll(projectAssignees);
+        projectAssigneeRepository.flush();
+    }
+
+    public void assignMultipleProjects(List<ProjectAssigneesSummary> mappings) {
+        for (ProjectAssigneesSummary map : mappings) {
+            List<Integer> projectIds = map.getProjectIds();
+            List<String> usernames = map.getAssignees();
+            //called to prevent duplication, seemed more efficient than multiple calls to DB for checking existence
+            unassignMultipleProjects(projectIds, usernames);
+            for (Integer id : projectIds) {
+                assignProject(id, usernames);
+            }
+        }
+    }
+
+    public void unassignMultipleProjects(List<Integer> projectIds, List<String> usernames) {
+        int deleteCount = projectAssigneeRepository.deleteAllByProjectIdsAndUsernames(projectIds, usernames);
+        log.debug("Deleted {} project assignees from project_assignee", deleteCount);
+    }
+
+    public Set<String> getProjectAssignees(Integer projectId) {
+        return projectAssigneeRepository.findAllByProjectId(projectId)
+                .stream()
+                .map(ProjectAssignee::getUserName)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<String> getProjectAssignees(Integer projectId, Set<String> roles) {
+        return getProjectAssignees(projectId)
+                .stream()
+                .map(a -> userService.find(a))
+                .filter(u -> !Collections.disjoint(u.getApprovedRolesNames(), roles))
+                .map(u -> u.getUsername())
+                .collect(Collectors.toSet());
+    }
+
+    public ProjectDetailsSummary getProjectDetailsSummary(Integer projectId) {
+        Project project = projectRepository.getOne(projectId);
+        return toDetailsSummary(project);
+    }
+
+    public ProjectDetailsSummary getProjectDetailsSummary(String projectTitle) {
+        return toDetailsSummary(findAllByTitle(projectTitle).get(0));
+    }
+
+    private ProjectDetailsSummary toDetailsSummary(Project project) {
+        return new ProjectDetailsSummary(project.getId(), project.getProgrammeId(), project.getTemplateId(),
+                project.getManagingOrganisationId(), project.getStatusName(), project.getSubStatusName());
+    }
+
+    public List<Project> getProjectsNotSubmitted(Integer templateId, OffsetDateTime startDateTime,  OffsetDateTime endDateTime) {
+        return projectRepository.findAllProjectNotSubmitted(templateId, startDateTime, endDateTime);
+    }
+
+
+    protected String getEmailSubheading(ProjectContactSummary summary) {
+        return String.format("RE: %d, %s, %d, %s", summary.getId(), summary.getProjectName(), summary.getOrgId(), summary.getOrgName());
+    }
+
+    @Override
+    public boolean canHandleType(BroadcastType type) {
+        return BroadcastType.Project.equals(type);
+    }
+
+    @Override
+    public List<BroadcastEmailSummary> getEmailDetails(BroadcastDetail details) {
+        if (details instanceof ProjectBroadcastDetails) {
+            ProjectBroadcastDetails broadcast = (ProjectBroadcastDetails) details;
+            Set<ProjectContactSummary> contacts = new HashSet<>();
+            if (broadcast.getMainProjectContacts() != null && broadcast.getMainProjectContacts()) {
+                Set<ProjectContactSummary> primaryContacts = projectRepository.findOwnerDetailsBy(
+                        broadcast.getProgrammeId(),
+                        broadcast.getTemplateIds(),
+                        broadcast.getProjectStatus());
+                contacts.addAll(primaryContacts);
+            }
+
+            if (broadcast.getSecondaryProjectContacts() != null && broadcast.getSecondaryProjectContacts()) {
+                Set<ProjectContactSummary> secondaryContacts = projectRepository.findSecondaryContactDetailsBy(
+                        broadcast.getProgrammeId(),
+                        broadcast.getTemplateIds(),
+                        broadcast.getProjectStatus());
+                contacts.addAll(secondaryContacts);
+            }
+
+            if (broadcast.getOrganisationAdmins() != null && broadcast.getOrganisationAdmins()) {
+                Set<ProjectContactSummary> orgAdmins = projectRepository.findOrganisationAdminsDetailsBy(
+                        broadcast.getProgrammeId(),
+                        broadcast.getTemplateIds(),
+                        broadcast.getProjectStatus(),
+                        Arrays.asList(ORG_ADMIN));
+                contacts.addAll(orgAdmins);
+            }
+
+            List<BroadcastEmailSummary> summaries = new ArrayList<>();
+            for (ProjectContactSummary project : contacts) {
+                if (!StringUtils.isEmpty(project.getContactEmail())) {
+                    summaries.add(new BroadcastEmailSummary(project.getContactEmail(),
+                            project.getContactName(),
+                            getEmailSubheading(project)
+                    ));
+                }
+            }
+            return summaries;
+        }
+        return Collections.emptyList();
+    }
+
+    public boolean isPaymentsSuspended(Integer projectId) {
+        return projectRepository.isPaymentsSuspended(projectId);
+    }
+
 }

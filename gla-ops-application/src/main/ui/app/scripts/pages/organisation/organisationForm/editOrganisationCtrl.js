@@ -30,13 +30,14 @@ class EditOrganisationCtrl extends OrganisationFormCtrl {
     this.originalRegistrationKey = this.org.registrationKey;
     this.title = 'Edit an organisation';
     this.isValidRegKey = true;
+    this.canEditName = this.UserService.hasPermission('org.edit.name', (this.organisation || {}).id);
   }
 
   validateRegistrationKey(key){
     this.isValidRegKey = true;
     if(key){
       key = _.trim(key);
-      if(!(_.toLower(this.org.imsNumber) === _.toLower(key) ||
+      if(!(_.toLower(this.org.providerNumber) === _.toLower(key) ||
         _.toLower(this.originalRegistrationKey) === _.toLower(key)
         )){
 
@@ -78,7 +79,8 @@ angular.module('GLA')
       teams: '<',
       contacts: '<',
       legalStatuses: '<',
-      isLegalStatusEnabled: '<'
+      isLegalStatusEnabled: '<',
+      organisationTemplates: '<'
     },
     controller: EditOrganisationCtrl,
   });

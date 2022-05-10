@@ -21,13 +21,13 @@ public class PortableEntityAPI {
     @Autowired
     PortableEntityService portableEntityService;
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, INTERNAL_BLOCK_EDITOR})
     @RequestMapping(value = "/portable/entity/{className}/{id}", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody String getSanitisedEntity(@PathVariable Integer id, @PathVariable String className) throws Exception {
             return portableEntityService.getSanitisedEntity(className, id);
     }
 
-    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY})
+    @Secured({OPS_ADMIN, GLA_ORG_ADMIN, GLA_SPM, GLA_PM, GLA_FINANCE, GLA_READ_ONLY, INTERNAL_BLOCK_EDITOR})
     @RequestMapping(value = "/portable/entity/{className}", method = RequestMethod.POST)
     public void saveSanitisedEntity(@PathVariable String className, @RequestBody String json) {
         portableEntityService.saveSanitisedEntity(className, json);

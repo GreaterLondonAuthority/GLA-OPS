@@ -1,0 +1,112 @@
+<div class="question-modal">
+  <div class="modal-header text-center">
+    <button aria-label="Close" class="close" data-dismiss="modal" (click)="activeModal.dismiss()" on-enter="activeModal.dismiss()" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{btnName}} Question</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form name="modalForm" #modalForm="ngForm">
+      <div class="form-group" *ngIf="sectionsCount >= 1">
+        <label for="sectionId">Question Section</label>
+        <select class="form-control"
+                id="sectionId"
+                name="sectionId"
+                #sectionId="ngModel"
+                (change)="onSectionSelect(selectedSection)"
+                [(ngModel)]="selectedSection"
+                required
+                style-placeholder>
+          <option selected disabled [value]="undefined">Select section</option>
+          <option *ngFor="let section of sections; trackBy:trackByExternalId"
+                  [ngValue]="section"
+                  ng-selected="section === selectedSection">
+            {{section.text}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="id">Question ID</label>
+        <input id="id"
+               type="number"
+               class="form-control"
+               name="questionId"
+               #questionId="ngModel"
+               numbers-only
+               placeholder="Question ID"
+               [(ngModel)]="questionQuestion.id"
+               ng-model-options="{ debounce: 400 }"
+               (change)="onQuestionIdChange(questionQuestion.id)"
+               [disabled]="!isIdEditable"
+               [maxlength]="9"/>
+        <div class="error-wrapper" role="alert">
+          <span *ngIf="questionQuestion.id && !questionExists && !loading" class="error" id="invalid-question">Question not found</span>
+          <span *ngIf="questionExists && isExistingQuestion" class="error" id="duplicate-question">Question already exists in the block</span>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="questionExists">
+        <span id="questionText" style="color: royalblue">{{question.question.text}}</span>
+      </div>
+
+     <div class="form-group">
+        <label for="helpText">Question Help Text (Optional)</label>
+        <textarea id="helpText"
+                  name="helpText"
+                  #helpText="ngModel"
+                  type="text"
+                  class="form-control"
+                  placeholder="Informational question text"
+                  [(ngModel)]="question.helpText"
+                  ng-model-options='{ debounce: 300 }'
+                  [maxlength]="600"
+                  cols="50"
+                  ng-trim="false"
+                  rows="4">
+            </textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="displayOrder">Display Order</label>
+        <input id="displayOrder"
+               type="number"
+               class="form-control"
+               number-mask="2"
+               placeholder="Display Order"
+               name="questionDisplayOrder"
+               #questionDisplayOrder="ngModel"
+               [(ngModel)]="question.displayOrder"
+               (keyup)="validateDisplayOrder(question.displayOrder)"
+               [maxlength]="9"/>
+        <div class="error-wrapper" *ngIf="questionDisplayOrder.touched || isDuplicateDisplayOrder || isDuplicateDisplayOrderInSection" role="alert">
+          <span class="error" id="duplicate-display-order">Duplicate display order</span>
+        </div>
+      </div>
+    </form>
+
+    <div class="modal-footer">
+      <div class="row">
+        <div class="col-xs-12 text-center mbottom15">
+
+          <button
+            id="abandon-btn"
+            class="btn btn-default btn-primary btn-center"
+            type="button"
+            (click)="addQuestion()"
+            [disabled]="!addButtonEnabled()">
+            {{btnName.toUpperCase()}}
+          </button>
+
+          <button
+            id="cancel-btn"
+            class="btn btn-default btn-secondary btn-center"
+            type="button"
+            (click)="activeModal.dismiss()">CANCEL
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,34 +7,6 @@
  */
 package uk.gov.london.ops.project.outputs;
 
-import static uk.gov.london.ops.payment.ProjectLedgerEntry.RECLAIMED_PAYMENT;
-import static uk.gov.london.ops.payment.ProjectLedgerEntry.SUPPLEMENTARY_PAYMENT;
-import static uk.gov.london.ops.payment.SpendType.CAPITAL;
-import static uk.gov.london.ops.payment.SpendType.REVENUE;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_OUTPUTS_EDIT_FUTURE;
-import static uk.gov.london.ops.permission.PermissionType.PROJ_OUTPUTS_EDIT_PAST;
-import static uk.gov.london.ops.project.claim.ClaimStatus.Claimed;
-import static uk.gov.london.ops.project.claim.ClaimType.ADVANCE;
-import static uk.gov.london.ops.project.claim.ClaimType.QUARTER;
-import static uk.gov.london.ops.project.claim.Claimable.CLAIM_STATUS_OVER_PAID;
-import static uk.gov.london.ops.project.claim.Claimable.CLAIM_STATUS_PARTLY_PAID;
-import static uk.gov.london.ops.project.outputs.OutputTableEntry.Source.PCS;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,19 +18,11 @@ import uk.gov.london.common.GlaUtils;
 import uk.gov.london.ops.framework.MapResult;
 import uk.gov.london.ops.framework.calendar.FinancialCalendar;
 import uk.gov.london.ops.framework.exception.ValidationException;
-import uk.gov.london.ops.payment.LedgerSource;
-import uk.gov.london.ops.payment.LedgerStatus;
-import uk.gov.london.ops.payment.LedgerType;
-import uk.gov.london.ops.payment.PaymentGroup;
-import uk.gov.london.ops.payment.PaymentSummary;
-import uk.gov.london.ops.payment.ProjectLedgerEntry;
+import uk.gov.london.ops.payment.*;
 import uk.gov.london.ops.permission.PermissionService;
+import uk.gov.london.ops.programme.domain.Programme;
 import uk.gov.london.ops.programme.domain.ProgrammeTemplate;
-import uk.gov.london.ops.project.BaseProjectService;
-import uk.gov.london.ops.project.EnrichmentRequiredListener;
-import uk.gov.london.ops.project.PostCloneNotificationListener;
-import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.ProjectPaymentGenerator;
+import uk.gov.london.ops.project.*;
 import uk.gov.london.ops.project.block.NamedProjectBlock;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.claim.Claim;
@@ -72,7 +36,27 @@ import uk.gov.london.ops.project.template.domain.TemplateBlock;
 import uk.gov.london.ops.refdata.OutputCategoryConfiguration;
 import uk.gov.london.ops.refdata.OutputConfigurationService;
 import uk.gov.london.ops.refdata.OutputType;
-import uk.gov.london.ops.user.UserService;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.time.YearMonth;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static uk.gov.london.ops.framework.OPSUtils.currentUsername;
+import static uk.gov.london.ops.payment.ProjectLedgerEntry.RECLAIMED_PAYMENT;
+import static uk.gov.london.ops.payment.ProjectLedgerEntry.SUPPLEMENTARY_PAYMENT;
+import static uk.gov.london.ops.payment.SpendType.CAPITAL;
+import static uk.gov.london.ops.payment.SpendType.REVENUE;
+import static uk.gov.london.ops.permission.PermissionType.PROJ_OUTPUTS_EDIT_FUTURE;
+import static uk.gov.london.ops.permission.PermissionType.PROJ_OUTPUTS_EDIT_PAST;
+import static uk.gov.london.ops.project.claim.ClaimStatus.Claimed;
+import static uk.gov.london.ops.project.claim.ClaimType.ADVANCE;
+import static uk.gov.london.ops.project.claim.ClaimType.QUARTER;
+import static uk.gov.london.ops.project.claim.Claimable.CLAIM_STATUS_OVER_PAID;
+import static uk.gov.london.ops.project.claim.Claimable.CLAIM_STATUS_PARTLY_PAID;
+import static uk.gov.london.ops.project.outputs.OutputTableEntry.Source.PCS;
 
 @Service
 @Transactional
@@ -92,9 +76,6 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
 
     @Autowired
     OutputConfigurationService outputConfigurationService;
-
-    @Autowired
-    UserService userService;
 
     @Autowired
     PermissionService permissionService;
@@ -121,6 +102,7 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
         outputsBlock.setAssumptions(assumptions);
 
         setPopulatedYears(outputsBlock);
+        setStartAndEndYear(outputsBlock);
 
         outputsBlock.setProjectBudgetExceeded(checkOutputsBlockBudgetExceeded(project, outputsBlock.getId(), true));
         outputsBlock.setForecastsExceedingProjectBudget(checkOutputsBlockBudgetExceeded(project, outputsBlock.getId(), false));
@@ -137,9 +119,7 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
 
     void enrichOutputsBlockForYear(Project project, OutputsBlock outputsBlock, OutputsCostsBlock costsBlock,
             Integer financialYear) {
-        if (outputsBlock.getTableData() == null || outputsBlock.getTableData().isEmpty()) {
-            loadOutputsBlockTableData(outputsBlock, financialYear);
-        }
+        loadOutputsBlockTableData(outputsBlock, financialYear);
 
         List<OutputTableEntry> tableDataOrdered = outputsBlock.getTableData().stream()
                 .sorted((Comparator.comparingInt(o -> o.getMonth() <= 3 ? o.getMonth() + 12 : o.getMonth())))
@@ -225,14 +205,31 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
     }
 
     private void loadOutputsBlockTableData(OutputsBlock outputsBlock, Integer financialYear) {
+        if (outputsBlock.getTableData() == null) {
+            outputsBlock.setTableData(new HashSet<>());
+        } else {
+            outputsBlock.getTableData().removeIf(e -> e.getYear().equals(financialYear));
+        }
+
         Set<OutputTableEntry> tableData = outputTableEntryRepository
                 .findAllByBlockIdAndFinancialYear(outputsBlock.getId(), financialYear);
-        outputsBlock.setTableData(tableData);
+        outputsBlock.getTableData().addAll(tableData);
     }
 
     private void setPopulatedYears(OutputsBlock outputsBlock) {
         for (Integer yearMonth : outputTableEntryRepository.findPopulatedYearsForBlock(outputsBlock.getId())) {
             outputsBlock.getPopulatedYears().add(financialCalendar.financialFromYearMonth(yearMonth));
+        }
+    }
+
+    public void setStartAndEndYear(OutputsBlock outputsBlock) {
+        Programme programme = outputsBlock.getProject().getProgramme();
+        if (programme.isYearlyDataValid()) {
+            outputsBlock.setStartYear(programme.getStartYear());
+            outputsBlock.setEndYear(programme.getEndYear());
+        } else {
+            outputsBlock.setStartYear(1998);
+            outputsBlock.setEndYear(financialCalendar.currentYear() + 20);
         }
     }
 
@@ -297,11 +294,11 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
         }
 
         if (firstClaimableOutputEntry != null) {
-            Integer fYearStart = firstClaimableOutputEntry.getMonth() < 4 ? firstClaimableOutputEntry.getYear() - 1
+            Integer financialYearStart = firstClaimableOutputEntry.getMonth() < 4 ? firstClaimableOutputEntry.getYear() - 1
                     : firstClaimableOutputEntry.getYear();
             Integer quarter = GlaUtils.getCurrentQuarter(firstClaimableOutputEntry.getMonth());
-            if (OutputsQuarter.isQuarterInThePast(fYearStart, quarter)) {
-                return new OutputsQuarter(fYearStart, quarter, true);
+            if (OutputsQuarter.isQuarterInThePast(financialYearStart, quarter)) {
+                return new OutputsQuarter(financialYearStart, quarter, true);
             }
         }
 
@@ -716,9 +713,7 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
     }
 
     public Set<OutputTableEntry> getOutputsForBaseline(Integer id, Integer blockId) {
-        Set<OutputTableEntry> tableData = outputTableEntryRepository.findAllBaselineData(blockId);
-        return tableData;
-
+        return outputTableEntryRepository.findAllBaselineData(blockId);
     }
 
     public Set<OutputCategoryAssumption> getOutputAssumptions(Integer blockId, Integer year) {
@@ -915,7 +910,7 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
             missingClaim.setAmount(BigDecimal.ZERO);
             missingClaim.setBlockId(block.getId());
             missingClaim.setClaimedOn(environment.now());
-            missingClaim.setClaimedBy(userService.currentUsername());
+            missingClaim.setClaimedBy(currentUsername());
             block.getOutputsClaims().add(missingClaim);
             year = quarter == 4 ? year + 1 : year;
             quarter = quarter == 4 ? 1 : quarter + 1;
@@ -931,7 +926,7 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
                 ProgrammeTemplate.WbsCodeType.Capital.equals(project.getProgrammeTemplate().getDefaultWbsCodeType()) ? CAPITAL
                         : REVENUE,
                 "Outputs",
-                String.format("Advance Payment"),
+                "Advance Payment",
                 grant.negate(),
                 environment.now().getYear(),
                 environment.now().getMonthValue(),
@@ -988,7 +983,7 @@ public class ProjectOutputsService extends BaseProjectService implements Enrichm
         if (first.isPresent()) {
             OutputsBlock outputsBlock = (OutputsBlock) first.get();
             OutputsCostsBlock costsBlock = (OutputsCostsBlock) project.getSingleLatestBlockOfType(ProjectBlockType.OutputsCosts);
-
+            setStartAndEndYear(outputsBlock);
             setPopulatedYears(outputsBlock);
 
             for (Integer year : outputsBlock.getPopulatedYears().stream().sorted().collect(Collectors.toList())) {

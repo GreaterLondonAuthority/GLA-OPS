@@ -1,0 +1,24 @@
+<gla-change-report-static-text *ngIf="label" [text]="label" [data]="sideController" class="next-to-tables"></gla-change-report-static-text>
+<div class="report-tables">
+  <div *ngFor="let row of rows" class="aligned-tables comparable-table-row">
+    <gla-change-report-table-separator [hasRightValues]="hasRightValues || showTableSeparators"></gla-change-report-table-separator>
+    <gla-change-report-table-row [heading]="heading"
+                             [row]="row"
+                             [fields]="fields"
+                             [changes]="changes"
+                             [ngClass]="{'with-no-element-msg': showNoElementMessage}">
+    </gla-change-report-table-row>
+    <div *ngFor="let r of row.subrows" style="position: relative">
+      <gla-change-report-table-row
+        [row]="r"
+        class="child-row"
+        [ngClass]="{'with-no-element-msg': showNoElementMessage}"
+        [fields]="row.subrowFields"
+        [changes]="changes">
+      </gla-change-report-table-row>
+      <div *ngIf="showNoElementMessage && !r.right" class="no-element changed-value" style="margin-top: 10px">Element is not present in this block version <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></div>
+    </div>
+    <div *ngIf="showNoElementMessage && !row.right" class="no-element changed-value">Element is not present in this block version <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></div>
+  </div>
+  <gla-change-report-table-separator [hasRightValues]="hasRightValues || showTableSeparators"></gla-change-report-table-separator>
+</div>

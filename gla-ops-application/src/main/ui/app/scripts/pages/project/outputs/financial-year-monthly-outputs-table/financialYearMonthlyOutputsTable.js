@@ -37,6 +37,14 @@ class FinancialYearMonthlyOutputsTable {
     })
   }
 
+  isParentRowNeeded(categoryRow) {
+    // Parent not needed for same category/subcategory or subcategory = 'N/A'
+    let same = categoryRow[0].config.category === categoryRow[0].config.subcategory;
+    let isNaSubcategory = categoryRow[0].config.subcategory === 'N/A'
+    let isParentRowNeeded = !same || isNaSubcategory || this.showAssumptions;
+    return isParentRowNeeded;
+  }
+
   getCategory(categoryRow) {
     return categoryRow[0].config.category;
   }

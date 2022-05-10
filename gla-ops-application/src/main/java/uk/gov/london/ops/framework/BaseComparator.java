@@ -12,14 +12,11 @@ public class BaseComparator {
     protected int compare(Comparable c1, Comparable c2) {
         if (c1 != null && c2 != null) {
             return c1.compareTo(c2);
-        }
-        else if (c1 != null) {
+        } else if (c1 != null) {
             return -1;
-        }
-        else if (c2 != null) {
+        } else if (c2 != null) {
             return 1;
-        }
-        else { // both null
+        } else { // both null
             return 0;
         }
     }

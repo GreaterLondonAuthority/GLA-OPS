@@ -69,7 +69,7 @@ describe('Page: questions: QuestionFileUpload', () => {
       $scope.readOnly = true;
       $scope.question.fileAttachments = [{
         contentType: 'image/png',
-        creatorName: 'test.admin@gla.com',
+        creatorName: 'test.admin',
         createdOn: '2017-08-09T12:33:28.157+01:00',
         fileName: 'Screen Shot 2017-04-21 at 12.16.50.png',
         id: 10001,
@@ -78,7 +78,7 @@ describe('Page: questions: QuestionFileUpload', () => {
       $scope.$digest();
       expect(element.text()).not.toContain('No files added.')
       expect(element.text()).not.toContain('DELETE')
-      expect(element.text()).toContain('Screen Shot 2017-04-21 at 12.16.50.png   Aug 9, 2017 test.admin@gla.com')
+      expect(element.text()).toContain('Screen Shot 2017-04-21 at 12.16.50.png   Aug 9, 2017 test.admin')
     });
 
   });
@@ -110,14 +110,14 @@ describe('Page: questions: QuestionFileUpload', () => {
     it('should block adding documents based on question config', () => {
       $scope.question.fileAttachments = [{
         contentType: 'image/png',
-        createdBy: 'test.admin@gla.com',
+        createdBy: 'test.admin',
         createdOn: '2017-08-09T12:33:28.157+01:00',
         fileName: 'document 1',
         id: 10001,
         organisationId: 9999
       },{
         contentType: 'image/png',
-        createdBy: 'test.admin@gla.com',
+        createdBy: 'test.admin',
         createdOn: '2017-08-09T12:33:28.157+01:00',
         fileName: 'document 2',
         id: 10002,
@@ -138,7 +138,7 @@ describe('Page: questions: QuestionFileUpload', () => {
     it('should block adding documents based on staged and binded count total', () => {
       $scope.question.fileAttachments = [{
         contentType: 'image/png',
-        createdBy: 'test.admin@gla.com',
+        createdBy: 'test.admin',
         createdOn: '2017-08-09T12:33:28.157+01:00',
         fileName: 'document 1',
         id: 10001,
@@ -197,7 +197,7 @@ describe('Page: questions: QuestionFileUpload', () => {
     it('removeAttachment', () => {
         let file =  {
           contentType: 'image/png',
-          createdBy: 'test.admin@gla.com',
+          createdBy: 'test.admin',
           createdOn: '2017-08-09T12:33:28.157+01:00',
           fileName: 'document 1',
           id: 10001,

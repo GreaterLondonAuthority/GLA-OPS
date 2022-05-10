@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import uk.gov.london.common.GlaUtils;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.audit.implementation.AuditRepository;
 import uk.gov.london.ops.framework.EntityType;
 

@@ -14,6 +14,7 @@ class ManageProjectRiskCtrl extends ManageRiskAndIssueCtrl{
   }
 
   $onInit(){
+    this.columnCount = 6 + ((this.projectMarkedCorporate?1:0) + (this.risksBlockConfig.showResidualRiskRatings?1:0))
     this.blockSessionStorage = this.blockSessionStorage || {};
     this.blockSessionStorage.manageProjectRisksTablesState = this.blockSessionStorage.manageProjectRisksTablesState || [];
   }
@@ -46,13 +47,15 @@ angular.module('GLA')
       deleteMitigation: '&',
       blockSessionStorage: '<',
       editRisk: '&',
+      editAction: '&',
       deleteRisk: '&',
       closeRisk: '&',
       readOnly: '<',
       disableHideClosedFilter: '<',
       header: '<',
       projectMarkedCorporate: '<',
-      subheader: '<'
+      subheader: '<',
+      risksBlockConfig: '<'
     },
     templateUrl: 'scripts/pages/project/risks/manage-project-risks/manageProjectRisk.html',
     controller: ManageProjectRiskCtrl

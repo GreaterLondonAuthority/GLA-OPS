@@ -1,0 +1,46 @@
+<div class="request-organisation-access-modal">
+
+    <div class="modal-header text-center">
+      <button aria-label="Close" class="close" data-dismiss="modal" (click)="activeModal.dismiss('cancel')" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h1>Send a request to another organisation</h1>
+    </div>
+  
+    <form class="modal-body" name="modalForm">
+      <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+          <div class="form-group has-feedback">
+            <input id="orgcode" type="text" name="orgcode" aria-label="Organisation Code" class="form-control" ngMinlength="3" (input)="lookupOrgCode()"
+                   autocomplete="off" [(ngModel)]="orgCode" placeholder="GLA provider number" required/>
+            <span *ngIf="orgName" class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+            <div class="error-wrapper" role="alert">
+              <span class="error" *ngIf="!(!!orgCode && orgCode.length > 2)">Invalid GLA Provider Number</span>
+              <span class="error" *ngIf="orgCode && orgCode.length > 2 && !orgName">Organisation number not recognised</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-xs-6 col-xs-offset-3">
+          <div *ngIf="!orgName" class="form-group">
+            <input type="text" class="form-control" disabled />
+          </div>
+          <div *ngIf="orgName" class="organisation-name">
+            {{orgName}}
+          </div>
+        </div>
+      </div>
+    </form>
+  
+    <div class="modal-footer">
+      <button class="btn btn-default btn-primary btn-center" type="button" *ngIf="!orgName" (click)="closeModal('cancel')"
+              ng-disabled="modalForm.$pristine || modalForm.$invalid">CANCEL</button>
+  
+      <button class="btn btn-default btn-primary btn-center" type="button" *ngIf="orgName" (click)="closeModal(orgCode)"
+              ng-disabled="modalForm.$pristine || modalForm.$invalid">SEND REQUEST</button>
+    </div>
+  
+  </div>
+  

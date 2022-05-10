@@ -1,4 +1,9 @@
 <div class="row no-gutter">
-  <div class="col-xs-6 field-label">{{$ctrl.label}}</div>
-  <div class="col-xs-6 field-value" ng-transclude default-value="$ctrl.mpDefault"></div>
+  <div class="col-xs-6 field-label">{{$ctrl.label}}
+    <span ng-if="$ctrl.tooltip">
+        <gla-info-tooltip class="mtop5" id="{{$ctrl.tooltipId}}" [help-text]="$ctrl.tooltipText"></gla-info-tooltip>
+    </span>
+  </div>
+  <div class="col-xs-6 field-value" ng-transclude default-value="$ctrl.mpDefault">
+  </div>
 </div>

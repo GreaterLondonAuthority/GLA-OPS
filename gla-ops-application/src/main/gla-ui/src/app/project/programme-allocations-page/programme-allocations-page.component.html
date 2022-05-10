@@ -1,0 +1,156 @@
+<div class="programme-allocations-page">
+        <gla-page-header header="Programme Allocations" [hideBackBtn]="true">
+          <ph-right>
+            <button *ngIf="canCreate" class="btn btn-primary btn-md" id="create-new-btn" (click)="createNewProject()">
+              CREATE NEW<span class="glyphicon glyphicon-plus"></span>
+            </button>
+          </ph-right>
+        </gla-page-header>
+      
+        <gla-well class="row programmes-list-actions mbottom10 search-container">
+          <div class="col-md-5 search-column">
+            <gla-search-field [options]="searchOptions"
+                              [(selectedOption)]="selectedSearchOption"
+                              [(searchText)]="searchTextModel"
+                              (onSelect)="select(selectedSearchOption)"
+                              (onSearch)="search()"
+                              (onClear)="clearSearch()"></gla-search-field>
+          </div>
+      
+          <div class="col-xs-12 col-sm-3 col-md-2 programme-allocation-status search-column">
+            <div class="status-box pull-left">
+              <label class="text-align-left" for="programme-allocation-status-filter">Status</label>
+              <gla-checkbox-filter id="programme-allocation-status-filter"
+                                   [filterDropdownItems]="groupedFilterDropdownItems"
+                                   (onChange)="getProgrammeAllocations(true)"
+                                   (onCollapseExpandToggle)="saveProjectStatusesToCache()"
+                                   [grouped]="true"></gla-checkbox-filter>
+            </div>
+          </div>
+      
+          <div class="col-xs-12 col-sm-5 col-md-2 programme-allocation-status search-column">
+            <div class="pull-left">
+              <label class="text-align-left" for="programmes-filter">Programmes</label>
+              <gla-checkbox-filter id="programmes-filter"
+                                   [filterDropdownItems]="programmesDropdown"
+                                   (onChange)="onProgrammeSelected()"
+                                   [isDisabled]="selectedSearchOption.name === byProgrammeOption.name">
+              </gla-checkbox-filter>
+            </div>
+          </div>
+      
+          <div *ngIf="isAnyFilterApplied()" class="clear-filter-and-search-box pull-right col-md-12 text-align-right">
+            <button
+              class="action-buttons action-buttons-reset"
+              (click)="clearFiltersAndSearch()"><span class="glyphicon glyphicon-remove"></span>Reset all
+            </button>
+          </div>
+      
+        </gla-well>
+      
+        <div class="row" *ngIf="programmeAllocations.length == 0" id="no-results">
+          <hr/>
+          <span *ngIf="searchText">
+              0 results match your search {{selectedSearchOption.description}} {{searchText}}. Check your search query and filters and try again.
+              For Project ID and Organisation Code searches, ensure you have entered the full number as a partial number will not return any search results
+            </span>
+          <span *ngIf="!searchText && isAnyFilterApplied()">
+               0 programme allocations match your filter selections. Check your filter criteria and try again.
+            </span>
+      
+      
+          <span *ngIf="!isAnyFilterApplied()">
+              There are currently no programme allocations available for you to view.
+            </span>
+        </div>
+        <div *ngIf="programmeAllocations.length > 0">
+          <div class="row">
+            <div class="no-padding">
+              <div>
+                <div *ngIf="showActions()" class="actions-panel pull-left">
+                  <span class="bolder">Project Actions:</span>
+                  <button
+                    *ngIf="canAssess"
+                    class="action-buttons"
+                    (click)="setToAssess()"
+                    [disabled]="!assessEnabled()"><span class="icon-Assess icon"></span> Set to Assess
+                  </button>
+      
+                  <button
+                    *ngIf="canTransfer"
+                    class="action-buttons"
+                    (click)="transfer()"
+                    [disabled]="!transferEnabled()"><span class="glyphicon glyphicon-transfer"></span> Transfer
+                  </button>
+                </div>
+      
+                <gla-pagination class="pagination-top pull-right"
+                                [(currentPage)]="currentPage"
+                                [(itemsPerPage)]="itemsPerPage"
+                                [totalItems]="totalItems"
+                                [numberOfElements]="itemsPerPage"
+                                (onChange)="getProgrammeAllocations()"></gla-pagination>
+              </div>
+            </div>
+      
+          </div>
+      
+          <div class="row">
+            <div class="col-xs-12 programme-allocation-table table-responsive no-padding">
+              <table id="programme-allocations-table" class="table table-hover table-bordered table-striped table-selectable-row">
+                <thead class="thead-inverse uppercase">
+                <tr>
+                  <th *ngIf="canAssess">
+                    <div class="checkbox checkbox-white-focus" [ngClass]="{checked: allSelected}">
+                      <input type="checkbox"
+                             aria-label="Select all programme allocations"
+                             name="selectInput"
+                             [(ngModel)]="allSelected"
+                             (change)="onAllCheckboxChange()">
+                    </div>
+                  </th>
+                  <th>Programme</th>
+                  <th>Org ID</th>
+                  <th>Org Name</th>
+                  <th class="total-header">Total £</th>
+                  <th>Status</th>
+                  <th>Modified</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr tabindex="0"
+                    (keydown.enter)="goToProjectOverview(programmeAllocation.id)"
+                    (click)="goToProjectOverview(programmeAllocation.id)"
+                    *ngFor="let programmeAllocation of programmeAllocations"
+                    class="programme-allocation-row">
+                  <td *ngIf="canAssess">
+                    <div class="checkbox" [ngClass]="{checked: programmeAllocation.isSelected}">
+                      <input type="checkbox"
+                             aria-label="Select programme allocation"
+                             name="selectInput"
+                             [(ngModel)]="programmeAllocation.isSelected"
+                             (click)="$event.stopPropagation()">
+                    </div>
+      
+                  </td>
+                  <td>{{programmeAllocation.programmeName}}</td>
+                  <td>{{programmeAllocation.orgId}}</td>
+                  <td>{{programmeAllocation.orgName}}</td>
+                  <td class="total-cell">{{programmeAllocation.allocationTotal | number : '1.2-2'}}</td>
+                  <td class="programme-allocation-status-column">{{programmeAllocation.fullStatus}}</td>
+                  <td>{{ programmeAllocation.lastModified | date: 'MMM d, yyyy HH:mm'}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+      
+          <gla-pagination class="pagination-bottom pull-right"
+                          [(currentPage)]="currentPage"
+                          [(itemsPerPage)]="itemsPerPage"
+                          [totalItems]="totalItems"
+                          [numberOfElements]="itemsPerPage"
+                          (onChange)="getProgrammeAllocations()"></gla-pagination>
+        </div>
+      </div>
+      

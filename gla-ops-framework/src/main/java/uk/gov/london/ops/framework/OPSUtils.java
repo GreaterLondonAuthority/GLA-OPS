@@ -50,4 +50,19 @@ public class OPSUtils {
         return NumberFormat.getCurrencyInstance(Locale.UK).format(bigDecimal.doubleValue());
     }
 
+    /**
+     * Percentage is a number or ratio expressed as a fraction of 100.
+     * It's denoted using the percent sign, “%”.
+     * Formula of percentage = (dividend/divisor)*100
+     *
+     * @param dividend the number to be divided
+     * @param divisor the number which divides another number
+     * @param scale scale of the BigDecimal value to be returned
+     * @param rounding the rounding mode to apply
+     * @return BigDecimal the percentage value (%)
+     */
+    public static BigDecimal calculatePercentage(BigDecimal dividend, BigDecimal divisor, int scale, int rounding) {
+        return dividend.divide(divisor, scale, rounding).multiply(new BigDecimal(100));
+    }
+
 }

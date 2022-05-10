@@ -22,18 +22,19 @@ function initLocators  (ptor) {
     var parent = $(parentElement || document);
     var label = parent.find("label:contains('" + labelText + "')");
 
+
     if(!fieldId){
       label = parent.find('label').filter(function(){ return (($(this).text() ||'').replace(/\s\s+/g, ' ') || '').indexOf(labelText) > -1});
     }
 
     var fieldId = label.attr('for');
-
+    
     var el = parent.find('#' + fieldId);
     if(!el || !el.length){
       el = parent.find('[aria-label*="' + labelText + '"]');
     }
 
-    if(el.is('date-input')){
+    if(el.is('gla-date-input') || el.is('date-input')){
       el = el.find('input')
     }
 

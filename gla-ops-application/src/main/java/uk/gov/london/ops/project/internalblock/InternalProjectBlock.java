@@ -10,8 +10,13 @@ package uk.gov.london.ops.project.internalblock;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
-import java.time.OffsetDateTime;
+import uk.gov.london.ops.framework.OpsEntity;
+import uk.gov.london.ops.framework.jpa.Join;
+import uk.gov.london.ops.framework.jpa.JoinData;
+import uk.gov.london.ops.project.Project;
+import uk.gov.london.ops.project.risk.InternalRiskBlock;
+import uk.gov.london.ops.project.template.domain.InternalTemplateBlock;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -26,12 +31,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
-import uk.gov.london.ops.domain.OpsEntity;
-import uk.gov.london.ops.framework.jpa.Join;
-import uk.gov.london.ops.framework.jpa.JoinData;
-import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.risk.InternalRiskBlock;
-import uk.gov.london.ops.project.template.domain.InternalTemplateBlock;
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 /**
  * Abstract base class for different internal project block types.
@@ -43,7 +44,8 @@ import uk.gov.london.ops.project.template.domain.InternalTemplateBlock;
         property = "json_type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = InternalRiskBlock.class),
-        @JsonSubTypes.Type(value = InternalQuestionsBlock.class)
+        @JsonSubTypes.Type(value = InternalQuestionsBlock.class),
+        @JsonSubTypes.Type(value = InternalProjectAdminBlock.class)
 })
 @DiscriminatorValue("BASE")
 public abstract class InternalProjectBlock implements Serializable, OpsEntity<Integer>, Comparable<InternalProjectBlock> {
@@ -69,7 +71,6 @@ public abstract class InternalProjectBlock implements Serializable, OpsEntity<In
     @Column(name = "info_message")
     private String infoMessage;
 
-
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "project_id")
@@ -86,6 +87,9 @@ public abstract class InternalProjectBlock implements Serializable, OpsEntity<In
 
     @Column(name = "modified_on")
     private OffsetDateTime modifiedOn;
+
+    @Column(name = "detached_block_project_id")
+    protected Integer detachedProjectId;
 
     @Override
     public Integer getId() {
@@ -176,6 +180,14 @@ public abstract class InternalProjectBlock implements Serializable, OpsEntity<In
         this.modifiedOn = modifiedOn;
     }
 
+    public Integer getDetachedProjectId() {
+        return detachedProjectId;
+    }
+
+    public void setDetachedProjectId(Integer detachedProjectId) {
+        this.detachedProjectId = detachedProjectId;
+    }
+
     /**
      * Initialise the new project block using the template block configuration.
      */
@@ -198,6 +210,7 @@ public abstract class InternalProjectBlock implements Serializable, OpsEntity<In
         clone.setDisplayOrder(this.getDisplayOrder());
         clone.setBlockDisplayName(this.getBlockDisplayName());
         clone.setInfoMessage(this.getInfoMessage());
+        clone.setDetachedProjectId(this.getDetachedProjectId());
         return clone;
     }
 

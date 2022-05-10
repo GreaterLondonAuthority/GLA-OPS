@@ -7,7 +7,11 @@
  */
 package uk.gov.london.ops.project.block;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
 import uk.gov.london.common.error.ApiErrorItem;
 import uk.gov.london.ops.OpsEvent;
@@ -22,8 +26,9 @@ import uk.gov.london.ops.project.deliverypartner.DeliveryPartnersBlock;
 import uk.gov.london.ops.project.funding.FundingBlock;
 import uk.gov.london.ops.project.grant.BaseGrantBlock;
 import uk.gov.london.ops.project.grant.GrantSourceBlock;
-import uk.gov.london.ops.project.implementation.spe.SimpleProjectExportConfig;
+import uk.gov.london.ops.project.grant.AffordableHomesBlock;
 import uk.gov.london.ops.project.label.Label;
+import uk.gov.london.ops.project.milestone.Milestone;
 import uk.gov.london.ops.project.milestone.ProjectMilestonesBlock;
 import uk.gov.london.ops.project.outputs.OutputsBlock;
 import uk.gov.london.ops.project.outputs.OutputsCostsBlock;
@@ -40,13 +45,42 @@ import uk.gov.london.ops.project.state.StateTransition;
 import uk.gov.london.ops.project.template.domain.TemplateBlock;
 import uk.gov.london.ops.project.unit.UnitDetailsBlock;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.LAST_APPROVED;
-import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.UNAPPROVED;
+import static uk.gov.london.ops.project.block.ProjectBlockStatus.LAST_APPROVED;
+import static uk.gov.london.ops.project.block.ProjectBlockStatus.UNAPPROVED;
 
 /**
  * Abstract base class for different project block types.
@@ -77,19 +111,17 @@ import static uk.gov.london.ops.project.block.NamedProjectBlock.BlockStatus.UNAP
         @JsonSubTypes.Type(value = ProjectObjectivesBlock.class),
         @JsonSubTypes.Type(value = OtherFundingBlock.class),
         @JsonSubTypes.Type(value = UserDefinedOutputBlock.class),
-        @JsonSubTypes.Type(value = ProjectElementsBlock.class)
+        @JsonSubTypes.Type(value = ProjectElementsBlock.class),
+        @JsonSubTypes.Type(value = AffordableHomesBlock.class)
 })
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @DiscriminatorValue("BASE")
 public abstract class NamedProjectBlock implements Serializable, Comparable, ComparableItem {
 
-    public enum BlockStatus {
-        UNAPPROVED, APPROVED, LAST_APPROVED
-    }
-
-    public enum Action {
-        APPROVE, DELETE, EDIT
-    }
+    public static final Set<Integer> START_ON_SITE_EXTERNAL_IDS = Stream.of(Milestone.START_ON_SITE_ID)
+            .collect(Collectors.toSet());
+    public static final Set<Integer> COMPLETION_MILESTONE_EXTERNAL_IDS = Stream.of(Milestone.COMPLETION_ID)
+            .collect(Collectors.toSet());
 
     @Id
     @JoinData(joinType = Join.JoinType.Complex, sourceTable = "project_block", comment = "This id is shared amongst all "
@@ -113,7 +145,7 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
 
     @Column(name = "block_status")
     @Enumerated(EnumType.STRING)
-    protected BlockStatus blockStatus = BlockStatus.UNAPPROVED;
+    protected ProjectBlockStatus blockStatus = ProjectBlockStatus.UNAPPROVED;
 
     @Column(name = "approved_on_status")
     protected String approvedOnStatus;
@@ -158,6 +190,9 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
     @Column(name = "has_updates_persisted")
     private Boolean hasUpdatesPersisted;
 
+    @Column(name = "has_been_payments_only_cycle")
+    private boolean hasBeenThroughPaymentsOnlyCycle;
+
     @Column(name = "info_message")
     private String infoMessage;
 
@@ -181,7 +216,7 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
     protected Map<String, List<ApiErrorItem>> errors;
 
     @Transient
-    protected Collection<Action> allowedActions;
+    protected Collection<ProjectBlockAction> allowedActions;
 
     @Transient
     private String modifiedByName;
@@ -347,11 +382,11 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
         return 0;
     }
 
-    public BlockStatus getBlockStatus() {
+    public ProjectBlockStatus getBlockStatus() {
         return blockStatus;
     }
 
-    public void setBlockStatus(BlockStatus blockStatus) {
+    public void setBlockStatus(ProjectBlockStatus blockStatus) {
         this.blockStatus = blockStatus;
     }
 
@@ -388,14 +423,14 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
     }
 
     public boolean isEditable() {
-        return allowedActions != null && allowedActions.contains(Action.EDIT);
+        return allowedActions != null && allowedActions.contains(ProjectBlockAction.EDIT);
     }
 
-    public Collection<Action> getAllowedActions() {
+    public Collection<ProjectBlockAction> getAllowedActions() {
         return allowedActions;
     }
 
-    public void setAllowedActions(Collection<Action> allowedActions) {
+    public void setAllowedActions(Collection<ProjectBlockAction> allowedActions) {
         this.allowedActions = allowedActions;
     }
 
@@ -530,11 +565,6 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
         return sources;
     }
 
-    @JsonIgnore
-    public Map<String, Object> simpleDataExtract(SimpleProjectExportConfig simpleProjectExportConfig) {
-        return new HashMap<>();
-    }
-
     /**
      * Makes a copy of the block.
      *
@@ -565,7 +595,7 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
         target.setBlockType(getBlockType());
         target.setDisplayOrder(getDisplayOrder());
         target.setBlockDisplayName(getBlockDisplayName());
-        target.setBlockStatus(NamedProjectBlock.BlockStatus.UNAPPROVED);
+        target.setBlockStatus(ProjectBlockStatus.UNAPPROVED);
         target.setBlockAppearsOnStatus(getBlockAppearsOnStatus());
         target.setVersionNumber(getVersionNumber() + 1);
         target.setApprovalTime(null);
@@ -657,7 +687,11 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
         this.performPostApprovalActions(username, approvalTime);
     }
 
-    protected void performPostApprovalActions(String username, OffsetDateTime approvalTime) {
+    public void performPostApprovalActions(String username, OffsetDateTime approvalTime) {
+
+    }
+
+    public void reportSuccessfulPayments(String paymentReason, boolean isPaymentsOnlyApproval) {
 
     }
 
@@ -666,7 +700,7 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
     }
 
     public boolean editRequiresCloning(OffsetDateTime now) {
-        if (blockStatus.equals(NamedProjectBlock.BlockStatus.UNAPPROVED)) {
+        if (blockStatus.equals(ProjectBlockStatus.UNAPPROVED)) {
             return !project.getStateModel().isApprovalRequired()
                     && (lastModified != null && (!now.getMonth().equals(lastModified.getMonth())
                     || now.getYear() != lastModified.getYear()));
@@ -808,5 +842,17 @@ public abstract class NamedProjectBlock implements Serializable, Comparable, Com
      */
     public boolean hasMonetaryValueChanged(NamedProjectBlock other) {
         return false;
+    }
+
+    public boolean isPaymentsOnlyApprovalPossible() {
+        return false;
+    }
+
+    public boolean isHasBeenThroughPaymentsOnlyCycle() {
+        return hasBeenThroughPaymentsOnlyCycle;
+    }
+
+    public void setHasBeenThroughPaymentsOnlyCycle(boolean hasBeenThroughPaymentsOnlyCycle) {
+        this.hasBeenThroughPaymentsOnlyCycle = hasBeenThroughPaymentsOnlyCycle;
     }
 }

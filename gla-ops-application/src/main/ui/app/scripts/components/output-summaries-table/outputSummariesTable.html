@@ -35,7 +35,7 @@
         <span class="text-capitalize">{{$ctrl.unitConfig[r.valueType].label}}</span>
       </td>
       <td>{{r.category}}</td>
-      <td style="color: green" ng-if="$ctrl.showBaseline">
+      <td style="color: #1D6F42" ng-if="$ctrl.showBaseline">
         <i ng-if="r.allSubcategoriesBaselined" class="glyphicon glyphicon-ok"/>
       </td>
       <td class="number">{{$ctrl.formatNumber(r.forecast, r.valueType)}}</td>
@@ -46,10 +46,10 @@
     </tr>
 
 
-    <tr ng-if="!r.collapsed" class="sub-heading">
+    <tr ng-if="!r.collapsed" class="sub-heading" >
       <td ng-if="$ctrl.displayOutputType"></td>
       <td>YEAR</td>
-      <td>SUB CATEGORY</td>
+      <td> <span ng-if="$ctrl.showSubCategory(r.subcategories)">SUB CATEGORY</span> </td>
       <td></td>
       <td></td>
       <td></td>
@@ -62,8 +62,8 @@
     <tr ng-repeat-end ng-repeat="s in r.subcategories | orderBy:['financialYear', 'subcategory']" ng-if="!r.collapsed" class="sub-row">
       <td ng-if="$ctrl.displayOutputType"></td>
       <td>{{s.financialYear}}/{{s.financialYear + 1 | limitTo:2:2}}</td>
-      <td>{{s.subcategory}}</td>
-      <td style="color: green" ng-if="$ctrl.showBaseline">
+      <td> <span ng-if="$ctrl.showSubCategory(r.subcategories)">{{s.subcategory}}</span> </td>
+      <td style="color: #1D6F42" ng-if="$ctrl.showBaseline">
         <i ng-if="s.baseline >= 0" class="glyphicon glyphicon-ok"/>
       </td>
       <td class="number">{{$ctrl.formatNumber(s.forecast, s.valueType)}}</td>

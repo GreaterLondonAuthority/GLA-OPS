@@ -86,7 +86,7 @@ describe('Component: Payment Summary', () => {
         // 'categoryId': null,
         // 'ledgerSource': null,
         // 'createdOn': '2017-06-23T09:30:19.795+01:00',
-        // 'createdBy': 'testdatainitialiser@gla.org',
+        // 'createdBy': 'testdatainitialiser',
         // 'modifiedOn': null,
         // 'modifiedBy': null,
         // 'subCategory': 'NoSapId',

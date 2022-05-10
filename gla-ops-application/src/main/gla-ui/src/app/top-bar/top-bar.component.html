@@ -1,0 +1,6 @@
+<div id="top-menu-container" [ngClass]="{'mobile-menu-expanded': mobileMenuExpanded, 'fixed-to-top': stickyHeader}">
+  <gla-cookie-warning></gla-cookie-warning>
+  <gla-banner-message *ngIf="shouldShowBanner()" class="system-outage-banner" [message]="systemOutageMessage" [canClose]="canDismissBanner"></gla-banner-message>
+  <gla-top-menu *ngIf="user.loggedOn"
+                [(mobileMenuExpanded)]="mobileMenuExpanded"></gla-top-menu>
+</div>

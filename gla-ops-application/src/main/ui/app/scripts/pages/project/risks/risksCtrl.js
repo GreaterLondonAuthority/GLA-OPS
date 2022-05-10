@@ -9,26 +9,25 @@
 import ProjectBlockCtrl from '../ProjectBlockCtrl';
 
 class RisksCtrl extends ProjectBlockCtrl {
-  constructor($state, ProjectService, ProjectBlockService, riskCategories, project, $injector, $timeout, RisksService, RiskAndIssueModal, AddRiskActionModal, FeatureToggleService){
+  constructor($state, ProjectService, ProjectBlockService, riskCategories, project, template, $injector, $timeout, RisksService, RiskAndIssueModal, AddRiskActionModal){
     super($injector);
 
     this.$state = $state;
     this.ProjectService = ProjectService;
     this.RisksService = RisksService;
+    this.template = template;
     this.$timeout = $timeout;
     this.riskCategories = riskCategories;
     this.RiskAndIssueModal = RiskAndIssueModal;
     this.AddRiskActionModal = AddRiskActionModal;
-    this.FeatureToggleService = FeatureToggleService;
   }
   $onInit() {
     super.$onInit();
     this.blockData = this.projectBlock;
     this.projectMarkedCorporate = this.project.markedForCorporate;
     this.overallRatings = this.RisksService.getOverallRatings();
-    this.FeatureToggleService.isFeatureEnabled('ProjectRiskAndIssues').subscribe(resp => {
-      this.showRisksAndIssues = resp;
-    });
+    this.risksBlockConfig = _.find(this.template.blocksEnabled, {block: 'Risks'});
+    this.showIssues = !this.risksBlockConfig.showIssuesOnlyAfterProjectActive || this.active;
     this.refreshData();
   }
 
@@ -43,7 +42,7 @@ class RisksCtrl extends ProjectBlockCtrl {
   }
 
   createNewRisk() {
-    let modal = this.RiskAndIssueModal.show('Risk', this.riskCategories);
+    let modal = this.RiskAndIssueModal.show('Risk', this.risksBlockConfig, this.riskCategories);
     modal.result.then(resp => {
       let data = _.clone(resp);
       data.type = 'Risk';
@@ -59,7 +58,7 @@ class RisksCtrl extends ProjectBlockCtrl {
   }
 
   editRisk(risk) {
-    let modal = this.RiskAndIssueModal.show('Risk', this.riskCategories, _.clone(risk));
+    let modal = this.RiskAndIssueModal.show('Risk', this.risksBlockConfig, this.riskCategories, _.clone(risk));
     modal.result.then(resp => {
       return this.RisksService.updateNewRiskOrIssue(this.project.id, this.blockId, resp).then(()=>{
         return this.refreshData();
@@ -98,7 +97,7 @@ class RisksCtrl extends ProjectBlockCtrl {
   }
 
   createNewIssue() {
-    let modal = this.RiskAndIssueModal.show('Issue');
+    let modal = this.RiskAndIssueModal.show('Issue', this.risksBlockConfig);
     modal.result.then( resp => {
       let data = _.clone(resp);
       data.type = 'Issue';
@@ -114,7 +113,7 @@ class RisksCtrl extends ProjectBlockCtrl {
   }
 
   editIssue(issue) {
-    let modal = this.RiskAndIssueModal.show('Issue', false, _.clone(issue));
+    let modal = this.RiskAndIssueModal.show('Issue', this.risksBlockConfig, false, _.clone(issue));
     modal.result.then(resp => {
       return this.RisksService.updateNewRiskOrIssue(this.project.id, this.blockId, resp).then(()=>{
         return this.refreshData();
@@ -146,6 +145,20 @@ class RisksCtrl extends ProjectBlockCtrl {
       let data = _.clone(resp);
       self.RisksService.postNewAction(self.project.id, self.blockId, risk.id, data).then(()=>{
         self.refreshData();
+      });
+    });
+  }
+
+  editAction(riskIssue, action, type) {
+
+    let modal = this.AddRiskActionModal.show(type,  _.clone(action));
+    modal.result.then(resp => {
+      let actions = riskIssue.actions
+      let index = actions.indexOf(action)
+      index >=0 ? actions[index]=resp : null;
+      riskIssue.actions=actions;
+      return this.RisksService.updateNewRiskOrIssue(this.project.id, this.blockId, riskIssue).then(()=>{
+        return this.refreshData();
       });
     });
   }
@@ -235,7 +248,7 @@ class RisksCtrl extends ProjectBlockCtrl {
 
 }
 
-RisksCtrl.$inject = ['$state', 'ProjectService', 'ProjectBlockService', 'riskCategories', 'project', '$injector', '$timeout', 'RisksService', 'RiskAndIssueModal', 'AddRiskActionModal', 'FeatureToggleService'];
+RisksCtrl.$inject = ['$state', 'ProjectService', 'ProjectBlockService', 'riskCategories', 'project', 'template', '$injector', '$timeout', 'RisksService', 'RiskAndIssueModal', 'AddRiskActionModal'];
 
 angular.module('GLA')
   .controller('RisksCtrl', RisksCtrl);

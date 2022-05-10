@@ -1,0 +1,45 @@
+<div class="advance-payment-claim-modal">
+    <div class="modal-header text-center">
+      <button aria-label="Close" class="close" data-dismiss="modal" (click)="activeModal.dismiss('cancel')" on-enter="activeModal.dismiss()" type="button">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h1>{{modal?.title}}</h1>
+      <div>{{modal?.subtitle}}</div>
+    </div>
+    <div class="modal-body text-left">
+      <div>
+        <div class="clearfix">
+          <span class="label">{{modal?.claimableAmountTitle}}</span>
+          <span class="pull-right">{{modal?.claimableAmount | currency:'£':'symbol':'2.2-2'}}</span>
+        </div>
+      </div>
+      <div class="mtop30">
+        {{modal?.text}}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="row">
+        <div class="col-xs-12 text-center">
+  
+          <button
+            class="btn btn-default btn-primary btn-center"
+            id="claim-btn"
+            (click)="onClaim()"
+            *ngIf="!modal?.isClaimed && !modal?.readOnly"
+            type="button">{{modal?.claimBtnText}}</button>
+  
+          <button
+            class="btn btn-default btn-secondary btn-negative btn-center"
+            id="cancel-claim-btn"
+            (click)="onCancelClaim()"
+            *ngIf="modal?.isClaimed && !modal?.readOnly"
+            type="button">{{modal?.cancelBtnText}}</button>
+  
+          <div class="mtop20">
+            <a class="form-cancel dismiss-btn" href="JavaScript:void(0)" (click)="activeModal.dismiss('cancel')">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

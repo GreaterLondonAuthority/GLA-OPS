@@ -1,5 +1,14 @@
 <div class="notifications-page">
   <gla-page-header class="mbottom10" [hide-back-btn]="true">Notifications</gla-page-header>
+
+  <div class="text-right delete-button-container">
+    <button class="btn btn-primary btn-md"
+            ng-click="$ctrl.deleteNotifications()"
+            ng-disabled="!$ctrl.anyNotificationSelected()">
+      DELETE<span class="glyphicon glyphicon-trash"></span>
+    </button>
+  </div>
+
   <div class="col-xs-12 mtop15" ng-repeat="group in $ctrl.notifcationsGroups">
     <notifications-group notifications-group="group" notification-deleted="$ctrl.notificationDeleted()">
     </notifications-group>

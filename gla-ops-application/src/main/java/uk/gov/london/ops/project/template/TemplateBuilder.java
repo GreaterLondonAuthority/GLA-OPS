@@ -7,43 +7,31 @@
  */
 package uk.gov.london.ops.project.template;
 
-import static uk.gov.london.ops.refdata.TenureType.LONDON_AFFORDABLE_RENT;
-import static uk.gov.london.ops.refdata.TenureType.LONDON_LIVING_RENT;
-import static uk.gov.london.ops.refdata.TenureType.LONDON_SHARED_OWNERSHIP;
-import static uk.gov.london.ops.refdata.TenureType.OTHER_AFFORDABLE;
-import static uk.gov.london.ops.user.UserBuilder.DATA_INITIALISER_USER;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import uk.gov.london.ops.domain.Requirement;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.enums.Requirement;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.project.block.ProjectBlockType;
 import uk.gov.london.ops.project.implementation.di.TemplateDataInitialiser;
 import uk.gov.london.ops.project.implementation.repository.QuestionRepository;
 import uk.gov.london.ops.project.state.StateModel;
-import uk.gov.london.ops.project.template.domain.DetailsTemplate;
-import uk.gov.london.ops.project.template.domain.MilestoneTemplate;
-import uk.gov.london.ops.project.template.domain.MilestonesTemplateBlock;
-import uk.gov.london.ops.project.template.domain.OutputsTemplateBlock;
-import uk.gov.london.ops.project.template.domain.ProcessingRoute;
-import uk.gov.london.ops.project.template.domain.Question;
-import uk.gov.london.ops.project.template.domain.QuestionsTemplateBlock;
-import uk.gov.london.ops.project.template.domain.Template;
-import uk.gov.london.ops.project.template.domain.TemplateBlock;
-import uk.gov.london.ops.project.template.domain.TemplateQuestion;
-import uk.gov.london.ops.project.template.domain.TemplateTenureType;
+import uk.gov.london.ops.project.template.domain.*;
 import uk.gov.london.ops.refdata.OutputConfigurationGroup;
 import uk.gov.london.ops.refdata.TenureType;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static uk.gov.london.ops.refdata.TenureType.*;
+import static uk.gov.london.ops.user.UserBuilder.DATA_INITIALISER_USER;
 
 /**
  * Factory class for building Organisation and Users entities, primarily for testing.
@@ -84,27 +72,11 @@ public class TemplateBuilder {
     public static final String LEGACY_MHC_15_18_TEMPLATE = "Legacy MHC 15-18";
     public static final String MULTI_ASSESSMENT_TEMPLATE_NAME = "Minimal Multi Assessment Template";
     public static final String MOPAC_TEMPLATE_NAME = "MOPAC: London Crime Prevention Fund";
-
-
-    public static final int LONDON_AFFORDABLE_RENT_TENURE_ID = 4000;
-    public static final int LONDON_LIVING_RENT_TENURE_ID = 4001;
-    public static final int LONDON_SHARED_OWNERSHIP_TENURE_ID = 4002;
-    public static final int OTHER_AFFORDABLE_TENURE_ID = 4003;
-    public static final int AFFORDABLE_RENT_ID = 4004;
-    public static final int AFFORDABLE_HOME_OWNERSHIP_ID = 4005;
-    public static final int LEGACY_SHARED_OWNERSHIP_TENURE_ID = 4006;
-
-    public static final String SOCIAL_RENT = "Social Rent";
-    public static final String INTERMEDIATE_RENT = "Intermediate Rent";
-    public static final String SHARED_OWNERSHIP = "Shared Ownership";
-    public static final String SHARED_EQUITY = "Shared Equity";
-    public static final String AFFORDABLE_HOUSING_LEGACY = "Affordable Housing Legacy";
-    public static final String LEGACY = "Legacy";
-    public static final String PRIVATE_RENT = "Private Rent";
-    public static final String PRIVATE_SALES = "Private Sales";
+    public static final String MOVE_ON_TEMPLATE_NAME = "Move-on";
+    public static final String CONTRACT_OFFER_AND_ACCEPTANCE_TEMPLATE = "Contract Offer And Acceptance Workflow";
 
     @Autowired
-    TemplateService templateService;
+    TemplateServiceImpl templateService;
     @Autowired
     QuestionRepository questionRepository;
     @Autowired
@@ -194,8 +166,6 @@ public class TemplateBuilder {
     public DetailsTemplate createDetailsTemplate(Directorate directorate, boolean hideIrrelevantFields) {
         DetailsTemplate dt = new DetailsTemplate();
 
-        dt.setContactRequirement(Requirement.optional); // this is not used anymore?
-
         if (Directorate.Land.equals(directorate)) {
             dt.setAddressRequirement(Requirement.optional);
             dt.setBoroughRequirement(Requirement.mandatory);
@@ -203,11 +173,15 @@ public class TemplateBuilder {
             dt.setCoordsRequirement(Requirement.mandatory);
             dt.setMaincontactRequirement(Requirement.mandatory);
             dt.setMaincontactemailRequirement(Requirement.mandatory);
+            dt.setSecondaryContactRequirement(Requirement.optional);
+            dt.setSecondaryContactEmailRequirement(Requirement.optional);
             dt.setInterestRequirement(Requirement.optional);
             dt.setSiteOwnerRequirement(Requirement.mandatory);
             dt.setProjectManagerRequirement(Requirement.optional);
             dt.setSiteStatusRequirement(Requirement.mandatory);
             dt.setLegacyProjectCodeRequirement(Requirement.optional);
+            dt.setDevelopmentLiabilityOrganisationRequirement(Requirement.optional);
+            dt.setPostCompletionLiabilityOrganisationRequirement(Requirement.optional);
         } else {
             dt.setAddressRequirement(Requirement.mandatory);
             dt.setBoroughRequirement(Requirement.mandatory);
@@ -215,14 +189,16 @@ public class TemplateBuilder {
             dt.setCoordsRequirement(Requirement.mandatory);
             dt.setMaincontactRequirement(Requirement.mandatory);
             dt.setMaincontactemailRequirement(Requirement.mandatory);
+            dt.setSecondaryContactRequirement(Requirement.optional);
+            dt.setSecondaryContactEmailRequirement(Requirement.optional);
             dt.setInterestRequirement(Requirement.hidden);
             dt.setSiteOwnerRequirement(Requirement.hidden);
             dt.setProjectManagerRequirement(Requirement.hidden);
             dt.setSiteStatusRequirement(Requirement.hidden);
             dt.setLegacyProjectCodeRequirement(Requirement.hidden);
+            dt.setDevelopmentLiabilityOrganisationRequirement(Requirement.optional);
+            dt.setPostCompletionLiabilityOrganisationRequirement(Requirement.optional);
         }
-
-        dt.setImageRequirement(Requirement.optional);
 
         return dt;
     }

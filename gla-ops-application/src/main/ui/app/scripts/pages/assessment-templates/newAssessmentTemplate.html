@@ -23,14 +23,14 @@
           <select class="form-control"
                   id="managing-organisation"
                   ng-change="$ctrl.onManagingOrganisation($ctrl.managingOrganisationModel)"
-                  ng-if="$ctrl.managingOrganisations.length > 1"
+                  ng-if="$ctrl.managingOrganisations.length >= 1"
                   ng-model="$ctrl.managingOrganisationModel"
                   ng-options="managingOrganisation as managingOrganisation.name for managingOrganisation in $ctrl.managingOrganisations track by managingOrganisation.id"
                   required
                   style-placeholder="">
             <option disabled value="">Select</option>
           </select>
-          <div ng-if="$ctrl.editMode || $ctrl.managingOrganisations.length === 1">
+          <div ng-if="$ctrl.editMode || $ctrl.managingOrganisations.length === 0">
             {{$ctrl.assessmentTemplate.managingOrganisationName || '-'}}
           </div>
         </div>

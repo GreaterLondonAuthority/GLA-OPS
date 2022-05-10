@@ -1,0 +1,34 @@
+<table class="table table-hover table-bordered table-default table-with-inputs indicative-summary-table"
+       ng-class="{'edit-mode': !$ctrl.isReadonly}">
+  <thead class="thead-inverse uppercase">
+  <tr>
+    <th>SUMMARY ITEM</th>
+    <th>AMOUNT(£)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr >
+    <td>TOTAL SCHEME COSTS</td>
+    <td class="bolder totals">{{ summaryTotals.totalCosts || 0 | number}}</td>
+  </tr>
+  <tr >
+    <td>TOTAL SCHEME CONTRIBUTIONS</td>
+    <td class="bolder totals">{{ summaryTotals.totalContributions || 0 | number }}</td>
+  </tr>
+  <tr >
+    <td>TOTAL ELIGIBLE GRANT</td>
+    <td class="bolder totals">{{ summaryTotals.totalEligibleGrant || 0  | number}}</td>
+  </tr>
+  <tr *ngFor="let grantType of grantTypes">
+    <td>{{grantType.toUpperCase() }} REQUESTED</td>
+    <td class="bolder totals">{{grantRequestedTotals.totalsByType[grantType] || 0 | number}}</td>
+  </tr>
+  <tr>
+    <td>GRANT % OF TOTAL COSTS</td>
+    <td class="bolder totals">{{totalCostsPercentage || 'N/A' }}</td>
+  </tr>
+  </tbody>
+</table>
+<div class="error-wrapper" role="alert" *ngIf="validationFailures && validationFailures.amount">
+  <span class="error" id="amount">{{validationFailures.amount[0].description}}</span>
+</div>

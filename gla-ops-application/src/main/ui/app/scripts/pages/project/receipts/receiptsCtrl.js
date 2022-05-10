@@ -8,15 +8,16 @@
 
 import ProjectBlockCtrl from '../ProjectBlockCtrl';
 import NumberUtil from '../../../util/NumberUtil';
+import {ActualsMetadataModalComponent} from '../../../../../../gla-ui/src/app/actuals-metadata-modal/actuals-metadata-modal.component'
 
 class ReceiptsCtrl extends ProjectBlockCtrl {
-  constructor($injector, $log, ReceiptsService, ActualsMetadataModal, FinanceService, ProjectService) {
+  constructor($injector, $log, ReceiptsService, FinanceService, ProjectService, NgbModal) {
     super($injector);
     this.ReceiptsService = ReceiptsService;
     this.FinanceService = FinanceService;
     this.ProjectService = ProjectService;
-    this.ActualsMetadataModal = ActualsMetadataModal;
     this.$log = $log;
+    this.NgbModal = NgbModal
   }
 
   $onInit(){
@@ -63,14 +64,8 @@ class ReceiptsCtrl extends ProjectBlockCtrl {
 
 
   loadCategoryData() {
-    // this.ProjectService.getSapCategoryCodes('receipt')
-    //   .then(resp => {
-    //     this.categories = resp.data;
-    //     console.log('old this.categories', resp.data)
-    //   });
-
     return this.FinanceService.getReceiptCategories()
-      .then(categories => {
+      .subscribe(categories => {
         this.categories = categories;
         console.log('this.categories', categories)
       });
@@ -202,9 +197,13 @@ class ReceiptsCtrl extends ProjectBlockCtrl {
   }
 
   showMetadataModal(event){
-    console.log('event', event);
-    let modalDataPromise = this.ReceiptsService.getReceiptsMetadata(this.project.id, this.blockId, event.spend.categoryId, event.data.yearMonth);
-    this.ActualsMetadataModal.show(modalDataPromise.then(rsp => rsp.data), event.spend.category);
+    this.$rootScope.showGlobalLoadingMask = true;
+    this.ReceiptsService.getReceiptsMetadata(this.project.id, this.blockId, event.spend.categoryId, event.data.yearMonth).then((rsp) => {
+      this.$rootScope.showGlobalLoadingMask = false;
+      let modal = this.NgbModal.open(ActualsMetadataModalComponent, {size: 'lg'})
+      modal.componentInstance.data = rsp.data
+      modal.componentInstance.title = event.spend.category
+    });
   }
 
   /**
@@ -226,7 +225,7 @@ class ReceiptsCtrl extends ProjectBlockCtrl {
   }
 }
 
-ReceiptsCtrl.$inject = ['$injector', '$log', 'ReceiptsService', 'ActualsMetadataModal', 'FinanceService', 'ProjectService'];
+ReceiptsCtrl.$inject = ['$injector', '$log', 'ReceiptsService', 'FinanceService', 'ProjectService', 'NgbModal'];
 
 angular.module('GLA')
   .controller('ReceiptsCtrl', ReceiptsCtrl);

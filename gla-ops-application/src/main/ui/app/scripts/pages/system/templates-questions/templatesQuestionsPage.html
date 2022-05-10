@@ -7,28 +7,27 @@
     </ph-right>
   </gla-page-header>
 
-  <well class="row mbottom20 search-container">
+  <gla-well class="row mbottom20 search-container">
       <div class="col-sm-6 text-search search-filter">
-      <div>Search</div>
-      <search-field options="$ctrl.searchOptions"
-                    selected-option="$ctrl.selectedSearchOption"
-                    search-text="$ctrl.searchText"
-                    on-select="$ctrl.select($ctrl.selectedSearchOption)"
-                    on-search="$ctrl.search()"
-                    on-clear="$ctrl.clearSearchText()"
-                    reset="$ctrl.resetSearch"></search-field>
+      <gla-search-field [options]="$ctrl.searchOptions"
+                        [(selected-option)]="$ctrl.selectedSearchOption"
+                        [(search-text)]="$ctrl.searchText"
+                        (on-select)="$ctrl.select($ctrl.selectedSearchOption)"
+                        (on-search)="$ctrl.search()"
+                        (on-clear)="$ctrl.clearSearchText()"
+                        (reset)="$ctrl.resetSearch"></gla-search-field>
     </div>
-  </well>
+  </gla-well>
 
 
   <div ng-if="$ctrl.questions.length">
 
-    <pagination class="mbottom10 pagination-top"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                total-items="$ctrl.totalItems"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.getQuestions()"></pagination>
+    <gla-pagination class="pagination-top"
+                    [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                    [total-items]="$ctrl.totalItems"
+                    [number-of-elements]="$ctrl.itemsPerPage"
+                    (on-change)="$ctrl.getQuestions()"></gla-pagination>
 
     <div class="mtop10">
       <div class="table-responsive">
@@ -75,12 +74,12 @@
       </div>
     </div>
 
-    <pagination class="mtop10 bottom-pagination"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                total-items="$ctrl.totalItems"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.getQuestions()"></pagination>
+    <gla-pagination class="mtop10 bottom-pagination"
+                    [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                    [total-items]="$ctrl.totalItems"
+                    [number-of-elements]="$ctrl.itemsPerPage"
+                    (on-change)="$ctrl.getQuestions()"></gla-pagination>
   </div>
   <div class="text-center" ng-if="!$ctrl.questions.length && !$root.showGlobalLoadingMask" id="no-results">
     <hr>

@@ -25,7 +25,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import uk.gov.london.common.GlaUtils;
 import uk.gov.london.common.skills.SkillsGrantType;
-import uk.gov.london.ops.framework.EnvironmentUtils;
+import uk.gov.london.ops.framework.environment.EnvironmentUtils;
 import uk.gov.london.ops.payment.PaymentSummary;
 import uk.gov.london.ops.project.claim.Claimable;
 

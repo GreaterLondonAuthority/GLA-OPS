@@ -19,7 +19,7 @@
 
     <changeSet id="651" author="jsingh">
         <addColumn tableName="programme">
-            <column name="company_email" type="varchar(100)" defaultValue="opsfinance@london.gov.uk"/>
+            <column name="company_email" type="varchar(100)" defaultValue="opsfinance.uk"/>
         </addColumn>
     </changeSet>
 

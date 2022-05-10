@@ -23,18 +23,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.xml.transform.StringResult;
 import uk.gov.london.common.GlaUtils;
-import uk.gov.london.ops.framework.Environment;
 import uk.gov.london.ops.audit.AuditService;
-import uk.gov.london.ops.domain.ScheduledTask;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.exception.ValidationException;
 import uk.gov.london.ops.framework.feature.Feature;
 import uk.gov.london.ops.framework.feature.FeatureStatus;
-import uk.gov.london.ops.organisation.OrganisationService;
-import uk.gov.london.ops.organisation.model.Organisation;
+import uk.gov.london.ops.framework.scheduledtask.ScheduledTask;
+import uk.gov.london.ops.framework.scheduledtask.ScheduledTaskService;
 import uk.gov.london.ops.payment.implementation.sap.model.SalesInvoiceDocument;
 import uk.gov.london.ops.refdata.RefDataService;
-import uk.gov.london.ops.service.ScheduledTaskService;
-import uk.gov.london.ops.user.UserService;
+import uk.gov.london.ops.user.UserServiceImpl;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -52,7 +50,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 import static uk.gov.london.ops.payment.LedgerType.PAYMENT;
-import static uk.gov.london.ops.payment.ProjectLedgerEntry.INVOICE_TRANSACTION;
 
 @Component
 @Transactional
@@ -60,6 +57,8 @@ public class AuthorisedPaymentsProcessor {
 
     Logger log = LoggerFactory.getLogger(getClass());
 
+    static final String INVOICE_TRANSACTION = "INV";
+    static final String CREDIT_TRANSACTION = "CRN";
     static final String AUTHORISED_PAYMENTS_LOCK = "AUTHORISED_PAYMENTS_LOCK";
     static final String TASK_KEY = "AUTHORISED_PAYMENTS";
 
@@ -73,10 +72,7 @@ public class AuthorisedPaymentsProcessor {
     private FinanceService financeService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    OrganisationService organisationService;
+    private UserServiceImpl userService;
 
     @Autowired
     RefDataService refDataService;
@@ -168,7 +164,8 @@ public class AuthorisedPaymentsProcessor {
     }
 
     public List<ProjectLedgerEntry> getAuthorisedPayments() {
-        List<ProjectLedgerEntry> authorisedPayments = financeService.findByStatusAndTypeIn(LedgerStatus.Authorised, new LedgerType[] {PAYMENT});
+        List<ProjectLedgerEntry> authorisedPayments = financeService.findByStatusAndTypeIn(LedgerStatus.Authorised,
+                new LedgerType[] {PAYMENT});
 
         boolean includeSkills = featureStatus.isEnabled(Feature.SkillsPayments);
 
@@ -269,7 +266,8 @@ public class AuthorisedPaymentsProcessor {
 
         if (payment != null) {
             payment.setResentOn(environment.now());
-            payment.setResender(userService.currentUser());
+            payment.setResender(userService.currentUsername());
+            payment.setResenderName(userService.getUserFullName(userService.currentUsername()));
             payment.setLedgerStatus(LedgerStatus.Sent);
             financeService.save(payment);
             auditService.auditCurrentUserActivity(audit);
@@ -282,30 +280,32 @@ public class AuthorisedPaymentsProcessor {
     SalesInvoiceDocument generateInvoice(ProjectLedgerEntry payment) {
         String authorisedOnString = DateTimeFormatter.ofPattern("yyyyMMdd").format(payment.getAuthorisedOn());
         SalesInvoiceDocument salesInvoiceDocument = new SalesInvoiceDocument();
-        salesInvoiceDocument.invoiceReferences.SuppliersInvoiceNumber = String.format("P%d-%d", payment.getProjectId(), payment.getId());
+        salesInvoiceDocument.invoiceReferences.SuppliersInvoiceNumber = String.format("P%d-%d", payment.getProjectId(),
+                payment.getId());
         salesInvoiceDocument.invoiceDate = authorisedOnString;
         salesInvoiceDocument.taxPointDate = authorisedOnString;
         String companyName;
         if (GlaUtils.isNullOrEmpty(payment.getCompanyName())) {
             companyName = "GLA";
-            log.warn("Payment created without specific company name, defaulting to GLA for now. Project: " + payment.getProjectId() + " Payment : " + payment.getId());
+            log.warn("Payment created without specific company name, defaulting to GLA for now. Project: " + payment.getProjectId()
+                    + " Payment : " + payment.getId());
         } else {
             companyName = payment.getCompanyName();
         }
         salesInvoiceDocument.supplier.references.BuyersCodeForSupplier = companyName;
         salesInvoiceDocument.invoiceTo.contact.name = companyName;
-        final Organisation organisation = organisationService.findOne(payment.getOrganisationId());
-        salesInvoiceDocument.buyer.buyerReferences.suppliersCodeForBuyer = organisation.getsapVendorId();
-        salesInvoiceDocument.narrative = String.format("P%d / %s / %s", payment.getProjectId(), payment.getCategory(), payment.getSubCategory());
+        salesInvoiceDocument.buyer.buyerReferences.suppliersCodeForBuyer = payment.getSapVendorId();
+        salesInvoiceDocument.narrative = String.format("P%d / %s / %s",
+                payment.getProjectId(), payment.getCategory(), payment.getSubCategory());
         salesInvoiceDocument.head.invoiceType.invoiceType = INVOICE_TRANSACTION;
         BigDecimal paymentValue = payment.getValue();
         if (payment.isReclaim()) { // reclaims are credits.
-            salesInvoiceDocument.head.invoiceType.invoiceType = "CRN";
-        } else {
-            // payments are negated
+            salesInvoiceDocument.head.invoiceType.invoiceType = CREDIT_TRANSACTION;
+        } else { // payments are negated
             paymentValue = paymentValue.negate();
         }
-        salesInvoiceDocument.addLine(paymentValue, "WBS-" + payment.getWbsCode(), payment.getCeCode());
+        salesInvoiceDocument.addLine(paymentValue, "WBS-" + payment.getWbsCode(), payment.getCeCode(),
+                payment.getSupplierProductCode());
         return salesInvoiceDocument;
     }
 

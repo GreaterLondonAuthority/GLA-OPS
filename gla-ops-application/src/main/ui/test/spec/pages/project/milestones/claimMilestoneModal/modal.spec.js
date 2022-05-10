@@ -38,7 +38,7 @@ describe('Milestons: Claim: Modal', () => {
       claimedRcgf: null,
       comparisonId: '3005',
       conditional: false,
-      createdBy: 'test.glaops@gmail.com',
+      createdBy: 'test.glaops',
       createdOn: '2017-09-11T09:53:58.523+01:00',
       description: null,
       displayOrder: 0,

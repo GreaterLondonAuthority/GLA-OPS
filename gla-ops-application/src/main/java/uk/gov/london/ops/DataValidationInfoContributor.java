@@ -8,6 +8,10 @@
 
 package uk.gov.london.ops;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +20,6 @@ import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Performs data validation
@@ -31,6 +30,7 @@ import java.util.Map;
 @Configuration
 @Component
 public class DataValidationInfoContributor implements InfoContributor {
+
     Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -48,13 +48,15 @@ public class DataValidationInfoContributor implements InfoContributor {
     public List<ValidationFailure> validationFailures() {
         List<ValidationFailure> validationFailures = new ArrayList<>();
 
-        validationFailures.addAll(getValidationFailuresByType(ValidationFailure.ValidationType.DuplicateBlocks, duplicateBlockCheck()));
+        validationFailures
+                .addAll(getValidationFailuresByType(ValidationFailure.ValidationType.DuplicateBlocks, duplicateBlockCheck()));
         validationFailures.addAll(getValidationFailuresByType(ValidationFailure.ValidationType.TestValidation, testValidation()));
 
         return validationFailures;
     }
 
-    public List<ValidationFailure> getValidationFailuresByType(ValidationFailure.ValidationType validationType, List<Map<String, Object>> details) {
+    public List<ValidationFailure> getValidationFailuresByType(ValidationFailure.ValidationType validationType,
+            List<Map<String, Object>> details) {
         List<ValidationFailure> validationFailures = new ArrayList<>();
         for (Map<String, Object> detail : details) {
             validationFailures.add(new ValidationFailure(validationType, detail.toString()));
@@ -64,25 +66,26 @@ public class DataValidationInfoContributor implements InfoContributor {
 
     public List<Map<String, Object>> duplicateBlockCheck() {
 
-        List<Map<String, Object>> duplicateProjectBlocks = jdbcTemplate.queryForList("" +
-                "select project_id as projectId " +
-                "from project_block " +
-                "where latest_version = true " +
-                "and latest_for_project is not null " +
-                "group by project_id, block_type, display_order " +
-                "having count(project_id) > 1 " +
-                "order by count(project_id) DESC");
+        List<Map<String, Object>> duplicateProjectBlocks = jdbcTemplate.queryForList(""
+                + "select project_id as projectId "
+                + "from project_block "
+                + "where latest_version = true "
+                + "and latest_for_project is not null "
+                + "group by project_id, block_type, display_order "
+                + "having count(project_id) > 1 "
+                + "order by count(project_id) DESC");
         log.debug("Project block duplicate check done.");
         return duplicateProjectBlocks;
 
     }
 
-    public List<Map<String,Object>> testValidation() {
+    public List<Map<String, Object>> testValidation() {
 
         //look for DI project for use in testing envs
-        List<Map<String, Object>> testValidation = jdbcTemplate.queryForList("select project_id as projectId from v_project_details" +
-                " where project_title = 'Active Auto Approval' " +
-                "or project_title = 'Auto Approval Project'");
+        List<Map<String, Object>> testValidation = jdbcTemplate
+                .queryForList("select project_id as projectId from v_project_details"
+                        + " where project_title = 'Active Auto Approval' "
+                        + "or project_title = 'Auto Approval Project'");
         return testValidation;
 
     }

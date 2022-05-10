@@ -7,22 +7,24 @@
  */
 package uk.gov.london.ops.payment.implementation.repository;
 
-import static uk.gov.london.common.GlaUtils.parseInt;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import uk.gov.london.ops.payment.LedgerStatus;
 import uk.gov.london.ops.payment.QPaymentSummary;
 import uk.gov.london.ops.project.accesscontrol.DefaultAccessControlSummary;
+
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static uk.gov.london.common.GlaUtils.parseInt;
 
 class PaymentSummaryPredicateBuilder {
 
     private final BooleanBuilder predicateBuilder = new BooleanBuilder();
 
-    void andSearch(String projectIdOrName, String organisationIdOrName, String programmeName) {
+    void andSearch(String projectIdOrName, String organisationIdOrName, String programmeName,
+                   String sapVendorId) {
         List<Predicate> predicates = new ArrayList<>();
 
         if (projectIdOrName != null) {
@@ -31,15 +33,16 @@ class PaymentSummaryPredicateBuilder {
             if (projectId != null) {
                 predicates.add(QPaymentSummary.paymentSummary.projectId.eq(projectId));
             }
-        }
-        else if (organisationIdOrName != null) {
+        } else if (organisationIdOrName != null) {
             predicates.add(QPaymentSummary.paymentSummary.vendorName.containsIgnoreCase(organisationIdOrName));
             Integer organisationId = parseInt(organisationIdOrName);
             if (organisationId != null) {
                 predicates.add(QPaymentSummary.paymentSummary.organisationId.eq(organisationId));
             }
-        }else if (programmeName != null) {
+        } else if (programmeName != null) {
             predicates.add(QPaymentSummary.paymentSummary.programmeName.containsIgnoreCase(programmeName));
+        } else if (sapVendorId != null) {
+            predicates.add(QPaymentSummary.paymentSummary.sapVendorId.equalsIgnoreCase(sapVendorId));
         }
         predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));
     }
@@ -91,6 +94,16 @@ class PaymentSummaryPredicateBuilder {
         predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));
     }
 
+    void andManagingOrganisations(List<Integer> managingOrganisations) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (managingOrganisations != null) {
+            predicates.add(QPaymentSummary.paymentSummary.managingOrganisation.id.in(managingOrganisations));
+        }
+
+        predicateBuilder.andAnyOf(predicates.toArray(new Predicate[predicates.size()]));
+    }
+
     void andAuthorisedDates(OffsetDateTime fromDate, OffsetDateTime toDate) {
 
         if (fromDate != null) {
@@ -105,7 +118,8 @@ class PaymentSummaryPredicateBuilder {
         BooleanBuilder outer = new BooleanBuilder();
         for (DefaultAccessControlSummary defaultAccess : dac) {
             BooleanBuilder defaultAccessBuilder = new BooleanBuilder();
-            defaultAccessBuilder.and(QPaymentSummary.paymentSummary.managingOrganisation.id.eq(defaultAccess.getManagingOrganisationId()));
+            defaultAccessBuilder.and(QPaymentSummary.paymentSummary.managingOrganisation.id
+                    .eq(defaultAccess.getManagingOrganisationId()));
             defaultAccessBuilder.and(QPaymentSummary.paymentSummary.programmeId.eq(defaultAccess.getProgrammeId()));
             defaultAccessBuilder.and(QPaymentSummary.paymentSummary.templateId.eq(defaultAccess.getTemplateId()));
             outer.or(defaultAccessBuilder);

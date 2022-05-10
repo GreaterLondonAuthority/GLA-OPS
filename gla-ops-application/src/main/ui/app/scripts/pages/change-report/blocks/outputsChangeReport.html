@@ -1,33 +1,29 @@
 <div class="includes-tables">
-
-  <!--<change-report-static-text text="$ctrl.title" data="$ctrl.data" class="next-to-tables block-section"></change-report-static-text>-->
-
-
   <div ng-repeat="group in $ctrl.comparableOutputGroups">
 
-    <change-report-static-text text="$ctrl.groupTitle(group.groupName)" data="$ctrl.data" class="next-to-tables"></change-report-static-text>
+    <gla-change-report-static-text [text]="$ctrl.groupTitle(group.groupName)" [data]="$ctrl.data" class="next-to-tables"></gla-change-report-static-text>
 
-    <change-report-table show-no-element-message="!!$ctrl.data.right"
-                       rows="group.group"
-                       fields="$ctrl.outputsFields"
-                       show-table-separators="$ctrl.data.right"
-                       changes="$ctrl.data.changes">
-    </change-report-table>
+    <gla-change-report-table [show-no-element-message]="!!$ctrl.data.right"
+                       [rows]="group.group"
+                       [fields]="$ctrl.outputsFields"
+                       [show-table-separators]="$ctrl.data.right"
+                       [changes]="$ctrl.data.changes">
+    </gla-change-report-table>
   </div>
 
-  <change-report-static-text ng-if="!$ctrl.comparableOutputGroups.length && !$ctrl.advancePaymentsToCompare.length"
-                             text="'No information provided'"
-                             data="$ctrl.data"
-                             class="next-to-tables text-secondary"></change-report-static-text>
+  <gla-change-report-static-text ng-if="!$ctrl.comparableOutputGroups.length && !$ctrl.advancePaymentsToCompare.length"
+                             [text]="'No information provided'"
+                             [data]="$ctrl.data"
+                             class="next-to-tables text-secondary"></gla-change-report-static-text>
 
 
-  <change-report-table
+  <gla-change-report-table
     ng-if="$ctrl.outputsCostsBlock.advancePayment"
-    label="'Advance Payment'"
-    rows="$ctrl.advancePaymentsToCompare"
-    fields="$ctrl.advancePaymentFields"
-    changes="$ctrl.data.changes"
-    show-table-separators="$ctrl.data.right">
-  </change-report-table>
+    [label]="'Advance Payment'"
+    [rows]="$ctrl.advancePaymentsToCompare"
+    [fields]="$ctrl.advancePaymentFields"
+    [changes]="$ctrl.data.changes"
+    [show-table-separators]="$ctrl.data.right">
+  </gla-change-report-table>
 
 </div>

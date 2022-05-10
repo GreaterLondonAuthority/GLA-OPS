@@ -14,20 +14,6 @@ OutputsService.$inject = ['$http', 'config'];
 function OutputsService($http, config) {
   let apiConfig = config;
   return {
-    getOutputsConfigurableFields() {
-      return [
-        'showBaselines',
-        'showAssumptions',
-        'showTotalProjectOutputsTable',
-        'showValueColumn',
-        'showOutputTypeColumn',
-        'showAdvancedPaymentColumn',
-        //'paymentSources',
-        //'grantTypes',
-        'outputConfigurationGroup',
-      ];
-    },
-
     getOutputConfigGroup: (id) => {
       return $http({
         url: `${config.basePath}/outputGroup/${id}`,

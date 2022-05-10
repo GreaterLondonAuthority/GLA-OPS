@@ -7,6 +7,7 @@
  */
 package uk.gov.london.ops.project.template.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,13 +34,25 @@ public class QuestionsBlockSection implements Serializable {
     @Column(name = "text")
     private String text;
 
+    @Column(name = "parent_id")
+    private Integer parentId;
+
+    @Column(name = "parent_answer_to_match")
+    private String parentAnswerToMatch;
+
     public QuestionsBlockSection() {
     }
 
-    public QuestionsBlockSection(Integer externalId, Double displayOrder, String text) {
+    public QuestionsBlockSection(Integer externalId, Double displayOrder, String text, Integer parentId, String parentAnswerToMatch) {
         this.externalId = externalId;
         this.displayOrder = displayOrder;
         this.text = text;
+        this.parentId = parentId;
+        this.parentAnswerToMatch = parentAnswerToMatch;
+    }
+
+    public QuestionsBlockSection(Integer externalId, Double displayOrder, String text) {
+        this(externalId, displayOrder, text, null, null);
     }
 
     public QuestionsBlockSection(Integer externalId, Integer displayOrder, String text) {
@@ -78,11 +91,34 @@ public class QuestionsBlockSection implements Serializable {
         this.text = text;
     }
 
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getParentAnswerToMatch() {
+        return parentAnswerToMatch;
+    }
+
+    public void setParentAnswerToMatch(String parentAnswerToMatch) {
+        this.parentAnswerToMatch = parentAnswerToMatch;
+    }
+
+    @JsonIgnore
+    public boolean hasParent() {
+        return parentId != null;
+    }
+
     public QuestionsBlockSection copy() {
         QuestionsBlockSection copy = new QuestionsBlockSection();
         copy.setExternalId(this.getExternalId());
         copy.setDisplayOrder(this.getDisplayOrder());
         copy.setText(this.getText());
+        copy.setParentId(this.getParentId());
+        copy.setParentAnswerToMatch(this.getParentAnswerToMatch());
         return copy;
     }
 

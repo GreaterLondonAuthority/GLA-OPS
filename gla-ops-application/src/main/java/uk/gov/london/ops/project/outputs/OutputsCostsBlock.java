@@ -8,31 +8,19 @@
 package uk.gov.london.ops.project.outputs;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import uk.gov.london.ops.framework.enums.GrantType;
 import uk.gov.london.ops.framework.jpa.Join;
 import uk.gov.london.ops.framework.jpa.JoinData;
 import uk.gov.london.ops.project.Project;
-import uk.gov.london.ops.project.block.FundingSourceProvider;
-import uk.gov.london.ops.project.block.NamedProjectBlock;
-import uk.gov.london.ops.project.block.ProjectBlockType;
-import uk.gov.london.ops.project.block.ProjectDifference;
-import uk.gov.london.ops.project.block.ProjectDifferences;
+import uk.gov.london.ops.project.block.*;
 import uk.gov.london.ops.project.claim.ClaimStatus;
-import uk.gov.london.ops.project.grant.GrantType;
 import uk.gov.london.ops.project.template.domain.OutputsCostsTemplateBlock;
 import uk.gov.london.ops.project.template.domain.TemplateBlock;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity(name = "outputs_costs_block")
 @DiscriminatorValue("OUTPUTS_COSTS")

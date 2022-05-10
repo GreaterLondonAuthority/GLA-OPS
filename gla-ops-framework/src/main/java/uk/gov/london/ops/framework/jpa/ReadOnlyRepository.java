@@ -18,9 +18,9 @@ import java.util.Optional;
  * Created by chris on 02/02/2017.
  */
 @NoRepositoryBean
-public interface ReadOnlyRepository<T, ID extends Serializable> extends Repository<T, ID> {
+public interface ReadOnlyRepository<T, K extends Serializable> extends Repository<T, K> {
 
-    Optional<T> findById(ID var1);
+    Optional<T> findById(K var1);
 
     Iterable<T> findAll();
 

@@ -1,4 +1,4 @@
-<a (click)="onSectionClick();$event.stopPropagation();"
+<a (click)="onToggle();$event.stopPropagation();"
    [attr.aria-expanded]="!collapsed"
    [attr.aria-label]="collapsed? 'Expand' : 'Collapse'"
    class="toggle-icon"

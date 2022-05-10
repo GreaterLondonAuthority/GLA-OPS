@@ -18,7 +18,7 @@ public interface AuditService {
 
     void auditCurrentUserActivity(EntityType entityType, Integer entityId, ActivityType type);
 
-    void auditCurrentUserActivity(String summary,  ActivityType type, String userAffected, Integer organisationId, BigDecimal amount);
+    void auditCurrentUserActivity(String summary, ActivityType type, String userAffected, Integer orgId, BigDecimal amount);
 
     void auditActivityForUser(String userName, String summary);
 

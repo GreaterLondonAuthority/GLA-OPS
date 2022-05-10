@@ -14,7 +14,7 @@
               id="programme-template"
               name="template"
               ng-model="$ctrl.selectedTemplate"
-              ng-options="template as template.name for template in $ctrl.availableTemplates"
+              ng-options="template as (template.name + ' (' +  template.id + ')') for template in $ctrl.availableTemplates | orderBy: 'name'"
               style-placeholder="">
         <option disabled value="">Select a template</option>
       </select>

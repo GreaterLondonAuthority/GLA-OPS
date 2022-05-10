@@ -7,6 +7,7 @@
  */
 package uk.gov.london.ops.payment;
 
+import java.util.Map.Entry;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,16 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uk.gov.london.common.CSVFile;
-import uk.gov.london.ops.framework.Environment;
+import uk.gov.london.ops.framework.environment.Environment;
 import uk.gov.london.ops.framework.feature.Feature;
 import uk.gov.london.ops.framework.feature.FeatureStatus;
 import uk.gov.london.ops.notification.EmailService;
+import uk.gov.london.ops.organisation.OrganisationServiceImpl;
+import uk.gov.london.ops.programme.ProgrammeDetailsSummary;
 import uk.gov.london.ops.programme.ProgrammeService;
-import uk.gov.london.ops.programme.domain.Programme;
 import uk.gov.london.ops.project.Project;
 import uk.gov.london.ops.project.ProjectService;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.UserServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -42,22 +44,37 @@ import static uk.gov.london.ops.payment.LedgerType.PAYMENT;
 @Transactional
 public class DailyPaymentsReportGenerator {
 
-    static final String PAYEE           = "Payee";
-    static final String PROJECT_ID      = "Project ID";
-    static final String PAYMENT_ID      = "Payment ID";
-    static final String WBS_CODE        = "WBS code";
-    static final String SAP_VENDOR_ID   = "SAP vendor ID";
-    static final String ADDRESS         = "Address";
-    static final String BOROUGH         = "Borough";
-    static final String POSTCODE        = "Postcode";
-    static final String AMOUNT          = "Payment amount";
-    static final String AUTHORISED_ON   = "Payment authorisation date";
-    static final String AUTHORISED_BY   = "Authorised by";
-    static final String FILE_NAME       = "Invoice file name";
+    static final String PAYEE = "Payee";
+    static final String PROJECT_ID = "Project ID";
+    static final String PAYMENT_ID = "Payment ID";
+    static final String WBS_CODE = "WBS code";
+    static final String SAP_VENDOR_ID = "SAP vendor ID";
+    static final String ADDRESS = "Address";
+    static final String BOROUGH = "Borough";
+    static final String POSTCODE = "Postcode";
+    static final String AMOUNT = "Payment amount";
+    static final String AUTHORISED_ON = "Payment authorisation date";
+    static final String AUTHORISED_BY = "Authorised by";
+    static final String FILE_NAME = "Invoice file name";
+    static final String THRESHOLD_ORG = "Threshold organisation";
+    static final String THRESHOLD_VALUE = "Threshold value";
 
     Set<String> csvHeaders = Stream.of(
-        PAYEE, PROJECT_ID, PAYMENT_ID, WBS_CODE, SAP_VENDOR_ID, ADDRESS, BOROUGH, POSTCODE, AMOUNT, AUTHORISED_ON,
-        AUTHORISED_BY, FILE_NAME).collect(Collectors.toCollection(LinkedHashSet::new));
+            PAYEE,
+            PROJECT_ID,
+            PAYMENT_ID,
+            WBS_CODE,
+            SAP_VENDOR_ID,
+            ADDRESS,
+            BOROUGH,
+            POSTCODE,
+            AMOUNT,
+            AUTHORISED_ON,
+            AUTHORISED_BY,
+            FILE_NAME,
+            THRESHOLD_ORG,
+            THRESHOLD_VALUE
+    ).collect(Collectors.toCollection(LinkedHashSet::new));
 
     Logger log = LoggerFactory.getLogger(getClass());
 
@@ -71,7 +88,10 @@ public class DailyPaymentsReportGenerator {
     ProjectService projectService;
 
     @Autowired
-    UserService userService;
+    OrganisationServiceImpl organisationService;
+
+    @Autowired
+    UserServiceImpl userService;
 
     @Autowired
     FinanceService financeService;
@@ -98,37 +118,41 @@ public class DailyPaymentsReportGenerator {
 
         List<ProjectLedgerEntry> payments = getPaymentsAuthorisedDay(day);
 
-        Map<String, String> programmeNameMappedToEmail = getAllProgrammeNameMappedToEmail();
-        Set<String> paymentEmailsSet = new HashSet<>(programmeNameMappedToEmail.values());
+        Map<String, Set<String>> programmeNameMappedToEmail = getAllProgrammeNameMappedToEmail();
+        Set<String> paymentEmailsSet = new HashSet<>(programmeNameMappedToEmail.values().stream().flatMap(Set::stream)
+                .collect(Collectors.toSet()));
 
         if (CollectionUtils.isNotEmpty(payments)) {
-            log.debug("Total {} authorised payments to process", payments.size());
+                log.debug("Total {} authorised payments to process", payments.size());
 
-            for (String paymentEmail : paymentEmailsSet) {
-                generateDailyAuthorisedPaymentPerCompanyEmail(
-                        day,
-                        paymentEmail,
-                        payments.stream()
-                                .filter(x -> programmeNameMappedToEmail.containsKey(x.getProgrammeName())
-                                    && programmeNameMappedToEmail.get(x.getProgrammeName()).equals(paymentEmail))
-                                .collect(Collectors.toList())
-                );
+                for (String paymentEmail : paymentEmailsSet) {
+                    generateDailyAuthorisedPaymentPerCompanyEmail(
+                            day,
+                            paymentEmail,
+                            payments.stream()
+                                    .filter(x -> programmeNameMappedToEmail.containsKey(x.getProgrammeName())
+                                            && programmeNameMappedToEmail.get(x.getProgrammeName()).contains(paymentEmail))
+                                    .collect(Collectors.toList())
+                    );
+                }
+            } else {
+                paymentEmailsSet.forEach(x -> sendNoAuthorisedPaymentEmail(x, day));
             }
-        } else {
-            paymentEmailsSet.forEach(x -> sendNoAuthorisedPaymentEmail(x, day));
-        }
 
         log.debug("generateDailyAuthorisedPaymentsReport() - END");
     }
 
-    private Map<String, String> getAllProgrammeNameMappedToEmail() {
-        List<Programme> programmes = programmeService.findAll();
+    private Map<String, Set<String>> getAllProgrammeNameMappedToEmail() {
+        List<ProgrammeDetailsSummary> programmes = programmeService.getProgrammeDetailsSummaries();
         log.debug("Total {} programmes found ", programmes.size());
 
-        Map<String, String> programNameEmailMap = new HashMap<>();
-        for (Programme programme: programmes) {
+        Map<String, Set<String>> programNameEmailMap = new HashMap<>();
+        for (ProgrammeDetailsSummary programme : programmes) {
+            programNameEmailMap.put(programme.getName(), new HashSet<>());
             if (StringUtils.isNotEmpty(programme.getCompanyEmail())) {
-                programNameEmailMap.put(programme.getName(), programme.getCompanyEmail());
+                for (String email : programme.getCompanyEmail().split(",")) {
+                    programNameEmailMap.get(programme.getName()).add(email.trim());
+                }
             }
         }
 
@@ -136,7 +160,7 @@ public class DailyPaymentsReportGenerator {
     }
 
     private void generateDailyAuthorisedPaymentPerCompanyEmail(OffsetDateTime day, String paymentEmail,
-        List<ProjectLedgerEntry> payments) throws IOException {
+            List<ProjectLedgerEntry> payments) throws IOException {
 
         if (CollectionUtils.isNotEmpty(payments)) {
             log.debug("found {} authorised payments to process", payments.size());
@@ -158,16 +182,16 @@ public class DailyPaymentsReportGenerator {
 
     String generateCsvReportPayload(List<ProjectLedgerEntry> payments, OffsetDateTime day) throws IOException {
         Map<String, List<ProjectLedgerEntry>> paymentsGroupedByPayee = payments.stream()
-            .collect(Collectors.groupingBy(ProjectLedgerEntry::getVendorName));
+                .collect(Collectors.groupingBy(ProjectLedgerEntry::getVendorName));
 
         StringWriter out = new StringWriter();
 
         CSVFile csvFile = new CSVFile(csvHeaders, out);
 
         BigDecimal total = new BigDecimal(0);
-        for (String payee: paymentsGroupedByPayee.keySet()) {
+        for (String payee : paymentsGroupedByPayee.keySet()) {
             BigDecimal payeeTotal = new BigDecimal(0);
-            for (ProjectLedgerEntry payment: paymentsGroupedByPayee.get(payee)) {
+            for (ProjectLedgerEntry payment : paymentsGroupedByPayee.get(payee)) {
                 payeeTotal = payeeTotal.add(payment.getValue());
                 total = total.add(payment.getValue());
                 csvFile.writeValues(toValueMap(payment));
@@ -195,7 +219,7 @@ public class DailyPaymentsReportGenerator {
 
     Map<String, Object> toValueMap(ProjectLedgerEntry payment) {
         Project project = projectService.get(payment.getProjectId());
-        User user = userService.find(payment.getAuthorisedBy());
+        UserEntity user = userService.find(payment.getAuthorisedBy());
 
         Map<String, Object> valueMap = new HashMap<>();
         valueMap.put(PAYEE, payment.getVendorName());
@@ -210,6 +234,8 @@ public class DailyPaymentsReportGenerator {
         valueMap.put(AUTHORISED_ON, DateTimeFormatter.ofPattern("yyyy-MM-dd").format(payment.getAuthorisedOn()));
         valueMap.put(AUTHORISED_BY, user != null ? user.getFullName() : null);
         valueMap.put(FILE_NAME, payment.getInvoiceFileName());
+        valueMap.put(THRESHOLD_ORG, organisationService.getOrganisationName(payment.getThresholdOrganisation()));
+        valueMap.put(THRESHOLD_VALUE, payment.getThresholdValue());
         return valueMap;
     }
 

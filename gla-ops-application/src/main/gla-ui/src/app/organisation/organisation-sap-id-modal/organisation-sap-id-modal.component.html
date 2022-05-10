@@ -1,0 +1,70 @@
+<div>
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>{{addOrUpdate}} SAP ID</h1>
+  </div>
+
+  <div class="modal-body">
+    <form #modalForm="ngForm" name="modalForm">
+      <div class="form-group">
+        <label for="sapId">SAP ID</label>
+        <input #sapId="ngModel"
+               [(ngModel)]="sapIdModel.sapId"
+               class="form-control"
+               id="sapId"
+               name="sapId"
+               placeholder="SAP ID"
+               required
+               type="text"/>
+        <div *ngIf="(sapId.dirty || sapId.touched) && (sapId.invalid || isDuplicate())" class="error-wrapper">
+          <div *ngIf="sapId?.errors?.required" class="error">Required</div>
+          <div *ngIf="isDuplicate()" class="error">This SAP ID already exists</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">SAP ID Nickname</label>
+        <input #description="ngModel"
+               [(ngModel)]="sapIdModel.description"
+               class="form-control"
+               id="description"
+               name="description"
+               placeholder="SAP ID Nickname"
+               required
+               type="text"/>
+        <div *ngIf="(description.dirty || description.touched) && (description.invalid)" class="error-wrapper">
+          <div *ngIf="description?.errors?.required" class="error">Required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="defaultSapId">
+          <input #defaultSapId="ngModel"
+               type="checkbox"
+               aria-label="Default Sap Id"
+               name="defaultSapId"
+               id="defaultSapId"
+               [(ngModel)]="sapIdModel.defaultSapId"
+               [disabled]="!defaultSapIdEnabled()">
+          <span> Default</span>
+        </label>
+      </div>
+    </form>
+  </div>
+
+
+
+  <div class="modal-footer">
+    <div class="row mbottom10">
+      <div class="col-xs-12 text-center">
+        <button (click)="activeModal.close(sapIdModel)"
+                [disabled]="!isFormValid(modalForm, sapIdModel)"
+                class="btn btn-primary">{{addOrUpdate}}
+        </button>
+        <button (click)="activeModal.dismiss()" class="btn btn-secondary">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

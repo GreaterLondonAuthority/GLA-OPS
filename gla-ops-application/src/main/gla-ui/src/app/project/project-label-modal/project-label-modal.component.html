@@ -1,0 +1,79 @@
+<div class="label-modal">
+  <div class="modal-header text-center">
+    <button (click)="activeModal.dismiss()" aria-label="Close" class="close" data-dismiss="modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <h1>Apply label</h1>
+  </div>
+
+  <div class="modal-body text-left">
+    <form
+      id="applyLabelForm"
+      role="form"
+      name="applyLabelForm">
+
+      <div class="form-group label-type-select">
+        <label for="labelType">Label type</label>
+        <select aria-label="Label type"
+                class="form-control"
+                id="labelType"
+                name="label-type"
+                [ngClass]="{placeholder: !label.type}"
+                (change)="onLabelTypeChange()"
+                [(ngModel)]="label.type"
+                required>
+          <option disabled value="undefined">Select a label type</option>
+          <option *ngFor="let label of labelTypes" [ngValue]="label.type">{{label.labelName}}</option>
+        </select>
+      </div>
+
+      <div class="form-group ad-hoc-label" *ngIf="label.type ==='Custom'">
+        <label for="label-text" class="mtop10">{{explanatoryText}}</label>
+        <input id="label-text"
+               type="text"
+               name="label-text"
+               class="form-control"
+               (input)="validate()"
+               maxlength="20"
+               [(ngModel)]="label.text">
+        <div class="error-wrapper" *ngIf="isExistingLabel">
+          <span class="error">Label already exists</span>
+        </div>
+      </div>
+
+
+      <div class="form-group pre-set-label" *ngIf="label.type ==='Predefined'">
+        <label for="pre-set-label">Select pre-set label</label>
+        <select class="form-control"
+                id="pre-set-label"
+                name="preSetLabel"
+                [ngClass]="{placeholder: !label.preSetLabel}"
+                aria-label="Pre-set label"
+                [(ngModel)]="label.preSetLabel"
+                required>
+          <option disabled value="undefined">Select pre-set label</option>
+          <option *ngFor="let preSetLabel of activePreSetLabels" [ngValue]="preSetLabel">{{preSetLabel.labelName}} - {{preSetLabel.managingOrganisationName}}</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-xs-12 text-center mbottom15">
+        <button
+          id="abandon-btn"
+          class="btn btn-default btn-primary btn-center"
+          type="button"
+          (click)="apply()"
+          [disabled]="(!label.type || (!label.text && !label.preSetLabel)) || isExistingLabel">APPLY</button>
+
+        <button
+          id="cancel-btn"
+          class="btn btn-default btn-secondary btn-center"
+          type="button"
+          (click)="activeModal.dismiss()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,143 @@
+<div class="page broadcast">
+  <gla-page-header (onBack)="goToBroadcasts()" class="mbottom10">{{broadcast.id ? '' : 'Enter '}}Broadcast Details</gla-page-header>
+
+  <header-status class="broadcast-header">
+    <hs-left class="row text-nowrap" *ngIf="broadcast.id">ID: {{broadcast.id}}</hs-left>
+    <hs-left class="row text-nowrap" *ngIf="broadcast.status">Status: {{broadcast.status}}</hs-left>
+    <hs-left class="row text-nowrap" *ngIf="broadcast.createdOn && broadcast.createdByName">Created on {{(broadcast.createdOn) | date: 'dd/MM/yyyy'}} by {{broadcast.createdByName}}, {{broadcast.managingOrganisationName}}</hs-left>
+    <hs-left class="row text-nowrap" *ngIf="isApproved()">Approved on {{(broadcast.modifiedOn) | date: 'dd/MM/yyyy'}} by {{broadcast.modifiedByName}}, {{broadcast.approverPrimaryOrg}}</hs-left>
+  </header-status>
+
+  <h4 class="mtop20">Target Users</h4>
+
+  <div class="bolder mtop10 mbottom5">User category</div>
+  <div class="form-group mbottom0">
+    <input [(ngModel)]="broadcast.mainProjectContacts"
+           id="main-project-contacts"
+           name="main-project-contacts"
+           [disabled]="!isEditable()"
+           type="checkbox">
+    <label class="mleft5 item-label" for="main-project-contacts">Main Project Contacts</label>
+  </div>
+
+  <div class="form-group mbottom0">
+    <input [(ngModel)]="broadcast.secondaryProjectContacts"
+           id="secondary-project-contacts"
+           name="secondary-project-contacts"
+           [disabled]="!isEditable()"
+           type="checkbox">
+    <label class="mleft5 item-label" for="secondary-project-contacts">Secondary Project Contacts</label>
+  </div>
+
+  <div class="form-group">
+    <input [(ngModel)]="broadcast.organisationAdmins"
+           id="org-admins"
+           name="org-admins"
+           [disabled]="!isEditable()"
+           type="checkbox">
+    <label class="mleft5 item-label" for="org-admins">Organisation Admins</label>
+  </div>
+
+  <div class="form-group" *ngIf="managingOrganisations.length > 1">
+    <label for="managingOrganisation">Responsible Managing Organisation</label>
+    <select [(ngModel)]="broadcast.managingOrganisationId"
+            [disabled]="!isEditable()"
+            class="form-control"
+            id="managingOrganisation">
+      <option disabled value="">Select</option>
+      <option *ngFor="let managingOrganisation of managingOrganisations" [ngValue]="managingOrganisation.id">{{managingOrganisation.name}}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="programme">Programme</label>
+    <select [(ngModel)]="broadcast.programmeId"
+            [disabled]="!isEditable()"
+            (change)="updateTemplatesDropdown()"
+            class="form-control"
+            id="programme">
+      <option disabled value="">Select</option>
+      <option *ngFor="let programme of programmes" [ngValue]="programme.id">{{programme.name}}</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <div>
+      <label for="templates">Project type(s)</label>
+    </div>
+    <div>
+      <gla-checkbox-filter id="templates"
+                           class="broadcast-templates-checkbox"
+                           [filterDropdownItems]="templates"
+                           [isDisabled]="!broadcast.programmeId"
+                           *ngIf="isEditable()"
+                           (onChange)="setTemplates()"></gla-checkbox-filter>
+      <ng-container *ngIf="!isEditable()">
+        <span *ngFor="let templateId of broadcast.templateIds; let isLast = last">
+          {{getTemplateName(templateId)}}{{isLast ? '' : ', '}}
+        </span>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="project-status">Project status</label>
+    <select [(ngModel)]="broadcast.projectStatus"
+            [disabled]="!isEditable()"
+            class="form-control"
+            id="project-status">
+      <option disabled value="undefined">Select</option>
+      <option *ngFor="let status of projectStatuses" [ngValue]="status.name">{{status.label}}</option>
+    </select>
+  </div>
+
+
+  <h4 class="mtop20">Broadcast Content <gla-info-tooltip [helpText]="getBroadcastContentTooltipText()"></gla-info-tooltip></h4>
+
+  <div class="form-group">
+    <label for="subject">Subject</label>
+    <input id="subject"
+           type="text"
+           name="subject"
+           class="form-control"
+           placeholder="e.g. Additional funding available"
+           [(ngModel)]="broadcast.subject"
+           [disabled]="!isEditable()"
+           [maxLength]="150" />
+    <gla-remaining-characters [text]="broadcast.subject" [max]="150"></gla-remaining-characters>
+  </div>
+
+  <div class="form-group">
+    <label for="body">Body</label>
+    <textarea id="body"
+              aria-label="Body" rows="5"
+              name="body"
+              class="form-control"
+              [(ngModel)]="broadcast.body"
+              [disabled]="!isEditable()"
+              maxlength="5000"></textarea>
+    <gla-remaining-characters [text]="broadcast.body" [max]="5000"></gla-remaining-characters>
+  </div>
+
+  <div class="form-group">
+    <label for="sign-off">Sign off</label>
+    <input id="sign-off"
+           type="text"
+           name="sign-off"
+           class="form-control"
+           placeholder="e.g. Programme team, GLA Skills & Employment"
+           [(ngModel)]="broadcast.signOff"
+           [disabled]="!isEditable()"
+           [maxLength]="100" />
+    <gla-remaining-characters [text]="broadcast.signOff" [max]="100"></gla-remaining-characters>
+  </div>
+
+  <div class="row mtop20">
+    <div class="col-xs-12 text-center">
+      <button class="btn btn-primary mright10" *ngIf="isEditable()" (click)="requestApproval()" [disabled]="!isFormValid()">REQUEST APPROVAL</button>
+      <button class="btn btn-primary mright10" *ngIf="isPendingApproval() && broadcast.canApprove" (click)="approve()">APPROVE</button>
+      <button class="btn btn-secondary"  (click)="goToBroadcasts()">CANCEL</button>
+    </div>
+  </div>
+
+</div>

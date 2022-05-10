@@ -1,0 +1,66 @@
+<table class="table table-hover table-bordered table-default table-with-inputs {{tableSelector}}"
+       ng-class="{'edit-mode': !$ctrl.isReadonly}">
+
+  <thead class="thead-inverse uppercase">
+  <tr>
+    <th scope="col" rowspan="2" *ngIf="yearsEnabled">YEAR</th>
+    <th scope="col" [colSpan]="tenures.length" class="text-center">TENURE TYPES</th>
+    <th scope="col" rowspan="2">TOTAL</th>
+  </tr>
+  <tr>
+    <th *ngFor="let tenure of tenures">{{tenure.name}}</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr *ngFor="let yearEntries of entriesByYearAndTenure | keyvalue">
+    <td *ngIf="yearsEnabled">{{toFinancialYearString(yearEntries.key)}}</td>
+    <td *ngFor="let tenure of tenures">
+      <span *ngIf="readOnly">{{yearEntries.value[tenure.externalId].units | number}}</span>
+      <input *ngIf="!readOnly"
+             mask="separator.0"
+             numberType
+             [(ngModel)]="yearEntries.value[tenure.externalId].units"
+             maxlength="12"
+             thousandSeparator=""
+             (blur)="onChange.emit()">
+    </td>
+    <td class="bolder">{{totals.totalsByYear[yearEntries.key]}}</td>
+  </tr>
+
+  <tr *ngIf="yearsEnabled" class="bolder totals-row">
+    <td>
+      <toggle-icon [(collapsed)]="collapsed"></toggle-icon>
+      TOTAL
+    </td>
+    <td *ngFor="let tenure of tenures">
+      {{totals.totalsByTenure[tenure.externalId] | number}}
+    </td>
+    <td>{{totals.overallTotal | number}}</td>
+  </tr>
+
+  <ng-container *ngIf="!collapsed">
+    <ng-container *ngFor="let ofWhichCategory of ofWhichCategories">
+      <tr class="text-center" [ngClass]="{'darker-row': !yearsEnabled && readOnly}">
+        <td [colSpan]="tenures.length + (yearsEnabled ? 2 : 1)">Of Which, {{getOfWhichCategoryDisplayName(ofWhichCategory)}}</td>
+      </tr>
+      <tr>
+        <td *ngIf="yearsEnabled"></td>
+        <td *ngFor="let tenure of tenures">
+          <span *ngIf="readOnly">{{entriesByOfWhichCategory[ofWhichCategory][tenure.externalId].units | number}}</span>
+          <input *ngIf="!readOnly"
+                 mask="separator.0"
+                 numberType
+                 [(ngModel)]="entriesByOfWhichCategory[ofWhichCategory][tenure.externalId].units"
+                 maxlength="12"
+                 thousandSeparator=""
+                 (blur)="onChange.emit()">
+        </td>
+        <td class="bolder">
+          {{totals.totalsByOfWhichCategory[ofWhichCategory] | number}}
+        </td>
+      </tr>
+    </ng-container>
+  </ng-container>
+  </tbody>
+</table>

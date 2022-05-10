@@ -10,7 +10,6 @@ package uk.gov.london.ops.web.api;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -26,11 +25,14 @@ import static uk.gov.london.common.user.BaseRole.TECH_ADMIN;
 
 @RestController
 @RequestMapping("/api/v1")
-@Api(description="messages to be displayed to the user")
+@Api("messages to be displayed to the user")
 public class MessageAPI {
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
+
+    public MessageAPI(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     @Secured({OPS_ADMIN, TECH_ADMIN})
     @RequestMapping(value = "/messages", method = RequestMethod.GET)
@@ -90,7 +92,7 @@ public class MessageAPI {
             @RequestParam(name = "wait", defaultValue = "100") Integer waitMillis) {
         List<PipeCleaner> things = new LinkedList<>();
         for (int n = 0; n < iterations; n++) {
-            things.add(new PipeCleaner(n+1, waitMillis));
+            things.add(new PipeCleaner(n + 1, waitMillis));
         }
         return things;
     }

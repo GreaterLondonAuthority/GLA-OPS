@@ -47,16 +47,35 @@
 
       <div class="form-group">
         <label for="read-only-delivery-allocation">{{$ctrl.labels.deliverAllocation}}</label>
-        <div id="read-only-delivery-allocation">{{$ctrl.currentAllocation.allocation | number}}</div>
+        <div id="read-only-delivery-allocation">{{$ctrl.currentDelivery.allocation | number}}</div>
       </div>
-      <div ng-if="$ctrl.isAebGrant" class="form-group">
-        <label for="read-only-community-allocation">{{$ctrl.labels.communityAllocation}}</label>
-        <div id="read-only-community-allocation">{{$ctrl.currentAllocation.communityAllocation | number}}</div>
+
+      <div ng-if="$ctrl.isAebGrant">
+        <div class="form-group mbottom10">
+          <toggle-icon [(collapsed)]="$ctrl.ofWhich.collapsed"></toggle-icon>
+          <label>{{$ctrl.labels.ofWhich}}</label>
+        </div>
+        <div ng-if="!$ctrl.ofWhich.collapsed" class="form-group">
+          <div ng-if="$ctrl.allocationTypesConfig.showCommunity">
+            <label for="read-only-community-allocation">{{$ctrl.labels.communityAllocation}}</label>
+            <div id="read-only-community-allocation" default-value="'Not provided'">{{$ctrl.currentCommunity.allocation | number}}</div>
+          </div>
+
+          <div ng-if="$ctrl.allocationTypesConfig.showInnovationFund">
+            <label class="read-only-innovation-fund mtop10">{{$ctrl.labels.innovationFund}}</label>
+            <div class="read-only-innovation-fund" default-value="'Not provided'">{{$ctrl.currentInnovationFund.allocation | number}}</div>
+          </div>
+
+          <div ng-if="$ctrl.allocationTypesConfig.showResponseFund1">
+            <label class="read-only-response-fund-strand-1 mtop10">{{$ctrl.labels.responseFundStrand1}}</label>
+            <div class="read-only-response-fund-strand-1" default-value="'Not provided'">{{$ctrl.currentResponseFundStrand1.allocation | number}}</div>
+          </div>
+        </div>
       </div>
 
       <div class="form-group" ng-if="$ctrl.isAebProcured">
         <label for="read-only-learner-support-allocation">{{$ctrl.labels.learnerSupportAllocation}}</label>
-        <div id="read-only-learner-support-allocation">{{$ctrl.currentAllocation.learnerSupportAllocation | number}}</div>
+        <div id="read-only-learner-support-allocation" default-value="'Not provided'">{{$ctrl.currentLearningSupport.allocation | number}}</div>
       </div>
 
     </div>

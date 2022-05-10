@@ -19,39 +19,38 @@
     </button>
   </div>
 
-  <well class="row mbottom20 search-container" ng-if="$ctrl.showFilters">
+  <gla-well class="row mbottom20 search-container" ng-if="$ctrl.showFilters">
     <div class="col-sm-6 col-md-5 text-search search-filter">
-      <div>Search</div>
-      <search-field options="$ctrl.searchOptions"
-                    selected-option="$ctrl.selectedSearchOption"
-                    search-text="$ctrl.searchText"
-                    on-select="$ctrl.select($ctrl.selectedSearchOption)"
-                    on-search="$ctrl.search()"
-                    on-clear="$ctrl.clearSearchText()"
-                    reset="$ctrl.resetSearch"></search-field>
+      <gla-search-field [options]="$ctrl.searchOptions"
+                    [(selected-option)]="$ctrl.selectedSearchOption"
+                    [(search-text)]="$ctrl.searchText"
+                    (on-select)="$ctrl.select($ctrl.selectedSearchOption)"
+                    (on-search)="$ctrl.search()"
+                    (on-clear)="$ctrl.clearSearchText()"
+                    (reset)="$ctrl.resetSearch"></gla-search-field>
+
     </div>
 
     <div class="col-sm-6 col-md-2 search-filter">
-      <div class="text-nowrap">Organisation Type</div>
-      <checkbox-filter
-        id="org-type"
-        filter-dropdown-items="$ctrl.orgTypeDropdown"
-        on-change="$ctrl.search()"></checkbox-filter>
+      <label class="text-nowrap" for="org-type">Organisation Type</label>
+      <gla-checkbox-filter id="org-type"
+                       [filter-dropdown-items]="$ctrl.orgTypeDropdown"
+                       (on-change)="$ctrl.search()"></gla-checkbox-filter>
     </div>
 
     <div class="col-sm-6 col-md-2 search-filter">
-      <div>Org. status</div>
-      <checkbox-filter
-        id="org-status"
-        filter-dropdown-items="$ctrl.orgStatusDropdown"
-        on-change="$ctrl.search()"></checkbox-filter>
+      <label for="org-status">Org. status</label>
+      <gla-checkbox-filter id="org-status"
+                       [filter-dropdown-items]="$ctrl.orgStatusDropdown"
+                       (on-change)="$ctrl.search()"></gla-checkbox-filter>
     </div>
 
     <div ng-if="$ctrl.canFilterByTeams" class="col-sm-6 col-md-2 team-filter">
-      <div class="text-align-left">Team</div>
-      <checkbox-filter filter-dropdown-items="$ctrl.teamsDropdown"
-         on-change="$ctrl.search($event)"
-         grouped="true"></checkbox-filter>
+      <label class="text-align-left" for="teams">Team</label>
+      <gla-checkbox-filter id="teams"
+                       [filter-dropdown-items]="$ctrl.teamsDropdown"
+                       (on-change)="$ctrl.search($event)"
+                       [grouped]="true"></gla-checkbox-filter>
     </div>
 
     <div class="col-sm-12 col-md-12 col-lg-1" ng-class="{'reset-column' : $ctrl.showReset}">
@@ -61,15 +60,14 @@
         ng-click="$ctrl.clearAll()"><span class="glyphicon glyphicon-remove"></span>Reset all
       </button>
     </div>
-  </well>
+  </gla-well>
 
   <div ng-if="$ctrl.orgCollection.length || !$ctrl.showFilters">
-    <pagination class="mbottom10"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                total-items="$ctrl.totalItems"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.getOrganisations()"></pagination>
+    <gla-pagination [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                    [total-items]="$ctrl.totalItems"
+                    [number-of-elements]="$ctrl.itemsPerPage"
+                    (on-change)="$ctrl.getOrganisations()"></gla-pagination>
 
 
     <div class="row">
@@ -101,8 +99,8 @@
               <span class="sortorder" ng-if="$ctrl.sortByName === 'teamName'" ng-class="{reverse: $ctrl.sortReverse}"></span>
             </th>
             <th>
-              SAP ID
-              <span class="sortorder" ng-if="$ctrl.sortByName === 'sapVendorId'" ng-class="{reverse: $ctrl.sortReverse}"></span>
+              DEFAULT SAP ID
+              <span class="sortorder" ng-if="$ctrl.sortByName === 'defaultSapVendorId'" ng-class="{reverse: $ctrl.sortReverse}"></span>
             </th>
             <th>
               ORG. STATUS
@@ -120,10 +118,10 @@
               ui-sref="organisation.view({orgId: row.id, backNavigation: $ctrl.currentState})">
             <td>{{row.id}}</td>
             <td class="org-name">{{row.name}}</td>
-            <td>{{$ctrl.organisationTypes[row.entityType]}}</td>
+            <td>{{$ctrl.organisationTypes[row.entityType].summary}}</td>
             <td>{{row.managingOrganisationName}}</td>
             <td>{{row.teamName}}</td>
-            <td>{{row.sapVendorId}}</td>
+            <td>{{row.defaultSapVendorId}}</td>
             <td>{{row.status}}</td>
             <td><a href="JavaScript: void(0);" ng-click="$event.stopPropagation(); $ctrl.toggleWatch(row)">{{$ctrl.watchedOrganisations[row.id] ? 'Stop watching' : 'Watch'}}</a></td>
           </tr>
@@ -134,12 +132,12 @@
       </div>
     </div>
 
-    <pagination class="bottom-pagination"
-                current-page="$ctrl.currentPage"
-                items-per-page="$ctrl.itemsPerPage"
-                total-items="$ctrl.totalItems"
-                number-of-elements="$ctrl.itemsPerPage"
-                on-change="$ctrl.getOrganisations()"></pagination>
+    <gla-pagination class="bottom-pagination"
+                    [(current-page)]="$ctrl.currentPage"
+                    [(items-per-page)]="$ctrl.itemsPerPage"
+                    [total-items]="$ctrl.totalItems"
+                    [number-of-elements]="$ctrl.itemsPerPage"
+                    (on-change)="$ctrl.getOrganisations()"></gla-pagination>
   </div>
 
   <div class="text-center" ng-if="!$ctrl.loading && $ctrl.showFilters && !$ctrl.orgCollection.length" id="no-results">

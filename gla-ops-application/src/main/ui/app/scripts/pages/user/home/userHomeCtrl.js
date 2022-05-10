@@ -9,8 +9,12 @@
 'use strict';
 class UserHomeCtrl {
   constructor(UserService) {
-    this.user = UserService.currentUser();
-    this.canViewProjects = UserService.hasPermission('proj');
+    this.UserService = UserService;
+  }
+
+  $onInit(){
+    this.user = this.UserService.currentUser();
+    this.canViewProjects = this.UserService.hasPermission('proj');
   }
 }
 

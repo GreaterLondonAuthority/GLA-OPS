@@ -23,7 +23,7 @@
           <div class="sub-comment" ng-if="!$ctrl.readOnly">If you need to submit supporting documents, contact your Area Manager</div>
         </div>
         <div class="col-xs-5 col-sm-3 no-padding">
-          <gla-remaining-characters [text]="$ctrl.data.justification" [max]="1000"></gla-remaining-characters>
+          <gla-remaining-characters ng-if="!$ctrl.readOnly" [text]="$ctrl.data.justification" [max]="1000"></gla-remaining-characters>
         </div>
       </div>
 
@@ -37,16 +37,18 @@
 
     </div>
 
-    <div class="row grant-block-title">
-      2. Enter the units and tenure
-    </div>
-    <grant-table data="$ctrl.data" is-readonly="$ctrl.readOnly" on-tenure-change="$ctrl.saveTenure(true)">
+    <section-header class="grant-block-title" subheader="Row and column totals are updated every time you change a value in the table">2. Enter the units and tenure</section-header>
+    <grant-table data="$ctrl.data"
+                 other-affordable-tenure-types="$ctrl.otherAffordableTenureTypes"
+                 show-other-affordable-question ="$ctrl.showOtherAffordableQuestion"
+                 is-readonly="$ctrl.readOnly"
+                 on-tenure-change="$ctrl.saveTenure(true)">
     </grant-table>
 
     <div class="loading-mask-container">
       <tenure-tiles tenures="$ctrl.tenureSummaryDetails"></tenure-tiles>
       <total-grant total="$ctrl.data.totalGrantEligibility"></total-grant>
-      <loading-mask ng-if="$ctrl.loading" text=""></loading-mask>
+      <gla-loading-mask ng-if="$ctrl.loading" text=""></gla-loading-mask>
     </div>
     <claimed-units ng-if="$ctrl.data.startOnSiteMilestoneAuthorised || $ctrl.data.completionMilestoneAuthorised"
                    start-milestone="$ctrl.data.startOnSiteMilestoneAuthorised"

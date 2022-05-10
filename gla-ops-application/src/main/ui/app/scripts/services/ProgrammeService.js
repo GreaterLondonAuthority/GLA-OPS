@@ -185,7 +185,7 @@ function ProgrammeService($resource, $http, config) {
           managingOrganisation: 'Managing organisation',
           status: 'Programme status',
           companyName: 'Company name for payments',
-          companyEmail: 'Email group for payments',
+          companyEmail: 'Email group(s) for payments',
           glaInternal: 'Programme restricted for GLA internal use only',
           enableForProjects: 'Programme enabled for new projects',
           markForAssessment: 'Programme marked for assessment',
@@ -193,7 +193,11 @@ function ProgrammeService($resource, $http, config) {
           financialYear: 'Financial year',
           yearType: 'Year type',
           startYear: 'Start year',
-          endYear: 'End year'
+          endYear: 'End year',
+          openingDate: 'Opening date',
+          closingDate: 'Closing date',
+          openingHour: 'Opening hour',
+          closingHour: 'Closing hour',
         },
 
         projectType: {

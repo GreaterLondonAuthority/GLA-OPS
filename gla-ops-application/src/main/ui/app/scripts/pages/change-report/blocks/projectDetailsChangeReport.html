@@ -67,6 +67,12 @@
 <change-report-field ng-if="!$ctrl.hiddenState.maincontactemail"
     label="'Email address'" data="$ctrl.details" fields="'mainContactEmail'"></change-report-field>
 
+
+<change-report-field ng-if="!$ctrl.hiddenState.secondaryContact"
+                     label="'Secondary contact'" data="$ctrl.details" fields="'secondaryContact'"></change-report-field>
+<change-report-field ng-if="!$ctrl.hiddenState.secondaryContactEmail"
+                     label="'Secondary email address'" data="$ctrl.details" fields="'secondaryContactEmail'"></change-report-field>
+
 <change-report-field ng-if="!$ctrl.hiddenState.siteOwner"
     label="'Site owner'" data="$ctrl.details" fields="'siteOwner'"></change-report-field>
 <change-report-field ng-if="!$ctrl.hiddenState.interest"

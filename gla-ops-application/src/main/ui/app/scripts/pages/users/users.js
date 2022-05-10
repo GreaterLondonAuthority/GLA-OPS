@@ -6,8 +6,8 @@
  * http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
  */
 
-import './approved-users-list/approvedUsersList.js'
 import './pending-users-list/pendingUsersList.js'
+import './all-users-list/allUsersList.js'
 
 class UsersCtrl {
   constructor($state, $stateParams, UserService, SessionService, $q) {
@@ -20,13 +20,22 @@ class UsersCtrl {
 
   $onInit() {
     this.tabs = {
-      approvedUsers: 0,
-      pendingUsers: 1
+      allUsers: 0,
+      approvedUsers: 1,
+      pendingUsers: 2,
+      orphanedUsers: 3
     };
+
+    this.userTypes = {
+      allUsers: ['Approved', 'Unapproved', 'Orphaned', 'Pending'],
+      approvedUsers: ['Approved'],
+      pendingUsers: ['Pending'],
+      orphanedUsers: ['Orphaned']
+    }
 
     let pageSession = this.SessionService.getUsersPage() || {};
 
-    this.activeTabIndex = pageSession.activeTabIndex || this.tabs.approvedUsers;
+    this.activeTabIndex = pageSession.activeTabIndex || this.tabs.allUsers;
 
     this.searchOptions = this.UserService.searchOptions();
     let usersSearchState = this.SessionService.getUsersSearchState();
@@ -79,6 +88,14 @@ class UsersCtrl {
     this.clearSearch();
   }
 
+  onAllUsersTabSelected() {
+    this.onActiveTabChange(this.tabs.allUsers)
+  }
+
+  onOrphanedUsersTabSelected() {
+    this.onActiveTabChange(this.tabs.orphanedUsers)
+  }
+
   onApprovedUsersTabSelected() {
     this.onActiveTabChange(this.tabs.approvedUsers)
   }
@@ -92,6 +109,21 @@ class UsersCtrl {
     let pageSession = this.SessionService.getUsersPage() || {};
     pageSession.activeTabIndex = tabIndex;
     this.SessionService.setUsersPage(pageSession);
+    this.updateSearchOptions(this.activeTabIndex)
+  }
+
+  updateSearchOptions(activeTabIndex) {
+    let options = this.UserService.searchOptions();
+    if (activeTabIndex === this.tabs.orphanedUsers) {
+      options = options.filter(o => o.name !== 'organisation')
+    }
+    if (this.searchOptions.length !== options.length) {
+      if (this.selectedSearchOption.name !== 'username') {
+        this.searchTextModel = null;
+      }
+      this.searchOptions =  options
+      this.selectedSearchOption = this.searchOptions[0];
+    }
   }
 }
 

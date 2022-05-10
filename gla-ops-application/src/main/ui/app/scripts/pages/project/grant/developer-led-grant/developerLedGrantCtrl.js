@@ -29,6 +29,8 @@ class DeveloperLedGrantCtrl extends ProjectBlockCtrl{
     this.lastRequestId = 0;
 
     this.data = this.GrantService.sortTenureTypes(this.projectBlock);
+    this.otherAffordableTenureTypes = _.find(this.template.blocksEnabled, {block: 'DeveloperLedGrant'}).otherAffordableTenureTypes;
+    this.showOtherAffordableQuestion = _.find(this.template.blocksEnabled, {block: 'DeveloperLedGrant'}).showOtherAffordableQuestion;
     this.criteriaPreviousValue = this.data.affordableCriteriaMet;
     this.tenureSummaryDetails = this.GrantService.developerLedGrantBlock(this.data);
     this.tenureClaimedDetails =  this.GrantService.calculateClaimedTenure(this.data, this.project);

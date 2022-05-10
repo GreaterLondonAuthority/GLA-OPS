@@ -28,7 +28,12 @@ class LearningGrantSummaryReport {
 
     this.block.academicYear = DateUtil.toFinancialYearString(this.block.startYear);
 
-    this.currentAllocation = _.find(this.block.allocations || [], {year: this.block.startYear});
+    this.currentDelivery = _.find(this.block.allocations || [], {year: this.block.startYear, type: 'Delivery'});
+    this.currentCommunity = _.find(this.block.allocations || [], {year: this.block.startYear, type: 'Community'});
+    this.currentInnovationFund = _.find(this.block.allocations || [], {year: this.block.startYear, type: 'InnovationFund'});
+    this.currentResponseFundStrand1 = _.find(this.block.allocations || [], {year: this.block.startYear, type: 'ResponseFundStrand1'});
+    this.currentLearningSupport = _.find(this.block.allocations || [], {year: this.block.startYear, type: 'LearnerSupport'});
+
     this.deliveryEntries = _.filter(this.block.learningGrantEntries, {type: EntryType.DELIVERY, academicYear: this.block.startYear});
     this.supportEntries = _.filter(this.block.learningGrantEntries, (s) => s.type === EntryType.SUPPORT && !!s.percentage && s.academicYear === this.block.startYear);
   }

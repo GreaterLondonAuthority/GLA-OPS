@@ -30,7 +30,7 @@ public class BeanTester {
 
     Logger log = LoggerFactory.getLogger(getClass());
 
-    public class BeanValidationFailure extends RuntimeException {
+    public static class BeanValidationFailure extends RuntimeException {
         public BeanValidationFailure(String message, Throwable cause) {
             super(message, cause);
         }
@@ -154,13 +154,15 @@ public class BeanTester {
     }
 
     private Object createValue(Class<?> propertyType) {
-        Object value = null;
+        Object value;
         if (propertyType.equals(String.class)) {
             value = "ABC" + random.nextLong();
         } else if (propertyType.equals(Integer.TYPE) || propertyType.equals(Integer.class)) {
             value = random.nextInt();
         } else if (propertyType.equals(Boolean.TYPE)) {
             value = true;
+        } else if (propertyType.equals(Long.TYPE) || propertyType.equals(Long.class)) {
+            value = random.nextLong();
         } else if (propertyType.equals(Date.class)) {
             value = new Date(random.nextLong());
         } else if (propertyType.equals(BigDecimal.class)) {

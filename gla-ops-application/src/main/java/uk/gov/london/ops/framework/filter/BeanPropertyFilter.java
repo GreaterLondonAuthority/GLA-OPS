@@ -16,36 +16,35 @@ import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.london.ops.framework.annotations.PermissionRequired;
-import uk.gov.london.ops.permission.PermissionService;
+import uk.gov.london.ops.permission.PermissionServiceImpl;
 import uk.gov.london.ops.permission.PermissionType;
-import uk.gov.london.ops.user.UserService;
-import uk.gov.london.ops.user.domain.User;
+import uk.gov.london.ops.user.UserServiceImpl;
+import uk.gov.london.ops.user.domain.UserEntity;
 
 import java.util.Set;
 
 /**
- *
- * Checks for PermissionRequried annotation and checks user's basic permissions
- * Created by chris on 16/03/2017.
+ * Checks for PermissionRequried annotation and checks user's basic permissions Created by chris on 16/03/2017.
  */
 @Component
 public class BeanPropertyFilter implements PropertyFilter {
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
 
     @Autowired
-    PermissionService permissionService;
+    PermissionServiceImpl permissionService;
 
     @Override
-    public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer) throws Exception {
+    public void serializeAsField(Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
+            throws Exception {
 
-        if (writer.getAnnotation(PermissionRequired.class) ==null) {
+        if (writer.getAnnotation(PermissionRequired.class) == null) {
             writer.serializeAsField(pojo, jgen, provider);
             return;
         }
         PermissionType[] permissionRequired = writer.getAnnotation(PermissionRequired.class).value();
-        User user = userService.currentUser();
+        UserEntity user = userService.currentUser();
 
         Set<String> permissionsForUser = permissionService.getPermissionsForUser(user);
         boolean showProperty = false;
@@ -65,17 +64,20 @@ public class BeanPropertyFilter implements PropertyFilter {
     }
 
     @Override
-    public void serializeAsElement(Object o, JsonGenerator jsonGenerator, SerializerProvider serializerProvider, PropertyWriter propertyWriter) {
+    public void serializeAsElement(Object o, JsonGenerator jsonGenerator, SerializerProvider serializerProvider,
+            PropertyWriter propertyWriter) {
 
     }
 
     @Override
-    public void depositSchemaProperty(PropertyWriter propertyWriter, ObjectNode objectNode, SerializerProvider serializerProvider) {
+    public void depositSchemaProperty(PropertyWriter propertyWriter, ObjectNode objectNode,
+            SerializerProvider serializerProvider) {
 
     }
 
     @Override
-    public void depositSchemaProperty(PropertyWriter propertyWriter, JsonObjectFormatVisitor jsonObjectFormatVisitor, SerializerProvider serializerProvider) {
+    public void depositSchemaProperty(PropertyWriter propertyWriter, JsonObjectFormatVisitor jsonObjectFormatVisitor,
+            SerializerProvider serializerProvider) {
 
     }
 }
